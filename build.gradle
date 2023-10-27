@@ -611,8 +611,21 @@ project(':forge') {
                 'Implementation-Title':     'FML Launcher',
                 'Implementation-Version':   SPEC_VERSION,
                 'Implementation-Vendor':    'Forge'
+            ] as LinkedHashMap,
+            'org/kettingpowered/ketting/': [
+                'Specification-Title':      'Kettingpowered',
+                'Specification-Vendor':     'Kettingpowered',
+                'Implementation-Title':     'Ketting',
+                'Implementation-Version':   "${KETTING_VERSION}-${MCP_VERSION}",
+                'Implementation-Vendor':    'Kettingpowered'
+            ] as LinkedHashMap,
+            'org/kettingpowered/ketting/common': [
+                'Specification-Title':      'Kettingpowered',
+                'Specification-Vendor':     'Kettingpowered',
+                'Implementation-Title':     'Ketting',
+                'Implementation-Version':   "${KETTING_VERSION}-${MCP_VERSION}",
+                'Implementation-Vendor':    'Kettingpowered'
             ] as LinkedHashMap
-                //TODO: ketting version
         ]
     }
 
@@ -1163,6 +1176,20 @@ project(':forge') {
                 IGNORE_LIST  : Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect { it.downloads.artifact.path.rsplit('/', 1)[1] }.join(','),
                 MODULES      : 'ALL-MODULE-PATH'
         ]
+
+        doFirst {
+            MANIFESTS.each { pkg, values ->
+                if (pkg == '/') {
+                    manifest.attributes(values += [
+                            'Main-Class': 'org.kettingpowered.ketting.KettingLauncher',
+                            'Class-Path': CLASS_PATH.toString().replace("[", "").replace("]", "").replace(",", "")
+                    ])
+                } else {
+                    manifest.attributes(values, pkg)
+                }
+            }
+        }
+
 
         PACKED_DEPS.each { dep ->
             //cut ':jar' from dep name
