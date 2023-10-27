@@ -5,7 +5,8 @@ import org.kettingpowered.ketting.common.betterui.BetterUI;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.kettingpowered.ketting.common.KettingConstants.*;
@@ -16,7 +17,9 @@ public class KettingLauncher {
     public static boolean enableUpdate;
 
     public static void main(String[] args) throws IOException {
-        KettingLauncher.args = Arrays.asList(args);
+        KettingLauncher.args = new ArrayList<>();
+        Collections.addAll(KettingLauncher.args, args);
+
         Path eula = Paths.get("eula.txt");
 
         Libraries.downloadInternal();
@@ -32,6 +35,11 @@ public class KettingLauncher {
     }
 
     private static void parseArgs(Path eula) throws IOException {
+        if (containsArg("-help") || containsArg("--help")) {
+            BetterUI.printHelp(NAME);
+            System.exit(0);
+        }
+
         if (containsArg("-noui"))
             BetterUI.setEnabled(false);
 
@@ -42,12 +50,12 @@ public class KettingLauncher {
             BetterUI.forceAcceptEULA(eula);
 
         enableUpdate = !containsArg("-dau");
-
-        //TODO: help command?
     }
 
     private static boolean containsArg(String arg) {
         if (args.isEmpty()) return false;
+
+        arg = arg.toLowerCase();
 
         if (args.contains(arg)) {
             args.remove(arg);

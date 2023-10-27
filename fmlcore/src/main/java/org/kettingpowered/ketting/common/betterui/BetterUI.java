@@ -93,6 +93,18 @@ public class BetterUI {
         System.err.println("------------------------------------------------------------");
     }
 
+    public static void printHelp(String name) {
+        System.out.println(name + " Help");
+        System.out.println("-".repeat(name.length() + 5));
+        System.out.println("Usage: java -jar your-jar-name.jar [options]");
+        System.out.println("Options:");
+        System.out.println("  -noui        Disables the fancy UI");
+        System.out.println("  -nologo      Disables the big logo");
+        System.out.println("  -accepteula  Accepts the EULA automatically");
+        System.out.println("  -dau         Disables automatic updates");
+        System.out.println("  -help        Shows this help message");
+    }
+
     public static boolean checkEula(Path path_to_eula) throws IOException {
         File file = path_to_eula.toFile();
         ServerEula eula = new ServerEula(path_to_eula);
