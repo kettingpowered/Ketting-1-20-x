@@ -619,7 +619,7 @@ project(':forge') {
                 'Implementation-Version':   "${KETTING_VERSION}-${MCP_VERSION}",
                 'Implementation-Vendor':    'Kettingpowered'
             ] as LinkedHashMap,
-            'org/kettingpowered/ketting/common': [
+            'org/kettingpowered/ketting/common/': [
                 'Specification-Title':      'Kettingpowered',
                 'Specification-Vendor':     'Kettingpowered',
                 'Implementation-Title':     'Ketting',
@@ -1200,6 +1200,7 @@ project(':forge') {
         }
 
         from(project(':kettinglauncher').project.sourceSets.main.output)
+        from(project(':fmlcore').project.sourceSets.main.output)
         from(generateKettingLibraries)
 
         from(rootProject.file('server_files/libraries.txt')) {
