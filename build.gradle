@@ -30,6 +30,7 @@ plugins {
     id 'de.undercouch.download' version '5.4.0'
     id 'net.minecraftforge.gradle.patcher' version '[6.0.14,6.2)' apply false
     id 'net.minecraftforge.gradle.mcp' version '[6.0.14,6.2)' apply false
+    id "dev.vankka.dependencydownload.plugin" version "1.3.1" apply false
 }
 
 Util.init() //Init all our extension methods!
@@ -53,9 +54,9 @@ ext {
     INSTALLER_VERSION = '2.1.+'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
-    // FML_VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, 'FML', MC_VERSION)
-    FORGE_VERSION = VERSION.substring(MC_VERSION.length() + 1)
+    FORGE_VERSION = "48.0.33"
+    VERSION = "${MC_VERSION}-${FORGE_VERSION}"
+    KETTING_VERSION = "${VERSION}-${GIT_INFO.abbreviatedId}"
 
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
     INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
@@ -68,6 +69,8 @@ println('Version: ' + VERSION +
         ' Java: ' + System.getProperty('java.version') +
         ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ')' +
         ' Arch: ' + System.getProperty('os.arch'))
+
+println('Ketting: ' + KETTING_VERSION)
 
 changelog {
     fromTag MIN_TAG_FOR_CHANGELOG
@@ -350,6 +353,8 @@ project(':forge') {
     apply plugin: 'net.minecraftforge.gradle.patcher'
     apply plugin: 'org.cadixdev.licenser'
 
+    apply plugin: 'dev.vankka.dependencydownload.plugin'
+
     applyPatches { 
         level 'WARNING'
     }
@@ -418,6 +423,10 @@ project(':forge') {
         installer { transitive = false }
         moduleonly  { transitive = false }
         api.extendsFrom(installer)
+
+        internallibs
+        internallibs.extendsFrom(installer)
+        internallibs.extendsFrom(moduleonly)
     }
 
     dependencies {        
@@ -454,6 +463,11 @@ project(':forge') {
         implementation project(':mclanguage')
         
         runtimeOnly(libs.bootstrap)
+
+        internallibs BINPATCH_TOOL
+        internallibs INSTALLER_TOOLS
+        internallibs JAR_SPLITTER
+        internallibs FART
     }
 
     patcher {
@@ -603,6 +617,7 @@ project(':forge') {
                 'Implementation-Version':   SPEC_VERSION,
                 'Implementation-Vendor':    'Forge'
             ] as LinkedHashMap
+                //TODO: ketting version
         ]
     }
 
@@ -1080,6 +1095,13 @@ project(':forge') {
         }
     }
 
+    task generateKettingLibraries(type: dev.vankka.dependencydownload.task.GenerateDependencyDownloadResourceTask) {
+        var conf = configurations.internallibs
+        configuration = conf
+        file = "data/ketting_libraries.txt"
+        includeShadowJarRelocations = false
+    }
+
     universalJar {
         dependsOn downloadCrowdin
         from zipTree(downloadCrowdin.dest).matching {
@@ -1111,6 +1133,69 @@ project(':forge') {
         }
         from(genServerBinPatches.output) {
             rename { 'data/server.lzma' }
+        }
+    }
+
+    task kettingJar(type: Jar, dependsOn: [downloadServerRaw, genServerBinPatches, 'signUniversalJar']) {
+        archiveClassifier = 'server'
+        archiveExtension = 'jar'
+        archiveBaseName = 'ketting'
+        archiveVersion = KETTING_VERSION
+        destinationDirectory = file('build/libs')
+
+        def CLASS_PATH = Util.getArtifacts(project, project.configurations.installer, false).values().collect{"libraries/${it.downloads.artifact.path}"} +
+                [
+                        'libraries/' + Util.getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
+                        "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
+                ]
+        def claimed = CLASS_PATH.collect { it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
+        if (rootProject.downloadServerRaw.dest.exists()) {
+            try (def zip = new java.util.zip.ZipFile(rootProject.downloadServerRaw.dest)) {
+                CLASS_PATH += zip.getInputStream(zip.getEntry('META-INF/classpath-joined')).text.split(';')
+                        .findAll { it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
+            }
+        } else {
+            println("Can't read server")
+        }
+        def MODULE_PATH = Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect { "libraries/${it.downloads.artifact.path}" }
+        def tokens = [
+                TASK         : project.name.equals('forge') ? 'forgeserver' : 'fmlserver',
+                MAVEN_PATH   : project.ext.MAVEN_PATH.toString(),
+                FORGE_VERSION: FORGE_VERSION,
+                MC_VERSION   : MC_VERSION,
+                MCP_VERSION  : MCP_VERSION,
+                FORGE_GROUP  : project.group,
+                IGNORE_LIST  : Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect { it.downloads.artifact.path.rsplit('/', 1)[1] }.join(','),
+                MODULES      : 'ALL-MODULE-PATH'
+        ]
+
+        PACKED_DEPS.each { dep ->
+            //cut ':jar' from dep name
+            from(project(dep.substring(0, dep.length() - 4)).tasks.jar.outputs) {
+                rename { "data/${dep}-${MC_VERSION}-${FORGE_VERSION}.jar" }
+            }
+        }
+
+        from(project(':kettinglauncher').project.sourceSets.main.output)
+        from(generateKettingLibraries)
+
+        from(rootProject.file('server_files/libraries.txt')) {
+            filter(ReplaceTokens, tokens: [CLASS_PATH: CLASS_PATH.join(';')])
+            rename { 'data/libraries.txt' }
+        }
+
+        from(rootProject.file('server_files/args.txt')) {
+            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';')])
+            rename { 'data/win_args.txt' }
+        }
+
+        from(rootProject.file('server_files/args.txt')) {
+            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':')])
+            rename { 'data/unix_args.txt' }
+        }
+
+        from(rootProject.file('server_files/user_jvm_args.txt')) {
+            rename { 'data/user_jvm_args.txt' }
         }
     }
     
@@ -1264,18 +1349,6 @@ project(':forge') {
         }
     }
 
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                artifact universalJar
-                artifact installerJar
-                artifact makeMdk
-                artifact userdevJar
-                artifact sourcesJar
-            }
-        }
-    }
-	
     // Since we need the modules in the bootstrap, we need to make sure they are compiled before we do each run
     afterEvaluate { prepareRuns.dependsOn(PACKED_DEPS) }
     
