@@ -72,14 +72,9 @@ println('Version: ' + VERSION +
 
 println('Ketting: ' + KETTING_VERSION)
 
-changelog {
-    fromTag MIN_TAG_FOR_CHANGELOG
-}
-
 def extraTxts = [
     rootProject.file('CREDITS.txt'),
     rootProject.file('LICENSE.txt'),
-    rootProject.tasks.createChangelog.outputFile
 ]
 
 tasks.register('downloadVersionManifest', Download) {
@@ -1095,7 +1090,7 @@ project(':forge') {
         }
     }
 
-    task generateKettingLibraries(type: dev.vankka.dependencydownload.task.GenerateDependencyDownloadResourceTask) {
+    task generateKettingLibraries(dependsOn: ['jar'], type: dev.vankka.dependencydownload.task.GenerateDependencyDownloadResourceTask) {
         var conf = configurations.internallibs
         configuration = conf
         file = "data/ketting_libraries.txt"
