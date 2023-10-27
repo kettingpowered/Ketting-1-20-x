@@ -1,0 +1,45 @@
+plugins {
+    id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
+    id 'org.cadixdev.licenser'
+    id 'java-library'
+    id 'jacoco'
+}
+
+java.withSourcesJar()
+
+dependencies {
+    compileOnly(libs.nulls)
+
+    implementation(project(':fmlloader'))
+    implementation(project(':fmlcore'))
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+            'Automatic-Module-Name': project.name.toLowerCase(),
+            'FMLModType': 'LANGPROVIDER'
+        ] as java.util.LinkedHashMap)
+        attributes([
+            'Specification-Title':      'LowCodeMod',
+            'Specification-Vendor':     'Forge Development LLC',
+            'Specification-Version':    '1.0',
+            'Implementation-Title':     project.name,
+            'Implementation-Version':   FORGE_VERSION.split('\\.')[0], //project.version, TODO: Split out into a real versioned system, for now use the default that net.minecraftforge.fml.loading.LanguageLoadingProvider.loadLanguageProviders() used
+            'Implementation-Vendor':    'Forge Development LLC'
+        ] as java.util.LinkedHashMap, 'net/minecraftforge/fml/lowcodemod/')
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+}
+
+license {
+    header = rootProject.file('LICENSE-header.txt')
+    include 'net/minecraftforge/'
+}
+
+publishing.publications.mavenJava(MavenPublication) {
+    from components.java
+}

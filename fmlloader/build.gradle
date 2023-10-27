@@ -1,0 +1,87 @@
+plugins {
+    id 'com.github.ben-manes.versions'
+    id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
+    id 'org.cadixdev.licenser'
+    id 'java-library'
+    id 'jacoco'
+}
+
+dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
+configurations.forEach{ it.transitive = false }
+
+dependencies {
+    compileOnly(libs.nulls)
+
+    api(libs.bundles.asm) // Needed by all the black magic
+    api(libs.forgespi)
+    api(libs.mergetool.api)
+    api(libs.log4j.api)
+    api(libs.slf4j.api)
+    api(libs.guava)
+    api(libs.gson)
+    api(libs.maven.artifact)
+    api(libs.apache.commons)
+    api(libs.bundles.night.config)
+    api(libs.modlauncher)
+    api(libs.coremods)
+    api(libs.mojang.logging)
+    api(libs.jarjar.selector)
+    api(libs.jarjar.meta)
+
+    implementation(libs.jopt.simple)
+    implementation(libs.securemodules)
+    implementation(libs.accesstransformers)
+    implementation(libs.terminalconsoleappender)
+    implementation(libs.jimfs)
+
+    implementation(libs.log4j.core)
+    annotationProcessor(libs.log4j.core)
+
+    testCompileOnly(libs.nulls)
+    testRuntimeOnly(libs.bootstrap)
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+ext {
+    MANIFESTS = [
+        'net/minecraftforge/fml/loading/': [
+            'Specification-Title':      'FMLLoader',
+            'Specification-Vendor':     'Forge Development LLC',
+            'Specification-Version':    '1',
+            'Implementation-Title':     'FML Loader',
+            'Implementation-Version':   '1.0',
+            'Implementation-Vendor':    'Forge'
+        ] as LinkedHashMap
+    ]
+}
+
+jar.doFirst {
+    manifest.attributes['Automatic-Module-Name'] = project.name
+    MANIFESTS.each { pkg, values ->
+        manifest.attributes(values, pkg)
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+}
+
+license {
+    header = rootProject.file('LICENSE-header.txt')
+
+    include 'net/minecraftforge/'
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+}
+
+publishing.publications.mavenJava(MavenPublication) {
+    from components.java
+    artifact sourcesJar
+}

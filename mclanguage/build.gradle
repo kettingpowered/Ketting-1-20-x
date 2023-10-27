@@ -1,0 +1,45 @@
+plugins {
+    id 'org.cadixdev.licenser'
+    id 'java-library'
+    id 'jacoco'
+}
+
+dependencies {
+    compileOnly(libs.nulls)
+    implementation(project(':fmlloader'))
+    implementation(project(':fmlcore'))
+}
+
+java {
+    withSourcesJar()
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+            'Automatic-Module-Name': project.name.toLowerCase(),
+            'FMLModType': 'LANGPROVIDER',
+        ] as LinkedHashMap)
+        attributes([
+            'Specification-Title':      'MCLanguage',
+            'Specification-Vendor':     'Forge Development LLC',
+            'Specification-Version':    '1',
+            'Implementation-Title':     'MCLanguage',
+            'Implementation-Version':   '1.0',
+            'Implementation-Vendor':    'Forge Development LLC',
+        ] as LinkedHashMap, 'net/minecraftforge/fml/mclanguageprovider/')
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+}
+
+license {
+    header = rootProject.file('LICENSE-header.txt')
+    include 'net/minecraftforge/'
+}
+
+publishing.publications.mavenJava(MavenPublication) {
+    from components.java
+}

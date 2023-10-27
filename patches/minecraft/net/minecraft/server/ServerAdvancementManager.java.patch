@@ -1,0 +1,34 @@
+--- a/net/minecraft/server/ServerAdvancementManager.java
++++ b/net/minecraft/server/ServerAdvancementManager.java
+@@ -29,10 +_,18 @@
+    private Map<ResourceLocation, AdvancementHolder> advancements = Map.of();
+    private AdvancementTree tree = new AdvancementTree();
+    private final LootDataManager lootData;
++   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
+ 
++   /** @deprecated Forge: use {@linkplain ServerAdvancementManager#ServerAdvancementManager(LootDataManager, net.minecraftforge.common.crafting.conditions.ICondition.IContext) constructor with context}. */
++   @Deprecated
+    public ServerAdvancementManager(LootDataManager p_279237_) {
++      this(p_279237_, net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
++   }
++
++   public ServerAdvancementManager(LootDataManager p_279237_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
+       super(GSON, "advancements");
+       this.lootData = p_279237_;
++      this.context = context;
+    }
+ 
+    protected void apply(Map<ResourceLocation, JsonElement> p_136034_, ResourceManager p_136035_, ProfilerFiller p_136036_) {
+@@ -40,7 +_,11 @@
+       p_136034_.forEach((p_296449_, p_296450_) -> {
+          try {
+             JsonObject jsonobject = GsonHelper.convertToJsonObject(p_296450_, "advancement");
+-            Advancement advancement = Advancement.fromJson(jsonobject, new DeserializationContext(p_296449_, this.lootData));
++            Advancement advancement = Advancement.fromJson(jsonobject, new DeserializationContext(p_296449_, this.lootData), this.context);
++            if (advancement == null) {
++                LOGGER.debug("Skipping loading advancement {} as its conditions were not met", p_296449_);
++                return;
++            }
+             builder.put(p_296449_, new AdvancementHolder(p_296449_, advancement));
+          } catch (Exception exception) {
+             LOGGER.error("Parsing error loading custom advancement {}: {}", p_296449_, exception.getMessage());

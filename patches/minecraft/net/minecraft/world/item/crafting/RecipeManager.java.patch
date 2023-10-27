@@ -1,0 +1,34 @@
+--- a/net/minecraft/world/item/crafting/RecipeManager.java
++++ b/net/minecraft/world/item/crafting/RecipeManager.java
+@@ -40,9 +_,17 @@
+    private Map<RecipeType<?>, Map<ResourceLocation, RecipeHolder<?>>> recipes = ImmutableMap.of();
+    private Map<ResourceLocation, RecipeHolder<?>> byName = ImmutableMap.of();
+    private boolean hasErrors;
++   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
+ 
++   /** @deprecated Forge: use {@linkplain RecipeManager#RecipeManager(net.minecraftforge.common.crafting.conditions.ICondition.IContext) constructor with context}. */
++   @Deprecated
+    public RecipeManager() {
++      this(net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
++   }
++
++   public RecipeManager(net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
+       super(GSON, "recipes");
++      this.context = context;
+    }
+ 
+    protected void apply(Map<ResourceLocation, JsonElement> p_44037_, ResourceManager p_44038_, ProfilerFiller p_44039_) {
+@@ -52,8 +_,13 @@
+ 
+       for(Map.Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
+          ResourceLocation resourcelocation = entry.getKey();
++         if (resourcelocation.getPath().startsWith("_")) continue; //Forge: filter anything beginning with "_" as it's used for metadata.
+ 
+          try {
++            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.ForgeHooks.readAndTestCondition(this.context, entry.getValue().getAsJsonObject())) {
++               LOGGER.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
++               continue;
++            }
+             RecipeHolder<?> recipeholder = fromJson(resourcelocation, GsonHelper.convertToJsonObject(entry.getValue(), "top element"));
+             map.computeIfAbsent(recipeholder.value().getType(), (p_44075_) -> {
+                return ImmutableMap.builder();
