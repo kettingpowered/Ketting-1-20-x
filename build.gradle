@@ -1166,7 +1166,8 @@ project(':forge') {
 
         PACKED_DEPS.each { dep ->
             //cut ':jar' from dep name
-            from(project(dep.substring(0, dep.length() - 4)).tasks.jar.outputs) {
+            dep = dep.substring(1, dep.length() - 4)
+            from(project(':' + dep).tasks.jar.outputs) {
                 rename { "data/${dep}-${MC_VERSION}-${FORGE_VERSION}.jar" }
             }
         }
