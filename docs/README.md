@@ -1,4 +1,4 @@
-<img align="right" src="./assets/ketting.png?raw=true" height="200" width="200">
+<img align="right" src="./assets/ketting.png?raw=true" height="150" width="150">
 
 # Ketting
 
