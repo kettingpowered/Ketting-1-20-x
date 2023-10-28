@@ -11,6 +11,9 @@ import java.util.Date;
 
 public class BetterUI {
 
+    public static final int
+            LOGO_LENGTH = 62,
+            DIVIDER_LENGTH = 45;
     private static boolean enabled = true,  enableBigLogo = true;
 
     private static final String[] bigLogo = {
@@ -35,7 +38,7 @@ public class BetterUI {
         if (split.length > 1)
             forgeVersion = forgeVersion.substring(forgeVersion.indexOf("-") + 1, forgeVersion.lastIndexOf("-"));
 
-        String divider = "-".repeat(45);
+        String divider = "-".repeat(DIVIDER_LENGTH);
         String copyright = "Copyright (c) " + new SimpleDateFormat("yyyy").format(new Date()) + " " + brand;
         String java = "Running on Java " + javaVersion;
         String server = name + " version " + version;
@@ -48,12 +51,10 @@ public class BetterUI {
                 if (i < 9)
                     System.out.println(bigLogo[i]);
                 else {
-                    int limit = divider.length();
-
                     if (i == 9)
-                        printPartial(copyright, limit, bigLogo[i]);
+                        printPartial(copyright, bigLogo[i]);
                     else
-                        printPartial(divider, limit, bigLogo[i]);
+                        printPartial(divider, bigLogo[i]);
                 }
             }
         } else {
@@ -69,8 +70,8 @@ public class BetterUI {
         System.out.println(divider);
     }
 
-    private static void printPartial(String s, int limit, String logo) {
-        int l = Math.min(s.length(), limit);
+    private static void printPartial(String s, String logo) {
+        int l = Math.min(s.length(), DIVIDER_LENGTH);
         System.out.println(s.substring(0, l) + logo.substring(l));
     }
 

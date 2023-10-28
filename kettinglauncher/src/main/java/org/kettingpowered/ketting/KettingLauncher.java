@@ -16,20 +16,18 @@ public class KettingLauncher {
     private static List<String> args;
     public static boolean enableUpdate;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         KettingLauncher.args = new ArrayList<>();
         Collections.addAll(KettingLauncher.args, args);
 
         Path eula = Paths.get("eula.txt");
-
-        Libraries.downloadInternal();
 
         parseArgs(eula);
 
         BetterUI.printTitle(NAME, BRAND, System.getProperty("java.version") + " (" + System.getProperty("java.vendor") + ")", VERSION, BUKKIT_VERSION, FORGE_VERSION);
         if(!BetterUI.checkEula(eula)) System.exit(0);
 
-        Libraries.download();
+        Libraries.setup();
         Patcher.init();
         launch();
     }
@@ -66,6 +64,7 @@ public class KettingLauncher {
     }
 
     private static void launch() {
-        System.out.println("Launching Ketting..."); //TODO
+        System.out.println("Launching Ketting..."); //TODO create urlclassloader with all libs in it and launch the server jar
+        System.exit(0);
     }
 }

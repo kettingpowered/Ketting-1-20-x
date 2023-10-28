@@ -1,22 +1,118 @@
 package org.kettingpowered.ketting;
 
+import dev.vankka.dependencydownload.dependency.Dependency;
+import dev.vankka.dependencydownload.repository.Repository;
+import dev.vankka.dependencydownload.repository.StandardRepository;
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarBuilder;
+import me.tongfei.progressbar.ProgressBarStyle;
+import org.kettingpowered.ketting.common.KettingConstants;
+import org.kettingpowered.ketting.common.betterui.BetterUI;
+import org.kettingpowered.ketting.common.utils.Hash;
+import org.kettingpowered.ketting.common.utils.JarTool;
+import org.kettingpowered.ketting.common.utils.NetworkUtils;
+import org.kettingpowered.ketting.common.utils.ShortenedStackTrace;
+import org.kettingpowered.ketting.utils.LibHelper;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Libraries {
 
-    //TODO: visualize?
-    public static void download() {
+    private static final String LIB_PATH = new File(JarTool.getJarDir(), KettingConstants.INSTALLER_LIBRARIES_FOLDER).getAbsolutePath() + "/";
+    private static final List<URL> loadedLibs = new ArrayList<>();
+
+    public static void setup() throws Exception {
+        Lib[] libs = {
+                new Lib("dev/vankka/dependencydownload-runtime/1.3.1/dependencydownload-runtime-1.3.1.jar", "65fbb417dd6898700906a45b3501dd1b"),
+                new Lib("dev/vankka/dependencydownload-common/1.3.1/dependencydownload-common-1.3.1.jar", "024cfedc649ac942621120c1774896a7"),
+                new Lib("me/tongfei/progressbar/0.10.0/progressbar-0.10.0.jar", "a66b941573c5e25ba6c8baf50610dc86"),
+                new Lib("net/minecrell/terminalconsoleappender/1.2.0/terminalconsoleappender-1.2.0.jar", "679363fa893293791e55a21f81342f87"),
+                new Lib("org/jline/jline-reader/3.12.1/jline-reader-3.12.1.jar", "a2e7b012cd9802f83321187409174a94"),
+                new Lib("org/jline/jline-terminal/3.12.1/jline-terminal-3.12.1.jar", "3c52be5ab5e3847be6e62269de924cb0"),
+        };
+
+        List<URL> urls = new ArrayList<>();
+
+        for (Lib lib : libs) {
+            if (!lib.file().exists() || !lib.signature().equals(Hash.getHash(lib.file(), "MD5"))) {
+                lib.file().getParentFile().mkdirs();
+                lib.download();
+            }
+            urls.add(lib.url());
+        }
+
+        urls.add(JarTool.getJar().toURI().toURL());
+
+        try (URLClassLoader loader = new URLClassLoader(urls.toArray(URL[]::new), null)) {
+            Class<?> clazz = loader.loadClass(Libraries.class.getName());
+            clazz.getDeclaredConstructor().newInstance();
+        } catch (InvocationTargetException e) {
+            System.err.println("Something went wrong while trying to load libraries");
+            ShortenedStackTrace.findCause(e).printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    public Libraries() throws IOException {
         downloadExternal();
-        downloadMinecraft();
+        System.setProperty("libs", String.join(";", loadedLibs.stream().map(URL::toString).toArray(String[]::new)));
     }
 
-    public static void downloadInternal() {
-        //make sure that we have log4j2 and terminalconsoleappender and colored stuff
+    private void downloadExternal() throws IOException {
+        List<Repository> standardRepositories = new ArrayList<>();
+        standardRepositories.add(new StandardRepository("https://repo1.maven.org/maven2"));
+        standardRepositories.add(new StandardRepository("https://libraries.minecraft.net"));
+        standardRepositories.add(new StandardRepository("https://maven.minecraftforge.net"));
+
+        List<Dependency> dependencies = LibHelper.getManager().getDependencies();
+
+        ProgressBarBuilder builder = new ProgressBarBuilder()
+                .setTaskName("Loading libs...")
+                .hideEta()
+                .setMaxRenderedLength(BetterUI.LOGO_LENGTH)
+                .setStyle(ProgressBarStyle.ASCII)
+                .setUpdateIntervalMillis(100)
+                .setInitialMax(dependencies.size());
+
+        ProgressBar.wrap(dependencies.stream(), builder).forEach(dep -> {
+            try {
+                LibHelper.downloadDependency(dep, standardRepositories);
+                LibHelper.loadDependency(dep, path -> loadedLibs.add(path.toUri().toURL()));
+            } catch (Exception e) {
+                throw new RuntimeException("Something went wrong while trying to load dependencies", e);
+            }
+        });
+
+        loadedLibs.add(JarTool.getJar().toURI().toURL()); //Make sure that the classloader has access to this code
     }
 
-    private static void downloadExternal() {
-        //download all the libraries from the txt file
-    }
+    public record Lib(File file, String path, String signature) {
+        private Lib(String path, String signature) {
+            this(new File(LIB_PATH + (path.startsWith("/") ? path.substring(1) : path)), (path.startsWith("/") ? path.substring(1) : path), signature);
+        }
 
-    private static void downloadMinecraft() {
-        //download the minecraft server jar and mcp mappings
+        private void download() throws Exception {
+            try {
+                NetworkUtils.downloadFile("https://repo1.maven.org/maven2/" + path, file, this.signature());
+            } catch (Throwable e) {
+                System.err.println("Failed to download internal depencency https://repo1.maven.org/maven2/" + path + " to " + file.getAbsolutePath() + ", check your internet connection and try again.");
+                throw e;
+            }
+        }
+
+        private URL url() {
+            try {
+                return file.toURI().toURL();
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
