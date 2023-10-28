@@ -34,10 +34,6 @@ public class BetterUI {
         if (!enabled)
             return;
 
-        String[] split = forgeVersion.split("-");
-        if (split.length > 1)
-            forgeVersion = forgeVersion.substring(forgeVersion.indexOf("-") + 1, forgeVersion.lastIndexOf("-"));
-
         String divider = "-".repeat(DIVIDER_LENGTH);
         String copyright = "Copyright (c) " + new SimpleDateFormat("yyyy").format(new Date()) + " " + brand;
         String java = "Running on Java " + javaVersion;

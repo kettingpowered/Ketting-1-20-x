@@ -6,7 +6,6 @@ import dev.vankka.dependencydownload.repository.StandardRepository;
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
-import org.kettingpowered.ketting.common.KettingConstants;
 import org.kettingpowered.ketting.common.betterui.BetterUI;
 import org.kettingpowered.ketting.common.utils.Hash;
 import org.kettingpowered.ketting.common.utils.JarTool;
@@ -25,7 +24,6 @@ import java.util.List;
 
 public class Libraries {
 
-    private static final String LIB_PATH = new File(JarTool.getJarDir(), KettingConstants.INSTALLER_LIBRARIES_FOLDER).getAbsolutePath() + "/";
     private static final List<URL> loadedLibs = new ArrayList<>();
 
     public static void setup() throws Exception {
@@ -95,7 +93,7 @@ public class Libraries {
 
     public record Lib(File file, String path, String signature) {
         private Lib(String path, String signature) {
-            this(new File(LIB_PATH + (path.startsWith("/") ? path.substring(1) : path)), (path.startsWith("/") ? path.substring(1) : path), signature);
+            this(new File(KettingFiles.LIBRARIES_PATH + (path.startsWith("/") ? path.substring(1) : path)), (path.startsWith("/") ? path.substring(1) : path), signature);
         }
 
         private void download() throws Exception {
