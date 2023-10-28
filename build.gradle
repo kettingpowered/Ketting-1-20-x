@@ -1130,7 +1130,7 @@ project(':forge') {
         }
     }
 
-    task installerJar(type: InstallerJar, dependsOn: [genClientBinPatches, genServerBinPatches, 'signUniversalJar', launcherJson]) {
+    task installerJar(type: InstallerJar, dependsOn: [genClientBinPatches, genServerBinPatches, installerJson, launcherJson, 'signUniversalJar']) {
         packedDependencies = PACKED_DEPS
         from(extraTxts)
         from(rootProject.file('/forge_installer_logo.png')) {
@@ -1202,6 +1202,18 @@ project(':forge') {
         from(project(':kettinglauncher').project.sourceSets.main.output)
         from(project(':fmlcore').project.sourceSets.main.output)
         from(generateKettingLibraries)
+
+        from(genServerBinPatches.output) {
+            rename { 'data/server.lzma' }
+        }
+
+        from(universalJar) {
+            rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-universal.jar' }
+        }
+
+        from(installerJson.output) {
+            rename { 'data/installscript.json' }
+        }
 
         from(rootProject.file('server_files/libraries.txt')) {
             filter(ReplaceTokens, tokens: [CLASS_PATH: CLASS_PATH.join(';')])
