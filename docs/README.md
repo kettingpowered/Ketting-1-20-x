@@ -2,7 +2,7 @@
 
 # Ketting
 
-Ketting is a fork of [MinecraftForge]()
+Ketting is a fork of [MinecraftForge](https://github.com/MinecraftForge/MinecraftForge/)
 that enables the use of Bukkit plugins on Forge servers.
 
 ## How does it work?
@@ -17,7 +17,7 @@ to make sure that the server runs as smoothly as possible.
 
 <b>Make sure that you have Java 17 or higher installed on your system.</b>
 
-- Step 1: Download the latest version of Ketting from the [releases page]().
+- Step 1: Download the latest version of Ketting from the [releases page](https://github.com/kettingpowered/Ketting-1-20-x/releases).
 
 - Step 2: Place the downloaded jar in an empty (or already existing) server folder.
 
@@ -30,14 +30,14 @@ to make sure that the server runs as smoothly as possible.
 
 ## How can I contribute?
 
-Please report any issues that you find on the [issues page]().
+Please report any issues that you find on the [issues page](https://github.com/kettingpowered/Ketting-1-20-x/issues).
 Make sure that you are using the latest version of Ketting before reporting an issue.
 Contributions are welcome, but please make sure that your code is clean and readable.
 
 ## How can I build it myself?
 
 Before building Ketting, I would recommend to first build the latest
-Forge MDK from [their website]() to prevent some issues with the build.
+Forge MDK from [their website](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.2.html) to prevent some issues with the build.
 <br>
 
 <b>If you encounter the 'client srg not found' issue, please follow the step above.</b>
