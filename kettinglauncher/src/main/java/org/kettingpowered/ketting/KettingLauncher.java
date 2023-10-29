@@ -1,8 +1,10 @@
 package org.kettingpowered.ketting;
 
 import org.kettingpowered.ketting.common.betterui.BetterUI;
+import org.kettingpowered.ketting.utils.FileUtils;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -26,6 +28,13 @@ public class KettingLauncher {
 
         BetterUI.printTitle(NAME, BRAND, System.getProperty("java.version") + " (" + System.getProperty("java.vendor") + ")", VERSION, BUKKIT_VERSION, FORGE_VERSION);
         if(!BetterUI.checkEula(eula)) System.exit(0);
+
+        if (Patcher.updateNeeded()) {
+            //prematurely delete files to prevent errors
+            Files.deleteIfExists(KettingFiles.MCP_MAPPINGS.toPath());
+            Files.deleteIfExists(KettingFiles.MERGED_MAPPINGS.toPath());
+            FileUtils.deleteDir(KettingFiles.NMS_PATCHES_DIR);
+        }
 
         Libraries.setup();
         Patcher.init();
@@ -64,7 +73,8 @@ public class KettingLauncher {
     }
 
     private static void launch() {
-        System.out.println("Launching Ketting..."); //TODO create urlclassloader with all libs in it and launch the server jar
+        System.out.println("Launching Ketting...");
+        //TODO: Launch Ketting
         System.exit(0);
     }
 }

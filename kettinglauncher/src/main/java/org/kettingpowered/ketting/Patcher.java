@@ -6,14 +6,12 @@ import org.kettingpowered.ketting.common.utils.Hash;
 import org.kettingpowered.ketting.common.utils.JarTool;
 import org.kettingpowered.ketting.common.utils.NetworkUtils;
 import org.kettingpowered.ketting.common.utils.ShortenedStackTrace;
-import org.kettingpowered.ketting.utils.FileUtils;
 import org.kettingpowered.ketting.utils.Processors;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
@@ -140,23 +138,7 @@ public class Patcher {
     }
 
     private void readAndExecuteProcessors() throws NoSuchAlgorithmException, IOException {
-        final File hashes = KettingFiles.STORED_HASHES;
-        if (hashes.exists()) {
-            final String serverHash = Hash.getHash(JarTool.getJar(), "sha1");
-
-            try (FileReader reader = new FileReader(hashes)) {
-                final Properties properties = new Properties();
-                properties.load(reader);
-
-                final String storedServerHash = properties.getProperty("serverjar");
-                if (storedServerHash != null && storedServerHash.equals(serverHash))
-                    return;
-            }
-        }
-
-        Files.deleteIfExists(KettingFiles.MCP_MAPPINGS.toPath());
-        Files.deleteIfExists(KettingFiles.MERGED_MAPPINGS.toPath());
-        FileUtils.deleteDir(KettingFiles.NMS_PATCHES_DIR); //FIXME: somehow the extra jar has an open stream somewhere, so we can't delete it
+        if (!updateNeeded()) return;
 
         processors.forEach(processorData -> {
             String jar = processorData.get("jar").getAsString();
@@ -188,11 +170,29 @@ public class Patcher {
             }
         });
 
+        final File hashes = KettingFiles.STORED_HASHES;
         hashes.getParentFile().mkdirs();
         hashes.createNewFile();
 
         try (FileWriter writer = new FileWriter(hashes)) {
             writer.write("serverjar=" + Hash.getHash(JarTool.getJar(), "sha1"));
         }
+    }
+
+    public static boolean updateNeeded() throws NoSuchAlgorithmException, IOException {
+        final File hashes = KettingFiles.STORED_HASHES;
+        if (hashes.exists()) {
+            final String serverHash = Hash.getHash(JarTool.getJar(), "sha1");
+
+            try (FileReader reader = new FileReader(hashes)) {
+                final Properties properties = new Properties();
+                properties.load(reader);
+
+                final String storedServerHash = properties.getProperty("serverjar");
+                if (storedServerHash != null && storedServerHash.equals(serverHash))
+                    return false;
+            }
+        }
+        return true;
     }
 }
