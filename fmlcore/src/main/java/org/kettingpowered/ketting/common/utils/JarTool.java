@@ -4,6 +4,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public class JarTool {
 
@@ -31,6 +35,18 @@ public class JarTool {
             }
         } catch (NoSuchAlgorithmException e) {
             throw new IOException("Failed to extract file '" + from + "', failed to get hash algorithm", e);
+        }
+    }
+
+    public static List<String> readFileLinesFromJar(String path) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(JarTool.class.getClassLoader().getResourceAsStream(path))))) {
+            List<String> lines = new ArrayList<>();
+            String line;
+            while ((line = br.readLine()) != null)
+                lines.add(line);
+            return lines;
+        } catch (Exception e) {
+            return Collections.emptyList();
         }
     }
 }

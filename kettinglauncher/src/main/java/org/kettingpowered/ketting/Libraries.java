@@ -21,7 +21,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class Libraries {
 
@@ -131,5 +133,29 @@ public class Libraries {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public static URL[] getLoadedLibs() {
+        String libs = System.getProperty("libs");
+        if (libs == null || libs.isBlank()) {
+            System.err.println("Libraries did not load correctly, please try again");
+            System.exit(1);
+        }
+
+        URL[] urls = Arrays.stream(libs.split(";")).map(lib -> {
+            try {
+                return new URL(lib);
+            } catch (Exception e) {
+                System.err.println("Failed to load library: " + lib);
+                return null;
+            }
+        }).toArray(URL[]::new);
+
+        if (Arrays.stream(urls).anyMatch(Objects::isNull)) {
+            System.err.println("Failed to load libraries, please try again");
+            System.exit(1);
+        }
+
+        return urls;
     }
 }

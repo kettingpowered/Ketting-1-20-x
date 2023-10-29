@@ -22,25 +22,7 @@ import static org.kettingpowered.ketting.common.utils.JarTool.extractJarContent;
 public class Patcher {
 
     public static void init() throws Exception {
-        String libs = System.getProperty("libs");
-        if (libs == null || libs.isBlank()) {
-            System.err.println("Libraries did not load correctly, please try again");
-            System.exit(1);
-        }
-
-        URL[] urls = Arrays.stream(libs.split(";")).map(lib -> {
-            try {
-                return new URL(lib);
-            } catch (Exception e) {
-                System.err.println("Failed to load library: " + lib);
-                return null;
-            }
-        }).toArray(URL[]::new);
-
-        if (Arrays.stream(urls).anyMatch(Objects::isNull)) {
-            System.err.println("Failed to load libraries, please try again");
-            System.exit(1);
-        }
+        URL[] urls = Libraries.getLoadedLibs();
 
         try (URLClassLoader loader = new PatcherClassLoader(urls)) {
             Class<?> clazz = loader.loadClass(Patcher.class.getName());
@@ -174,7 +156,7 @@ public class Patcher {
 
         Files.deleteIfExists(KettingFiles.MCP_MAPPINGS.toPath());
         Files.deleteIfExists(KettingFiles.MERGED_MAPPINGS.toPath());
-        FileUtils.deleteDir(KettingFiles.NMS_PATCHES_DIR);
+        FileUtils.deleteDir(KettingFiles.NMS_PATCHES_DIR); //FIXME: somehow the extra jar has an open stream somewhere, so we can't delete it
 
         processors.forEach(processorData -> {
             String jar = processorData.get("jar").getAsString();
