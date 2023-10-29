@@ -1,5 +1,7 @@
 package org.kettingpowered.ketting.common.utils;
 
+import org.kettingpowered.ketting.common.KettingConstants;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -7,6 +9,7 @@ import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -55,6 +58,17 @@ public class NetworkUtils {
         if(md5 != null && hash != null && !hash.equals(md5.toLowerCase())) {
             f.delete();
             throw new Exception("MD5 hash of downloaded file does not match expected value!");
+        }
+    }
+
+    public static String readFile(String URL) {
+        try {
+            File f = File.createTempFile(KettingConstants.NAME, ".tmp");
+            downloadFile(URL, f);
+            return new String(Files.readAllBytes(f.toPath()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

@@ -13,16 +13,26 @@ import java.security.NoSuchAlgorithmException;
 public class Hash {
 
     public static String getHash(File file, String algorithm) throws NoSuchAlgorithmException, IOException {
+        try (FileInputStream stream = new FileInputStream(file)) {
+            return getHash(stream, algorithm);
+        }
+    }
+
+    public static String getHash(InputStream stream, String algorithm) throws NoSuchAlgorithmException, IOException {
         MessageDigest digest = MessageDigest.getInstance(algorithm);
 
-        try (InputStream inputStream = new FileInputStream(file)) {
-            byte[] buffer = new byte[1024];
-            int total;
-            while ((total = inputStream.read(buffer)) != -1) {
-                digest.update(buffer, 0, total);
-            }
+        byte[] buffer = new byte[1024];
+        int total;
+        while ((total = stream.read(buffer)) != -1) {
+            digest.update(buffer, 0, total);
         }
 
+        return getHash(digest);
+    }
+
+    public static String getHash(byte[] bytes, String algorithm) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance(algorithm);
+        digest.update(bytes);
         return getHash(digest);
     }
 
