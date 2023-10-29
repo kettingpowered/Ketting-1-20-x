@@ -39,7 +39,11 @@ public class NetworkUtils {
         downloadFile(URL, f, null);
     }
 
-    public static void downloadFile(String URL, File f, String md5) throws Exception {
+    public static void downloadFile(String URL, File f, String expectedHash) throws Exception {
+        downloadFile(URL, f, expectedHash, "MD5");
+    }
+
+    public static void downloadFile(String URL, File f, String expectedHash, String hashFormat) throws Exception {
         URLConnection conn = getConnection(URL);
         ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
         FileChannel fc = FileChannel.open(f.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -54,8 +58,8 @@ public class NetworkUtils {
             return null;
         }, downloadSrvc).get(20, TimeUnit.SECONDS);
         rbc.close();
-        String hash = Hash.getHash(f, "MD5");
-        if(md5 != null && hash != null && !hash.equals(md5.toLowerCase())) {
+        String hash = Hash.getHash(f, hashFormat);
+        if(expectedHash != null && hash != null && !hash.equals(expectedHash.toLowerCase())) {
             f.delete();
             throw new Exception("MD5 hash of downloaded file does not match expected value!");
         }

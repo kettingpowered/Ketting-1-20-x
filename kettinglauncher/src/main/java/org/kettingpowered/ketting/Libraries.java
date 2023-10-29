@@ -6,6 +6,7 @@ import dev.vankka.dependencydownload.repository.StandardRepository;
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
+import org.kettingpowered.ketting.common.KettingConstants;
 import org.kettingpowered.ketting.common.betterui.BetterUI;
 import org.kettingpowered.ketting.common.utils.Hash;
 import org.kettingpowered.ketting.common.utils.JarTool;
@@ -60,6 +61,7 @@ public class Libraries {
 
     public Libraries() throws IOException {
         downloadExternal();
+        downloadMcp();
         System.setProperty("libs", String.join(";", loadedLibs.stream().map(URL::toString).toArray(String[]::new)));
     }
 
@@ -89,6 +91,23 @@ public class Libraries {
         });
 
         loadedLibs.add(JarTool.getJar().toURI().toURL()); //Make sure that the classloader has access to this code
+    }
+
+    private void downloadMcp() throws IOException {
+        if (KettingFiles.MCP_ZIP.exists()) return;
+
+        String mcMcp = KettingConstants.MINECRAFT_VERSION + "-" + KettingConstants.MCP_VERSION;
+
+        try {
+            KettingFiles.MCP_ZIP.getParentFile().mkdirs();
+
+            String baseURL = "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_config/" + mcMcp + "/mcp_config-" + mcMcp + ".zip";
+            String hash = NetworkUtils.readFile(baseURL + ".md5");
+            NetworkUtils.downloadFile(baseURL, KettingFiles.MCP_ZIP, hash);
+        } catch (Exception e) {
+            KettingFiles.MCP_ZIP.delete();
+            throw new IOException("Failed to download MCP", e);
+        }
     }
 
     public record Lib(File file, String path, String signature) {
