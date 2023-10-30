@@ -2,7 +2,6 @@ package org.kettingpowered.ketting;
 
 import org.kettingpowered.ketting.common.betterui.BetterUI;
 import org.kettingpowered.ketting.common.utils.JarTool;
-import org.kettingpowered.ketting.utils.BootstrapLauncher;
 import org.kettingpowered.ketting.utils.FileUtils;
 import org.kettingpowered.ketting.utils.ServerInitHelper;
 
@@ -83,10 +82,10 @@ public class KettingLauncher {
     private static void launch() {
         System.out.println("Launching Ketting...");
 
+        fsHacks();
+
         List<String> launchArgs = JarTool.readFileLinesFromJar("data/" + (System.getProperty("os.name").toLowerCase().contains("win") ? "win" : "unix") + "_args.txt");
         ServerInitHelper.init(launchArgs);
-
-        fsHacks();
 
         List<String> forgeArgs = new ArrayList<>();
         launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).toList().forEach(arg -> {
@@ -95,7 +94,14 @@ public class KettingLauncher {
         });
 
         String[] invokeArgs = Stream.concat(forgeArgs.stream(), KettingLauncher.args.stream()).toArray(String[]::new);
-        BootstrapLauncher.startServer(invokeArgs);
+
+        try {
+            Class.forName("net.minecraftforge.bootstrap.BootstrapLauncher")
+                    .getMethod("main", String[].class)
+                    .invoke(null, (Object) invokeArgs);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not launch server", e);
+        }
     }
 
     private static void fsHacks() {
