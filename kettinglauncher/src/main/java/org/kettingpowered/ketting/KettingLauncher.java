@@ -1,19 +1,27 @@
 package org.kettingpowered.ketting;
 
 import org.kettingpowered.ketting.common.betterui.BetterUI;
+import org.kettingpowered.ketting.common.utils.JarTool;
+import org.kettingpowered.ketting.utils.BootstrapLauncher;
 import org.kettingpowered.ketting.utils.FileUtils;
+import org.kettingpowered.ketting.utils.ServerInitHelper;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.nio.file.spi.FileSystemProvider;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static org.kettingpowered.ketting.common.KettingConstants.*;
 
 public class KettingLauncher {
+
+    //Libs added here will get ignored by ServerInitHelper
+    public static final String[] MANUALLY_PATCHED_LIBS = {
+        //"com/mojang/brigadier" TODO: add this when we implement our custom command system
+    };
 
     private static List<String> args;
     public static boolean enableUpdate;
@@ -74,7 +82,33 @@ public class KettingLauncher {
 
     private static void launch() {
         System.out.println("Launching Ketting...");
-        //TODO: Launch Ketting
-        System.exit(0);
+
+        List<String> launchArgs = JarTool.readFileLinesFromJar("data/" + (System.getProperty("os.name").toLowerCase().contains("win") ? "win" : "unix") + "_args.txt");
+        ServerInitHelper.init(launchArgs);
+
+        fsHacks();
+
+        List<String> forgeArgs = new ArrayList<>();
+        launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).toList().forEach(arg -> {
+            forgeArgs.add(arg.split(" ")[0]);
+            forgeArgs.add(arg.split(" ")[1]);
+        });
+
+        String[] invokeArgs = Stream.concat(forgeArgs.stream(), KettingLauncher.args.stream()).toArray(String[]::new);
+        BootstrapLauncher.startServer(invokeArgs);
+    }
+
+    private static void fsHacks() {
+        try {
+            ServerInitHelper.addOpens("java.base", "java.nio.file.spi", "ALL-UNNAMED");
+            var loadingProvidersField = FileSystemProvider.class.getDeclaredField("loadingProviders");
+            loadingProvidersField.setAccessible(true);
+            loadingProvidersField.set(null, false);
+            var installedProvidersField = FileSystemProvider.class.getDeclaredField("installedProviders");
+            installedProvidersField.setAccessible(true);
+            installedProvidersField.set(null, null);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not set filesystem", e);
+        }
     }
 }

@@ -15,6 +15,7 @@ public class KettingFiles {
             MC_MCP = MC + "-" + MCP;
 
     public static final String LIBRARIES_PATH = new File(JarTool.getJarDir(), KettingConstants.INSTALLER_LIBRARIES_FOLDER).getAbsolutePath() + "/";
+    public static final String LOGS_PATH = new File(JarTool.getJarDir(), "logs").getAbsolutePath() + "/";
 
     public static final File INSTALL_DIR = new File(LIBRARIES_PATH, "org/kettingpowered/ketting/install/");
 
@@ -59,5 +60,6 @@ public class KettingFiles {
             SERVER_LZMA = new File(INSTALL_DIR, "server.lzma");
 
     public static final File
-            STORED_HASHES = new File(INSTALL_DIR, "hashes.txt");
+            STORED_HASHES = new File(INSTALL_DIR, "hashes.txt"),
+            PATCHER_LOGS = new File(LOGS_PATH, "logs.txt");
 }

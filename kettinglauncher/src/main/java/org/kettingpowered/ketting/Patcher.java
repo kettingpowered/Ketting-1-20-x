@@ -1,7 +1,11 @@
 package org.kettingpowered.ketting;
 
 import com.google.gson.*;
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarBuilder;
+import me.tongfei.progressbar.ProgressBarStyle;
 import org.kettingpowered.ketting.common.KettingConstants;
+import org.kettingpowered.ketting.common.betterui.BetterUI;
 import org.kettingpowered.ketting.common.utils.Hash;
 import org.kettingpowered.ketting.common.utils.JarTool;
 import org.kettingpowered.ketting.common.utils.NetworkUtils;
@@ -39,6 +43,9 @@ public class Patcher {
     private final String dataDir = "data/";
     private final List<JsonObject> processors = new ArrayList<>();
     private final Map<String, String> tokens = new HashMap<>();
+
+    private final PrintStream out = System.out;
+    private PrintStream log;
 
     public Patcher() throws IOException, NoSuchAlgorithmException {
         downloadServer();
@@ -140,6 +147,32 @@ public class Patcher {
     private void readAndExecuteProcessors() throws NoSuchAlgorithmException, IOException {
         if (!updateNeeded()) return;
 
+        final File logFile = KettingFiles.PATCHER_LOGS;
+        if (!logFile.exists()) {
+            try {
+                logFile.getParentFile().mkdirs();
+                logFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        log = new PrintStream(new FileOutputStream(KettingFiles.PATCHER_LOGS) {
+            @Override
+            public void write(int b) {
+                out.write(b);
+            }
+        });
+
+        ProgressBar progressBar = new ProgressBarBuilder()
+                .setTaskName("Patching...")
+                .hideEta()
+                .setMaxRenderedLength(BetterUI.LOGO_LENGTH)
+                .setStyle(ProgressBarStyle.ASCII)
+                .setUpdateIntervalMillis(100)
+                .setInitialMax(processors.size())
+                .build();
+
         processors.forEach(processorData -> {
             String jar = processorData.get("jar").getAsString();
             JsonArray args = processorData.getAsJsonArray("args");
@@ -164,8 +197,12 @@ public class Patcher {
             });
 
             try {
+                mute();
                 Processors.execute(jar, parsedArgs.toArray(String[]::new));
+                unmute();
+                progressBar.step();
             } catch (IOException e) {
+                unmute();
                 throw new RuntimeException("A processor ran into an error", e);
             }
         });
@@ -177,6 +214,14 @@ public class Patcher {
         try (FileWriter writer = new FileWriter(hashes)) {
             writer.write("serverjar=" + Hash.getHash(JarTool.getJar(), "sha1"));
         }
+    }
+
+    private void mute() {
+        System.setOut(log);
+    }
+
+    private void unmute() {
+        System.setOut(out);
     }
 
     public static boolean updateNeeded() throws NoSuchAlgorithmException, IOException {

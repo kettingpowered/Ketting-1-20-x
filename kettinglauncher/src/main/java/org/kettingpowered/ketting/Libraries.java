@@ -53,7 +53,7 @@ public class Libraries {
 
         try (URLClassLoader loader = new URLClassLoader(urls.toArray(URL[]::new), null)) {
             Class<?> clazz = loader.loadClass(Libraries.class.getName());
-            clazz.getDeclaredConstructor().newInstance();
+            clazz.getDeclaredConstructor(List.class).newInstance(urls);
         } catch (InvocationTargetException e) {
             System.err.println("Something went wrong while trying to load libraries");
             ShortenedStackTrace.findCause(e).printStackTrace();
@@ -61,7 +61,8 @@ public class Libraries {
         }
     }
 
-    public Libraries() throws IOException {
+    public Libraries(List<URL> internalLibs) throws IOException {
+        loadedLibs.addAll(internalLibs);
         downloadExternal();
         downloadMcp();
         System.setProperty("libs", String.join(";", loadedLibs.stream().map(URL::toString).toArray(String[]::new)));

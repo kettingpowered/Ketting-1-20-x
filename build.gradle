@@ -1165,16 +1165,17 @@ project(':forge') {
         } else {
             println("Can't read server")
         }
-        def MODULE_PATH = Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect { "libraries/${it.downloads.artifact.path}" }
+
+        def MODULE_PATH = Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect{"libraries/${it.downloads.artifact.path}"}.sort()
         def tokens = [
-                TASK         : project.name.equals('forge') ? 'forgeserver' : 'fmlserver',
-                MAVEN_PATH   : project.ext.MAVEN_PATH.toString(),
+                TASK:          'forge_server',
+                MAVEN_PATH:    project.ext.MAVEN_PATH.toString(),
                 FORGE_VERSION: FORGE_VERSION,
-                MC_VERSION   : MC_VERSION,
-                MCP_VERSION  : MCP_VERSION,
-                FORGE_GROUP  : project.group,
-                IGNORE_LIST  : Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect { it.downloads.artifact.path.rsplit('/', 1)[1] }.join(','),
-                MODULES      : 'ALL-MODULE-PATH'
+                MC_VERSION:    MC_VERSION,
+                MCP_VERSION:   MCP_VERSION,
+                FORGE_GROUP:   project.group,
+                IGNORE_LIST: Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect{it.downloads.artifact.path.rsplit('/', 1)[1]}.sort().join(','),
+                MODULES: 'ALL-MODULE-PATH'
         ]
 
         doFirst {
