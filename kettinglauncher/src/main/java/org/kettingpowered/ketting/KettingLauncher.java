@@ -5,9 +5,7 @@ import org.kettingpowered.ketting.common.utils.JarTool;
 import org.kettingpowered.ketting.utils.FileUtils;
 import org.kettingpowered.ketting.utils.ServerInitHelper;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.spi.FileSystemProvider;
@@ -39,13 +37,8 @@ public class KettingLauncher {
 
         if (Patcher.updateNeeded()) {
             //prematurely delete files to prevent errors
-            Files.deleteIfExists(KettingFiles.MCP_MAPPINGS.toPath());
-            Files.deleteIfExists(KettingFiles.MERGED_MAPPINGS.toPath());
             FileUtils.deleteDir(KettingFiles.NMS_PATCHES_DIR);
-
-            //this is needed to prevent duplicate classes
             FileUtils.deleteDir(KettingFiles.FORGE_BASE_DIR);
-            FileUtils.deleteDir(new File(KettingFiles.LIBRARIES_PATH, "org/ow2/asm/"));
         }
 
         Libraries.setup();
