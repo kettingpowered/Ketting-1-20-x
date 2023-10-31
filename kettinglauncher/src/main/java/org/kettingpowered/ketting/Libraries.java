@@ -70,6 +70,7 @@ public class Libraries {
 
     private void downloadExternal() throws IOException {
         List<Repository> standardRepositories = new ArrayList<>();
+        standardRepositories.add(new StandardRepository("https://nexus.c0d3m4513r.com/repository/Magma/"));
         standardRepositories.add(new StandardRepository("https://repo1.maven.org/maven2"));
         standardRepositories.add(new StandardRepository("https://libraries.minecraft.net"));
         standardRepositories.add(new StandardRepository("https://maven.minecraftforge.net"));
@@ -120,10 +121,16 @@ public class Libraries {
 
         private void download() throws Exception {
             try {
-                NetworkUtils.downloadFile("https://repo1.maven.org/maven2/" + path, file, this.signature());
+                NetworkUtils.downloadFile("https://nexus.c0d3m4513r.com/repository/Magma/" + path, file, this.signature());
             } catch (Throwable e) {
-                System.err.println("Failed to download internal depencency https://repo1.maven.org/maven2/" + path + " to " + file.getAbsolutePath() + ", check your internet connection and try again.");
-                throw e;
+                System.err.println("Failed to download https://nexus.c0d3m4513r.com/repository/Magma/" + path + " to " + file.getAbsolutePath());
+                try {
+                    NetworkUtils.downloadFile("https://repo1.maven.org/maven2/" + path, file, this.signature());
+                } catch (Throwable e2) {
+                    System.err.println("Failed to download internal depencency https://repo1.maven.org/maven2/" + path + " to " + file.getAbsolutePath() + ", check your internet connection and try again.");
+                    e2.addSuppressed(e);
+                    throw e2;
+                }
             }
         }
 
