@@ -164,48 +164,49 @@ public class Patcher {
             }
         });
 
-        ProgressBar progressBar = new ProgressBarBuilder()
+        try (ProgressBar progressBar = new ProgressBarBuilder()
                 .setTaskName("Patching...")
                 .hideEta()
                 .setMaxRenderedLength(BetterUI.LOGO_LENGTH)
                 .setStyle(ProgressBarStyle.ASCII)
                 .setUpdateIntervalMillis(100)
                 .setInitialMax(processors.size())
-                .build();
+                .build())
+        {
+            processors.forEach(processorData -> {
+                String jar = processorData.get("jar").getAsString();
+                JsonArray args = processorData.getAsJsonArray("args");
+                List<String> parsedArgs = new ArrayList<>();
 
-        processors.forEach(processorData -> {
-            String jar = processorData.get("jar").getAsString();
-            JsonArray args = processorData.getAsJsonArray("args");
-            List<String> parsedArgs = new ArrayList<>();
-
-            args.forEach(arg -> {
-                String argString = arg.getAsString();
-                if (argString.startsWith("[de.oceanlabs.mcp:mcp_config:")) {
-                    argString = KettingFiles.MCP_ZIP.getAbsolutePath();
-                    parsedArgs.add(argString);
-                    return;
-                }
-
-                for (Map.Entry<String, String> token : tokens.entrySet()) {
-                    if (argString.equals(token.getKey())) {
-                        argString = argString.replace(token.getKey(), token.getValue());
-                        break;
+                args.forEach(arg -> {
+                    String argString = arg.getAsString();
+                    if (argString.startsWith("[de.oceanlabs.mcp:mcp_config:")) {
+                        argString = KettingFiles.MCP_ZIP.getAbsolutePath();
+                        parsedArgs.add(argString);
+                        return;
                     }
+
+                    for (Map.Entry<String, String> token : tokens.entrySet()) {
+                        if (argString.equals(token.getKey())) {
+                            argString = argString.replace(token.getKey(), token.getValue());
+                            break;
+                        }
+                    }
+
+                    parsedArgs.add(argString);
+                });
+
+                try {
+                    mute();
+                    Processors.execute(jar, parsedArgs.toArray(String[]::new));
+                    unmute();
+                    progressBar.step();
+                } catch (IOException e) {
+                    unmute();
+                    throw new RuntimeException("A processor ran into an error", e);
                 }
-
-                parsedArgs.add(argString);
             });
-
-            try {
-                mute();
-                Processors.execute(jar, parsedArgs.toArray(String[]::new));
-                unmute();
-                progressBar.step();
-            } catch (IOException e) {
-                unmute();
-                throw new RuntimeException("A processor ran into an error", e);
-            }
-        });
+        }
 
         final File hashes = KettingFiles.STORED_HASHES;
         hashes.getParentFile().mkdirs();
