@@ -123,6 +123,7 @@ subprojects {
 
     repositories {
         maven { url = 'https://nexus.c0d3m4513r.com/repository/Magma/' }
+        maven { url = 'https://jitpack.io' }
         mavenCentral()
         maven gradleutils.forgeMaven
         maven gradleutils.minecraftLibsMaven
@@ -1192,7 +1193,6 @@ project(':forge') {
             }
         }
 
-
         PACKED_DEPS.each { dep ->
             //cut ':jar' from dep name
             dep = dep.substring(1, dep.length() - 4)
@@ -1204,6 +1204,15 @@ project(':forge') {
         from(project(':kettinglauncher').project.sourceSets.main.output)
         from(project(':fmlcore').project.sourceSets.main.output)
         from(generateKettingLibraries)
+
+        //Add KettingCore to the jar, this contains BetterUI and some more common utils
+        project(':fmlcore').configurations.runtimeClasspath.getFiles().each { file ->
+            if (file.isFile() && file.name.startsWith('common-')) {
+                from(zipTree(file)) {
+                    exclude 'META-INF/'
+                }
+            }
+        }
 
         from(genServerBinPatches.output) {
             rename { 'data/server.lzma' }
