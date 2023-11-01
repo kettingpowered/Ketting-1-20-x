@@ -60,10 +60,11 @@ dependencyResolutionManagement {
             // Terminal Console Appender.. essentually make pretty colors in the console, but it's been a PITA
             library('terminalconsoleappender', 'net.minecrell:terminalconsoleappender:1.2.0')
             version('jline', '3.12.1')
+            library('jline', 'jline', 'jline').version('2.14.6') //Ketting: bukkit lib
             library('jline-reader',   'org.jline', 'jline-reader'  ).versionRef('jline')
             library('jline-terminal', 'org.jline', 'jline-terminal').versionRef('jline')
             library('jline-terminal-jansi', 'org.jline', 'jline-terminal-jansi').versionRef('jline') //Ketting: colored terminal
-            bundle('terminalconsoleappender', ['terminalconsoleappender', 'jline-reader', 'jline-terminal', 'jline-terminal-jansi'])
+            bundle('terminalconsoleappender', ['terminalconsoleappender', 'jline', 'jline-reader', 'jline-terminal', 'jline-terminal-jansi'])
             
             // The core of our configuration system, it has many flaws, but it works for the most part
             version('night-config', '3.6.4')
@@ -93,11 +94,15 @@ dependencyResolutionManagement {
             library('maven-resolver-connector-basic', 'org.apache.maven.resolver', 'maven-resolver-connector-basic').versionRef('maven-providers')
             library('maven-resolver-transport-http', 'org.apache.maven.resolver', 'maven-resolver-transport-http').versionRef('maven-providers')
 
+            version('log4j', '2.19.0')
+            library('log4j-io', 'org.apache.logging.log4j', 'log4j-iostreams').versionRef('log4j')
+
             bundle('bukkitlibs', [
                     'yaml',
                     'maven-resolver-provider',
                     'maven-resolver-connector-basic',
-                    'maven-resolver-transport-http'
+                    'maven-resolver-transport-http',
+                    'log4j-io'
             ])
             //Ketting libs
 
@@ -106,7 +111,6 @@ dependencyResolutionManagement {
             library('gson', 'com.google.code.gson:gson:2.10.1')
             library('guava', 'com.google.guava:guava:32.1.2-jre')
             library('failureaccess', 'com.google.guava:failureaccess:1.0.1')
-            version('log4j', '2.19.0')
             library('log4j-api',  'org.apache.logging.log4j', 'log4j-api' ).versionRef('log4j')
             library('log4j-core', 'org.apache.logging.log4j', 'log4j-core').versionRef('log4j')
             library('apache-commons', 'org.apache.commons:commons-lang3:3.12.0')
