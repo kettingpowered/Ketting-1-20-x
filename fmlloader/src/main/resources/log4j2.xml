@@ -37,6 +37,9 @@
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </Queue>
+        <Queue name="TerminalConsole">
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
+        </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg{nolookup}}{strip}%n%xEx"/>
             <Policies>
@@ -61,6 +64,7 @@
         <Logger level="${sys:forge.logging.classtransformer.level:-info}" name="cpw.mods.modlauncher.ClassTransformer"/>
         <Root level="all">
             <AppenderRef ref="Console" level="${sys:forge.logging.console.level:-info}"/>
+            <AppenderRef ref="TerminalConsole" level="${sys:forge.logging.console.level:-info}"/>
             <AppenderRef ref="ServerGuiConsole" level="${sys:forge.logging.console.level:-info}"/>
             <AppenderRef ref="File" level="${sys:forge.logging.file.level:-info}"/>
             <AppenderRef ref="DebugFile" level="${sys:forge.logging.debugFile.level:-debug}"/>

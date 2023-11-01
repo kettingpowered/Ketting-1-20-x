@@ -62,7 +62,8 @@ dependencyResolutionManagement {
             version('jline', '3.12.1')
             library('jline-reader',   'org.jline', 'jline-reader'  ).versionRef('jline')
             library('jline-terminal', 'org.jline', 'jline-terminal').versionRef('jline')
-            bundle('terminalconsoleappender', ['terminalconsoleappender', 'jline-reader', 'jline-terminal'])
+            library('jline-terminal-jansi', 'org.jline', 'jline-terminal-jansi').versionRef('jline') //Ketting: colored terminal
+            bundle('terminalconsoleappender', ['terminalconsoleappender', 'jline-reader', 'jline-terminal', 'jline-terminal-jansi'])
             
             // The core of our configuration system, it has many flaws, but it works for the most part
             version('night-config', '3.6.4')
@@ -82,6 +83,23 @@ dependencyResolutionManagement {
             library('kettingcommon', 'com.github.kettingpowered.KettingCore', 'common').versionRef('ketting')
             library('kettingcore',   'com.github.kettingpowered.KettingCore', 'KettingCore').versionRef('ketting')
             bundle('ketting', ['kettingcommon', 'kettingcore'])
+
+            version('snakeyaml', '2.2')
+            library('yaml', 'org.yaml', 'snakeyaml').versionRef('snakeyaml')
+
+            version('maven-resolver', '3.8.5')
+            version('maven-providers', '1.7.3')
+            library('maven-resolver-provider', 'org.apache.maven', 'maven-resolver-provider').versionRef('maven-resolver')
+            library('maven-resolver-connector-basic', 'org.apache.maven.resolver', 'maven-resolver-connector-basic').versionRef('maven-providers')
+            library('maven-resolver-transport-http', 'org.apache.maven.resolver', 'maven-resolver-transport-http').versionRef('maven-providers')
+
+            bundle('bukkitlibs', [
+                    'yaml',
+                    'maven-resolver-provider',
+                    'maven-resolver-connector-basic',
+                    'maven-resolver-transport-http'
+            ])
+            //Ketting libs
 
             // These are libraries shipped by the MC launcher, try and keep them in sync with the manifest
             // but honestly if we don't it just means we ship them as normal libraries by adding them to the installer config in the forge project
