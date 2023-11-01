@@ -1,6 +1,6 @@
-package org.kettingpowered.ketting.common.utils;
+package org.kettingpowered.ketting.internal.utils;
 
-import org.kettingpowered.ketting.common.KettingConstants;
+import org.kettingpowered.ketting.internal.KettingConstants;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package org.kettingpowered.ketting.common;
+package org.kettingpowered.ketting.internal;
 
 import java.util.Objects;
 

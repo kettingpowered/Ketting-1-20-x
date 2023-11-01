@@ -6,8 +6,8 @@ import dev.vankka.dependencydownload.dependency.Dependency;
 import dev.vankka.dependencydownload.path.CleanupPathProvider;
 import dev.vankka.dependencydownload.path.DependencyPathProvider;
 import dev.vankka.dependencydownload.repository.Repository;
-import org.kettingpowered.ketting.common.utils.Hash;
-import org.kettingpowered.ketting.common.utils.JarTool;
+import org.kettingpowered.ketting.internal.utils.Hash;
+import org.kettingpowered.ketting.internal.utils.JarTool;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

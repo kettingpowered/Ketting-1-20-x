@@ -4,13 +4,14 @@ import com.google.gson.*;
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
-import org.kettingpowered.ketting.common.KettingConstants;
+import org.kettingpowered.ketting.internal.KettingConstants;
 import org.kettingpowered.ketting.common.betterui.BetterUI;
-import org.kettingpowered.ketting.common.utils.Hash;
-import org.kettingpowered.ketting.common.utils.JarTool;
-import org.kettingpowered.ketting.common.utils.NetworkUtils;
+import org.kettingpowered.ketting.internal.utils.Hash;
+import org.kettingpowered.ketting.internal.utils.JarTool;
+import org.kettingpowered.ketting.internal.utils.NetworkUtils;
 import org.kettingpowered.ketting.common.utils.ShortenedStackTrace;
 import org.kettingpowered.ketting.utils.Processors;
+import org.kettingpowered.ketting.utils.ServerInitHelper;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -19,7 +20,7 @@ import java.net.URLClassLoader;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
-import static org.kettingpowered.ketting.common.utils.JarTool.extractJarContent;
+import static org.kettingpowered.ketting.internal.utils.JarTool.extractJarContent;
 
 public class Patcher {
 
@@ -49,6 +50,8 @@ public class Patcher {
 
     public Patcher() throws IOException, NoSuchAlgorithmException {
         downloadServer();
+        downloadCore();
+        ServerInitHelper.addToPath(KettingFiles.CORE_JAR.toPath());
         readInstallScript();
         extractJarContents();
         prepareTokens();
@@ -56,9 +59,10 @@ public class Patcher {
     }
 
     private void downloadServer() throws IOException {
-        if (KettingFiles.SERVER_JAR.exists()) return;
+        final File serverJar = KettingFiles.SERVER_JAR;
+        if (serverJar.exists()) return;
 
-        String manifest = NetworkUtils.readFile("https://launchermeta.mojang.com/mc/game/version_manifest.json");
+        final String manifest = NetworkUtils.readFile("https://launchermeta.mojang.com/mc/game/version_manifest.json");
         if (manifest == null) {
             System.err.println("Failed to download version_manifest.json");
             System.exit(1);
@@ -80,22 +84,46 @@ public class Patcher {
             System.exit(1);
         }
 
-        String releaseManifest = NetworkUtils.readFile(currentRelease.get("url").getAsString());
+        final String releaseManifest = NetworkUtils.readFile(currentRelease.get("url").getAsString());
         if (releaseManifest == null) {
             System.err.println("Failed to download release manifest");
             System.exit(1);
         }
 
-        final JsonObject releaseObject = JsonParser.parseString(releaseManifest).getAsJsonObject();
-        final JsonObject serverComponents = releaseObject.getAsJsonObject("downloads").getAsJsonObject("server");
+        final JsonObject serverComponents = JsonParser.parseString(releaseManifest).getAsJsonObject()
+                .getAsJsonObject("downloads").getAsJsonObject("server");
         final String serverUrl = serverComponents.get("url").getAsString();
         final String serverHash = serverComponents.get("sha1").getAsString();
 
-        KettingFiles.SERVER_JAR.getParentFile().mkdirs();
+        serverJar.getParentFile().mkdirs();
         try {
-            NetworkUtils.downloadFile(serverUrl, KettingFiles.SERVER_JAR, serverHash, "sha1");
+            NetworkUtils.downloadFile(serverUrl, serverJar, serverHash, "sha1");
         } catch (Exception e) {
             throw new IOException("Failed to download server jar", e);
+        }
+    }
+
+    private void downloadCore() throws IOException, NoSuchAlgorithmException {
+        final File coreJar = KettingFiles.CORE_JAR;
+        if (!updateNeeded() && coreJar.exists()) return;
+
+        final String manifest = NetworkUtils.readFile("https://api.github.com/repos/KettingPowered/KettingCore/releases/latest");
+        if (manifest == null) {
+            System.err.println("Failed to download KettingCore manifest");
+            System.exit(1);
+        }
+
+        final JsonArray assets = JsonParser.parseString(manifest).getAsJsonObject()
+                .getAsJsonArray("assets");
+        final JsonObject asset = assets.get(0).getAsJsonObject();
+        final String coreUrl = asset.get("browser_download_url").getAsString();
+
+        coreJar.getParentFile().mkdirs();
+        try {
+            NetworkUtils.downloadFile(coreUrl, coreJar);
+        } catch (Exception e) {
+            coreJar.delete();
+            throw new IOException("Failed to download " + coreJar.getName(), e);
         }
     }
 

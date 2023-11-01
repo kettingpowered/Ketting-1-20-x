@@ -6,11 +6,11 @@ import dev.vankka.dependencydownload.repository.StandardRepository;
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
-import org.kettingpowered.ketting.common.KettingConstants;
+import org.kettingpowered.ketting.internal.KettingConstants;
 import org.kettingpowered.ketting.common.betterui.BetterUI;
-import org.kettingpowered.ketting.common.utils.Hash;
-import org.kettingpowered.ketting.common.utils.JarTool;
-import org.kettingpowered.ketting.common.utils.NetworkUtils;
+import org.kettingpowered.ketting.internal.utils.Hash;
+import org.kettingpowered.ketting.internal.utils.JarTool;
+import org.kettingpowered.ketting.internal.utils.NetworkUtils;
 import org.kettingpowered.ketting.common.utils.ShortenedStackTrace;
 import org.kettingpowered.ketting.utils.LibHelper;
 

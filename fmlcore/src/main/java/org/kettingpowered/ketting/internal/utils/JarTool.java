@@ -1,4 +1,4 @@
-package org.kettingpowered.ketting.common.utils;
+package org.kettingpowered.ketting.internal.utils;
 
 import org.jetbrains.annotations.NotNull;
 

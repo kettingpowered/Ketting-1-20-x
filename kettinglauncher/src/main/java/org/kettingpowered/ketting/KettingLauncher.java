@@ -1,7 +1,7 @@
 package org.kettingpowered.ketting;
 
 import org.kettingpowered.ketting.common.betterui.BetterUI;
-import org.kettingpowered.ketting.common.utils.JarTool;
+import org.kettingpowered.ketting.internal.utils.JarTool;
 import org.kettingpowered.ketting.utils.FileUtils;
 import org.kettingpowered.ketting.utils.ServerInitHelper;
 
@@ -12,7 +12,7 @@ import java.nio.file.spi.FileSystemProvider;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static org.kettingpowered.ketting.common.KettingConstants.*;
+import static org.kettingpowered.ketting.internal.KettingConstants.*;
 
 public class KettingLauncher {
 

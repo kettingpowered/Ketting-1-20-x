@@ -1,8 +1,9 @@
 package org.kettingpowered.ketting.utils;
 
+import org.kettingpowered.ketting.KettingFiles;
 import org.kettingpowered.ketting.KettingLauncher;
-import org.kettingpowered.ketting.common.KettingConstants;
-import org.kettingpowered.ketting.common.utils.JarTool;
+import org.kettingpowered.ketting.internal.KettingConstants;
+import org.kettingpowered.ketting.internal.utils.JarTool;
 
 import java.io.File;
 import java.lang.invoke.MethodHandle;
@@ -66,6 +67,8 @@ public class ServerInitHelper {
                             tmp.append(libsPath).append(s.substring("libraries/".length() - 1)).append(File.pathSeparator);
                         }
                     }
+
+                    tmp.append(KettingFiles.CORE_JAR.getAbsolutePath());
 
                     System.setProperty(params[0], tmp.toString());
                 } else if (params[0].equals("libraryDirectory")) {

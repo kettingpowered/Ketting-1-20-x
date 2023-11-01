@@ -451,7 +451,7 @@ project(':forge') {
         installer(libs.bundles.terminalconsoleappender)
         installer(libs.mixin)
         installer(libs.bundles.jarjar)
-        
+
         implementation project(':fmlcore')
         implementation project(':fmlloader')
         implementation project(':fmlearlydisplay')
@@ -621,7 +621,7 @@ project(':forge') {
                 'Implementation-Version':   "${KETTING_VERSION}-${MCP_VERSION}",
                 'Implementation-Vendor':    'Kettingpowered'
             ] as LinkedHashMap,
-            'org/kettingpowered/ketting/common/': [
+            'org/kettingpowered/ketting/internal/': [
                 'Specification-Title':      'Kettingpowered',
                 'Specification-Vendor':     'Kettingpowered',
                 'Implementation-Title':     'Ketting',
@@ -797,7 +797,6 @@ project(':forge') {
     }
 
     genPatches {
-        finalizedBy checkAndFixPatches
         autoHeader true
         lineEnding = '\n'
     }

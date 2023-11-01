@@ -1,7 +1,7 @@
 package org.kettingpowered.ketting;
 
-import org.kettingpowered.ketting.common.KettingConstants;
-import org.kettingpowered.ketting.common.utils.JarTool;
+import org.kettingpowered.ketting.internal.KettingConstants;
+import org.kettingpowered.ketting.internal.utils.JarTool;
 
 import java.io.File;
 
@@ -15,9 +15,10 @@ public class KettingFiles {
             MC_MCP = MC + "-" + MCP;
 
     public static final String LIBRARIES_PATH = new File(JarTool.getJarDir(), KettingConstants.INSTALLER_LIBRARIES_FOLDER).getAbsolutePath() + "/";
+    public static final String KETTING_PATH = new File(LIBRARIES_PATH, "org/kettingpowered/ketting").getAbsolutePath() + "/";
     public static final String LOGS_PATH = new File(System.getProperty("user.dir"), "logs").getAbsolutePath() + "/";
 
-    public static final File INSTALL_DIR = new File(LIBRARIES_PATH, "org/kettingpowered/ketting/install/");
+    public static final File INSTALL_DIR = new File(KETTING_PATH, "install/");
 
     public static final File FORGE_BASE_DIR = new File(LIBRARIES_PATH, "net/minecraftforge/");
     public static final File MCP_BASE_DIR = new File(LIBRARIES_PATH, "de/oceanlabs/mcp_config/" + MC_MCP + "/");
@@ -61,5 +62,7 @@ public class KettingFiles {
 
     public static final File
             STORED_HASHES = new File(INSTALL_DIR, "hashes.txt"),
+            CORE_JAR = new File(KETTING_PATH, "KettingCore.jar"),
+            CORE_JAR_VERSION = new File(KETTING_PATH, "KettingCore.jar.version"),
             PATCHER_LOGS = new File(LOGS_PATH, "install.txt");
 }

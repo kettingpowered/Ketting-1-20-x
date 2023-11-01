@@ -76,7 +76,13 @@ dependencyResolutionManagement {
             library('jarjar-meta',     'net.minecraftforge', 'JarJarMetadata'   ).versionRef('jarjar')
             library('jarjar-selector', 'net.minecraftforge', 'JarJarSelector'   ).versionRef('jarjar')
             bundle('jarjar', ['jarjar-fs', 'jarjar-selector', 'jarjar-meta'])
-            
+
+            //Ketting libs
+            version('ketting', '596f0be')
+            library('kettingcommon', 'com.github.kettingpowered.KettingCore', 'common').versionRef('ketting')
+            library('kettingcore',   'com.github.kettingpowered.KettingCore', 'KettingCore').versionRef('ketting')
+            bundle('ketting', ['kettingcommon', 'kettingcore'])
+
             // These are libraries shipped by the MC launcher, try and keep them in sync with the manifest
             // but honestly if we don't it just means we ship them as normal libraries by adding them to the installer config in the forge project
             library('gson', 'com.google.code.gson:gson:2.10.1')
