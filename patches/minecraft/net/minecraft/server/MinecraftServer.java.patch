@@ -1,14 +1,28 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -245,7 +_,7 @@
+@@ -155,7 +_,9 @@
+ import net.minecraft.world.level.storage.loot.LootDataManager;
+ import net.minecraft.world.phys.Vec2;
+ import net.minecraft.world.phys.Vec3;
++import org.kettingpowered.ketting.core.injectprotect.InjectProtect;
+ import org.slf4j.Logger;
++import org.spongepowered.asm.mixin.throwables.MixinError;
+ 
+ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements ServerInfo, CommandSource, AutoCloseable {
+    private static final Logger LOGGER = LogUtils.getLogger();
+@@ -245,8 +_,11 @@
  
     public static <S extends MinecraftServer> S spin(Function<Thread, S> p_129873_) {
        AtomicReference<S> atomicreference = new AtomicReference<>();
 -      Thread thread = new Thread(() -> {
 +      Thread thread = new Thread(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER, () -> {
           atomicreference.get().runServer();
++         //Ketting start - fix rare condition where the server just hangs for no reason
++         Runtime.getRuntime().halt(0);
++         //Ketting end
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
+          LOGGER.error("Uncaught exception in server thread", p_177910_);
 @@ -338,6 +_,7 @@
        this.readScoreboard(dimensiondatastorage);
        this.commandStorage = new CommandStorage(dimensiondatastorage);
@@ -49,24 +63,30 @@
                 serverlevel2.close();
              } catch (IOException ioexception1) {
                 LOGGER.error("Exception closing the level", (Throwable)ioexception1);
-@@ -625,9 +_,11 @@
+@@ -625,11 +_,13 @@
              throw new IllegalStateException("Failed to initialize server");
           }
  
 +         net.minecraftforge.server.ServerLifecycleHooks.handleServerStarted(this);
           this.nextTickTime = Util.getMillis();
-          this.statusIcon = this.loadStatusIcon().orElse((ServerStatus.Favicon)null);
+-         this.statusIcon = this.loadStatusIcon().orElse((ServerStatus.Favicon)null);
++         this.statusIcon = this.loadStatusIcon().orElse((ServerStatus.Favicon) null);
           this.status = this.buildServerStatus();
 +         resetStatusCache(status);
  
-          while(this.running) {
+-         while(this.running) {
++         while (this.running) {
              long i = Util.getMillis() - this.nextTickTime;
-@@ -656,6 +_,8 @@
+             if (i > 2000L && this.nextTickTime - this.lastOverloadWarning >= 15000L) {
+                long j = i / 50L;
+@@ -656,6 +_,10 @@
              this.isReady = true;
              JvmProfiler.INSTANCE.onServerTick(this.averageTickTime);
           }
 +         net.minecraftforge.server.ServerLifecycleHooks.handleServerStopping(this);
 +         net.minecraftforge.server.ServerLifecycleHooks.expectServerStopped(); // Forge: Has to come before MinecraftServer#onServerCrash to avoid race conditions
++      } catch (MixinError mixin) {
++         InjectProtect.mixinInjectCaught(null, mixin);
        } catch (Throwable throwable1) {
           LOGGER.error("Encountered an unexpected exception", throwable1);
           CrashReport crashreport = constructOrExtractCrashReport(throwable1);
