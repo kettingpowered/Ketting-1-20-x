@@ -11,6 +11,7 @@ Ketting is still in development and is not ready for production use.
 
 ### PATCHES DONE
 Bukkit: 14 / 530
+CraftBukkit: 0 / 685
 
 ## How does it work?
 
