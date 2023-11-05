@@ -3,10 +3,10 @@ package org.bukkit.craftbukkit.v1_20_R2.util;
 import com.google.common.base.Preconditions;
 import java.util.concurrent.ExecutionException;
 
-public abstract class Waitable implements Runnable {
+public abstract class Waitable<T> implements Runnable {
 
     Throwable t = null;
-    Object value = null;
+    T value = null;
     Waitable.Status status;
 
     public Waitable() {
@@ -32,9 +32,9 @@ public abstract class Waitable implements Runnable {
 
     }
 
-    protected abstract Object evaluate();
+    protected abstract T evaluate();
 
-    public synchronized Object get() throws InterruptedException, ExecutionException {
+    public synchronized T get() throws InterruptedException, ExecutionException {
         while (this.status != Waitable.Status.FINISHED) {
             this.wait();
         }
@@ -46,7 +46,7 @@ public abstract class Waitable implements Runnable {
         }
     }
 
-    private static enum Status {
+    private enum Status {
 
         WAITING, RUNNING, FINISHED;
     }
