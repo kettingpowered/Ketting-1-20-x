@@ -984,7 +984,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
                     if (fromWorld == toWorld) {
                         entity.connection.teleport(to);
                     } else {
+                        //Ketting start - forge event
+                        if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this.getHandle(), fromWorld.dimension())) return false;
                         this.server.getHandle().respawn(entity, toWorld, true, to, true, (RespawnReason) null);
+                        net.minecraftforge.event.ForgeEventFactory.onPlayerChangedDimension(this.getHandle(), fromWorld.dimension(), toWorld.dimension());
+                        //Ketting end
                     }
 
                     return true;

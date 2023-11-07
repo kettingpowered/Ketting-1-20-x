@@ -264,11 +264,8 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     }
 
     public Chunk[] getLoadedChunks() {
-        Long2ObjectLinkedOpenHashMap chunks = this.world.getChunkSource().chunkMap.visibleChunkMap;
-
-        return (Chunk[]) chunks.values().stream().map(ChunkHolder::getFullChunkNow).filter(Objects::nonNull).map(CraftChunk::new).toArray((i) -> {
-            return new Chunk[i];
-        });
+        Long2ObjectLinkedOpenHashMap<ChunkHolder> chunks = world.getChunkSource().chunkMap.visibleChunkMap;
+        return chunks.values().stream().map(ChunkHolder::getFullChunkNow).filter(Objects::nonNull).map(CraftChunk::new).toArray(Chunk[]::new);
     }
 
     public void loadChunk(int x, int z) {
