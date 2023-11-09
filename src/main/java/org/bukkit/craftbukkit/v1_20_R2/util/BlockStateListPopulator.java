@@ -25,17 +25,15 @@ import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState;
 public class BlockStateListPopulator extends DummyGeneratorAccess {
 
     private final LevelAccessor world;
-    private final Map dataMap;
-    private final Map entityMap;
-    private final LinkedHashMap list;
+    private final Map<BlockPos, BlockState> dataMap = new HashMap<>();
+    private final Map<BlockPos, BlockEntity> entityMap = new HashMap<>();
+    private final LinkedHashMap<BlockPos, CraftBlockState> list;
 
     public BlockStateListPopulator(LevelAccessor world) {
         this(world, new LinkedHashMap());
     }
 
     private BlockStateListPopulator(LevelAccessor world, LinkedHashMap list) {
-        this.dataMap = new HashMap();
-        this.entityMap = new HashMap();
         this.world = world;
         this.list = list;
     }
@@ -58,19 +56,22 @@ public class BlockStateListPopulator extends DummyGeneratorAccess {
 
     public boolean setBlock(BlockPos position, BlockState data, int flag) {
         position = position.immutable();
-        this.list.remove(position);
-        this.dataMap.put(position, data);
+        // remove first to keep insertion order
+        list.remove(position);
+
+        dataMap.put(position, data);
         if (data.hasBlockEntity()) {
-            this.entityMap.put(position, ((EntityBlock) data.getBlock()).newBlockEntity(position, data));
+            entityMap.put(position, ((EntityBlock) data.getBlock()).newBlockEntity(position, data));
         } else {
-            this.entityMap.put(position, (Object) null);
+            entityMap.put(position, null);
         }
 
+        // use 'this' to ensure that the block state is the correct TileState
         CraftBlockState state = (CraftBlockState) CraftBlock.at(this, position).getState();
-
         state.setFlag(flag);
-        state.setWorldHandle(this.world);
-        this.list.put(position, state);
+        // set world handle to ensure that updated calls are done to the world and not to this populator
+        state.setWorldHandle(world);
+        list.put(position, state);
         return true;
     }
 
@@ -79,35 +80,25 @@ public class BlockStateListPopulator extends DummyGeneratorAccess {
     }
 
     public void refreshTiles() {
-        Iterator iterator = this.list.values().iterator();
-
-        while (iterator.hasNext()) {
-            CraftBlockState state = (CraftBlockState) iterator.next();
-
+        for (CraftBlockState state : list.values()) {
             if (state instanceof CraftBlockEntityState) {
-                ((CraftBlockEntityState) state).refreshSnapshot();
+                ((CraftBlockEntityState<?>) state).refreshSnapshot();
             }
         }
-
     }
 
     public void updateList() {
-        Iterator iterator = this.list.values().iterator();
-
-        while (iterator.hasNext()) {
-            org.bukkit.block.BlockState state = (org.bukkit.block.BlockState) iterator.next();
-
+        for (org.bukkit.block.BlockState state : list.values()) {
             state.update(true);
         }
-
     }
 
-    public Set getBlocks() {
-        return this.list.keySet();
+    public Set<BlockPos> getBlocks() {
+        return list.keySet();
     }
 
-    public List getList() {
-        return new ArrayList(this.list.values());
+    public List<CraftBlockState> getList() {
+        return new ArrayList<>(list.values());
     }
 
     public LevelAccessor getWorld() {
