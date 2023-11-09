@@ -286,7 +286,7 @@ public final class CraftServer implements Server {
     private final StructureManager structureManager;
     protected final DedicatedServer console;
     protected final DedicatedPlayerList playerList;
-    private final Map worlds;
+    private final Map<String, World> worlds = new LinkedHashMap<String, World>();
     private final Map registries;
     private YamlConfiguration configuration;
     private YamlConfiguration commandsConfiguration;
@@ -881,8 +881,8 @@ public final class CraftServer implements Server {
         return this.servicesManager;
     }
 
-    public List getWorlds() {
-        return new ArrayList(this.worlds.values());
+    public List<World> getWorlds() {
+        return new ArrayList<World>(worlds.values());
     }
 
     public DedicatedPlayerList getHandle() {
