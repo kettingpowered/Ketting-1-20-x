@@ -1,18 +1,67 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -56,7 +_,11 @@
- import net.minecraft.world.level.storage.LevelSummary;
- import net.minecraft.world.level.storage.PrimaryLevelData;
- import net.minecraft.world.level.storage.WorldData;
+@@ -1,5 +_,6 @@
+ package net.minecraft.server;
+ 
++import com.google.common.base.Charsets;
+ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.datafixers.util.Pair;
+@@ -9,12 +_,15 @@
+ import java.awt.GraphicsEnvironment;
+ import java.io.File;
+ import java.io.IOException;
++import java.io.InputStreamReader;
+ import java.io.UncheckedIOException;
+ import java.net.Proxy;
+ import java.nio.file.Files;
+ import java.nio.file.Path;
+ import java.nio.file.Paths;
++import java.util.List;
+ import java.util.Optional;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.BooleanSupplier;
+ import joptsimple.OptionParser;
+ import joptsimple.OptionSet;
+@@ -37,6 +_,7 @@
+ import net.minecraft.server.dedicated.DedicatedServerProperties;
+ import net.minecraft.server.dedicated.DedicatedServerSettings;
+ import net.minecraft.server.level.progress.LoggerChunkProgressListener;
++import net.minecraft.server.packs.PackType;
+ import net.minecraft.server.packs.repository.PackRepository;
+ import net.minecraft.server.packs.repository.ServerPacksSource;
+ import net.minecraft.util.Mth;
+@@ -52,11 +_,16 @@
+ import net.minecraft.world.level.levelgen.WorldDimensions;
+ import net.minecraft.world.level.levelgen.WorldOptions;
+ import net.minecraft.world.level.levelgen.presets.WorldPresets;
+-import net.minecraft.world.level.storage.LevelStorageSource;
+-import net.minecraft.world.level.storage.LevelSummary;
+-import net.minecraft.world.level.storage.PrimaryLevelData;
+-import net.minecraft.world.level.storage.WorldData;
++import net.minecraft.world.level.storage.*;
++import org.bukkit.configuration.file.YamlConfiguration;
++import org.fusesource.jansi.AnsiConsole;
 +import org.kettingpowered.ketting.adapters.Forge_1_20_2_Adapter;
 +import org.kettingpowered.ketting.core.Ketting;
 +import org.kettingpowered.ketting.core.injectprotect.InjectProtect;
  import org.slf4j.Logger;
 +import org.spongepowered.asm.mixin.throwables.MixinError;
++
++import static java.util.Arrays.asList;
  
  public class Main {
     private static final Logger LOGGER = LogUtils.getLogger();
-@@ -80,6 +_,20 @@
+@@ -66,7 +_,7 @@
+       SharedConstants.tryDetectVersion();
+       OptionParser optionparser = new OptionParser();
+       OptionSpec<Void> optionspec = optionparser.accepts("nogui");
+-      OptionSpec<Void> optionspec1 = optionparser.accepts("initSettings", "Initializes 'server.properties' and 'eula.txt', then quits");
++      OptionSpec<Void> optionspec1 = optionparser.accepts("initSettings", "Only create configuration files and then exit");
+       OptionSpec<Void> optionspec2 = optionparser.accepts("demo");
+       OptionSpec<Void> optionspec3 = optionparser.accepts("bonusChest");
+       OptionSpec<Void> optionspec4 = optionparser.accepts("forceUpgrade");
+@@ -80,13 +_,51 @@
        OptionSpec<Void> optionspec12 = optionparser.accepts("jfrProfile");
        OptionSpec<Path> optionspec13 = optionparser.accepts("pidFile").withRequiredArg().withValuesConvertedBy(new PathConverter());
        OptionSpec<String> optionspec14 = optionparser.nonOptions();
@@ -26,6 +75,10 @@
 +          spawnPosOpt = null;
 +      }
 +
++      //Ketting start - Bukkit Options
++      acceptBukkitSettings(optionparser);
++      //Ketting end
++
 +      //Ketting start - Initialize Ketting
 +      Ketting.init(SharedConstants.getCurrentVersion().getName())
 +              .registerAdapter(new Forge_1_20_2_Adapter());
@@ -33,21 +86,34 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_129699_);
-@@ -87,6 +_,13 @@
++         //Ketting start - Bukkit Options
++         bukkitSettings(optionset);
++         //Ketting end
+          if (optionset.has(optionspec7)) {
              optionparser.printHelpOn(System.err);
              return;
           }
 +         Path path2 = Paths.get("eula.txt");
 +         Eula eula = new Eula(path2);
 +
-+         if (!eula.hasAgreedToEULA()) {
++         // Spigot Start
++         boolean eulaAgreed = Boolean.getBoolean( "com.mojang.eula.agree" );
++         if ( eulaAgreed )
++         {
++            System.err.println( "You have used the Spigot command line EULA agreement flag." );
++            System.err.println( "By using this setting you are indicating your agreement to Mojang's EULA (https://account.mojang.com/documents/minecraft_eula)." );
++            System.err.println( "If you do not agree to the above EULA please stop your server and remove this flag immediately." );
++         }
++         // Spigot End
++
++         if (!eula.hasAgreedToEULA() && !eulaAgreed) { // Spigot
 +            LOGGER.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
 +            return;
 +         }
  
           Path path = optionset.valueOf(optionspec13);
           if (path != null) {
-@@ -98,29 +_,33 @@
+@@ -98,29 +_,46 @@
              JvmProfiler.INSTANCE.start(Environment.SERVER);
           }
  
@@ -61,12 +127,26 @@
           Bootstrap.validate();
           Util.startTimerHackThread();
           Path path1 = Paths.get("server.properties");
+-         DedicatedServerSettings dedicatedserversettings = new DedicatedServerSettings(path1);
 +         if (!optionset.has(optionspec1)) net.minecraftforge.server.loading.ServerModLoader.load(); // Load mods before we load almost anything else anymore. Single spot now. Only loads if they haven't passed the initserver param
-          DedicatedServerSettings dedicatedserversettings = new DedicatedServerSettings(path1);
++         DedicatedServerSettings dedicatedserversettings = new DedicatedServerSettings(optionset); // CraftBukkit - CLI argument support
           dedicatedserversettings.forceSave();
 -         Path path2 = Paths.get("eula.txt");
 -         Eula eula = new Eula(path2);
           if (optionset.has(optionspec1)) {
++            // CraftBukkit start - SPIGOT-5761: Create bukkit.yml and commands.yml if not present
++            File configFile = (File) optionset.valueOf("bukkit-settings");
++            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(configFile);
++            configuration.options().copyDefaults(true);
++            configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(Main.class.getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
++            configuration.save(configFile);
++
++            File commandFile = (File) optionset.valueOf("commands-settings");
++            YamlConfiguration commandsConfiguration = YamlConfiguration.loadConfiguration(commandFile);
++            commandsConfiguration.options().copyDefaults(true);
++            commandsConfiguration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(Main.class.getClassLoader().getResourceAsStream("configurations/commands.yml"), Charsets.UTF_8)));
++            commandsConfiguration.save(commandFile);
++            // CraftBukkit end
              LOGGER.info("Initialized '{}' and '{}'", path1.toAbsolutePath(), path2.toAbsolutePath());
              return;
           }
@@ -89,6 +169,38 @@
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.getSummary();
           if (levelsummary != null) {
              if (levelsummary.requiresManualConversion()) {
+@@ -141,11 +_,31 @@
+ 
+          PackRepository packrepository = ServerPacksSource.createPackRepository(levelstoragesource$levelstorageaccess);
+ 
++         // CraftBukkit start
++         File bukkitDataPackFolder = new File(levelstoragesource$levelstorageaccess.getLevelPath(LevelResource.DATAPACK_DIR).toFile(), "bukkit");
++         if (!bukkitDataPackFolder.exists()) {
++            bukkitDataPackFolder.mkdirs();
++         }
++         File mcMeta = new File(bukkitDataPackFolder, "pack.mcmeta");
++         try {
++            com.google.common.io.Files.write("{\n"
++                    + "    \"pack\": {\n"
++                    + "        \"description\": \"Data pack for resources provided by Bukkit plugins\",\n"
++                    + "        \"pack_format\": " + SharedConstants.getCurrentVersion().getPackVersion(PackType.SERVER_DATA) + "\n"
++                    + "    }\n"
++                    + "}\n", mcMeta, com.google.common.base.Charsets.UTF_8);
++         } catch (java.io.IOException ex) {
++            throw new RuntimeException("Could not initialize Bukkit datapack", ex);
++         }
++         AtomicReference<WorldLoader.DataLoadContext> worldLoader = new AtomicReference<>();
++         // CraftBukkit end
++
+          WorldStem worldstem;
+          try {
+             WorldLoader.InitConfig worldloader$initconfig = loadOrCreateConfig(dedicatedserversettings.getProperties(), levelstoragesource$levelstorageaccess, flag, packrepository);
+             worldstem = Util.blockUntilDone((p_248086_) -> {
+                return WorldLoader.load(worldloader$initconfig, (p_248079_) -> {
++                  worldLoader.set(p_248079_); // CraftBukkit
+                   Registry<LevelStem> registry = p_248079_.datapackDimensions().registryOrThrow(Registries.LEVEL_STEM);
+                   DynamicOps<Tag> dynamicops = RegistryOps.create(NbtOps.INSTANCE, p_248079_.datapackWorldgen());
+                   Pair<WorldData, WorldDimensions.Complete> pair = levelstoragesource$levelstorageaccess.getDataTag(dynamicops, p_248079_.dataConfiguration(), registry, p_248079_.datapackWorldgen().allRegistriesLifecycle());
 @@ -166,6 +_,8 @@
                          worlddimensions = dedicatedserverproperties.createDimensions(p_248079_.datapackWorldgen());
                       }
@@ -98,7 +210,7 @@
                       WorldDimensions.Complete worlddimensions$complete = worlddimensions.bake(registry);
                       Lifecycle lifecycle = worlddimensions$complete.lifecycle().add(p_248079_.datapackWorldgen().allRegistriesLifecycle());
                       return new WorldLoader.DataLoadOutput<>(new PrimaryLevelData(levelsettings, worldoptions, worlddimensions$complete.specialWorldProperty(), lifecycle), worlddimensions$complete.dimensionsRegistryAccess());
-@@ -186,21 +_,35 @@
+@@ -186,21 +_,38 @@
  
           WorldData worlddata = worldstem.worldData();
           levelstoragesource$levelstorageaccess.saveDataTag(registryaccess$frozen, worlddata);
@@ -113,6 +225,9 @@
 +               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, testBatches, spawnPos);
 +            } else {
 +               dedicatedserver1 = new DedicatedServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.getDataFixer(), services, LoggerChunkProgressListener::new);
++               //Ketting start - add optionset and worldloader
++               ((DedicatedServer) dedicatedserver1).setBukkitOptions(optionset, worldLoader.get());
++               //Ketting end
 +            }
              dedicatedserver1.setPort(optionset.valueOf(optionspec10));
              dedicatedserver1.setDemo(optionset.has(optionspec2));
@@ -138,3 +253,68 @@
              }
           };
           thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
+@@ -210,6 +_,64 @@
+       }
+ 
+    }
++
++   //Ketting start - Bukkit Options
++   private static void acceptBukkitSettings(OptionParser parser) {
++      parser.acceptsAll(asList("nojline"), "Disables jline and emulates the vanilla console");
++      parser.acceptsAll(asList("noconsole"), "Disables the console");
++      parser.acceptsAll(asList("b", "bukkit-settings"), "File for bukkit settings")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("bukkit.yml"))
++              .describedAs("Yml file");
++      parser.acceptsAll(asList("C", "commands-settings"), "File for command settings")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("commands.yml"))
++              .describedAs("Yml file");
++      // Spigot Start
++      parser.acceptsAll(asList("S", "spigot-settings"), "File for spigot settings")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("spigot.yml"))
++              .describedAs("Yml file");
++      // Spigot End
++      parser.acceptsAll(asList("c", "config"), "Properties file to use")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("server.properties"))
++              .describedAs("Properties file");
++      parser.acceptsAll(asList("P", "plugins"), "Plugin directory to use")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("plugins"))
++              .describedAs("Plugin directory");
++   }
++
++   private static void bukkitSettings(OptionSet options) {
++      // This trick bypasses Maven Shade's clever rewriting of our getProperty call when using String literals
++      String jline_UnsupportedTerminal = new String(new char[]{'j', 'l', 'i', 'n', 'e', '.', 'U', 'n', 's', 'u', 'p', 'p', 'o', 'r', 't', 'e', 'd', 'T', 'e', 'r', 'm', 'i', 'n', 'a', 'l'});
++      String jline_terminal = new String(new char[]{'j', 'l', 'i', 'n', 'e', '.', 't', 'e', 'r', 'm', 'i', 'n', 'a', 'l'});
++
++      org.bukkit.craftbukkit.Main.useJline = !(jline_UnsupportedTerminal).equals(System.getProperty(jline_terminal));
++
++      if (options.has("nojline")) {
++         System.setProperty("user.language", "en");
++         org.bukkit.craftbukkit.Main.useJline = false;
++      }
++
++      if (org.bukkit.craftbukkit.Main.useJline) {
++         AnsiConsole.systemInstall();
++      } else {
++         // This ensures the terminal literal will always match the jline implementation
++         System.setProperty(jline.TerminalFactory.JLINE_TERMINAL, jline.UnsupportedTerminal.class.getName());
++      }
++
++      if (options.has("noconsole")) {
++         org.bukkit.craftbukkit.Main.useConsole = false;
++      }
++   }
++   //Ketting end
+ 
+    private static void writePidFile(Path p_270192_) {
+       try {

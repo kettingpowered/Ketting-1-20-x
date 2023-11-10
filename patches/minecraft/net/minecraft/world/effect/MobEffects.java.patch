@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/effect/MobEffects.java
++++ b/net/minecraft/world/effect/MobEffects.java
+@@ -44,6 +_,10 @@
+    }));
+ 
+    private static MobEffect register(String p_19625_, MobEffect p_19626_) {
+-      return Registry.register(BuiltInRegistries.MOB_EFFECT, p_19625_, p_19626_);
++      // CraftBukkit start
++      p_19626_ = Registry.register(BuiltInRegistries.MOB_EFFECT, p_19625_, p_19626_);
++      org.bukkit.potion.PotionEffectType.registerPotionEffectType(new org.bukkit.craftbukkit.v1_20_R2.potion.CraftPotionEffectType(p_19626_));
++      return p_19626_;
++      // CraftBukkit end
+    }
+ }

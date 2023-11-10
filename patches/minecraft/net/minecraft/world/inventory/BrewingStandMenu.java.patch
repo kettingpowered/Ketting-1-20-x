@@ -1,5 +1,41 @@
 --- a/net/minecraft/world/inventory/BrewingStandMenu.java
 +++ b/net/minecraft/world/inventory/BrewingStandMenu.java
+@@ -11,6 +_,8 @@
+ import net.minecraft.world.item.alchemy.Potion;
+ import net.minecraft.world.item.alchemy.PotionBrewing;
+ import net.minecraft.world.item.alchemy.PotionUtils;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryBrewer;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
+ 
+ public class BrewingStandMenu extends AbstractContainerMenu {
+    private static final int BOTTLE_SLOT_START = 0;
+@@ -27,12 +_,18 @@
+    private final ContainerData brewingStandData;
+    private final Slot ingredientSlot;
+ 
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private Inventory player;
++   // CraftBukkit end
++
+    public BrewingStandMenu(int p_39090_, Inventory p_39091_) {
+       this(p_39090_, p_39091_, new SimpleContainer(5), new SimpleContainerData(2));
+    }
+ 
+    public BrewingStandMenu(int p_39093_, Inventory p_39094_, Container p_39095_, ContainerData p_39096_) {
+       super(MenuType.BREWING_STAND, p_39093_);
++      player = p_39094_; // CraftBukkit
+       checkContainerSize(p_39095_, 5);
+       checkContainerDataCount(p_39096_, 2);
+       this.brewingStand = p_39095_;
+@@ -57,6 +_,7 @@
+    }
+ 
+    public boolean stillValid(Player p_39098_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return this.brewingStand.stillValid(p_39098_);
+    }
+ 
 @@ -75,7 +_,7 @@
                 if (!this.moveItemStackTo(itemstack1, 3, 4, false)) {
                    return ItemStack.EMPTY;
@@ -26,12 +62,27 @@
              CriteriaTriggers.BREWED_POTION.trigger((ServerPlayer)p_150499_, potion);
           }
  
-@@ -177,7 +_,7 @@
+@@ -177,7 +_,20 @@
        }
  
        public static boolean mayPlaceItem(ItemStack p_39134_) {
 -         return p_39134_.is(Items.POTION) || p_39134_.is(Items.SPLASH_POTION) || p_39134_.is(Items.LINGERING_POTION) || p_39134_.is(Items.GLASS_BOTTLE);
+-      }
+-   }
 +         return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_39134_);
-       }
-    }
++      }
++   }
++
++   // CraftBukkit start
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++
++      CraftInventoryBrewer inventory = new CraftInventoryBrewer(this.brewingStand);
++      bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
  }

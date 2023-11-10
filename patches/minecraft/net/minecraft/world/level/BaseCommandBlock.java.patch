@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/level/BaseCommandBlock.java
++++ b/net/minecraft/world/level/BaseCommandBlock.java
+@@ -29,6 +_,10 @@
+    private Component lastOutput;
+    private String command = "";
+    private Component name = DEFAULT_NAME;
++   // CraftBukkit start
++   @Override
++   public abstract org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper);
++   // CraftBukkit end
+ 
+    public int getSuccessCount() {
+       return this.successCount;
+@@ -119,7 +_,8 @@
+                      }
+ 
+                   });
+-                  minecraftserver.getCommands().performPrefixedCommand(commandsourcestack, this.command);
++
++                  minecraftserver.getCommands().dispatchServerCommand(commandsourcestack, this.command); // CraftBukkit
+                } catch (Throwable throwable) {
+                   CrashReport crashreport = CrashReport.forThrowable(throwable, "Executing command block");
+                   CrashReportCategory crashreportcategory = crashreport.addCategory("Command to be executed");

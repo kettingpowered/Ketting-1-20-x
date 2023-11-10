@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
 +++ b/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
+@@ -91,7 +_,7 @@
+       ChunkSource chunksource = p_188231_.getChunkSource();
+       LevelLightEngine levellightengine = chunksource.getLightEngine();
+       Registry<Biome> registry = p_188231_.registryAccess().registryOrThrow(Registries.BIOME);
+-      Codec<PalettedContainerRO<Holder<Biome>>> codec = makeBiomeCodec(registry);
++      Codec<PalettedContainer<Holder<Biome>>> codec = makeBiomeCodecRW(registry); // CraftBukkit - read/write
+       boolean flag2 = false;
+ 
+       for(int j = 0; j < listtag.size(); ++j) {
+@@ -108,7 +_,7 @@
+                palettedcontainer = new PalettedContainer<>(Block.BLOCK_STATE_REGISTRY, Blocks.AIR.defaultBlockState(), PalettedContainer.Strategy.SECTION_STATES);
+             }
+ 
+-            PalettedContainerRO<Holder<Biome>> palettedcontainerro;
++            PalettedContainer<Holder<Biome>> palettedcontainerro; // CraftBukkit - read/write
+             if (compoundtag.contains("biomes", 10)) {
+                palettedcontainerro = codec.parse(NbtOps.INSTANCE, compoundtag.getCompound("biomes")).promotePartial((p_188274_) -> {
+                   logErrors(p_188233_, k, p_188274_);
 @@ -159,6 +_,7 @@
              return BuiltInRegistries.FLUID.getOptional(ResourceLocation.tryParse(p_258990_));
           }, p_188233_);
@@ -8,6 +26,20 @@
        } else {
           ProtoChunkTicks<Block> protochunkticks = ProtoChunkTicks.load(p_188234_.getList("block_ticks", 10), (p_258992_) -> {
              return BuiltInRegistries.BLOCK.getOptional(ResourceLocation.tryParse(p_258992_));
+@@ -180,6 +_,13 @@
+          }
+       }
+ 
++      // CraftBukkit start - load chunk persistent data from nbt - SPIGOT-6814: Already load PDC here to account for 1.17 to 1.18 chunk upgrading.
++      net.minecraft.nbt.Tag persistentBase = p_188234_.get("ChunkBukkitValues");
++      if (persistentBase instanceof CompoundTag) {
++         chunkaccess.persistentDataContainer.putAll((CompoundTag) persistentBase);
++      }
++      // CraftBukkit end
++
+       chunkaccess.setLightCorrect(flag);
+       CompoundTag compoundtag2 = p_188234_.getCompound("Heightmaps");
+       EnumSet<Heightmap.Types> enumset = EnumSet.noneOf(Heightmap.Types.class);
 @@ -212,6 +_,7 @@
        }
  
@@ -24,11 +56,23 @@
           return protochunk1;
        }
     }
-@@ -340,6 +_,14 @@
-          }
+@@ -247,6 +_,12 @@
+       return PalettedContainer.codecRO(p_188261_.asHolderIdMap(), p_188261_.holderByNameCodec(), PalettedContainer.Strategy.SECTION_BIOMES, p_188261_.getHolderOrThrow(Biomes.PLAINS));
+    }
+ 
++   // CraftBukkit start - read/write
++   private static Codec<PalettedContainer<Holder<Biome>>> makeBiomeCodecRW(Registry<Biome> iregistry) {
++      return PalettedContainer.codecRW(iregistry.asHolderIdMap(), iregistry.holderByNameCodec(), PalettedContainer.Strategy.SECTION_BIOMES, iregistry.getHolderOrThrow(Biomes.PLAINS));
++   }
++   // CraftBukkit end
++
+    public static CompoundTag write(ServerLevel p_63455_, ChunkAccess p_63456_) {
+       ChunkPos chunkpos = p_63456_.getPos();
+       CompoundTag compoundtag = NbtUtils.addCurrentDataVersion(new CompoundTag());
+@@ -341,6 +_,14 @@
  
           compoundtag.put("CarvingMasks", compoundtag4);
-+      }
+       }
 +      else if (p_63456_ instanceof LevelChunk levelChunk){
 +          try {
 +              final CompoundTag capTag = levelChunk.writeCapsToNBT();
@@ -36,6 +80,41 @@
 +          } catch (Exception exception) {
 +              LOGGER.error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
 +          }
-       }
++      }
  
        saveTicks(p_63455_, compoundtag, p_63456_.getTicksForSerialization());
+       compoundtag.put("PostProcessing", packOffsets(p_63456_.getPostProcessing()));
+@@ -354,6 +_,11 @@
+ 
+       compoundtag.put("Heightmaps", compoundtag2);
+       compoundtag.put("structures", packStructureData(StructurePieceSerializationContext.fromLevel(p_63455_), chunkpos, p_63456_.getAllStarts(), p_63456_.getAllReferences()));
++      // CraftBukkit start - store chunk persistent data in nbt
++      if (!p_63456_.persistentDataContainer.isEmpty()) { // SPIGOT-6814: Always save PDC to account for 1.17 to 1.18 chunk upgrading.
++         compoundtag.put("ChunkBukkitValues", p_63456_.persistentDataContainer.toTagCompound());
++      }
++      // CraftBukkit end
+       return compoundtag;
+    }
+ 
+@@ -376,10 +_,13 @@
+       ListTag listtag = getListOfCompoundsOrNull(p_196892_, "entities");
+       ListTag listtag1 = getListOfCompoundsOrNull(p_196892_, "block_entities");
+       return listtag == null && listtag1 == null ? null : (p_196904_) -> {
++         p_196891_.timings.syncChunkLoadEntitiesTimer.startTiming(); // Spigot
+          if (listtag != null) {
+             p_196891_.addLegacyChunkEntities(EntityType.loadEntitiesRecursive(listtag, p_196891_));
+          }
++         p_196891_.timings.syncChunkLoadEntitiesTimer.stopTiming(); // Spigot
+ 
++         p_196891_.timings.syncChunkLoadTileEntitiesTimer.startTiming(); // Spigot
+          if (listtag1 != null) {
+             for(int i = 0; i < listtag1.size(); ++i) {
+                CompoundTag compoundtag = listtag1.getCompound(i);
+@@ -395,6 +_,7 @@
+                }
+             }
+          }
++         p_196891_.timings.syncChunkLoadTileEntitiesTimer.stopTiming(); // Spigot
+ 
+       };
+    }

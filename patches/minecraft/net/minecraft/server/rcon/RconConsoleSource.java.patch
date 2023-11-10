@@ -1,8 +1,44 @@
 --- a/net/minecraft/server/rcon/RconConsoleSource.java
 +++ b/net/minecraft/server/rcon/RconConsoleSource.java
-@@ -33,7 +_,7 @@
+@@ -8,14 +_,22 @@
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.phys.Vec2;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_20_R2.command.CraftRemoteConsoleCommandSender;
++
++import java.net.SocketAddress;
+ 
+ public class RconConsoleSource implements CommandSource {
+    private static final String RCON = "Rcon";
+    private static final Component RCON_COMPONENT = Component.literal("Rcon");
+    private final StringBuffer buffer = new StringBuffer();
+    private final MinecraftServer server;
++   // CraftBukkit start
++   public final SocketAddress socketAddress;
++   private final CraftRemoteConsoleCommandSender remoteConsole = new CraftRemoteConsoleCommandSender(this);
+ 
+-   public RconConsoleSource(MinecraftServer p_11505_) {
++   public RconConsoleSource(MinecraftServer p_11505_, SocketAddress socketAddress) {
++      this.socketAddress = socketAddress;
++      // CraftBukkit end
+       this.server = p_11505_;
     }
  
+@@ -32,8 +_,19 @@
+       return new CommandSourceStack(this, Vec3.atLowerCornerOf(serverlevel.getSharedSpawnPos()), Vec2.ZERO, serverlevel, 4, "Rcon", RCON_COMPONENT, this.server, (Entity)null);
+    }
+ 
++   // CraftBukkit start - Send a String
++   public void sendMessage(String message) {
++      this.buffer.append(message);
++   }
++
++   @Override
++   public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
++      return this.remoteConsole;
++   }
++   // CraftBukkit end
++
     public void sendSystemMessage(Component p_215653_) {
 -      this.buffer.append(p_215653_.getString());
 +      this.buffer.append(p_215653_.getString()).append("\n"); // FIX MC-7569 - RCON has no newlines in multiline output

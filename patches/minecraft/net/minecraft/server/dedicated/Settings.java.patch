@@ -1,11 +1,103 @@
 --- a/net/minecraft/server/dedicated/Settings.java
 +++ b/net/minecraft/server/dedicated/Settings.java
-@@ -55,7 +_,7 @@
+@@ -20,19 +_,39 @@
+ import java.util.function.Supplier;
+ import java.util.function.UnaryOperator;
+ import javax.annotation.Nullable;
++
++import joptsimple.OptionSet;
+ import net.minecraft.core.RegistryAccess;
+ import org.slf4j.Logger;
+ 
+ public abstract class Settings<T extends Settings<T>> {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    protected final Properties properties;
++   // CraftBukkit start
++   private OptionSet options = null;
+ 
+-   public Settings(Properties p_139801_) {
++   public Settings(Properties p_139801_, final OptionSet options) {
+       this.properties = p_139801_;
++      this.options = options;
++   }
++
++   private String getOverride(String name, String value) {
++      if ((this.options != null) && (this.options.has(name)) && !name.equals( "online-mode")) { // Spigot
++         return String.valueOf(this.options.valueOf(name));
++      }
++
++      return value;
++      // CraftBukkit end
+    }
+ 
+    public static Properties loadFromFile(Path p_139840_) {
+       try {
++         // CraftBukkit start - SPIGOT-7465, MC-264979: Don't load if file doesn't exist
++         if (!p_139840_.toFile().exists()) {
++            return new Properties();
++         }
++         // CraftBukkit end
++
+          try (InputStream inputstream = Files.newInputStream(p_139840_)) {
+             CharsetDecoder charsetdecoder = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT);
+             Properties properties1 = new Properties();
+@@ -54,8 +_,14 @@
+    }
  
     public void store(Path p_139877_) {
++      // CraftBukkit start - Don't attempt writing to file if it's read only
++      if (p_139877_.toFile().exists() && !p_139877_.toFile().canWrite()) {
++         return;
++      }
++      // CraftBukkit end
++
        try (Writer writer = Files.newBufferedWriter(p_139877_, StandardCharsets.UTF_8)) {
 -         this.properties.store(writer, "Minecraft server properties");
 +         net.minecraftforge.common.util.SortedProperties.store(this.properties, writer, "Minecraft server properties");
        } catch (IOException ioexception) {
           LOGGER.error("Failed to store properties to file: {}", (Object)p_139877_);
        }
+@@ -84,7 +_,7 @@
+ 
+    @Nullable
+    private String getStringRaw(String p_139879_) {
+-      return (String)this.properties.get(p_139879_);
++      return (String) getOverride(p_139879_, this.properties.getProperty(p_139879_)); // CraftBukkit
+    }
+ 
+    @Nullable
+@@ -99,6 +_,16 @@
+    }
+ 
+    protected <V> V get(String p_139822_, Function<String, V> p_139823_, Function<V, String> p_139824_, V p_139825_) {
++      // CraftBukkit start
++      try {
++         return get0(p_139822_, p_139823_, p_139824_, p_139825_);
++      } catch (Exception ex) {
++         throw new RuntimeException("Could not load invalidly configured property '" + p_139822_ + "'", ex);
++      }
++   }
++
++   private <V> V get0(String p_139822_, Function<String, V> p_139823_, Function<V, String> p_139824_, V p_139825_) {
++      // CraftBukkit end
+       String s = this.getStringRaw(p_139822_);
+       V v = MoreObjects.firstNonNull((V)(s != null ? p_139823_.apply(s) : null), p_139825_);
+       this.properties.put(p_139822_, p_139824_.apply(v));
+@@ -171,7 +_,7 @@
+       return properties;
+    }
+ 
+-   protected abstract T reload(RegistryAccess p_139857_, Properties p_139858_);
++   protected abstract T reload(RegistryAccess p_139857_, Properties p_139858_, OptionSet optionset); // CraftBukkit
+ 
+    public class MutableValue<V> implements Supplier<V> {
+       private final String key;
+@@ -191,7 +_,7 @@
+       public T update(RegistryAccess p_139896_, V p_139897_) {
+          Properties properties = Settings.this.cloneProperties();
+          properties.put(this.key, this.serializer.apply(p_139897_));
+-         return Settings.this.reload(p_139896_, properties);
++         return Settings.this.reload(p_139896_, properties, Settings.this.options); // CraftBukkit
+       }
+    }
+ }

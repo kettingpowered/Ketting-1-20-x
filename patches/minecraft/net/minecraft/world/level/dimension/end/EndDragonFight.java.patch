@@ -1,5 +1,49 @@
 --- a/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/net/minecraft/world/level/dimension/end/EndDragonFight.java
+@@ -453,7 +_,7 @@
+       return this.previouslyKilled;
+    }
+ 
+-   public void tryRespawn() {
++   public boolean tryRespawn() { // CraftBukkit - return boolean
+       if (this.dragonKilled && this.respawnStage == null) {
+          BlockPos blockpos = this.portalLocation;
+          if (blockpos == null) {
+@@ -475,19 +_,19 @@
+          for(Direction direction : Direction.Plane.HORIZONTAL) {
+             List<EndCrystal> list = this.level.getEntitiesOfClass(EndCrystal.class, new AABB(blockpos1.relative(direction, 2)));
+             if (list.isEmpty()) {
+-               return;
++               return false; // CraftBukkit - return value
+             }
+ 
+             list1.addAll(list);
+          }
+ 
+          LOGGER.debug("Found all crystals, respawning dragon.");
+-         this.respawnDragon(list1);
++         return this.respawnDragon(list1); // CraftBukkit - return value
+       }
+-
++      return false; // CraftBukkit - return value
+    }
+ 
+-   private void respawnDragon(List<EndCrystal> p_64092_) {
++   private boolean respawnDragon(List<EndCrystal> p_64092_) { // CraftBukkit - return boolean
+       if (this.dragonKilled && this.respawnStage == null) {
+          for(BlockPattern.BlockPatternMatch blockpattern$blockpatternmatch = this.findExitPortal(); blockpattern$blockpatternmatch != null; blockpattern$blockpatternmatch = this.findExitPortal()) {
+             for(int i = 0; i < this.exitPortalPattern.getWidth(); ++i) {
+@@ -506,8 +_,9 @@
+          this.respawnTime = 0;
+          this.spawnExitPortal(false);
+          this.respawnCrystals = p_64092_;
++         return true; // CraftBukkit - return value
+       }
+-
++      return false; // CraftBukkit - return value
+    }
+ 
+    public void resetSpikeCrystals() {
 @@ -517,7 +_,14 @@
              endcrystal.setBeamTarget((BlockPos)null);
           }

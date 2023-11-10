@@ -1,0 +1,19 @@
+--- a/net/minecraft/server/commands/ReloadCommand.java
++++ b/net/minecraft/server/commands/ReloadCommand.java
+@@ -37,6 +_,16 @@
+       return collection;
+    }
+ 
++   // CraftBukkit start
++   public static void reload(MinecraftServer minecraftserver) {
++      PackRepository resourcepackrepository = minecraftserver.getPackRepository();
++      WorldData savedata = minecraftserver.getWorldData();
++      Collection<String> collection = resourcepackrepository.getSelectedIds();
++      Collection<String> collection1 = discoverNewPacks(resourcepackrepository, savedata, collection);
++      minecraftserver.reloadResources(collection1);
++   }
++   // CraftBukkit end
++
+    public static void register(CommandDispatcher<CommandSourceStack> p_138227_) {
+       p_138227_.register(Commands.literal("reload").requires((p_138231_) -> {
+          return p_138231_.hasPermission(2);

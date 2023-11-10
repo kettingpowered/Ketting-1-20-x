@@ -18,3 +18,41 @@
     }
  
     default int getMaxLightLevel() {
+@@ -54,19 +_,26 @@
+       });
+    }
+ 
++   // CraftBukkit start - moved block handling into separate method for use by Block#rayTrace
++   default BlockHitResult clip(ClipContext p_45548_, BlockPos blockpos) {
++      BlockState blockstate = this.getBlockState(blockpos);
++      FluidState fluidstate = this.getFluidState(blockpos);
++      Vec3 vec3 = p_45548_.getFrom();
++      Vec3 vec31 = p_45548_.getTo();
++      VoxelShape voxelshape = p_45548_.getBlockShape(blockstate, this, blockpos);
++      BlockHitResult blockhitresult = this.clipWithInteractionOverride(vec3, vec31, blockpos, voxelshape, blockstate);
++      VoxelShape voxelshape1 = p_45548_.getFluidShape(fluidstate, this, blockpos);
++      BlockHitResult blockhitresult1 = voxelshape1.clip(vec3, vec31, blockpos);
++      double d0 = blockhitresult == null ? Double.MAX_VALUE : p_45548_.getFrom().distanceToSqr(blockhitresult.getLocation());
++      double d1 = blockhitresult1 == null ? Double.MAX_VALUE : p_45548_.getFrom().distanceToSqr(blockhitresult1.getLocation());
++
++      return d0 <= d1 ? blockhitresult : blockhitresult1;
++   }
++   // CraftBukkit end
++
+    default BlockHitResult clip(ClipContext p_45548_) {
+       return traverseBlocks(p_45548_.getFrom(), p_45548_.getTo(), p_45548_, (p_151359_, p_151360_) -> {
+-         BlockState blockstate = this.getBlockState(p_151360_);
+-         FluidState fluidstate = this.getFluidState(p_151360_);
+-         Vec3 vec3 = p_151359_.getFrom();
+-         Vec3 vec31 = p_151359_.getTo();
+-         VoxelShape voxelshape = p_151359_.getBlockShape(blockstate, this, p_151360_);
+-         BlockHitResult blockhitresult = this.clipWithInteractionOverride(vec3, vec31, p_151360_, voxelshape, blockstate);
+-         VoxelShape voxelshape1 = p_151359_.getFluidShape(fluidstate, this, p_151360_);
+-         BlockHitResult blockhitresult1 = voxelshape1.clip(vec3, vec31, p_151360_);
+-         double d0 = blockhitresult == null ? Double.MAX_VALUE : p_151359_.getFrom().distanceToSqr(blockhitresult.getLocation());
+-         double d1 = blockhitresult1 == null ? Double.MAX_VALUE : p_151359_.getFrom().distanceToSqr(blockhitresult1.getLocation());
+-         return d0 <= d1 ? blockhitresult : blockhitresult1;
++         return this.clip(p_151359_, p_151360_); // CraftBukkit - moved into separate method
+       }, (p_275153_) -> {
+          Vec3 vec3 = p_275153_.getFrom().subtract(p_275153_.getTo());
+          return BlockHitResult.miss(p_275153_.getTo(), Direction.getNearest(vec3.x, vec3.y, vec3.z), BlockPos.containing(p_275153_.getTo()));

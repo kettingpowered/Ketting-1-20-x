@@ -1,5 +1,42 @@
 --- a/net/minecraft/world/level/chunk/ChunkAccess.java
 +++ b/net/minecraft/world/level/chunk/ChunkAccess.java
+@@ -80,6 +_,11 @@
+    protected final LevelHeightAccessor levelHeightAccessor;
+    protected final LevelChunkSection[] sections;
+ 
++   // CraftBukkit start - SPIGOT-6814: move to IChunkAccess to account for 1.17 to 1.18 chunk upgrading.
++   private static final org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataTypeRegistry();
++   public org.bukkit.craftbukkit.v1_20_R2.persistence.DirtyCraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.v1_20_R2.persistence.DirtyCraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++   // CraftBukkit end
++
+    public ChunkAccess(ChunkPos p_187621_, UpgradeData p_187622_, LevelHeightAccessor p_187623_, Registry<Biome> p_187624_, long p_187625_, @Nullable LevelChunkSection[] p_187626_, @Nullable BlendingData p_187627_) {
+       this.chunkPos = p_187621_;
+       this.upgradeData = p_187622_;
+@@ -98,7 +_,11 @@
+       }
+ 
+       replaceMissingSections(p_187624_, this.sections);
++      // CraftBukkit start
++      this.biomeRegistry = p_187624_;
+    }
++   public final Registry<Biome> biomeRegistry;
++   // CraftBukkit end
+ 
+    private static void replaceMissingSections(Registry<Biome> p_281389_, LevelChunkSection[] p_282796_) {
+       for(int i = 0; i < p_282796_.length; ++i) {
+@@ -253,10 +_,11 @@
+ 
+    public void setUnsaved(boolean p_62094_) {
+       this.unsaved = p_62094_;
++      if (!p_62094_) this.persistentDataContainer.dirty(false); // CraftBukkit - SPIGOT-6814: chunk was saved, pdc is no longer dirty
+    }
+ 
+    public boolean isUnsaved() {
+-      return this.unsaved;
++      return this.unsaved || this.persistentDataContainer.dirty(); // CraftBukkit - SPIGOT-6814: chunk is unsaved if pdc was mutated
+    }
+ 
+    public abstract ChunkStatus getStatus();
 @@ -299,25 +_,30 @@
     public abstract CompoundTag getBlockEntityNbtForSaving(BlockPos p_62104_);
  
@@ -36,6 +73,34 @@
                       }
                    }
                 }
+@@ -422,6 +_,27 @@
+       }
+    }
+ 
++   // CraftBukkit start
++   public void setBiome(int i, int j, int k, Holder<Biome> biome) {
++      try {
++         int l = QuartPos.fromBlock(this.getMinBuildHeight());
++         int i1 = l + QuartPos.fromBlock(this.getHeight()) - 1;
++         int j1 = Mth.clamp(j, l, i1);
++         int k1 = this.getSectionIndex(QuartPos.toBlock(j1));
++
++         this.sections[k1].setBiome(i & 3, j1 & 3, k & 3, biome);
++      } catch (Throwable throwable) {
++         CrashReport crashreport = CrashReport.forThrowable(throwable, "Setting biome");
++         CrashReportCategory crashreportsystemdetails = crashreport.addCategory("Biome being set");
++
++         crashreportsystemdetails.setDetail("Location", () -> {
++            return CrashReportCategory.formatLocation(this, i, j, k);
++         });
++         throw new ReportedException(crashreport);
++      }
++   }
++   // CraftBukkit end
++
+    public void fillBiomesFromNoise(BiomeResolver p_187638_, Climate.Sampler p_187639_) {
+       ChunkPos chunkpos = this.getPos();
+       int i = QuartPos.fromBlock(chunkpos.getMinBlockX());
 @@ -463,4 +_,7 @@
  
     public static record TicksToSave(SerializableTickContainer<Block> blocks, SerializableTickContainer<Fluid> fluids) {

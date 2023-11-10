@@ -1,0 +1,81 @@
+--- a/net/minecraft/world/inventory/CraftingMenu.java
++++ b/net/minecraft/world/inventory/CraftingMenu.java
+@@ -8,12 +_,11 @@
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.entity.player.StackedContents;
+ import net.minecraft.world.item.ItemStack;
+-import net.minecraft.world.item.crafting.CraftingRecipe;
+-import net.minecraft.world.item.crafting.Recipe;
+-import net.minecraft.world.item.crafting.RecipeHolder;
+-import net.minecraft.world.item.crafting.RecipeType;
++import net.minecraft.world.item.crafting.*;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
+ 
+ public class CraftingMenu extends RecipeBookMenu<CraftingContainer> {
+    public static final int RESULT_SLOT = 0;
+@@ -23,10 +_,13 @@
+    private static final int INV_SLOT_END = 37;
+    private static final int USE_ROW_SLOT_START = 37;
+    private static final int USE_ROW_SLOT_END = 46;
+-   private final CraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3);
+-   private final ResultContainer resultSlots = new ResultContainer();
+-   private final ContainerLevelAccess access;
++   private final CraftingContainer craftSlots;
++   private final ResultContainer resultSlots;
++   public final ContainerLevelAccess access;
+    private final Player player;
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   // CraftBukkit end
+ 
+    public CraftingMenu(int p_39353_, Inventory p_39354_) {
+       this(p_39353_, p_39354_, ContainerLevelAccess.NULL);
+@@ -34,6 +_,11 @@
+ 
+    public CraftingMenu(int p_39356_, Inventory p_39357_, ContainerLevelAccess p_39358_) {
+       super(MenuType.CRAFTING, p_39356_);
++      // CraftBukkit start - Switched order of IInventory construction and stored player
++      this.resultSlots = new ResultContainer();
++      this.craftSlots = new TransientCraftingContainer(this, 3, 3, p_39357_.player); // CraftBukkit - pass player
++      this.craftSlots.resultInventory = this.resultSlots;
++      // CraftBukkit end
+       this.access = p_39358_;
+       this.player = p_39357_.player;
+       this.addSlot(new ResultSlot(p_39357_.player, this.craftSlots, this.resultSlots, 0, 124, 35));
+@@ -71,6 +_,7 @@
+                }
+             }
+          }
++         itemstack = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.map(RecipeHolder::toBukkitRecipe).orElse(null) instanceof RepairItemRecipe); // CraftBukkit
+ 
+          p_150551_.setItem(0, itemstack);
+          p_150547_.setRemoteSlot(0, itemstack);
+@@ -105,6 +_,7 @@
+    }
+ 
+    public boolean stillValid(Player p_39368_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return stillValid(this.access, p_39368_, Blocks.CRAFTING_TABLE);
+    }
+ 
+@@ -183,4 +_,17 @@
+    public boolean shouldMoveToInventory(int p_150553_) {
+       return p_150553_ != this.getResultSlotIndex();
+    }
++
++   // CraftBukkit start
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++
++      CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.craftSlots, this.resultSlots);
++      bukkitEntity = new CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
+ }

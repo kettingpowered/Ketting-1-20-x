@@ -1,11 +1,28 @@
 --- a/net/minecraft/network/Connection.java
 +++ b/net/minecraft/network/Connection.java
-@@ -102,15 +_,19 @@
+@@ -82,8 +_,13 @@
+    });
+    private final PacketFlow receiving;
+    private final Queue<Consumer<Connection>> pendingActions = Queues.newConcurrentLinkedQueue();
+-   private Channel channel;
+-   private SocketAddress address;
++   public Channel channel;
++   public SocketAddress address;
++   // Spigot Start
++   public java.util.UUID spoofedUUID;
++   public com.mojang.authlib.properties.Property[] spoofedProfile;
++   public boolean preparing = true;
++   // Spigot End
+    @Nullable
+    private volatile PacketListener disconnectListener;
+    @Nullable
+@@ -102,15 +_,23 @@
     private volatile Component delayedDisconnect;
     @Nullable
     BandwidthDebugMonitor bandwidthDebugMonitor;
 +   private java.util.function.Consumer<Connection> activationHandler;
 +   private final net.minecraftforge.common.util.PacketLogger packetLogger;
++   public String hostname = ""; // CraftBukkit - add field
  
     public Connection(PacketFlow p_129482_) {
        this.receiving = p_129482_;
@@ -17,9 +34,20 @@
        this.channel = p_129525_.channel();
        this.address = this.channel.remoteAddress();
 +      if (activationHandler != null) activationHandler.accept(this);
++      // Spigot Start
++      this.preparing = false;
++      // Spigot End
        if (this.delayedDisconnect != null) {
           this.disconnect(this.delayedDisconnect);
        }
+@@ -159,6 +_,7 @@
+ 
+          }
+       }
++      if (net.minecraft.server.MinecraftServer.getServer().isDebugging()) p_129534_.printStackTrace(); // Spigot
+    }
+ 
+    protected void channelRead0(ChannelHandlerContext p_129487_, Packet<?> p_129488_) {
 @@ -169,6 +_,7 @@
           } else {
              if (packetlistener.shouldHandleMessage(p_129488_)) {
@@ -46,7 +74,7 @@
        if (p_243290_ != null) {
           channelfuture.addListener((p_243167_) -> {
              if (p_243167_.isSuccess()) {
-@@ -395,7 +_,7 @@
+@@ -395,11 +_,14 @@
        if (this.address == null) {
           return "local";
        } else {
@@ -55,6 +83,13 @@
        }
     }
  
+    public void disconnect(Component p_129508_) {
++      // Spigot Start
++      this.preparing = false;
++      // Spigot End
+       if (this.channel == null) {
+          this.delayedDisconnect = p_129508_;
+       }
 @@ -435,6 +_,8 @@
     }
  

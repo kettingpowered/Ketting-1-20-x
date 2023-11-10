@@ -1,5 +1,99 @@
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
+@@ -32,11 +_,15 @@
+ import net.minecraft.network.protocol.login.ServerboundKeyPacket;
+ import net.minecraft.network.protocol.login.ServerboundLoginAcknowledgedPacket;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.server.players.PlayerList;
+ import net.minecraft.util.Crypt;
+ import net.minecraft.util.CryptException;
+ import net.minecraft.util.RandomSource;
+ import org.apache.commons.lang3.Validate;
++import org.bukkit.craftbukkit.v1_20_R2.util.Waitable;
++import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
++import org.bukkit.event.player.PlayerPreLoginEvent;
+ import org.slf4j.Logger;
+ 
+ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener, TickablePacketListener {
+@@ -46,7 +_,7 @@
+    private static final Component DISCONNECT_UNEXPECTED_QUERY = Component.translatable("multiplayer.disconnect.unexpected_query_response");
+    private final byte[] challenge;
+    final MinecraftServer server;
+-   final Connection connection;
++   public final Connection connection;
+    private volatile ServerLoginPacketListenerImpl.State state = ServerLoginPacketListenerImpl.State.HELLO;
+    private int tick;
+    @Nullable
+@@ -54,6 +_,7 @@
+    @Nullable
+    private GameProfile authenticatedProfile;
+    private final String serverId = "";
++   private ServerPlayer player; // CraftBukkit
+ 
+    public ServerLoginPacketListenerImpl(MinecraftServer p_10027_, Connection p_10028_) {
+       this.server = p_10027_;
+@@ -76,6 +_,13 @@
+ 
+    }
+ 
++   // CraftBukkit start
++   @Deprecated
++   public void disconnect(String s) {
++      disconnect(Component.literal(s));
++   }
++   // CraftBukkit end
++
+    public boolean isAcceptingMessages() {
+       return this.connection.isConnected();
+    }
+@@ -116,7 +_,20 @@
+             this.state = ServerLoginPacketListenerImpl.State.KEY;
+             this.connection.send(new ClientboundHelloPacket("", this.server.getKeyPair().getPublic().getEncoded(), this.challenge));
+          } else {
+-            this.startClientVerification(createOfflineProfile(this.requestedUsername));
++            // Spigot start
++            new Thread("User Authenticator #" + ServerLoginPacketListenerImpl.UNIQUE_THREAD_ID.incrementAndGet()) {
++
++               @Override
++               public void run() {
++                  try {
++                     new LoginHandler().fireEvents(createOfflineProfile(ServerLoginPacketListenerImpl.this.requestedUsername));
++                  } catch (Exception ex) {
++                     disconnect("Failed to verify username!");
++                     server.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + ServerLoginPacketListenerImpl.this.requestedUsername, ex);
++                  }
++               }
++            }.start();
++            // Spigot end
+          }
+ 
+       }
+@@ -129,9 +_,11 @@
+ 
+    private void verifyLoginAndFinishConnectionSetup(GameProfile p_299507_) {
+       PlayerList playerlist = this.server.getPlayerList();
+-      Component component = playerlist.canPlayerLogin(this.connection.getRemoteAddress(), p_299507_);
+-      if (component != null) {
+-         this.disconnect(component);
++      // CraftBukkit start - fire PlayerLoginEvent
++      this.player = playerlist.canPlayerLogin(this, p_299507_); // CraftBukkit
++      if (player == null) {
++         // this.disconnect(component);
++         // CraftBukkit end
+       } else {
+          if (this.server.getCompressionThreshold() >= 0 && !this.connection.isMemoryConnection()) {
+             this.connection.send(new ClientboundLoginCompressionPacket(this.server.getCompressionThreshold()), PacketSendListener.thenRun(() -> {
+@@ -139,7 +_,8 @@
+             }));
+          }
+ 
+-         boolean flag = playerlist.disconnectAllPlayersWithProfile(p_299507_);
++         boolean flag = playerlist.disconnectAllPlayersWithProfile(p_299507_, this.player); // CraftBukkit - add player reference
++
+          if (flag) {
+             this.state = ServerLoginPacketListenerImpl.State.WAITING_FOR_DUPE_DISCONNECT;
+          } else {
 @@ -180,7 +_,7 @@
           throw new IllegalStateException("Protocol error", cryptexception);
        }
@@ -9,23 +103,138 @@
           public void run() {
              String s1 = Objects.requireNonNull(ServerLoginPacketListenerImpl.this.requestedUsername, "Player name not initialized");
  
-@@ -220,6 +_,7 @@
+@@ -188,11 +_,16 @@
+                ProfileResult profileresult = ServerLoginPacketListenerImpl.this.server.getSessionService().hasJoinedServer(s1, s, this.getAddress());
+                if (profileresult != null) {
+                   GameProfile gameprofile = profileresult.profile();
+-                  ServerLoginPacketListenerImpl.LOGGER.info("UUID of player {} is {}", gameprofile.getName(), gameprofile.getId());
+-                  ServerLoginPacketListenerImpl.this.startClientVerification(gameprofile);
++
++                  // CraftBukkit start - fire PlayerPreLoginEvent
++                  if (!connection.isConnected()) {
++                     return;
++                  }
++
++                  new LoginHandler().fireEvents(gameprofile);
+                } else if (ServerLoginPacketListenerImpl.this.server.isSingleplayer()) {
+                   ServerLoginPacketListenerImpl.LOGGER.warn("Failed to verify username but will let them in anyway!");
+-                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.createOfflineProfile(s1));
++                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfile(s1)); // Spigot
+                } else {
+                   ServerLoginPacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.unverified_username"));
+                   ServerLoginPacketListenerImpl.LOGGER.error("Username '{}' tried to join with an invalid session", (Object)s1);
+@@ -200,11 +_,16 @@
+             } catch (AuthenticationUnavailableException authenticationunavailableexception) {
+                if (ServerLoginPacketListenerImpl.this.server.isSingleplayer()) {
+                   ServerLoginPacketListenerImpl.LOGGER.warn("Authentication servers are down but will let them in anyway!");
+-                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.createOfflineProfile(s1));
++                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfile(s1)); // Spigot
+                } else {
+                   ServerLoginPacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.authservers_down"));
+                   ServerLoginPacketListenerImpl.LOGGER.error("Couldn't verify username because servers are unavailable");
+                }
++               // CraftBukkit start - catch all exceptions
++            } catch (Exception exception) {
++               disconnect("Failed to verify username!");
++               server.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + s1, exception);
++               // CraftBukkit end
+             }
+ 
+          }
+@@ -219,22 +_,92 @@
+       thread.start();
     }
  
++   // Spigot start
++   public class LoginHandler {
++
++      public void fireEvents(GameProfile gameprofile) throws Exception {
++         String playerName = gameprofile.getName();
++         java.net.InetAddress address = ((java.net.InetSocketAddress) connection.getRemoteAddress()).getAddress();
++         java.util.UUID uniqueId = gameprofile.getId();
++         final org.bukkit.craftbukkit.v1_20_R2.CraftServer server = ServerLoginPacketListenerImpl.this.server.server;
++
++         AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
++         server.getPluginManager().callEvent(asyncEvent);
++
++         if (PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0) {
++            final PlayerPreLoginEvent event = new PlayerPreLoginEvent(playerName, address, uniqueId);
++            if (asyncEvent.getResult() != PlayerPreLoginEvent.Result.ALLOWED) {
++               event.disallow(asyncEvent.getResult(), asyncEvent.getKickMessage());
++            }
++            Waitable<PlayerPreLoginEvent.Result> waitable = new Waitable<PlayerPreLoginEvent.Result>() {
++               @Override
++               protected PlayerPreLoginEvent.Result evaluate() {
++                  server.getPluginManager().callEvent(event);
++                  return event.getResult();
++               }};
++
++            ServerLoginPacketListenerImpl.this.server.processQueue.add(waitable);
++            if (waitable.get() != PlayerPreLoginEvent.Result.ALLOWED) {
++               disconnect(event.getKickMessage());
++               return;
++            }
++         } else {
++            if (asyncEvent.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
++               disconnect(asyncEvent.getKickMessage());
++               return;
++            }
++         }
++         // CraftBukkit end
++         ServerLoginPacketListenerImpl.LOGGER.info("UUID of player {} is {}", gameprofile.getName(), gameprofile.getId());
++         ServerLoginPacketListenerImpl.this.startClientVerification(gameprofile);
++      }
++   }
++   // Spigot end
++
     public void handleCustomQueryPacket(ServerboundCustomQueryAnswerPacket p_297965_) {
 +      if (!net.minecraftforge.common.ForgeHooks.onCustomPayload(p_297965_, this.connection))
        this.disconnect(DISCONNECT_UNEXPECTED_QUERY);
     }
  
-@@ -230,6 +_,11 @@
+    public void handleLoginAcknowledgement(ServerboundLoginAcknowledgedPacket p_298815_) {
+       Validate.validState(this.state == ServerLoginPacketListenerImpl.State.PROTOCOL_SWITCHING, "Unexpected login acknowledgement packet");
+       CommonListenerCookie commonlistenercookie = CommonListenerCookie.createInitial(Objects.requireNonNull(this.authenticatedProfile));
+-      ServerConfigurationPacketListenerImpl serverconfigurationpacketlistenerimpl = new ServerConfigurationPacketListenerImpl(this.server, this.connection, commonlistenercookie);
++      ServerConfigurationPacketListenerImpl serverconfigurationpacketlistenerimpl = new ServerConfigurationPacketListenerImpl(this.server, this.connection, commonlistenercookie, this.player); // CraftBukkit
++
        this.connection.setListener(serverconfigurationpacketlistenerimpl);
        serverconfigurationpacketlistenerimpl.startConfiguration();
        this.state = ServerLoginPacketListenerImpl.State.ACCEPTED;
-+   }
-+
+    }
+ 
+-   protected static GameProfile createOfflineProfile(String p_297551_) {
+-      UUID uuid = UUIDUtil.createOfflinePlayerUUID(p_297551_);
+-      return new GameProfile(uuid, p_297551_);
 +   @Nullable
 +   public GameProfile getAuthenticatedProfile() {
 +       return this.authenticatedProfile;
++   }
++
++   // Spigot start
++   protected GameProfile createOfflineProfile(String p_297551_) {
++      UUID uuid;
++      if ( connection.spoofedUUID != null )
++      {
++         uuid = connection.spoofedUUID;
++      } else
++      {
++         uuid = UUIDUtil.createOfflinePlayerUUID( p_297551_ );
++      }
++
++      GameProfile gameProfile = new GameProfile( uuid, p_297551_ );
++
++      if (connection.spoofedProfile != null)
++      {
++         for ( com.mojang.authlib.properties.Property property : connection.spoofedProfile )
++         {
++            if ( !ServerHandshakePacketListenerImpl.PROP_PATTERN.matcher( property.name()).matches() ) continue;
++            gameProfile.getProperties().put( property.name(), property );
++         }
++      }
++
++      return gameProfile;
++      // Spigot end
     }
  
-    protected static GameProfile createOfflineProfile(String p_297551_) {
+    static enum State {

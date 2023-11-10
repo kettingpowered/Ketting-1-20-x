@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/inventory/ItemCombinerMenu.java
++++ b/net/minecraft/world/inventory/ItemCombinerMenu.java
+@@ -107,6 +_,7 @@
+    }
+ 
+    public boolean stillValid(Player p_39780_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return this.access.evaluate((p_39785_, p_39786_) -> {
+          return !this.isValidBlock(p_39785_.getBlockState(p_39786_)) ? false : p_39780_.distanceToSqr((double)p_39786_.getX() + 0.5D, (double)p_39786_.getY() + 0.5D, (double)p_39786_.getZ() + 0.5D) <= 64.0D;
+       }, true);

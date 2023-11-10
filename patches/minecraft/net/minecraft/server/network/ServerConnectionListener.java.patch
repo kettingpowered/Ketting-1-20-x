@@ -33,3 +33,51 @@
                 Connection.configureSerialization(channelpipeline, PacketFlow.SERVERBOUND, (BandwidthDebugMonitor)null);
                 int i = ServerConnectionListener.this.server.getRateLimitPacketsPerSecond();
                 Connection connection = (Connection)(i > 0 ? new RateKickingConnection(i) : new Connection(PacketFlow.SERVERBOUND));
+@@ -96,9 +_,19 @@
+                connection.configurePacketHandler(channelpipeline);
+                connection.setListenerForServerboundHandshake(new ServerHandshakePacketListenerImpl(ServerConnectionListener.this.server, connection));
+             }
+-         }).group(eventloopgroup).localAddress(p_9712_, p_9713_).bind().syncUninterruptibly());
+-      }
+-   }
++         }).group(eventloopgroup).localAddress(p_9712_, p_9713_).option(ChannelOption.AUTO_READ, false).bind().syncUninterruptibly()); // CraftBukkit
++      }
++   }
++
++   // CraftBukkit start
++   public void acceptConnections() {
++      synchronized (this.channels) {
++         for (ChannelFuture future : this.channels) {
++            future.channel().config().setAutoRead(true);
++         }
++      }
++   }
++   // CraftBukkit end
+ 
+    public SocketAddress startMemoryChannel() {
+       ChannelFuture channelfuture;
+@@ -135,6 +_,13 @@
+ 
+    public void tick() {
+       synchronized(this.connections) {
++         // Spigot Start
++         // This prevents players from 'gaming' the server, and strategically relogging to increase their position in the tick order
++         if ( org.spigotmc.SpigotConfig.playerShuffle > 0 && MinecraftServer.currentTick % org.spigotmc.SpigotConfig.playerShuffle == 0 )
++         {
++            Collections.shuffle( this.connections );
++         }
++         // Spigot End
+          Iterator<Connection> iterator = this.connections.iterator();
+ 
+          while(iterator.hasNext()) {
+@@ -156,6 +_,10 @@
+                      connection.setReadOnly();
+                   }
+                } else {
++                  // Spigot Start
++                  // Fix a race condition where a NetworkManager could be unregistered just before connection.
++                  if (connection.preparing) continue;
++                  // Spigot End
+                   iterator.remove();
+                   connection.handleDisconnection();
+                }

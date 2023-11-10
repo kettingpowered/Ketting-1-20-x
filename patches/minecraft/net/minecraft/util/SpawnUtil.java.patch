@@ -1,11 +1,37 @@
 --- a/net/minecraft/util/SpawnUtil.java
 +++ b/net/minecraft/util/SpawnUtil.java
-@@ -27,7 +_,7 @@
+@@ -17,6 +_,14 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ 
+ public class SpawnUtil {
++
++   //Ketting start - modified CraftBukkit code
++   private static org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason trySpawnMob$reason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
++   public static <T extends Mob> Optional<T> trySpawnMob(EntityType<T> p_216404_, MobSpawnType p_216405_, ServerLevel p_216406_, BlockPos p_216407_, int p_216408_, int p_216409_, int p_216410_, SpawnUtil.Strategy p_216411_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++      trySpawnMob$reason = reason;
++      return trySpawnMob(p_216404_, p_216405_, p_216406_, p_216407_, p_216408_, p_216409_, p_216410_, p_216411_);
++   }
++
+    public static <T extends Mob> Optional<T> trySpawnMob(EntityType<T> p_216404_, MobSpawnType p_216405_, ServerLevel p_216406_, BlockPos p_216407_, int p_216408_, int p_216409_, int p_216410_, SpawnUtil.Strategy p_216411_) {
+       BlockPos.MutableBlockPos blockpos$mutableblockpos = p_216407_.mutable();
+ 
+@@ -27,8 +_,8 @@
           if (p_216406_.getWorldBorder().isWithinBounds(blockpos$mutableblockpos) && moveToPossibleSpawnPosition(p_216406_, p_216410_, blockpos$mutableblockpos, p_216411_)) {
              T t = p_216404_.create(p_216406_, (CompoundTag)null, (Consumer<T>)null, blockpos$mutableblockpos, p_216405_, false, false);
              if (t != null) {
 -               if (t.checkSpawnRules(p_216406_, p_216405_) && t.checkSpawnObstruction(p_216406_)) {
+-                  p_216406_.addFreshEntityWithPassengers(t);
 +               if (net.minecraftforge.event.ForgeEventFactory.checkSpawnPosition(t, p_216406_, p_216405_)) {
-                   p_216406_.addFreshEntityWithPassengers(t);
++                  p_216406_.addFreshEntityWithPassengers(t, trySpawnMob$reason); // CraftBukkit
                    return Optional.of(t);
                 }
+ 
+@@ -37,6 +_,8 @@
+          }
+       }
+ 
++      trySpawnMob$reason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
++      //Ketting end
+       return Optional.empty();
+    }
+ 

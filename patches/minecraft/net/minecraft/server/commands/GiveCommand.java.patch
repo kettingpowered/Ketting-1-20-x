@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/commands/GiveCommand.java
++++ b/net/minecraft/server/commands/GiveCommand.java
+@@ -49,7 +_,7 @@
+                boolean flag = serverplayer.getInventory().add(itemstack1);
+                if (flag && itemstack1.isEmpty()) {
+                   itemstack1.setCount(1);
+-                  ItemEntity itementity1 = serverplayer.drop(itemstack1, false);
++                  ItemEntity itementity1 = serverplayer.drop(itemstack1, false, false, false); // SPIGOT-2942: Add boolean to call event
+                   if (itementity1 != null) {
+                      itementity1.makeFakeItem();
+                   }

@@ -1,0 +1,62 @@
+--- a/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java
++++ b/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java
+@@ -18,13 +_,41 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.AABB;
++import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseEvent;
+ 
+ public class ShearsDispenseItemBehavior extends OptionalDispenseItemBehavior {
+    protected ItemStack execute(BlockSource p_301806_, ItemStack p_123581_) {
+       ServerLevel serverlevel = p_301806_.level();
++      // CraftBukkit start
++      org.bukkit.block.Block bukkitBlock = CraftBlock.at(serverlevel, p_301806_.pos());
++      CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123581_);
++
++      BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
++      if (!DispenserBlock.eventFired) {
++         serverlevel.getCraftServer().getPluginManager().callEvent(event);
++      }
++
++      if (event.isCancelled()) {
++         return p_123581_;
++      }
++
++      if (!event.getItem().equals(craftItem)) {
++         // Chain to handler for new item
++         ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++         DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++         if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
++            idispensebehavior.dispense(p_301806_, eventStack);
++            return p_123581_;
++         }
++      }
++      // CraftBukkit end
++
+       if (!serverlevel.isClientSide()) {
+          BlockPos blockpos = p_301806_.pos().relative(p_301806_.state().getValue(DispenserBlock.FACING));
+-         this.setSuccess(tryShearBeehive(serverlevel, blockpos) || tryShearLivingEntity(serverlevel, blockpos));
++         this.setSuccess(tryShearBeehive(serverlevel, blockpos) || tryShearLivingEntity(serverlevel, blockpos, bukkitBlock, craftItem)); // CraftBukkit
+          if (this.isSuccess() && p_123581_.hurt(1, serverlevel.getRandom(), (ServerPlayer)null)) {
+             p_123581_.setCount(0);
+          }
+@@ -51,10 +_,15 @@
+       return false;
+    }
+ 
+-   private static boolean tryShearLivingEntity(ServerLevel p_123583_, BlockPos p_123584_) {
++   private static boolean tryShearLivingEntity(ServerLevel p_123583_, BlockPos p_123584_, org.bukkit.block.Block bukkitBlock, CraftItemStack craftItem) { // CraftBukkit - add args
+       for(LivingEntity livingentity : p_123583_.getEntitiesOfClass(LivingEntity.class, new AABB(p_123584_), EntitySelector.NO_SPECTATORS)) {
+          if (livingentity instanceof Shearable shearable) {
+             if (shearable.readyForShearing()) {
++               // CraftBukkit start
++               if (CraftEventFactory.callBlockShearEntityEvent(livingentity, bukkitBlock, craftItem).isCancelled()) {
++                  continue;
++               }
++               // CraftBukkit end
+                shearable.shear(SoundSource.BLOCKS);
+                p_123583_.gameEvent((Entity)null, GameEvent.SHEAR, p_123584_);
+                return true;

@@ -1,6 +1,10 @@
 --- a/net/minecraft/network/FriendlyByteBuf.java
 +++ b/net/minecraft/network/FriendlyByteBuf.java
-@@ -78,7 +_,7 @@
+@@ -75,10 +_,11 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.phys.BlockHitResult;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
  import org.joml.Quaternionf;
  import org.joml.Vector3f;
  
@@ -9,10 +13,20 @@
     public static final int DEFAULT_NBT_QUOTA = 2097152;
     private final ByteBuf source;
     public static final short MAX_STRING_LENGTH = Short.MAX_VALUE;
-@@ -577,6 +_,15 @@
+@@ -551,7 +_,7 @@
+       try {
+          NbtIo.writeAnyTag(p_300580_, new ByteBufOutputStream(this));
+          return this;
+-      } catch (IOException ioexception) {
++      } catch (Exception ioexception) { // CraftBukkit - IOException -> Exception
+          throw new EncoderException(ioexception);
+       }
+    }
+@@ -577,7 +_,16 @@
     }
  
     public FriendlyByteBuf writeItem(ItemStack p_130056_) {
+-      if (p_130056_.isEmpty()) {
 +      return writeItemStack(p_130056_, true);
 +   }
 +
@@ -22,26 +36,36 @@
 +    * If you want to send the FULL tag set limitedTag to false
 +    */
 +   public FriendlyByteBuf writeItemStack(ItemStack p_130056_, boolean limitedTag) {
-       if (p_130056_.isEmpty()) {
++      if (p_130056_.isEmpty() || p_130056_.getItem() == null) { // CraftBukkit - NPE fix itemstack.getItem()
           this.writeBoolean(false);
        } else {
-@@ -585,8 +_,8 @@
+          this.writeBoolean(true);
+@@ -585,8 +_,12 @@
           this.writeId(BuiltInRegistries.ITEM, item);
           this.writeByte(p_130056_.getCount());
           CompoundTag compoundtag = null;
 -         if (item.canBeDepleted() || item.shouldOverrideMultiplayerNbt()) {
 -            compoundtag = p_130056_.getTag();
 +         if (item.isDamageable(p_130056_) || item.shouldOverrideMultiplayerNbt()) {
++            // Spigot start - filter
++            p_130056_ = p_130056_.copy();
++            CraftItemStack.setItemMeta(p_130056_, CraftItemStack.getItemMeta(p_130056_));
++            // Spigot end
 +            compoundtag = limitedTag ? p_130056_.getShareTag() : p_130056_.getTag();
           }
  
           this.writeNbt(compoundtag);
-@@ -602,7 +_,7 @@
+@@ -602,7 +_,12 @@
           Item item = this.readById(BuiltInRegistries.ITEM);
           int i = this.readByte();
           ItemStack itemstack = new ItemStack(item, i);
 -         itemstack.setTag(this.readNbt());
 +         itemstack.readShareTag(this.readNbt());
++         // CraftBukkit start
++         if (itemstack.getTag() != null) {
++            CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
++         }
++         // CraftBukkit end
           return itemstack;
        }
     }

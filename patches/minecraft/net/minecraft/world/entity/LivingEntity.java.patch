@@ -16,6 +16,27 @@
     public static final int HAND_SLOTS = 2;
     public static final int ARMOR_SLOTS = 4;
     public static final int EQUIPMENT_SLOT_OFFSET = 98;
+@@ -156,7 +_,7 @@
+    public static final float EXTRA_RENDER_CULLING_SIZE_WITH_BIG_HAT = 0.5F;
+    private static final int MAX_HEAD_ROTATION_RELATIVE_TO_BODY = 50;
+    private final AttributeMap attributes;
+-   private final CombatTracker combatTracker = new CombatTracker(this);
++   public CombatTracker combatTracker = new CombatTracker(this);
+    private final Map<MobEffect, MobEffectInstance> activeEffects = Maps.newHashMap();
+    private final NonNullList<ItemStack> lastHandItemStacks = NonNullList.withSize(2, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> lastArmorItemStacks = NonNullList.withSize(4, ItemStack.EMPTY);
+@@ -204,9 +_,9 @@
+    protected double lerpXRot;
+    protected double lerpYHeadRot;
+    protected int lerpHeadSteps;
+-   private boolean effectsDirty = true;
++   public boolean effectsDirty = true;
+    @Nullable
+-   private LivingEntity lastHurtByMob;
++   public LivingEntity lastHurtByMob;
+    private int lastHurtByMobTimestamp;
+    private LivingEntity lastHurtMob;
+    private int lastHurtMobTimestamp;
 @@ -239,7 +_,8 @@
        this.yHeadRot = this.getYRot();
        this.setMaxUpStep(0.6F);

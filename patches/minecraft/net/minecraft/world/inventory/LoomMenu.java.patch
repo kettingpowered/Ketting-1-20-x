@@ -1,0 +1,110 @@
+--- a/net/minecraft/world/inventory/LoomMenu.java
++++ b/net/minecraft/world/inventory/LoomMenu.java
+@@ -23,8 +_,27 @@
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.entity.BannerPattern;
+ import net.minecraft.world.level.block.entity.BlockEntityType;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryLoom;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
+ 
+ public class LoomMenu extends AbstractContainerMenu {
++
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private org.bukkit.entity.Player player;
++
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++
++      CraftInventoryLoom inventory = new CraftInventoryLoom(this.inputContainer, this.outputContainer);
++      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
+    private static final int PATTERN_NOT_SET = -1;
+    private static final int INV_SLOT_START = 4;
+    private static final int INV_SLOT_END = 31;
+@@ -40,19 +_,8 @@
+    private final Slot patternSlot;
+    private final Slot resultSlot;
+    long lastSoundTime;
+-   private final Container inputContainer = new SimpleContainer(3) {
+-      public void setChanged() {
+-         super.setChanged();
+-         LoomMenu.this.slotsChanged(this);
+-         LoomMenu.this.slotUpdateListener.run();
+-      }
+-   };
+-   private final Container outputContainer = new SimpleContainer(1) {
+-      public void setChanged() {
+-         super.setChanged();
+-         LoomMenu.this.slotUpdateListener.run();
+-      }
+-   };
++   private final Container inputContainer;
++   private final Container outputContainer;
+ 
+    public LoomMenu(int p_39856_, Inventory p_39857_) {
+       this(p_39856_, p_39857_, ContainerLevelAccess.NULL);
+@@ -60,6 +_,33 @@
+ 
+    public LoomMenu(int p_39859_, Inventory p_39860_, final ContainerLevelAccess p_39861_) {
+       super(MenuType.LOOM, p_39859_);
++      this.inputContainer = new SimpleContainer(3) {
++         public void setChanged() {
++            super.setChanged();
++            LoomMenu.this.slotsChanged(this);
++            LoomMenu.this.slotUpdateListener.run();
++         }
++
++         // CraftBukkit start
++         @Override
++         public Location getLocation() {
++            return p_39861_.getLocation();
++         }
++         // CraftBukkit end
++      };
++      this.outputContainer = new SimpleContainer(1) {
++         public void setChanged() {
++            super.setChanged();
++            LoomMenu.this.slotUpdateListener.run();
++         }
++
++         // CraftBukkit start
++         @Override
++         public Location getLocation() {
++            return p_39861_.getLocation();
++         }
++         // CraftBukkit end
++      };
+       this.access = p_39861_;
+       this.bannerSlot = this.addSlot(new Slot(this.inputContainer, 0, 13, 26) {
+          public boolean mayPlace(ItemStack p_39918_) {
+@@ -111,9 +_,11 @@
+       }
+ 
+       this.addDataSlot(this.selectedBannerPatternIndex);
++      player = (org.bukkit.entity.Player) p_39860_.player.getBukkitEntity(); // CraftBukkit
+    }
+ 
+    public boolean stillValid(Player p_39865_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return stillValid(this.access, p_39865_, Blocks.LOOM);
+    }
+ 
+@@ -276,6 +_,11 @@
+          ListTag listtag;
+          if (compoundtag != null && compoundtag.contains("Patterns", 9)) {
+             listtag = compoundtag.getList("Patterns", 10);
++            // CraftBukkit start
++            while (listtag.size() > 20) {
++               listtag.remove(20);
++            }
++            // CraftBukkit end
+          } else {
+             listtag = new ListTag();
+             if (compoundtag == null) {

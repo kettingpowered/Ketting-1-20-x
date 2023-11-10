@@ -1,0 +1,65 @@
+--- a/net/minecraft/server/commands/WorldBorderCommand.java
++++ b/net/minecraft/server/commands/WorldBorderCommand.java
+@@ -53,7 +_,7 @@
+    }
+ 
+    private static int setDamageBuffer(CommandSourceStack p_139257_, float p_139258_) throws CommandSyntaxException {
+-      WorldBorder worldborder = p_139257_.getServer().overworld().getWorldBorder();
++      WorldBorder worldborder = p_139257_.getLevel().getWorldBorder(); // CraftBukkit
+       if (worldborder.getDamageSafeZone() == (double)p_139258_) {
+          throw ERROR_SAME_DAMAGE_BUFFER.create();
+       } else {
+@@ -66,7 +_,7 @@
+    }
+ 
+    private static int setDamageAmount(CommandSourceStack p_139270_, float p_139271_) throws CommandSyntaxException {
+-      WorldBorder worldborder = p_139270_.getServer().overworld().getWorldBorder();
++      WorldBorder worldborder = p_139270_.getLevel().getWorldBorder(); // CraftBukkit
+       if (worldborder.getDamagePerBlock() == (double)p_139271_) {
+          throw ERROR_SAME_DAMAGE_AMOUNT.create();
+       } else {
+@@ -79,7 +_,7 @@
+    }
+ 
+    private static int setWarningTime(CommandSourceStack p_139260_, int p_139261_) throws CommandSyntaxException {
+-      WorldBorder worldborder = p_139260_.getServer().overworld().getWorldBorder();
++      WorldBorder worldborder = p_139260_.getLevel().getWorldBorder(); // CraftBukkit
+       if (worldborder.getWarningTime() == p_139261_) {
+          throw ERROR_SAME_WARNING_TIME.create();
+       } else {
+@@ -92,7 +_,7 @@
+    }
+ 
+    private static int setWarningDistance(CommandSourceStack p_139273_, int p_139274_) throws CommandSyntaxException {
+-      WorldBorder worldborder = p_139273_.getServer().overworld().getWorldBorder();
++      WorldBorder worldborder = p_139273_.getLevel().getWorldBorder(); // CraftBukkit
+       if (worldborder.getWarningBlocks() == p_139274_) {
+          throw ERROR_SAME_WARNING_DISTANCE.create();
+       } else {
+@@ -105,7 +_,7 @@
+    }
+ 
+    private static int getSize(CommandSourceStack p_139251_) {
+-      double d0 = p_139251_.getServer().overworld().getWorldBorder().getSize();
++      double d0 = p_139251_.getLevel().getWorldBorder().getSize(); // CraftBukkit
+       p_139251_.sendSuccess(() -> {
+          return Component.translatable("commands.worldborder.get", String.format(Locale.ROOT, "%.0f", d0));
+       }, false);
+@@ -113,7 +_,7 @@
+    }
+ 
+    private static int setCenter(CommandSourceStack p_139263_, Vec2 p_139264_) throws CommandSyntaxException {
+-      WorldBorder worldborder = p_139263_.getServer().overworld().getWorldBorder();
++      WorldBorder worldborder = p_139263_.getLevel().getWorldBorder(); // CraftBukkit
+       if (worldborder.getCenterX() == (double)p_139264_.x && worldborder.getCenterZ() == (double)p_139264_.y) {
+          throw ERROR_SAME_CENTER.create();
+       } else if (!((double)Math.abs(p_139264_.x) > 2.9999984E7D) && !((double)Math.abs(p_139264_.y) > 2.9999984E7D)) {
+@@ -128,7 +_,7 @@
+    }
+ 
+    private static int setSize(CommandSourceStack p_139253_, double p_139254_, long p_139255_) throws CommandSyntaxException {
+-      WorldBorder worldborder = p_139253_.getServer().overworld().getWorldBorder();
++      WorldBorder worldborder = p_139253_.getLevel().getWorldBorder(); // CraftBukkit
+       double d0 = worldborder.getSize();
+       if (d0 == p_139254_) {
+          throw ERROR_SAME_SIZE.create();

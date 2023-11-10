@@ -4,8 +4,9 @@
        this.setPvpAllowed(true);
        this.setFlightAllowed(true);
        this.initializeKeyPair();
+-      this.loadLevel();
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-       this.loadLevel();
++      this.loadLevel(storageSource.getLevelId()); // CraftBukkit
        GameProfile gameprofile = this.getSingleplayerProfile();
        String s = this.getWorldData().getLevelName();
        this.setMotd(gameprofile != null ? gameprofile.getName() + " - " + s : s);

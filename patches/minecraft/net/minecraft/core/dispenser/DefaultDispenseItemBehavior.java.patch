@@ -1,0 +1,97 @@
+--- a/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
++++ b/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
+@@ -6,8 +_,23 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.DispenserBlock;
++import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R2.util.CraftVector;
++import org.bukkit.event.block.BlockDispenseEvent;
+ 
+ public class DefaultDispenseItemBehavior implements DispenseItemBehavior {
++
++   // CraftBukkit start
++   private boolean dropper;
++
++   public DefaultDispenseItemBehavior(boolean dropper) {
++      this.dropper = dropper;
++   }
++   // CraftBukkit end
++
++   public DefaultDispenseItemBehavior() {}
++
+    public final ItemStack dispense(BlockSource p_123391_, ItemStack p_123392_) {
+       ItemStack itemstack = this.execute(p_123391_, p_123392_);
+       this.playSound(p_123391_);
+@@ -19,14 +_,23 @@
+       Direction direction = p_301824_.state().getValue(DispenserBlock.FACING);
+       Position position = DispenserBlock.getDispensePosition(p_301824_);
+       ItemStack itemstack = p_123386_.split(1);
+-      spawnItem(p_301824_.level(), itemstack, 6, direction, position);
++      // CraftBukkit start
++      if (!spawnItem(p_301824_.level(), itemstack, 6, direction, p_301824_, dropper)) {
++         p_123386_.grow(1);
++      }
++      // CraftBukkit end
+       return p_123386_;
+    }
+ 
+-   public static void spawnItem(Level p_123379_, ItemStack p_123380_, int p_123381_, Direction p_123382_, Position p_123383_) {
+-      double d0 = p_123383_.x();
+-      double d1 = p_123383_.y();
+-      double d2 = p_123383_.z();
++   // CraftBukkit start - void -> boolean return, IPosition -> ISourceBlock last argument, dropper
++   public static boolean spawnItem(Level p_123379_, ItemStack p_123380_, int p_123381_, Direction p_123382_, BlockSource p_123383_, boolean dropper) {
++      if (p_123380_.isEmpty()) return true;
++      Position position = DispenserBlock.getDispensePosition(p_123383_);
++      // CraftBukkit end
++      double d0 = position.x();
++      double d1 = position.y();
++      double d2 = position.z();
++
+       if (p_123382_.getAxis() == Direction.Axis.Y) {
+          d1 -= 0.125D;
+       } else {
+@@ -35,8 +_,41 @@
+ 
+       ItemEntity itementity = new ItemEntity(p_123379_, d0, d1, d2, p_123380_);
+       double d3 = p_123379_.random.nextDouble() * 0.1D + 0.2D;
++
+       itementity.setDeltaMovement(p_123379_.random.triangle((double)p_123382_.getStepX() * d3, 0.0172275D * (double)p_123381_), p_123379_.random.triangle(0.2D, 0.0172275D * (double)p_123381_), p_123379_.random.triangle((double)p_123382_.getStepZ() * d3, 0.0172275D * (double)p_123381_));
++
++      // CraftBukkit start
++      org.bukkit.block.Block block = CraftBlock.at(p_123379_, p_123383_.pos());
++      CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123380_);
++
++      BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), CraftVector.toBukkit(itementity.getDeltaMovement()));
++      if (!DispenserBlock.eventFired) {
++         p_123379_.getCraftServer().getPluginManager().callEvent(event);
++      }
++
++      if (event.isCancelled()) {
++         return false;
++      }
++
++      itementity.setItem(CraftItemStack.asNMSCopy(event.getItem()));
++      itementity.setDeltaMovement(CraftVector.toNMS(event.getVelocity()));
++
++      if (!dropper && !event.getItem().getType().equals(craftItem.getType())) {
++         // Chain to handler for new item
++         ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++         DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++         if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior.getClass() != DefaultDispenseItemBehavior.class) {
++            idispensebehavior.dispense(p_123383_, eventStack);
++         } else {
++            p_123379_.addFreshEntity(itementity);
++         }
++         return false;
++      }
++
+       p_123379_.addFreshEntity(itementity);
++
++      return true;
++      // CraftBukkit end
+    }
+ 
+    protected void playSound(BlockSource p_123384_) {
