@@ -28,7 +28,7 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
         this.load(snapshot);
     }
 
-    protected CraftBlockEntityState(CraftBlockEntityState state) {
+    protected CraftBlockEntityState(CraftBlockEntityState<T> state) {
         super((CraftBlockState) state);
         this.tileEntity = this.createSnapshot(state.snapshot);
         this.snapshot = this.tileEntity;

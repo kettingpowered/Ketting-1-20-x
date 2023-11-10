@@ -10,30 +10,29 @@ import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.bukkit.loot.LootTable;
 import org.bukkit.loot.Lootable;
 
-public abstract class CraftLootable extends CraftContainer implements Nameable, Lootable {
+public abstract class CraftLootable<T extends RandomizableContainerBlockEntity> extends CraftContainer<T> implements Nameable, Lootable {
 
-    public CraftLootable(World world, RandomizableContainerBlockEntity tileEntity) {
+    public CraftLootable(World world, T tileEntity) {
         super(world, (BaseContainerBlockEntity) tileEntity);
     }
 
-    protected CraftLootable(CraftLootable state) {
+    protected CraftLootable(CraftLootable<T> state) {
         super((CraftContainer) state);
     }
 
-    public void applyTo(RandomizableContainerBlockEntity lootable) {
+    public void applyTo(T lootable) {
         super.applyTo((BaseContainerBlockEntity) lootable);
-        if (((RandomizableContainerBlockEntity) this.getSnapshot()).lootTable == null) {
+        if (this.getSnapshot().lootTable == null) {
             lootable.setLootTable((ResourceLocation) null, 0L);
         }
 
     }
 
     public LootTable getLootTable() {
-        if (((RandomizableContainerBlockEntity) this.getSnapshot()).lootTable == null) {
+        if (this.getSnapshot().lootTable == null) {
             return null;
         } else {
-            ResourceLocation key = ((RandomizableContainerBlockEntity) this.getSnapshot()).lootTable;
-
+            ResourceLocation key = this.getSnapshot().lootTable;
             return Bukkit.getLootTable(CraftNamespacedKey.fromMinecraft(key));
         }
     }
@@ -43,7 +42,7 @@ public abstract class CraftLootable extends CraftContainer implements Nameable, 
     }
 
     public long getSeed() {
-        return ((RandomizableContainerBlockEntity) this.getSnapshot()).lootTableSeed;
+        return this.getSnapshot().lootTableSeed;
     }
 
     public void setSeed(long seed) {
@@ -53,8 +52,8 @@ public abstract class CraftLootable extends CraftContainer implements Nameable, 
     private void setLootTable(LootTable table, long seed) {
         ResourceLocation key = table == null ? null : CraftNamespacedKey.toMinecraft(table.getKey());
 
-        ((RandomizableContainerBlockEntity) this.getSnapshot()).setLootTable(key, seed);
+        this.getSnapshot().setLootTable(key, seed);
     }
 
-    public abstract CraftLootable copy();
+    public abstract CraftLootable<T> copy();
 }
