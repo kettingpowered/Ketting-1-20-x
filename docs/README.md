@@ -1,9 +1,13 @@
+[discord-widget]: https://canary.discord.com/api/guilds/1172551819138965605/widget.png
+[discord-invite]: https://discord.gg/jBHZDG9WS8
+
 <img align="right" src="./assets/ketting.png?raw=true" height="150" width="150">
 
 # Ketting
 
 Ketting is a fork of [MinecraftForge](https://github.com/MinecraftForge/MinecraftForge/)
 that enables the use of Bukkit plugins on Forge servers.
+[ ![discord-widget][] ][discord-invite]
 
 ## Notice
 
