@@ -31,7 +31,7 @@ If applicable, add screenshots to help explain your problem.
 ### Logs
 Please add your server's logs (just the latest logs for the initial report).
 You can upload your server logs to https://mclo.gs. 
-That website will (try to) redact sensitive information, such as paths automatically. 
+That website will (try to) redact sensitive information (such as paths) automatically. 
 
 ### Additional context
 Add any other context about the problem here.
