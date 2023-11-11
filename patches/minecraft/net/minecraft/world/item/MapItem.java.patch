@@ -1,6 +1,18 @@
 --- a/net/minecraft/world/item/MapItem.java
 +++ b/net/minecraft/world/item/MapItem.java
-@@ -58,8 +_,18 @@
+@@ -33,6 +_,11 @@
+ import net.minecraft.world.level.material.MapColor;
+ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+ 
++// CraftBukkit start
++import org.bukkit.Bukkit;
++import org.bukkit.event.server.MapInitializeEvent;
++// CraftBukkit end
++
+ public class MapItem extends ComplexItem {
+    public static final int IMAGE_WIDTH = 128;
+    public static final int IMAGE_HEIGHT = 128;
+@@ -58,14 +_,24 @@
  
     @Nullable
     public static MapItemSavedData getSavedData(ItemStack p_42854_, Level p_42855_) {
@@ -21,3 +33,21 @@
     }
  
     @Nullable
+    public static Integer getMapId(ItemStack p_151132_) {
+       CompoundTag compoundtag = p_151132_.getTag();
+-      return compoundtag != null && compoundtag.contains("map", 99) ? compoundtag.getInt("map") : null;
++      return compoundtag != null && compoundtag.contains("map", 99) ? compoundtag.getInt("map") : -1; // CraftBukkit - make new maps for no tag
+    }
+ 
+    private static int createNewSavedData(Level p_151121_, int p_151122_, int p_151123_, int p_151124_, boolean p_151125_, boolean p_151126_, ResourceKey<Level> p_151127_) {
+@@ -331,6 +_,10 @@
+       if (mapitemsaveddata != null) {
+          int i = p_42858_.getFreeMapId();
+          p_42858_.setMapData(makeKey(i), mapitemsaveddata.scaled(p_42859_));
++         // CraftBukkit start
++         MapInitializeEvent event = new MapInitializeEvent(mapitemsaveddata.mapView);
++         Bukkit.getServer().getPluginManager().callEvent(event);
++         // CraftBukkit end
+          storeMapData(p_42857_, i);
+       }
+ 
