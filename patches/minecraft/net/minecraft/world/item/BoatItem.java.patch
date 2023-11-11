@@ -8,11 +8,12 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  
-@@ -31,6 +_,7 @@
+@@ -30,7 +_,7 @@
+ 
     public InteractionResultHolder<ItemStack> use(Level p_40622_, Player p_40623_, InteractionHand p_40624_) {
        ItemStack itemstack = p_40623_.getItemInHand(p_40624_);
-       HitResult hitresult = getPlayerPOVHitResult(p_40622_, p_40623_, ClipContext.Fluid.ANY);
-+      BlockHitResult blockhitresult = (BlockHitResult) hitresult; // Ketting
+-      HitResult hitresult = getPlayerPOVHitResult(p_40622_, p_40623_, ClipContext.Fluid.ANY);
++      BlockHitResult hitresult = getPlayerPOVHitResult(p_40622_, p_40623_, ClipContext.Fluid.ANY);
        if (hitresult.getType() == HitResult.Type.MISS) {
           return InteractionResultHolder.pass(itemstack);
        } else {
@@ -21,7 +22,7 @@
  
           if (hitresult.getType() == HitResult.Type.BLOCK) {
 +            // CraftBukkit start - Boat placement
-+            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent(p_40623_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, blockhitresult.getBlockPos(), blockhitresult.getDirection(), itemstack, false, p_40624_, blockhitresult.getLocation());
++            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent(p_40623_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, hitresult.getBlockPos(), hitresult.getDirection(), itemstack, false, p_40624_, hitresult.getLocation());
 +
 +            if (event.isCancelled()) {
 +               return InteractionResultHolder.pass(itemstack);
@@ -36,7 +37,7 @@
                 if (!p_40622_.isClientSide) {
 -                  p_40622_.addFreshEntity(boat);
 +                  // CraftBukkit start
-+                  if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPlaceEvent(p_40622_, blockhitresult.getBlockPos(), blockhitresult.getDirection(), p_40623_, boat, p_40624_).isCancelled()) {
++                  if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPlaceEvent(p_40622_, hitresult.getBlockPos(), hitresult.getDirection(), p_40623_, boat, p_40624_).isCancelled()) {
 +                     return InteractionResultHolder.fail(itemstack);
 +                  }
 +

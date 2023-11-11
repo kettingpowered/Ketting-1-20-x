@@ -139,7 +139,7 @@
              BlockEntity blockentity = p_40583_.getBlockEntity(p_40585_);
              if (blockentity != null) {
 -               if (!p_40583_.isClientSide && blockentity.onlyOpCanSetNbt() && (p_40584_ == null || !p_40584_.canUseGameMasterBlocks())) {
-+               if (!p_40583_.isClientSide && blockentity.onlyOpCanSetNbt() && (p_40584_ == null || !p_40584_.canUseGameMasterBlocks() || (p_40584_.getAbilities().instabuild && p_40584_.getBukkitEntity().hasPermission("minecraft.nbt.place"))))) { // Spigot - add permission
++               if (!p_40583_.isClientSide && blockentity.onlyOpCanSetNbt() && (p_40584_ == null || !(p_40584_.canUseGameMasterBlocks() || (p_40584_.getAbilities().instabuild && p_40584_.getBukkitEntity().hasPermission("minecraft.nbt.place"))))) { // Spigot - add permission
                    return false;
                 }
  
