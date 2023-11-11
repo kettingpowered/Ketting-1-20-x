@@ -1,5 +1,18 @@
 --- a/net/minecraft/world/item/MinecartItem.java
 +++ b/net/minecraft/world/item/MinecartItem.java
+@@ -17,6 +_,12 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.Vec3;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseEvent;
++// CraftBukkit end
++
+ public class MinecartItem extends Item {
+    private static final DispenseItemBehavior DISPENSE_ITEM_BEHAVIOR = new DefaultDispenseItemBehavior() {
+       private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
 @@ -30,7 +_,7 @@
           double d2 = vec3.z() + (double)direction.getStepZ() * 1.125D;
           BlockPos blockpos = p_42949_.pos().relative(direction);
@@ -9,6 +22,52 @@
           double d3;
           if (blockstate.is(BlockTags.RAILS)) {
              if (railshape.isAscending()) {
+@@ -52,13 +_,42 @@
+             }
+          }
+ 
+-         AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(level, d0, d1 + d3, d2, ((MinecartItem)p_42950_.getItem()).type);
++         // CraftBukkit start
++         // AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(level, d0, d1 + d3, d2, ((MinecartItem)p_42950_.getItem()).type);
++         ItemStack itemstack1 = p_42950_.split(1);
++         org.bukkit.block.Block block2 = CraftBlock.at(level, p_42949_.pos());
++         CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
++
++         BlockDispenseEvent event = new BlockDispenseEvent(block2, craftItem.clone(), new org.bukkit.util.Vector(d0, d1 + d3, d2));
++         if (!DispenserBlock.eventFired) {
++            level.getCraftServer().getPluginManager().callEvent(event);
++         }
++
++         if (event.isCancelled()) {
++            p_42950_.grow(1);
++            return p_42950_;
++         }
++
++         if (!event.getItem().equals(craftItem)) {
++            p_42950_.grow(1);
++            // Chain to handler for new item
++            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++            if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
++               idispensebehavior.dispense(p_42949_, eventStack);
++               return p_42950_;
++            }
++         }
++
++         itemstack1 = CraftItemStack.asNMSCopy(event.getItem());
++         AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(level, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), ((MinecartItem) itemstack1.getItem()).type);
+          if (p_42950_.hasCustomHoverName()) {
+             abstractminecart.setCustomName(p_42950_.getHoverName());
+          }
+ 
+-         level.addFreshEntity(abstractminecart);
+-         p_42950_.shrink(1);
++         if (!level.addFreshEntity(abstractminecart)) p_42950_.grow(1);
++         // itemstack.shrink(1); // CraftBukkit - handled during event processing
++         // CraftBukkit end
+          return p_42950_;
+       }
+ 
 @@ -83,7 +_,7 @@
        } else {
           ItemStack itemstack = p_42943_.getItemInHand();
@@ -18,3 +77,17 @@
              double d0 = 0.0D;
              if (railshape.isAscending()) {
                 d0 = 0.5D;
+@@ -94,7 +_,12 @@
+                abstractminecart.setCustomName(itemstack.getHoverName());
+             }
+ 
+-            level.addFreshEntity(abstractminecart);
++            // CraftBukkit start
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPlaceEvent(p_42943_, abstractminecart).isCancelled()) {
++               return InteractionResult.FAIL;
++            }
++            // CraftBukkit end
++            if (!level.addFreshEntity(abstractminecart)) return InteractionResult.PASS; // CraftBukkit
+             level.gameEvent(GameEvent.ENTITY_PLACE, blockpos, GameEvent.Context.of(p_42943_.getPlayer(), level.getBlockState(blockpos.below())));
+          }
+ 

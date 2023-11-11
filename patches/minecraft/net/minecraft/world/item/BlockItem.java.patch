@@ -1,5 +1,19 @@
 --- a/net/minecraft/world/item/BlockItem.java
 +++ b/net/minecraft/world/item/BlockItem.java
+@@ -30,6 +_,13 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ 
++// CraftBukkit start
++import net.minecraft.server.level.ServerLevel;
++import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
++import org.bukkit.event.block.BlockCanBuildEvent;
++// CraftBukkit end
++
+ public class BlockItem extends Item {
+    public static final String BLOCK_ENTITY_TAG = "BlockEntityTag";
+    public static final String BLOCK_STATE_TAG = "BlockStateTag";
 @@ -82,8 +_,8 @@
                    }
                 }
@@ -28,6 +42,60 @@
     @Nullable
     public BlockPlaceContext updatePlacementContext(BlockPlaceContext p_40609_) {
        return p_40609_;
+@@ -119,6 +_,8 @@
+       CompoundTag compoundtag = p_40605_.getTag();
+       if (compoundtag != null) {
+          CompoundTag compoundtag1 = compoundtag.getCompound("BlockStateTag");
++         // CraftBukkit start
++         blockstate = getBlockState(blockstate, compoundtag1);
+          StateDefinition<Block, BlockState> statedefinition = p_40606_.getBlock().getStateDefinition();
+ 
+          for(String s : compoundtag1.getAllKeys()) {
+@@ -130,13 +_,24 @@
+          }
+       }
+ 
+-      if (blockstate != p_40606_) {
+-         p_40604_.setBlock(p_40603_, blockstate, 2);
+-      }
+-
+       return blockstate;
+    }
+ 
++   public static BlockState getBlockState(BlockState iblockdata, CompoundTag compoundtag1) {
++      BlockState iblockdata1 = iblockdata;
++      // CraftBukkit end
++      StateDefinition<Block, BlockState> statedefinition = iblockdata.getBlock().getStateDefinition();
++
++      for (String s : compoundtag1.getAllKeys()) {
++         Property<?> property = statedefinition.getProperty(s);
++         if (property != null) {
++            String s1 = compoundtag1.get(s).getAsString();
++            iblockdata1 = updateState(iblockdata1, property, s1);
++         }
++      }
++      return iblockdata1;
++   }
++
+    private static <T extends Comparable<T>> BlockState updateState(BlockState p_40594_, Property<T> p_40595_, String p_40596_) {
+       return p_40595_.getValue(p_40596_).map((p_40592_) -> {
+          return p_40594_.setValue(p_40595_, p_40592_);
+@@ -146,6 +_,15 @@
+    protected boolean canPlace(BlockPlaceContext p_40611_, BlockState p_40612_) {
+       Player player = p_40611_.getPlayer();
+       CollisionContext collisioncontext = player == null ? CollisionContext.empty() : CollisionContext.of(player);
++      // CraftBukkit start - store default return
++      boolean defaultReturn = (!this.mustSurvive() || p_40612_.canSurvive(p_40611_.getLevel(), p_40611_.getClickedPos())) && p_40611_.getLevel().isUnobstructed(p_40612_, p_40611_.getClickedPos(), collisioncontext);
++      org.bukkit.entity.Player playerBukkit = (p_40611_.getPlayer() instanceof ServerPlayer) ? (org.bukkit.entity.Player) p_40611_.getPlayer().getBukkitEntity() : null;
++
++      BlockCanBuildEvent event = new BlockCanBuildEvent(CraftBlock.at(p_40611_.getLevel(), p_40611_.getClickedPos()), playerBukkit, CraftBlockData.fromData(p_40612_), defaultReturn);
++      p_40611_.getLevel().getCraftServer().getPluginManager().callEvent(event);
++
++      return event.isBuildable();
++      // CraftBukkit end
+       return (!this.mustSurvive() || p_40612_.canSurvive(p_40611_.getLevel(), p_40611_.getClickedPos())) && p_40611_.getLevel().isUnobstructed(p_40612_, p_40611_.getClickedPos(), collisioncontext);
+    }
+ 
 @@ -195,11 +_,19 @@
     }
  
