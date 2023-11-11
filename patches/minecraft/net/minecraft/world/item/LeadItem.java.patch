@@ -1,0 +1,70 @@
+--- a/net/minecraft/world/item/LeadItem.java
++++ b/net/minecraft/world/item/LeadItem.java
+@@ -12,6 +_,11 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.AABB;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot;
++import org.bukkit.event.hanging.HangingPlaceEvent;
++// CraftBukkit end
++
+ public class LeadItem extends Item {
+    public LeadItem(Item.Properties p_42828_) {
+       super(p_42828_);
+@@ -24,7 +_,7 @@
+       if (blockstate.is(BlockTags.FENCES)) {
+          Player player = p_42834_.getPlayer();
+          if (!level.isClientSide && player != null) {
+-            bindPlayerMobs(player, level, blockpos);
++            bindPlayerMobs(player, level, blockpos, p_42834_.getHand()); // CraftBukkit - Pass hand
+          }
+ 
+          return InteractionResult.sidedSuccess(level.isClientSide);
+@@ -33,7 +_,7 @@
+       }
+    }
+ 
+-   public static InteractionResult bindPlayerMobs(Player p_42830_, Level p_42831_, BlockPos p_42832_) {
++   public static InteractionResult bindPlayerMobs(Player p_42830_, Level p_42831_, BlockPos p_42832_, net.minecraft.world.InteractionHand interactionHand) { // CraftBukkit - Add InteractionHand
+       LeashFenceKnotEntity leashfenceknotentity = null;
+       boolean flag = false;
+       double d0 = 7.0D;
+@@ -45,9 +_,26 @@
+          if (mob.getLeashHolder() == p_42830_) {
+             if (leashfenceknotentity == null) {
+                leashfenceknotentity = LeashFenceKnotEntity.getOrCreateKnot(p_42831_, p_42832_);
++
++               // CraftBukkit start - fire HangingPlaceEvent
++               org.bukkit.inventory.EquipmentSlot hand = CraftEquipmentSlot.getHand(interactionHand);
++               HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) leashfenceknotentity.getBukkitEntity(), leashfenceknotentity != null ? (org.bukkit.entity.Player) p_42830_.getBukkitEntity() : null, p_42831_.getWorld().getBlockAt(i, j, k), org.bukkit.block.BlockFace.SELF, hand);
++               p_42831_.getCraftServer().getPluginManager().callEvent(event);
++
++               if (event.isCancelled()) {
++                  leashfenceknotentity.discard();
++                  return InteractionResult.PASS;
++               }
++               // CraftBukkit end
+                leashfenceknotentity.playPlacementSound();
+             }
+ 
++            // CraftBukkit start
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerLeashEntityEvent(mob, leashfenceknotentity, p_42830_, interactionHand).isCancelled()) {
++               continue;
++            }
++            // CraftBukkit end
++
+             mob.setLeashedTo(leashfenceknotentity, true);
+             flag = true;
+          }
+@@ -59,4 +_,10 @@
+ 
+       return flag ? InteractionResult.SUCCESS : InteractionResult.PASS;
+    }
++
++   // CraftBukkit start
++   public static InteractionResult bindPlayerMobs(Player player, Level level, BlockPos blockPos) {
++      return bindPlayerMobs(player, level, blockPos, net.minecraft.world.InteractionHand.MAIN_HAND);
++   }
++   // CraftBukkit end
+ }
