@@ -1,8 +1,41 @@
 --- a/net/minecraft/world/item/trading/MerchantOffer.java
 +++ b/net/minecraft/world/item/trading/MerchantOffer.java
-@@ -90,7 +_,7 @@
+@@ -5,6 +_,7 @@
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.item.ItemStack;
+ 
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMerchantRecipe; // CraftBukkit
+ public class MerchantOffer {
+    private final ItemStack baseCostA;
+    private final ItemStack costB;
+@@ -16,6 +_,22 @@
+    private int demand;
+    private float priceMultiplier;
+    private int xp = 1;
++   // CraftBukkit start
++   private CraftMerchantRecipe bukkitHandle;
++
++   public CraftMerchantRecipe asBukkit() {
++      return (bukkitHandle == null) ? bukkitHandle = new CraftMerchantRecipe(this) : bukkitHandle;
++   }
++
++   public MerchantOffer(ItemStack itemstack, ItemStack itemstack1, ItemStack itemstack2, int uses, int maxUses, int experience, float priceMultiplier, CraftMerchantRecipe bukkit) {
++      this(itemstack, itemstack1, itemstack2, uses, maxUses, experience, priceMultiplier, 0, bukkit);
++   }
++
++   public MerchantOffer(ItemStack itemstack, ItemStack itemstack1, ItemStack itemstack2, int uses, int maxUses, int experience, float priceMultiplier, int demand, CraftMerchantRecipe bukkit) {
++      this(itemstack, itemstack1, itemstack2, uses, maxUses, experience, priceMultiplier, demand);
++      this.bukkitHandle = bukkit;
++   }
++// CraftBukkit end
+ 
+    public MerchantOffer(CompoundTag p_45351_) {
+       this.baseCostA = ItemStack.of(p_45351_.getCompound("buy"));
+@@ -89,8 +_,9 @@
+          return ItemStack.EMPTY;
        } else {
           int i = this.baseCostA.getCount();
++         if (i <= 0) return ItemStack.EMPTY; // CraftBukkit - SPIGOT-5476
           int j = Math.max(0, Mth.floor((float)(i * this.demand) * this.priceMultiplier));
 -         return this.baseCostA.copyWithCount(Mth.clamp(i + j + this.specialPriceDiff, 1, this.baseCostA.getItem().getMaxStackSize()));
 +         return this.baseCostA.copyWithCount(Mth.clamp(i + j + this.specialPriceDiff, 1, this.baseCostA.getMaxStackSize()));
@@ -18,3 +51,16 @@
              itemstack.setDamageValue(itemstack.getDamageValue());
           }
  
+@@ -206,7 +_,11 @@
+       if (!this.satisfiedBy(p_45362_, p_45363_)) {
+          return false;
+       } else {
+-         p_45362_.shrink(this.getCostA().getCount());
++         // CraftBukkit start
++         if (!this.getCostA().isEmpty()) {
++            p_45362_.shrink(this.getCostA().getCount());
++         }
++         // CraftBukkit end
+          if (!this.getCostB().isEmpty()) {
+             p_45363_.shrink(this.getCostB().getCount());
+          }

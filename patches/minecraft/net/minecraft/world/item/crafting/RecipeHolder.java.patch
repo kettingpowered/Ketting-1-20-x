@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/item/crafting/RecipeHolder.java
++++ b/net/minecraft/world/item/crafting/RecipeHolder.java
+@@ -2,7 +_,15 @@
+ 
+ import net.minecraft.resources.ResourceLocation;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
++
+ public record RecipeHolder<T extends Recipe<?>>(ResourceLocation id, T value) {
++   public final org.bukkit.inventory.Recipe toBukkitRecipe() {
++      return this.value.toBukkitRecipe(CraftNamespacedKey.fromMinecraft(this.id));
++   }
++   // CraftBukkit end
++
+    public boolean equals(Object p_298053_) {
+       if (this == p_298053_) {
+          return true;

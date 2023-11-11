@@ -1,11 +1,34 @@
 --- a/net/minecraft/world/item/crafting/SmithingTrimRecipe.java
 +++ b/net/minecraft/world/item/crafting/SmithingTrimRecipe.java
-@@ -87,7 +_,7 @@
+@@ -18,6 +_,13 @@
+ import net.minecraft.world.item.armortrim.TrimPatterns;
+ import net.minecraft.world.level.Level;
+ 
++// CraftBukkit start
++import org.bukkit.NamespacedKey;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftSmithingTrimRecipe;
++import org.bukkit.inventory.Recipe;
++// CraftBukkit end
++
+ public class SmithingTrimRecipe implements SmithingRecipe {
+    final Ingredient template;
+    final Ingredient base;
+@@ -87,8 +_,15 @@
     }
  
     public boolean isIncomplete() {
 -      return Stream.of(this.template, this.base, this.addition).anyMatch(Ingredient::isEmpty);
+-   }
 +      return Stream.of(this.template, this.base, this.addition).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
-    }
++   }
++
++   // CraftBukkit start
++   @Override
++   public Recipe toBukkitRecipe(NamespacedKey id) {
++      return new CraftSmithingTrimRecipe(id, CraftRecipe.toBukkit(this.template), CraftRecipe.toBukkit(this.base), CraftRecipe.toBukkit(this.addition));
++   }
++   // CraftBukkit end
  
     public static class Serializer implements RecipeSerializer<SmithingTrimRecipe> {
+       private static final Codec<SmithingTrimRecipe> CODEC = RecordCodecBuilder.create((p_297394_) -> {

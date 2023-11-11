@@ -1,5 +1,34 @@
 --- a/net/minecraft/world/item/CrossbowItem.java
 +++ b/net/minecraft/world/item/CrossbowItem.java
+@@ -214,11 +_,27 @@
+             Vector3f vector3f = vec31.toVector3f().rotate(quaternionf);
+             projectile.shoot((double)vector3f.x(), (double)vector3f.y(), (double)vector3f.z(), p_40902_, p_40903_);
+          }
++         // CraftBukkit start
++         org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityShootBowEvent(p_40896_, p_40898_, p_40899_, projectile, p_40896_.getUsedItemHand(), p_40900_, true);
++         if (event.isCancelled()) {
++            event.getProjectile().remove();
++            return;
++         }
++         // CraftBukkit end
+ 
+          p_40898_.hurtAndBreak(flag ? 3 : 1, p_40896_, (p_40858_) -> {
+             p_40858_.broadcastBreakEvent(p_40897_);
+          });
+-         p_40895_.addFreshEntity(projectile);
++         // CraftBukkit start
++         if (event.getProjectile() == projectile.getBukkitEntity()) {
++            if (!p_40895_.addFreshEntity(projectile)) {
++               if (p_40896_ instanceof ServerPlayer) {
++                  ((ServerPlayer) p_40896_).getBukkitEntity().updateInventory();
++               }
++               return;
++            }
++         }
++         // CraftBukkit end
+          p_40895_.playSound((Player)null, p_40896_.getX(), p_40896_.getY(), p_40896_.getZ(), SoundEvents.CROSSBOW_SHOOT, SoundSource.PLAYERS, 1.0F, p_40900_);
+       }
+    }
 @@ -241,6 +_,7 @@
     }
  

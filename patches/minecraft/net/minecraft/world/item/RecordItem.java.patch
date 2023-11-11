@@ -43,6 +43,14 @@
     }
  
     public InteractionResult useOn(UseOnContext p_43048_) {
+@@ -42,6 +_,7 @@
+       if (blockstate.is(Blocks.JUKEBOX) && !blockstate.getValue(JukeboxBlock.HAS_RECORD)) {
+          ItemStack itemstack = p_43048_.getItemInHand();
+          if (!level.isClientSide) {
++            if (true) return InteractionResult.SUCCESS; // CraftBukkit - handled in ItemStack
+             Player player = p_43048_.getPlayer();
+             BlockEntity blockentity = level.getBlockEntity(blockpos);
+             if (blockentity instanceof JukeboxBlockEntity) {
 @@ -80,7 +_,7 @@
     }
  

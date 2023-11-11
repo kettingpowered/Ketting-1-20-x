@@ -26,6 +26,40 @@
                    abstractarrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 3.0F, 1.0F);
                    if (f == 1.0F) {
                       abstractarrow.setCritArrow(true);
+@@ -56,6 +_,15 @@
+                      abstractarrow.setSecondsOnFire(100);
+                   }
+ 
++                  // CraftBukkit start
++                  org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityShootBowEvent(player, p_40667_, itemstack, abstractarrow, player.getUsedItemHand(), f, !flag1);
++                  if (event.isCancelled()) {
++                     event.getProjectile().remove();
++                     return;
++                  }
++                  flag1 = !event.shouldConsumeItem();
++                  // CraftBukkit end
++
+                   p_40667_.hurtAndBreak(1, player, (p_296888_) -> {
+                      p_296888_.broadcastBreakEvent(player.getUsedItemHand());
+                   });
+@@ -63,7 +_,16 @@
+                      abstractarrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
+                   }
+ 
+-                  p_40668_.addFreshEntity(abstractarrow);
++                  // CraftBukkit start
++                  if (event.getProjectile() == abstractarrow.getBukkitEntity()) {
++                     if (!p_40668_.addFreshEntity(abstractarrow)) {
++                        if (player instanceof net.minecraft.server.level.ServerPlayer) {
++                           ((net.minecraft.server.level.ServerPlayer) player).getBukkitEntity().updateInventory();
++                        }
++                        return;
++                     }
++                  }
++                  // CraftBukkit end
+                }
+ 
+                p_40668_.playSound((Player)null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F / (p_40668_.getRandom().nextFloat() * 0.4F + 1.2F) + f * 0.5F);
 @@ -101,6 +_,10 @@
     public InteractionResultHolder<ItemStack> use(Level p_40672_, Player p_40673_, InteractionHand p_40674_) {
        ItemStack itemstack = p_40673_.getItemInHand(p_40674_);

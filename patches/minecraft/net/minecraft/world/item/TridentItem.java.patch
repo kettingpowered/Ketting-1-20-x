@@ -1,0 +1,55 @@
+--- a/net/minecraft/world/item/TridentItem.java
++++ b/net/minecraft/world/item/TridentItem.java
+@@ -57,9 +_,12 @@
+             int j = EnchantmentHelper.getRiptide(p_43394_);
+             if (j <= 0 || player.isInWaterOrRain()) {
+                if (!p_43395_.isClientSide) {
++                  // CraftBukkit - moved down
++                  /*
+                   p_43394_.hurtAndBreak(1, player, (p_43388_) -> {
+                      p_43388_.broadcastBreakEvent(p_43396_.getUsedItemHand());
+                   });
++                  */
+                   if (j == 0) {
+                      ThrownTrident throwntrident = new ThrownTrident(p_43395_, player, p_43394_);
+                      throwntrident.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F + (float)j * 0.5F, 1.0F);
+@@ -68,15 +_,39 @@
+                      }
+ 
+                      p_43395_.addFreshEntity(throwntrident);
++                     // CraftBukkit start
++                     if (!p_43395_.addFreshEntity(throwntrident)) {
++                        if (player instanceof net.minecraft.server.level.ServerPlayer) {
++                           ((net.minecraft.server.level.ServerPlayer) player).getBukkitEntity().updateInventory();
++                        }
++                        return;
++                     }
++
++                     p_43394_.hurtAndBreak(1, player, (p_43388_) -> {
++                        p_43388_.broadcastBreakEvent(p_43396_.getUsedItemHand());
++                     });
++                     throwntrident.tridentItem = p_43394_.copy(); // SPIGOT-4511 update since damage call moved
++                     // CraftBukkit end
++
+                      p_43395_.playSound((Player)null, throwntrident, SoundEvents.TRIDENT_THROW, SoundSource.PLAYERS, 1.0F, 1.0F);
+                      if (!player.getAbilities().instabuild) {
+                         player.getInventory().removeItem(p_43394_);
+                      }
++                     // CraftBukkit start - SPIGOT-5458 also need in this branch :(
++                  } else {
++                     p_43394_.hurtAndBreak(1, player, (p_43388_) -> {
++                        p_43388_.broadcastBreakEvent(p_43396_.getUsedItemHand());
++                     });
++                     // CraftBukkkit end
+                   }
+                }
+ 
+                player.awardStat(Stats.ITEM_USED.get(this));
+                if (j > 0) {
++                  // CraftBukkit start
++                  org.bukkit.event.player.PlayerRiptideEvent event = new org.bukkit.event.player.PlayerRiptideEvent((org.bukkit.entity.Player) player.getBukkitEntity(), org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(p_43394_));
++                  event.getPlayer().getServer().getPluginManager().callEvent(event);
++                  // CraftBukkit end
+                   float f7 = player.getYRot();
+                   float f = player.getXRot();
+                   float f1 = -Mth.sin(f7 * ((float)Math.PI / 180F)) * Mth.cos(f * ((float)Math.PI / 180F));
