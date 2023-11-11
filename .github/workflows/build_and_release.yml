@@ -62,6 +62,16 @@ jobs:
           distribution: 'temurin'
       - name: Make ./gradlew executable
         run: chmod +x ./gradlew
+      - name: Cache .gradle
+        uses: burrunan/gradle-cache-action@v1
+        with:
+          # Enable concurrent cache save and restore
+          # Default is concurrent=false for better log readability
+          concurrent: true
+          # Disable caching of $HOME/.gradle/caches/*.*/generated-gradle-jars
+          save-generated-gradle-jars: false
+          # Disable publishing Gradle Build Scan URL to job report
+          gradle-build-scan-report: false
       - name: Setup Ketting
         run: ./gradlew setup
       - name: Build Ketting Jar
