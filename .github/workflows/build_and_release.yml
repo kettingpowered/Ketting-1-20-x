@@ -21,8 +21,8 @@ jobs:
   #fixme: this is not ready yet, because the project itself doesn't compile.
   create-release:
     needs: build
+    if: ${{ github.ref == 'refs/heads/1.20.x' }}
     runs-on: ubuntu-latest
-    if: false && github.ref_type == 'tag'
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v3
@@ -49,6 +49,10 @@ jobs:
         with:
           generateReleaseNotes: true
           artifacts: "artifacts/*"
+          tag: ${{ github.sha }}
+          #prerelease: true
+          draft: true
+          
 
   build:
     runs-on: ubuntu-latest
@@ -75,9 +79,8 @@ jobs:
       - name: Build Ketting Jar
         run: ./gradlew kettingJar
       - name: Upload build artifact
-        if: false
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.name }}
           path: |
-            forge/build/libs/
+            projects/forge/build/libs/
