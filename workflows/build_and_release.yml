@@ -1,0 +1,74 @@
+name: Server builds
+
+on:
+  push:
+    branches:
+     - *
+    #todo: not sure if tags for ketting should be built.
+    # it might be better to just build all commits to the main branch
+    # and automatically push a tag and release.
+    tags:
+      - *
+  pull_request:
+    branches:
+     - *
+#This permission is needed to push a release (and/or tags)
+permissions:
+  contents: write
+
+jobs:
+  #fixme: this is not ready yet, because the project itself doesn't compile.
+  create-release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: false && github.ref_type == 'tag'
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+      - name: Rename and move artifacts
+        run: |
+          for dir in artifacts/*/
+          do
+            dir=${dir%*/} # remove the trailing "/"
+            for file in $dir/*
+            do 
+              file=${file##*/} # remove the path before the filename
+              base=${file%.*} # remove the extension
+              ext=${file#"$base"} # remove the filename before the extension
+              echo "moving ${dir}/${file} to artifacts/${file%%.*}-${dir##*/}${ext}"
+              mv "${dir}/${file}" "artifacts/${file%%.*}-${dir##*/}${ext}"
+            done
+            rm -r "${dir}"
+          done
+      - name: release
+        uses: ncipollo/release-action@v1
+        id: create_release
+        with:
+          generateReleaseNotes: true
+          artifacts: "artifacts/*"
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
+        with:
+        java-version: '17'
+        distribution: 'temurin'
+      - name: Make ./gradlew executable
+        run: chmod +x ./gradlew
+      - name: Setup Ketting
+        run: ./gradlew setup
+      - name: Build Ketting Jar
+        run: ./gradlew kettingJar
+      - name: Upload build artifact
+        if: 
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.name }}
+          path: |
+            forge/build/libs/
