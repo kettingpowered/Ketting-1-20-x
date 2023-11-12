@@ -1,0 +1,35 @@
+--- a/net/minecraft/world/entity/Interaction.java
++++ b/net/minecraft/world/entity/Interaction.java
+@@ -16,10 +_,13 @@
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.world.InteractionHand;
+ import net.minecraft.world.InteractionResult;
++import net.minecraft.world.damagesource.DamageSource;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.material.PushReaction;
+ import net.minecraft.world.phys.AABB;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityDamageEvent;
+ import org.slf4j.Logger;
+ 
+ public class Interaction extends Entity implements Attackable, Targeting {
+@@ -121,9 +_,17 @@
+ 
+    public boolean skipAttackInteraction(Entity p_273553_) {
+       if (p_273553_ instanceof Player player) {
++         // CraftBukkit start
++         DamageSource source = player.damageSources().playerAttack(player);
++         EntityDamageEvent event = CraftEventFactory.callNonLivingEntityDamageEvent(this, source, 1.0F, false);
++         if (event.isCancelled()) {
++            return true;
++         }
++         // CraftBukkit end
++
+          this.attack = new Interaction.PlayerAction(player.getUUID(), this.level().getGameTime());
+          if (player instanceof ServerPlayer serverplayer) {
+-            CriteriaTriggers.PLAYER_HURT_ENTITY.trigger(serverplayer, this, player.damageSources().generic(), 1.0F, 1.0F, false);
++            CriteriaTriggers.PLAYER_HURT_ENTITY.trigger(serverplayer, this, source, (float) event.getFinalDamage(), 1.0F, false); // CraftBukkit
+          }
+ 
+          return !this.getResponse();
