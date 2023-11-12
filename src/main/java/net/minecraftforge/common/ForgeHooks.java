@@ -510,7 +510,7 @@ public class ForgeHooks {
             level.captureBlockSnapshots = true;
 
         ItemStack copy = itemstack.copy();
-        InteractionResult ret = itemstack.getItem().useOn(context);
+        InteractionResult ret = itemstack.onItemUse(context, (c) -> itemstack.getItem().useOn(context)); //Ketting - make sure that craftbukkit knows that we fired this event
         if (itemstack.isEmpty())
             ForgeEventFactory.onPlayerDestroyItem(player, copy, context.getHand());
 
