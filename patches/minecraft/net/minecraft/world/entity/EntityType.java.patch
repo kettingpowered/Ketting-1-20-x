@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
+@@ -167,7 +_,7 @@
+    private static final float MAGIC_HORSE_WIDTH = 1.3964844F;
+    private static final int DISPLAY_TRACKING_RANGE = 10;
+    public static final EntityType<Allay> ALLAY = register("allay", EntityType.Builder.of(Allay::new, MobCategory.CREATURE).sized(0.35F, 0.6F).clientTrackingRange(8).updateInterval(2));
+-   public static final EntityType<AreaEffectCloud> AREA_EFFECT_CLOUD = register("area_effect_cloud", EntityType.Builder.<AreaEffectCloud>of(AreaEffectCloud::new, MobCategory.MISC).fireImmune().sized(6.0F, 0.5F).clientTrackingRange(10).updateInterval(Integer.MAX_VALUE));
++   public static final EntityType<AreaEffectCloud> AREA_EFFECT_CLOUD = register("area_effect_cloud", EntityType.Builder.<AreaEffectCloud>of(AreaEffectCloud::new, MobCategory.MISC).fireImmune().sized(6.0F, 0.5F).clientTrackingRange(10).updateInterval(10)); // CraftBukkit - SPIGOT-3729: track area effect clouds
+    public static final EntityType<ArmorStand> ARMOR_STAND = register("armor_stand", EntityType.Builder.<ArmorStand>of(ArmorStand::new, MobCategory.MISC).sized(0.5F, 1.975F).clientTrackingRange(10));
+    public static final EntityType<Arrow> ARROW = register("arrow", EntityType.Builder.<Arrow>of(Arrow::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20));
+    public static final EntityType<Axolotl> AXOLOTL = register("axolotl", EntityType.Builder.of(Axolotl::new, MobCategory.AXOLOTLS).sized(0.75F, 0.42F).clientTrackingRange(10));
 @@ -308,6 +_,11 @@
     private final EntityDimensions dimensions;
     private final FeatureFlagSet requiredFeatures;
@@ -12,7 +21,7 @@
     private static <T extends Entity> EntityType<T> register(String p_20635_, EntityType.Builder<T> p_20636_) {
        return Registry.register(BuiltInRegistries.ENTITY_TYPE, p_20635_, p_20636_.build(p_20635_));
     }
-@@ -321,17 +_,24 @@
+@@ -321,21 +_,34 @@
     }
  
     public EntityType(EntityType.EntityFactory<T> p_273268_, MobCategory p_272918_, boolean p_273417_, boolean p_273389_, boolean p_273556_, boolean p_272654_, ImmutableSet<Block> p_273631_, EntityDimensions p_272946_, int p_272895_, int p_273451_, FeatureFlagSet p_273518_) {
@@ -47,7 +56,71 @@
 +      this.customClientFactory = customClientFactory;
     }
  
+-   @Nullable
+    public T spawn(ServerLevel p_20593_, @Nullable ItemStack p_20594_, @Nullable Player p_20595_, BlockPos p_20596_, MobSpawnType p_20597_, boolean p_20598_, boolean p_20599_) {
++      // CraftBukkit start
++      return this.spawn(p_20593_, p_20594_, p_20595_, p_20596_, p_20597_, p_20598_, p_20599_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
++   }
++
++      @Nullable
++   public T spawn(ServerLevel p_20593_, @Nullable ItemStack p_20594_, @Nullable Player p_20595_, BlockPos p_20596_, MobSpawnType p_20597_, boolean p_20598_, boolean p_20599_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++      // CraftBukkit end
+       Consumer<T> consumer;
+       CompoundTag compoundtag;
+       if (p_20594_ != null) {
+@@ -347,7 +_,7 @@
+          compoundtag = null;
+       }
+ 
+-      return this.spawn(p_20593_, compoundtag, consumer, p_20596_, p_20597_, p_20598_, p_20599_);
++      return this.spawn(p_20593_, compoundtag, consumer, p_20596_, p_20597_, p_20598_, p_20599_, spawnReason); // CraftBukkit end
+    }
+ 
+    public static <T extends Entity> Consumer<T> createDefaultStackConfig(ServerLevel p_263583_, ItemStack p_263568_, @Nullable Player p_263575_) {
+@@ -368,20 +_,36 @@
+    public static <T extends Entity> Consumer<T> appendCustomEntityStackConfig(Consumer<T> p_263579_, ServerLevel p_263571_, ItemStack p_263582_, @Nullable Player p_263574_) {
+       CompoundTag compoundtag = p_263582_.getTag();
+       return compoundtag != null ? p_263579_.andThen((p_262558_) -> {
+-         updateCustomEntityTag(p_263571_, p_263574_, p_262558_, compoundtag);
++         try { updateCustomEntityTag(p_263571_, p_263574_, p_262558_, compoundtag); } catch (Throwable t) { LOGGER.warn("Error loading spawn egg NBT", t); } // CraftBukkit - SPIGOT-5665
+       }) : p_263579_;
+    }
+ 
     @Nullable
+    public T spawn(ServerLevel p_262634_, BlockPos p_262707_, MobSpawnType p_262597_) {
+-      return this.spawn(p_262634_, (CompoundTag)null, (Consumer<T>)null, p_262707_, p_262597_, false, false);
+-   }
+-
+-   @Nullable
+-   public T spawn(ServerLevel p_262704_, @Nullable CompoundTag p_262603_, @Nullable Consumer<T> p_262621_, BlockPos p_262672_, MobSpawnType p_262644_, boolean p_262690_, boolean p_262590_) {
++      // CraftBukkit start
++      return this.spawn(p_262634_, p_262707_, p_262597_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++   }
++
++   @Nullable
++   public T spawn(ServerLevel worldserver, BlockPos blockposition, MobSpawnType enummobspawn, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++      return this.spawn(worldserver, (CompoundTag) null, null, blockposition, enummobspawn, false, false, spawnReason); // CraftBukkit - decompile error
++      // CraftBukkit end
++   }
++
++   @Nullable
++   public T spawn(ServerLevel worldserver, @Nullable CompoundTag nbttagcompound, @Nullable Consumer<T> consumer, BlockPos blockposition, MobSpawnType enummobspawn, boolean flag, boolean flag1) {
++      // CraftBukkit start
++      return this.spawn(worldserver, nbttagcompound, consumer, blockposition, enummobspawn, flag, flag1, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++   }
++
++   @Nullable
++   public T spawn(ServerLevel p_262704_, @Nullable CompoundTag p_262603_, @Nullable Consumer<T> p_262621_, BlockPos p_262672_, MobSpawnType p_262644_, boolean p_262690_, boolean p_262590_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++      // CraftBukkit end
+       T t = this.create(p_262704_, p_262603_, p_262621_, p_262672_, p_262644_, p_262690_, p_262590_);
+       if (t != null) {
+-         p_262704_.addFreshEntityWithPassengers(t);
++         p_262704_.addFreshEntityWithPassengers(t, spawnReason);
++         return !t.isRemoved() ? t : null; // Don't return an entity when CreatureSpawnEvent is canceled
++         // CraftBukkit end
+       }
+ 
+       return t;
 @@ -601,14 +_,23 @@
     }
  
