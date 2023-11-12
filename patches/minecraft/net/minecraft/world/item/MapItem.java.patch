@@ -12,7 +12,7 @@
  public class MapItem extends ComplexItem {
     public static final int IMAGE_WIDTH = 128;
     public static final int IMAGE_HEIGHT = 128;
-@@ -58,14 +_,24 @@
+@@ -58,20 +_,34 @@
  
     @Nullable
     public static MapItemSavedData getSavedData(ItemStack p_42854_, Level p_42855_) {
@@ -40,6 +40,16 @@
     }
  
     private static int createNewSavedData(Level p_151121_, int p_151122_, int p_151123_, int p_151124_, boolean p_151125_, boolean p_151126_, ResourceKey<Level> p_151127_) {
+       MapItemSavedData mapitemsaveddata = MapItemSavedData.createFresh((double)p_151122_, (double)p_151123_, (byte)p_151124_, p_151125_, p_151126_, p_151127_);
+       int i = p_151121_.getFreeMapId();
+       p_151121_.setMapData(makeKey(i), mapitemsaveddata);
++      // CraftBukkit start
++      MapInitializeEvent event = new MapInitializeEvent(mapitemsaveddata.mapView);
++      Bukkit.getServer().getPluginManager().callEvent(event);
++      // CraftBukkit end
+       return i;
+    }
+ 
 @@ -331,6 +_,10 @@
        if (mapitemsaveddata != null) {
           int i = p_42858_.getFreeMapId();
