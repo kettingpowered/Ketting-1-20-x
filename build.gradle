@@ -207,24 +207,10 @@ def sharedFmlonlyForge = { Project prj ->
         //libraries.add("${project.group}:${project.name}:${project.version}:launcher")
         inject = '' // We don't have a userdev sourceset anymore. Empty as a gradle workaround...
         runs {
-            client {
-                environment 'MCP_MAPPINGS', '{mcp_mappings}'
-                property 'forge.enableGameTest', 'true'
-                args '--launchTarget', "forge_userdev_client"
-                args '--version', 'MOD_DEV'
-                args '--assetIndex', '{asset_index}'
-                args '--assetsDir', '{assets_root}'
-            }
-
             server {
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
                 property 'forge.enableGameTest', 'true'
                 args '--launchTarget', "forge_userdev_server"
-            }
-
-            gameTestServer {
-                environment 'MCP_MAPPINGS', '{mcp_mappings}'
-                args '--launchTarget', "forge_userdev_server_gametest"
             }
 
             data {
@@ -273,23 +259,13 @@ def sharedFmlonlyForge = { Project prj ->
         run.jvmArgs '--add-exports', 'jdk.naming.dns/com.sun.jndi.dns=java.naming'
     }
     for (def run : prj.patcher.runs) {
-        def isTest = run.name.endsWith('_test')
-        
         run.taskName = run.name
         run.environment 'FORGE_SPEC', prj.SPEC_VERSION
         run.workingDirectory prj.file('run/' + run.name)
-        run.ideaModule rootProject.name + '.' + prj.name + '.' + (isTest ? 'test' : 'main')
+        run.ideaModule rootProject.name + '.' + prj.name + '.' + 'main'
         
         run.mods {
             minecraft { source prj.sourceSets.main }
-        }
-        
-        if (isTest) {
-            run.property 'forge.enableGameTest', 'true'
-
-            run.mods {
-                tests { sources prj.sourceSets.test }
-            }
         }
     }
 
@@ -369,19 +345,6 @@ project(':forge') {
                     "$rootDir/src/main/resources",
                     "$rootDir/src/generated/resources",
                     "$rootDir/src/fmlcommon/resources"
-                ]
-            }
-        }
-        test {
-            java {
-                srcDirs = [
-                    "$rootDir/src/test/java"
-                ]
-            }
-            resources {
-                srcDirs = [
-                    "$rootDir/src/test/resources",
-                    "$rootDir/src/generated_test/resources"
                 ]
             }
         }
@@ -483,38 +446,8 @@ project(':forge') {
         sideAnnotationStrippers.from file("$rootDir/src/main/resources/forge.sas")
 
         runs {
-            forge_client {
-                property 'eventbus.checkTypesOnDispatch', 'true'
-                property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
-                
-                args '--launchTarget', 'forge_dev_client',
-                     '--username', 'Dev',
-                     '--version', project.name,
-                     '--accessToken', '0',
-                     '--userType', 'mojang',
-                     '--versionType', 'release',
-                     '--assetsDir', downloadAssets.output,
-                     '--assetIndex', "{asset_index}"
-            }
-
-            forge_client_test {
-                parent runs.forge_client
-            }
-
             forge_server {
                 args '--launchTarget', 'forge_dev_server'
-            }
-
-            forge_server_test {
-                parent runs.forge_server
-            }
-
-            forge_server_gametest {
-                args '--launchTarget', 'forge_dev_server_gametest'
-            }
-
-            forge_server_gametest_test {
-                parent runs.forge_server_gametest
             }
 
             forge_data {
@@ -528,19 +461,6 @@ project(':forge') {
                      '--assetsDir', downloadAssets.output,
                      '--assetIndex', "{asset_index}"
             }
-
-            forge_data_test {
-                args '--launchTarget', 'forge_dev_data',
-                     '--mod', '.+',
-                     '--all', 
-                     '--validate',
-                     '--output', rootProject.file('src/generated_test/resources/'),
-                     '--existing', sourceSets.main.resources.srcDirs[0],
-                     '--existing', sourceSets.test.resources.srcDirs[0],
-                     '--assetsDir', downloadAssets.output,
-                     '--assetIndex', "{asset_index}"
-            }
-
         }
     }
     
@@ -1263,28 +1183,14 @@ project(':forge') {
             main {
                 files.from files("$rootDir/src/main/java")
             }
-            test {
-                files.from files("$rootDir/src/test/java")
-            }
         }
     }
 
     tasks.register('genAllData') {
-        dependsOn 'forge_data', 'forge_mdk_data', 'forge_test_data'
+        dependsOn 'forge_data'
     }
 
     tasks.eclipse.dependsOn('genEclipseRuns')
-
-    if (project.hasProperty('UPDATE_MAPPINGS')) {
-        extractRangeMap {
-            sources.from sourceSets.test.java.srcDirs
-            addDependencies compileTestJava.classpath
-        }
-        applyRangeMap {
-            sources.from sourceSets.test.java.srcDirs
-        }
-        sourceSets.test.java.srcDirs.each { extractMappedNew.addTarget it }
-    }
 
     tasks.named('javadoc', Javadoc).configure {
         description 'Generates the combined javadocs for the FML projects and the main Forge project'
