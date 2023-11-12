@@ -58,7 +58,7 @@
              builder.put(resourcelocation, recipeholder);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
              LOGGER.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
-@@ -65,20 +_,37 @@
+@@ -65,20 +_,38 @@
        }
  
        this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (p_44033_) -> {
@@ -72,6 +72,7 @@
  
 +   // CraftBukkit start
 +   public void addRecipe(RecipeHolder<?> irecipe) {
++      org.spigotmc.AsyncCatcher.catchOp("Recipe Add"); // Spigot
 +      Object2ObjectLinkedOpenHashMap<ResourceLocation, RecipeHolder<?>> map = this.recipes.get(irecipe.value().getType()); // CraftBukkit
 +
 +      if (byName.containsKey(irecipe.id()) || map.containsKey(irecipe.id())) {
