@@ -929,6 +929,9 @@ public class CraftEventFactory {
         victim.expToDrop = event.getDroppedExp();
         Iterator iterator = event.getDrops().iterator();
 
+        if (victim instanceof ServerPlayer) //Ketting - player death drops are handled in callPlayerDeathEvent
+            return event;
+
         while (iterator.hasNext()) {
             org.bukkit.inventory.ItemStack stack = (org.bukkit.inventory.ItemStack) iterator.next();
 

@@ -8,6 +8,14 @@
  import javax.annotation.Nullable;
  import net.minecraft.BlockUtil;
  import net.minecraft.ChatFormatting;
+@@ -29,6 +_,7 @@
+ import net.minecraft.core.SectionPos;
+ import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.nbt.CompoundTag;
++import net.minecraft.nbt.ListTag;
+ import net.minecraft.nbt.NbtOps;
+ import net.minecraft.network.PacketSendListener;
+ import net.minecraft.network.chat.ChatType;
 @@ -91,6 +_,7 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.InteractionHand;
@@ -165,11 +173,16 @@
           int i = Math.max(0, this.server.getSpawnRadius(p_9202_));
           int j = Mth.floor(p_9202_.getWorldBorder().getDistanceToBorder((double)blockpos.getX(), (double)blockpos.getZ()));
           if (j < i) {
-@@ -317,11 +_,20 @@
+@@ -317,11 +_,25 @@
        if (p_9131_.contains("recipeBook", 10)) {
           this.recipeBook.fromNbt(p_9131_.getCompound("recipeBook"), this.server.getRecipeManager());
        }
 +      this.getBukkitEntity().readExtraData(p_9131_); // CraftBukkit
++
++      //Ketting start - load forge captures
++      ListTag forgeCaptures = p_9131_.getList("ForgeCaptures", 10);
++      setForgeCaptures(this, forgeCaptures);
++      //Ketting end
  
        if (this.isSleeping()) {
           this.stopSleeping();
@@ -212,7 +225,7 @@
           entity1.save(compoundtag2);
           compoundtag1.putUUID("Attach", entity.getUUID());
           compoundtag1.put("Entity", compoundtag2);
-@@ -371,8 +_,32 @@
+@@ -371,8 +_,36 @@
              p_9197_.put("SpawnDimension", p_248207_);
           });
        }
@@ -220,6 +233,10 @@
 -   }
 +      this.getBukkitEntity().setExtraData(p_9197_); // CraftBukkit
 +
++      //Ketting start - save forge captures
++      Inventory forgeCaptures = getForgeCaptures();
++      if (forgeCaptures != null) p_9197_.put("ForgeCaptures", forgeCaptures.save(new ListTag()));
++      //Ketting end
 +   }
 +
 +   // CraftBukkit start - World fallback code, either respawn location or global spawn
@@ -302,7 +319,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.addCategory("Player being ticked");
-@@ -562,13 +_,16 @@
+@@ -562,13 +_,17 @@
     }
  
     private void updateScoreForCriteria(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -314,6 +331,7 @@
     }
  
 +   //Ketting TODO - add our own version here from Magma
++   //TODO - implement getForgeCapturesAndClear();
     public void die(DamageSource p_9035_) {
        this.gameEvent(GameEvent.ENTITY_DIE);
 +      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_9035_)) return;
@@ -881,7 +899,21 @@
     }
  
     public void displayClientMessage(Component p_9154_, boolean p_9155_) {
-@@ -1127,13 +_,22 @@
+@@ -1121,19 +_,36 @@
+          this.setScore(p_9016_.getScore());
+       }
+ 
++      //Ketting start - copy over the forge captures
++      Inventory forgeCaptures = p_9016_.getForgeCapturesAndClear();
++      if (forgeCaptures != null)
++         forgeCaptures.items.stream().filter(item -> !item.isEmpty()).forEach(item -> this.getInventory().add(item));
++
++      this.getInventory().setChanged();
++      //Ketting end
++
+       this.enchantmentSeed = p_9016_.enchantmentSeed;
+       this.enderChestInventory = p_9016_.enderChestInventory;
+       this.getEntityData().set(DATA_PLAYER_MODE_CUSTOMISATION, p_9016_.getEntityData().get(DATA_PLAYER_MODE_CUSTOMISATION));
        this.lastSentExp = -1;
        this.lastSentHealth = -1.0F;
        this.lastSentFood = -1;
