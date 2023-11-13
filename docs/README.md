@@ -5,12 +5,14 @@
 
 <img align="right" src="./assets/ketting.png?raw=true" height="150" width="150">
 
+[![discord-widget][]][discord-invite]
+[![forge-version][]][forge-commit]
+
 # Ketting
 
 Ketting is a fork of [MinecraftForge](https://github.com/MinecraftForge/MinecraftForge/)
 that enables the use of Bukkit plugins on Forge servers.
-[ ![discord-widget][] ][discord-invite]
-[ ![forge-version][] ][forge-commit]
+
 
 ## Notice
 
