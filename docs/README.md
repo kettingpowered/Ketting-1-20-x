@@ -13,7 +13,6 @@
 Ketting is a fork of [MinecraftForge](https://github.com/MinecraftForge/MinecraftForge/)
 that enables the use of Bukkit plugins on Forge servers.
 
-
 ## Notice
 
 Ketting is still in development and is not ready for production use.
