@@ -15,13 +15,14 @@ on:
   workflow_dispatch:
 #This permission is needed to push a release (and/or tags)
 permissions:
-  contents: write
+  contents: write #nessesary for tag creation and release creation
+  actions: write #nessesary for cache deletion
 
 jobs:
   #fixme: this is not ready yet, because the project itself doesn't compile.
   create-release:
     needs: build
-    if: ${{ github.ref == 'refs/heads/1.20.x' }}
+    if: ${{ format('refs/heads/{0}', github.event.repository.default_branch) == github.ref }}
     runs-on: ubuntu-latest
     steps:
       - name: Download build artifacts
@@ -52,9 +53,8 @@ jobs:
           tag: ${{ github.sha }}
           #prerelease: true
           draft: true
-          
 
-  build:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -74,8 +74,70 @@ jobs:
           save-generated-gradle-jars: false
           # Disable publishing Gradle Build Scan URL to job report
           gradle-build-scan-report: false
+      - name: Restore Project Sources for faster setup
+        id: cache_projects-src_restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+           projects/
+          key: project-src-cache-${{ hashFiles('patches') }}
+          restore-keys: |
+           project-src-cache-
       - name: Setup Ketting
+        id: setup
         run: ./gradlew setup
+      - name: Save Project Sources
+        if: steps.cache_projects-src_restore.output.cache-hit == 'false'
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            projects/
+          key: ${{ steps.cache_projects-src_restore.outputs.cache-primary-key }}
+      - name: Save Project Sources for build
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            projects/
+          key: project-src-cache-${{ github.ref }}-${{ github.sha }}
+  build:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Cache .gradle
+        uses: burrunan/gradle-cache-action@v1
+        with:
+          # Enable concurrent cache save and restore
+          # Default is concurrent=false for better log readability
+          concurrent: true
+          # Disable caching of $HOME/.gradle/caches/*.*/generated-gradle-jars
+          save-generated-gradle-jars: false
+          # Disable publishing Gradle Build Scan URL to job report
+          gradle-build-scan-report: false
+      - name: Restore Project Sources for build
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            projects/
+          key: project-src-cache-${{ github.ref }}-${{ github.sha }}
+      - name: Delete Project Sources for build
+        run: |
+          gh extension install actions/gh-actions-cache
+          REPO=${{ github.repository }}
+          BRANCH=${{ github.ref }}
+          echo "Deleting caches..."
+          ## Setting this to not fail the workflow while deleting cache keys. 
+          #set +e
+          gh actions-cache delete project-src-cache-${{ github.ref }}-${{ github.sha }} -R $REPO -B $BRANCH --confirm
+          echo "Done"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Ketting Jar
         run: ./gradlew kettingJar
       - name: Upload build artifact
