@@ -74,6 +74,13 @@ jobs:
           save-generated-gradle-jars: false
           # Disable publishing Gradle Build Scan URL to job report
           gradle-build-scan-report: false
+      - name: Restore Project Sources for faster setup
+        id: cache_projects-src_restore
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+           projects/
+          key: project-src-cache
       - name: Setup Ketting
         run: ./gradlew setup
       - name: Build Ketting Jar
@@ -84,3 +91,11 @@ jobs:
           name: ${{ matrix.name }}
           path: |
             projects/forge/build/libs/
+      - name: Save Project Sources
+        id: cache_projects-src_save
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            path/to/dependencies
+            some/other/dependencies
+          key: ${{ steps.cache_projects-src_restore.outputs.cache-primary-key }}
