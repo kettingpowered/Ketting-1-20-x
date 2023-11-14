@@ -1272,16 +1272,6 @@ tasks.register('doChecks') {
     dependsOn ':forge:publish'
 }
 
-if (System.env.TEAMCITY_VERSION) {
-    //Only setup the CI environment if and only if the environment variables are set.
-    tasks.configureTeamCity {
-        doLast {
-            println "##teamcity[buildNumber '${project(':forge').version}']"
-            println "##teamcity[setParameter name='env.PUBLISHED_JAVA_ARTIFACT_VERSION' value='${project(':forge').version}']"
-        }
-    }
-}
-
 allprojects { prj ->
     prj.tasks.eclipse.doFirst {
         rootProject.fileTree('ide/eclipse/template/.settings/').matching { include '**/*.prefs' }.each { file ->
