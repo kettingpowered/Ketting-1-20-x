@@ -1,24 +1,41 @@
 --- a/net/minecraft/world/entity/animal/MushroomCow.java
 +++ b/net/minecraft/world/entity/animal/MushroomCow.java
-@@ -41,7 +_,7 @@
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.entity.animal;
+ 
++import java.util.Collections;
+ import java.util.List;
+ import java.util.Optional;
+ import java.util.UUID;
+@@ -40,8 +_,12 @@
+ import net.minecraft.world.level.block.SuspiciousEffectHolder;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityDropItemEvent;
++import org.bukkit.event.entity.EntityTransformEvent;
  
 -public class MushroomCow extends Cow implements Shearable, VariantHolder<MushroomCow.MushroomType> {
 +public class MushroomCow extends Cow implements Shearable, net.minecraftforge.common.IForgeShearable {
     private static final EntityDataAccessor<String> DATA_TYPE = SynchedEntityData.defineId(MushroomCow.class, EntityDataSerializers.STRING);
     private static final int MUTATE_CHANCE = 1024;
     private static final String TAG_STEW_EFFECTS = "stew_effects";
-@@ -102,7 +_,7 @@
+@@ -102,7 +_,12 @@
  
           this.playSound(soundevent, 1.0F, 1.0F);
           return InteractionResult.sidedSuccess(this.level().isClientSide);
 -      } else if (itemstack.is(Items.SHEARS) && this.readyForShearing()) {
 +      } else if (false && itemstack.getItem() == Items.SHEARS && this.readyForShearing()) { //Forge: Moved to onSheared
++         // CraftBukkit start
++         if (!CraftEventFactory.handlePlayerShearEntityEvent(p_28941_, this, itemstack, p_28942_)) {
++            return InteractionResult.PASS;
++         }
++         // CraftBukkit end
           this.shear(SoundSource.PLAYERS);
           this.gameEvent(GameEvent.SHEAR, p_28941_);
           if (!this.level().isClientSide) {
-@@ -141,7 +_,17 @@
+@@ -141,13 +_,33 @@
        }
     }
  
@@ -29,17 +46,45 @@
 +   }
 +
     public void shear(SoundSource p_28924_) {
-+      shearInternal(p_28924_).forEach(s -> this.level().addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY(1.0D), this.getZ(), s)));
++      for (ItemStack itemStack : shearInternal(p_28924_)) {
++         // CraftBukkit start
++         ItemEntity itemEntity = new ItemEntity(this.level(), this.getX(), this.getY(1.0D), this.getZ(), itemStack);
++         EntityDropItemEvent event = new EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) itemEntity.getBukkitEntity());
++         Bukkit.getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            continue;
++         }
++         this.level().addFreshEntity(itemEntity);
++         // CraftBukkit end
++      }
 +   }
 +
 +   private java.util.List<ItemStack> shearInternal(SoundSource p_28924_) {
        this.level().playSound((Player)null, this, SoundEvents.MOOSHROOM_SHEAR, p_28924_, 1.0F, 1.0F);
        if (!this.level().isClientSide()) {
           Cow cow = EntityType.COW.create(this.level());
-@@ -163,11 +_,14 @@
-             cow.setInvulnerable(this.isInvulnerable());
-             this.level().addFreshEntity(cow);
+          if (cow != null) {
+             ((ServerLevel)this.level()).sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(0.5D), this.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+-            this.discard();
++            // this.discard(); // CraftBukkit - moved down
+             cow.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+             cow.setHealth(this.getHealth());
+             cow.yBodyRot = this.yBodyRot;
+@@ -161,13 +_,23 @@
+             }
  
+             cow.setInvulnerable(this.isInvulnerable());
+-            this.level().addFreshEntity(cow);
+-
++            // CraftBukkit start
++            if (CraftEventFactory.callEntityTransformEvent(this, cow, EntityTransformEvent.TransformReason.SHEARED).isCancelled()) {
++               return Collections.emptyList();
++            }
++            this.level().addFreshEntity(cow, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SHEARED);
++
++            this.discard(); // CraftBukkit - from above
++            // CraftBukkit end
++
 +            java.util.List<ItemStack> items = new java.util.ArrayList<>();
              for(int i = 0; i < 5; ++i) {
 -               this.level().addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY(1.0D), this.getZ(), new ItemStack(this.getVariant().blockState.getBlock())));
