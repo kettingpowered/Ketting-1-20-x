@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/entity/monster/Strider.java
++++ b/net/minecraft/world/entity/monster/Strider.java
+@@ -304,7 +_,14 @@
+          }
+ 
+          boolean flag1 = flag2;
+-         this.setSuffocating(!flag || flag1);
++         // CraftBukkit start
++         boolean suffocating = !flag || flag2;
++         if (suffocating ^ this.isSuffocating()) {
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callStriderTemperatureChangeEvent(this, suffocating)) {
++               this.setSuffocating(suffocating);
++            }
++         }
++         // CraftBukkit end
+       }
+ 
+       super.tick();

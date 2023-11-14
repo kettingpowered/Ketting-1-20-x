@@ -1,13 +1,17 @@
 --- a/net/minecraft/world/entity/projectile/LargeFireball.java
 +++ b/net/minecraft/world/entity/projectile/LargeFireball.java
-@@ -8,6 +_,7 @@
+@@ -8,9 +_,10 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class LargeFireball extends Fireball {
-    private int explosionPower = 1;
+-   private int explosionPower = 1;
++   public int explosionPower = 1;
+ 
+    public LargeFireball(EntityType<? extends LargeFireball> p_37199_, Level p_37200_) {
+       super(p_37199_, p_37200_);
 @@ -24,8 +_,17 @@
     protected void onHit(HitResult p_37218_) {
        super.onHit(p_37218_);
