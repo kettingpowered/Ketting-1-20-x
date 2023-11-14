@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/vehicle/MinecartCommandBlock.java
 +++ b/net/minecraft/world/entity/vehicle/MinecartCommandBlock.java
+@@ -19,6 +_,7 @@
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.command.CommandSender;
+ 
+ public class MinecartCommandBlock extends AbstractMinecart {
+    static final EntityDataAccessor<String> DATA_ID_COMMAND_NAME = SynchedEntityData.defineId(MinecartCommandBlock.class, EntityDataSerializers.STRING);
 @@ -78,6 +_,8 @@
     }
  
@@ -9,3 +17,17 @@
        return this.commandBlock.usedBy(p_38522_);
     }
  
+@@ -99,6 +_,13 @@
+    }
+ 
+    public class MinecartCommandBase extends BaseCommandBlock {
++      // CraftBukkit start
++      @Override
++      public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++         return (org.bukkit.craftbukkit.v1_20_R2.entity.CraftMinecartCommand) MinecartCommandBlock.this.getBukkitEntity();
++      }
++      // CraftBukkit end
++
+       public ServerLevel getLevel() {
+          return (ServerLevel)MinecartCommandBlock.this.level();
+       }
