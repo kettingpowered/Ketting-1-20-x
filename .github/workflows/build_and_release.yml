@@ -87,6 +87,7 @@ jobs:
         id: setup
         run: ./gradlew setup
       - name: Save Project Sources
+        if: steps.cache_projects-src_restore.output.cache-hit == 'false'
         uses: actions/cache/save@v3
         with:
           path: |
