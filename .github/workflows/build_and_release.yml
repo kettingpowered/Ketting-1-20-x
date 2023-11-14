@@ -52,7 +52,7 @@ jobs:
           tag: ${{ github.sha }}
           #prerelease: true
           draft: true
-          
+
   setup:
     runs-on: ubuntu-latest
     steps:
@@ -84,9 +84,24 @@ jobs:
       - name: Setup Ketting
         id: setup
         run: ./gradlew setup
-
+      - name: Save Project Sources
+        if: $${{ always() && steps.setup.conclusion == 'success' && !steps.cache_projects-src_restore.outputs.cache-hit}}
+        id: cache_projects-src_save
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            projects/
+          key: ${{ steps.cache_projects-src_restore.outputs.cache-primary-key }}
+      - name: Archive Project Sources for faster upload
+        run: tar --create --file=sources.tar projects/
+      - name: Upload project sources
+        uses: actions/upload-artifact@v3
+        with:
+          name: project-srcs
+          path: sources.tar
   build:
     runs-on: ubuntu-latest
+    needs: setup
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -105,14 +120,17 @@ jobs:
           save-generated-gradle-jars: false
           # Disable publishing Gradle Build Scan URL to job report
           gradle-build-scan-report: false
-      - name: Restore Project Sources for faster setup
-        id: cache_projects-src_restore
-        uses: actions/cache/restore@v3
+      - name: Download sources artifact
+        uses: actions/download-artifact@v3
         with:
-          path: |
-           projects/
-          key: project-src-cache-${{ hashFiles('patches') }}
-          restore-keys: project-src-cache-
+          name: project-srcs
+          path: .
+      - name: Extract sources from downloaded artifact
+        run: tar -xf sources.tar
+      - name: Delete Project sources artifact 
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: project-srcs
       - name: Setup Ketting
         id: setup
         run: ./gradlew setup
@@ -124,11 +142,3 @@ jobs:
           name: ${{ matrix.name }}
           path: |
             projects/forge/build/libs/
-      - name: Save Project Sources
-        if: $${{ always() && steps.setup.conclusion == 'success' && !steps.cache_projects-src_restore.outputs.cache-hit}}
-        id: cache_projects-src_save
-        uses: actions/cache/save@v3
-        with:
-          path: |
-            projects/
-          key: ${{ steps.cache_projects-src_restore.outputs.cache-primary-key }}
