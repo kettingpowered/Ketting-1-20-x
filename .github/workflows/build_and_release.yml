@@ -4,11 +4,6 @@ on:
   push:
     branches:
      - '*'
-    #todo: not sure if tags for ketting should be built.
-    # it might be better to just build all commits to the main branch
-    # and automatically push a tag and release.
-    tags:
-      - '*'
   pull_request:
     branches:
      - '*'
@@ -48,6 +43,10 @@ jobs:
           key: project-src-cache-${{ hashFiles('patches') }}
           restore-keys: |
            project-src-cache-
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
       - name: Setup Ketting
         id: setup
         run: ./gradlew setup
