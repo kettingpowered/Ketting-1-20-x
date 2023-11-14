@@ -21,7 +21,7 @@ jobs:
   #fixme: this is not ready yet, because the project itself doesn't compile.
   create-release:
     needs: build
-    if: ${{ github.ref == 'refs/heads/1.20.x' }}
+    if: ${{ format('refs/heads/{0}', github.event.repository.default_branch) == github.ref }}
     runs-on: ubuntu-latest
     steps:
       - name: Download build artifacts
@@ -80,8 +80,10 @@ jobs:
         with:
           path: |
            projects/
-          key: project-src-cache
+          key: project-src-cache-${{ github.ref }}
+          restore-keys: project-src-cache-${{format('refs/heads/{0}', github.event.repository.default_branch)}}
       - name: Setup Ketting
+        id: setup
         run: ./gradlew setup
       - name: Build Ketting Jar
         run: ./gradlew kettingJar
@@ -92,10 +94,10 @@ jobs:
           path: |
             projects/forge/build/libs/
       - name: Save Project Sources
+        if: $${{ always() && steps.setup.conclusion == 'success' }}
         id: cache_projects-src_save
         uses: actions/cache/save@v3
         with:
           path: |
-            path/to/dependencies
-            some/other/dependencies
+            projects/
           key: ${{ steps.cache_projects-src_restore.outputs.cache-primary-key }}
