@@ -144,27 +144,6 @@ subprojects {
         ]
         options.addStringOption('Xdoclint:all,-missing', '-public')
     }
-
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                // Normal Maven/old gradle doesn't support '2.+' version wildcards
-                // For now we just suppress. We *should* force the resolution to pinned versions.
-                suppressPomMetadataWarningsFor('apiElements')
-                suppressPomMetadataWarningsFor('runtimeElements')
-                pom {
-                    name = project.name
-                    description = 'Modifactions to Minecraft to enable mod developers.'
-                    url = 'https://github.com/MinecraftForge/MinecraftForge'
-                    PomUtils.setGitHubDetails(pom, 'MinecraftForge')
-                    license PomUtils.Licenses.LGPLv2_1
-                }
-            }
-        }
-        repositories {
-            maven gradleutils.publishingForgeMaven
-        }
-    }
     
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
