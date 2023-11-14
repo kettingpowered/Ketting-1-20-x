@@ -72,9 +72,14 @@ println('Version: ' + VERSION +
 
 println('Ketting: ' + KETTING_VERSION)
 
+changelog {
+    fromTag MIN_TAG_FOR_CHANGELOG
+}
+
 def extraTxts = [
     rootProject.file('CREDITS.txt'),
     rootProject.file('LICENSE.txt'),
+    rootProject.tasks.createChangelog.outputFile
 ]
 
 tasks.register('downloadVersionManifest', Download) {
