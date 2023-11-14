@@ -58,14 +58,12 @@ jobs:
             projects/
           key: ${{ steps.cache_projects-src_restore.outputs.cache-primary-key }}
       - name: Save Project Sources for build
-        if: false
         uses: actions/cache/save@v3
         with:
           path: |
             projects/
           key: project-src-cache-${{ github.ref }}-${{ github.sha }}
   build:
-    if: false
     runs-on: ubuntu-latest
     needs: setup
     steps:
