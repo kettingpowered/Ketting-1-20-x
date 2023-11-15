@@ -66,7 +66,7 @@ Forge MDK from [their website](https://files.minecraftforge.net/net/minecraftfor
 Ketting uses the Gradle build system, so you can build it by running the following command:
 
 ```bash
-./gradlew build
+./gradlew setup
 ```
 To create a jar, run
 
