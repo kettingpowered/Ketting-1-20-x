@@ -52,7 +52,6 @@ jobs:
         run: ./gradlew setup
       - name: Check Setup Ketting
         id: build
-        continue-on-error: true
         run: ./gradlew build
       - name: Save Project Sources
         if: steps.cache_projects-src_restore.output.cache-hit != 'true'
@@ -91,6 +90,7 @@ jobs:
       - name: Restore Project Sources for build
         uses: actions/cache/restore@v3
         with:
+          fail-on-cache-miss: true
           path: |
             projects/
           key: project-src-cache-${{ github.ref }}-${{ github.sha }}
