@@ -33,28 +33,15 @@
     private boolean hasPhysics() {
        return !this.isMarker() && !this.isNoGravity();
     }
-@@ -142,13 +_,18 @@
-    }
- 
-    public void setItemSlot(EquipmentSlot p_31584_, ItemStack p_31585_) {
-+      // CraftBukkit start
-+      this.setItemSlot(p_31584_, p_31585_, false);
-+   }
-+
-+   public void setItemSlot(EquipmentSlot p_31584_, ItemStack p_31585_, boolean silent) {
-       this.verifyEquippedItem(p_31585_);
-       switch (p_31584_.getType()) {
-          case HAND:
--            this.onEquipItem(p_31584_, this.handItems.set(p_31584_.getIndex(), p_31585_), p_31585_);
-+            this.onEquipItem(p_31584_, this.handItems.set(p_31584_.getIndex(), p_31585_), p_31585_, silent); // CraftBukkit
-             break;
+@@ -150,7 +_,6 @@
           case ARMOR:
--            this.onEquipItem(p_31584_, this.armorItems.set(p_31584_.getIndex(), p_31585_), p_31585_);
-+            this.onEquipItem(p_31584_, this.armorItems.set(p_31584_.getIndex(), p_31585_), p_31585_, silent); // CraftBukkit
+             this.onEquipItem(p_31584_, this.armorItems.set(p_31584_.getIndex(), p_31585_), p_31585_);
        }
- 
+-
     }
-@@ -351,32 +_,61 @@
+ 
+    public boolean canTakeItem(ItemStack p_31638_) {
+@@ -351,32 +_,60 @@
           return false;
        } else if (itemstack.isEmpty() && (this.disabledSlots & 1 << p_31590_.getFilterFlag() + 16) != 0) {
           return false;
@@ -75,7 +62,7 @@
 -         return true;
 -      }
 +         org.bukkit.inventory.ItemStack armorStandItem = CraftItemStack.asCraftMirror(itemstack);
-+         org.bukkit.inventory.ItemStack playerHeldItem = CraftItemStack.asCraftMirror(itemstack);
++         org.bukkit.inventory.ItemStack playerHeldItem = CraftItemStack.asCraftMirror(p_31591_);
 +
 +         org.bukkit.entity.Player player = (org.bukkit.entity.Player) p_31589_.getBukkitEntity();
 +         org.bukkit.entity.ArmorStand self = (org.bukkit.entity.ArmorStand) this.getBukkitEntity();
@@ -89,11 +76,10 @@
 +            return true;
 +         }
 +
-+         if (p_31589_.getAbilities().instabuild && itemstack.isEmpty() && !itemstack.isEmpty()) {
++         if (p_31589_.getAbilities().instabuild && itemstack.isEmpty() && !p_31591_.isEmpty()) {
 +            // CraftBukkit end
 +            this.setItemSlot(p_31590_, p_31591_.copyWithCount(1));
 +            return true;
-+            // CraftBukkit start
 +         } else if (!p_31591_.isEmpty() && p_31591_.getCount() > 1) {
 +            if (!itemstack.isEmpty()) {
 +               return false;

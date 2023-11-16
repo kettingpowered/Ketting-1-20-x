@@ -18,7 +18,7 @@
  
  public class ItemEntity extends Entity implements TraceableEntity {
     private static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(ItemEntity.class, EntityDataSerializers.ITEM_STACK);
-@@ -42,6 +_,11 @@
+@@ -42,11 +_,18 @@
     @Nullable
     private UUID target;
     public final float bobOffs;
@@ -30,11 +30,18 @@
  
     public ItemEntity(EntityType<? extends ItemEntity> p_31991_, Level p_31992_) {
        super(p_31991_, p_31992_);
+       this.bobOffs = this.random.nextFloat() * (float)Math.PI * 2.0F;
+       this.setYRot(this.random.nextFloat() * 360.0F);
++      if (lifespan == 6000) //Ketting - check if not modified
++         this.lifespan = (p_31992_.spigotConfig.itemDespawnRate); // Spigot
+    }
+ 
+    public ItemEntity(Level p_32001_, double p_32002_, double p_32003_, double p_32004_, ItemStack p_32005_) {
 @@ -58,6 +_,7 @@
        this.setPos(p_149664_, p_149665_, p_149666_);
        this.setDeltaMovement(p_149668_, p_149669_, p_149670_);
        this.setItem(p_149667_);
-+      this.lifespan = (p_149667_.getItem() == null ? ItemEntity.LIFETIME : p_149667_.getEntityLifespan(p_149663_));
++      this.lifespan = (p_149667_.getItem() == null ? p_149663_.spigotConfig.itemDespawnRate : p_149667_.getEntityLifespan(p_149663_)); //Ketting - spigot
     }
  
     private ItemEntity(ItemEntity p_31994_) {
@@ -101,11 +108,16 @@
  
           this.hasImpulse |= this.updateInWaterStateAndDoFluidPushing();
           if (!this.level().isClientSide) {
-@@ -158,7 +_,22 @@
+@@ -158,12 +_,62 @@
              }
           }
  
 -         if (!this.level().isClientSide && this.age >= 6000) {
+-            this.discard();
+-         }
+-
+-      }
+-   }
 +         ItemStack item = this.getItem();
 +         if (!this.level().isClientSide && this.age >= lifespan) {
 +             int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
@@ -122,9 +134,70 @@
 +             }
 +         }
 +         if (item.isEmpty() && !this.isRemoved()) {
-             this.discard();
-          }
++            this.discard();
++         }
++
++      }
++   }
++
++   // Spigot start - copied from above
++   @Override
++   public void inactiveTick() {
++      // CraftBukkit start - Use wall time for pickup and despawn timers
++      int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++      if (this.pickupDelay != 32767) this.pickupDelay -= elapsedTicks;
++      if (this.age != -32768) this.age += elapsedTicks;
++      this.lastTick = MinecraftServer.currentTick;
++      // CraftBukkit end
++
++      ItemStack item = this.getItem(); //Ketting
++      if (!this.level().isClientSide && this.age >= lifespan) { // Spigot
++         //Ketting start - forge event
++         int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
++         if (hook < 0) {
++            // CraftBukkit start - fire ItemDespawnEvent
++            if (CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
++               this.age = 0;
++               return;
++            }
++            // CraftBukkit end
++            this.discard();
++         } else {
++            this.lifespan += hook;
++         }
++         //Ketting end
++      }
++      //Ketting start
++      if (item.isEmpty() && !this.isRemoved()) {
++         this.discard();
++      }
++      //Ketting end
++   }
++   // Spigot end
  
+    protected BlockPos getBlockPosBelowThatAffectsMyMovement() {
+       return this.getOnPos(0.999999F);
+@@ -181,7 +_,10 @@
+ 
+    private void mergeWithNeighbours() {
+       if (this.isMergable()) {
+-         for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(0.5D, 0.0D, 0.5D), (p_186268_) -> {
++         // Spigot start
++         double radius = this.level().spigotConfig.itemMerge;
++         for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(radius, radius - 0.5D, radius), (p_186268_) -> {
++            // Spigot end
+             return p_186268_ != this && p_186268_.isMergable();
+          })) {
+             if (itementity.isMergable()) {
+@@ -204,7 +_,7 @@
+       ItemStack itemstack = this.getItem();
+       ItemStack itemstack1 = p_32016_.getItem();
+       if (Objects.equals(this.target, p_32016_.target) && areMergable(itemstack, itemstack1)) {
+-         if (itemstack1.getCount() < itemstack.getCount()) {
++         if (true || itemstack1.getCount() < itemstack.getCount()) { // Spigot
+             merge(this, itemstack, p_32016_, itemstack1);
+          } else {
+             merge(p_32016_, itemstack1, this, itemstack);
 @@ -220,6 +_,8 @@
           return false;
        } else if (p_32028_.hasTag() ^ p_32027_.hasTag()) {
@@ -139,7 +212,7 @@
  
     private static void merge(ItemEntity p_32018_, ItemStack p_32019_, ItemEntity p_32020_, ItemStack p_32021_) {
 +      // CraftBukkit start
-+      if (!CraftEventFactory.callItemMergeEvent(p_32018_, p_32020_)) {
++      if (!CraftEventFactory.callItemMergeEvent(p_32020_, p_32018_)) {
 +         return;
 +      }
 +      // CraftBukkit end
@@ -182,7 +255,7 @@
  
        if (p_32034_.hasUUID("Owner")) {
           this.target = p_32034_.getUUID("Owner");
-@@ -316,10 +_,56 @@
+@@ -316,10 +_,58 @@
  
     public void playerTouch(Player p_32040_) {
        if (!this.level().isClientSide) {
@@ -193,6 +266,7 @@
 -         if (this.pickupDelay == 0 && (this.target == null || this.target.equals(p_32040_.getUUID())) && p_32040_.getInventory().add(itemstack)) {
 +         int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_32040_);
 +         if (hook < 0) return;
++
 +         // CraftBukkit start - fire PlayerPickupItemEvent
 +         int canHold = p_32040_.getInventory().canHold(itemstack);
 +         int remaining = i - canHold;
@@ -232,6 +306,7 @@
 +            this.pickupDelay = -1;
 +         }
 +         // CraftBukkit end
++
 +         ItemStack copy = itemstack.copy();
 +         if (this.pickupDelay == 0 && (this.target == null || this.target.equals(p_32040_.getUUID())) && (hook == 1 || i <= 0 || p_32040_.getInventory().add(itemstack))) {
 +            i = copy.getCount() - itemstack.getCount();
