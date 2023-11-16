@@ -1,5 +1,24 @@
 --- a/net/minecraft/world/entity/animal/Bee.java
 +++ b/net/minecraft/world/entity/animal/Bee.java
+@@ -87,6 +_,9 @@
+ import net.minecraft.world.level.pathfinder.BlockPathTypes;
+ import net.minecraft.world.level.pathfinder.Path;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
++import org.bukkit.event.entity.EntityTargetEvent;
+ 
+ public class Bee extends Animal implements NeutralMob, FlyingAnimal {
+    public static final float FLAP_DEGREES_PER_TICK = 120.32113F;
+@@ -230,7 +_,7 @@
+             }
+ 
+             if (i > 0) {
+-               ((LivingEntity)p_27722_).addEffect(new MobEffectInstance(MobEffects.POISON, i * 20, 0), this);
++               ((LivingEntity)p_27722_).addEffect(new MobEffectInstance(MobEffects.POISON, i * 20, 0), this, EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
+             }
+          }
+ 
 @@ -473,7 +_,7 @@
           return false;
        } else {
@@ -9,7 +28,24 @@
        }
     }
  
-@@ -612,8 +_,18 @@
+@@ -600,11 +_,14 @@
+       if (this.isInvulnerableTo(p_27762_)) {
+          return false;
+       } else {
+-         if (!this.level().isClientSide) {
++         // CraftBukkit start - Only stop pollinating if entity was damaged
++         boolean result = super.hurt(p_27762_, p_27763_);
++         if (result && !this.level().isClientSide) {
++            // CraftBukkit end
+             this.beePollinateGoal.stopPollinating();
+          }
+ 
+-         return super.hurt(p_27762_, p_27763_);
++         return result; // CraftBukkit
+       }
+    }
+ 
+@@ -612,10 +_,20 @@
        return MobType.ARTHROPOD;
     }
  
@@ -20,11 +56,49 @@
 +
 +   private void jumpInLiquidInternal() {
        this.setDeltaMovement(this.getDeltaMovement().add(0.0D, 0.01D, 0.0D));
-+   }
-+
+    }
+ 
 +   @Override
 +   public void jumpInFluid(net.minecraftforge.fluids.FluidType type) {
 +      this.jumpInLiquidInternal();
-    }
- 
++   }
++
     public Vec3 getLeashOffset() {
+       return new Vec3(0.0D, (double)(0.5F * this.getEyeHeight()), (double)(this.getBbWidth() * 0.2F));
+    }
+@@ -710,7 +_,7 @@
+    @VisibleForDebug
+    public class BeeGoToHiveGoal extends Bee.BaseBeeGoal {
+       public static final int MAX_TRAVELLING_TICKS = 600;
+-      int travellingTicks = Bee.this.level().random.nextInt(10);
++      int travellingTicks = Bee.this.random.nextInt(10); // CraftBukkit - SPIGOT-7495: Give Bees another chance and let them use their own random, avoid concurrency issues
+       private static final int MAX_BLACKLISTED_TARGETS = 3;
+       final List<BlockPos> blacklistedTargets = Lists.newArrayList();
+       @Nullable
+@@ -822,7 +_,7 @@
+ 
+    public class BeeGoToKnownFlowerGoal extends Bee.BaseBeeGoal {
+       private static final int MAX_TRAVELLING_TICKS = 600;
+-      int travellingTicks = Bee.this.level().random.nextInt(10);
++      int travellingTicks = Bee.this.random.nextInt(10); // CraftBukkit - SPIGOT-7495: Give Bees another chance and let them use their own random, avoid concurrency issues
+ 
+       BeeGoToKnownFlowerGoal() {
+          this.setFlags(EnumSet.of(Goal.Flag.MOVE));
+@@ -911,7 +_,7 @@
+                      ((BonemealableBlock)blockstate.getBlock()).performBonemeal((ServerLevel)Bee.this.level(), Bee.this.random, blockpos, blockstate);
+                   }
+ 
+-                  if (blockstate1 != null) {
++                  if (blockstate1 != null && CraftEventFactory.callEntityChangeBlockEvent(Bee.this, blockpos, blockstate1)) { // CraftBukkit
+                      Bee.this.level().levelEvent(2005, blockpos, 0);
+                      Bee.this.level().setBlockAndUpdate(blockpos, blockstate1);
+                      Bee.this.incrementNumCropsGrownSincePollination();
+@@ -934,7 +_,7 @@
+ 
+       protected void alertOther(Mob p_28035_, LivingEntity p_28036_) {
+          if (p_28035_ instanceof Bee && this.mob.hasLineOfSight(p_28036_)) {
+-            p_28035_.setTarget(p_28036_);
++            p_28035_.setTarget(p_28036_, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit - reason
+          }
+ 
+       }

@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/entity/raid/Raider.java
++++ b/net/minecraft/world/entity/raid/Raider.java
+@@ -149,7 +_,7 @@
+                i = Mth.clamp(i, 0, 4);
+                MobEffectInstance mobeffectinstance = new MobEffectInstance(MobEffects.BAD_OMEN, 120000, i, false, false, true);
+                if (!this.level().getGameRules().getBoolean(GameRules.RULE_DISABLE_RAIDS)) {
+-                  player.addEffect(mobeffectinstance);
++                  player.addEffect(mobeffectinstance, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.PATROL_CAPTAIN); // CraftBukkit
+                }
+             }
+          }
+@@ -296,7 +_,7 @@
+          this.mob.getNavigation().stop();
+ 
+          for(Raider raider : this.mob.level().getNearbyEntities(Raider.class, this.shoutTargeting, this.mob, this.mob.getBoundingBox().inflate(8.0D, 8.0D, 8.0D))) {
+-            raider.setTarget(this.mob.getTarget());
++            raider.setTarget(this.mob.getTarget(), org.bukkit.event.entity.EntityTargetEvent.TargetReason.FOLLOW_LEADER, true); // CraftBukkit
+          }
+ 
+       }
+@@ -306,7 +_,7 @@
+          LivingEntity livingentity = this.mob.getTarget();
+          if (livingentity != null) {
+             for(Raider raider : this.mob.level().getNearbyEntities(Raider.class, this.shoutTargeting, this.mob, this.mob.getBoundingBox().inflate(8.0D, 8.0D, 8.0D))) {
+-               raider.setTarget(livingentity);
++               raider.setTarget(this.mob.getTarget(), org.bukkit.event.entity.EntityTargetEvent.TargetReason.FOLLOW_LEADER, true); // CraftBukkit
+                raider.setAggressive(true);
+             }
+ 
