@@ -82,26 +82,35 @@
              this.dropItem(p_31776_.getEntity(), false);
              this.gameEvent(GameEvent.BLOCK_CHANGE, p_31776_.getEntity());
              this.playSound(this.getRemoveItemSound(), 1.0F, 1.0F);
-@@ -274,14 +_,20 @@
+@@ -274,6 +_,7 @@
        this.setItem(p_31806_, true);
     }
  
--   public void setItem(ItemStack p_31790_, boolean p_31791_) {
-+   public void setItem(ItemStack itemstack, boolean p_31791_) {
-+      // CraftBukkit start
-+      this.setItem(itemstack, p_31791_, true);
-+   }
-+
-+   public void setItem(ItemStack p_31790_, boolean p_31791_, boolean playSound) {
-+      // CraftBukkit end
++   //Ketting start - forge compat
+    public void setItem(ItemStack p_31790_, boolean p_31791_) {
        if (!p_31790_.isEmpty()) {
           p_31790_ = p_31790_.copyWithCount(1);
-       }
+@@ -281,15 +_,22 @@
  
        this.onItemChanged(p_31790_);
        this.getEntityData().set(DATA_ITEM, p_31790_);
 -      if (!p_31790_.isEmpty()) {
-+      if (!p_31790_.isEmpty() && playSound) { // CraftBukkit
++      if (!p_31790_.isEmpty() && setItem$playSound) { //Ketting
           this.playSound(this.getAddItemSound(), 1.0F, 1.0F);
        }
  
+       if (p_31791_ && this.pos != null) {
+          this.level().updateNeighbourForOutputSignal(this.pos, Blocks.AIR);
+       }
++   }
+ 
++   private boolean setItem$playSound = true;
++   public void setItem(ItemStack p_31790_, boolean p_31791_, boolean playSound) {
++      this.setItem$playSound = playSound;
++      this.setItem(p_31790_, p_31791_);
++      this.setItem$playSound = true;
+    }
++   //Ketting end
+ 
+    public SoundEvent getAddItemSound() {
+       return SoundEvents.ITEM_FRAME_ADD_ITEM;
