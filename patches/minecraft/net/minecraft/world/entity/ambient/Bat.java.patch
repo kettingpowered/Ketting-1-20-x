@@ -8,7 +8,7 @@
  
  public class Bat extends AmbientCreature {
     public static final float FLAP_DEGREES_PER_TICK = 74.48451F;
-@@ -125,7 +_,7 @@
+@@ -125,13 +_,13 @@
                 this.yHeadRot = (float)this.random.nextInt(360);
              }
  
@@ -17,6 +17,13 @@
                 this.setResting(false);
                 if (!flag) {
                    this.level().levelEvent((Player)null, 1025, blockpos, 0);
+                }
+             }
+-         } else {
++         } else if (CraftEventFactory.handleBatToggleSleepEvent(this, true)) { // CraftBukkit - Call BatToggleSleepEvent
+             this.setResting(false);
+             if (!flag) {
+                this.level().levelEvent((Player)null, 1025, blockpos, 0);
 @@ -156,7 +_,7 @@
           float f1 = Mth.wrapDegrees(f - this.getYRot());
           this.zza = 0.5F;
