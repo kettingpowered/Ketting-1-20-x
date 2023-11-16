@@ -9,7 +9,7 @@
  import org.slf4j.Logger;
  
  public class EnderDragonPhaseManager {
-@@ -22,6 +_,19 @@
+@@ -22,6 +_,24 @@
           if (this.currentPhase != null) {
              this.currentPhase.end();
           }
@@ -24,7 +24,12 @@
 +         if (event.isCancelled()) {
 +            return;
 +         }
-+         p_31417_ = CraftEnderDragon.getMinecraftPhase(event.getNewPhase());
++
++         //Ketting start - check for modded phases
++         EnderDragonPhase<?> newPhase = CraftEnderDragon.getMinecraftPhase(event.getNewPhase());
++         if (newPhase != null)
++            p_31417_ = newPhase;
++         //Ketting end
 +         // CraftBukkit end
  
           this.currentPhase = this.getPhase(p_31417_);

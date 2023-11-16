@@ -42,12 +42,13 @@
 +               this.level().explode(this, this.getX(), this.getEyeY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
 +            }
 +            // CraftBukkit end
++
              if (!this.isSilent()) {
-                this.level().globalLevelEvent(1023, this.blockPosition(), 0);
+-               this.level().globalLevelEvent(1023, this.blockPosition(), 0);
 +               // CraftBukkit start - Use relative location for far away sounds
 +               // this.level().globalLevelEvent(1023, new BlockPosition(this), 0);
 +               int viewDistance = ((ServerLevel) this.level()).getCraftServer().getViewDistance() * 16;
-+               for (ServerPlayer player : (List<ServerPlayer>) MinecraftServer.getServer().getPlayerList().players) {
++               for (ServerPlayer player : MinecraftServer.getServer().getPlayerList().players) {
 +                  double deltaX = this.getX() - player.getX();
 +                  double deltaZ = this.getZ() - player.getZ();
 +                  double distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
@@ -71,10 +72,11 @@
           }
  
        } else {
-@@ -265,6 +_,7 @@
+@@ -265,6 +_,8 @@
                    List<LivingEntity> list = this.level().getNearbyEntities(LivingEntity.class, TARGETING_CONDITIONS, this, this.getBoundingBox().inflate(20.0D, 8.0D, 20.0D));
                    if (!list.isEmpty()) {
                       LivingEntity livingentity1 = list.get(this.random.nextInt(list.size()));
++
 +                     if (CraftEventFactory.callEntityTargetLivingEvent(this, livingentity1, EntityTargetEvent.TargetReason.CLOSEST_ENTITY).isCancelled()) continue; // CraftBukkit
                       this.setAlternativeTarget(i, livingentity1.getId());
                    }
