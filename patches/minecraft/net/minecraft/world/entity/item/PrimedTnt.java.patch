@@ -17,6 +17,14 @@
  
     public PrimedTnt(EntityType<? extends PrimedTnt> p_32076_, Level p_32077_) {
        super(p_32076_, p_32077_);
+@@ -51,6 +_,7 @@
+    }
+ 
+    public void tick() {
++      if (this.level().spigotConfig.maxTntTicksPerTick > 0 && ++this.level().spigotConfig.currentPrimedTnt > this.level().spigotConfig.maxTntTicksPerTick) { return; } // Spigot
+       if (!this.isNoGravity()) {
+          this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
+       }
 @@ -64,10 +_,13 @@
        int i = this.getFuse() - 1;
        this.setFuse(i);
