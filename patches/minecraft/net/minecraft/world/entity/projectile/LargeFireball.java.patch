@@ -1,12 +1,44 @@
 --- a/net/minecraft/world/entity/projectile/LargeFireball.java
 +++ b/net/minecraft/world/entity/projectile/LargeFireball.java
-@@ -24,7 +_,8 @@
+@@ -8,9 +_,10 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.phys.EntityHitResult;
+ import net.minecraft.world.phys.HitResult;
++import org.bukkit.event.entity.ExplosionPrimeEvent;
+ 
+ public class LargeFireball extends Fireball {
+-   private int explosionPower = 1;
++   public int explosionPower = 1;
+ 
+    public LargeFireball(EntityType<? extends LargeFireball> p_37199_, Level p_37200_) {
+       super(p_37199_, p_37200_);
+@@ -24,8 +_,17 @@
     protected void onHit(HitResult p_37218_) {
        super.onHit(p_37218_);
        if (!this.level().isClientSide) {
 -         boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+-         this.level().explode(this, this.getX(), this.getY(), this.getZ(), (float)this.explosionPower, flag, Level.ExplosionInteraction.MOB);
 +         // TODO 1.19.3: The creation of Level.ExplosionInteraction means this code path will fire EntityMobGriefingEvent twice. Should we try and fix it? -SS
 +         boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this.getOwner());
-          this.level().explode(this, this.getX(), this.getY(), this.getZ(), (float)this.explosionPower, flag, Level.ExplosionInteraction.MOB);
++         // CraftBukkit start - fire ExplosionPrimeEvent
++         ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) this.getBukkitEntity());
++         this.level().getCraftServer().getPluginManager().callEvent(event);
++
++         if (!event.isCancelled()) {
++            // give 'this' instead of (Entity) null so we know what causes the damage
++            this.level().explode(this, this.getX(), this.getY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
++         }
++         // CraftBukkit end
           this.discard();
        }
+ 
+@@ -52,7 +_,8 @@
+    public void readAdditionalSaveData(CompoundTag p_37220_) {
+       super.readAdditionalSaveData(p_37220_);
+       if (p_37220_.contains("ExplosionPower", 99)) {
+-         this.explosionPower = p_37220_.getByte("ExplosionPower");
++         // CraftBukkit - set bukkitYield when setting explosionpower
++         bukkitYield = this.explosionPower = p_37220_.getByte("ExplosionPower");
+       }
+ 
+    }

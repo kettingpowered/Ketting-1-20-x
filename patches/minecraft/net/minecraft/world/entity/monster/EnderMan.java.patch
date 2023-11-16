@@ -1,10 +1,33 @@
 --- a/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/net/minecraft/world/entity/monster/EnderMan.java
-@@ -111,7 +_,6 @@
+@@ -68,6 +_,8 @@
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.BlockHitResult;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent;
+ import org.joml.Vector3f;
+ 
+ public class EnderMan extends Monster implements NeutralMob {
+@@ -110,8 +_,20 @@
+       return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 40.0D).add(Attributes.MOVEMENT_SPEED, (double)0.3F).add(Attributes.ATTACK_DAMAGE, 7.0D).add(Attributes.FOLLOW_RANGE, 64.0D);
     }
  
++   @Override
     public void setTarget(@Nullable LivingEntity p_32537_) {
 -      super.setTarget(p_32537_);
++      // CraftBukkit start - fire event
++      setTarget(p_32537_, EntityTargetEvent.TargetReason.UNKNOWN, true);
++   }
++
++   @Override
++   public boolean setTarget(LivingEntity p_32537_, EntityTargetEvent.TargetReason reason, boolean fireEvent) {
++      if (!super.setTarget(p_32537_, reason, fireEvent)) {
++         return false;
++      }
++      p_32537_ = getTarget();
++      // CraftBukkit end
++
        AttributeInstance attributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
        if (p_32537_ == null) {
           this.targetChangeTime = 0;
@@ -12,7 +35,7 @@
           }
        }
  
-+      super.setTarget(p_32537_); //Forge: Moved down to allow event handlers to write data manager values.
++      return true;
     }
  
     protected void defineSynchedData() {
@@ -46,16 +69,23 @@
              return false;
           } else {
              return this.enderman.getRandom().nextInt(reducedTickDelay(2000)) == 0;
-@@ -444,7 +_,7 @@
+@@ -444,17 +_,19 @@
           BlockState blockstate2 = this.enderman.getCarriedBlock();
           if (blockstate2 != null) {
              blockstate2 = Block.updateFromNeighbourShapes(blockstate2, this.enderman.level(), blockpos);
 -            if (this.canPlaceBlock(level, blockpos, blockstate2, blockstate, blockstate1, blockpos1)) {
+-               level.setBlock(blockpos, blockstate2, 3);
+-               level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this.enderman, blockstate2));
+-               this.enderman.setCarriedBlock((BlockState)null);
 +            if (this.canPlaceBlock(level, blockpos, blockstate2, blockstate, blockstate1, blockpos1) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(enderman, net.minecraftforge.common.util.BlockSnapshot.create(level.dimension(), level, blockpos1), net.minecraft.core.Direction.UP)) {
-                level.setBlock(blockpos, blockstate2, 3);
-                level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this.enderman, blockstate2));
-                this.enderman.setCarriedBlock((BlockState)null);
-@@ -454,7 +_,7 @@
++               if (CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, blockstate2)) { // CraftBukkit - Place event
++                  level.setBlock(blockpos, blockstate2, 3);
++                  level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this.enderman, blockstate2));
++                  this.enderman.setCarriedBlock((BlockState) null);
++               } // CraftBukkit
+             }
+ 
+          }
        }
  
        private boolean canPlaceBlock(Level p_32559_, BlockPos p_32560_, BlockState p_32561_, BlockState p_32562_, BlockState p_32563_, BlockPos p_32564_) {
@@ -73,3 +103,18 @@
              return false;
           } else {
              return this.enderman.getRandom().nextInt(reducedTickDelay(20)) == 0;
+@@ -576,9 +_,11 @@
+          BlockHitResult blockhitresult = level.clip(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this.enderman));
+          boolean flag = blockhitresult.getBlockPos().equals(blockpos);
+          if (blockstate.is(BlockTags.ENDERMAN_HOLDABLE) && flag) {
+-            level.removeBlock(blockpos, false);
+-            level.gameEvent(GameEvent.BLOCK_DESTROY, blockpos, GameEvent.Context.of(this.enderman, blockstate));
+-            this.enderman.setCarriedBlock(blockstate.getBlock().defaultBlockState());
++            if (CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, Blocks.AIR.defaultBlockState())) { // CraftBukkit - Place event
++               level.removeBlock(blockpos, false);
++               level.gameEvent(GameEvent.BLOCK_DESTROY, blockpos, GameEvent.Context.of(this.enderman, blockstate));
++               this.enderman.setCarriedBlock(blockstate.getBlock().defaultBlockState());
++            } // CraftBukkit
+          }
+ 
+       }

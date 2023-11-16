@@ -1,0 +1,31 @@
+--- a/net/minecraft/world/entity/boss/enderdragon/phases/EnderDragonPhaseManager.java
++++ b/net/minecraft/world/entity/boss/enderdragon/phases/EnderDragonPhaseManager.java
+@@ -3,6 +_,8 @@
+ import com.mojang.logging.LogUtils;
+ import javax.annotation.Nullable;
+ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
++import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEnderDragon;
++import org.bukkit.event.entity.EnderDragonChangePhaseEvent;
+ import org.slf4j.Logger;
+ 
+ public class EnderDragonPhaseManager {
+@@ -22,6 +_,19 @@
+          if (this.currentPhase != null) {
+             this.currentPhase.end();
+          }
++
++         // CraftBukkit start - Call EnderDragonChangePhaseEvent
++         EnderDragonChangePhaseEvent event = new EnderDragonChangePhaseEvent(
++                 (CraftEnderDragon) this.dragon.getBukkitEntity(),
++                 (this.currentPhase == null) ? null : CraftEnderDragon.getBukkitPhase(this.currentPhase.getPhase()),
++                 CraftEnderDragon.getBukkitPhase(p_31417_)
++         );
++         this.dragon.level().getCraftServer().getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            return;
++         }
++         p_31417_ = CraftEnderDragon.getMinecraftPhase(event.getNewPhase());
++         // CraftBukkit end
+ 
+          this.currentPhase = this.getPhase(p_31417_);
+          if (!this.dragon.level().isClientSide) {
