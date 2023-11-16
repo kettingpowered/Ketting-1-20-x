@@ -55,7 +55,7 @@ jobs:
         continue-on-error: true
         run: ./gradlew build
       - name: Save Project Sources
-        if: steps.cache_projects-src_restore.output.cache-hit == 'false'
+        if: steps.cache_projects-src_restore.output.cache-hit != 'true'
         uses: actions/cache/save@v3
         with:
           path: |
