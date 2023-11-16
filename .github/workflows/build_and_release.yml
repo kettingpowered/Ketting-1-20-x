@@ -50,6 +50,9 @@ jobs:
       - name: Setup Ketting
         id: setup
         run: ./gradlew setup
+      - name: Check Setup Ketting
+        id: build
+        run: ./gradlew setup
       - name: Save Project Sources
         if: steps.cache_projects-src_restore.output.cache-hit == 'false'
         uses: actions/cache/save@v3
@@ -91,6 +94,7 @@ jobs:
             projects/
           key: project-src-cache-${{ github.ref }}-${{ github.sha }}
       - name: Delete Project Sources for build
+        continue-on-error: true
         run: |
           gh extension install actions/gh-actions-cache
           REPO=${{ github.repository }}
