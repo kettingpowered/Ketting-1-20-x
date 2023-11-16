@@ -1276,6 +1276,8 @@ project(':forge') {
     // Make sure we run bin compat checking during local testing.
     if (!System.env.MAVEN_USER || !System.env.MAVEN_PASSWORD)
         publish.dependsOn(':forge:checkJarCompatibility')
+
+    tasks.named('compileJava').get().mustRunAfter('extractMapped')
 }
 
 tasks.register('setup') {
