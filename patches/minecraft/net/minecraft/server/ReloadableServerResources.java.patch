@@ -1,10 +1,12 @@
 --- a/net/minecraft/server/ReloadableServerResources.java
 +++ b/net/minecraft/server/ReloadableServerResources.java
-@@ -29,10 +_,10 @@
+@@ -28,11 +_,11 @@
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final CompletableFuture<Unit> DATA_RELOAD_INITIAL_TASK = CompletableFuture.completedFuture(Unit.INSTANCE);
     private final CommandBuildContext.Configurable commandBuildContext;
-    private final Commands commands;
+-   private final Commands commands;
 -   private final RecipeManager recipes = new RecipeManager();
++   public final Commands commands;
 +   private final RecipeManager recipes;
     private final TagManager tagManager;
     private final LootDataManager lootData = new LootDataManager();
