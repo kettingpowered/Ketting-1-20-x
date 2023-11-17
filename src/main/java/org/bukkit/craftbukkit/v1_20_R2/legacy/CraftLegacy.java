@@ -9,25 +9,25 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.SharedConstants;
-import net.minecraft.core.IRegistry;
+//import net.minecraft.core.IRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.DynamicOpsNBT;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.resources.MinecraftKey;
-import net.minecraft.server.DispenserRegistry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.Bootstrap;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.datafix.DataConverterRegistry;
-import net.minecraft.util.datafix.fixes.DataConverterFlattenData;
-import net.minecraft.util.datafix.fixes.DataConverterMaterialId;
-import net.minecraft.util.datafix.fixes.DataConverterTypes;
+import net.minecraft.util.datafix.DataFixers;
+import net.minecraft.util.datafix.fixes.BlockStateData;
+import net.minecraft.util.datafix.fixes.ItemIdFix;
+import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockStateList;
-import net.minecraft.world.level.block.state.IBlockData;
-import net.minecraft.world.level.block.state.properties.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.Property;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
@@ -50,8 +50,8 @@ public final class CraftLegacy {
     private static final Set<String> whitelistedStates = new HashSet<>(Arrays.asList("explode", "check_decay", "decayable", "facing"));
     private static final Map<MaterialData, Item> materialToItem = new HashMap<>(16384);
     private static final Map<Item, MaterialData> itemToMaterial = new HashMap<>(1024);
-    private static final Map<MaterialData, IBlockData> materialToData = new HashMap<>(4096);
-    private static final Map<IBlockData, MaterialData> dataToMaterial = new HashMap<>(4096);
+    private static final Map<MaterialData, BlockState> materialToData = new HashMap<>(4096);
+    private static final Map<BlockState, MaterialData> dataToMaterial = new HashMap<>(4096);
     private static final Map<MaterialData, Block> materialToBlock = new HashMap<>(4096);
     private static final Map<Block, MaterialData> blockToMaterial = new HashMap<>(1024);
 
@@ -73,7 +73,7 @@ public final class CraftLegacy {
 
         if (material.isBlock()) {
             Block block = CraftMagicNumbers.getBlock(material);
-            IBlockData blockData = block.defaultBlockState();
+            BlockState blockData = block.defaultBlockState();
 
             // Try exact match first
             mappedData = dataToMaterial.get(blockData);
@@ -93,13 +93,13 @@ public final class CraftLegacy {
         return (mappedData == null) ? new MaterialData(Material.LEGACY_AIR) : mappedData;
     }
 
-    public static IBlockData fromLegacyData(Material material, byte data) {
+    public static BlockState fromLegacyData(Material material, byte data) {
         Preconditions.checkArgument(material.isLegacy(), "fromLegacyData on modern Material");
 
         MaterialData materialData = new MaterialData(material, data);
 
         // Try exact match first
-        IBlockData converted = materialToData.get(materialData);
+        BlockState converted = materialToData.get(materialData);
         if (converted != null) {
             return converted;
         }
@@ -128,7 +128,7 @@ public final class CraftLegacy {
         // Fallback to matching block
         if (material.isBlock()) {
             // Try exact match first
-            IBlockData converted = materialToData.get(materialData);
+            BlockState converted = materialToData.get(materialData);
             if (converted != null) {
                 return converted.getBlock().asItem();
             }
@@ -144,15 +144,15 @@ public final class CraftLegacy {
         return Items.AIR;
     }
 
-    public static byte toLegacyData(IBlockData blockData) {
+    public static byte toLegacyData(BlockState blockData) {
         return toLegacy(blockData).getData();
     }
 
-    public static Material toLegacyMaterial(IBlockData blockData) {
+    public static Material toLegacyMaterial(BlockState blockData) {
         return toLegacy(blockData).getItemType();
     }
 
-    public static MaterialData toLegacy(IBlockData blockData) {
+    public static MaterialData toLegacy(BlockState blockData) {
         MaterialData mappedData;
 
         // Try exact match first
@@ -195,7 +195,7 @@ public final class CraftLegacy {
 
         if (mappedData == null && material.isBlock()) {
             // Try exact match first
-            IBlockData iblock = materialToData.get(materialData);
+            BlockState iblock = materialToData.get(materialData);
             if (iblock != null) {
                 mappedData = CraftMagicNumbers.getMaterial(iblock.getBlock());
             }
@@ -315,7 +315,7 @@ public final class CraftLegacy {
         SPAWN_EGGS.put((byte) EntityType.ZOMBIE_VILLAGER.getTypeId(), Material.ZOMBIE_VILLAGER_SPAWN_EGG);
 
         SharedConstants.tryDetectVersion();
-        DispenserRegistry.bootStrap();
+        Bootstrap.bootStrap();
 
         for (Material material : Material.values()) {
             if (!material.isLegacy()) {
@@ -326,26 +326,26 @@ public final class CraftLegacy {
             if (material.isBlock()) {
                 for (byte data = 0; data < 16; data++) {
                     MaterialData matData = new MaterialData(material, data);
-                    Dynamic blockTag = DataConverterFlattenData.getTag(material.getId() << 4 | data);
-                    blockTag = DataConverterRegistry.getDataFixer().update(DataConverterTypes.BLOCK_STATE, blockTag, 100, CraftMagicNumbers.INSTANCE.getDataVersion());
+                    Dynamic blockTag = BlockStateData.getTag(material.getId() << 4 | data);
+                    blockTag = DataFixers.getDataFixer().update(References.BLOCK_STATE, blockTag, 100, CraftMagicNumbers.INSTANCE.getDataVersion());
                     // TODO: better skull conversion, chests
                     if (blockTag.get("Name").asString("").contains("%%FILTER_ME%%")) {
                         continue;
                     }
 
                     String name = blockTag.get("Name").asString("");
-                    Block block = BuiltInRegistries.BLOCK.get(new MinecraftKey(name));
+                    Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(name));
                     if (block == null) {
                         continue;
                     }
-                    IBlockData blockData = block.defaultBlockState();
-                    BlockStateList states = block.getStateDefinition();
+                    BlockState blockData = block.defaultBlockState();
+                    StateDefinition<Block,BlockState> states = block.getStateDefinition();
 
-                    Optional<NBTTagCompound> propMap = blockTag.getElement("Properties").result();
+                    Optional<CompoundTag> propMap = blockTag.getElement("Properties").result();
                     if (propMap.isPresent()) {
-                        NBTTagCompound properties = propMap.get();
+                        CompoundTag properties = propMap.get();
                         for (String dataKey : properties.getAllKeys()) {
-                            IBlockState state = states.getProperty(dataKey);
+                            Property state = states.getProperty(dataKey);
 
                             if (state == null) {
                                 Preconditions.checkArgument(whitelistedStates.contains(dataKey), "No state for %s", dataKey);
@@ -389,17 +389,17 @@ public final class CraftLegacy {
                     continue;
                 }
                 // Skip non item stacks for now (18w19b)
-                if (DataConverterMaterialId.getItem(material.getId()) == null) {
+                if (ItemIdFix.getItem(material.getId()) == null) {
                     continue;
                 }
 
                 MaterialData matData = new MaterialData(material, data);
 
-                NBTTagCompound stack = new NBTTagCompound();
+                CompoundTag stack = new CompoundTag();
                 stack.putInt("id", material.getId());
                 stack.putShort("Damage", data);
 
-                Dynamic<NBTBase> converted = DataConverterRegistry.getDataFixer().update(DataConverterTypes.ITEM_STACK, new Dynamic<NBTBase>(DynamicOpsNBT.INSTANCE, stack), -1, CraftMagicNumbers.INSTANCE.getDataVersion());
+                Dynamic<Tag> converted = DataFixers.getDataFixer().update(References.ITEM_STACK, new Dynamic<Tag>(NbtOps.INSTANCE, stack), -1, CraftMagicNumbers.INSTANCE.getDataVersion());
 
                 String newId = converted.get("id").asString("");
                 // Recover spawn eggs with invalid data
@@ -408,7 +408,7 @@ public final class CraftLegacy {
                 }
 
                 // Preconditions.checkState(newId.contains("minecraft:"), "Unknown new material for " + matData);
-                Item newMaterial = BuiltInRegistries.ITEM.get(new MinecraftKey(newId));
+                Item newMaterial = BuiltInRegistries.ITEM.get(new ResourceLocation(newId));
 
                 if (newMaterial == Items.AIR) {
                     continue;
