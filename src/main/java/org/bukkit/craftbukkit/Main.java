@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.util.PathConverter;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.fusesource.jansi.AnsiConsole;
 
 public class Main {
@@ -214,7 +215,7 @@ public class Main {
                 }
 
                 System.out.println("Loading libraries, please wait...");
-                net.minecraft.server.Main.main(options);
+                //net.minecraft.server.Main.main(options); //Ketting: We boot from here instead
             } catch (Throwable t) {
                 t.printStackTrace();
             }
