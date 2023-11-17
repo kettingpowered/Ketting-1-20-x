@@ -2,8 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R2.scoreboard;
 
 import java.util.Map;
 import net.minecraft.world.scores.Scoreboard;
-import net.minecraft.world.scores.ScoreboardObjective;
-import net.minecraft.world.scores.ScoreboardScore;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.Objective;
@@ -44,8 +42,8 @@ final class CraftScore implements Score {
         Scoreboard board = objective.checkState().board;
 
         if (board.getTrackedPlayers().contains(entry)) { // Lazy
-            Map<ScoreboardObjective, ScoreboardScore> scores = board.getPlayerScores(entry);
-            ScoreboardScore score = scores.get(objective.getHandle());
+            Map<net.minecraft.world.scores.Objective, net.minecraft.world.scores.Score> scores = board.getPlayerScores(entry);
+            net.minecraft.world.scores.Score score = scores.get(objective.getHandle());
             if (score != null) { // Lazy
                 return score.getScore();
             }

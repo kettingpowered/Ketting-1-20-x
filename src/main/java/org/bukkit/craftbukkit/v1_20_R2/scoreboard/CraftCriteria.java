@@ -2,8 +2,8 @@ package org.bukkit.craftbukkit.v1_20_R2.scoreboard;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
-import net.minecraft.world.scores.ScoreboardObjective;
-import net.minecraft.world.scores.criteria.IScoreboardCriteria;
+import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.RenderType;
 
@@ -14,9 +14,9 @@ public final class CraftCriteria implements Criteria {
     static {
         ImmutableMap.Builder<String, CraftCriteria> defaults = ImmutableMap.builder();
 
-        for (Map.Entry<String, IScoreboardCriteria> entry : IScoreboardCriteria.CRITERIA_CACHE.entrySet()) {
+        for (Map.Entry<String, ObjectiveCriteria> entry : ObjectiveCriteria.CRITERIA_CACHE.entrySet()) {
             String name = entry.getKey();
-            IScoreboardCriteria criteria = entry.getValue();
+            ObjectiveCriteria criteria = entry.getValue();
 
             defaults.put(name, new CraftCriteria(criteria));
         }
@@ -25,7 +25,7 @@ public final class CraftCriteria implements Criteria {
         DUMMY = DEFAULTS.get("dummy");
     }
 
-    final IScoreboardCriteria criteria;
+    final ObjectiveCriteria criteria;
     final String bukkitName;
 
     private CraftCriteria(String bukkitName) {
@@ -33,7 +33,7 @@ public final class CraftCriteria implements Criteria {
         this.criteria = DUMMY.criteria;
     }
 
-    private CraftCriteria(IScoreboardCriteria criteria) {
+    private CraftCriteria(ObjectiveCriteria criteria) {
         this.criteria = criteria;
         this.bukkitName = criteria.getName();
     }
@@ -53,7 +53,7 @@ public final class CraftCriteria implements Criteria {
         return RenderType.values()[criteria.getDefaultRenderType().ordinal()];
     }
 
-    static CraftCriteria getFromNMS(ScoreboardObjective objective) {
+    static CraftCriteria getFromNMS(Objective objective) {
         return DEFAULTS.get(objective.getCriteria().getName());
     }
 
@@ -63,7 +63,7 @@ public final class CraftCriteria implements Criteria {
             return criteria;
         }
 
-        return IScoreboardCriteria.byName(name).map(CraftCriteria::new).orElseGet(() -> new CraftCriteria(name));
+        return ObjectiveCriteria.byName(name).map(CraftCriteria::new).orElseGet(() -> new CraftCriteria(name));
     }
 
     @Override
