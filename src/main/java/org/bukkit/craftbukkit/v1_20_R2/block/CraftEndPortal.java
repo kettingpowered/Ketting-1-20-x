@@ -1,18 +1,19 @@
-package org.bukkit.craftbukkit.v1_20_R2.block;
+package org.bukkit.craftbukkit.block;
 
-import net.minecraft.world.level.block.entity.TheEndPortalBlockEntity;
+import net.minecraft.world.level.block.entity.TileEntityEnderPortal;
 import org.bukkit.World;
 
-public class CraftEndPortal extends CraftBlockEntityState {
+public class CraftEndPortal extends CraftBlockEntityState<TileEntityEnderPortal> {
 
-    public CraftEndPortal(World world, TheEndPortalBlockEntity tileEntity) {
+    public CraftEndPortal(World world, TileEntityEnderPortal tileEntity) {
         super(world, tileEntity);
     }
 
     protected CraftEndPortal(CraftEndPortal state) {
-        super((CraftBlockEntityState) state);
+        super(state);
     }
 
+    @Override
     public CraftEndPortal copy() {
         return new CraftEndPortal(this);
     }

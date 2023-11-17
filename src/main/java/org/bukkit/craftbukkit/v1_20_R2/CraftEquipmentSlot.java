@@ -1,46 +1,47 @@
-package org.bukkit.craftbukkit.v1_20_R2;
+package org.bukkit.craftbukkit;
 
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.EnumHand;
+import net.minecraft.world.entity.EnumItemSlot;
+import org.bukkit.inventory.EquipmentSlot;
 
 public class CraftEquipmentSlot {
 
-    private static final EquipmentSlot[] slots = new EquipmentSlot[org.bukkit.inventory.EquipmentSlot.values().length];
-    private static final org.bukkit.inventory.EquipmentSlot[] enums = new org.bukkit.inventory.EquipmentSlot[EquipmentSlot.values().length];
+    private static final EnumItemSlot[] slots = new EnumItemSlot[EquipmentSlot.values().length];
+    private static final EquipmentSlot[] enums = new EquipmentSlot[EnumItemSlot.values().length];
 
     static {
-        set(org.bukkit.inventory.EquipmentSlot.HAND, EquipmentSlot.MAINHAND);
-        set(org.bukkit.inventory.EquipmentSlot.OFF_HAND, EquipmentSlot.OFFHAND);
-        set(org.bukkit.inventory.EquipmentSlot.FEET, EquipmentSlot.FEET);
-        set(org.bukkit.inventory.EquipmentSlot.LEGS, EquipmentSlot.LEGS);
-        set(org.bukkit.inventory.EquipmentSlot.CHEST, EquipmentSlot.CHEST);
-        set(org.bukkit.inventory.EquipmentSlot.HEAD, EquipmentSlot.HEAD);
+        set(EquipmentSlot.HAND, EnumItemSlot.MAINHAND);
+        set(EquipmentSlot.OFF_HAND, EnumItemSlot.OFFHAND);
+        set(EquipmentSlot.FEET, EnumItemSlot.FEET);
+        set(EquipmentSlot.LEGS, EnumItemSlot.LEGS);
+        set(EquipmentSlot.CHEST, EnumItemSlot.CHEST);
+        set(EquipmentSlot.HEAD, EnumItemSlot.HEAD);
     }
 
-    private static void set(org.bukkit.inventory.EquipmentSlot type, EquipmentSlot value) {
-        CraftEquipmentSlot.slots[type.ordinal()] = value;
-        CraftEquipmentSlot.enums[value.ordinal()] = type;
+    private static void set(EquipmentSlot type, EnumItemSlot value) {
+        slots[type.ordinal()] = value;
+        enums[value.ordinal()] = type;
     }
 
-    public static org.bukkit.inventory.EquipmentSlot getSlot(EquipmentSlot nms) {
-        return CraftEquipmentSlot.enums[nms.ordinal()];
+    public static EquipmentSlot getSlot(EnumItemSlot nms) {
+        return enums[nms.ordinal()];
     }
 
-    public static EquipmentSlot getNMS(org.bukkit.inventory.EquipmentSlot slot) {
-        return CraftEquipmentSlot.slots[slot.ordinal()];
+    public static EnumItemSlot getNMS(EquipmentSlot slot) {
+        return slots[slot.ordinal()];
     }
 
-    public static org.bukkit.inventory.EquipmentSlot getHand(InteractionHand enumhand) {
-        return enumhand == InteractionHand.MAIN_HAND ? org.bukkit.inventory.EquipmentSlot.HAND : org.bukkit.inventory.EquipmentSlot.OFF_HAND;
+    public static EquipmentSlot getHand(EnumHand enumhand) {
+        return (enumhand == EnumHand.MAIN_HAND) ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND;
     }
 
-    public static InteractionHand getHand(org.bukkit.inventory.EquipmentSlot hand) {
-        if (hand == org.bukkit.inventory.EquipmentSlot.HAND) {
-            return InteractionHand.MAIN_HAND;
-        } else if (hand == org.bukkit.inventory.EquipmentSlot.OFF_HAND) {
-            return InteractionHand.OFF_HAND;
-        } else {
-            throw new IllegalArgumentException("EquipmentSlot." + hand + " is not a hand");
+    public static EnumHand getHand(EquipmentSlot hand) {
+        if (hand == EquipmentSlot.HAND) {
+            return EnumHand.MAIN_HAND;
+        } else if (hand == EquipmentSlot.OFF_HAND) {
+            return EnumHand.OFF_HAND;
         }
+
+        throw new IllegalArgumentException("EquipmentSlot." + hand + " is not a hand");
     }
 }

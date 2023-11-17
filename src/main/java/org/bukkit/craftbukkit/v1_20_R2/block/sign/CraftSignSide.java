@@ -1,16 +1,18 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.sign;
+package org.bukkit.craftbukkit.block.sign;
 
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.world.item.EnumColor;
 import net.minecraft.world.level.block.entity.SignText;
 import org.bukkit.DyeColor;
 import org.bukkit.block.sign.SignSide;
-import org.bukkit.craftbukkit.v1_20_R2.block.CraftSign;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
+import org.bukkit.craftbukkit.block.CraftSign;
+import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CraftSignSide implements SignSide {
 
+    // Lazily initialized only if requested:
     private String[] originalLines = null;
     private String[] lines = null;
     private SignText signText;
@@ -20,56 +22,62 @@ public class CraftSignSide implements SignSide {
     }
 
     @NotNull
+    @Override
     public String[] getLines() {
-        if (this.lines == null) {
-            Component[] messages = this.signText.getMessages(false);
-
-            this.lines = new String[messages.length];
-            System.arraycopy(CraftSign.revertComponents(messages), 0, this.lines, 0, this.lines.length);
-            this.originalLines = new String[this.lines.length];
-            System.arraycopy(this.lines, 0, this.originalLines, 0, this.originalLines.length);
+        if (lines == null) {
+            // Lazy initialization:
+            IChatBaseComponent[] messages = signText.getMessages(false);
+            lines = new String[messages.length];
+            System.arraycopy(CraftSign.revertComponents(messages), 0, lines, 0, lines.length);
+            originalLines = new String[lines.length];
+            System.arraycopy(lines, 0, originalLines, 0, originalLines.length);
         }
-
-        return this.lines;
+        return lines;
     }
 
     @NotNull
+    @Override
     public String getLine(int index) throws IndexOutOfBoundsException {
-        return this.getLines()[index];
+        return getLines()[index];
     }
 
+    @Override
     public void setLine(int index, @NotNull String line) throws IndexOutOfBoundsException {
-        this.getLines()[index] = line;
+        getLines()[index] = line;
     }
 
+    @Override
     public boolean isGlowingText() {
-        return this.signText.hasGlowingText();
+        return signText.hasGlowingText();
     }
 
+    @Override
     public void setGlowingText(boolean glowing) {
-        this.signText = this.signText.setHasGlowingText(glowing);
+        signText = signText.setHasGlowingText(glowing);
     }
 
     @Nullable
+    @Override
     public DyeColor getColor() {
-        return DyeColor.getByWoolData((byte) this.signText.getColor().getId());
+        return DyeColor.getByWoolData((byte) signText.getColor().getId());
     }
 
+    @Override
     public void setColor(@NotNull DyeColor color) {
-        this.signText = this.signText.setColor(net.minecraft.world.item.DyeColor.byId(color.getWoolData()));
+        signText = signText.setColor(EnumColor.byId(color.getWoolData()));
     }
 
     public SignText applyLegacyStringToSignSide() {
-        if (this.lines != null) {
-            for (int i = 0; i < this.lines.length; ++i) {
-                String line = this.lines[i] == null ? "" : this.lines[i];
-
-                if (!line.equals(this.originalLines[i])) {
-                    this.signText = this.signText.setMessage(i, CraftChatMessage.fromString(line)[0]);
+        if (lines != null) {
+            for (int i = 0; i < lines.length; i++) {
+                String line = (lines[i] == null) ? "" : lines[i];
+                if (line.equals(originalLines[i])) {
+                    continue; // The line contents are still the same, skip.
                 }
+                signText = signText.setMessage(i, CraftChatMessage.fromString(line)[0]);
             }
         }
 
-        return this.signText;
+        return signText;
     }
 }

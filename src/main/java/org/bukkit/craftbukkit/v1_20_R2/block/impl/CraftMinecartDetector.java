@@ -1,55 +1,62 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.DetectorRailBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Powerable;
-import org.bukkit.block.data.Rail;
-import org.bukkit.block.data.Rail.Shape;
-import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.RedstoneRail;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftMinecartDetector extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.RedstoneRail, org.bukkit.block.data.Powerable, org.bukkit.block.data.Rail, org.bukkit.block.data.Waterlogged {
 
-public final class CraftMinecartDetector extends CraftBlockData implements RedstoneRail, Powerable, Rail, Waterlogged {
+    public CraftMinecartDetector() {
+        super();
+    }
 
-    private static final BooleanProperty POWERED = getBoolean(DetectorRailBlock.class, "powered");
-    private static final EnumProperty SHAPE = getEnum(DetectorRailBlock.class, "shape");
-    private static final BooleanProperty WATERLOGGED = getBoolean(DetectorRailBlock.class, "waterlogged");
-
-    public CraftMinecartDetector() {}
-
-    public CraftMinecartDetector(BlockState state) {
+    public CraftMinecartDetector(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.block.data.CraftPowerable
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean POWERED = getBoolean(net.minecraft.world.level.block.BlockMinecartDetector.class, "powered");
+
+    @Override
     public boolean isPowered() {
-        return (Boolean) this.get(CraftMinecartDetector.POWERED);
+        return get(POWERED);
     }
 
+    @Override
     public void setPowered(boolean powered) {
-        this.set((Property) CraftMinecartDetector.POWERED, (Comparable) powered);
+        set(POWERED, powered);
     }
 
-    public Shape getShape() {
-        return (Shape) this.get(CraftMinecartDetector.SHAPE, Shape.class);
+    // org.bukkit.craftbukkit.block.data.CraftRail
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> SHAPE = getEnum(net.minecraft.world.level.block.BlockMinecartDetector.class, "shape");
+
+    @Override
+    public org.bukkit.block.data.Rail.Shape getShape() {
+        return get(SHAPE, org.bukkit.block.data.Rail.Shape.class);
     }
 
-    public void setShape(Shape shape) {
-        this.set(CraftMinecartDetector.SHAPE, (Enum) shape);
+    @Override
+    public void setShape(org.bukkit.block.data.Rail.Shape shape) {
+        set(SHAPE, shape);
     }
 
-    public Set getShapes() {
-        return this.getValues(CraftMinecartDetector.SHAPE, Shape.class);
+    @Override
+    public java.util.Set<org.bukkit.block.data.Rail.Shape> getShapes() {
+        return getValues(SHAPE, org.bukkit.block.data.Rail.Shape.class);
     }
 
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockMinecartDetector.class, "waterlogged");
+
+    @Override
     public boolean isWaterlogged() {
-        return (Boolean) this.get(CraftMinecartDetector.WATERLOGGED);
+        return get(WATERLOGGED);
     }
 
+    @Override
     public void setWaterlogged(boolean waterlogged) {
-        this.set((Property) CraftMinecartDetector.WATERLOGGED, (Comparable) waterlogged);
+        set(WATERLOGGED, waterlogged);
     }
 }

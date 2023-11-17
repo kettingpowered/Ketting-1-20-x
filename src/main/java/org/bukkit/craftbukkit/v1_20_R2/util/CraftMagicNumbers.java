@@ -1,9 +1,9 @@
-package org.bukkit.craftbukkit.v1_20_R2.util;
+package org.bukkit.craftbukkit.util;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableMultimap.Builder;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Files;
 import com.google.gson.JsonElement;
@@ -13,8 +13,8 @@ import com.mojang.serialization.Dynamic;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -23,24 +23,27 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.SharedConstants;
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.advancements.critereon.LootDeserializationContext;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.TagParser;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.nbt.DynamicOpsNBT;
+import net.minecraft.nbt.MojangsonParser;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraft.resources.MinecraftKey;
+import net.minecraft.server.AdvancementDataWorld;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.ServerAdvancementManager;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.util.datafix.DataFixers;
-import net.minecraft.util.datafix.fixes.References;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.util.ChatDeserializer;
+import net.minecraft.util.datafix.DataConverterRegistry;
+import net.minecraft.util.datafix.fixes.DataConverterTypes;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.ai.attributes.AttributeBase;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionRegistry;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.level.block.state.IBlockData;
+import net.minecraft.world.level.storage.SavedFile;
 import org.bukkit.Bukkit;
 import org.bukkit.FeatureFlag;
 import org.bukkit.Material;
@@ -48,15 +51,17 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.UnsafeValues;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot;
-import org.bukkit.craftbukkit.v1_20_R2.CraftFeatureFlag;
-import org.bukkit.craftbukkit.v1_20_R2.CraftRegistry;
-import org.bukkit.craftbukkit.v1_20_R2.attribute.CraftAttribute;
-import org.bukkit.craftbukkit.v1_20_R2.attribute.CraftAttributeInstance;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_20_R2.potion.CraftPotionType;
+import org.bukkit.craftbukkit.CraftEquipmentSlot;
+import org.bukkit.craftbukkit.CraftFeatureFlag;
+import org.bukkit.craftbukkit.CraftRegistry;
+import org.bukkit.craftbukkit.attribute.CraftAttribute;
+import org.bukkit.craftbukkit.attribute.CraftAttributeInstance;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.legacy.CraftLegacy;
+import org.bukkit.craftbukkit.potion.CraftPotionType;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.CreativeCategory;
 import org.bukkit.inventory.EquipmentSlot;
@@ -64,194 +69,213 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.potion.PotionType.InternalPotionData;
+import org.bukkit.potion.PotionType;
 
+@SuppressWarnings("deprecation")
 public final class CraftMagicNumbers implements UnsafeValues {
-
     public static final UnsafeValues INSTANCE = new CraftMagicNumbers();
-    private static final Map BLOCK_MATERIAL = new HashMap();
-    private static final Map ITEM_MATERIAL = new HashMap();
-    private static final Map MATERIAL_ITEM = new HashMap();
-    private static final Map MATERIAL_BLOCK = new HashMap();
-    private static final List SUPPORTED_API;
-
-    static {
-        Iterator iterator = BuiltInRegistries.BLOCK.iterator();
-
-        while (iterator.hasNext()) {
-            Block block = (Block) iterator.next();
-
-            CraftMagicNumbers.BLOCK_MATERIAL.put(block, Material.getMaterial(BuiltInRegistries.BLOCK.getKey(block).getPath().toUpperCase(Locale.ROOT)));
-        }
-
-        iterator = BuiltInRegistries.ITEM.iterator();
-
-        while (iterator.hasNext()) {
-            Item item = (Item) iterator.next();
-
-            CraftMagicNumbers.ITEM_MATERIAL.put(item, Material.getMaterial(BuiltInRegistries.ITEM.getKey(item).getPath().toUpperCase(Locale.ROOT)));
-        }
-
-        Material[] amaterial;
-        int i = (amaterial = Material.values()).length;
-
-        for (int j = 0; j < i; ++j) {
-            Material material = amaterial[j];
-
-            if (!material.isLegacy()) {
-                ResourceLocation key = key(material);
-
-                BuiltInRegistries.ITEM.getOptional(key).ifPresent((itemx) -> {
-                    CraftMagicNumbers.MATERIAL_ITEM.put(material, itemx);
-                });
-                BuiltInRegistries.BLOCK.getOptional(key).ifPresent((blockx) -> {
-                    CraftMagicNumbers.MATERIAL_BLOCK.put(material, blockx);
-                });
-            }
-        }
-
-        SUPPORTED_API = Arrays.asList("1.13", "1.14", "1.15", "1.16", "1.17", "1.18", "1.19", "1.20");
-    }
 
     private CraftMagicNumbers() {}
 
-    public static BlockState getBlock(MaterialData material) {
+    public static IBlockData getBlock(MaterialData material) {
         return getBlock(material.getItemType(), material.getData());
     }
 
-    public static BlockState getBlock(Material material, byte data) {
-        return org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.fromLegacyData(org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.toLegacy(material), data);
+    public static IBlockData getBlock(Material material, byte data) {
+        return CraftLegacy.fromLegacyData(CraftLegacy.toLegacy(material), data);
     }
 
-    public static MaterialData getMaterial(BlockState data) {
-        return org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.toLegacy(getMaterial(data.getBlock())).getNewData(toLegacyData(data));
+    public static MaterialData getMaterial(IBlockData data) {
+        return CraftLegacy.toLegacy(getMaterial(data.getBlock())).getNewData(toLegacyData(data));
     }
 
     public static Item getItem(Material material, short data) {
-        return material.isLegacy() ? org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.fromLegacyData(org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.toLegacy(material), data) : getItem(material);
+        if (material.isLegacy()) {
+            return CraftLegacy.fromLegacyData(CraftLegacy.toLegacy(material), data);
+        }
+
+        return getItem(material);
     }
 
     public static MaterialData getMaterialData(Item item) {
-        return org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.toLegacyData(getMaterial(item));
+        return CraftLegacy.toLegacyData(getMaterial(item));
+    }
+
+    // ========================================================================
+    private static final Map<Block, Material> BLOCK_MATERIAL = new HashMap<>();
+    private static final Map<Item, Material> ITEM_MATERIAL = new HashMap<>();
+    private static final Map<Material, Item> MATERIAL_ITEM = new HashMap<>();
+    private static final Map<Material, Block> MATERIAL_BLOCK = new HashMap<>();
+
+    static {
+        for (Block block : BuiltInRegistries.BLOCK) {
+            BLOCK_MATERIAL.put(block, Material.getMaterial(BuiltInRegistries.BLOCK.getKey(block).getPath().toUpperCase(Locale.ROOT)));
+        }
+
+        for (Item item : BuiltInRegistries.ITEM) {
+            ITEM_MATERIAL.put(item, Material.getMaterial(BuiltInRegistries.ITEM.getKey(item).getPath().toUpperCase(Locale.ROOT)));
+        }
+
+        for (Material material : Material.values()) {
+            if (material.isLegacy()) {
+                continue;
+            }
+
+            MinecraftKey key = key(material);
+            BuiltInRegistries.ITEM.getOptional(key).ifPresent((item) -> {
+                MATERIAL_ITEM.put(material, item);
+            });
+            BuiltInRegistries.BLOCK.getOptional(key).ifPresent((block) -> {
+                MATERIAL_BLOCK.put(material, block);
+            });
+        }
     }
 
     public static Material getMaterial(Block block) {
-        return (Material) CraftMagicNumbers.BLOCK_MATERIAL.get(block);
+        return BLOCK_MATERIAL.get(block);
     }
 
     public static Material getMaterial(Item item) {
-        return (Material) CraftMagicNumbers.ITEM_MATERIAL.getOrDefault(item, Material.AIR);
+        return ITEM_MATERIAL.getOrDefault(item, Material.AIR);
     }
 
     public static Item getItem(Material material) {
         if (material != null && material.isLegacy()) {
-            material = org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.fromLegacy(material);
+            material = CraftLegacy.fromLegacy(material);
         }
 
-        return (Item) CraftMagicNumbers.MATERIAL_ITEM.get(material);
+        return MATERIAL_ITEM.get(material);
     }
 
     public static Block getBlock(Material material) {
         if (material != null && material.isLegacy()) {
-            material = org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.fromLegacy(material);
+            material = CraftLegacy.fromLegacy(material);
         }
 
-        return (Block) CraftMagicNumbers.MATERIAL_BLOCK.get(material);
+        return MATERIAL_BLOCK.get(material);
     }
 
-    public static ResourceLocation key(Material mat) {
+    public static MinecraftKey key(Material mat) {
         return CraftNamespacedKey.toMinecraft(mat.getKey());
     }
+    // ========================================================================
 
-    public static byte toLegacyData(BlockState data) {
-        return org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.toLegacyData(data);
+    public static byte toLegacyData(IBlockData data) {
+        return CraftLegacy.toLegacyData(data);
     }
 
+    @Override
     public Material toLegacy(Material material) {
-        return org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.toLegacy(material);
+        return CraftLegacy.toLegacy(material);
     }
 
+    @Override
     public Material fromLegacy(Material material) {
-        return org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.fromLegacy(material);
+        return CraftLegacy.fromLegacy(material);
     }
 
+    @Override
     public Material fromLegacy(MaterialData material) {
-        return org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.fromLegacy(material);
+        return CraftLegacy.fromLegacy(material);
     }
 
+    @Override
     public Material fromLegacy(MaterialData material, boolean itemPriority) {
-        return org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.fromLegacy(material, itemPriority);
+        return CraftLegacy.fromLegacy(material, itemPriority);
     }
 
+    @Override
     public BlockData fromLegacy(Material material, byte data) {
         return CraftBlockData.fromData(getBlock(material, data));
     }
 
+    @Override
     public Material getMaterial(String material, int version) {
         Preconditions.checkArgument(material != null, "material == null");
         Preconditions.checkArgument(version <= this.getDataVersion(), "Newer version! Server downgrades are not supported!");
+
+        // Fastpath up to date materials
         if (version == this.getDataVersion()) {
             return Material.getMaterial(material);
-        } else {
-            Dynamic name = new Dynamic(NbtOps.INSTANCE, StringTag.valueOf("minecraft:" + material.toLowerCase(Locale.ROOT)));
-            Dynamic converted = DataFixers.getDataFixer().update(References.ITEM_NAME, name, version, this.getDataVersion());
-
-            if (name.equals(converted)) {
-                converted = DataFixers.getDataFixer().update(References.BLOCK_NAME, name, version, this.getDataVersion());
-            }
-
-            return Material.matchMaterial(converted.asString(""));
         }
+
+        Dynamic<NBTBase> name = new Dynamic<>(DynamicOpsNBT.INSTANCE, NBTTagString.valueOf("minecraft:" + material.toLowerCase(Locale.ROOT)));
+        Dynamic<NBTBase> converted = DataConverterRegistry.getDataFixer().update(DataConverterTypes.ITEM_NAME, name, version, this.getDataVersion());
+
+        if (name.equals(converted)) {
+            converted = DataConverterRegistry.getDataFixer().update(DataConverterTypes.BLOCK_NAME, name, version, this.getDataVersion());
+        }
+
+        return Material.matchMaterial(converted.asString(""));
     }
 
+    /**
+     * This string should be changed if the NMS mappings do.
+     *
+     * It has no meaning and should only be used as an equality check. Plugins
+     * which are sensitive to the NMS mappings may read it and refuse to load if
+     * it cannot be found or is different to the expected value.
+     *
+     * Remember: NMS is not supported API and may break at any time for any
+     * reason irrespective of this. There is often supported API to do the same
+     * thing as many common NMS usages. If not, you are encouraged to open a
+     * feature and/or pull request for consideration, or use a well abstracted
+     * third-party API such as ProtocolLib.
+     *
+     * @return string
+     */
     public String getMappingsVersion() {
         return "3478a65bfd04b15b431fe107b3617dfc";
     }
 
+    @Override
     public int getDataVersion() {
         return SharedConstants.getCurrentVersion().getDataVersion().getVersion();
     }
 
+    @Override
     public ItemStack modifyItemStack(ItemStack stack, String arguments) {
         net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
 
         try {
-            nmsStack.setTag(TagParser.parseTag(arguments));
-        } catch (CommandSyntaxException commandsyntaxexception) {
-            Logger.getLogger(CraftMagicNumbers.class.getName()).log(Level.SEVERE, (String) null, commandsyntaxexception);
+            nmsStack.setTag((NBTTagCompound) MojangsonParser.parseTag(arguments));
+        } catch (CommandSyntaxException ex) {
+            Logger.getLogger(CraftMagicNumbers.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         stack.setItemMeta(CraftItemStack.getItemMeta(nmsStack));
+
         return stack;
     }
 
     private static File getBukkitDataPackFolder() {
-        return new File(MinecraftServer.getServer().getWorldPath(LevelResource.DATAPACK_DIR).toFile(), "bukkit");
+        return new File(MinecraftServer.getServer().getWorldPath(SavedFile.DATAPACK_DIR).toFile(), "bukkit");
     }
 
+    @Override
     public Advancement loadAdvancement(NamespacedKey key, String advancement) {
         Preconditions.checkArgument(Bukkit.getAdvancement(key) == null, "Advancement %s already exists", key);
-        ResourceLocation minecraftkey = CraftNamespacedKey.toMinecraft(key);
-        JsonElement jsonelement = (JsonElement) ServerAdvancementManager.GSON.fromJson(advancement, JsonElement.class);
-        JsonObject jsonobject = GsonHelper.convertToJsonObject(jsonelement, "advancement");
-        net.minecraft.advancements.Advancement nms = net.minecraft.advancements.Advancement.fromJson(jsonobject, new DeserializationContext(minecraftkey, MinecraftServer.getServer().getLootData()));
+        MinecraftKey minecraftkey = CraftNamespacedKey.toMinecraft(key);
 
+        JsonElement jsonelement = AdvancementDataWorld.GSON.fromJson(advancement, JsonElement.class);
+        JsonObject jsonobject = ChatDeserializer.convertToJsonObject(jsonelement, "advancement");
+        net.minecraft.advancements.Advancement nms = net.minecraft.advancements.Advancement.fromJson(jsonobject, new LootDeserializationContext(minecraftkey, MinecraftServer.getServer().getLootData()));
         if (nms != null) {
             MinecraftServer.getServer().getAdvancements().advancements.put(minecraftkey, new AdvancementHolder(minecraftkey, nms));
             Advancement bukkit = Bukkit.getAdvancement(key);
 
             if (bukkit != null) {
                 File file = new File(getBukkitDataPackFolder(), "data" + File.separator + key.getNamespace() + File.separator + "advancements" + File.separator + key.getKey() + ".json");
-
                 file.getParentFile().mkdirs();
 
                 try {
                     Files.write(advancement, file, Charsets.UTF_8);
-                } catch (IOException ioexception) {
-                    Bukkit.getLogger().log(Level.SEVERE, "Error saving advancement " + key, ioexception);
+                } catch (IOException ex) {
+                    Bukkit.getLogger().log(Level.SEVERE, "Error saving advancement " + key, ex);
                 }
 
                 MinecraftServer.getServer().getPlayerList().reloadResources();
+
                 return bukkit;
             }
         }
@@ -259,18 +283,21 @@ public final class CraftMagicNumbers implements UnsafeValues {
         return null;
     }
 
+    @Override
     public boolean removeAdvancement(NamespacedKey key) {
         File file = new File(getBukkitDataPackFolder(), "data" + File.separator + key.getNamespace() + File.separator + "advancements" + File.separator + key.getKey() + ".json");
-
         return file.delete();
     }
 
+    private static final List<String> SUPPORTED_API = Arrays.asList("1.13", "1.14", "1.15", "1.16", "1.17", "1.18", "1.19", "1.20");
+
+    @Override
     public void checkSupported(PluginDescriptionFile pdf) throws InvalidPluginException {
         String minimumVersion = MinecraftServer.getServer().server.minimumAPI;
-        int minimumIndex = CraftMagicNumbers.SUPPORTED_API.indexOf(minimumVersion);
+        int minimumIndex = SUPPORTED_API.indexOf(minimumVersion);
 
         if (pdf.getAPIVersion() != null) {
-            int pluginIndex = CraftMagicNumbers.SUPPORTED_API.indexOf(pdf.getAPIVersion());
+            int pluginIndex = SUPPORTED_API.indexOf(pdf.getAPIVersion());
 
             if (pluginIndex == -1) {
                 throw new InvalidPluginException("Unsupported API version " + pdf.getAPIVersion());
@@ -280,83 +307,91 @@ public final class CraftMagicNumbers implements UnsafeValues {
                 throw new InvalidPluginException("Plugin API version " + pdf.getAPIVersion() + " is lower than the minimum allowed version. Please update or replace it.");
             }
         } else {
-            if (minimumIndex != -1) {
+            if (minimumIndex == -1) {
+                CraftLegacy.init();
+                Bukkit.getLogger().log(Level.WARNING, "Legacy plugin " + pdf.getFullName() + " does not specify an api-version.");
+            } else {
                 throw new InvalidPluginException("Plugin API version " + pdf.getAPIVersion() + " is lower than the minimum allowed version. Please update or replace it.");
             }
-
-            org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.init();
-            Bukkit.getLogger().log(Level.WARNING, "Legacy plugin " + pdf.getFullName() + " does not specify an api-version.");
         }
-
     }
 
     public static boolean isLegacy(PluginDescriptionFile pdf) {
         return pdf.getAPIVersion() == null;
     }
 
+    @Override
     public byte[] processClass(PluginDescriptionFile pdf, String path, byte[] clazz) {
         try {
             clazz = Commodore.convert(clazz, !isLegacy(pdf));
-        } catch (Exception exception) {
-            Bukkit.getLogger().log(Level.SEVERE, "Fatal error trying to convert " + pdf.getFullName() + ":" + path, exception);
+        } catch (Exception ex) {
+            Bukkit.getLogger().log(Level.SEVERE, "Fatal error trying to convert " + pdf.getFullName() + ":" + path, ex);
         }
 
         return clazz;
     }
 
-    public Multimap getDefaultAttributeModifiers(Material material, EquipmentSlot slot) {
-        Builder defaultAttributes = ImmutableMultimap.builder();
-        Multimap nmsDefaultAttributes = getItem(material).getDefaultAttributeModifiers(CraftEquipmentSlot.getNMS(slot));
-        Iterator iterator = nmsDefaultAttributes.entries().iterator();
+    @Override
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(Material material, EquipmentSlot slot) {
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> defaultAttributes = ImmutableMultimap.builder();
 
-        while (iterator.hasNext()) {
-            Entry mapEntry = (Entry) iterator.next();
-            Attribute attribute = CraftAttribute.minecraftToBukkit((net.minecraft.world.entity.ai.attributes.Attribute) mapEntry.getKey());
-
-            defaultAttributes.put(attribute, CraftAttributeInstance.convert((AttributeModifier) mapEntry.getValue(), slot));
+        Multimap<AttributeBase, net.minecraft.world.entity.ai.attributes.AttributeModifier> nmsDefaultAttributes = getItem(material).getDefaultAttributeModifiers(CraftEquipmentSlot.getNMS(slot));
+        for (Entry<AttributeBase, net.minecraft.world.entity.ai.attributes.AttributeModifier> mapEntry : nmsDefaultAttributes.entries()) {
+            Attribute attribute = CraftAttribute.minecraftToBukkit(mapEntry.getKey());
+            defaultAttributes.put(attribute, CraftAttributeInstance.convert(mapEntry.getValue(), slot));
         }
 
         return defaultAttributes.build();
     }
 
+    @Override
     public CreativeCategory getCreativeCategory(Material material) {
-        return CreativeCategory.BUILDING_BLOCKS;
+        return CreativeCategory.BUILDING_BLOCKS; // TODO: Figure out what to do with this
     }
 
+    @Override
     public String getBlockTranslationKey(Material material) {
         Block block = getBlock(material);
-
-        return block != null ? block.getDescriptionId() : null;
+        return (block != null) ? block.getDescriptionId() : null;
     }
 
+    @Override
     public String getItemTranslationKey(Material material) {
         Item item = getItem(material);
-
-        return item != null ? item.getDescriptionId() : null;
+        return (item != null) ? item.getDescriptionId() : null;
     }
 
+    @Override
     public String getTranslationKey(EntityType entityType) {
         Preconditions.checkArgument(entityType.getName() != null, "Invalid name of EntityType %s for translation key", entityType);
-        return (String) net.minecraft.world.entity.EntityType.byString(entityType.getName()).map(net.minecraft.world.entity.EntityType::getDescriptionId).orElseThrow();
+        return EntityTypes.byString(entityType.getName()).map(EntityTypes::getDescriptionId).orElseThrow();
     }
 
+    @Override
     public String getTranslationKey(ItemStack itemStack) {
         net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
-
         return nmsItemStack.getItem().getDescriptionId(nmsItemStack);
     }
 
+    @Override
     public FeatureFlag getFeatureFlag(NamespacedKey namespacedKey) {
         Preconditions.checkArgument(namespacedKey != null, "NamespaceKey cannot be null");
         return CraftFeatureFlag.getFromNMS(namespacedKey);
     }
 
-    public InternalPotionData getInternalPotionData(NamespacedKey namespacedKey) {
-        Potion potionRegistry = (Potion) CraftRegistry.getMinecraftRegistry(Registries.POTION).getOptional(CraftNamespacedKey.toMinecraft(namespacedKey)).orElseThrow();
+    @Override
+    public PotionType.InternalPotionData getInternalPotionData(NamespacedKey namespacedKey) {
+        PotionRegistry potionRegistry = CraftRegistry.getMinecraftRegistry(Registries.POTION)
+                .getOptional(CraftNamespacedKey.toMinecraft(namespacedKey)).orElseThrow();
 
         return new CraftPotionType(namespacedKey, potionRegistry);
     }
 
+    /**
+     * This helper class represents the different NBT Tags.
+     * <p>
+     * These should match NBTBase#getTypeId
+     */
     public static class NBT {
 
         public static final int TAG_END = 0;

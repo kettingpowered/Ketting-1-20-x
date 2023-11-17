@@ -1,19 +1,21 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.PathfinderMob;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import net.minecraft.world.entity.monster.EntityMonster;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Monster;
 
 public class CraftMonster extends CraftCreature implements Monster, CraftEnemy {
 
-    public CraftMonster(CraftServer server, net.minecraft.world.entity.monster.Monster entity) {
-        super(server, (PathfinderMob) entity);
+    public CraftMonster(CraftServer server, EntityMonster entity) {
+        super(server, entity);
     }
 
-    public net.minecraft.world.entity.monster.Monster getHandle() {
-        return (net.minecraft.world.entity.monster.Monster) this.entity;
+    @Override
+    public EntityMonster getHandle() {
+        return (EntityMonster) entity;
     }
 
+    @Override
     public String toString() {
         return "CraftMonster";
     }

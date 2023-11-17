@@ -1,47 +1,56 @@
-package org.bukkit.craftbukkit.v1_20_R2.block;
+package org.bukkit.craftbukkit.block;
 
-import net.minecraft.world.Container;
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
-import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
+import net.minecraft.world.level.block.entity.TileEntityBrewingStand;
 import org.bukkit.World;
 import org.bukkit.block.BrewingStand;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryBrewer;
+import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
 import org.bukkit.inventory.BrewerInventory;
 
-public class CraftBrewingStand extends CraftContainer implements BrewingStand {
+public class CraftBrewingStand extends CraftContainer<TileEntityBrewingStand> implements BrewingStand {
 
-    public CraftBrewingStand(World world, BrewingStandBlockEntity tileEntity) {
-        super(world, (BaseContainerBlockEntity) tileEntity);
+    public CraftBrewingStand(World world, TileEntityBrewingStand tileEntity) {
+        super(world, tileEntity);
     }
 
     protected CraftBrewingStand(CraftBrewingStand state) {
-        super((CraftContainer) state);
+        super(state);
     }
 
+    @Override
     public BrewerInventory getSnapshotInventory() {
-        return new CraftInventoryBrewer((Container) this.getSnapshot());
+        return new CraftInventoryBrewer(this.getSnapshot());
     }
 
+    @Override
     public BrewerInventory getInventory() {
-        return (BrewerInventory) (!this.isPlaced() ? this.getSnapshotInventory() : new CraftInventoryBrewer((Container) this.getTileEntity()));
+        if (!this.isPlaced()) {
+            return this.getSnapshotInventory();
+        }
+
+        return new CraftInventoryBrewer(this.getTileEntity());
     }
 
+    @Override
     public int getBrewingTime() {
-        return ((BrewingStandBlockEntity) this.getSnapshot()).brewTime;
+        return this.getSnapshot().brewTime;
     }
 
+    @Override
     public void setBrewingTime(int brewTime) {
-        ((BrewingStandBlockEntity) this.getSnapshot()).brewTime = brewTime;
+        this.getSnapshot().brewTime = brewTime;
     }
 
+    @Override
     public int getFuelLevel() {
-        return ((BrewingStandBlockEntity) this.getSnapshot()).fuel;
+        return this.getSnapshot().fuel;
     }
 
+    @Override
     public void setFuelLevel(int level) {
-        ((BrewingStandBlockEntity) this.getSnapshot()).fuel = level;
+        this.getSnapshot().fuel = level;
     }
 
+    @Override
     public CraftBrewingStand copy() {
         return new CraftBrewingStand(this);
     }

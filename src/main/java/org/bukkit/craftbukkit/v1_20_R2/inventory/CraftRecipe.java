@@ -1,39 +1,32 @@
-package org.bukkit.craftbukkit.v1_20_R2.inventory;
+package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
-import net.minecraft.world.item.crafting.CookingBookCategory;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.Ingredient;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
+import java.util.List;
+import net.minecraft.world.item.crafting.RecipeItemStack;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.RecipeChoice.ExactChoice;
-import org.bukkit.inventory.RecipeChoice.MaterialChoice;
+import org.bukkit.inventory.recipe.CookingBookCategory;
+import org.bukkit.inventory.recipe.CraftingBookCategory;
 
 public interface CraftRecipe extends Recipe {
 
     void addToCraftingManager();
 
-    default Ingredient toNMS(RecipeChoice bukkit, boolean requireNotEmpty) {
-        Ingredient stack;
+    default RecipeItemStack toNMS(RecipeChoice bukkit, boolean requireNotEmpty) {
+        RecipeItemStack stack;
 
         if (bukkit == null) {
-            stack = Ingredient.EMPTY;
-        } else if (bukkit instanceof MaterialChoice) {
-            stack = new Ingredient(((MaterialChoice) bukkit).getChoices().stream().map((matx) -> {
-                return new Ingredient.ItemValue(CraftItemStack.asNMSCopy(new ItemStack(matx)));
-            }));
-        } else {
-            if (!(bukkit instanceof ExactChoice)) {
-                throw new IllegalArgumentException("Unknown recipe stack instance " + bukkit);
-            }
-
-            stack = new Ingredient(((ExactChoice) bukkit).getChoices().stream().map((matx) -> {
-                return new Ingredient.ItemValue(CraftItemStack.asNMSCopy(matx));
-            }));
+            stack = RecipeItemStack.EMPTY;
+        } else if (bukkit instanceof RecipeChoice.MaterialChoice) {
+            stack = new RecipeItemStack(((RecipeChoice.MaterialChoice) bukkit).getChoices().stream().map((mat) -> new net.minecraft.world.item.crafting.RecipeItemStack.StackProvider(CraftItemStack.asNMSCopy(new ItemStack(mat)))));
+        } else if (bukkit instanceof RecipeChoice.ExactChoice) {
+            stack = new RecipeItemStack(((RecipeChoice.ExactChoice) bukkit).getChoices().stream().map((mat) -> new net.minecraft.world.item.crafting.RecipeItemStack.StackProvider(CraftItemStack.asNMSCopy(mat))));
             stack.exact = true;
+        } else {
+            throw new IllegalArgumentException("Unknown recipe stack instance " + bukkit);
         }
 
         stack.getItems();
@@ -44,56 +37,44 @@ public interface CraftRecipe extends Recipe {
         return stack;
     }
 
-    static RecipeChoice toBukkit(Ingredient list) {
+    public static RecipeChoice toBukkit(RecipeItemStack list) {
         list.getItems();
+
         if (list.itemStacks.length == 0) {
             return null;
-        } else {
-            ArrayList choices;
-            net.minecraft.world.item.ItemStack[] anet_minecraft_world_item_itemstack;
-            int i;
-            net.minecraft.world.item.ItemStack i;
-            int j;
+        }
 
-            if (list.exact) {
-                choices = new ArrayList(list.itemStacks.length);
-                anet_minecraft_world_item_itemstack = list.itemStacks;
-                i = list.itemStacks.length;
-
-                for (j = 0; j < i; ++j) {
-                    i = anet_minecraft_world_item_itemstack[j];
-                    choices.add(CraftItemStack.asBukkitCopy(i));
-                }
-
-                return new ExactChoice(choices);
-            } else {
-                choices = new ArrayList(list.itemStacks.length);
-                anet_minecraft_world_item_itemstack = list.itemStacks;
-                i = list.itemStacks.length;
-
-                for (j = 0; j < i; ++j) {
-                    i = anet_minecraft_world_item_itemstack[j];
-                    choices.add(CraftMagicNumbers.getMaterial(i.getItem()));
-                }
-
-                return new MaterialChoice(choices);
+        if (list.exact) {
+            List<org.bukkit.inventory.ItemStack> choices = new ArrayList<>(list.itemStacks.length);
+            for (net.minecraft.world.item.ItemStack i : list.itemStacks) {
+                choices.add(CraftItemStack.asBukkitCopy(i));
             }
+
+            return new RecipeChoice.ExactChoice(choices);
+        } else {
+
+            List<org.bukkit.Material> choices = new ArrayList<>(list.itemStacks.length);
+            for (net.minecraft.world.item.ItemStack i : list.itemStacks) {
+                choices.add(CraftMagicNumbers.getMaterial(i.getItem()));
+            }
+
+            return new RecipeChoice.MaterialChoice(choices);
         }
     }
 
-    static CraftingBookCategory getCategory(org.bukkit.inventory.recipe.CraftingBookCategory bukkit) {
-        return CraftingBookCategory.valueOf(bukkit.name());
+    public static net.minecraft.world.item.crafting.CraftingBookCategory getCategory(CraftingBookCategory bukkit) {
+        return net.minecraft.world.item.crafting.CraftingBookCategory.valueOf(bukkit.name());
     }
 
-    static org.bukkit.inventory.recipe.CraftingBookCategory getCategory(CraftingBookCategory nms) {
-        return org.bukkit.inventory.recipe.CraftingBookCategory.valueOf(nms.name());
+    public static CraftingBookCategory getCategory(net.minecraft.world.item.crafting.CraftingBookCategory nms) {
+        return CraftingBookCategory.valueOf(nms.name());
     }
 
-    static CookingBookCategory getCategory(org.bukkit.inventory.recipe.CookingBookCategory bukkit) {
-        return CookingBookCategory.valueOf(bukkit.name());
+    public static net.minecraft.world.item.crafting.CookingBookCategory getCategory(CookingBookCategory bukkit) {
+        return net.minecraft.world.item.crafting.CookingBookCategory.valueOf(bukkit.name());
     }
 
-    static org.bukkit.inventory.recipe.CookingBookCategory getCategory(CookingBookCategory nms) {
-        return org.bukkit.inventory.recipe.CookingBookCategory.valueOf(nms.name());
+    public static CookingBookCategory getCategory(net.minecraft.world.item.crafting.CookingBookCategory nms) {
+        return CookingBookCategory.valueOf(nms.name());
     }
 }

@@ -1,20 +1,22 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import net.minecraft.world.entity.animal.horse.EntityHorseDonkey;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Donkey;
 import org.bukkit.entity.Horse.Variant;
 
 public class CraftDonkey extends CraftChestedHorse implements Donkey {
 
-    public CraftDonkey(CraftServer server, net.minecraft.world.entity.animal.horse.Donkey entity) {
-        super(server, (AbstractChestedHorse) entity);
+    public CraftDonkey(CraftServer server, EntityHorseDonkey entity) {
+        super(server, entity);
     }
 
+    @Override
     public String toString() {
         return "CraftDonkey";
     }
 
+    @Override
     public Variant getVariant() {
         return Variant.DONKEY;
     }

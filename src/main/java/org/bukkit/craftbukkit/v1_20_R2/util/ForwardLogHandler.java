@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.v1_20_R2.util;
+package org.bukkit.craftbukkit.util;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,25 +9,24 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ForwardLogHandler extends ConsoleHandler {
-
-    private Map cachedLoggers = new ConcurrentHashMap();
+    private Map<String, Logger> cachedLoggers = new ConcurrentHashMap<String, Logger>();
 
     private Logger getLogger(String name) {
-        Logger logger = (Logger) this.cachedLoggers.get(name);
-
+        Logger logger = cachedLoggers.get(name);
         if (logger == null) {
             logger = LogManager.getLogger(name);
-            this.cachedLoggers.put(name, logger);
+            cachedLoggers.put(name, logger);
         }
 
         return logger;
     }
 
+    @Override
     public void publish(LogRecord record) {
-        Logger logger = this.getLogger(String.valueOf(record.getLoggerName()));
+        Logger logger = getLogger(String.valueOf(record.getLoggerName())); // See SPIGOT-1230
         Throwable exception = record.getThrown();
         Level level = record.getLevel();
-        String message = this.getFormatter().formatMessage(record);
+        String message = getFormatter().formatMessage(record);
 
         if (level == Level.SEVERE) {
             logger.error(message, exception);
@@ -40,10 +39,13 @@ public class ForwardLogHandler extends ConsoleHandler {
         } else {
             logger.trace(message, exception);
         }
-
     }
 
-    public void flush() {}
+    @Override
+    public void flush() {
+    }
 
-    public void close() throws SecurityException {}
+    @Override
+    public void close() throws SecurityException {
+    }
 }

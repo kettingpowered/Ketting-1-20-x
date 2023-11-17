@@ -1,32 +1,34 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.EndRodBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Directional;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftEndRod extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Directional {
 
-public final class CraftEndRod extends CraftBlockData implements Directional {
+    public CraftEndRod() {
+        super();
+    }
 
-    private static final EnumProperty FACING = getEnum(EndRodBlock.class, "facing");
-
-    public CraftEndRod() {}
-
-    public CraftEndRod(BlockState state) {
+    public CraftEndRod(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
-    public BlockFace getFacing() {
-        return (BlockFace) this.get(CraftEndRod.FACING, BlockFace.class);
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.BlockEndRod.class, "facing");
+
+    @Override
+    public org.bukkit.block.BlockFace getFacing() {
+        return get(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public void setFacing(BlockFace facing) {
-        this.set(CraftEndRod.FACING, (Enum) facing);
+    @Override
+    public void setFacing(org.bukkit.block.BlockFace facing) {
+        set(FACING, facing);
     }
 
-    public Set getFaces() {
-        return this.getValues(CraftEndRod.FACING, BlockFace.class);
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 }

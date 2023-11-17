@@ -1,23 +1,21 @@
-package org.bukkit.craftbukkit.v1_20_R2.inventory;
+package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Preconditions;
 import java.util.List;
-import net.minecraft.world.item.trading.MerchantOffer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 
 public class CraftMerchantRecipe extends MerchantRecipe {
 
-    private final MerchantOffer handle;
+    private final net.minecraft.world.item.trading.MerchantRecipe handle;
 
-    public CraftMerchantRecipe(MerchantOffer merchantRecipe) {
+    public CraftMerchantRecipe(net.minecraft.world.item.trading.MerchantRecipe merchantRecipe) {
         super(CraftItemStack.asBukkitCopy(merchantRecipe.result), 0);
         this.handle = merchantRecipe;
-        this.addIngredient(CraftItemStack.asBukkitCopy(merchantRecipe.baseCostA));
-        this.addIngredient(CraftItemStack.asBukkitCopy(merchantRecipe.costB));
+        addIngredient(CraftItemStack.asBukkitCopy(merchantRecipe.baseCostA));
+        addIngredient(CraftItemStack.asBukkitCopy(merchantRecipe.costB));
     }
 
-    /** @deprecated */
     @Deprecated
     public CraftMerchantRecipe(ItemStack result, int uses, int maxUses, boolean experienceReward, int experience, float priceMultiplier) {
         this(result, uses, maxUses, experienceReward, experience, priceMultiplier, 0, 0);
@@ -25,77 +23,99 @@ public class CraftMerchantRecipe extends MerchantRecipe {
 
     public CraftMerchantRecipe(ItemStack result, int uses, int maxUses, boolean experienceReward, int experience, float priceMultiplier, int demand, int specialPrice) {
         super(result, uses, maxUses, experienceReward, experience, priceMultiplier, demand, specialPrice);
-        this.handle = new MerchantOffer(net.minecraft.world.item.ItemStack.EMPTY, net.minecraft.world.item.ItemStack.EMPTY, CraftItemStack.asNMSCopy(result), uses, maxUses, experience, priceMultiplier, demand, this);
+        this.handle = new net.minecraft.world.item.trading.MerchantRecipe(
+                net.minecraft.world.item.ItemStack.EMPTY,
+                net.minecraft.world.item.ItemStack.EMPTY,
+                CraftItemStack.asNMSCopy(result),
+                uses,
+                maxUses,
+                experience,
+                priceMultiplier,
+                demand,
+                this
+        );
         this.setSpecialPrice(specialPrice);
         this.setExperienceReward(experienceReward);
     }
 
+    @Override
     public int getSpecialPrice() {
-        return this.handle.getSpecialPriceDiff();
+        return handle.getSpecialPriceDiff();
     }
 
+    @Override
     public void setSpecialPrice(int specialPrice) {
-        this.handle.specialPriceDiff = specialPrice;
+        handle.specialPriceDiff = specialPrice;
     }
 
+    @Override
     public int getDemand() {
-        return this.handle.demand;
+        return handle.demand;
     }
 
+    @Override
     public void setDemand(int demand) {
-        this.handle.demand = demand;
+        handle.demand = demand;
     }
 
+    @Override
     public int getUses() {
-        return this.handle.uses;
+        return handle.uses;
     }
 
+    @Override
     public void setUses(int uses) {
-        this.handle.uses = uses;
+        handle.uses = uses;
     }
 
+    @Override
     public int getMaxUses() {
-        return this.handle.maxUses;
+        return handle.maxUses;
     }
 
+    @Override
     public void setMaxUses(int maxUses) {
-        this.handle.maxUses = maxUses;
+        handle.maxUses = maxUses;
     }
 
+    @Override
     public boolean hasExperienceReward() {
-        return this.handle.rewardExp;
+        return handle.rewardExp;
     }
 
+    @Override
     public void setExperienceReward(boolean flag) {
-        this.handle.rewardExp = flag;
+        handle.rewardExp = flag;
     }
 
+    @Override
     public int getVillagerExperience() {
-        return this.handle.xp;
+        return handle.xp;
     }
 
+    @Override
     public void setVillagerExperience(int villagerExperience) {
-        this.handle.xp = villagerExperience;
+        handle.xp = villagerExperience;
     }
 
+    @Override
     public float getPriceMultiplier() {
-        return this.handle.priceMultiplier;
+        return handle.priceMultiplier;
     }
 
+    @Override
     public void setPriceMultiplier(float priceMultiplier) {
-        this.handle.priceMultiplier = priceMultiplier;
+        handle.priceMultiplier = priceMultiplier;
     }
 
-    public MerchantOffer toMinecraft() {
-        List ingredients = this.getIngredients();
-
+    public net.minecraft.world.item.trading.MerchantRecipe toMinecraft() {
+        List<ItemStack> ingredients = getIngredients();
         Preconditions.checkState(!ingredients.isEmpty(), "No offered ingredients");
-        this.handle.baseCostA = CraftItemStack.asNMSCopy((ItemStack) ingredients.get(0));
+        handle.baseCostA = CraftItemStack.asNMSCopy(ingredients.get(0));
         if (ingredients.size() > 1) {
-            this.handle.costB = CraftItemStack.asNMSCopy((ItemStack) ingredients.get(1));
+            handle.costB = CraftItemStack.asNMSCopy(ingredients.get(1));
         }
-
-        return this.handle;
+        return handle;
     }
 
     public static CraftMerchantRecipe fromBukkit(MerchantRecipe recipe) {
@@ -103,8 +123,8 @@ public class CraftMerchantRecipe extends MerchantRecipe {
             return (CraftMerchantRecipe) recipe;
         } else {
             CraftMerchantRecipe craft = new CraftMerchantRecipe(recipe.getResult(), recipe.getUses(), recipe.getMaxUses(), recipe.hasExperienceReward(), recipe.getVillagerExperience(), recipe.getPriceMultiplier(), recipe.getDemand(), recipe.getSpecialPrice());
-
             craft.setIngredients(recipe.getIngredients());
+
             return craft;
         }
     }

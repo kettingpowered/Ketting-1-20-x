@@ -1,39 +1,41 @@
-package org.bukkit.craftbukkit.v1_20_R2.block;
+package org.bukkit.craftbukkit.block;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
+import net.minecraft.world.level.block.entity.TileEntityEnchantTable;
 import org.bukkit.World;
 import org.bukkit.block.EnchantingTable;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
+import org.bukkit.craftbukkit.util.CraftChatMessage;
 
-public class CraftEnchantingTable extends CraftBlockEntityState implements EnchantingTable {
+public class CraftEnchantingTable extends CraftBlockEntityState<TileEntityEnchantTable> implements EnchantingTable {
 
-    public CraftEnchantingTable(World world, EnchantmentTableBlockEntity tileEntity) {
+    public CraftEnchantingTable(World world, TileEntityEnchantTable tileEntity) {
         super(world, tileEntity);
     }
 
     protected CraftEnchantingTable(CraftEnchantingTable state) {
-        super((CraftBlockEntityState) state);
+        super(state);
     }
 
+    @Override
     public String getCustomName() {
-        EnchantmentTableBlockEntity enchant = (EnchantmentTableBlockEntity) this.getSnapshot();
-
+        TileEntityEnchantTable enchant = this.getSnapshot();
         return enchant.hasCustomName() ? CraftChatMessage.fromComponent(enchant.getCustomName()) : null;
     }
 
+    @Override
     public void setCustomName(String name) {
-        ((EnchantmentTableBlockEntity) this.getSnapshot()).setCustomName(CraftChatMessage.fromStringOrNull(name));
+        this.getSnapshot().setCustomName(CraftChatMessage.fromStringOrNull(name));
     }
 
-    public void applyTo(EnchantmentTableBlockEntity enchantingTable) {
+    @Override
+    public void applyTo(TileEntityEnchantTable enchantingTable) {
         super.applyTo(enchantingTable);
-        if (!((EnchantmentTableBlockEntity) this.getSnapshot()).hasCustomName()) {
-            enchantingTable.setCustomName((Component) null);
-        }
 
+        if (!this.getSnapshot().hasCustomName()) {
+            enchantingTable.setCustomName(null);
+        }
     }
 
+    @Override
     public CraftEnchantingTable copy() {
         return new CraftEnchantingTable(this);
     }

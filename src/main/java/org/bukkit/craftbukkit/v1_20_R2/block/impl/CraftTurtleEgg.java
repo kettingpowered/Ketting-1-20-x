@@ -1,49 +1,58 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import net.minecraft.world.level.block.TurtleEggBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Hatchable;
-import org.bukkit.block.data.type.TurtleEgg;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftTurtleEgg extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.TurtleEgg, org.bukkit.block.data.Hatchable {
 
-public final class CraftTurtleEgg extends CraftBlockData implements TurtleEgg, Hatchable {
+    public CraftTurtleEgg() {
+        super();
+    }
 
-    private static final IntegerProperty EGGS = getInteger(TurtleEggBlock.class, "eggs");
-    private static final IntegerProperty HATCH = getInteger(TurtleEggBlock.class, "hatch");
-
-    public CraftTurtleEgg() {}
-
-    public CraftTurtleEgg(BlockState state) {
+    public CraftTurtleEgg(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.block.data.type.CraftTurtleEgg
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger EGGS = getInteger(net.minecraft.world.level.block.BlockTurtleEgg.class, "eggs");
+
+    @Override
     public int getEggs() {
-        return (Integer) this.get(CraftTurtleEgg.EGGS);
+        return get(EGGS);
     }
 
+    @Override
     public void setEggs(int eggs) {
-        this.set((Property) CraftTurtleEgg.EGGS, (Comparable) eggs);
+        set(EGGS, eggs);
     }
 
+    @Override
     public int getMinimumEggs() {
-        return getMin(CraftTurtleEgg.EGGS);
+        return getMin(EGGS);
     }
 
+    @Override
     public int getMaximumEggs() {
-        return getMax(CraftTurtleEgg.EGGS);
+        return getMax(EGGS);
     }
 
+    // org.bukkit.craftbukkit.block.data.CraftHatchable
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger HATCH = getInteger(net.minecraft.world.level.block.BlockTurtleEgg.class, "hatch");
+
+    @Override
     public int getHatch() {
-        return (Integer) this.get(CraftTurtleEgg.HATCH);
+        return get(HATCH);
     }
 
+    @Override
     public void setHatch(int hatch) {
-        this.set((Property) CraftTurtleEgg.HATCH, (Comparable) hatch);
+        set(HATCH, hatch);
     }
 
+    @Override
     public int getMaximumHatch() {
-        return getMax(CraftTurtleEgg.HATCH);
+        return getMax(HATCH);
     }
 }

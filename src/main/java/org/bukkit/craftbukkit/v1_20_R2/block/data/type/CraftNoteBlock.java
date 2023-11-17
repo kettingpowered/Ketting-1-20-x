@@ -1,31 +1,30 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.data.type;
+package org.bukkit.craftbukkit.block.data.type;
 
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.Instrument;
-import org.bukkit.Note;
 import org.bukkit.block.data.type.NoteBlock;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftNoteBlock extends CraftBlockData implements NoteBlock {
 
-    private static final EnumProperty INSTRUMENT = getEnum("instrument");
-    private static final IntegerProperty NOTE = getInteger("note");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> INSTRUMENT = getEnum("instrument");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger NOTE = getInteger("note");
 
-    public Instrument getInstrument() {
-        return (Instrument) this.get(CraftNoteBlock.INSTRUMENT, Instrument.class);
+    @Override
+    public org.bukkit.Instrument getInstrument() {
+        return get(INSTRUMENT, org.bukkit.Instrument.class);
     }
 
-    public void setInstrument(Instrument instrument) {
-        this.set(CraftNoteBlock.INSTRUMENT, (Enum) instrument);
+    @Override
+    public void setInstrument(org.bukkit.Instrument instrument) {
+        set(INSTRUMENT, instrument);
     }
 
-    public Note getNote() {
-        return new Note((Integer) this.get(CraftNoteBlock.NOTE));
+    @Override
+    public org.bukkit.Note getNote() {
+       return new org.bukkit.Note(get(NOTE));
     }
 
-    public void setNote(Note note) {
-        this.set((Property) CraftNoteBlock.NOTE, (Comparable) Integer.valueOf(note.getId()));
+    @Override
+    public void setNote(org.bukkit.Note note) {
+        set(NOTE, (int) note.getId());
     }
 }

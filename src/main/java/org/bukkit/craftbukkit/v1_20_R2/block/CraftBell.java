@@ -1,69 +1,78 @@
-package org.bukkit.craftbukkit.v1_20_R2.block;
+package org.bukkit.craftbukkit.block;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.BellBlock;
+import net.minecraft.core.EnumDirection;
+import net.minecraft.world.level.block.BlockBell;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BellBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.TileEntity;
+import net.minecraft.world.level.block.entity.TileEntityBell;
 import org.bukkit.World;
 import org.bukkit.block.Bell;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 
-public class CraftBell extends CraftBlockEntityState implements Bell {
+public class CraftBell extends CraftBlockEntityState<TileEntityBell> implements Bell {
 
-    public CraftBell(World world, BellBlockEntity tileEntity) {
+    public CraftBell(World world, TileEntityBell tileEntity) {
         super(world, tileEntity);
     }
 
     protected CraftBell(CraftBell state) {
-        super((CraftBlockEntityState) state);
+        super(state);
     }
 
+    @Override
     public boolean ring(Entity entity, BlockFace direction) {
         Preconditions.checkArgument(direction == null || direction.isCartesian(), "direction must be cartesian, given %s", direction);
-        BlockEntity tileEntity = this.getTileEntityFromWorld();
 
+        TileEntity tileEntity = getTileEntityFromWorld();
         if (tileEntity == null) {
             return false;
-        } else {
-            net.minecraft.world.entity.Entity nmsEntity = entity != null ? ((CraftEntity) entity).getHandle() : null;
-            Direction enumDirection = CraftBlock.blockFaceToNotch(direction);
-
-            return ((BellBlock) Blocks.BELL).attemptToRing(nmsEntity, this.world.getHandle(), this.getPosition(), enumDirection);
         }
+
+        net.minecraft.world.entity.Entity nmsEntity = (entity != null) ? ((CraftEntity) entity).getHandle() : null;
+        EnumDirection enumDirection = CraftBlock.blockFaceToNotch(direction);
+
+        return ((BlockBell) Blocks.BELL).attemptToRing(nmsEntity, world.getHandle(), getPosition(), enumDirection);
     }
 
+    @Override
     public boolean ring(Entity entity) {
-        return this.ring(entity, (BlockFace) null);
+        return ring(entity, null);
     }
 
+    @Override
     public boolean ring(BlockFace direction) {
-        return this.ring((Entity) null, direction);
+        return ring(null, direction);
     }
 
+    @Override
     public boolean ring() {
-        return this.ring((Entity) null, (BlockFace) null);
+        return ring(null, null);
     }
 
+    @Override
     public boolean isShaking() {
-        return ((BellBlockEntity) this.getSnapshot()).shaking;
+        return getSnapshot().shaking;
     }
 
+    @Override
     public int getShakingTicks() {
-        return ((BellBlockEntity) this.getSnapshot()).ticks;
+        return getSnapshot().ticks;
     }
 
+    @Override
     public boolean isResonating() {
-        return ((BellBlockEntity) this.getSnapshot()).resonating;
+        return getSnapshot().resonating;
     }
 
+    @Override
     public int getResonatingTicks() {
-        return this.isResonating() ? ((BellBlockEntity) this.getSnapshot()).ticks : 0;
+        return isResonating() ? getSnapshot().ticks : 0;
     }
 
+    @Override
     public CraftBell copy() {
         return new CraftBell(this);
     }

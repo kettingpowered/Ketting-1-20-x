@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.v1_20_R2.help;
+package org.bukkit.craftbukkit.help;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -7,10 +7,8 @@ import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -20,8 +18,8 @@ import org.bukkit.command.MultipleCommandAlias;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.command.defaults.BukkitCommand;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R2.command.VanillaCommandWrapper;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
 import org.bukkit.help.GenericCommandHelpTopic;
 import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;
@@ -29,202 +27,210 @@ import org.bukkit.help.HelpTopicComparator;
 import org.bukkit.help.HelpTopicFactory;
 import org.bukkit.help.IndexHelpTopic;
 
+/**
+ * Standard implementation of {@link HelpMap} for CraftBukkit servers.
+ */
 public class SimpleHelpMap implements HelpMap {
 
     private HelpTopic defaultTopic;
-    private final Map helpTopics = new TreeMap(HelpTopicComparator.topicNameComparatorInstance());
-    private final Map topicFactoryMap = new HashMap();
+    private final Map<String, HelpTopic> helpTopics;
+    private final Map<Class, HelpTopicFactory<Command>> topicFactoryMap;
     private final CraftServer server;
     private HelpYamlReader yaml;
 
+    @SuppressWarnings("unchecked")
     public SimpleHelpMap(CraftServer server) {
+        this.helpTopics = new TreeMap<String, HelpTopic>(HelpTopicComparator.topicNameComparatorInstance()); // Using a TreeMap for its explicit sorting on key
+        this.topicFactoryMap = new HashMap<Class, HelpTopicFactory<Command>>();
         this.server = server;
         this.yaml = new HelpYamlReader(server);
+
         Predicate indexFilter = Predicates.not(Predicates.instanceOf(CommandAliasHelpTopic.class));
-
-        if (!this.yaml.commandTopicsInMasterIndex()) {
-            indexFilter = Predicates.and(indexFilter, Predicates.not(new SimpleHelpMap.IsCommandTopicPredicate()));
+        if (!yaml.commandTopicsInMasterIndex()) {
+            indexFilter = Predicates.and(indexFilter, Predicates.not(new IsCommandTopicPredicate()));
         }
 
-        this.defaultTopic = new IndexHelpTopic("Index", (String) null, (String) null, Collections2.filter(this.helpTopics.values(), indexFilter), "Use /help [n] to get page n of help.");
-        this.registerHelpTopicFactory(MultipleCommandAlias.class, new MultipleCommandAliasHelpTopicFactory());
+        this.defaultTopic = new IndexHelpTopic("Index", null, null, Collections2.filter(helpTopics.values(), indexFilter), "Use /help [n] to get page n of help.");
+
+        registerHelpTopicFactory(MultipleCommandAlias.class, new MultipleCommandAliasHelpTopicFactory());
     }
 
+    @Override
     public synchronized HelpTopic getHelpTopic(String topicName) {
-        return topicName.equals("") ? this.defaultTopic : (this.helpTopics.containsKey(topicName) ? (HelpTopic) this.helpTopics.get(topicName) : null);
+        if (topicName.equals("")) {
+            return defaultTopic;
+        }
+
+        if (helpTopics.containsKey(topicName)) {
+            return helpTopics.get(topicName);
+        }
+
+        return null;
     }
 
-    public Collection getHelpTopics() {
-        return this.helpTopics.values();
+    @Override
+    public Collection<HelpTopic> getHelpTopics() {
+        return helpTopics.values();
     }
 
+    @Override
     public synchronized void addTopic(HelpTopic topic) {
-        if (!this.helpTopics.containsKey(topic.getName())) {
-            this.helpTopics.put(topic.getName(), topic);
+        // Existing topics take priority
+        if (!helpTopics.containsKey(topic.getName())) {
+            helpTopics.put(topic.getName(), topic);
         }
-
     }
 
+    @Override
     public synchronized void clear() {
-        this.helpTopics.clear();
+        helpTopics.clear();
     }
 
-    public List getIgnoredPlugins() {
-        return this.yaml.getIgnoredPlugins();
+    @Override
+    public List<String> getIgnoredPlugins() {
+        return yaml.getIgnoredPlugins();
     }
 
+    /**
+     * Reads the general topics from help.yml and adds them to the help index.
+     */
     public synchronized void initializeGeneralTopics() {
-        this.yaml = new HelpYamlReader(this.server);
-        Iterator iterator = this.yaml.getGeneralTopics().iterator();
+        yaml = new HelpYamlReader(server);
 
-        HelpTopic topic;
-
-        while (iterator.hasNext()) {
-            topic = (HelpTopic) iterator.next();
-            this.addTopic(topic);
+        // Initialize general help topics from the help.yml file
+        for (HelpTopic topic : yaml.getGeneralTopics()) {
+            addTopic(topic);
         }
 
-        iterator = this.yaml.getIndexTopics().iterator();
-
-        while (iterator.hasNext()) {
-            topic = (HelpTopic) iterator.next();
+        // Initialize index help topics from the help.yml file
+        for (HelpTopic topic : yaml.getIndexTopics()) {
             if (topic.getName().equals("Default")) {
-                this.defaultTopic = topic;
+                defaultTopic = topic;
             } else {
-                this.addTopic(topic);
+                addTopic(topic);
             }
         }
-
     }
 
+    /**
+     * Processes all the commands registered in the server and creates help topics for them.
+     */
     public synchronized void initializeCommands() {
-        HashSet ignoredPlugins = new HashSet(this.yaml.getIgnoredPlugins());
+        // ** Load topics from highest to lowest priority order **
+        Set<String> ignoredPlugins = new HashSet<String>(yaml.getIgnoredPlugins());
 
-        if (!ignoredPlugins.contains("All")) {
-            Iterator iterator = this.server.getCommandMap().getCommands().iterator();
+        // Don't load any automatic help topics if All is ignored
+        if (ignoredPlugins.contains("All")) {
+            return;
+        }
 
-            Command command;
-            Iterator iterator1;
+        // Initialize help topics from the server's command map
+        outer: for (Command command : server.getCommandMap().getCommands()) {
+            if (commandInIgnoredPlugin(command, ignoredPlugins)) {
+                continue;
+            }
 
-            label82:
-            while (iterator.hasNext()) {
-                command = (Command) iterator.next();
-                if (!this.commandInIgnoredPlugin(command, ignoredPlugins)) {
-                    iterator1 = this.topicFactoryMap.keySet().iterator();
-
-                    Class c;
-                    HelpTopic t;
-
-                    do {
-                        if (!iterator1.hasNext()) {
-                            this.addTopic(new GenericCommandHelpTopic(command));
-                            continue label82;
-                        }
-
-                        c = (Class) iterator1.next();
-                        if (c.isAssignableFrom(command.getClass())) {
-                            t = ((HelpTopicFactory) this.topicFactoryMap.get(c)).createTopic(command);
-                            if (t != null) {
-                                this.addTopic(t);
-                            }
-                            continue label82;
-                        }
-                    } while (!(command instanceof PluginCommand) || !c.isAssignableFrom(((PluginCommand) command).getExecutor().getClass()));
-
-                    t = ((HelpTopicFactory) this.topicFactoryMap.get(c)).createTopic(command);
-                    if (t != null) {
-                        this.addTopic(t);
-                    }
+            // Register a topic
+            for (Class c : topicFactoryMap.keySet()) {
+                if (c.isAssignableFrom(command.getClass())) {
+                    HelpTopic t = topicFactoryMap.get(c).createTopic(command);
+                    if (t != null) addTopic(t);
+                    continue outer;
+                }
+                if (command instanceof PluginCommand && c.isAssignableFrom(((PluginCommand) command).getExecutor().getClass())) {
+                    HelpTopic t = topicFactoryMap.get(c).createTopic(command);
+                    if (t != null) addTopic(t);
+                    continue outer;
                 }
             }
+            addTopic(new GenericCommandHelpTopic(command));
+        }
 
-            iterator = this.server.getCommandMap().getCommands().iterator();
-
-            while (iterator.hasNext()) {
-                command = (Command) iterator.next();
-                if (!this.commandInIgnoredPlugin(command, ignoredPlugins)) {
-                    iterator1 = command.getAliases().iterator();
-
-                    while (iterator1.hasNext()) {
-                        String alias = (String) iterator1.next();
-
-                        if (this.server.getCommandMap().getCommand(alias) == command) {
-                            this.addTopic(new CommandAliasHelpTopic("/" + alias, "/" + command.getLabel(), this));
-                        }
-                    }
+        // Initialize command alias help topics
+        for (Command command : server.getCommandMap().getCommands()) {
+            if (commandInIgnoredPlugin(command, ignoredPlugins)) {
+                continue;
+            }
+            for (String alias : command.getAliases()) {
+                // Only register if this command owns the alias
+                if (server.getCommandMap().getCommand(alias) == command) {
+                    addTopic(new CommandAliasHelpTopic("/" + alias, "/" + command.getLabel(), this));
                 }
             }
+        }
 
-            Collection filteredTopics = Collections2.filter(this.helpTopics.values(), Predicates.instanceOf(CommandAliasHelpTopic.class));
+        // Add alias sub-index
+        Collection<HelpTopic> filteredTopics = Collections2.filter(helpTopics.values(), Predicates.instanceOf(CommandAliasHelpTopic.class));
+        if (!filteredTopics.isEmpty()) {
+            addTopic(new IndexHelpTopic("Aliases", "Lists command aliases", null, filteredTopics));
+        }
 
-            if (!filteredTopics.isEmpty()) {
-                this.addTopic(new IndexHelpTopic("Aliases", "Lists command aliases", (String) null, filteredTopics));
-            }
+        // Initialize plugin-level sub-topics
+        Map<String, Set<HelpTopic>> pluginIndexes = new HashMap<String, Set<HelpTopic>>();
+        fillPluginIndexes(pluginIndexes, server.getCommandMap().getCommands());
 
-            HashMap pluginIndexes = new HashMap();
+        for (Map.Entry<String, Set<HelpTopic>> entry : pluginIndexes.entrySet()) {
+            addTopic(new IndexHelpTopic(entry.getKey(), "All commands for " + entry.getKey(), null, entry.getValue(), "Below is a list of all " + entry.getKey() + " commands:"));
+        }
 
-            this.fillPluginIndexes(pluginIndexes, this.server.getCommandMap().getCommands());
-            iterator1 = pluginIndexes.entrySet().iterator();
-
-            while (iterator1.hasNext()) {
-                Entry entry = (Entry) iterator1.next();
-
-                this.addTopic(new IndexHelpTopic((String) entry.getKey(), "All commands for " + (String) entry.getKey(), (String) null, (Collection) entry.getValue(), "Below is a list of all " + (String) entry.getKey() + " commands:"));
-            }
-
-            iterator1 = this.yaml.getTopicAmendments().iterator();
-
-            while (iterator1.hasNext()) {
-                HelpTopicAmendment amendment = (HelpTopicAmendment) iterator1.next();
-
-                if (this.helpTopics.containsKey(amendment.getTopicName())) {
-                    ((HelpTopic) this.helpTopics.get(amendment.getTopicName())).amendTopic(amendment.getShortText(), amendment.getFullText());
-                    if (amendment.getPermission() != null) {
-                        ((HelpTopic) this.helpTopics.get(amendment.getTopicName())).amendCanSee(amendment.getPermission());
-                    }
+        // Amend help topics from the help.yml file
+        for (HelpTopicAmendment amendment : yaml.getTopicAmendments()) {
+            if (helpTopics.containsKey(amendment.getTopicName())) {
+                helpTopics.get(amendment.getTopicName()).amendTopic(amendment.getShortText(), amendment.getFullText());
+                if (amendment.getPermission() != null) {
+                    helpTopics.get(amendment.getTopicName()).amendCanSee(amendment.getPermission());
                 }
             }
-
         }
     }
 
-    private void fillPluginIndexes(Map pluginIndexes, Collection commands) {
-        Iterator iterator = commands.iterator();
-
-        while (iterator.hasNext()) {
-            Command command = (Command) iterator.next();
-            String pluginName = this.getCommandPluginName(command);
-
+    private void fillPluginIndexes(Map<String, Set<HelpTopic>> pluginIndexes, Collection<? extends Command> commands) {
+        for (Command command : commands) {
+            String pluginName = getCommandPluginName(command);
             if (pluginName != null) {
-                HelpTopic topic = this.getHelpTopic("/" + command.getLabel());
-
+                HelpTopic topic = getHelpTopic("/" + command.getLabel());
                 if (topic != null) {
                     if (!pluginIndexes.containsKey(pluginName)) {
-                        pluginIndexes.put(pluginName, new TreeSet(HelpTopicComparator.helpTopicComparatorInstance()));
+                        pluginIndexes.put(pluginName, new TreeSet<HelpTopic>(HelpTopicComparator.helpTopicComparatorInstance())); //keep things in topic order
                     }
-
-                    ((Set) pluginIndexes.get(pluginName)).add(topic);
+                    pluginIndexes.get(pluginName).add(topic);
                 }
             }
         }
-
     }
 
     private String getCommandPluginName(Command command) {
-        return command instanceof VanillaCommandWrapper ? "Minecraft" : (command instanceof BukkitCommand ? "Bukkit" : (command instanceof PluginIdentifiableCommand ? ((PluginIdentifiableCommand) command).getPlugin().getName() : null));
+        if (command instanceof VanillaCommandWrapper) {
+            return "Minecraft";
+        }
+        if (command instanceof BukkitCommand) {
+            return "Bukkit";
+        }
+        if (command instanceof PluginIdentifiableCommand) {
+            return ((PluginIdentifiableCommand) command).getPlugin().getName();
+        }
+        return null;
     }
 
-    private boolean commandInIgnoredPlugin(Command command, Set ignoredPlugins) {
-        return command instanceof BukkitCommand && ignoredPlugins.contains("Bukkit") ? true : command instanceof PluginIdentifiableCommand && ignoredPlugins.contains(((PluginIdentifiableCommand) command).getPlugin().getName());
+    private boolean commandInIgnoredPlugin(Command command, Set<String> ignoredPlugins) {
+        if ((command instanceof BukkitCommand) && ignoredPlugins.contains("Bukkit")) {
+            return true;
+        }
+        if (command instanceof PluginIdentifiableCommand && ignoredPlugins.contains(((PluginIdentifiableCommand) command).getPlugin().getName())) {
+            return true;
+        }
+        return false;
     }
 
+    @Override
     public void registerHelpTopicFactory(Class commandClass, HelpTopicFactory factory) {
         Preconditions.checkArgument(Command.class.isAssignableFrom(commandClass) || CommandExecutor.class.isAssignableFrom(commandClass), "commandClass (%s) must implement either Command or CommandExecutor", commandClass.getName());
-        this.topicFactoryMap.put(commandClass, factory);
+        topicFactoryMap.put(commandClass, factory);
     }
 
-    private class IsCommandTopicPredicate implements Predicate {
+    private class IsCommandTopicPredicate implements Predicate<HelpTopic> {
 
+        @Override
         public boolean apply(HelpTopic topic) {
             return topic.getName().charAt(0) == '/';
         }

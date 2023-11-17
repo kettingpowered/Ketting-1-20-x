@@ -1,17 +1,18 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.monster.Monster;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import net.minecraft.world.entity.monster.EntitySkeletonAbstract;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.AbstractSkeleton;
-import org.bukkit.entity.Skeleton.SkeletonType;
+import org.bukkit.entity.Skeleton;
 
 public abstract class CraftAbstractSkeleton extends CraftMonster implements AbstractSkeleton {
 
-    public CraftAbstractSkeleton(CraftServer server, net.minecraft.world.entity.monster.AbstractSkeleton entity) {
-        super(server, (Monster) entity);
+    public CraftAbstractSkeleton(CraftServer server, EntitySkeletonAbstract entity) {
+        super(server, entity);
     }
 
-    public void setSkeletonType(SkeletonType type) {
+    @Override
+    public void setSkeletonType(Skeleton.SkeletonType type) {
         throw new UnsupportedOperationException("Not supported.");
     }
 }

@@ -1,27 +1,29 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import net.minecraft.world.level.block.RedstoneTorchBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Lightable;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftRedstoneTorch extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Lightable {
 
-public final class CraftRedstoneTorch extends CraftBlockData implements Lightable {
+    public CraftRedstoneTorch() {
+        super();
+    }
 
-    private static final BooleanProperty LIT = getBoolean(RedstoneTorchBlock.class, "lit");
-
-    public CraftRedstoneTorch() {}
-
-    public CraftRedstoneTorch(BlockState state) {
+    public CraftRedstoneTorch(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.block.data.CraftLightable
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean LIT = getBoolean(net.minecraft.world.level.block.BlockRedstoneTorch.class, "lit");
+
+    @Override
     public boolean isLit() {
-        return (Boolean) this.get(CraftRedstoneTorch.LIT);
+        return get(LIT);
     }
 
+    @Override
     public void setLit(boolean lit) {
-        this.set((Property) CraftRedstoneTorch.LIT, (Comparable) lit);
+        set(LIT, lit);
     }
 }

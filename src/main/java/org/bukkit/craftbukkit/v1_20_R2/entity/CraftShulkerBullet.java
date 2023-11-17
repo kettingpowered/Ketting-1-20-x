@@ -1,45 +1,52 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import net.minecraft.world.entity.projectile.EntityShulkerBullet;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ShulkerBullet;
 import org.bukkit.projectiles.ProjectileSource;
 
 public class CraftShulkerBullet extends AbstractProjectile implements ShulkerBullet {
 
-    public CraftShulkerBullet(CraftServer server, net.minecraft.world.entity.projectile.ShulkerBullet entity) {
+    public CraftShulkerBullet(CraftServer server, EntityShulkerBullet entity) {
         super(server, entity);
     }
 
+    @Override
     public ProjectileSource getShooter() {
-        return this.getHandle().projectileSource;
+        return getHandle().projectileSource;
     }
 
+    @Override
     public void setShooter(ProjectileSource shooter) {
         if (shooter instanceof Entity) {
-            this.getHandle().setOwner(((CraftEntity) shooter).getHandle());
+            getHandle().setOwner(((CraftEntity) shooter).getHandle());
         } else {
-            this.getHandle().setOwner((net.minecraft.world.entity.Entity) null);
+            getHandle().setOwner(null);
         }
-
-        this.getHandle().projectileSource = shooter;
+        getHandle().projectileSource = shooter;
     }
 
-    public Entity getTarget() {
-        return this.getHandle().getTarget() != null ? this.getHandle().getTarget().getBukkitEntity() : null;
+    @Override
+    public org.bukkit.entity.Entity getTarget() {
+        return getHandle().getTarget() != null ? getHandle().getTarget().getBukkitEntity() : null;
     }
 
-    public void setTarget(Entity target) {
-        Preconditions.checkState(!this.getHandle().generation, "Cannot set target during world generation");
-        this.getHandle().setTarget(target == null ? null : ((CraftEntity) target).getHandle());
+    @Override
+    public void setTarget(org.bukkit.entity.Entity target) {
+        Preconditions.checkState(!getHandle().generation, "Cannot set target during world generation");
+
+        getHandle().setTarget(target == null ? null : ((CraftEntity) target).getHandle());
     }
 
+    @Override
     public String toString() {
         return "CraftShulkerBullet";
     }
 
-    public net.minecraft.world.entity.projectile.ShulkerBullet getHandle() {
-        return (net.minecraft.world.entity.projectile.ShulkerBullet) this.entity;
+    @Override
+    public EntityShulkerBullet getHandle() {
+        return (EntityShulkerBullet) entity;
     }
 }

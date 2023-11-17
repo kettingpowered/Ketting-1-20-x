@@ -1,16 +1,24 @@
-package org.bukkit.craftbukkit.v1_20_R2.util;
+package org.bukkit.craftbukkit.util;
 
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.World;
+import net.minecraft.world.level.dimension.WorldDimension;
 
 public class CraftDimensionUtil {
 
-    private CraftDimensionUtil() {}
+    private CraftDimensionUtil() {
+    }
 
-    public static ResourceKey getMainDimensionKey(Level world) {
-        ResourceKey typeKey = world.getTypeKey();
+    public static ResourceKey<World> getMainDimensionKey(World world) {
+        ResourceKey<WorldDimension> typeKey = world.getTypeKey();
+        if (typeKey == WorldDimension.OVERWORLD) {
+            return World.OVERWORLD;
+        } else if (typeKey == WorldDimension.NETHER) {
+            return World.NETHER;
+        } else if (typeKey == WorldDimension.END) {
+            return World.END;
+        }
 
-        return typeKey == LevelStem.OVERWORLD ? Level.OVERWORLD : (typeKey == LevelStem.NETHER ? Level.NETHER : (typeKey == LevelStem.END ? Level.END : world.dimension()));
+        return world.dimension();
     }
 }

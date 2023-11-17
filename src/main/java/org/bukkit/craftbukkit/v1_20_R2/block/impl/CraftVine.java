@@ -1,64 +1,62 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import java.util.Set;
-import net.minecraft.world.level.block.VineBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.MultipleFacing;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftVine extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.MultipleFacing {
 
-public final class CraftVine extends CraftBlockData implements MultipleFacing {
+    public CraftVine() {
+        super();
+    }
 
-    private static final BooleanProperty[] FACES = new BooleanProperty[]{getBoolean(VineBlock.class, "north", true), getBoolean(VineBlock.class, "east", true), getBoolean(VineBlock.class, "south", true), getBoolean(VineBlock.class, "west", true), getBoolean(VineBlock.class, "up", true), getBoolean(VineBlock.class, "down", true)};
-
-    public CraftVine() {}
-
-    public CraftVine(BlockState state) {
+    public CraftVine(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
-    public boolean hasFace(BlockFace face) {
-        BooleanProperty state = CraftVine.FACES[face.ordinal()];
+    // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean[] FACES = new net.minecraft.world.level.block.state.properties.BlockStateBoolean[]{
+        getBoolean(net.minecraft.world.level.block.BlockVine.class, "north", true), getBoolean(net.minecraft.world.level.block.BlockVine.class, "east", true), getBoolean(net.minecraft.world.level.block.BlockVine.class, "south", true), getBoolean(net.minecraft.world.level.block.BlockVine.class, "west", true), getBoolean(net.minecraft.world.level.block.BlockVine.class, "up", true), getBoolean(net.minecraft.world.level.block.BlockVine.class, "down", true)
+    };
+
+    @Override
+    public boolean hasFace(org.bukkit.block.BlockFace face) {
+        net.minecraft.world.level.block.state.properties.BlockStateBoolean state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
-        } else {
-            return (Boolean) this.get(state);
         }
+        return get(state);
     }
 
-    public void setFace(BlockFace face, boolean has) {
-        BooleanProperty state = CraftVine.FACES[face.ordinal()];
-
+    @Override
+    public void setFace(org.bukkit.block.BlockFace face, boolean has) {
+        net.minecraft.world.level.block.state.properties.BlockStateBoolean state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
-        } else {
-            this.set((Property) state, (Comparable) has);
         }
+        set(state, has);
     }
 
-    public Set getFaces() {
-        Builder faces = ImmutableSet.builder();
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        com.google.common.collect.ImmutableSet.Builder<org.bukkit.block.BlockFace> faces = com.google.common.collect.ImmutableSet.builder();
 
-        for (int i = 0; i < CraftVine.FACES.length; ++i) {
-            if (CraftVine.FACES[i] != null && (Boolean) this.get(CraftVine.FACES[i])) {
-                faces.add(BlockFace.values()[i]);
+        for (int i = 0; i < FACES.length; i++) {
+            if (FACES[i] != null && get(FACES[i])) {
+                faces.add(org.bukkit.block.BlockFace.values()[i]);
             }
         }
 
         return faces.build();
     }
 
-    public Set getAllowedFaces() {
-        Builder faces = ImmutableSet.builder();
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getAllowedFaces() {
+        com.google.common.collect.ImmutableSet.Builder<org.bukkit.block.BlockFace> faces = com.google.common.collect.ImmutableSet.builder();
 
-        for (int i = 0; i < CraftVine.FACES.length; ++i) {
-            if (CraftVine.FACES[i] != null) {
-                faces.add(BlockFace.values()[i]);
+        for (int i = 0; i < FACES.length; i++) {
+            if (FACES[i] != null) {
+                faces.add(org.bukkit.block.BlockFace.values()[i]);
             }
         }
 

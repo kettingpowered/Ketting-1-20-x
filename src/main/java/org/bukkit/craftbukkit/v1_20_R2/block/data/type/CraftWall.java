@@ -1,31 +1,32 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.data.type;
+package org.bukkit.craftbukkit.block.data.type;
 
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Wall;
-import org.bukkit.block.data.type.Wall.Height;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftWall extends CraftBlockData implements Wall {
 
-    private static final BooleanProperty UP = getBoolean("up");
-    private static final EnumProperty[] HEIGHTS = new EnumProperty[]{getEnum("north"), getEnum("east"), getEnum("south"), getEnum("west")};
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean UP = getBoolean("up");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?>[] HEIGHTS = new net.minecraft.world.level.block.state.properties.BlockStateEnum[]{
+        getEnum("north"), getEnum("east"), getEnum("south"), getEnum("west")
+    };
 
+    @Override
     public boolean isUp() {
-        return (Boolean) this.get(CraftWall.UP);
+        return get(UP);
     }
 
+    @Override
     public void setUp(boolean up) {
-        this.set((Property) CraftWall.UP, (Comparable) up);
+        set(UP, up);
     }
 
-    public Height getHeight(BlockFace face) {
-        return (Height) this.get(CraftWall.HEIGHTS[face.ordinal()], Height.class);
+    @Override
+    public org.bukkit.block.data.type.Wall.Height getHeight(org.bukkit.block.BlockFace face) {
+        return get(HEIGHTS[face.ordinal()], org.bukkit.block.data.type.Wall.Height.class);
     }
 
-    public void setHeight(BlockFace face, Height height) {
-        this.set(CraftWall.HEIGHTS[face.ordinal()], (Enum) height);
+    @Override
+    public void setHeight(org.bukkit.block.BlockFace face, org.bukkit.block.data.type.Wall.Height height) {
+        set(HEIGHTS[face.ordinal()], height);
     }
 }

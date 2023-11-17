@@ -1,19 +1,21 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.animal.WaterAnimal;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import net.minecraft.world.entity.animal.EntitySquid;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Squid;
 
 public class CraftSquid extends CraftWaterMob implements Squid {
 
-    public CraftSquid(CraftServer server, net.minecraft.world.entity.animal.Squid entity) {
-        super(server, (WaterAnimal) entity);
+    public CraftSquid(CraftServer server, EntitySquid entity) {
+        super(server, entity);
     }
 
-    public net.minecraft.world.entity.animal.Squid getHandle() {
-        return (net.minecraft.world.entity.animal.Squid) this.entity;
+    @Override
+    public EntitySquid getHandle() {
+        return (EntitySquid) entity;
     }
 
+    @Override
     public String toString() {
         return "CraftSquid";
     }

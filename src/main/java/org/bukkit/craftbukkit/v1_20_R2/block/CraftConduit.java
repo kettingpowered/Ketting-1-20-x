@@ -1,19 +1,20 @@
-package org.bukkit.craftbukkit.v1_20_R2.block;
+package org.bukkit.craftbukkit.block;
 
-import net.minecraft.world.level.block.entity.ConduitBlockEntity;
+import net.minecraft.world.level.block.entity.TileEntityConduit;
 import org.bukkit.World;
 import org.bukkit.block.Conduit;
 
-public class CraftConduit extends CraftBlockEntityState implements Conduit {
+public class CraftConduit extends CraftBlockEntityState<TileEntityConduit> implements Conduit {
 
-    public CraftConduit(World world, ConduitBlockEntity tileEntity) {
+    public CraftConduit(World world, TileEntityConduit tileEntity) {
         super(world, tileEntity);
     }
 
     protected CraftConduit(CraftConduit state) {
-        super((CraftBlockEntityState) state);
+        super(state);
     }
 
+    @Override
     public CraftConduit copy() {
         return new CraftConduit(this);
     }

@@ -1,43 +1,47 @@
-package org.bukkit.craftbukkit.v1_20_R2.generator.structure;
+package org.bukkit.craftbukkit.generator.structure;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.Registry;
+import net.minecraft.core.IRegistry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.v1_20_R2.CraftRegistry;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
+import org.bukkit.Registry;
+import org.bukkit.craftbukkit.CraftRegistry;
+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.generator.structure.StructureType;
 
 public class CraftStructureType extends StructureType {
 
-    private final NamespacedKey key;
-    private final net.minecraft.world.level.levelgen.structure.StructureType structureType;
-
-    public static StructureType minecraftToBukkit(net.minecraft.world.level.levelgen.structure.StructureType minecraft) {
+    public static StructureType minecraftToBukkit(net.minecraft.world.level.levelgen.structure.StructureType<?> minecraft) {
         Preconditions.checkArgument(minecraft != null);
-        Registry registry = CraftRegistry.getMinecraftRegistry(Registries.STRUCTURE_TYPE);
-        StructureType bukkit = (StructureType) org.bukkit.Registry.STRUCTURE_TYPE.get(CraftNamespacedKey.fromMinecraft(((ResourceKey) registry.getResourceKey(minecraft).orElseThrow()).location()));
+
+        IRegistry<net.minecraft.world.level.levelgen.structure.StructureType<?>> registry = CraftRegistry.getMinecraftRegistry(Registries.STRUCTURE_TYPE);
+        StructureType bukkit = Registry.STRUCTURE_TYPE.get(CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location()));
 
         Preconditions.checkArgument(bukkit != null);
+
         return bukkit;
     }
 
-    public static net.minecraft.world.level.levelgen.structure.StructureType bukkitToMinecraft(StructureType bukkit) {
+    public static net.minecraft.world.level.levelgen.structure.StructureType<?> bukkitToMinecraft(StructureType bukkit) {
         Preconditions.checkArgument(bukkit != null);
+
         return ((CraftStructureType) bukkit).getHandle();
     }
 
-    public CraftStructureType(NamespacedKey key, net.minecraft.world.level.levelgen.structure.StructureType structureType) {
+    private final NamespacedKey key;
+    private final net.minecraft.world.level.levelgen.structure.StructureType<?> structureType;
+
+    public CraftStructureType(NamespacedKey key, net.minecraft.world.level.levelgen.structure.StructureType<?> structureType) {
         this.key = key;
         this.structureType = structureType;
     }
 
-    public net.minecraft.world.level.levelgen.structure.StructureType getHandle() {
-        return this.structureType;
+    public net.minecraft.world.level.levelgen.structure.StructureType<?> getHandle() {
+        return structureType;
     }
 
+    @Override
     public NamespacedKey getKey() {
-        return this.key;
+        return key;
     }
 }

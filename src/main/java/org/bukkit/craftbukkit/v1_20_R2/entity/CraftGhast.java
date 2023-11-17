@@ -1,28 +1,32 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.FlyingMob;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import net.minecraft.world.entity.monster.EntityGhast;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Ghast;
 
 public class CraftGhast extends CraftFlying implements Ghast, CraftEnemy {
 
-    public CraftGhast(CraftServer server, net.minecraft.world.entity.monster.Ghast entity) {
-        super(server, (FlyingMob) entity);
+    public CraftGhast(CraftServer server, EntityGhast entity) {
+        super(server, entity);
     }
 
-    public net.minecraft.world.entity.monster.Ghast getHandle() {
-        return (net.minecraft.world.entity.monster.Ghast) this.entity;
+    @Override
+    public EntityGhast getHandle() {
+        return (EntityGhast) entity;
     }
 
+    @Override
     public String toString() {
         return "CraftGhast";
     }
 
+    @Override
     public boolean isCharging() {
-        return this.getHandle().isCharging();
+        return getHandle().isCharging();
     }
 
+    @Override
     public void setCharging(boolean flag) {
-        this.getHandle().setCharging(flag);
+        getHandle().setCharging(flag);
     }
 }

@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.v1_20_R2.block;
+package org.bukkit.craftbukkit.block;
 
 import net.minecraft.world.level.block.entity.BrushableBlockEntity;
 import org.bukkit.World;
@@ -11,9 +11,10 @@ public class CraftSuspiciousSand extends CraftBrushableBlock implements Suspicio
     }
 
     protected CraftSuspiciousSand(CraftSuspiciousSand state) {
-        super((CraftBrushableBlock) state);
+        super(state);
     }
 
+    @Override
     public CraftSuspiciousSand copy() {
         return new CraftSuspiciousSand(this);
     }

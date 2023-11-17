@@ -1,57 +1,67 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import net.minecraft.world.level.block.BambooStalkBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Ageable;
-import org.bukkit.block.data.type.Bamboo;
-import org.bukkit.block.data.type.Bamboo.Leaves;
-import org.bukkit.block.data.type.Sapling;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftBamboo extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Bamboo, org.bukkit.block.data.Ageable, org.bukkit.block.data.type.Sapling {
 
-public final class CraftBamboo extends CraftBlockData implements Bamboo, Ageable, Sapling {
+    public CraftBamboo() {
+        super();
+    }
 
-    private static final EnumProperty LEAVES = getEnum(BambooStalkBlock.class, "leaves");
-    private static final IntegerProperty AGE = getInteger(BambooStalkBlock.class, "age");
-    private static final IntegerProperty STAGE = getInteger(BambooStalkBlock.class, "stage");
-
-    public CraftBamboo() {}
-
-    public CraftBamboo(BlockState state) {
+    public CraftBamboo(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
-    public Leaves getLeaves() {
-        return (Leaves) this.get(CraftBamboo.LEAVES, Leaves.class);
+    // org.bukkit.craftbukkit.block.data.type.CraftBamboo
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> LEAVES = getEnum(net.minecraft.world.level.block.BlockBamboo.class, "leaves");
+
+    @Override
+    public org.bukkit.block.data.type.Bamboo.Leaves getLeaves() {
+        return get(LEAVES, org.bukkit.block.data.type.Bamboo.Leaves.class);
     }
 
-    public void setLeaves(Leaves leaves) {
-        this.set(CraftBamboo.LEAVES, (Enum) leaves);
+    @Override
+    public void setLeaves(org.bukkit.block.data.type.Bamboo.Leaves leaves) {
+        set(LEAVES, leaves);
     }
 
+    // org.bukkit.craftbukkit.block.data.CraftAgeable
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger AGE = getInteger(net.minecraft.world.level.block.BlockBamboo.class, "age");
+
+    @Override
     public int getAge() {
-        return (Integer) this.get(CraftBamboo.AGE);
+        return get(AGE);
     }
 
+    @Override
     public void setAge(int age) {
-        this.set((Property) CraftBamboo.AGE, (Comparable) age);
+        set(AGE, age);
     }
 
+    @Override
     public int getMaximumAge() {
-        return getMax(CraftBamboo.AGE);
+        return getMax(AGE);
     }
 
+    // org.bukkit.craftbukkit.block.data.type.CraftSapling
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger STAGE = getInteger(net.minecraft.world.level.block.BlockBamboo.class, "stage");
+
+    @Override
     public int getStage() {
-        return (Integer) this.get(CraftBamboo.STAGE);
+        return get(STAGE);
     }
 
+    @Override
     public void setStage(int stage) {
-        this.set((Property) CraftBamboo.STAGE, (Comparable) stage);
+        set(STAGE, stage);
     }
 
+    @Override
     public int getMaximumStage() {
-        return getMax(CraftBamboo.STAGE);
+        return getMax(STAGE);
     }
 }

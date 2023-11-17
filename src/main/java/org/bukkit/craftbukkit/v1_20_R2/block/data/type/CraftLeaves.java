@@ -1,29 +1,30 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.data.type;
+package org.bukkit.craftbukkit.block.data.type;
 
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
 import org.bukkit.block.data.type.Leaves;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftLeaves extends CraftBlockData implements Leaves {
 
-    private static final IntegerProperty DISTANCE = getInteger("distance");
-    private static final BooleanProperty PERSISTENT = getBoolean("persistent");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger DISTANCE = getInteger("distance");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean PERSISTENT = getBoolean("persistent");
 
+    @Override
     public boolean isPersistent() {
-        return (Boolean) this.get(CraftLeaves.PERSISTENT);
+        return get(PERSISTENT);
     }
 
+    @Override
     public void setPersistent(boolean persistent) {
-        this.set((Property) CraftLeaves.PERSISTENT, (Comparable) persistent);
+        set(PERSISTENT, persistent);
     }
 
+    @Override
     public int getDistance() {
-        return (Integer) this.get(CraftLeaves.DISTANCE);
+        return get(DISTANCE);
     }
 
+    @Override
     public void setDistance(int distance) {
-        this.set((Property) CraftLeaves.DISTANCE, (Comparable) distance);
+        set(DISTANCE, distance);
     }
 }

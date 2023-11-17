@@ -1,52 +1,60 @@
-package org.bukkit.craftbukkit.v1_20_R2.inventory;
+package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.world.Container;
-import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.IInventory;
+import net.minecraft.world.inventory.ContainerAnvil;
 import org.bukkit.Location;
 import org.bukkit.inventory.AnvilInventory;
 
 public class CraftInventoryAnvil extends CraftResultInventory implements AnvilInventory {
 
     private final Location location;
-    private final AnvilMenu container;
+    private final ContainerAnvil container;
 
-    public CraftInventoryAnvil(Location location, Container inventory, Container resultInventory, AnvilMenu container) {
+    public CraftInventoryAnvil(Location location, IInventory inventory, IInventory resultInventory, ContainerAnvil container) {
         super(inventory, resultInventory);
         this.location = location;
         this.container = container;
     }
 
+    @Override
     public Location getLocation() {
-        return this.location;
+        return location;
     }
 
+    @Override
     public String getRenameText() {
-        return this.container.itemName;
+        return container.itemName;
     }
 
+    @Override
     public int getRepairCostAmount() {
-        return this.container.repairItemCountCost;
+        return container.repairItemCountCost;
     }
 
+    @Override
     public void setRepairCostAmount(int amount) {
-        this.container.repairItemCountCost = amount;
+        container.repairItemCountCost = amount;
     }
 
+    @Override
     public int getRepairCost() {
-        return this.container.cost.get();
+        return container.cost.get();
     }
 
+    @Override
     public void setRepairCost(int i) {
-        this.container.cost.set(i);
+        container.cost.set(i);
     }
 
+    @Override
     public int getMaximumRepairCost() {
-        return this.container.maximumRepairCost;
+        return container.maximumRepairCost;
     }
 
+    @Override
     public void setMaximumRepairCost(int levels) {
         Preconditions.checkArgument(levels >= 0, "Maximum repair cost must be positive (or 0)");
-        this.container.maximumRepairCost = levels;
+        container.maximumRepairCost = levels;
     }
 }

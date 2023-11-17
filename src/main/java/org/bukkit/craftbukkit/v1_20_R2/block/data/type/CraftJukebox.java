@@ -1,14 +1,14 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.data.type;
+package org.bukkit.craftbukkit.block.data.type;
 
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.bukkit.block.data.type.Jukebox;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftJukebox extends CraftBlockData implements Jukebox {
 
-    private static final BooleanProperty HAS_RECORD = getBoolean("has_record");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean HAS_RECORD = getBoolean("has_record");
 
+    @Override
     public boolean hasRecord() {
-        return (Boolean) this.get(CraftJukebox.HAS_RECORD);
+        return get(HAS_RECORD);
     }
 }

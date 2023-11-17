@@ -1,50 +1,50 @@
-package org.bukkit.craftbukkit.v1_20_R2.command;
+package org.bukkit.craftbukkit.command;
 
 import java.net.SocketAddress;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.rcon.RconConsoleSource;
+import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.server.rcon.RemoteControlCommandListener;
 import org.bukkit.command.RemoteConsoleCommandSender;
 
 public class CraftRemoteConsoleCommandSender extends ServerCommandSender implements RemoteConsoleCommandSender {
 
-    private final RconConsoleSource listener;
+    private final RemoteControlCommandListener listener;
 
-    public CraftRemoteConsoleCommandSender(RconConsoleSource listener) {
+    public CraftRemoteConsoleCommandSender(RemoteControlCommandListener listener) {
         this.listener = listener;
     }
 
-    public RconConsoleSource getListener() {
-        return this.listener;
+    public RemoteControlCommandListener getListener() {
+        return listener;
     }
 
+    @Override
     public SocketAddress getAddress() {
-        return this.listener.socketAddress;
+       return listener.socketAddress;
     }
 
+    @Override
     public void sendMessage(String message) {
-        this.listener.sendSystemMessage(Component.literal(message + "\n"));
+        listener.sendSystemMessage(IChatBaseComponent.literal(message + "\n")); // Send a newline after each message, to preserve formatting.
     }
 
+    @Override
     public void sendMessage(String... messages) {
-        String[] astring = messages;
-        int i = messages.length;
-
-        for (int j = 0; j < i; ++j) {
-            String message = astring[j];
-
-            this.sendMessage(message);
+        for (String message : messages) {
+            sendMessage(message);
         }
-
     }
 
+    @Override
     public String getName() {
         return "Rcon";
     }
 
+    @Override
     public boolean isOp() {
         return true;
     }
 
+    @Override
     public void setOp(boolean value) {
         throw new UnsupportedOperationException("Cannot change operator status of remote controller.");
     }

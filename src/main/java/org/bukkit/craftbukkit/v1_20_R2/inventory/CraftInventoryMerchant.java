@@ -1,35 +1,38 @@
-package org.bukkit.craftbukkit.v1_20_R2.inventory;
+package org.bukkit.craftbukkit.inventory;
 
-import net.minecraft.world.inventory.MerchantContainer;
-import net.minecraft.world.item.trading.Merchant;
-import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.inventory.InventoryMerchant;
+import net.minecraft.world.item.trading.IMerchant;
+import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.MerchantRecipe;
 
 public class CraftInventoryMerchant extends CraftInventory implements MerchantInventory {
 
-    private final Merchant merchant;
+    private final IMerchant merchant;
 
-    public CraftInventoryMerchant(Merchant merchant, MerchantContainer inventory) {
+    public CraftInventoryMerchant(IMerchant merchant, InventoryMerchant inventory) {
         super(inventory);
         this.merchant = merchant;
     }
 
+    @Override
     public int getSelectedRecipeIndex() {
-        return this.getInventory().selectionHint;
+        return getInventory().selectionHint;
     }
 
+    @Override
     public MerchantRecipe getSelectedRecipe() {
-        MerchantOffer nmsRecipe = this.getInventory().getActiveOffer();
-
-        return nmsRecipe == null ? null : nmsRecipe.asBukkit();
+        net.minecraft.world.item.trading.MerchantRecipe nmsRecipe = getInventory().getActiveOffer();
+        return (nmsRecipe == null) ? null : nmsRecipe.asBukkit();
     }
 
-    public MerchantContainer getInventory() {
-        return (MerchantContainer) this.inventory;
+    @Override
+    public InventoryMerchant getInventory() {
+        return (InventoryMerchant) inventory;
     }
 
-    public org.bukkit.inventory.Merchant getMerchant() {
-        return this.merchant.getCraftMerchant();
+    @Override
+    public Merchant getMerchant() {
+        return merchant.getCraftMerchant();
     }
 }

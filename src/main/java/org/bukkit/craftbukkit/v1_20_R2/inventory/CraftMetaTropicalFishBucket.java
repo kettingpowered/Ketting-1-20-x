@@ -1,195 +1,198 @@
-package org.bukkit.craftbukkit.v1_20_R2.inventory;
+package org.bukkit.craftbukkit.inventory;
 
-import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableMap;
 import java.util.Map;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftTropicalFish;
-import org.bukkit.entity.TropicalFish.Pattern;
+import org.bukkit.craftbukkit.entity.CraftTropicalFish;
+import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.entity.TropicalFish;
 import org.bukkit.inventory.meta.TropicalFishBucketMeta;
 
-@DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
+@DelegateDeserialization(SerializableMeta.class)
 class CraftMetaTropicalFishBucket extends CraftMetaItem implements TropicalFishBucketMeta {
+    static final ItemMetaKey VARIANT = new ItemMetaKey("BucketVariantTag", "fish-variant");
+    static final ItemMetaKey ENTITY_TAG = new ItemMetaKey("EntityTag", "entity-tag");
 
-    static final CraftMetaItem.ItemMetaKey VARIANT = new CraftMetaItem.ItemMetaKey("BucketVariantTag", "fish-variant");
-    static final CraftMetaItem.ItemMetaKey ENTITY_TAG = new CraftMetaItem.ItemMetaKey("EntityTag", "entity-tag");
     private Integer variant;
-    private CompoundTag entityTag;
+    private NBTTagCompound entityTag;
 
     CraftMetaTropicalFishBucket(CraftMetaItem meta) {
         super(meta);
-        if (meta instanceof CraftMetaTropicalFishBucket) {
-            CraftMetaTropicalFishBucket bucket = (CraftMetaTropicalFishBucket) meta;
 
-            this.variant = bucket.variant;
-            this.entityTag = bucket.entityTag;
+        if (!(meta instanceof CraftMetaTropicalFishBucket)) {
+            return;
         }
+
+        CraftMetaTropicalFishBucket bucket = (CraftMetaTropicalFishBucket) meta;
+        this.variant = bucket.variant;
+        this.entityTag = bucket.entityTag;
     }
 
-    CraftMetaTropicalFishBucket(CompoundTag tag) {
+    CraftMetaTropicalFishBucket(NBTTagCompound tag) {
         super(tag);
-        if (tag.contains(CraftMetaTropicalFishBucket.VARIANT.NBT, 3)) {
-            this.variant = tag.getInt(CraftMetaTropicalFishBucket.VARIANT.NBT);
+
+        if (tag.contains(VARIANT.NBT, CraftMagicNumbers.NBT.TAG_INT)) {
+            this.variant = tag.getInt(VARIANT.NBT);
         }
 
-        if (tag.contains(CraftMetaTropicalFishBucket.ENTITY_TAG.NBT)) {
-            this.entityTag = tag.getCompound(CraftMetaTropicalFishBucket.ENTITY_TAG.NBT).copy();
+        if (tag.contains(ENTITY_TAG.NBT)) {
+            entityTag = tag.getCompound(ENTITY_TAG.NBT).copy();
         }
-
     }
 
-    CraftMetaTropicalFishBucket(Map map) {
+    CraftMetaTropicalFishBucket(Map<String, Object> map) {
         super(map);
-        Integer integer = (Integer) CraftMetaItem.SerializableMeta.getObject(Integer.class, map, CraftMetaTropicalFishBucket.VARIANT.BUKKIT, true);
 
-        if (integer != null) {
-            this.variant = integer;
+        Integer variant = SerializableMeta.getObject(Integer.class, map, VARIANT.BUKKIT, true);
+        if (variant != null) {
+            this.variant = variant;
         }
-
     }
 
-    void deserializeInternal(CompoundTag tag, Object context) {
+    @Override
+    void deserializeInternal(NBTTagCompound tag, Object context) {
         super.deserializeInternal(tag, context);
-        if (tag.contains(CraftMetaTropicalFishBucket.ENTITY_TAG.NBT)) {
-            this.entityTag = tag.getCompound(CraftMetaTropicalFishBucket.ENTITY_TAG.NBT);
-        }
 
+        if (tag.contains(ENTITY_TAG.NBT)) {
+            entityTag = tag.getCompound(ENTITY_TAG.NBT);
+        }
     }
 
-    void serializeInternal(Map internalTags) {
-        if (this.entityTag != null && !this.entityTag.isEmpty()) {
-            internalTags.put(CraftMetaTropicalFishBucket.ENTITY_TAG.NBT, this.entityTag);
+    @Override
+    void serializeInternal(Map<String, NBTBase> internalTags) {
+        if (entityTag != null && !entityTag.isEmpty()) {
+            internalTags.put(ENTITY_TAG.NBT, entityTag);
         }
-
     }
 
-    void applyToItem(CompoundTag tag) {
+    @Override
+    void applyToItem(NBTTagCompound tag) {
         super.applyToItem(tag);
-        if (this.hasVariant()) {
-            tag.putInt(CraftMetaTropicalFishBucket.VARIANT.NBT, this.variant);
+
+        if (hasVariant()) {
+            tag.putInt(VARIANT.NBT, variant);
         }
 
-        if (this.entityTag != null) {
-            tag.put(CraftMetaTropicalFishBucket.ENTITY_TAG.NBT, this.entityTag);
+        if (entityTag != null) {
+            tag.put(ENTITY_TAG.NBT, entityTag);
         }
-
     }
 
+    @Override
     boolean applicableTo(Material type) {
         return type == Material.TROPICAL_FISH_BUCKET;
     }
 
+    @Override
     boolean isEmpty() {
-        return super.isEmpty() && this.isBucketEmpty();
+        return super.isEmpty() && isBucketEmpty();
     }
 
     boolean isBucketEmpty() {
-        return !this.hasVariant() && this.entityTag == null;
+        return !(hasVariant() || entityTag != null);
     }
 
+    @Override
     public DyeColor getPatternColor() {
-        return CraftTropicalFish.getPatternColor(this.variant);
+        return CraftTropicalFish.getPatternColor(variant);
     }
 
+    @Override
     public void setPatternColor(DyeColor color) {
-        if (this.variant == null) {
-            this.variant = 0;
+        if (variant == null) {
+            variant = 0;
         }
-
-        this.variant = CraftTropicalFish.getData(color, this.getPatternColor(), this.getPattern());
+        variant = CraftTropicalFish.getData(color, getPatternColor(), getPattern());
     }
 
+    @Override
     public DyeColor getBodyColor() {
-        return CraftTropicalFish.getBodyColor(this.variant);
+        return CraftTropicalFish.getBodyColor(variant);
     }
 
+    @Override
     public void setBodyColor(DyeColor color) {
-        if (this.variant == null) {
-            this.variant = 0;
+        if (variant == null) {
+            variant = 0;
         }
-
-        this.variant = CraftTropicalFish.getData(this.getPatternColor(), color, this.getPattern());
+        variant = CraftTropicalFish.getData(getPatternColor(), color, getPattern());
     }
 
-    public Pattern getPattern() {
-        return CraftTropicalFish.getPattern(this.variant);
+    @Override
+    public TropicalFish.Pattern getPattern() {
+        return CraftTropicalFish.getPattern(variant);
     }
 
-    public void setPattern(Pattern pattern) {
-        if (this.variant == null) {
-            this.variant = 0;
+    @Override
+    public void setPattern(TropicalFish.Pattern pattern) {
+        if (variant == null) {
+            variant = 0;
         }
-
-        this.variant = CraftTropicalFish.getData(this.getPatternColor(), this.getBodyColor(), pattern);
+        variant = CraftTropicalFish.getData(getPatternColor(), getBodyColor(), pattern);
     }
 
+    @Override
     public boolean hasVariant() {
-        return this.variant != null;
+        return variant != null;
     }
 
+    @Override
     boolean equalsCommon(CraftMetaItem meta) {
         if (!super.equalsCommon(meta)) {
             return false;
-        } else if (!(meta instanceof CraftMetaTropicalFishBucket)) {
-            return true;
-        } else {
+        }
+        if (meta instanceof CraftMetaTropicalFishBucket) {
             CraftMetaTropicalFishBucket that = (CraftMetaTropicalFishBucket) meta;
 
-            if (this.hasVariant()) {
-                if (!that.hasVariant() || !this.variant.equals(that.variant)) {
-                    return false;
-                }
-            } else if (that.hasVariant()) {
-                return false;
-            }
-
-            if (this.entityTag != null) {
-                if (that.entityTag == null || !this.entityTag.equals(that.entityTag)) {
-                    return false;
-                }
-            } else if (that.entityTag != null) {
-                return false;
-            }
-
-            return true;
+            return (hasVariant() ? that.hasVariant() && this.variant.equals(that.variant) : !that.hasVariant())
+                    && (entityTag != null ? that.entityTag != null && this.entityTag.equals(that.entityTag) : that.entityTag == null);
         }
+        return true;
     }
 
+    @Override
     boolean notUncommon(CraftMetaItem meta) {
-        return super.notUncommon(meta) && (meta instanceof CraftMetaTropicalFishBucket || this.isBucketEmpty());
+        return super.notUncommon(meta) && (meta instanceof CraftMetaTropicalFishBucket || isBucketEmpty());
     }
 
+    @Override
     int applyHash() {
-        int original;
+        final int original;
         int hash = original = super.applyHash();
 
-        if (this.hasVariant()) {
-            hash = 61 * hash + this.variant;
+        if (hasVariant()) {
+            hash = 61 * hash + variant;
         }
-
-        if (this.entityTag != null) {
-            hash = 61 * hash + this.entityTag.hashCode();
+        if (entityTag != null) {
+            hash = 61 * hash + entityTag.hashCode();
         }
 
         return original != hash ? CraftMetaTropicalFishBucket.class.hashCode() ^ hash : hash;
     }
 
+
+    @Override
     public CraftMetaTropicalFishBucket clone() {
         CraftMetaTropicalFishBucket clone = (CraftMetaTropicalFishBucket) super.clone();
 
-        if (this.entityTag != null) {
-            clone.entityTag = this.entityTag.copy();
+        if (entityTag != null) {
+            clone.entityTag = entityTag.copy();
         }
 
         return clone;
     }
 
-    Builder serialize(Builder builder) {
+    @Override
+    ImmutableMap.Builder<String, Object> serialize(ImmutableMap.Builder<String, Object> builder) {
         super.serialize(builder);
-        if (this.hasVariant()) {
-            builder.put(CraftMetaTropicalFishBucket.VARIANT.BUKKIT, this.variant);
+
+        if (hasVariant()) {
+            builder.put(VARIANT.BUKKIT, variant);
         }
 
         return builder;

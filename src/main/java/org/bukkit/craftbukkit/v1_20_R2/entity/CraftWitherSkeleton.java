@@ -1,20 +1,22 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.monster.AbstractSkeleton;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import net.minecraft.world.entity.monster.EntitySkeletonWither;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.WitherSkeleton;
 
 public class CraftWitherSkeleton extends CraftAbstractSkeleton implements WitherSkeleton {
 
-    public CraftWitherSkeleton(CraftServer server, net.minecraft.world.entity.monster.WitherSkeleton entity) {
-        super(server, (AbstractSkeleton) entity);
+    public CraftWitherSkeleton(CraftServer server, EntitySkeletonWither entity) {
+        super(server, entity);
     }
 
+    @Override
     public String toString() {
         return "CraftWitherSkeleton";
     }
 
+    @Override
     public SkeletonType getSkeletonType() {
         return SkeletonType.WITHER;
     }

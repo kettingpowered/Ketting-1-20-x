@@ -1,19 +1,21 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.monster.SpellcasterIllager;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import net.minecraft.world.entity.monster.EntityIllagerIllusioner;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Illusioner;
 
 public class CraftIllusioner extends CraftSpellcaster implements Illusioner {
 
-    public CraftIllusioner(CraftServer server, net.minecraft.world.entity.monster.Illusioner entity) {
-        super(server, (SpellcasterIllager) entity);
+    public CraftIllusioner(CraftServer server, EntityIllagerIllusioner entity) {
+        super(server, entity);
     }
 
-    public net.minecraft.world.entity.monster.Illusioner getHandle() {
-        return (net.minecraft.world.entity.monster.Illusioner) super.getHandle();
+    @Override
+    public EntityIllagerIllusioner getHandle() {
+        return (EntityIllagerIllusioner) super.getHandle();
     }
 
+    @Override
     public String toString() {
         return "CraftIllusioner";
     }

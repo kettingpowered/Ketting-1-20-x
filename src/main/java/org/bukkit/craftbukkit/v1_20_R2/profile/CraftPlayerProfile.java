@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.v1_20_R2.profile;
+package org.bukkit.craftbukkit.profile;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
@@ -11,56 +11,60 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.minecraft.Util;
+import net.minecraft.SystemUtils;
 import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.entity.TileEntitySkull;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.SerializableAs;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R2.configuration.ConfigSerializationUtil;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.configuration.ConfigSerializationUtil;
 import org.bukkit.profile.PlayerProfile;
 import org.bukkit.profile.PlayerTextures;
 
 @SerializableAs("PlayerProfile")
 public final class CraftPlayerProfile implements PlayerProfile {
 
-    private final UUID uniqueId;
-    private final String name;
-    private final PropertyMap properties;
-    private final CraftPlayerTextures textures;
-
     @Nonnull
     public static GameProfile validateSkullProfile(@Nonnull GameProfile gameProfile) {
-        boolean isValidSkullProfile = gameProfile.getName() != null || gameProfile.getProperties().containsKey("textures");
-
+        // The GameProfile needs to contain either both a uuid and textures, or a name.
+        // The GameProfile always has a name or a uuid, so checking if it has a name is sufficient.
+        boolean isValidSkullProfile = (gameProfile.getName() != null)
+                || gameProfile.getProperties().containsKey(CraftPlayerTextures.PROPERTY_NAME);
         Preconditions.checkArgument(isValidSkullProfile, "The skull profile is missing a name or textures!");
         return gameProfile;
     }
 
     @Nullable
     public static Property getProperty(@Nonnull GameProfile profile, String propertyName) {
-        return (Property) Iterables.getFirst(profile.getProperties().get(propertyName), (Object) null);
+        return Iterables.getFirst(profile.getProperties().get(propertyName), null);
     }
+
+    private final UUID uniqueId;
+    private final String name;
+
+    private final PropertyMap properties = new PropertyMap();
+    private final CraftPlayerTextures textures = new CraftPlayerTextures(this);
 
     public CraftPlayerProfile(UUID uniqueId, String name) {
-        this.properties = new PropertyMap();
-        this.textures = new CraftPlayerTextures(this);
-        Preconditions.checkArgument(uniqueId != null || !StringUtils.isBlank(name), "uniqueId is null or name is blank");
-        this.uniqueId = uniqueId == null ? Util.NIL_UUID : uniqueId;
-        this.name = name == null ? "" : name;
+        Preconditions.checkArgument((uniqueId != null) || !StringUtils.isBlank(name), "uniqueId is null or name is blank");
+        this.uniqueId = (uniqueId == null) ? SystemUtils.NIL_UUID : uniqueId;
+        this.name = (name == null) ? "" : name;
     }
 
+    // The Map of properties of the given GameProfile is not immutable. This captures a snapshot of the properties of
+    // the given GameProfile at the time this CraftPlayerProfile is created.
     public CraftPlayerProfile(@Nonnull GameProfile gameProfile) {
         this(gameProfile.getId(), gameProfile.getName());
-        this.properties.putAll(gameProfile.getProperties());
+        properties.putAll(gameProfile.getProperties());
     }
 
     private CraftPlayerProfile(@Nonnull CraftPlayerProfile other) {
@@ -69,73 +73,78 @@ public final class CraftPlayerProfile implements PlayerProfile {
         this.textures.copyFrom(other.textures);
     }
 
+    @Override
     public UUID getUniqueId() {
-        return this.uniqueId.equals(Util.NIL_UUID) ? null : this.uniqueId;
+        return (uniqueId.equals(SystemUtils.NIL_UUID)) ? null : uniqueId;
     }
 
+    @Override
     public String getName() {
-        return this.name.isEmpty() ? null : this.name;
+        return (name.isEmpty()) ? null : name;
     }
 
     @Nullable
     Property getProperty(String propertyName) {
-        return (Property) Iterables.getFirst(this.properties.get(propertyName), (Object) null);
+        return Iterables.getFirst(properties.get(propertyName), null);
     }
 
     void setProperty(String propertyName, @Nullable Property property) {
-        this.removeProperty(propertyName);
+        // Assert: (property == null) || property.getName().equals(propertyName)
+        removeProperty(propertyName);
         if (property != null) {
-            this.properties.put(property.name(), property);
+            properties.put(property.name(), property);
         }
-
     }
 
     void removeProperty(String propertyName) {
-        this.properties.removeAll(propertyName);
+        properties.removeAll(propertyName);
     }
 
     void rebuildDirtyProperties() {
-        this.textures.rebuildPropertyIfDirty();
+        textures.rebuildPropertyIfDirty();
     }
 
+    @Override
     public CraftPlayerTextures getTextures() {
-        return this.textures;
+        return textures;
     }
 
+    @Override
     public void setTextures(@Nullable PlayerTextures textures) {
         if (textures == null) {
             this.textures.clear();
         } else {
             this.textures.copyFrom(textures);
         }
-
     }
 
+    @Override
     public boolean isComplete() {
-        return this.getUniqueId() != null && this.getName() != null && !this.textures.isEmpty();
+        return (getUniqueId() != null) && (getName() != null) && !textures.isEmpty();
     }
 
-    public CompletableFuture update() {
-        return CompletableFuture.supplyAsync(this::getUpdatedProfile, Util.backgroundExecutor());
+    @Override
+    public CompletableFuture<PlayerProfile> update() {
+        return CompletableFuture.supplyAsync(this::getUpdatedProfile, SystemUtils.backgroundExecutor());
     }
 
     private CraftPlayerProfile getUpdatedProfile() {
         DedicatedServer server = ((CraftServer) Bukkit.getServer()).getServer();
         GameProfile profile = this.buildGameProfile();
 
-        if (profile.getId().equals(Util.NIL_UUID)) {
-            profile = (GameProfile) server.getProfileCache().get(profile.getName()).orElse(profile);
+        // If missing, look up the uuid by name:
+        if (profile.getId().equals(SystemUtils.NIL_UUID)) {
+            profile = server.getProfileCache().get(profile.getName()).orElse(profile);
         }
 
-        if (!profile.getId().equals(Util.NIL_UUID)) {
+        // Look up properties such as the textures:
+        if (!profile.getId().equals(SystemUtils.NIL_UUID)) {
             GameProfile newProfile;
-
             try {
-                newProfile = (GameProfile) ((Optional) SkullBlockEntity.fillProfileTextures(profile).get()).orElse((Object) null);
-            } catch (ExecutionException | InterruptedException interruptedexception) {
-                throw new RuntimeException("Exception filling profile textures", interruptedexception);
+                newProfile = TileEntitySkull.fillProfileTextures(profile).get().orElse(null); // TODO: replace with CompletableFuture
+            } catch (InterruptedException | ExecutionException ex) {
+                throw new RuntimeException("Exception filling profile textures", ex);
             }
-
             if (newProfile != null) {
                 profile = newProfile;
             }
@@ -144,150 +153,127 @@ public final class CraftPlayerProfile implements PlayerProfile {
         return new CraftPlayerProfile(profile);
     }
 
+    // This always returns a new GameProfile instance to ensure that property changes to the original or previously
+    // built GameProfiles don't affect the use of this profile in other contexts.
     @Nonnull
     public GameProfile buildGameProfile() {
-        this.rebuildDirtyProperties();
-        GameProfile profile = new GameProfile(this.uniqueId, this.name);
-
-        profile.getProperties().putAll(this.properties);
+        rebuildDirtyProperties();
+        GameProfile profile = new GameProfile(uniqueId, name);
+        profile.getProperties().putAll(properties);
         return profile;
     }
 
+    @Override
     public String toString() {
-        this.rebuildDirtyProperties();
+        rebuildDirtyProperties();
         StringBuilder builder = new StringBuilder();
-
         builder.append("CraftPlayerProfile [uniqueId=");
-        builder.append(this.uniqueId);
+        builder.append(uniqueId);
         builder.append(", name=");
-        builder.append(this.name);
+        builder.append(name);
         builder.append(", properties=");
-        builder.append(toString(this.properties));
+        builder.append(toString(properties));
         builder.append("]");
         return builder.toString();
     }
 
     private static String toString(@Nonnull PropertyMap propertyMap) {
         StringBuilder builder = new StringBuilder();
-
         builder.append("{");
-        propertyMap.asMap().forEach((propertyNamex, propertiesx) -> {
-            builder.append(propertyNamex);
+        propertyMap.asMap().forEach((propertyName, properties) -> {
+            builder.append(propertyName);
             builder.append("=");
-            builder.append((String) propertiesx.stream().map(CraftProfileProperty::toString).collect(Collectors.joining(",", "[", "]")));
+            builder.append(properties.stream().map(CraftProfileProperty::toString).collect(Collectors.joining(",", "[", "]")));
         });
         builder.append("}");
         return builder.toString();
     }
 
+    @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (!(obj instanceof CraftPlayerProfile)) {
-            return false;
-        } else {
-            CraftPlayerProfile other = (CraftPlayerProfile) obj;
+        if (this == obj) return true;
+        if (!(obj instanceof CraftPlayerProfile)) return false;
+        CraftPlayerProfile other = (CraftPlayerProfile) obj;
+        if (!Objects.equals(uniqueId, other.uniqueId)) return false;
+        if (!Objects.equals(name, other.name)) return false;
 
-            if (!Objects.equals(this.uniqueId, other.uniqueId)) {
-                return false;
-            } else if (!Objects.equals(this.name, other.name)) {
-                return false;
-            } else {
-                this.rebuildDirtyProperties();
-                other.rebuildDirtyProperties();
-                return equals(this.properties, other.properties);
-            }
-        }
+        rebuildDirtyProperties();
+        other.rebuildDirtyProperties();
+        if (!equals(properties, other.properties)) return false;
+        return true;
     }
 
     private static boolean equals(@Nonnull PropertyMap propertyMap, @Nonnull PropertyMap other) {
-        if (propertyMap.size() != other.size()) {
-            return false;
-        } else {
-            Iterator iterator1 = propertyMap.values().iterator();
-            Iterator iterator2 = other.values().iterator();
-
-            while (iterator1.hasNext()) {
-                if (!iterator2.hasNext()) {
-                    return false;
-                }
-
-                Property property1 = (Property) iterator1.next();
-                Property property2 = (Property) iterator2.next();
-
-                if (!CraftProfileProperty.equals(property1, property2)) {
-                    return false;
-                }
+        if (propertyMap.size() != other.size()) return false;
+        // We take the order of properties into account here, because it is
+        // also relevant in the serialized and NBT forms of GameProfiles.
+        Iterator<Property> iterator1 = propertyMap.values().iterator();
+        Iterator<Property> iterator2 = other.values().iterator();
+        while (iterator1.hasNext()) {
+            if (!iterator2.hasNext()) return false;
+            Property property1 = iterator1.next();
+            Property property2 = iterator2.next();
+            if (!CraftProfileProperty.equals(property1, property2)) {
+                return false;
             }
-
-            return !iterator2.hasNext();
         }
+        return !iterator2.hasNext();
     }
 
+    @Override
     public int hashCode() {
-        this.rebuildDirtyProperties();
-        byte result = 1;
-        int result = 31 * result + Objects.hashCode(this.uniqueId);
-
-        result = 31 * result + Objects.hashCode(this.name);
-        result = 31 * result + hashCode(this.properties);
+        rebuildDirtyProperties();
+        int result = 1;
+        result = 31 * result + Objects.hashCode(uniqueId);
+        result = 31 * result + Objects.hashCode(name);
+        result = 31 * result + hashCode(properties);
         return result;
     }
 
     private static int hashCode(PropertyMap propertyMap) {
         int result = 1;
-
-        Property property;
-
-        for (Iterator iterator = propertyMap.values().iterator(); iterator.hasNext(); result = 31 * result + CraftProfileProperty.hashCode(property)) {
-            property = (Property) iterator.next();
+        for (Property property : propertyMap.values()) {
+            result = 31 * result + CraftProfileProperty.hashCode(property);
         }
-
         return result;
     }
 
+    @Override
     public CraftPlayerProfile clone() {
         return new CraftPlayerProfile(this);
     }
 
-    public Map serialize() {
-        LinkedHashMap map = new LinkedHashMap();
-
-        if (this.getUniqueId() != null) {
-            map.put("uniqueId", this.getUniqueId().toString());
+    @Override
+    public Map<String, Object> serialize() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        if (getUniqueId() != null) {
+            map.put("uniqueId", getUniqueId().toString());
         }
-
-        if (this.getName() != null) {
-            map.put("name", this.getName());
+        if (getName() != null) {
+            map.put("name", getName());
         }
-
-        this.rebuildDirtyProperties();
-        if (!this.properties.isEmpty()) {
-            ArrayList propertiesData = new ArrayList();
-
-            this.properties.forEach((propertyNamex, propertyx) -> {
-                propertiesData.add(CraftProfileProperty.serialize(propertyx));
+        rebuildDirtyProperties();
+        if (!properties.isEmpty()) {
+            List<Object> propertiesData = new ArrayList<>();
+            properties.forEach((propertyName, property) -> {
+                propertiesData.add(CraftProfileProperty.serialize(property));
             });
             map.put("properties", propertiesData);
         }
-
         return map;
     }
 
-    public static CraftPlayerProfile deserialize(Map map) {
+    public static CraftPlayerProfile deserialize(Map<String, Object> map) {
         UUID uniqueId = ConfigSerializationUtil.getUuid(map, "uniqueId", true);
         String name = ConfigSerializationUtil.getString(map, "name", true);
+
+        // This also validates the deserialized unique id and name (ensures that not both are null):
         CraftPlayerProfile profile = new CraftPlayerProfile(uniqueId, name);
 
         if (map.containsKey("properties")) {
-            Iterator iterator = ((List) map.get("properties")).iterator();
-
-            while (iterator.hasNext()) {
-                Object propertyData = iterator.next();
-
+            for (Object propertyData : (List<?>) map.get("properties")) {
                 Preconditions.checkArgument(propertyData instanceof Map, "Propertu data (%s) is not a valid Map", propertyData);
-                Property property = CraftProfileProperty.deserialize((Map) propertyData);
-
+                Property property = CraftProfileProperty.deserialize((Map<?, ?>) propertyData);
                 profile.properties.put(property.name(), property);
             }
         }

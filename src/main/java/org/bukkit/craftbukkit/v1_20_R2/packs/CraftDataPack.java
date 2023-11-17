@@ -1,171 +1,114 @@
-package org.bukkit.craftbukkit.v1_20_R2.packs;
+package org.bukkit.craftbukkit.packs;
 
 import java.io.IOException;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import net.minecraft.server.packs.PackResources;
-import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
-import net.minecraft.server.packs.repository.Pack;
-import net.minecraft.server.packs.repository.PackCompatibility;
+import net.minecraft.server.packs.IResourcePack;
+import net.minecraft.server.packs.metadata.pack.ResourcePackInfo;
 import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.server.packs.repository.ResourcePackLoader;
 import net.minecraft.util.InclusiveRange;
 import org.bukkit.Bukkit;
 import org.bukkit.FeatureFlag;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.v1_20_R2.CraftFeatureFlag;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
+import org.bukkit.craftbukkit.CraftFeatureFlag;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.packs.DataPack;
-import org.bukkit.packs.DataPack.Compatibility;
-import org.bukkit.packs.DataPack.Source;
 
 public class CraftDataPack implements DataPack {
 
-    private final Pack handle;
-    private final PackMetadataSection resourcePackInfo;
-    private static volatile int[] $SWITCH_TABLE$net$minecraft$server$packs$repository$EnumResourcePackVersion;
+    private final ResourcePackLoader handle;
+    private final ResourcePackInfo resourcePackInfo;
 
-    public CraftDataPack(Pack handler) {
+    public CraftDataPack(ResourcePackLoader handler) {
         this.handle = handler;
-
-        try {
-            Throwable throwable = null;
-            Object object = null;
-
-            try {
-                PackResources iresourcepack = this.handle.resources.openPrimary(this.handle.getId());
-
-                try {
-                    this.resourcePackInfo = (PackMetadataSection) iresourcepack.getMetadataSection(PackMetadataSection.TYPE);
-                } finally {
-                    if (iresourcepack != null) {
-                        iresourcepack.close();
-                    }
-
-                }
-
-            } catch (Throwable throwable1) {
-                if (throwable == null) {
-                    throwable = throwable1;
-                } else if (throwable != throwable1) {
-                    throwable.addSuppressed(throwable1);
-                }
-
-                throw throwable;
-            }
-        } catch (IOException ioexception) {
-            throw new RuntimeException(ioexception);
+        try (IResourcePack iresourcepack = this.handle.resources.openPrimary(this.handle.getId())) {
+            this.resourcePackInfo = iresourcepack.getMetadataSection(ResourcePackInfo.TYPE);
+        } catch (IOException e) { // This is already called in NMS then if in NMS not happen is secure this not throw here
+            throw new RuntimeException(e);
         }
     }
 
-    public Pack getHandle() {
+    public ResourcePackLoader getHandle() {
         return this.handle;
     }
 
     public String getRawId() {
-        return this.getHandle().getId();
+        return getHandle().getId();
     }
 
+    @Override
     public String getTitle() {
         return CraftChatMessage.fromComponent(this.getHandle().getTitle());
     }
 
+    @Override
     public String getDescription() {
         return CraftChatMessage.fromComponent(this.getHandle().getDescription());
     }
 
+    @Override
     public int getPackFormat() {
         return this.resourcePackInfo.packFormat();
     }
 
+    @Override
     public int getMinSupportedPackFormat() {
-        return (Integer) ((InclusiveRange) this.resourcePackInfo.supportedFormats().orElse(new InclusiveRange(this.getPackFormat()))).minInclusive();
+        return this.resourcePackInfo.supportedFormats().orElse(new InclusiveRange<>(this.getPackFormat())).minInclusive();
     }
 
+    @Override
     public int getMaxSupportedPackFormat() {
-        return (Integer) ((InclusiveRange) this.resourcePackInfo.supportedFormats().orElse(new InclusiveRange(this.getPackFormat()))).maxInclusive();
+        return this.resourcePackInfo.supportedFormats().orElse(new InclusiveRange<>(this.getPackFormat())).maxInclusive();
     }
 
+    @Override
     public boolean isRequired() {
-        return this.getHandle().isRequired();
+        return getHandle().isRequired();
     }
 
+    @Override
     public Compatibility getCompatibility() {
-        Compatibility compatibility;
-
-        switch ($SWITCH_TABLE$net$minecraft$server$packs$repository$EnumResourcePackVersion()[this.getHandle().getCompatibility().ordinal()]) {
-            case 1:
-                compatibility = Compatibility.OLD;
-                break;
-            case 2:
-                compatibility = Compatibility.NEW;
-                break;
-            case 3:
-                compatibility = Compatibility.COMPATIBLE;
-                break;
-            default:
-                throw new IncompatibleClassChangeError();
-        }
-
-        return compatibility;
+        return switch (this.getHandle().getCompatibility()) {
+            case COMPATIBLE -> Compatibility.COMPATIBLE;
+            case TOO_NEW -> Compatibility.NEW;
+            case TOO_OLD -> Compatibility.OLD;
+        };
     }
 
+    @Override
     public boolean isEnabled() {
-        return ((CraftServer) Bukkit.getServer()).getServer().getPackRepository().getSelectedIds().contains(this.getRawId());
+        return ((CraftServer) Bukkit.getServer()).getServer().getPackRepository().getSelectedIds().contains(getRawId());
     }
 
-    public Source getSource() {
-        return this.getHandle().getPackSource() == PackSource.BUILT_IN ? Source.BUILT_IN : (this.getHandle().getPackSource() == PackSource.FEATURE ? Source.FEATURE : (this.getHandle().getPackSource() == PackSource.WORLD ? Source.WORLD : (this.getHandle().getPackSource() == PackSource.SERVER ? Source.SERVER : Source.DEFAULT)));
-    }
-
-    public Set getRequestedFeatures() {
-        Stream stream = CraftFeatureFlag.getFromNMS(this.getHandle().getRequestedFeatures()).stream();
-
-        FeatureFlag.class.getClass();
-        return (Set) stream.map(FeatureFlag.class::cast).collect(Collectors.toUnmodifiableSet());
-    }
-
-    public NamespacedKey getKey() {
-        return NamespacedKey.fromString(this.getRawId());
-    }
-
-    public String toString() {
-        String requestedFeatures = (String) this.getRequestedFeatures().stream().map((featureFlagx) -> {
-            return featureFlagx.getKey().toString();
-        }).collect(Collectors.joining(","));
-
-        return "CraftDataPack{rawId=" + this.getRawId() + ",id=" + this.getKey() + ",title=" + this.getTitle() + ",description=" + this.getDescription() + ",packformat=" + this.getPackFormat() + ",minSupportedPackFormat=" + this.getMinSupportedPackFormat() + ",maxSupportedPackFormat=" + this.getMaxSupportedPackFormat() + ",compatibility=" + this.getCompatibility() + ",source=" + this.getSource() + ",enabled=" + this.isEnabled() + ",requestedFeatures=[" + requestedFeatures + "]}";
-    }
-
-    static int[] $SWITCH_TABLE$net$minecraft$server$packs$repository$EnumResourcePackVersion() {
-        int[] aint = CraftDataPack.$SWITCH_TABLE$net$minecraft$server$packs$repository$EnumResourcePackVersion;
-
-        if (aint != null) {
-            return aint;
-        } else {
-            int[] aint1 = new int[PackCompatibility.values().length];
-
-            try {
-                aint1[PackCompatibility.COMPATIBLE.ordinal()] = 3;
-            } catch (NoSuchFieldError nosuchfielderror) {
-                ;
-            }
-
-            try {
-                aint1[PackCompatibility.TOO_NEW.ordinal()] = 2;
-            } catch (NoSuchFieldError nosuchfielderror1) {
-                ;
-            }
-
-            try {
-                aint1[PackCompatibility.TOO_OLD.ordinal()] = 1;
-            } catch (NoSuchFieldError nosuchfielderror2) {
-                ;
-            }
-
-            CraftDataPack.$SWITCH_TABLE$net$minecraft$server$packs$repository$EnumResourcePackVersion = aint1;
-            return aint1;
+    @Override
+    public DataPack.Source getSource() {
+        if (this.getHandle().getPackSource() == PackSource.BUILT_IN) {
+            return Source.BUILT_IN;
+        } else if (this.getHandle().getPackSource() == PackSource.FEATURE) {
+            return Source.FEATURE;
+        } else if (this.getHandle().getPackSource() == PackSource.WORLD) {
+            return Source.WORLD;
+        } else if (this.getHandle().getPackSource() == PackSource.SERVER) {
+            return Source.SERVER;
         }
+        return Source.DEFAULT;
+    }
+
+    @Override
+    public Set<FeatureFlag> getRequestedFeatures() {
+        return CraftFeatureFlag.getFromNMS(this.getHandle().getRequestedFeatures()).stream().map(FeatureFlag.class::cast).collect(Collectors.toUnmodifiableSet());
+    }
+
+    @Override
+    public NamespacedKey getKey() {
+        return NamespacedKey.fromString(getRawId());
+    }
+
+    @Override
+    public String toString() {
+        String requestedFeatures = getRequestedFeatures().stream().map(featureFlag -> featureFlag.getKey().toString()).collect(Collectors.joining(","));
+        return "CraftDataPack{rawId=" + this.getRawId() + ",id=" + this.getKey() + ",title=" + this.getTitle() + ",description=" + this.getDescription() + ",packformat=" + this.getPackFormat() + ",minSupportedPackFormat=" + this.getMinSupportedPackFormat() + ",maxSupportedPackFormat=" + this.getMaxSupportedPackFormat() + ",compatibility=" + this.getCompatibility() + ",source=" + this.getSource() + ",enabled=" + this.isEnabled() + ",requestedFeatures=[" + requestedFeatures + "]}";
     }
 }

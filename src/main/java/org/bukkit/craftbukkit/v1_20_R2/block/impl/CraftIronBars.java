@@ -1,78 +1,79 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import java.util.Set;
-import net.minecraft.world.level.block.IronBarsBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.MultipleFacing;
-import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.Fence;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftIronBars extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Fence, org.bukkit.block.data.MultipleFacing, org.bukkit.block.data.Waterlogged {
 
-public final class CraftIronBars extends CraftBlockData implements Fence, MultipleFacing, Waterlogged {
+    public CraftIronBars() {
+        super();
+    }
 
-    private static final BooleanProperty[] FACES = new BooleanProperty[]{getBoolean(IronBarsBlock.class, "north", true), getBoolean(IronBarsBlock.class, "east", true), getBoolean(IronBarsBlock.class, "south", true), getBoolean(IronBarsBlock.class, "west", true), getBoolean(IronBarsBlock.class, "up", true), getBoolean(IronBarsBlock.class, "down", true)};
-    private static final BooleanProperty WATERLOGGED = getBoolean(IronBarsBlock.class, "waterlogged");
-
-    public CraftIronBars() {}
-
-    public CraftIronBars(BlockState state) {
+    public CraftIronBars(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
-    public boolean hasFace(BlockFace face) {
-        BooleanProperty state = CraftIronBars.FACES[face.ordinal()];
+    // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean[] FACES = new net.minecraft.world.level.block.state.properties.BlockStateBoolean[]{
+        getBoolean(net.minecraft.world.level.block.BlockIronBars.class, "north", true), getBoolean(net.minecraft.world.level.block.BlockIronBars.class, "east", true), getBoolean(net.minecraft.world.level.block.BlockIronBars.class, "south", true), getBoolean(net.minecraft.world.level.block.BlockIronBars.class, "west", true), getBoolean(net.minecraft.world.level.block.BlockIronBars.class, "up", true), getBoolean(net.minecraft.world.level.block.BlockIronBars.class, "down", true)
+    };
+
+    @Override
+    public boolean hasFace(org.bukkit.block.BlockFace face) {
+        net.minecraft.world.level.block.state.properties.BlockStateBoolean state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
-        } else {
-            return (Boolean) this.get(state);
         }
+        return get(state);
     }
 
-    public void setFace(BlockFace face, boolean has) {
-        BooleanProperty state = CraftIronBars.FACES[face.ordinal()];
-
+    @Override
+    public void setFace(org.bukkit.block.BlockFace face, boolean has) {
+        net.minecraft.world.level.block.state.properties.BlockStateBoolean state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
-        } else {
-            this.set((Property) state, (Comparable) has);
         }
+        set(state, has);
     }
 
-    public Set getFaces() {
-        Builder faces = ImmutableSet.builder();
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        com.google.common.collect.ImmutableSet.Builder<org.bukkit.block.BlockFace> faces = com.google.common.collect.ImmutableSet.builder();
 
-        for (int i = 0; i < CraftIronBars.FACES.length; ++i) {
-            if (CraftIronBars.FACES[i] != null && (Boolean) this.get(CraftIronBars.FACES[i])) {
-                faces.add(BlockFace.values()[i]);
+        for (int i = 0; i < FACES.length; i++) {
+            if (FACES[i] != null && get(FACES[i])) {
+                faces.add(org.bukkit.block.BlockFace.values()[i]);
             }
         }
 
         return faces.build();
     }
 
-    public Set getAllowedFaces() {
-        Builder faces = ImmutableSet.builder();
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getAllowedFaces() {
+        com.google.common.collect.ImmutableSet.Builder<org.bukkit.block.BlockFace> faces = com.google.common.collect.ImmutableSet.builder();
 
-        for (int i = 0; i < CraftIronBars.FACES.length; ++i) {
-            if (CraftIronBars.FACES[i] != null) {
-                faces.add(BlockFace.values()[i]);
+        for (int i = 0; i < FACES.length; i++) {
+            if (FACES[i] != null) {
+                faces.add(org.bukkit.block.BlockFace.values()[i]);
             }
         }
 
         return faces.build();
     }
 
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockIronBars.class, "waterlogged");
+
+    @Override
     public boolean isWaterlogged() {
-        return (Boolean) this.get(CraftIronBars.WATERLOGGED);
+        return get(WATERLOGGED);
     }
 
+    @Override
     public void setWaterlogged(boolean waterlogged) {
-        this.set((Property) CraftIronBars.WATERLOGGED, (Comparable) waterlogged);
+        set(WATERLOGGED, waterlogged);
     }
 }

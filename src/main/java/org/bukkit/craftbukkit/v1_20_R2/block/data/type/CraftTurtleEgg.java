@@ -1,27 +1,29 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.data.type;
+package org.bukkit.craftbukkit.block.data.type;
 
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
 import org.bukkit.block.data.type.TurtleEgg;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftTurtleEgg extends CraftBlockData implements TurtleEgg {
 
-    private static final IntegerProperty EGGS = getInteger("eggs");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger EGGS = getInteger("eggs");
 
+    @Override
     public int getEggs() {
-        return (Integer) this.get(CraftTurtleEgg.EGGS);
+        return get(EGGS);
     }
 
+    @Override
     public void setEggs(int eggs) {
-        this.set((Property) CraftTurtleEgg.EGGS, (Comparable) eggs);
+        set(EGGS, eggs);
     }
 
+    @Override
     public int getMinimumEggs() {
-        return getMin(CraftTurtleEgg.EGGS);
+        return getMin(EGGS);
     }
 
+    @Override
     public int getMaximumEggs() {
-        return getMax(CraftTurtleEgg.EGGS);
+        return getMax(EGGS);
     }
 }

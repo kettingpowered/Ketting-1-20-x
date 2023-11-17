@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.v1_20_R2.legacy;
+package org.bukkit.craftbukkit.legacy;
 
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
@@ -8,32 +8,32 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState;
+import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.block.CraftBlockState;
 import org.bukkit.inventory.ItemStack;
 
-/** @deprecated */
+/**
+ * @deprecated do not use for any reason
+ */
 @Deprecated
 public final class CraftEvil {
 
-    private static final Int2ObjectMap byId = new Int2ObjectLinkedOpenHashMap();
+    private static final Int2ObjectMap<Material> byId = new Int2ObjectLinkedOpenHashMap<>();
 
     static {
-        Material[] amaterial;
-        int i = (amaterial = Material.values()).length;
-
-        for (int j = 0; j < i; ++j) {
-            Material material = amaterial[j];
-
-            if (material.isLegacy()) {
-                Preconditions.checkState(!CraftEvil.byId.containsKey(material.getId()), "Duplicate material ID for", material);
-                CraftEvil.byId.put(material.getId(), material);
+        for (Material material : Material.values()) {
+            if (!material.isLegacy()) {
+                continue;
             }
-        }
 
+            Preconditions.checkState(!byId.containsKey(material.getId()), "Duplicate material ID for", material);
+            byId.put(material.getId(), material);
+        }
     }
 
-    private CraftEvil() {}
+    private CraftEvil() {
+        //
+    }
 
     public static int getBlockTypeIdAt(World world, int x, int y, int z) {
         return getId(world.getBlockAt(x, y, z).getType());
@@ -97,7 +97,7 @@ public final class CraftEvil {
     }
 
     public static Material getMaterial(int id) {
-        return (Material) CraftEvil.byId.get(id);
+        return byId.get(id);
     }
 
     public static int getId(Material material) {

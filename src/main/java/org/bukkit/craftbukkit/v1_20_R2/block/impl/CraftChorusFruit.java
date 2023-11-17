@@ -1,64 +1,62 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import java.util.Set;
-import net.minecraft.world.level.block.ChorusPlantBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.MultipleFacing;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftChorusFruit extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.MultipleFacing {
 
-public final class CraftChorusFruit extends CraftBlockData implements MultipleFacing {
+    public CraftChorusFruit() {
+        super();
+    }
 
-    private static final BooleanProperty[] FACES = new BooleanProperty[]{getBoolean(ChorusPlantBlock.class, "north", true), getBoolean(ChorusPlantBlock.class, "east", true), getBoolean(ChorusPlantBlock.class, "south", true), getBoolean(ChorusPlantBlock.class, "west", true), getBoolean(ChorusPlantBlock.class, "up", true), getBoolean(ChorusPlantBlock.class, "down", true)};
-
-    public CraftChorusFruit() {}
-
-    public CraftChorusFruit(BlockState state) {
+    public CraftChorusFruit(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
-    public boolean hasFace(BlockFace face) {
-        BooleanProperty state = CraftChorusFruit.FACES[face.ordinal()];
+    // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean[] FACES = new net.minecraft.world.level.block.state.properties.BlockStateBoolean[]{
+        getBoolean(net.minecraft.world.level.block.BlockChorusFruit.class, "north", true), getBoolean(net.minecraft.world.level.block.BlockChorusFruit.class, "east", true), getBoolean(net.minecraft.world.level.block.BlockChorusFruit.class, "south", true), getBoolean(net.minecraft.world.level.block.BlockChorusFruit.class, "west", true), getBoolean(net.minecraft.world.level.block.BlockChorusFruit.class, "up", true), getBoolean(net.minecraft.world.level.block.BlockChorusFruit.class, "down", true)
+    };
+
+    @Override
+    public boolean hasFace(org.bukkit.block.BlockFace face) {
+        net.minecraft.world.level.block.state.properties.BlockStateBoolean state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
-        } else {
-            return (Boolean) this.get(state);
         }
+        return get(state);
     }
 
-    public void setFace(BlockFace face, boolean has) {
-        BooleanProperty state = CraftChorusFruit.FACES[face.ordinal()];
-
+    @Override
+    public void setFace(org.bukkit.block.BlockFace face, boolean has) {
+        net.minecraft.world.level.block.state.properties.BlockStateBoolean state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
-        } else {
-            this.set((Property) state, (Comparable) has);
         }
+        set(state, has);
     }
 
-    public Set getFaces() {
-        Builder faces = ImmutableSet.builder();
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        com.google.common.collect.ImmutableSet.Builder<org.bukkit.block.BlockFace> faces = com.google.common.collect.ImmutableSet.builder();
 
-        for (int i = 0; i < CraftChorusFruit.FACES.length; ++i) {
-            if (CraftChorusFruit.FACES[i] != null && (Boolean) this.get(CraftChorusFruit.FACES[i])) {
-                faces.add(BlockFace.values()[i]);
+        for (int i = 0; i < FACES.length; i++) {
+            if (FACES[i] != null && get(FACES[i])) {
+                faces.add(org.bukkit.block.BlockFace.values()[i]);
             }
         }
 
         return faces.build();
     }
 
-    public Set getAllowedFaces() {
-        Builder faces = ImmutableSet.builder();
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getAllowedFaces() {
+        com.google.common.collect.ImmutableSet.Builder<org.bukkit.block.BlockFace> faces = com.google.common.collect.ImmutableSet.builder();
 
-        for (int i = 0; i < CraftChorusFruit.FACES.length; ++i) {
-            if (CraftChorusFruit.FACES[i] != null) {
-                faces.add(BlockFace.values()[i]);
+        for (int i = 0; i < FACES.length; i++) {
+            if (FACES[i] != null) {
+                faces.add(org.bukkit.block.BlockFace.values()[i]);
             }
         }
 

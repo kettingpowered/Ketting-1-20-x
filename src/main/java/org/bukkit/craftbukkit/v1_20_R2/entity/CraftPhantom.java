@@ -1,27 +1,31 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.FlyingMob;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import net.minecraft.world.entity.monster.EntityPhantom;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Phantom;
 
 public class CraftPhantom extends CraftFlying implements Phantom, CraftEnemy {
 
-    public CraftPhantom(CraftServer server, net.minecraft.world.entity.monster.Phantom entity) {
-        super(server, (FlyingMob) entity);
+    public CraftPhantom(CraftServer server, EntityPhantom entity) {
+        super(server, entity);
     }
 
-    public net.minecraft.world.entity.monster.Phantom getHandle() {
-        return (net.minecraft.world.entity.monster.Phantom) super.getHandle();
+    @Override
+    public EntityPhantom getHandle() {
+        return (EntityPhantom) super.getHandle();
     }
 
+    @Override
     public int getSize() {
-        return this.getHandle().getPhantomSize();
+        return getHandle().getPhantomSize();
     }
 
+    @Override
     public void setSize(int sz) {
-        this.getHandle().setPhantomSize(sz);
+        getHandle().setPhantomSize(sz);
     }
 
+    @Override
     public String toString() {
         return "CraftPhantom";
     }

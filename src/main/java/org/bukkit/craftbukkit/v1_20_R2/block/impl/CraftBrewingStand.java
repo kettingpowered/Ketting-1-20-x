@@ -1,38 +1,40 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import java.util.Set;
-import net.minecraft.world.level.block.BrewingStandBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.type.BrewingStand;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftBrewingStand extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.BrewingStand {
 
-public final class CraftBrewingStand extends CraftBlockData implements BrewingStand {
+    public CraftBrewingStand() {
+        super();
+    }
 
-    private static final BooleanProperty[] HAS_BOTTLE = new BooleanProperty[]{getBoolean(BrewingStandBlock.class, "has_bottle_0"), getBoolean(BrewingStandBlock.class, "has_bottle_1"), getBoolean(BrewingStandBlock.class, "has_bottle_2")};
-
-    public CraftBrewingStand() {}
-
-    public CraftBrewingStand(BlockState state) {
+    public CraftBrewingStand(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.block.data.type.CraftBrewingStand
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean[] HAS_BOTTLE = new net.minecraft.world.level.block.state.properties.BlockStateBoolean[]{
+        getBoolean(net.minecraft.world.level.block.BlockBrewingStand.class, "has_bottle_0"), getBoolean(net.minecraft.world.level.block.BlockBrewingStand.class, "has_bottle_1"), getBoolean(net.minecraft.world.level.block.BlockBrewingStand.class, "has_bottle_2")
+    };
+
+    @Override
     public boolean hasBottle(int bottle) {
-        return (Boolean) this.get(CraftBrewingStand.HAS_BOTTLE[bottle]);
+        return get(HAS_BOTTLE[bottle]);
     }
 
+    @Override
     public void setBottle(int bottle, boolean has) {
-        this.set((Property) CraftBrewingStand.HAS_BOTTLE[bottle], (Comparable) has);
+        set(HAS_BOTTLE[bottle], has);
     }
 
-    public Set getBottles() {
-        Builder bottles = ImmutableSet.builder();
+    @Override
+    public java.util.Set<Integer> getBottles() {
+        com.google.common.collect.ImmutableSet.Builder<Integer> bottles = com.google.common.collect.ImmutableSet.builder();
 
-        for (int index = 0; index < this.getMaximumBottles(); ++index) {
-            if (this.hasBottle(index)) {
+        for (int index = 0; index < getMaximumBottles(); index++) {
+            if (hasBottle(index)) {
                 bottles.add(index);
             }
         }
@@ -40,7 +42,8 @@ public final class CraftBrewingStand extends CraftBlockData implements BrewingSt
         return bottles.build();
     }
 
+    @Override
     public int getMaximumBottles() {
-        return CraftBrewingStand.HAS_BOTTLE.length;
+        return HAS_BOTTLE.length;
     }
 }

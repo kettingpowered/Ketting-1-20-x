@@ -1,27 +1,29 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import net.minecraft.world.level.block.TallSeagrassBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import org.bukkit.block.data.Bisected;
-import org.bukkit.block.data.Bisected.Half;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftTallSeagrass extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Bisected {
 
-public final class CraftTallSeagrass extends CraftBlockData implements Bisected {
+    public CraftTallSeagrass() {
+        super();
+    }
 
-    private static final EnumProperty HALF = getEnum(TallSeagrassBlock.class, "half");
-
-    public CraftTallSeagrass() {}
-
-    public CraftTallSeagrass(BlockState state) {
+    public CraftTallSeagrass(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
-    public Half getHalf() {
-        return (Half) this.get(CraftTallSeagrass.HALF, Half.class);
+    // org.bukkit.craftbukkit.block.data.CraftBisected
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> HALF = getEnum(net.minecraft.world.level.block.TallSeagrassBlock.class, "half");
+
+    @Override
+    public org.bukkit.block.data.Bisected.Half getHalf() {
+        return get(HALF, org.bukkit.block.data.Bisected.Half.class);
     }
 
-    public void setHalf(Half half) {
-        this.set(CraftTallSeagrass.HALF, (Enum) half);
+    @Override
+    public void setHalf(org.bukkit.block.data.Bisected.Half half) {
+        set(HALF, half);
     }
 }

@@ -1,26 +1,22 @@
-package org.bukkit.craftbukkit.v1_20_R2;
+package org.bukkit.craftbukkit;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap.Entry;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -28,47 +24,48 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockPosition;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
-import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
-import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket;
-import net.minecraft.network.protocol.game.ClientboundSoundPacket;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ChunkHolder;
-import net.minecraft.server.level.ChunkMap;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.protocol.game.PacketPlayOutEntitySound;
+import net.minecraft.network.protocol.game.PacketPlayOutNamedSoundEffect;
+import net.minecraft.network.protocol.game.PacketPlayOutUpdateTime;
+import net.minecraft.network.protocol.game.PacketPlayOutWorldEvent;
+import net.minecraft.resources.MinecraftKey;
+import net.minecraft.server.level.ChunkMapDistance;
+import net.minecraft.server.level.EntityPlayer;
+import net.minecraft.server.level.PlayerChunk;
+import net.minecraft.server.level.PlayerChunkMap;
 import net.minecraft.server.level.Ticket;
 import net.minecraft.server.level.TicketType;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.ProgressListener;
-import net.minecraft.util.SortedArraySet;
+import net.minecraft.server.level.WorldServer;
+import net.minecraft.sounds.SoundCategory;
+import net.minecraft.sounds.SoundEffect;
+import net.minecraft.util.ArraySetSorted;
 import net.minecraft.util.Unit;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.item.FallingBlockEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.raid.Raids;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.entity.EntityLightning;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.item.EntityFallingBlock;
+import net.minecraft.world.entity.item.EntityItem;
+import net.minecraft.world.entity.player.EntityHuman;
+import net.minecraft.world.entity.projectile.EntityArrow;
+import net.minecraft.world.entity.raid.PersistentRaid;
+import net.minecraft.world.level.ChunkCoordIntPair;
 import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.RayTrace;
+import net.minecraft.world.level.biome.BiomeBase;
 import net.minecraft.world.level.biome.Climate;
-import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
-import net.minecraft.world.level.chunk.ImposterProtoChunk;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.storage.LevelResource;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.chunk.IChunkAccess;
+import net.minecraft.world.level.chunk.ProtoChunkExtension;
+import net.minecraft.world.level.storage.SavedFile;
+import net.minecraft.world.phys.AxisAlignedBB;
+import net.minecraft.world.phys.MovingObjectPosition;
+import net.minecraft.world.phys.Vec3D;
 import org.bukkit.BlockChangeDelegate;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -78,52 +75,46 @@ import org.bukkit.Effect;
 import org.bukkit.FeatureFlag;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameRule;
-import org.bukkit.HeightMap;
+import org.bukkit.Instrument;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Note;
 import org.bukkit.Particle;
 import org.bukkit.Raid;
 import org.bukkit.Registry;
 import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.StructureType;
 import org.bukkit.TreeType;
 import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.World.Spigot;
 import org.bukkit.WorldBorder;
-import org.bukkit.WorldType;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.DragonBattle;
-import org.bukkit.craftbukkit.v1_20_R2.block.CraftBiome;
-import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_20_R2.boss.CraftDragonBattle;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R2.generator.structure.CraftStructure;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_20_R2.metadata.BlockMetadataStore;
-import org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataContainer;
-import org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataTypeRegistry;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftBiomeSearchResult;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftRayTraceResult;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftSpawnCategory;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftStructureSearchResult;
+import org.bukkit.craftbukkit.block.CraftBiome;
+import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.block.CraftBlockState;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.boss.CraftDragonBattle;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.generator.structure.CraftStructure;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.metadata.BlockMetadataStore;
+import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
+import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
+import org.bukkit.craftbukkit.util.CraftBiomeSearchResult;
+import org.bukkit.craftbukkit.util.CraftLocation;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.util.CraftRayTraceResult;
+import org.bukkit.craftbukkit.util.CraftSpawnCategory;
+import org.bukkit.craftbukkit.util.CraftStructureSearchResult;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Item;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SpawnCategory;
@@ -131,13 +122,14 @@ import org.bukkit.entity.SpectralArrow;
 import org.bukkit.entity.TippedArrow;
 import org.bukkit.entity.Trident;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.weather.LightningStrikeEvent.Cause;
+import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.world.SpawnChangeEvent;
 import org.bukkit.event.world.TimeSkipEvent;
-import org.bukkit.event.world.TimeSkipEvent.SkipReason;
 import org.bukkit.generator.BiomeProvider;
+import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.structure.Structure;
+import org.bukkit.generator.structure.StructureType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.MetadataValue;
@@ -152,671 +144,713 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.StructureSearchResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.spigotmc.AsyncCatcher;
 
 public class CraftWorld extends CraftRegionAccessor implements World {
-
     public static final int CUSTOM_DIMENSION_OFFSET = 10;
     private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
-    private final ServerLevel world;
+
+    private final WorldServer world;
     private WorldBorder worldBorder;
     private Environment environment;
     private final CraftServer server = (CraftServer) Bukkit.getServer();
     private final ChunkGenerator generator;
     private final BiomeProvider biomeProvider;
-    private final List populators = new ArrayList();
+    private final List<BlockPopulator> populators = new ArrayList<BlockPopulator>();
     private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
-    private final Object2IntOpenHashMap spawnCategoryLimit = new Object2IntOpenHashMap();
-    private final CraftPersistentDataContainer persistentDataContainer;
+    private final Object2IntOpenHashMap<SpawnCategory> spawnCategoryLimit = new Object2IntOpenHashMap<>();
+    private final CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
+
     private static final Random rand = new Random();
-    private static Map gamerules;
-    private static Map gameruleDefinitions;
-    private final Spigot spigot;
 
-    public CraftWorld(ServerLevel world, ChunkGenerator gen, BiomeProvider biomeProvider, Environment env) {
-        this.persistentDataContainer = new CraftPersistentDataContainer(CraftWorld.DATA_TYPE_REGISTRY);
-        this.spigot = new Spigot() {
-            public LightningStrike strikeLightning(Location loc, boolean isSilent) {
-                LightningBolt lightning = (LightningBolt) EntityType.LIGHTNING_BOLT.create(CraftWorld.this.world);
-
-                lightning.moveTo(loc.getX(), loc.getY(), loc.getZ());
-                lightning.isSilent = isSilent;
-                CraftWorld.this.world.strikeLightning(lightning, Cause.CUSTOM);
-                return (LightningStrike) lightning.getBukkitEntity();
-            }
-
-            public LightningStrike strikeLightningEffect(Location loc, boolean isSilent) {
-                LightningBolt lightning = (LightningBolt) EntityType.LIGHTNING_BOLT.create(CraftWorld.this.world);
-
-                lightning.moveTo(loc.getX(), loc.getY(), loc.getZ());
-                lightning.visualOnly = true;
-                lightning.isSilent = isSilent;
-                CraftWorld.this.world.strikeLightning(lightning, Cause.CUSTOM);
-                return (LightningStrike) lightning.getBukkitEntity();
-            }
-        };
+    public CraftWorld(WorldServer world, ChunkGenerator gen, BiomeProvider biomeProvider, Environment env) {
         this.world = world;
         this.generator = gen;
         this.biomeProvider = biomeProvider;
-        this.environment = env;
+
+        environment = env;
     }
 
+    @Override
     public Block getBlockAt(int x, int y, int z) {
-        return CraftBlock.at(this.world, new BlockPos(x, y, z));
+        return CraftBlock.at(world, new BlockPosition(x, y, z));
     }
 
+    @Override
     public Location getSpawnLocation() {
-        BlockPos spawn = this.world.getSharedSpawnPos();
-        float yaw = this.world.getSharedSpawnAngle();
-
-        return CraftLocation.toBukkit(spawn, this, yaw, 0.0F);
+        BlockPosition spawn = world.getSharedSpawnPos();
+        float yaw = world.getSharedSpawnAngle();
+        return CraftLocation.toBukkit(spawn, this, yaw, 0);
     }
 
+    @Override
     public boolean setSpawnLocation(Location location) {
         Preconditions.checkArgument(location != null, "location");
-        return this.equals(location.getWorld()) ? this.setSpawnLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw()) : false;
+
+        return equals(location.getWorld()) ? setSpawnLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw()) : false;
     }
 
+    @Override
     public boolean setSpawnLocation(int x, int y, int z, float angle) {
         try {
-            Location previousLocation = this.getSpawnLocation();
+            Location previousLocation = getSpawnLocation();
+            world.levelData.setSpawn(new BlockPosition(x, y, z), angle);
 
-            this.world.levelData.setSpawn(new BlockPos(x, y, z), angle);
+            // Notify anyone who's listening.
             SpawnChangeEvent event = new SpawnChangeEvent(this, previousLocation);
+            server.getPluginManager().callEvent(event);
 
-            this.server.getPluginManager().callEvent(event);
             return true;
-        } catch (Exception exception) {
+        } catch (Exception e) {
             return false;
         }
     }
 
+    @Override
     public boolean setSpawnLocation(int x, int y, int z) {
-        return this.setSpawnLocation(x, y, z, 0.0F);
+        return setSpawnLocation(x, y, z, 0.0F);
     }
 
+    @Override
     public Chunk getChunkAt(int x, int z) {
-        LevelChunk chunk = (LevelChunk) this.world.getChunk(x, z, ChunkStatus.FULL, true);
-
+        net.minecraft.world.level.chunk.Chunk chunk = (net.minecraft.world.level.chunk.Chunk) this.world.getChunk(x, z, ChunkStatus.FULL, true);
         return new CraftChunk(chunk);
     }
 
     @NotNull
+    @Override
     public Chunk getChunkAt(int x, int z, boolean generate) {
-        return (Chunk) (generate ? this.getChunkAt(x, z) : new CraftChunk(this.getHandle(), x, z));
+        if (generate) {
+            return getChunkAt(x, z);
+        }
+
+        return new CraftChunk(getHandle(), x, z);
     }
 
+    @Override
     public Chunk getChunkAt(Block block) {
         Preconditions.checkArgument(block != null, "null block");
-        return this.getChunkAt(block.getX() >> 4, block.getZ() >> 4);
+
+        return getChunkAt(block.getX() >> 4, block.getZ() >> 4);
     }
 
+    @Override
     public boolean isChunkLoaded(int x, int z) {
-        return this.world.getChunkSource().isChunkLoaded(x, z);
+        return world.getChunkSource().isChunkLoaded(x, z);
     }
 
+    @Override
     public boolean isChunkGenerated(int x, int z) {
         try {
-            return this.isChunkLoaded(x, z) || ((Optional) this.world.getChunkSource().chunkMap.read(new ChunkPos(x, z)).get()).isPresent();
-        } catch (ExecutionException | InterruptedException interruptedexception) {
-            throw new RuntimeException(interruptedexception);
+            return isChunkLoaded(x, z) || world.getChunkSource().chunkMap.read(new ChunkCoordIntPair(x, z)).get().isPresent();
+        } catch (InterruptedException | ExecutionException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
+    @Override
     public Chunk[] getLoadedChunks() {
-        Long2ObjectLinkedOpenHashMap<ChunkHolder> chunks = world.getChunkSource().chunkMap.visibleChunkMap;
-        return chunks.values().stream().map(ChunkHolder::getFullChunkNow).filter(Objects::nonNull).map(CraftChunk::new).toArray(Chunk[]::new);
+        Long2ObjectLinkedOpenHashMap<PlayerChunk> chunks = world.getChunkSource().chunkMap.visibleChunkMap;
+        return chunks.values().stream().map(PlayerChunk::getFullChunkNow).filter(Objects::nonNull).map(CraftChunk::new).toArray(Chunk[]::new);
     }
 
+    @Override
     public void loadChunk(int x, int z) {
-        this.loadChunk(x, z, true);
+        loadChunk(x, z, true);
     }
 
+    @Override
     public boolean unloadChunk(Chunk chunk) {
-        return this.unloadChunk(chunk.getX(), chunk.getZ());
+        return unloadChunk(chunk.getX(), chunk.getZ());
     }
 
+    @Override
     public boolean unloadChunk(int x, int z) {
-        return this.unloadChunk(x, z, true);
+        return unloadChunk(x, z, true);
     }
 
+    @Override
     public boolean unloadChunk(int x, int z, boolean save) {
-        return this.unloadChunk0(x, z, save);
+        return unloadChunk0(x, z, save);
     }
 
+    @Override
     public boolean unloadChunkRequest(int x, int z) {
-        AsyncCatcher.catchOp("chunk unload");
-        if (this.isChunkLoaded(x, z)) {
-            this.world.getChunkSource().removeRegionTicket(TicketType.PLUGIN, new ChunkPos(x, z), 1, Unit.INSTANCE);
+        if (isChunkLoaded(x, z)) {
+            world.getChunkSource().removeRegionTicket(TicketType.PLUGIN, new ChunkCoordIntPair(x, z), 1, Unit.INSTANCE);
         }
 
         return true;
     }
 
     private boolean unloadChunk0(int x, int z, boolean save) {
-        AsyncCatcher.catchOp("chunk unload");
-        if (!this.isChunkLoaded(x, z)) {
+        if (!isChunkLoaded(x, z)) {
             return true;
-        } else {
-            LevelChunk chunk = this.world.getChunk(x, z);
-
-            chunk.setUnsaved(!save);
-            this.unloadChunkRequest(x, z);
-            this.world.getChunkSource().purgeUnload();
-            return !this.isChunkLoaded(x, z);
         }
+        net.minecraft.world.level.chunk.Chunk chunk = world.getChunk(x, z);
+
+        chunk.setUnsaved(!save); // Use method call to account for persistentDataContainer
+        unloadChunkRequest(x, z);
+
+        world.getChunkSource().purgeUnload();
+        return !isChunkLoaded(x, z);
     }
 
+    @Override
     public boolean regenerateChunk(int x, int z) {
-        AsyncCatcher.catchOp("chunk regenerate");
         throw new UnsupportedOperationException("Not supported in this Minecraft version! Unless you can fix it, this is not a bug :)");
+        /*
+        if (!unloadChunk0(x, z, false)) {
+            return false;
+        }
+
+        final long chunkKey = ChunkCoordIntPair.pair(x, z);
+        world.getChunkProvider().unloadQueue.remove(chunkKey);
+
+        net.minecraft.server.Chunk chunk = world.getChunkProvider().generateChunk(x, z);
+        PlayerChunk playerChunk = world.getPlayerChunkMap().getChunk(x, z);
+        if (playerChunk != null) {
+            playerChunk.chunk = chunk;
+        }
+
+        if (chunk != null) {
+            refreshChunk(x, z);
+        }
+
+        return chunk != null;
+        */
     }
 
+    @Override
     public boolean refreshChunk(int x, int z) {
-        ChunkHolder playerChunk = (ChunkHolder) this.world.getChunkSource().chunkMap.visibleChunkMap.get(ChunkPos.asLong(x, z));
+        PlayerChunk playerChunk = world.getChunkSource().chunkMap.visibleChunkMap.get(ChunkCoordIntPair.asLong(x, z));
+        if (playerChunk == null) return false;
 
-        if (playerChunk == null) {
-            return false;
-        } else {
-            playerChunk.getTickingChunkFuture().thenAccept((eitherx) -> {
-                eitherx.left().ifPresent((chunkx) -> {
-                    List playersInRange = playerChunk.playerProvider.getPlayers(playerChunk.getPos(), false);
+        playerChunk.getTickingChunkFuture().thenAccept(either -> {
+            either.left().ifPresent(chunk -> {
+                List<EntityPlayer> playersInRange = playerChunk.playerProvider.getPlayers(playerChunk.getPos(), false);
+                if (playersInRange.isEmpty()) return;
 
-                    if (!playersInRange.isEmpty()) {
-                        ClientboundLevelChunkWithLightPacket refreshPacket = new ClientboundLevelChunkWithLightPacket(chunkx, this.world.getLightEngine(), (BitSet) null, (BitSet) null);
-                        Iterator iterator = playersInRange.iterator();
+                ClientboundLevelChunkWithLightPacket refreshPacket = new ClientboundLevelChunkWithLightPacket(chunk, world.getLightEngine(), null, null);
+                for (EntityPlayer player : playersInRange) {
+                    if (player.connection == null) continue;
 
-                        while (iterator.hasNext()) {
-                            ServerPlayer player = (ServerPlayer) iterator.next();
-
-                            if (player.connection != null) {
-                                player.connection.send(refreshPacket);
-                            }
-                        }
-
-                    }
-                });
+                    player.connection.send(refreshPacket);
+                }
             });
-            return true;
-        }
+        });
+
+        return true;
     }
 
+    @Override
     public boolean isChunkInUse(int x, int z) {
-        return this.isChunkLoaded(x, z);
+        return isChunkLoaded(x, z);
     }
 
+    @Override
     public boolean loadChunk(int x, int z, boolean generate) {
-        AsyncCatcher.catchOp("chunk load");
-        ChunkAccess chunk = this.world.getChunkSource().getChunk(x, z, generate ? ChunkStatus.FULL : ChunkStatus.EMPTY, true);
+        IChunkAccess chunk = world.getChunkSource().getChunk(x, z, generate ? ChunkStatus.FULL : ChunkStatus.EMPTY, true);
 
-        if (chunk instanceof ImposterProtoChunk) {
-            chunk = this.world.getChunkSource().getChunk(x, z, ChunkStatus.FULL, true);
+        // If generate = false, but the chunk already exists, we will get this back.
+        if (chunk instanceof ProtoChunkExtension) {
+            // We then cycle through again to get the full chunk immediately, rather than after the ticket addition
+            chunk = world.getChunkSource().getChunk(x, z, ChunkStatus.FULL, true);
         }
 
-        if (chunk instanceof LevelChunk) {
-            this.world.getChunkSource().addRegionTicket(TicketType.PLUGIN, new ChunkPos(x, z), 1, Unit.INSTANCE);
+        if (chunk instanceof net.minecraft.world.level.chunk.Chunk) {
+            world.getChunkSource().addRegionTicket(TicketType.PLUGIN, new ChunkCoordIntPair(x, z), 1, Unit.INSTANCE);
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
+    @Override
     public boolean isChunkLoaded(Chunk chunk) {
         Preconditions.checkArgument(chunk != null, "null chunk");
-        return this.isChunkLoaded(chunk.getX(), chunk.getZ());
+
+        return isChunkLoaded(chunk.getX(), chunk.getZ());
     }
 
+    @Override
     public void loadChunk(Chunk chunk) {
         Preconditions.checkArgument(chunk != null, "null chunk");
-        this.loadChunk(chunk.getX(), chunk.getZ());
+
+        loadChunk(chunk.getX(), chunk.getZ());
     }
 
+    @Override
     public boolean addPluginChunkTicket(int x, int z, Plugin plugin) {
         Preconditions.checkArgument(plugin != null, "null plugin");
         Preconditions.checkArgument(plugin.isEnabled(), "plugin is not enabled");
-        ChunkMap.DistanceManager chunkDistanceManager = this.world.getChunkSource().chunkMap.distanceManager;
 
-        if (chunkDistanceManager.addRegionTicketAtDistance(TicketType.PLUGIN_TICKET, new ChunkPos(x, z), 2, plugin)) {
-            this.getChunkAt(x, z);
+        ChunkMapDistance chunkDistanceManager = this.world.getChunkSource().chunkMap.distanceManager;
+
+        if (chunkDistanceManager.addRegionTicketAtDistance(TicketType.PLUGIN_TICKET, new ChunkCoordIntPair(x, z), 2, plugin)) { // keep in-line with force loading, add at level 31
+            this.getChunkAt(x, z); // ensure loaded
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
+    @Override
     public boolean removePluginChunkTicket(int x, int z, Plugin plugin) {
         Preconditions.checkNotNull(plugin, "null plugin");
-        ChunkMap.DistanceManager chunkDistanceManager = this.world.getChunkSource().chunkMap.distanceManager;
 
-        return chunkDistanceManager.removeRegionTicketAtDistance(TicketType.PLUGIN_TICKET, new ChunkPos(x, z), 2, plugin);
+        ChunkMapDistance chunkDistanceManager = this.world.getChunkSource().chunkMap.distanceManager;
+        return chunkDistanceManager.removeRegionTicketAtDistance(TicketType.PLUGIN_TICKET, new ChunkCoordIntPair(x, z), 2, plugin); // keep in-line with force loading, remove at level 31
     }
 
+    @Override
     public void removePluginChunkTickets(Plugin plugin) {
         Preconditions.checkNotNull(plugin, "null plugin");
-        ChunkMap.DistanceManager chunkDistanceManager = this.world.getChunkSource().chunkMap.distanceManager;
 
-        chunkDistanceManager.removeAllTicketsFor(TicketType.PLUGIN_TICKET, 31, plugin);
+        ChunkMapDistance chunkDistanceManager = this.world.getChunkSource().chunkMap.distanceManager;
+        chunkDistanceManager.removeAllTicketsFor(TicketType.PLUGIN_TICKET, 31, plugin); // keep in-line with force loading, remove at level 31
     }
 
-    public Collection getPluginChunkTickets(int x, int z) {
-        ChunkMap.DistanceManager chunkDistanceManager = this.world.getChunkSource().chunkMap.distanceManager;
-        SortedArraySet tickets = (SortedArraySet) chunkDistanceManager.tickets.get(ChunkPos.asLong(x, z));
+    @Override
+    public Collection<Plugin> getPluginChunkTickets(int x, int z) {
+        ChunkMapDistance chunkDistanceManager = this.world.getChunkSource().chunkMap.distanceManager;
+        ArraySetSorted<Ticket<?>> tickets = chunkDistanceManager.tickets.get(ChunkCoordIntPair.asLong(x, z));
 
         if (tickets == null) {
             return Collections.emptyList();
-        } else {
-            Builder ret = ImmutableList.builder();
-            Iterator iterator = tickets.iterator();
-
-            while (iterator.hasNext()) {
-                Ticket ticket = (Ticket) iterator.next();
-
-                if (ticket.getType() == TicketType.PLUGIN_TICKET) {
-                    ret.add((Plugin) ticket.key);
-                }
-            }
-
-            return ret.build();
         }
+
+        ImmutableList.Builder<Plugin> ret = ImmutableList.builder();
+        for (Ticket<?> ticket : tickets) {
+            if (ticket.getType() == TicketType.PLUGIN_TICKET) {
+                ret.add((Plugin) ticket.key);
+            }
+        }
+
+        return ret.build();
     }
 
-    public Map getPluginChunkTickets() {
-        HashMap ret = new HashMap();
-        ChunkMap.DistanceManager chunkDistanceManager = this.world.getChunkSource().chunkMap.distanceManager;
-        Iterator iterator = chunkDistanceManager.tickets.long2ObjectEntrySet().iterator();
+    @Override
+    public Map<Plugin, Collection<Chunk>> getPluginChunkTickets() {
+        Map<Plugin, ImmutableList.Builder<Chunk>> ret = new HashMap<>();
+        ChunkMapDistance chunkDistanceManager = this.world.getChunkSource().chunkMap.distanceManager;
 
-        while (iterator.hasNext()) {
-            Entry chunkTickets = (Entry) iterator.next();
+        for (Long2ObjectMap.Entry<ArraySetSorted<Ticket<?>>> chunkTickets : chunkDistanceManager.tickets.long2ObjectEntrySet()) {
             long chunkKey = chunkTickets.getLongKey();
-            SortedArraySet tickets = (SortedArraySet) chunkTickets.getValue();
+            ArraySetSorted<Ticket<?>> tickets = chunkTickets.getValue();
+
             Chunk chunk = null;
-            Iterator iterator1 = tickets.iterator();
-
-            while (iterator1.hasNext()) {
-                Ticket ticket = (Ticket) iterator1.next();
-
-                if (ticket.getType() == TicketType.PLUGIN_TICKET) {
-                    if (chunk == null) {
-                        chunk = this.getChunkAt(ChunkPos.getX(chunkKey), ChunkPos.getZ(chunkKey));
-                    }
-
-                    ((Builder) ret.computeIfAbsent((Plugin) ticket.key, (keyx) -> {
-                        return ImmutableList.builder();
-                    })).add(chunk);
+            for (Ticket<?> ticket : tickets) {
+                if (ticket.getType() != TicketType.PLUGIN_TICKET) {
+                    continue;
                 }
+
+                if (chunk == null) {
+                    chunk = this.getChunkAt(ChunkCoordIntPair.getX(chunkKey), ChunkCoordIntPair.getZ(chunkKey));
+                }
+
+                ret.computeIfAbsent((Plugin) ticket.key, (key) -> ImmutableList.builder()).add(chunk);
             }
         }
 
-        return (Map) ret.entrySet().stream().collect(ImmutableMap.toImmutableMap(java.util.Map.Entry::getKey, (entryx) -> {
-            return ((Builder) entryx.getValue()).build();
-        }));
+        return ret.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (entry) -> entry.getValue().build()));
     }
 
+    @Override
     public boolean isChunkForceLoaded(int x, int z) {
-        return this.getHandle().getForcedChunks().contains(ChunkPos.asLong(x, z));
+        return getHandle().getForcedChunks().contains(ChunkCoordIntPair.asLong(x, z));
     }
 
+    @Override
     public void setChunkForceLoaded(int x, int z, boolean forced) {
-        this.getHandle().setChunkForced(x, z, forced);
+        getHandle().setChunkForced(x, z, forced);
     }
 
-    public Collection getForceLoadedChunks() {
-        HashSet chunks = new HashSet();
-        Iterator iterator = this.getHandle().getForcedChunks().iterator();
+    @Override
+    public Collection<Chunk> getForceLoadedChunks() {
+        Set<Chunk> chunks = new HashSet<>();
 
-        while (iterator.hasNext()) {
-            long coord = (Long) iterator.next();
-
-            chunks.add(this.getChunkAt(ChunkPos.getX(coord), ChunkPos.getZ(coord)));
+        for (long coord : getHandle().getForcedChunks()) {
+            chunks.add(getChunkAt(ChunkCoordIntPair.getX(coord), ChunkCoordIntPair.getZ(coord)));
         }
 
         return Collections.unmodifiableCollection(chunks);
     }
 
-    public ServerLevel getHandle() {
-        return this.world;
+    public WorldServer getHandle() {
+        return world;
     }
 
-    public Item dropItem(Location loc, ItemStack item) {
-        return this.dropItem(loc, item, (Consumer) null);
+    @Override
+    public org.bukkit.entity.Item dropItem(Location loc, ItemStack item) {
+        return dropItem(loc, item, null);
     }
 
-    public Item dropItem(Location loc, ItemStack item, Consumer function) {
+    @Override
+    public org.bukkit.entity.Item dropItem(Location loc, ItemStack item, Consumer<? super org.bukkit.entity.Item> function) {
         Preconditions.checkArgument(loc != null, "Location cannot be null");
         Preconditions.checkArgument(item != null, "ItemStack cannot be null");
-        ItemEntity entity = new ItemEntity(this.world, loc.getX(), loc.getY(), loc.getZ(), CraftItemStack.asNMSCopy(item));
-        Item itemEntity = (Item) entity.getBukkitEntity();
 
+        EntityItem entity = new EntityItem(world, loc.getX(), loc.getY(), loc.getZ(), CraftItemStack.asNMSCopy(item));
+        org.bukkit.entity.Item itemEntity = (org.bukkit.entity.Item) entity.getBukkitEntity();
         entity.pickupDelay = 10;
         if (function != null) {
             function.accept(itemEntity);
         }
-
-        this.world.addFreshEntity(entity, SpawnReason.CUSTOM);
+        world.addFreshEntity(entity, SpawnReason.CUSTOM);
         return itemEntity;
     }
 
-    public Item dropItemNaturally(Location loc, ItemStack item) {
-        return this.dropItemNaturally(loc, item, (Consumer) null);
+    @Override
+    public org.bukkit.entity.Item dropItemNaturally(Location loc, ItemStack item) {
+        return dropItemNaturally(loc, item, null);
     }
 
-    public Item dropItemNaturally(Location loc, ItemStack item, Consumer function) {
+    @Override
+    public org.bukkit.entity.Item dropItemNaturally(Location loc, ItemStack item, Consumer<? super org.bukkit.entity.Item> function) {
         Preconditions.checkArgument(loc != null, "Location cannot be null");
         Preconditions.checkArgument(item != null, "ItemStack cannot be null");
-        double xs = (double) (this.world.random.nextFloat() * 0.5F) + 0.25D;
-        double ys = (double) (this.world.random.nextFloat() * 0.5F) + 0.25D;
-        double zs = (double) (this.world.random.nextFloat() * 0.5F) + 0.25D;
 
+        double xs = (world.random.nextFloat() * 0.5F) + 0.25D;
+        double ys = (world.random.nextFloat() * 0.5F) + 0.25D;
+        double zs = (world.random.nextFloat() * 0.5F) + 0.25D;
         loc = loc.clone().add(xs, ys, zs);
-        return this.dropItem(loc, item, function);
+        return dropItem(loc, item, function);
     }
 
+    @Override
     public Arrow spawnArrow(Location loc, Vector velocity, float speed, float spread) {
-        return (Arrow) this.spawnArrow(loc, velocity, speed, spread, Arrow.class);
+        return spawnArrow(loc, velocity, speed, spread, Arrow.class);
     }
 
-    public AbstractArrow spawnArrow(Location loc, Vector velocity, float speed, float spread, Class clazz) {
+    @Override
+    public <T extends AbstractArrow> T spawnArrow(Location loc, Vector velocity, float speed, float spread, Class<T> clazz) {
         Preconditions.checkArgument(loc != null, "Location cannot be null");
         Preconditions.checkArgument(velocity != null, "Vector cannot be null");
         Preconditions.checkArgument(clazz != null, "clazz Entity for the arrow cannot be null");
-        net.minecraft.world.entity.projectile.AbstractArrow arrow;
 
+        EntityArrow arrow;
         if (TippedArrow.class.isAssignableFrom(clazz)) {
-            arrow = (net.minecraft.world.entity.projectile.AbstractArrow) EntityType.ARROW.create(this.world);
+            arrow = EntityTypes.ARROW.create(world);
             ((Arrow) arrow.getBukkitEntity()).setBasePotionData(new PotionData(PotionType.WATER, false, false));
         } else if (SpectralArrow.class.isAssignableFrom(clazz)) {
-            arrow = (net.minecraft.world.entity.projectile.AbstractArrow) EntityType.SPECTRAL_ARROW.create(this.world);
+            arrow = EntityTypes.SPECTRAL_ARROW.create(world);
         } else if (Trident.class.isAssignableFrom(clazz)) {
-            arrow = (net.minecraft.world.entity.projectile.AbstractArrow) EntityType.TRIDENT.create(this.world);
+            arrow = EntityTypes.TRIDENT.create(world);
         } else {
-            arrow = (net.minecraft.world.entity.projectile.AbstractArrow) EntityType.ARROW.create(this.world);
+            arrow = EntityTypes.ARROW.create(world);
         }
 
         arrow.moveTo(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         arrow.shoot(velocity.getX(), velocity.getY(), velocity.getZ(), speed, spread);
-        this.world.addFreshEntity(arrow);
-        return (AbstractArrow) arrow.getBukkitEntity();
+        world.addFreshEntity(arrow);
+        return (T) arrow.getBukkitEntity();
     }
 
+    @Override
     public LightningStrike strikeLightning(Location loc) {
-        return this.strikeLightning0(loc, false);
+        return strikeLightning0(loc, false);
     }
 
+    @Override
     public LightningStrike strikeLightningEffect(Location loc) {
-        return this.strikeLightning0(loc, true);
+        return strikeLightning0(loc, true);
     }
 
     private LightningStrike strikeLightning0(Location loc, boolean isVisual) {
         Preconditions.checkArgument(loc != null, "Location cannot be null");
-        LightningBolt lightning = (LightningBolt) EntityType.LIGHTNING_BOLT.create(this.world);
 
+        EntityLightning lightning = EntityTypes.LIGHTNING_BOLT.create(world);
         lightning.moveTo(loc.getX(), loc.getY(), loc.getZ());
         lightning.setVisualOnly(isVisual);
-        this.world.strikeLightning(lightning, Cause.CUSTOM);
+        world.strikeLightning(lightning, LightningStrikeEvent.Cause.CUSTOM);
         return (LightningStrike) lightning.getBukkitEntity();
     }
 
+    @Override
     public boolean generateTree(Location loc, TreeType type) {
-        return this.generateTree(loc, CraftWorld.rand, type);
+        return generateTree(loc, rand, type);
     }
 
+    @Override
     public boolean generateTree(Location loc, TreeType type, BlockChangeDelegate delegate) {
-        this.world.captureTreeGeneration = true;
-        this.world.captureBlockStates = true;
-        boolean grownTree = this.generateTree(loc, type);
-
-        this.world.captureBlockStates = false;
-        this.world.captureTreeGeneration = false;
-        if (!grownTree) {
-            this.world.capturedBlockStates.clear();
-            return false;
-        } else {
-            Iterator iterator = this.world.capturedBlockStates.values().iterator();
-
-            while (iterator.hasNext()) {
-                BlockState blockstate = (BlockState) iterator.next();
-                BlockPos position = ((CraftBlockState) blockstate).getPosition();
-                net.minecraft.world.level.block.state.BlockState oldBlock = this.world.getBlockState(position);
+        world.captureTreeGeneration = true;
+        world.captureBlockStates = true;
+        boolean grownTree = generateTree(loc, type);
+        world.captureBlockStates = false;
+        world.captureTreeGeneration = false;
+        if (grownTree) { // Copy block data to delegate
+            for (BlockState blockstate : world.capturedBlockStates.values()) {
+                BlockPosition position = ((CraftBlockState) blockstate).getPosition();
+                net.minecraft.world.level.block.state.IBlockData oldBlock = world.getBlockState(position);
                 int flag = ((CraftBlockState) blockstate).getFlag();
-
                 delegate.setBlockData(blockstate.getX(), blockstate.getY(), blockstate.getZ(), blockstate.getBlockData());
-                net.minecraft.world.level.block.state.BlockState newBlock = this.world.getBlockState(position);
-
-                this.world.notifyAndUpdatePhysics(position, (LevelChunk) null, oldBlock, newBlock, newBlock, flag, 512);
+                net.minecraft.world.level.block.state.IBlockData newBlock = world.getBlockState(position);
+                world.notifyAndUpdatePhysics(position, null, oldBlock, newBlock, newBlock, flag, 512);
             }
-
-            this.world.capturedBlockStates.clear();
+            world.capturedBlockStates.clear();
             return true;
+        } else {
+            world.capturedBlockStates.clear();
+            return false;
         }
     }
 
+    @Override
     public String getName() {
-        return this.world.K.getLevelName();
+        return world.serverLevelData.getLevelName();
     }
 
+    @Override
     public UUID getUID() {
-        return this.world.uuid;
+        return world.uuid;
     }
 
+    @Override
     public NamespacedKey getKey() {
-        return CraftNamespacedKey.fromMinecraft(this.world.dimension().location());
+        return CraftNamespacedKey.fromMinecraft(world.dimension().location());
     }
 
+    @Override
     public String toString() {
-        return "CraftWorld{name=" + this.getName() + '}';
+        return "CraftWorld{name=" + getName() + '}';
     }
 
+    @Override
     public long getTime() {
-        long time = this.getFullTime() % 24000L;
-
-        if (time < 0L) {
-            time += 24000L;
-        }
-
+        long time = getFullTime() % 24000;
+        if (time < 0) time += 24000;
         return time;
     }
 
+    @Override
     public void setTime(long time) {
-        long margin = (time - this.getFullTime()) % 24000L;
-
-        if (margin < 0L) {
-            margin += 24000L;
-        }
-
-        this.setFullTime(this.getFullTime() + margin);
+        long margin = (time - getFullTime()) % 24000;
+        if (margin < 0) margin += 24000;
+        setFullTime(getFullTime() + margin);
     }
 
+    @Override
     public long getFullTime() {
-        return this.world.getDayTime();
+        return world.getDayTime();
     }
 
+    @Override
     public void setFullTime(long time) {
-        TimeSkipEvent event = new TimeSkipEvent(this, SkipReason.CUSTOM, time - this.world.getDayTime());
+        // Notify anyone who's listening
+        TimeSkipEvent event = new TimeSkipEvent(this, TimeSkipEvent.SkipReason.CUSTOM, time - world.getDayTime());
+        server.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
 
-        this.server.getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            this.world.setDayTime(this.world.getDayTime() + event.getSkipAmount());
-            Iterator iterator = this.getPlayers().iterator();
+        world.setDayTime(world.getDayTime() + event.getSkipAmount());
 
-            while (iterator.hasNext()) {
-                Player p = (Player) iterator.next();
-                CraftPlayer cp = (CraftPlayer) p;
+        // Forces the client to update to the new time immediately
+        for (Player p : getPlayers()) {
+            CraftPlayer cp = (CraftPlayer) p;
+            if (cp.getHandle().connection == null) continue;
 
-                if (cp.getHandle().connection != null) {
-                    cp.getHandle().connection.send(new ClientboundSetTimePacket(cp.getHandle().level().getGameTime(), cp.getHandle().getPlayerTime(), cp.getHandle().level().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)));
-                }
-            }
-
+            cp.getHandle().connection.send(new PacketPlayOutUpdateTime(cp.getHandle().level().getGameTime(), cp.getHandle().getPlayerTime(), cp.getHandle().level().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)));
         }
     }
 
+    @Override
     public long getGameTime() {
-        return this.world.levelData.getGameTime();
+        return world.levelData.getGameTime();
     }
 
+    @Override
     public boolean createExplosion(double x, double y, double z, float power) {
-        return this.createExplosion(x, y, z, power, false, true);
+        return createExplosion(x, y, z, power, false, true);
     }
 
+    @Override
     public boolean createExplosion(double x, double y, double z, float power, boolean setFire) {
-        return this.createExplosion(x, y, z, power, setFire, true);
+        return createExplosion(x, y, z, power, setFire, true);
     }
 
+    @Override
     public boolean createExplosion(double x, double y, double z, float power, boolean setFire, boolean breakBlocks) {
-        return this.createExplosion(x, y, z, power, setFire, breakBlocks, (Entity) null);
+        return createExplosion(x, y, z, power, setFire, breakBlocks, null);
     }
 
+    @Override
     public boolean createExplosion(double x, double y, double z, float power, boolean setFire, boolean breakBlocks, Entity source) {
-        return !this.world.explode(source == null ? null : ((CraftEntity) source).getHandle(), x, y, z, power, setFire, breakBlocks ? Level.ExplosionInteraction.MOB : Level.ExplosionInteraction.NONE).wasCanceled;
+        return !world.explode(source == null ? null : ((CraftEntity) source).getHandle(), x, y, z, power, setFire, breakBlocks ? net.minecraft.world.level.World.a.MOB : net.minecraft.world.level.World.a.NONE).wasCanceled;
     }
 
+    @Override
     public boolean createExplosion(Location loc, float power) {
-        return this.createExplosion(loc, power, false);
+        return createExplosion(loc, power, false);
     }
 
+    @Override
     public boolean createExplosion(Location loc, float power, boolean setFire) {
-        return this.createExplosion(loc, power, setFire, true);
+        return createExplosion(loc, power, setFire, true);
     }
 
+    @Override
     public boolean createExplosion(Location loc, float power, boolean setFire, boolean breakBlocks) {
-        return this.createExplosion(loc, power, setFire, breakBlocks, (Entity) null);
+        return createExplosion(loc, power, setFire, breakBlocks, null);
     }
 
+    @Override
     public boolean createExplosion(Location loc, float power, boolean setFire, boolean breakBlocks, Entity source) {
         Preconditions.checkArgument(loc != null, "Location is null");
         Preconditions.checkArgument(this.equals(loc.getWorld()), "Location not in world");
-        return this.createExplosion(loc.getX(), loc.getY(), loc.getZ(), power, setFire, breakBlocks, source);
+
+        return createExplosion(loc.getX(), loc.getY(), loc.getZ(), power, setFire, breakBlocks, source);
     }
 
+    @Override
     public Environment getEnvironment() {
-        return this.environment;
+        return environment;
     }
 
+    @Override
     public Block getBlockAt(Location location) {
-        return this.getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        return getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
+    @Override
     public Chunk getChunkAt(Location location) {
-        return this.getChunkAt(location.getBlockX() >> 4, location.getBlockZ() >> 4);
+        return getChunkAt(location.getBlockX() >> 4, location.getBlockZ() >> 4);
     }
 
+    @Override
     public ChunkGenerator getGenerator() {
-        return this.generator;
+        return generator;
     }
 
+    @Override
     public BiomeProvider getBiomeProvider() {
-        return this.biomeProvider;
+        return biomeProvider;
     }
 
-    public List getPopulators() {
-        return this.populators;
+    @Override
+    public List<BlockPopulator> getPopulators() {
+        return populators;
     }
 
+    @Override
     public Block getHighestBlockAt(int x, int z) {
-        return this.getBlockAt(x, this.getHighestBlockYAt(x, z), z);
+        return getBlockAt(x, getHighestBlockYAt(x, z), z);
     }
 
+    @Override
     public Block getHighestBlockAt(Location location) {
-        return this.getHighestBlockAt(location.getBlockX(), location.getBlockZ());
+        return getHighestBlockAt(location.getBlockX(), location.getBlockZ());
     }
 
-    public int getHighestBlockYAt(int x, int z, HeightMap heightMap) {
-        return this.world.getChunk(x >> 4, z >> 4).getHeight(CraftHeightMap.toNMS(heightMap), x, z);
+    @Override
+    public int getHighestBlockYAt(int x, int z, org.bukkit.HeightMap heightMap) {
+        // Transient load for this tick
+        return world.getChunk(x >> 4, z >> 4).getHeight(CraftHeightMap.toNMS(heightMap), x, z);
     }
 
-    public Block getHighestBlockAt(int x, int z, HeightMap heightMap) {
-        return this.getBlockAt(x, this.getHighestBlockYAt(x, z, heightMap), z);
+    @Override
+    public Block getHighestBlockAt(int x, int z, org.bukkit.HeightMap heightMap) {
+        return getBlockAt(x, getHighestBlockYAt(x, z, heightMap), z);
     }
 
-    public Block getHighestBlockAt(Location location, HeightMap heightMap) {
-        return this.getHighestBlockAt(location.getBlockX(), location.getBlockZ(), heightMap);
+    @Override
+    public Block getHighestBlockAt(Location location, org.bukkit.HeightMap heightMap) {
+        return getHighestBlockAt(location.getBlockX(), location.getBlockZ(), heightMap);
     }
 
+    @Override
     public Biome getBiome(int x, int z) {
-        return this.getBiome(x, 0, z);
+        return getBiome(x, 0, z);
     }
 
+    @Override
     public void setBiome(int x, int z, Biome bio) {
-        for (int y = this.getMinHeight(); y < this.getMaxHeight(); ++y) {
-            this.setBiome(x, y, z, bio);
+        for (int y = getMinHeight(); y < getMaxHeight(); y++) {
+            setBiome(x, y, z, bio);
         }
-
     }
 
-    public void setBiome(int x, int y, int z, Holder bb) {
-        BlockPos pos = new BlockPos(x, 0, z);
-
+    @Override
+    public void setBiome(int x, int y, int z, Holder<BiomeBase> bb) {
+        BlockPosition pos = new BlockPosition(x, 0, z);
         if (this.world.hasChunkAt(pos)) {
-            LevelChunk chunk = this.world.getChunkAt(pos);
+            net.minecraft.world.level.chunk.Chunk chunk = this.world.getChunkAt(pos);
 
             if (chunk != null) {
                 chunk.setBiome(x >> 2, y >> 2, z >> 2, bb);
-                chunk.setUnsaved(true);
+
+                chunk.setUnsaved(true); // SPIGOT-2890
             }
         }
-
     }
 
+    @Override
     public double getTemperature(int x, int z) {
-        return this.getTemperature(x, 0, z);
+        return getTemperature(x, 0, z);
     }
 
+    @Override
     public double getTemperature(int x, int y, int z) {
-        BlockPos pos = new BlockPos(x, y, z);
-
-        return (double) ((net.minecraft.world.level.biome.Biome) this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2).value()).getTemperature(pos);
+        BlockPosition pos = new BlockPosition(x, y, z);
+        return this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2).value().getTemperature(pos);
     }
 
+    @Override
     public double getHumidity(int x, int z) {
-        return this.getHumidity(x, 0, z);
+        return getHumidity(x, 0, z);
     }
 
+    @Override
     public double getHumidity(int x, int y, int z) {
-        return (double) ((net.minecraft.world.level.biome.Biome) this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2).value()).climateSettings.downfall();
+        return this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2).value().climateSettings.downfall();
     }
 
-    /** @deprecated */
+    @Override
+    @SuppressWarnings("unchecked")
     @Deprecated
-    public Collection getEntitiesByClass(Class... classes) {
-        return this.getEntitiesByClasses(classes);
+    public <T extends Entity> Collection<T> getEntitiesByClass(Class<T>... classes) {
+        return (Collection<T>) getEntitiesByClasses(classes);
     }
 
-    public Iterable getNMSEntities() {
-        return this.getHandle().getEntities().getAll();
+    @Override
+    public Iterable<net.minecraft.world.entity.Entity> getNMSEntities() {
+        return getHandle().getEntities().getAll();
     }
 
+    @Override
     public void addEntityToWorld(net.minecraft.world.entity.Entity entity, SpawnReason reason) {
-        this.getHandle().addFreshEntity(entity, reason);
+        getHandle().addFreshEntity(entity, reason);
     }
 
-    public Collection getNearbyEntities(Location location, double x, double y, double z) {
-        return this.getNearbyEntities(location, x, y, z, (Predicate) null);
+    @Override
+    public Collection<Entity> getNearbyEntities(Location location, double x, double y, double z) {
+        return this.getNearbyEntities(location, x, y, z, null);
     }
 
-    public Collection getNearbyEntities(Location location, double x, double y, double z, Predicate filter) {
+    @Override
+    public Collection<Entity> getNearbyEntities(Location location, double x, double y, double z, Predicate<? super Entity> filter) {
         Preconditions.checkArgument(location != null, "Location cannot be null");
         Preconditions.checkArgument(this.equals(location.getWorld()), "Location cannot be in a different world");
-        BoundingBox aabb = BoundingBox.of(location, x, y, z);
 
+        BoundingBox aabb = BoundingBox.of(location, x, y, z);
         return this.getNearbyEntities(aabb, filter);
     }
 
-    public Collection getNearbyEntities(BoundingBox boundingBox) {
-        return this.getNearbyEntities(boundingBox, (Predicate) null);
+    @Override
+    public Collection<Entity> getNearbyEntities(BoundingBox boundingBox) {
+        return this.getNearbyEntities(boundingBox, null);
     }
 
-    public Collection getNearbyEntities(BoundingBox boundingBox, Predicate filter) {
-        AsyncCatcher.catchOp("getNearbyEntities");
+    @Override
+    public Collection<Entity> getNearbyEntities(BoundingBox boundingBox, Predicate<? super Entity> filter) {
         Preconditions.checkArgument(boundingBox != null, "BoundingBox cannot be null");
-        AABB bb = new AABB(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
-        List entityList = this.getHandle().getEntities((net.minecraft.world.entity.Entity) null, bb, (Predicate) Predicates.alwaysTrue());
-        ArrayList bukkitEntityList = new ArrayList(entityList.size());
-        Iterator iterator = entityList.iterator();
 
-        while (iterator.hasNext()) {
-            net.minecraft.world.entity.Entity entity = (net.minecraft.world.entity.Entity) iterator.next();
-            CraftEntity bukkitEntity = entity.getBukkitEntity();
+        AxisAlignedBB bb = new AxisAlignedBB(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
+        List<net.minecraft.world.entity.Entity> entityList = getHandle().getEntities((net.minecraft.world.entity.Entity) null, bb, Predicates.alwaysTrue());
+        List<Entity> bukkitEntityList = new ArrayList<org.bukkit.entity.Entity>(entityList.size());
 
+        for (net.minecraft.world.entity.Entity entity : entityList) {
+            Entity bukkitEntity = entity.getBukkitEntity();
             if (filter == null || filter.test(bukkitEntity)) {
                 bukkitEntityList.add(bukkitEntity);
             }
@@ -825,117 +859,135 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         return bukkitEntityList;
     }
 
+    @Override
     public RayTraceResult rayTraceEntities(Location start, Vector direction, double maxDistance) {
-        return this.rayTraceEntities(start, direction, maxDistance, (Predicate) null);
+        return this.rayTraceEntities(start, direction, maxDistance, null);
     }
 
+    @Override
     public RayTraceResult rayTraceEntities(Location start, Vector direction, double maxDistance, double raySize) {
-        return this.rayTraceEntities(start, direction, maxDistance, raySize, (Predicate) null);
+        return this.rayTraceEntities(start, direction, maxDistance, raySize, null);
     }
 
-    public RayTraceResult rayTraceEntities(Location start, Vector direction, double maxDistance, Predicate filter) {
+    @Override
+    public RayTraceResult rayTraceEntities(Location start, Vector direction, double maxDistance, Predicate<? super Entity> filter) {
         return this.rayTraceEntities(start, direction, maxDistance, 0.0D, filter);
     }
 
-    public RayTraceResult rayTraceEntities(Location start, Vector direction, double maxDistance, double raySize, Predicate filter) {
+    @Override
+    public RayTraceResult rayTraceEntities(Location start, Vector direction, double maxDistance, double raySize, Predicate<? super Entity> filter) {
         Preconditions.checkArgument(start != null, "Location start cannot be null");
         Preconditions.checkArgument(this.equals(start.getWorld()), "Location start cannot be in a different world");
         start.checkFinite();
+
         Preconditions.checkArgument(direction != null, "Vector direction cannot be null");
         direction.checkFinite();
-        Preconditions.checkArgument(direction.lengthSquared() > 0.0D, "Direction's magnitude (%s) need to be greater than 0", direction.lengthSquared());
+
+        Preconditions.checkArgument(direction.lengthSquared() > 0, "Direction's magnitude (%s) need to be greater than 0", direction.lengthSquared());
+
         if (maxDistance < 0.0D) {
             return null;
-        } else {
-            Vector startPos = start.toVector();
-            Vector dir = direction.clone().normalize().multiply(maxDistance);
-            BoundingBox aabb = BoundingBox.of(startPos, startPos).expandDirectional(dir).expand(raySize);
-            Collection entities = this.getNearbyEntities(aabb, filter);
-            Entity nearestHitEntity = null;
-            RayTraceResult nearestHitResult = null;
-            double nearestDistanceSq = Double.MAX_VALUE;
-            Iterator iterator = entities.iterator();
+        }
 
-            while (iterator.hasNext()) {
-                Entity entity = (Entity) iterator.next();
-                BoundingBox boundingBox = entity.getBoundingBox().expand(raySize);
-                RayTraceResult hitResult = boundingBox.rayTrace(startPos, direction, maxDistance);
+        Vector startPos = start.toVector();
+        Vector dir = direction.clone().normalize().multiply(maxDistance);
+        BoundingBox aabb = BoundingBox.of(startPos, startPos).expandDirectional(dir).expand(raySize);
+        Collection<Entity> entities = this.getNearbyEntities(aabb, filter);
 
-                if (hitResult != null) {
-                    double distanceSq = startPos.distanceSquared(hitResult.getHitPosition());
+        Entity nearestHitEntity = null;
+        RayTraceResult nearestHitResult = null;
+        double nearestDistanceSq = Double.MAX_VALUE;
 
-                    if (distanceSq < nearestDistanceSq) {
-                        nearestHitEntity = entity;
-                        nearestHitResult = hitResult;
-                        nearestDistanceSq = distanceSq;
-                    }
+        for (Entity entity : entities) {
+            BoundingBox boundingBox = entity.getBoundingBox().expand(raySize);
+            RayTraceResult hitResult = boundingBox.rayTrace(startPos, direction, maxDistance);
+
+            if (hitResult != null) {
+                double distanceSq = startPos.distanceSquared(hitResult.getHitPosition());
+
+                if (distanceSq < nearestDistanceSq) {
+                    nearestHitEntity = entity;
+                    nearestHitResult = hitResult;
+                    nearestDistanceSq = distanceSq;
                 }
             }
-
-            return nearestHitEntity == null ? null : new RayTraceResult(nearestHitResult.getHitPosition(), nearestHitEntity, nearestHitResult.getHitBlockFace());
         }
+
+        return (nearestHitEntity == null) ? null : new RayTraceResult(nearestHitResult.getHitPosition(), nearestHitEntity, nearestHitResult.getHitBlockFace());
     }
 
+    @Override
     public RayTraceResult rayTraceBlocks(Location start, Vector direction, double maxDistance) {
         return this.rayTraceBlocks(start, direction, maxDistance, FluidCollisionMode.NEVER, false);
     }
 
+    @Override
     public RayTraceResult rayTraceBlocks(Location start, Vector direction, double maxDistance, FluidCollisionMode fluidCollisionMode) {
         return this.rayTraceBlocks(start, direction, maxDistance, fluidCollisionMode, false);
     }
 
+    @Override
     public RayTraceResult rayTraceBlocks(Location start, Vector direction, double maxDistance, FluidCollisionMode fluidCollisionMode, boolean ignorePassableBlocks) {
         Preconditions.checkArgument(start != null, "Location start cannot be null");
         Preconditions.checkArgument(this.equals(start.getWorld()), "Location start cannot be in a different world");
         start.checkFinite();
+
         Preconditions.checkArgument(direction != null, "Vector direction cannot be null");
         direction.checkFinite();
-        Preconditions.checkArgument(direction.lengthSquared() > 0.0D, "Direction's magnitude (%s) need to be greater than 0", direction.lengthSquared());
+
+        Preconditions.checkArgument(direction.lengthSquared() > 0, "Direction's magnitude (%s) need to be greater than 0", direction.lengthSquared());
         Preconditions.checkArgument(fluidCollisionMode != null, "FluidCollisionMode cannot be null");
+
         if (maxDistance < 0.0D) {
             return null;
-        } else {
-            Vector dir = direction.clone().normalize().multiply(maxDistance);
-            Vec3 startPos = CraftLocation.toVec3D(start);
-            Vec3 endPos = startPos.add(dir.getX(), dir.getY(), dir.getZ());
-            BlockHitResult nmsHitResult = this.getHandle().clip(new ClipContext(startPos, endPos, ignorePassableBlocks ? ClipContext.Block.COLLIDER : ClipContext.Block.OUTLINE, CraftFluidCollisionMode.toNMS(fluidCollisionMode), (net.minecraft.world.entity.Entity) null));
-
-            return CraftRayTraceResult.fromNMS(this, nmsHitResult);
         }
+
+        Vector dir = direction.clone().normalize().multiply(maxDistance);
+        Vec3D startPos = CraftLocation.toVec3D(start);
+        Vec3D endPos = startPos.add(dir.getX(), dir.getY(), dir.getZ());
+        MovingObjectPosition nmsHitResult = this.getHandle().clip(new RayTrace(startPos, endPos, ignorePassableBlocks ? RayTrace.BlockCollisionOption.COLLIDER : RayTrace.BlockCollisionOption.OUTLINE, CraftFluidCollisionMode.toNMS(fluidCollisionMode), null));
+
+        return CraftRayTraceResult.fromNMS(this, nmsHitResult);
     }
 
-    public RayTraceResult rayTrace(Location start, Vector direction, double maxDistance, FluidCollisionMode fluidCollisionMode, boolean ignorePassableBlocks, double raySize, Predicate filter) {
+    @Override
+    public RayTraceResult rayTrace(Location start, Vector direction, double maxDistance, FluidCollisionMode fluidCollisionMode, boolean ignorePassableBlocks, double raySize, Predicate<? super Entity> filter) {
         RayTraceResult blockHit = this.rayTraceBlocks(start, direction, maxDistance, fluidCollisionMode, ignorePassableBlocks);
         Vector startVec = null;
         double blockHitDistance = maxDistance;
 
+        // limiting the entity search range if we found a block hit:
         if (blockHit != null) {
             startVec = start.toVector();
             blockHitDistance = startVec.distance(blockHit.getHitPosition());
         }
 
         RayTraceResult entityHit = this.rayTraceEntities(start, direction, blockHitDistance, raySize, filter);
-
         if (blockHit == null) {
             return entityHit;
-        } else if (entityHit == null) {
-            return blockHit;
-        } else {
-            double entityHitDistanceSquared = startVec.distanceSquared(entityHit.getHitPosition());
-
-            return entityHitDistanceSquared < blockHitDistance * blockHitDistance ? entityHit : blockHit;
         }
+
+        if (entityHit == null) {
+            return blockHit;
+        }
+
+        // Cannot be null as blockHit == null returns above
+        double entityHitDistanceSquared = startVec.distanceSquared(entityHit.getHitPosition());
+        if (entityHitDistanceSquared < (blockHitDistance * blockHitDistance)) {
+            return entityHit;
+        }
+
+        return blockHit;
     }
 
-    public List getPlayers() {
-        ArrayList list = new ArrayList(this.world.players().size());
-        Iterator iterator = this.world.players().iterator();
+    @Override
+    public List<Player> getPlayers() {
+        List<Player> list = new ArrayList<Player>(world.players().size());
 
-        while (iterator.hasNext()) {
-            net.minecraft.world.entity.player.Player human = (net.minecraft.world.entity.player.Player) iterator.next();
-            CraftHumanEntity bukkitEntity = human.getBukkitEntity();
+        for (EntityHuman human : world.players()) {
+            HumanEntity bukkitEntity = human.getBukkitEntity();
 
-            if (bukkitEntity != null && bukkitEntity instanceof Player) {
+            if ((bukkitEntity != null) && (bukkitEntity instanceof Player)) {
                 list.add((Player) bukkitEntity);
             }
         }
@@ -943,667 +995,751 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         return list;
     }
 
+    @Override
     public void save() {
-        AsyncCatcher.catchOp("world save");
         this.server.checkSaveState();
-        boolean oldSave = this.world.noSave;
+        boolean oldSave = world.noSave;
 
-        this.world.noSave = false;
-        this.world.save((ProgressListener) null, false, false);
-        this.world.noSave = oldSave;
+        world.noSave = false;
+        world.save(null, false, false);
+
+        world.noSave = oldSave;
     }
 
+    @Override
     public boolean isAutoSave() {
-        return !this.world.noSave;
+        return !world.noSave;
     }
 
+    @Override
     public void setAutoSave(boolean value) {
-        this.world.noSave = !value;
+        world.noSave = !value;
     }
 
+    @Override
     public void setDifficulty(Difficulty difficulty) {
-        this.getHandle().K.setDifficulty(net.minecraft.world.Difficulty.byId(difficulty.getValue()));
+        this.getHandle().serverLevelData.setDifficulty(EnumDifficulty.byId(difficulty.getValue()));
     }
 
+    @Override
     public Difficulty getDifficulty() {
         return Difficulty.getByValue(this.getHandle().getDifficulty().ordinal());
     }
 
     public BlockMetadataStore getBlockMetadata() {
-        return this.blockMetadata;
+        return blockMetadata;
     }
 
+    @Override
     public boolean hasStorm() {
-        return this.world.levelData.isRaining();
+        return world.levelData.isRaining();
     }
 
+    @Override
     public void setStorm(boolean hasStorm) {
-        this.world.levelData.setRaining(hasStorm);
-        this.setWeatherDuration(0);
-        this.setClearWeatherDuration(0);
+        world.levelData.setRaining(hasStorm);
+        setWeatherDuration(0); // Reset weather duration (legacy behaviour)
+        setClearWeatherDuration(0); // Reset clear weather duration (reset "/weather clear" commands)
     }
 
+    @Override
     public int getWeatherDuration() {
-        return this.world.K.getRainTime();
+        return world.serverLevelData.getRainTime();
     }
 
+    @Override
     public void setWeatherDuration(int duration) {
-        this.world.K.setRainTime(duration);
+        world.serverLevelData.setRainTime(duration);
     }
 
+    @Override
     public boolean isThundering() {
-        return this.world.levelData.isThundering();
+        return world.levelData.isThundering();
     }
 
+    @Override
     public void setThundering(boolean thundering) {
-        this.world.K.setThundering(thundering);
-        this.setThunderDuration(0);
-        this.setClearWeatherDuration(0);
+        world.serverLevelData.setThundering(thundering);
+        setThunderDuration(0); // Reset weather duration (legacy behaviour)
+        setClearWeatherDuration(0); // Reset clear weather duration (reset "/weather clear" commands)
     }
 
+    @Override
     public int getThunderDuration() {
-        return this.world.K.getThunderTime();
+        return world.serverLevelData.getThunderTime();
     }
 
+    @Override
     public void setThunderDuration(int duration) {
-        this.world.K.setThunderTime(duration);
+        world.serverLevelData.setThunderTime(duration);
     }
 
+    @Override
     public boolean isClearWeather() {
         return !this.hasStorm() && !this.isThundering();
     }
 
+    @Override
     public void setClearWeatherDuration(int duration) {
-        this.world.K.setClearWeatherTime(duration);
+        world.serverLevelData.setClearWeatherTime(duration);
     }
 
+    @Override
     public int getClearWeatherDuration() {
-        return this.world.K.getClearWeatherTime();
+        return world.serverLevelData.getClearWeatherTime();
     }
 
+    @Override
     public long getSeed() {
-        return this.world.getSeed();
+        return world.getSeed();
     }
 
+    @Override
     public boolean getPVP() {
-        return this.world.pvpMode;
+        return world.pvpMode;
     }
 
+    @Override
     public void setPVP(boolean pvp) {
-        this.world.pvpMode = pvp;
+        world.pvpMode = pvp;
     }
 
     public void playEffect(Player player, Effect effect, int data) {
-        this.playEffect(player.getLocation(), effect, data, 0);
+        playEffect(player.getLocation(), effect, data, 0);
     }
 
+    @Override
     public void playEffect(Location location, Effect effect, int data) {
-        this.playEffect(location, effect, data, 64);
+        playEffect(location, effect, data, 64);
     }
 
-    public void playEffect(Location loc, Effect effect, Object data) {
-        this.playEffect(loc, effect, data, 64);
+    @Override
+    public <T> void playEffect(Location loc, Effect effect, T data) {
+        playEffect(loc, effect, data, 64);
     }
 
-    public void playEffect(Location loc, Effect effect, Object data, int radius) {
+    @Override
+    public <T> void playEffect(Location loc, Effect effect, T data, int radius) {
         if (data != null) {
             Preconditions.checkArgument(effect.getData() != null, "Effect.%s does not have a valid Data", effect);
             Preconditions.checkArgument(effect.getData().isAssignableFrom(data.getClass()), "%s data cannot be used for the %s effect", data.getClass().getName(), effect);
         } else {
+            // Special case: the axis is optional for ELECTRIC_SPARK
             Preconditions.checkArgument(effect.getData() == null || effect == Effect.ELECTRIC_SPARK, "Wrong kind of data for the %s effect", effect);
         }
 
         int datavalue = CraftEffect.getDataValue(effect, data);
-
-        this.playEffect(loc, effect, datavalue, radius);
+        playEffect(loc, effect, datavalue, radius);
     }
 
+    @Override
     public void playEffect(Location location, Effect effect, int data, int radius) {
         Preconditions.checkArgument(effect != null, "Effect cannot be null");
         Preconditions.checkArgument(location != null, "Location cannot be null");
         Preconditions.checkArgument(location.getWorld() != null, "World of Location cannot be null");
         int packetData = effect.getId();
-        ClientboundLevelEventPacket packet = new ClientboundLevelEventPacket(packetData, CraftLocation.toBlockPosition(location), data, false);
-
+        PacketPlayOutWorldEvent packet = new PacketPlayOutWorldEvent(packetData, CraftLocation.toBlockPosition(location), data, false);
+        int distance;
         radius *= radius;
-        Iterator iterator = this.getPlayers().iterator();
 
-        while (iterator.hasNext()) {
-            Player player = (Player) iterator.next();
+        for (Player player : getPlayers()) {
+            if (((CraftPlayer) player).getHandle().connection == null) continue;
+            if (!location.getWorld().equals(player.getWorld())) continue;
 
-            if (((CraftPlayer) player).getHandle().connection != null && location.getWorld().equals(player.getWorld())) {
-                int distance = (int) player.getLocation().distanceSquared(location);
-
-                if (distance <= radius) {
-                    ((CraftPlayer) player).getHandle().connection.send(packet);
-                }
+            distance = (int) player.getLocation().distanceSquared(location);
+            if (distance <= radius) {
+                ((CraftPlayer) player).getHandle().connection.send(packet);
             }
         }
-
     }
 
+    @Override
     public FallingBlock spawnFallingBlock(Location location, MaterialData data) throws IllegalArgumentException {
         Preconditions.checkArgument(data != null, "MaterialData cannot be null");
-        return this.spawnFallingBlock(location, data.getItemType(), data.getData());
+        return spawnFallingBlock(location, data.getItemType(), data.getData());
     }
 
-    public FallingBlock spawnFallingBlock(Location location, Material material, byte data) throws IllegalArgumentException {
+    @Override
+    public FallingBlock spawnFallingBlock(Location location, org.bukkit.Material material, byte data) throws IllegalArgumentException {
         Preconditions.checkArgument(location != null, "Location cannot be null");
         Preconditions.checkArgument(material != null, "Material cannot be null");
         Preconditions.checkArgument(material.isBlock(), "Material.%s must be a block", material);
-        FallingBlockEntity entity = FallingBlockEntity.fall(this.world, BlockPos.containing(location.getX(), location.getY(), location.getZ()), CraftMagicNumbers.getBlock(material).defaultBlockState(), SpawnReason.CUSTOM);
 
+        EntityFallingBlock entity = EntityFallingBlock.fall(world, BlockPosition.containing(location.getX(), location.getY(), location.getZ()), CraftMagicNumbers.getBlock(material).defaultBlockState(), SpawnReason.CUSTOM);
         return (FallingBlock) entity.getBukkitEntity();
     }
 
+    @Override
     public FallingBlock spawnFallingBlock(Location location, BlockData data) throws IllegalArgumentException {
         Preconditions.checkArgument(location != null, "Location cannot be null");
         Preconditions.checkArgument(data != null, "BlockData cannot be null");
-        FallingBlockEntity entity = FallingBlockEntity.fall(this.world, BlockPos.containing(location.getX(), location.getY(), location.getZ()), ((CraftBlockData) data).getState(), SpawnReason.CUSTOM);
 
+        EntityFallingBlock entity = EntityFallingBlock.fall(world, BlockPosition.containing(location.getX(), location.getY(), location.getZ()), ((CraftBlockData) data).getState(), SpawnReason.CUSTOM);
         return (FallingBlock) entity.getBukkitEntity();
     }
 
+    @Override
     public ChunkSnapshot getEmptyChunkSnapshot(int x, int z, boolean includeBiome, boolean includeBiomeTempRain) {
         return CraftChunk.getEmptyChunkSnapshot(x, z, this, includeBiome, includeBiomeTempRain);
     }
 
+    @Override
     public void setSpawnFlags(boolean allowMonsters, boolean allowAnimals) {
-        this.world.setSpawnSettings(allowMonsters, allowAnimals);
+        world.setSpawnSettings(allowMonsters, allowAnimals);
     }
 
+    @Override
     public boolean getAllowAnimals() {
-        return this.world.getChunkSource().spawnFriendlies;
+        return world.getChunkSource().spawnFriendlies;
     }
 
+    @Override
     public boolean getAllowMonsters() {
-        return this.world.getChunkSource().spawnEnemies;
+        return world.getChunkSource().spawnEnemies;
     }
 
+    @Override
     public int getMinHeight() {
-        return this.world.getMinBuildHeight();
+        return world.getMinBuildHeight();
     }
 
+    @Override
     public int getMaxHeight() {
-        return this.world.getMaxBuildHeight();
+        return world.getMaxBuildHeight();
     }
 
+    @Override
     public int getLogicalHeight() {
-        return this.world.dimensionType().logicalHeight();
+        return world.dimensionType().logicalHeight();
     }
 
+    @Override
     public boolean isNatural() {
-        return this.world.dimensionType().natural();
+        return world.dimensionType().natural();
     }
 
+    @Override
     public boolean isBedWorks() {
-        return this.world.dimensionType().bedWorks();
+        return world.dimensionType().bedWorks();
     }
 
+    @Override
     public boolean hasSkyLight() {
-        return this.world.dimensionType().hasSkyLight();
+        return world.dimensionType().hasSkyLight();
     }
 
+    @Override
     public boolean hasCeiling() {
-        return this.world.dimensionType().hasCeiling();
+        return world.dimensionType().hasCeiling();
     }
 
+    @Override
     public boolean isPiglinSafe() {
-        return this.world.dimensionType().piglinSafe();
+        return world.dimensionType().piglinSafe();
     }
 
+    @Override
     public boolean isRespawnAnchorWorks() {
-        return this.world.dimensionType().respawnAnchorWorks();
+        return world.dimensionType().respawnAnchorWorks();
     }
 
+    @Override
     public boolean hasRaids() {
-        return this.world.dimensionType().hasRaids();
+        return world.dimensionType().hasRaids();
     }
 
+    @Override
     public boolean isUltraWarm() {
-        return this.world.dimensionType().ultraWarm();
+        return world.dimensionType().ultraWarm();
     }
 
+    @Override
     public int getSeaLevel() {
-        return this.world.getSeaLevel();
+        return world.getSeaLevel();
     }
 
+    @Override
     public boolean getKeepSpawnInMemory() {
-        return this.world.keepSpawnInMemory;
+        return world.keepSpawnInMemory;
     }
 
+    @Override
     public void setKeepSpawnInMemory(boolean keepLoaded) {
-        this.world.keepSpawnInMemory = keepLoaded;
-        BlockPos chunkcoordinates = this.world.getSharedSpawnPos();
-
+        world.keepSpawnInMemory = keepLoaded;
+        // Grab the worlds spawn chunk
+        BlockPosition chunkcoordinates = this.world.getSharedSpawnPos();
         if (keepLoaded) {
-            this.world.getChunkSource().addRegionTicket(TicketType.START, new ChunkPos(chunkcoordinates), 11, Unit.INSTANCE);
+            world.getChunkSource().addRegionTicket(TicketType.START, new ChunkCoordIntPair(chunkcoordinates), 11, Unit.INSTANCE);
         } else {
-            this.world.getChunkSource().removeRegionTicket(TicketType.START, new ChunkPos(chunkcoordinates), 11, Unit.INSTANCE);
+            // TODO: doesn't work well if spawn changed....
+            world.getChunkSource().removeRegionTicket(TicketType.START, new ChunkCoordIntPair(chunkcoordinates), 11, Unit.INSTANCE);
         }
-
     }
 
+    @Override
     public int hashCode() {
-        return this.getUID().hashCode();
+        return getUID().hashCode();
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
-        } else if (this.getClass() != obj.getClass()) {
-            return false;
-        } else {
-            CraftWorld other = (CraftWorld) obj;
-
-            return this.getUID() == other.getUID();
         }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        final CraftWorld other = (CraftWorld) obj;
+
+        return this.getUID() == other.getUID();
     }
 
+    @Override
     public File getWorldFolder() {
-        return this.world.convertable.getLevelPath(LevelResource.ROOT).toFile().getParentFile();
+        return world.convertable.getLevelPath(SavedFile.ROOT).toFile().getParentFile();
     }
 
+    @Override
     public void sendPluginMessage(Plugin source, String channel, byte[] message) {
-        StandardMessenger.validatePluginMessage(this.server.getMessenger(), source, channel, message);
-        Iterator iterator = this.getPlayers().iterator();
+        StandardMessenger.validatePluginMessage(server.getMessenger(), source, channel, message);
 
-        while (iterator.hasNext()) {
-            Player player = (Player) iterator.next();
-
+        for (Player player : getPlayers()) {
             player.sendPluginMessage(source, channel, message);
         }
-
     }
 
-    public Set getListeningPluginChannels() {
-        HashSet result = new HashSet();
-        Iterator iterator = this.getPlayers().iterator();
+    @Override
+    public Set<String> getListeningPluginChannels() {
+        Set<String> result = new HashSet<String>();
 
-        while (iterator.hasNext()) {
-            Player player = (Player) iterator.next();
-
+        for (Player player : getPlayers()) {
             result.addAll(player.getListeningPluginChannels());
         }
 
         return result;
     }
 
-    public WorldType getWorldType() {
-        return this.world.isFlat() ? WorldType.FLAT : WorldType.NORMAL;
+    @Override
+    public org.bukkit.WorldType getWorldType() {
+        return world.isFlat() ? org.bukkit.WorldType.FLAT : org.bukkit.WorldType.NORMAL;
     }
 
+    @Override
     public boolean canGenerateStructures() {
-        return this.world.K.worldGenOptions().generateStructures();
+        return world.serverLevelData.worldGenOptions().generateStructures();
     }
 
+    @Override
     public boolean isHardcore() {
-        return this.world.getLevelData().isHardcore();
+        return world.getLevelData().isHardcore();
     }
 
+    @Override
     public void setHardcore(boolean hardcore) {
-        this.world.K.settings.hardcore = hardcore;
+        world.serverLevelData.settings.hardcore = hardcore;
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public long getTicksPerAnimalSpawns() {
-        return this.getTicksPerSpawns(SpawnCategory.ANIMAL);
+        return getTicksPerSpawns(SpawnCategory.ANIMAL);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public void setTicksPerAnimalSpawns(int ticksPerAnimalSpawns) {
-        this.setTicksPerSpawns(SpawnCategory.ANIMAL, ticksPerAnimalSpawns);
+        setTicksPerSpawns(SpawnCategory.ANIMAL, ticksPerAnimalSpawns);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public long getTicksPerMonsterSpawns() {
-        return this.getTicksPerSpawns(SpawnCategory.MONSTER);
+        return getTicksPerSpawns(SpawnCategory.MONSTER);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public void setTicksPerMonsterSpawns(int ticksPerMonsterSpawns) {
-        this.setTicksPerSpawns(SpawnCategory.MONSTER, ticksPerMonsterSpawns);
+        setTicksPerSpawns(SpawnCategory.MONSTER, ticksPerMonsterSpawns);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public long getTicksPerWaterSpawns() {
-        return this.getTicksPerSpawns(SpawnCategory.WATER_ANIMAL);
+        return getTicksPerSpawns(SpawnCategory.WATER_ANIMAL);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public void setTicksPerWaterSpawns(int ticksPerWaterSpawns) {
-        this.setTicksPerSpawns(SpawnCategory.WATER_ANIMAL, ticksPerWaterSpawns);
+        setTicksPerSpawns(SpawnCategory.WATER_ANIMAL, ticksPerWaterSpawns);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public long getTicksPerWaterAmbientSpawns() {
-        return this.getTicksPerSpawns(SpawnCategory.WATER_AMBIENT);
+        return getTicksPerSpawns(SpawnCategory.WATER_AMBIENT);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public void setTicksPerWaterAmbientSpawns(int ticksPerWaterAmbientSpawns) {
-        this.setTicksPerSpawns(SpawnCategory.WATER_AMBIENT, ticksPerWaterAmbientSpawns);
+        setTicksPerSpawns(SpawnCategory.WATER_AMBIENT, ticksPerWaterAmbientSpawns);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public long getTicksPerWaterUndergroundCreatureSpawns() {
-        return this.getTicksPerSpawns(SpawnCategory.WATER_UNDERGROUND_CREATURE);
+        return getTicksPerSpawns(SpawnCategory.WATER_UNDERGROUND_CREATURE);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public void setTicksPerWaterUndergroundCreatureSpawns(int ticksPerWaterUndergroundCreatureSpawns) {
-        this.setTicksPerSpawns(SpawnCategory.WATER_UNDERGROUND_CREATURE, ticksPerWaterUndergroundCreatureSpawns);
+        setTicksPerSpawns(SpawnCategory.WATER_UNDERGROUND_CREATURE, ticksPerWaterUndergroundCreatureSpawns);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public long getTicksPerAmbientSpawns() {
-        return this.getTicksPerSpawns(SpawnCategory.AMBIENT);
+        return getTicksPerSpawns(SpawnCategory.AMBIENT);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public void setTicksPerAmbientSpawns(int ticksPerAmbientSpawns) {
-        this.setTicksPerSpawns(SpawnCategory.AMBIENT, ticksPerAmbientSpawns);
+        setTicksPerSpawns(SpawnCategory.AMBIENT, ticksPerAmbientSpawns);
     }
 
+    @Override
     public void setTicksPerSpawns(SpawnCategory spawnCategory, int ticksPerCategorySpawn) {
         Preconditions.checkArgument(spawnCategory != null, "SpawnCategory cannot be null");
         Preconditions.checkArgument(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory.%s are not supported", spawnCategory);
-        this.world.ticksPerSpawnCategory.put(spawnCategory, (long) ticksPerCategorySpawn);
+
+        world.ticksPerSpawnCategory.put(spawnCategory, (long) ticksPerCategorySpawn);
     }
 
+    @Override
     public long getTicksPerSpawns(SpawnCategory spawnCategory) {
         Preconditions.checkArgument(spawnCategory != null, "SpawnCategory cannot be null");
         Preconditions.checkArgument(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory.%s are not supported", spawnCategory);
-        return this.world.ticksPerSpawnCategory.getLong(spawnCategory);
+
+        return world.ticksPerSpawnCategory.getLong(spawnCategory);
     }
 
+    @Override
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
-        this.server.getWorldMetadata().setMetadata(this, metadataKey, newMetadataValue);
+        server.getWorldMetadata().setMetadata(this, metadataKey, newMetadataValue);
     }
 
-    public List getMetadata(String metadataKey) {
-        return this.server.getWorldMetadata().getMetadata(this, metadataKey);
+    @Override
+    public List<MetadataValue> getMetadata(String metadataKey) {
+        return server.getWorldMetadata().getMetadata(this, metadataKey);
     }
 
+    @Override
     public boolean hasMetadata(String metadataKey) {
-        return this.server.getWorldMetadata().hasMetadata(this, metadataKey);
+        return server.getWorldMetadata().hasMetadata(this, metadataKey);
     }
 
+    @Override
     public void removeMetadata(String metadataKey, Plugin owningPlugin) {
-        this.server.getWorldMetadata().removeMetadata(this, metadataKey, owningPlugin);
+        server.getWorldMetadata().removeMetadata(this, metadataKey, owningPlugin);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public int getMonsterSpawnLimit() {
-        return this.getSpawnLimit(SpawnCategory.MONSTER);
+        return getSpawnLimit(SpawnCategory.MONSTER);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public void setMonsterSpawnLimit(int limit) {
-        this.setSpawnLimit(SpawnCategory.MONSTER, limit);
+        setSpawnLimit(SpawnCategory.MONSTER, limit);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public int getAnimalSpawnLimit() {
-        return this.getSpawnLimit(SpawnCategory.ANIMAL);
+        return getSpawnLimit(SpawnCategory.ANIMAL);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public void setAnimalSpawnLimit(int limit) {
-        this.setSpawnLimit(SpawnCategory.ANIMAL, limit);
+        setSpawnLimit(SpawnCategory.ANIMAL, limit);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public int getWaterAnimalSpawnLimit() {
-        return this.getSpawnLimit(SpawnCategory.WATER_ANIMAL);
+        return getSpawnLimit(SpawnCategory.WATER_ANIMAL);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public void setWaterAnimalSpawnLimit(int limit) {
-        this.setSpawnLimit(SpawnCategory.WATER_ANIMAL, limit);
+        setSpawnLimit(SpawnCategory.WATER_ANIMAL, limit);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public int getWaterAmbientSpawnLimit() {
-        return this.getSpawnLimit(SpawnCategory.WATER_AMBIENT);
+        return getSpawnLimit(SpawnCategory.WATER_AMBIENT);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public void setWaterAmbientSpawnLimit(int limit) {
-        this.setSpawnLimit(SpawnCategory.WATER_AMBIENT, limit);
+        setSpawnLimit(SpawnCategory.WATER_AMBIENT, limit);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public int getWaterUndergroundCreatureSpawnLimit() {
-        return this.getSpawnLimit(SpawnCategory.WATER_UNDERGROUND_CREATURE);
+        return getSpawnLimit(SpawnCategory.WATER_UNDERGROUND_CREATURE);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public void setWaterUndergroundCreatureSpawnLimit(int limit) {
-        this.setSpawnLimit(SpawnCategory.WATER_UNDERGROUND_CREATURE, limit);
+        setSpawnLimit(SpawnCategory.WATER_UNDERGROUND_CREATURE, limit);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public int getAmbientSpawnLimit() {
-        return this.getSpawnLimit(SpawnCategory.AMBIENT);
+        return getSpawnLimit(SpawnCategory.AMBIENT);
     }
 
-    /** @deprecated */
+    @Override
     @Deprecated
     public void setAmbientSpawnLimit(int limit) {
-        this.setSpawnLimit(SpawnCategory.AMBIENT, limit);
+        setSpawnLimit(SpawnCategory.AMBIENT, limit);
     }
 
+    @Override
     public int getSpawnLimit(SpawnCategory spawnCategory) {
         Preconditions.checkArgument(spawnCategory != null, "SpawnCategory cannot be null");
         Preconditions.checkArgument(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory.%s are not supported", spawnCategory);
-        int limit = this.spawnCategoryLimit.getOrDefault(spawnCategory, -1);
 
+        int limit = spawnCategoryLimit.getOrDefault(spawnCategory, -1);
         if (limit < 0) {
-            limit = this.server.getSpawnLimit(spawnCategory);
+            limit = server.getSpawnLimit(spawnCategory);
         }
-
         return limit;
     }
 
+    @Override
     public void setSpawnLimit(SpawnCategory spawnCategory, int limit) {
         Preconditions.checkArgument(spawnCategory != null, "SpawnCategory cannot be null");
         Preconditions.checkArgument(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory.%s are not supported", spawnCategory);
-        this.spawnCategoryLimit.put(spawnCategory, limit);
+
+        spawnCategoryLimit.put(spawnCategory, limit);
     }
 
+    @Override
+    public void playNote(@NotNull Location loc, @NotNull Instrument instrument, @NotNull Note note) {
+        playSound(loc, instrument.getSound(), org.bukkit.SoundCategory.RECORDS, 3f, note.getPitch());
+    }
+
+    @Override
     public void playSound(Location loc, Sound sound, float volume, float pitch) {
-        this.playSound(loc, sound, SoundCategory.MASTER, volume, pitch);
+        playSound(loc, sound, org.bukkit.SoundCategory.MASTER, volume, pitch);
     }
 
+    @Override
     public void playSound(Location loc, String sound, float volume, float pitch) {
-        this.playSound(loc, sound, SoundCategory.MASTER, volume, pitch);
+        playSound(loc, sound, org.bukkit.SoundCategory.MASTER, volume, pitch);
     }
 
-    public void playSound(Location loc, Sound sound, SoundCategory category, float volume, float pitch) {
-        if (loc != null && sound != null && category != null) {
-            double x = loc.getX();
-            double y = loc.getY();
-            double z = loc.getZ();
-
-            this.getHandle().playSound((net.minecraft.world.entity.player.Player) null, x, y, z, CraftSound.bukkitToMinecraft(sound), SoundSource.valueOf(category.name()), volume, pitch);
-        }
+    @Override
+    public void playSound(Location loc, Sound sound, org.bukkit.SoundCategory category, float volume, float pitch) {
+        playSound(loc, sound, category, volume, pitch, getHandle().random.nextLong());;
     }
 
-    public void playSound(Location loc, String sound, SoundCategory category, float volume, float pitch) {
-        if (loc != null && sound != null && category != null) {
-            double x = loc.getX();
-            double y = loc.getY();
-            double z = loc.getZ();
-            ClientboundSoundPacket packet = new ClientboundSoundPacket(Holder.direct(SoundEvent.createVariableRangeEvent(new ResourceLocation(sound))), SoundSource.valueOf(category.name()), x, y, z, volume, pitch, this.getHandle().getRandom().nextLong());
-
-            this.world.getServer().getPlayerList().broadcast((net.minecraft.world.entity.player.Player) null, x, y, z, volume > 1.0F ? (double) (16.0F * volume) : 16.0D, this.world.dimension(), packet);
-        }
+    @Override
+    public void playSound(Location loc, String sound, org.bukkit.SoundCategory category, float volume, float pitch) {
+        playSound(loc, sound, category, volume, pitch, getHandle().random.nextLong());
     }
 
+    @Override
+    public void playSound(Location loc, Sound sound, org.bukkit.SoundCategory category, float volume, float pitch, long seed) {
+        if (loc == null || sound == null || category == null) return;
+
+        double x = loc.getX();
+        double y = loc.getY();
+        double z = loc.getZ();
+
+        getHandle().playSeededSound(null, x, y, z, CraftSound.bukkitToMinecraft(sound), SoundCategory.valueOf(category.name()), volume, pitch, seed);
+    }
+
+    @Override
+    public void playSound(Location loc, String sound, org.bukkit.SoundCategory category, float volume, float pitch, long seed) {
+        if (loc == null || sound == null || category == null) return;
+
+        double x = loc.getX();
+        double y = loc.getY();
+        double z = loc.getZ();
+
+        PacketPlayOutNamedSoundEffect packet = new PacketPlayOutNamedSoundEffect(Holder.direct(SoundEffect.createVariableRangeEvent(new MinecraftKey(sound))), SoundCategory.valueOf(category.name()), x, y, z, volume, pitch, seed);
+        world.getServer().getPlayerList().broadcast(null, x, y, z, volume > 1.0F ? 16.0F * volume : 16.0D, this.world.dimension(), packet);
+    }
+
+    @Override
     public void playSound(Entity entity, Sound sound, float volume, float pitch) {
-        this.playSound(entity, sound, SoundCategory.MASTER, volume, pitch);
+        playSound(entity, sound, org.bukkit.SoundCategory.MASTER, volume, pitch);
     }
 
+    @Override
     public void playSound(Entity entity, String sound, float volume, float pitch) {
-        this.playSound(entity, sound, SoundCategory.MASTER, volume, pitch);
+        playSound(entity, sound, org.bukkit.SoundCategory.MASTER, volume, pitch);
     }
 
-    public void playSound(Entity entity, Sound sound, SoundCategory category, float volume, float pitch) {
-        CraftEntity craftEntity;
+    @Override
+    public void playSound(Entity entity, Sound sound, org.bukkit.SoundCategory category, float volume, float pitch) {
+        playSound(entity, sound, category, volume, pitch, getHandle().random.nextLong());
+    }
 
-        if (entity instanceof CraftEntity && (craftEntity = (CraftEntity) entity) == (CraftEntity) entity && entity.getWorld() == this && sound != null && category != null) {
-            ClientboundSoundEntityPacket packet = new ClientboundSoundEntityPacket(CraftSound.bukkitToMinecraftHolder(sound), SoundSource.valueOf(category.name()), craftEntity.getHandle(), volume, pitch, this.getHandle().getRandom().nextLong());
-            ChunkMap.TrackedEntity entityTracker = (ChunkMap.TrackedEntity) this.getHandle().getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
+    @Override
+    public void playSound(Entity entity, String sound, org.bukkit.SoundCategory category, float volume, float pitch) {
+        playSound(entity, sound, category, volume, pitch, getHandle().random.nextLong());
+    }
 
-            if (entityTracker != null) {
-                entityTracker.broadcastAndSend(packet);
-            }
+    @Override
+    public void playSound(Entity entity, Sound sound, org.bukkit.SoundCategory category, float volume, float pitch, long seed) {
+        if (!(entity instanceof CraftEntity craftEntity) || entity.getWorld() != this || sound == null || category == null) return;
 
+        PacketPlayOutEntitySound packet = new PacketPlayOutEntitySound(CraftSound.bukkitToMinecraftHolder(sound), net.minecraft.sounds.SoundCategory.valueOf(category.name()), craftEntity.getHandle(), volume, pitch, seed);
+        PlayerChunkMap.EntityTracker entityTracker = getHandle().getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
+        if (entityTracker != null) {
+            entityTracker.broadcastAndSend(packet);
         }
     }
 
-    public void playSound(Entity entity, String sound, SoundCategory category, float volume, float pitch) {
-        CraftEntity craftEntity;
+    @Override
+    public void playSound(Entity entity, String sound, org.bukkit.SoundCategory category, float volume, float pitch, long seed) {
+        if (!(entity instanceof CraftEntity craftEntity) || entity.getWorld() != this || sound == null || category == null) return;
 
-        if (entity instanceof CraftEntity && (craftEntity = (CraftEntity) entity) == (CraftEntity) entity && entity.getWorld() == this && sound != null && category != null) {
-            ClientboundSoundEntityPacket packet = new ClientboundSoundEntityPacket(Holder.direct(SoundEvent.createVariableRangeEvent(new ResourceLocation(sound))), SoundSource.valueOf(category.name()), craftEntity.getHandle(), volume, pitch, this.getHandle().getRandom().nextLong());
-            ChunkMap.TrackedEntity entityTracker = (ChunkMap.TrackedEntity) this.getHandle().getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
-
-            if (entityTracker != null) {
-                entityTracker.broadcastAndSend(packet);
-            }
-
+        PacketPlayOutEntitySound packet = new PacketPlayOutEntitySound(Holder.direct(SoundEffect.createVariableRangeEvent(new MinecraftKey(sound))), net.minecraft.sounds.SoundCategory.valueOf(category.name()), craftEntity.getHandle(), volume, pitch, seed);
+        PlayerChunkMap.EntityTracker entityTracker = getHandle().getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
+        if (entityTracker != null) {
+            entityTracker.broadcastAndSend(packet);
         }
     }
 
-    public static synchronized Map getGameRulesNMS() {
-        if (CraftWorld.gamerules != null) {
-            return CraftWorld.gamerules;
-        } else {
-            final HashMap gamerules = new HashMap();
-
-            GameRules.visitGameRuleTypes(new GameRules.GameRuleTypeVisitor() {
-                public void visit(GameRules.Key gamerules_gamerulekey, GameRules.Type gamerules_gameruledefinition) {
-                    gamerules.put(gamerules_gamerulekey.getId(), gamerules_gamerulekey);
-                }
-            });
-            CraftWorld.gamerules = gamerules;
+    private static Map<String, GameRules.GameRuleKey<?>> gamerules;
+    public static synchronized Map<String, GameRules.GameRuleKey<?>> getGameRulesNMS() {
+        if (gamerules != null) {
             return gamerules;
         }
+
+        Map<String, GameRules.GameRuleKey<?>> gamerules = new HashMap<>();
+        GameRules.visitGameRuleTypes(new GameRules.GameRuleVisitor() {
+            @Override
+            public <T extends GameRules.GameRuleValue<T>> void visit(GameRules.GameRuleKey<T> gamerules_gamerulekey, GameRules.GameRuleDefinition<T> gamerules_gameruledefinition) {
+                gamerules.put(gamerules_gamerulekey.getId(), gamerules_gamerulekey);
+            }
+        });
+
+        return CraftWorld.gamerules = gamerules;
     }
 
-    public static synchronized Map getGameRuleDefinitions() {
-        if (CraftWorld.gameruleDefinitions != null) {
-            return CraftWorld.gameruleDefinitions;
-        } else {
-            final HashMap gameruleDefinitions = new HashMap();
-
-            GameRules.visitGameRuleTypes(new GameRules.GameRuleTypeVisitor() {
-                public void visit(GameRules.Key gamerules_gamerulekey, GameRules.Type gamerules_gameruledefinition) {
-                    gameruleDefinitions.put(gamerules_gamerulekey.getId(), gamerules_gameruledefinition);
-                }
-            });
-            CraftWorld.gameruleDefinitions = gameruleDefinitions;
+    private static Map<String, GameRules.GameRuleDefinition<?>> gameruleDefinitions;
+    public static synchronized Map<String, GameRules.GameRuleDefinition<?>> getGameRuleDefinitions() {
+        if (gameruleDefinitions != null) {
             return gameruleDefinitions;
         }
+
+        Map<String, GameRules.GameRuleDefinition<?>> gameruleDefinitions = new HashMap<>();
+        GameRules.visitGameRuleTypes(new GameRules.GameRuleVisitor() {
+            @Override
+            public <T extends GameRules.GameRuleValue<T>> void visit(GameRules.GameRuleKey<T> gamerules_gamerulekey, GameRules.GameRuleDefinition<T> gamerules_gameruledefinition) {
+                gameruleDefinitions.put(gamerules_gamerulekey.getId(), gamerules_gameruledefinition);
+            }
+        });
+
+        return CraftWorld.gameruleDefinitions = gameruleDefinitions;
     }
 
+    @Override
     public String getGameRuleValue(String rule) {
+        // In method contract for some reason
         if (rule == null) {
             return null;
-        } else {
-            GameRules.Value value = this.getHandle().getGameRules().getRule((GameRules.Key) getGameRulesNMS().get(rule));
-
-            return value != null ? value.toString() : "";
         }
+
+        GameRules.GameRuleValue<?> value = getHandle().getGameRules().getRule(getGameRulesNMS().get(rule));
+        return value != null ? value.toString() : "";
     }
 
+    @Override
     public boolean setGameRuleValue(String rule, String value) {
-        if (rule != null && value != null) {
-            if (!this.isGameRule(rule)) {
-                return false;
-            } else {
-                GameRules.Value handle = this.getHandle().getGameRules().getRule((GameRules.Key) getGameRulesNMS().get(rule));
+        // No null values allowed
+        if (rule == null || value == null) return false;
 
-                handle.deserialize(value);
-                handle.onChanged(this.getHandle().getServer());
-                return true;
-            }
-        } else {
-            return false;
-        }
+        if (!isGameRule(rule)) return false;
+
+        GameRules.GameRuleValue<?> handle = getHandle().getGameRules().getRule(getGameRulesNMS().get(rule));
+        handle.deserialize(value);
+        handle.onChanged(getHandle().getServer());
+        return true;
     }
 
+    @Override
     public String[] getGameRules() {
-        return (String[]) getGameRulesNMS().keySet().toArray(new String[getGameRulesNMS().size()]);
+        return getGameRulesNMS().keySet().toArray(new String[getGameRulesNMS().size()]);
     }
 
+    @Override
     public boolean isGameRule(String rule) {
         Preconditions.checkArgument(rule != null, "String rule cannot be null");
         Preconditions.checkArgument(!rule.isEmpty(), "String rule cannot be empty");
         return getGameRulesNMS().containsKey(rule);
     }
 
-    public Object getGameRuleValue(GameRule rule) {
+    @Override
+    public <T> T getGameRuleValue(GameRule<T> rule) {
         Preconditions.checkArgument(rule != null, "GameRule cannot be null");
-        return this.convert(rule, this.getHandle().getGameRules().getRule((GameRules.Key) getGameRulesNMS().get(rule.getName())));
+        return convert(rule, getHandle().getGameRules().getRule(getGameRulesNMS().get(rule.getName())));
     }
 
-    public Object getGameRuleDefault(GameRule rule) {
+    @Override
+    public <T> T getGameRuleDefault(GameRule<T> rule) {
         Preconditions.checkArgument(rule != null, "GameRule cannot be null");
-        return this.convert(rule, ((GameRules.Type) getGameRuleDefinitions().get(rule.getName())).createRule());
+        return convert(rule, getGameRuleDefinitions().get(rule.getName()).createRule());
     }
 
-    public boolean setGameRule(GameRule rule, Object newValue) {
+    @Override
+    public <T> boolean setGameRule(GameRule<T> rule, T newValue) {
         Preconditions.checkArgument(rule != null, "GameRule cannot be null");
         Preconditions.checkArgument(newValue != null, "GameRule value cannot be null");
-        if (!this.isGameRule(rule.getName())) {
-            return false;
-        } else {
-            GameRules.Value handle = this.getHandle().getGameRules().getRule((GameRules.Key) getGameRulesNMS().get(rule.getName()));
 
-            handle.deserialize(newValue.toString());
-            handle.onChanged(this.getHandle().getServer());
-            return true;
-        }
+        if (!isGameRule(rule.getName())) return false;
+
+        GameRules.GameRuleValue<?> handle = getHandle().getGameRules().getRule(getGameRulesNMS().get(rule.getName()));
+        handle.deserialize(newValue.toString());
+        handle.onChanged(getHandle().getServer());
+        return true;
     }
 
-    private Object convert(GameRule rule, GameRules.Value value) {
+    private <T> T convert(GameRule<T> rule, GameRules.GameRuleValue<?> value) {
         if (value == null) {
             return null;
-        } else if (value instanceof GameRules.BooleanValue) {
-            return rule.getType().cast(((GameRules.BooleanValue) value).get());
-        } else if (value instanceof GameRules.IntegerValue) {
+        }
+
+        if (value instanceof GameRules.GameRuleBoolean) {
+            return rule.getType().cast(((GameRules.GameRuleBoolean) value).get());
+        } else if (value instanceof GameRules.GameRuleInt) {
             return rule.getType().cast(value.getCommandResult());
         } else {
             throw new IllegalArgumentException("Invalid GameRule type (" + value + ") for GameRule " + rule.getName());
         }
     }
 
+    @Override
     public WorldBorder getWorldBorder() {
         if (this.worldBorder == null) {
             this.worldBorder = new CraftWorldBorder(this);
@@ -1612,224 +1748,234 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         return this.worldBorder;
     }
 
+    @Override
     public void spawnParticle(Particle particle, Location location, int count) {
-        this.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count);
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count);
     }
 
+    @Override
     public void spawnParticle(Particle particle, double x, double y, double z, int count) {
-        this.spawnParticle(particle, x, y, z, count, (Object) null);
+        spawnParticle(particle, x, y, z, count, null);
     }
 
-    public void spawnParticle(Particle particle, Location location, int count, Object data) {
-        this.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, data);
+    @Override
+    public <T> void spawnParticle(Particle particle, Location location, int count, T data) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, data);
     }
 
-    public void spawnParticle(Particle particle, double x, double y, double z, int count, Object data) {
-        this.spawnParticle(particle, x, y, z, count, 0.0D, 0.0D, 0.0D, data);
+    @Override
+    public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, T data) {
+        spawnParticle(particle, x, y, z, count, 0, 0, 0, data);
     }
 
+    @Override
     public void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ) {
-        this.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ);
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ);
     }
 
+    @Override
     public void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ) {
-        this.spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, (Object) null);
+        spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, null);
     }
 
-    public void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, Object data) {
-        this.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, data);
+    @Override
+    public <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, T data) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, data);
     }
 
-    public void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, Object data) {
-        this.spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, 1.0D, data);
+    @Override
+    public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, T data) {
+        spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, 1, data);
     }
 
+    @Override
     public void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra) {
-        this.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra);
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra);
     }
 
+    @Override
     public void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra) {
-        this.spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, extra, (Object) null);
+        spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, extra, null);
     }
 
-    public void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra, Object data) {
-        this.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra, data);
+    @Override
+    public <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra, T data) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra, data);
     }
 
-    public void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra, Object data) {
-        this.spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, extra, data, false);
+    @Override
+    public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra, T data) {
+        spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, extra, data, false);
     }
 
-    public void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra, Object data, boolean force) {
-        this.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra, data, force);
+    @Override
+    public <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra, T data, boolean force) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra, data, force);
     }
 
-    public void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra, Object data, boolean force) {
+    @Override
+    public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra, T data, boolean force) {
         particle = CraftParticle.convertLegacy(particle);
         data = CraftParticle.convertLegacy(data);
         if (data != null) {
             Preconditions.checkArgument(particle.getDataType().isInstance(data), "data (%s) should be %s", data.getClass(), particle.getDataType());
         }
+        getHandle().sendParticles(
+                null, // Sender
+                CraftParticle.createParticleParam(particle, data), // Particle
+                x, y, z, // Position
+                count,  // Count
+                offsetX, offsetY, offsetZ, // Random offset
+                extra, // Speed?
+                force
+        );
 
-        this.getHandle().sendParticles((ServerPlayer) null, CraftParticle.createParticleParam(particle, data), x, y, z, count, offsetX, offsetY, offsetZ, extra, force);
     }
 
-    /** @deprecated */
     @Deprecated
-    public Location locateNearestStructure(Location origin, StructureType structureType, int radius, boolean findUnexplored) {
+    @Override
+    public Location locateNearestStructure(Location origin, org.bukkit.StructureType structureType, int radius, boolean findUnexplored) {
         StructureSearchResult result = null;
 
-        if (StructureType.MINESHAFT == structureType) {
-            result = this.locateNearestStructure(origin, org.bukkit.generator.structure.StructureType.MINESHAFT, radius, findUnexplored);
-        } else if (StructureType.VILLAGE == structureType) {
-            result = this.locateNearestStructure(origin, List.of(Structure.VILLAGE_DESERT, Structure.VILLAGE_PLAINS, Structure.VILLAGE_SAVANNA, Structure.VILLAGE_SNOWY, Structure.VILLAGE_TAIGA), radius, findUnexplored);
-        } else if (StructureType.NETHER_FORTRESS == structureType) {
-            result = this.locateNearestStructure(origin, org.bukkit.generator.structure.StructureType.FORTRESS, radius, findUnexplored);
-        } else if (StructureType.STRONGHOLD == structureType) {
-            result = this.locateNearestStructure(origin, org.bukkit.generator.structure.StructureType.STRONGHOLD, radius, findUnexplored);
-        } else if (StructureType.JUNGLE_PYRAMID == structureType) {
-            result = this.locateNearestStructure(origin, org.bukkit.generator.structure.StructureType.JUNGLE_TEMPLE, radius, findUnexplored);
-        } else if (StructureType.OCEAN_RUIN == structureType) {
-            result = this.locateNearestStructure(origin, org.bukkit.generator.structure.StructureType.OCEAN_RUIN, radius, findUnexplored);
-        } else if (StructureType.DESERT_PYRAMID == structureType) {
-            result = this.locateNearestStructure(origin, org.bukkit.generator.structure.StructureType.DESERT_PYRAMID, radius, findUnexplored);
-        } else if (StructureType.IGLOO == structureType) {
-            result = this.locateNearestStructure(origin, org.bukkit.generator.structure.StructureType.IGLOO, radius, findUnexplored);
-        } else if (StructureType.SWAMP_HUT == structureType) {
-            result = this.locateNearestStructure(origin, org.bukkit.generator.structure.StructureType.SWAMP_HUT, radius, findUnexplored);
-        } else if (StructureType.OCEAN_MONUMENT == structureType) {
-            result = this.locateNearestStructure(origin, org.bukkit.generator.structure.StructureType.OCEAN_MONUMENT, radius, findUnexplored);
-        } else if (StructureType.END_CITY == structureType) {
-            result = this.locateNearestStructure(origin, org.bukkit.generator.structure.StructureType.END_CITY, radius, findUnexplored);
-        } else if (StructureType.WOODLAND_MANSION == structureType) {
-            result = this.locateNearestStructure(origin, org.bukkit.generator.structure.StructureType.WOODLAND_MANSION, radius, findUnexplored);
-        } else if (StructureType.BURIED_TREASURE == structureType) {
-            result = this.locateNearestStructure(origin, org.bukkit.generator.structure.StructureType.BURIED_TREASURE, radius, findUnexplored);
-        } else if (StructureType.SHIPWRECK == structureType) {
-            result = this.locateNearestStructure(origin, org.bukkit.generator.structure.StructureType.SHIPWRECK, radius, findUnexplored);
-        } else if (StructureType.PILLAGER_OUTPOST == structureType) {
-            result = this.locateNearestStructure(origin, Structure.PILLAGER_OUTPOST, radius, findUnexplored);
-        } else if (StructureType.NETHER_FOSSIL == structureType) {
-            result = this.locateNearestStructure(origin, org.bukkit.generator.structure.StructureType.NETHER_FOSSIL, radius, findUnexplored);
-        } else if (StructureType.RUINED_PORTAL == structureType) {
-            result = this.locateNearestStructure(origin, org.bukkit.generator.structure.StructureType.RUINED_PORTAL, radius, findUnexplored);
-        } else if (StructureType.BASTION_REMNANT == structureType) {
-            result = this.locateNearestStructure(origin, Structure.BASTION_REMNANT, radius, findUnexplored);
+        // Manually map the mess of the old StructureType to the new StructureType and normal Structure
+        if (org.bukkit.StructureType.MINESHAFT == structureType) {
+            result = locateNearestStructure(origin, StructureType.MINESHAFT, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.VILLAGE == structureType) {
+            result = locateNearestStructure(origin, List.of(Structure.VILLAGE_DESERT, Structure.VILLAGE_PLAINS, Structure.VILLAGE_SAVANNA, Structure.VILLAGE_SNOWY, Structure.VILLAGE_TAIGA), radius, findUnexplored);
+        } else if (org.bukkit.StructureType.NETHER_FORTRESS == structureType) {
+            result = locateNearestStructure(origin, StructureType.FORTRESS, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.STRONGHOLD == structureType) {
+            result = locateNearestStructure(origin, StructureType.STRONGHOLD, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.JUNGLE_PYRAMID == structureType) {
+            result = locateNearestStructure(origin, StructureType.JUNGLE_TEMPLE, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.OCEAN_RUIN == structureType) {
+            result = locateNearestStructure(origin, StructureType.OCEAN_RUIN, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.DESERT_PYRAMID == structureType) {
+            result = locateNearestStructure(origin, StructureType.DESERT_PYRAMID, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.IGLOO == structureType) {
+            result = locateNearestStructure(origin, StructureType.IGLOO, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.SWAMP_HUT == structureType) {
+            result = locateNearestStructure(origin, StructureType.SWAMP_HUT, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.OCEAN_MONUMENT == structureType) {
+            result = locateNearestStructure(origin, StructureType.OCEAN_MONUMENT, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.END_CITY == structureType) {
+            result = locateNearestStructure(origin, StructureType.END_CITY, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.WOODLAND_MANSION == structureType) {
+            result = locateNearestStructure(origin, StructureType.WOODLAND_MANSION, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.BURIED_TREASURE == structureType) {
+            result = locateNearestStructure(origin, StructureType.BURIED_TREASURE, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.SHIPWRECK == structureType) {
+            result = locateNearestStructure(origin, StructureType.SHIPWRECK, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.PILLAGER_OUTPOST == structureType) {
+            result = locateNearestStructure(origin, Structure.PILLAGER_OUTPOST, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.NETHER_FOSSIL == structureType) {
+            result = locateNearestStructure(origin, StructureType.NETHER_FOSSIL, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.RUINED_PORTAL == structureType) {
+            result = locateNearestStructure(origin, StructureType.RUINED_PORTAL, radius, findUnexplored);
+        } else if (org.bukkit.StructureType.BASTION_REMNANT == structureType) {
+            result = locateNearestStructure(origin, Structure.BASTION_REMNANT, radius, findUnexplored);
         }
 
-        return result == null ? null : result.getLocation();
+        return (result == null) ? null : result.getLocation();
     }
 
-    public StructureSearchResult locateNearestStructure(Location origin, org.bukkit.generator.structure.StructureType structureType, int radius, boolean findUnexplored) {
-        ArrayList structures = new ArrayList();
-        Iterator iterator = Registry.STRUCTURE.iterator();
-
-        while (iterator.hasNext()) {
-            Structure structure = (Structure) iterator.next();
-
+    @Override
+    public StructureSearchResult locateNearestStructure(Location origin, StructureType structureType, int radius, boolean findUnexplored) {
+        List<Structure> structures = new ArrayList<>();
+        for (Structure structure : Registry.STRUCTURE) {
             if (structure.getStructureType() == structureType) {
                 structures.add(structure);
             }
         }
 
-        return this.locateNearestStructure(origin, (List) structures, radius, findUnexplored);
+        return locateNearestStructure(origin, structures, radius, findUnexplored);
     }
 
+    @Override
     public StructureSearchResult locateNearestStructure(Location origin, Structure structure, int radius, boolean findUnexplored) {
-        return this.locateNearestStructure(origin, List.of(structure), radius, findUnexplored);
+        return locateNearestStructure(origin, List.of(structure), radius, findUnexplored);
     }
 
-    public StructureSearchResult locateNearestStructure(Location origin, List structures, int radius, boolean findUnexplored) {
-        BlockPos originPos = BlockPos.containing(origin.getX(), origin.getY(), origin.getZ());
-        ArrayList holders = new ArrayList();
-        Iterator iterator = structures.iterator();
+    public StructureSearchResult locateNearestStructure(Location origin, List<Structure> structures, int radius, boolean findUnexplored) {
+        BlockPosition originPos = BlockPosition.containing(origin.getX(), origin.getY(), origin.getZ());
+        List<Holder<net.minecraft.world.level.levelgen.structure.Structure>> holders = new ArrayList<>();
 
-        while (iterator.hasNext()) {
-            Structure structure = (Structure) iterator.next();
-
+        for (Structure structure : structures) {
             holders.add(Holder.direct(CraftStructure.bukkitToMinecraft(structure)));
         }
 
-        Pair found = this.getHandle().getChunkSource().getGenerator().findNearestMapStructure(this.getHandle(), HolderSet.direct((List) holders), originPos, radius, findUnexplored);
+        Pair<BlockPosition, Holder<net.minecraft.world.level.levelgen.structure.Structure>> found = getHandle().getChunkSource().getGenerator().findNearestMapStructure(getHandle(), HolderSet.direct(holders), originPos, radius, findUnexplored);
+        if (found == null) {
+            return null;
+        }
 
-        return found == null ? null : new CraftStructureSearchResult(CraftStructure.minecraftToBukkit((net.minecraft.world.level.levelgen.structure.Structure) ((Holder) found.getSecond()).value(), this.getHandle().registryAccess()), CraftLocation.toBukkit((BlockPos) found.getFirst(), (World) this));
+        return new CraftStructureSearchResult(CraftStructure.minecraftToBukkit(found.getSecond().value(), getHandle().registryAccess()), CraftLocation.toBukkit(found.getFirst(), this));
     }
 
+    @Override
     public BiomeSearchResult locateNearestBiome(Location origin, int radius, Biome... biomes) {
-        return this.locateNearestBiome(origin, radius, 32, 64, biomes);
+        return locateNearestBiome(origin, radius, 32, 64, biomes);
     }
 
+    @Override
     public BiomeSearchResult locateNearestBiome(Location origin, int radius, int horizontalInterval, int verticalInterval, Biome... biomes) {
-        BlockPos originPos = BlockPos.containing(origin.getX(), origin.getY(), origin.getZ());
-        HashSet holders = new HashSet();
-        Biome[] abiome = biomes;
-        int i = biomes.length;
+        BlockPosition originPos = BlockPosition.containing(origin.getX(), origin.getY(), origin.getZ());
+        Set<Holder<BiomeBase>> holders = new HashSet<>();
 
-        for (int j = 0; j < i; ++j) {
-            Biome biome = abiome[j];
-
+        for (Biome biome : biomes) {
             holders.add(CraftBiome.bukkitToMinecraftHolder(biome));
         }
 
-        Climate.Sampler sampler = this.getHandle().getChunkSource().randomState().sampler();
-        Pair found = this.getHandle().getChunkSource().getGenerator().getBiomeSource().findClosestBiome3d(originPos, radius, horizontalInterval, verticalInterval, holders::contains, sampler, this.getHandle());
+        Climate.Sampler sampler = getHandle().getChunkSource().randomState().sampler();
+        // The given predicate is evaluated once at the start of the search, so performance isn't a large concern.
+        Pair<BlockPosition, Holder<BiomeBase>> found = getHandle().getChunkSource().getGenerator().getBiomeSource().findClosestBiome3d(originPos, radius, horizontalInterval, verticalInterval, holders::contains, sampler, getHandle());
+        if (found == null) {
+            return null;
+        }
 
-        return found == null ? null : new CraftBiomeSearchResult(CraftBiome.minecraftHolderToBukkit((Holder) found.getSecond()), new Location(this, (double) ((BlockPos) found.getFirst()).getX(), (double) ((BlockPos) found.getFirst()).getY(), (double) ((BlockPos) found.getFirst()).getZ()));
+        return new CraftBiomeSearchResult(CraftBiome.minecraftHolderToBukkit(found.getSecond()), new Location(this, found.getFirst().getX(), found.getFirst().getY(), found.getFirst().getZ()));
     }
 
+    @Override
     public Raid locateNearestRaid(Location location, int radius) {
         Preconditions.checkArgument(location != null, "Location cannot be null");
         Preconditions.checkArgument(radius >= 0, "Radius value (%s) cannot be negative", radius);
-        Raids persistentRaid = this.world.getRaids();
+
+        PersistentRaid persistentRaid = world.getRaids();
         net.minecraft.world.entity.raid.Raid raid = persistentRaid.getNearbyRaid(CraftLocation.toBlockPosition(location), radius * radius);
-
-        return raid == null ? null : new CraftRaid(raid);
+        return (raid == null) ? null : new CraftRaid(raid);
     }
 
-    public List getRaids() {
-        Raids persistentRaid = this.world.getRaids();
-
-        return (List) persistentRaid.raidMap.values().stream().map(CraftRaid::new).collect(Collectors.toList());
+    @Override
+    public List<Raid> getRaids() {
+        PersistentRaid persistentRaid = world.getRaids();
+        return persistentRaid.raidMap.values().stream().map(CraftRaid::new).collect(Collectors.toList());
     }
 
+    @Override
     public DragonBattle getEnderDragonBattle() {
-        return this.getHandle().getDragonFight() == null ? null : new CraftDragonBattle(this.getHandle().getDragonFight());
+        return (getHandle().getDragonFight() == null) ? null : new CraftDragonBattle(getHandle().getDragonFight());
     }
 
+    @Override
     public PersistentDataContainer getPersistentDataContainer() {
-        return this.persistentDataContainer;
+        return persistentDataContainer;
     }
 
-    public Set getFeatureFlags() {
-        Stream stream = CraftFeatureFlag.getFromNMS(this.getHandle().enabledFeatures()).stream();
-
-        FeatureFlag.class.getClass();
-        return (Set) stream.map(FeatureFlag.class::cast).collect(Collectors.toUnmodifiableSet());
+    @Override
+    public Set<FeatureFlag> getFeatureFlags() {
+        return CraftFeatureFlag.getFromNMS(this.getHandle().enabledFeatures()).stream().map(FeatureFlag.class::cast).collect(Collectors.toUnmodifiableSet());
     }
 
-    public void storeBukkitValues(CompoundTag c) {
+    public void storeBukkitValues(NBTTagCompound c) {
         if (!this.persistentDataContainer.isEmpty()) {
             c.put("BukkitValues", this.persistentDataContainer.toTagCompound());
         }
-
     }
 
-    public void readBukkitValues(Tag c) {
-        if (c instanceof CompoundTag) {
-            this.persistentDataContainer.putAll((CompoundTag) c);
+    public void readBukkitValues(NBTBase c) {
+        if (c instanceof NBTTagCompound) {
+            this.persistentDataContainer.putAll((NBTTagCompound) c);
         }
-
-    }
-
-    public int getViewDistance() {
-        return this.world.spigotConfig.viewDistance;
-    }
-
-    public int getSimulationDistance() {
-        return this.world.spigotConfig.simulationDistance;
-    }
-
-    public Spigot spigot() {
-        return this.spigot;
     }
 }

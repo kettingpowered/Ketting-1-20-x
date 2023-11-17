@@ -1,23 +1,23 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.data;
+package org.bukkit.craftbukkit.block.data;
 
-import java.util.Set;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.bukkit.block.data.Rail;
-import org.bukkit.block.data.Rail.Shape;
 
 public abstract class CraftRail extends CraftBlockData implements Rail {
 
-    private static final EnumProperty SHAPE = getEnum("shape");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> SHAPE = getEnum("shape");
 
-    public Shape getShape() {
-        return (Shape) this.get(CraftRail.SHAPE, Shape.class);
+    @Override
+    public org.bukkit.block.data.Rail.Shape getShape() {
+        return get(SHAPE, org.bukkit.block.data.Rail.Shape.class);
     }
 
-    public void setShape(Shape shape) {
-        this.set(CraftRail.SHAPE, (Enum) shape);
+    @Override
+    public void setShape(org.bukkit.block.data.Rail.Shape shape) {
+        set(SHAPE, shape);
     }
 
-    public Set getShapes() {
-        return this.getValues(CraftRail.SHAPE, Shape.class);
+    @Override
+    public java.util.Set<org.bukkit.block.data.Rail.Shape> getShapes() {
+        return getValues(SHAPE, org.bukkit.block.data.Rail.Shape.class);
     }
 }

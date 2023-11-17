@@ -1,55 +1,62 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.TrappedChestBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.Chest;
-import org.bukkit.block.data.type.Chest.Type;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftChestTrapped extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Chest, org.bukkit.block.data.Directional, org.bukkit.block.data.Waterlogged {
 
-public final class CraftChestTrapped extends CraftBlockData implements Chest, Directional, Waterlogged {
+    public CraftChestTrapped() {
+        super();
+    }
 
-    private static final EnumProperty TYPE = getEnum(TrappedChestBlock.class, "type");
-    private static final EnumProperty FACING = getEnum(TrappedChestBlock.class, "facing");
-    private static final BooleanProperty WATERLOGGED = getBoolean(TrappedChestBlock.class, "waterlogged");
-
-    public CraftChestTrapped() {}
-
-    public CraftChestTrapped(BlockState state) {
+    public CraftChestTrapped(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
-    public Type getType() {
-        return (Type) this.get(CraftChestTrapped.TYPE, Type.class);
+    // org.bukkit.craftbukkit.block.data.type.CraftChest
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> TYPE = getEnum(net.minecraft.world.level.block.BlockChestTrapped.class, "type");
+
+    @Override
+    public org.bukkit.block.data.type.Chest.Type getType() {
+        return get(TYPE, org.bukkit.block.data.type.Chest.Type.class);
     }
 
-    public void setType(Type type) {
-        this.set(CraftChestTrapped.TYPE, (Enum) type);
+    @Override
+    public void setType(org.bukkit.block.data.type.Chest.Type type) {
+        set(TYPE, type);
     }
 
-    public BlockFace getFacing() {
-        return (BlockFace) this.get(CraftChestTrapped.FACING, BlockFace.class);
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.BlockChestTrapped.class, "facing");
+
+    @Override
+    public org.bukkit.block.BlockFace getFacing() {
+        return get(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public void setFacing(BlockFace facing) {
-        this.set(CraftChestTrapped.FACING, (Enum) facing);
+    @Override
+    public void setFacing(org.bukkit.block.BlockFace facing) {
+        set(FACING, facing);
     }
 
-    public Set getFaces() {
-        return this.getValues(CraftChestTrapped.FACING, BlockFace.class);
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockChestTrapped.class, "waterlogged");
+
+    @Override
     public boolean isWaterlogged() {
-        return (Boolean) this.get(CraftChestTrapped.WATERLOGGED);
+        return get(WATERLOGGED);
     }
 
+    @Override
     public void setWaterlogged(boolean waterlogged) {
-        this.set((Property) CraftChestTrapped.WATERLOGGED, (Comparable) waterlogged);
+        set(WATERLOGGED, waterlogged);
     }
 }

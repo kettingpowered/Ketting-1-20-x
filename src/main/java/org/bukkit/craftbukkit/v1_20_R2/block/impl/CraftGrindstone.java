@@ -1,44 +1,48 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.GrindstoneBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.FaceAttachable;
-import org.bukkit.block.data.FaceAttachable.AttachedFace;
-import org.bukkit.block.data.type.Grindstone;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftGrindstone extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Grindstone, org.bukkit.block.data.Directional, org.bukkit.block.data.FaceAttachable {
 
-public final class CraftGrindstone extends CraftBlockData implements Grindstone, Directional, FaceAttachable {
+    public CraftGrindstone() {
+        super();
+    }
 
-    private static final EnumProperty FACING = getEnum(GrindstoneBlock.class, "facing");
-    private static final EnumProperty ATTACH_FACE = getEnum(GrindstoneBlock.class, "face");
-
-    public CraftGrindstone() {}
-
-    public CraftGrindstone(BlockState state) {
+    public CraftGrindstone(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
-    public BlockFace getFacing() {
-        return (BlockFace) this.get(CraftGrindstone.FACING, BlockFace.class);
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.BlockGrindstone.class, "facing");
+
+    @Override
+    public org.bukkit.block.BlockFace getFacing() {
+        return get(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public void setFacing(BlockFace facing) {
-        this.set(CraftGrindstone.FACING, (Enum) facing);
+    @Override
+    public void setFacing(org.bukkit.block.BlockFace facing) {
+        set(FACING, facing);
     }
 
-    public Set getFaces() {
-        return this.getValues(CraftGrindstone.FACING, BlockFace.class);
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public AttachedFace getAttachedFace() {
-        return (AttachedFace) this.get(CraftGrindstone.ATTACH_FACE, AttachedFace.class);
+    // org.bukkit.craftbukkit.block.data.CraftFaceAttachable
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> ATTACH_FACE = getEnum(net.minecraft.world.level.block.BlockGrindstone.class, "face");
+
+    @Override
+    public org.bukkit.block.data.FaceAttachable.AttachedFace getAttachedFace() {
+        return get(ATTACH_FACE, org.bukkit.block.data.FaceAttachable.AttachedFace.class);
     }
 
-    public void setAttachedFace(AttachedFace face) {
-        this.set(CraftGrindstone.ATTACH_FACE, (Enum) face);
+    @Override
+    public void setAttachedFace(org.bukkit.block.data.FaceAttachable.AttachedFace face) {
+        set(ATTACH_FACE, face);
     }
 }

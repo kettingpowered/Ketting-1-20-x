@@ -1,60 +1,75 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.monster.Monster;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import net.minecraft.world.entity.monster.EntityZoglin;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Zoglin;
 
 public class CraftZoglin extends CraftMonster implements Zoglin {
 
-    public CraftZoglin(CraftServer server, net.minecraft.world.entity.monster.Zoglin entity) {
-        super(server, (Monster) entity);
+    public CraftZoglin(CraftServer server, EntityZoglin entity) {
+        super(server, entity);
     }
 
+    @Override
     public boolean isBaby() {
-        return this.getHandle().isBaby();
+        return getHandle().isBaby();
     }
 
+    @Override
     public void setBaby(boolean flag) {
-        this.getHandle().setBaby(flag);
+        getHandle().setBaby(flag);
     }
 
-    public net.minecraft.world.entity.monster.Zoglin getHandle() {
-        return (net.minecraft.world.entity.monster.Zoglin) this.entity;
+    @Override
+    public EntityZoglin getHandle() {
+        return (EntityZoglin) entity;
     }
 
+    @Override
     public String toString() {
         return "CraftZoglin";
     }
 
+    @Override
     public int getAge() {
-        return this.getHandle().isBaby() ? -1 : 0;
+        return getHandle().isBaby() ? -1 : 0;
     }
 
+    @Override
     public void setAge(int i) {
-        this.getHandle().setBaby(i < 0);
+        getHandle().setBaby(i < 0);
     }
 
-    public void setAgeLock(boolean b) {}
+    @Override
+    public void setAgeLock(boolean b) {
+    }
 
+    @Override
     public boolean getAgeLock() {
         return false;
     }
 
+    @Override
     public void setBaby() {
-        this.getHandle().setBaby(true);
+        getHandle().setBaby(true);
     }
 
+    @Override
     public void setAdult() {
-        this.getHandle().setBaby(false);
+        getHandle().setBaby(false);
     }
 
+    @Override
     public boolean isAdult() {
-        return !this.getHandle().isBaby();
+        return !getHandle().isBaby();
     }
 
+    @Override
     public boolean canBreed() {
         return false;
     }
 
-    public void setBreed(boolean b) {}
+    @Override
+    public void setBreed(boolean b) {
+    }
 }

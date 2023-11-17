@@ -1,18 +1,18 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.data;
+package org.bukkit.craftbukkit.block.data;
 
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
 import org.bukkit.block.data.Attachable;
 
 public abstract class CraftAttachable extends CraftBlockData implements Attachable {
 
-    private static final BooleanProperty ATTACHED = getBoolean("attached");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean ATTACHED = getBoolean("attached");
 
+    @Override
     public boolean isAttached() {
-        return (Boolean) this.get(CraftAttachable.ATTACHED);
+        return get(ATTACHED);
     }
 
+    @Override
     public void setAttached(boolean attached) {
-        this.set((Property) CraftAttachable.ATTACHED, (Comparable) attached);
+        set(ATTACHED, attached);
     }
 }

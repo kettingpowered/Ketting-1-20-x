@@ -1,37 +1,43 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.boss.EnderDragonPart;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import net.minecraft.world.entity.boss.EntityComplexPart;
+import net.minecraft.world.entity.boss.enderdragon.EntityEnderDragon;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.ComplexEntityPart;
 import org.bukkit.entity.ComplexLivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 public class CraftComplexPart extends CraftEntity implements ComplexEntityPart {
-
-    public CraftComplexPart(CraftServer server, EnderDragonPart entity) {
+    public CraftComplexPart(CraftServer server, EntityComplexPart entity) {
         super(server, entity);
     }
 
+    @Override
     public ComplexLivingEntity getParent() {
-        return (ComplexLivingEntity) this.getHandle().parentMob.getBukkitEntity();
+        return (ComplexLivingEntity) ((EntityEnderDragon) getHandle().parentMob).getBukkitEntity();
     }
 
+    @Override
     public void setLastDamageCause(EntityDamageEvent cause) {
-        this.getParent().setLastDamageCause(cause);
+        getParent().setLastDamageCause(cause);
     }
 
+    @Override
     public EntityDamageEvent getLastDamageCause() {
-        return this.getParent().getLastDamageCause();
+        return getParent().getLastDamageCause();
     }
 
+    @Override
     public boolean isValid() {
-        return this.getParent().isValid();
+        return getParent().isValid();
     }
 
-    public EnderDragonPart getHandle() {
-        return (EnderDragonPart) this.entity;
+    @Override
+    public EntityComplexPart getHandle() {
+        return (EntityComplexPart) entity;
     }
 
+    @Override
     public String toString() {
         return "CraftComplexPart";
     }

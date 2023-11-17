@@ -1,30 +1,33 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.ThrownTrident;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
+import net.minecraft.world.entity.projectile.EntityThrownTrident;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Trident;
 import org.bukkit.inventory.ItemStack;
 
 public class CraftTrident extends CraftArrow implements Trident {
 
-    public CraftTrident(CraftServer server, ThrownTrident entity) {
-        super(server, (AbstractArrow) entity);
+    public CraftTrident(CraftServer server, EntityThrownTrident entity) {
+        super(server, entity);
     }
 
-    public ThrownTrident getHandle() {
-        return (ThrownTrident) super.getHandle();
+    @Override
+    public EntityThrownTrident getHandle() {
+        return (EntityThrownTrident) super.getHandle();
     }
 
+    @Override
     public ItemStack getItem() {
-        return CraftItemStack.asBukkitCopy(this.getHandle().tridentItem);
+        return CraftItemStack.asBukkitCopy(getHandle().tridentItem);
     }
 
+    @Override
     public void setItem(ItemStack itemStack) {
-        this.getHandle().tridentItem = CraftItemStack.asNMSCopy(itemStack);
+        getHandle().tridentItem = CraftItemStack.asNMSCopy(itemStack);
     }
 
+    @Override
     public String toString() {
         return "CraftTrident";
     }

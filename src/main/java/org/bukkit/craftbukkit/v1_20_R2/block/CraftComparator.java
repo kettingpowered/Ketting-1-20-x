@@ -1,19 +1,20 @@
-package org.bukkit.craftbukkit.v1_20_R2.block;
+package org.bukkit.craftbukkit.block;
 
-import net.minecraft.world.level.block.entity.ComparatorBlockEntity;
+import net.minecraft.world.level.block.entity.TileEntityComparator;
 import org.bukkit.World;
 import org.bukkit.block.Comparator;
 
-public class CraftComparator extends CraftBlockEntityState implements Comparator {
+public class CraftComparator extends CraftBlockEntityState<TileEntityComparator> implements Comparator {
 
-    public CraftComparator(World world, ComparatorBlockEntity tileEntity) {
+    public CraftComparator(World world, TileEntityComparator tileEntity) {
         super(world, tileEntity);
     }
 
     protected CraftComparator(CraftComparator state) {
-        super((CraftBlockEntityState) state);
+        super(state);
     }
 
+    @Override
     public CraftComparator copy() {
         return new CraftComparator(this);
     }

@@ -1,20 +1,22 @@
-package org.bukkit.craftbukkit.v1_20_R2.inventory;
+package org.bukkit.craftbukkit.inventory;
 
-import net.minecraft.world.Container;
+import net.minecraft.world.IInventory;
 import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.ItemStack;
 
 public class CraftInventoryHorse extends CraftInventoryAbstractHorse implements HorseInventory {
 
-    public CraftInventoryHorse(Container inventory) {
+    public CraftInventoryHorse(IInventory inventory) {
         super(inventory);
     }
 
+    @Override
     public ItemStack getArmor() {
-        return this.getItem(1);
+       return getItem(1);
     }
 
+    @Override
     public void setArmor(ItemStack stack) {
-        this.setItem(1, stack);
+        setItem(1, stack);
     }
 }

@@ -1,28 +1,23 @@
-package org.bukkit.craftbukkit.v1_20_R2.util;
+package org.bukkit.craftbukkit.util;
 
 import net.minecraft.server.MinecraftServer;
-import org.spigotmc.AsyncCatcher;
 
 public class ServerShutdownThread extends Thread {
-
     private final MinecraftServer server;
 
     public ServerShutdownThread(MinecraftServer server) {
         this.server = server;
     }
 
+    @Override
     public void run() {
         try {
-            AsyncCatcher.enabled = false;
-            this.server.close();
+            server.close();
         } finally {
             try {
-                this.server.reader.getTerminal().restore();
-            } catch (Exception exception) {
-                ;
+                server.reader.getTerminal().restore();
+            } catch (Exception e) {
             }
-
         }
-
     }
 }

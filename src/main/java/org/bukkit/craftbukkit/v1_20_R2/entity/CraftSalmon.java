@@ -1,19 +1,21 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.animal.AbstractFish;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import net.minecraft.world.entity.animal.EntitySalmon;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Salmon;
 
 public class CraftSalmon extends CraftFish implements Salmon {
 
-    public CraftSalmon(CraftServer server, net.minecraft.world.entity.animal.Salmon entity) {
-        super(server, (AbstractFish) entity);
+    public CraftSalmon(CraftServer server, EntitySalmon entity) {
+        super(server, entity);
     }
 
-    public net.minecraft.world.entity.animal.Salmon getHandle() {
-        return (net.minecraft.world.entity.animal.Salmon) super.getHandle();
+    @Override
+    public EntitySalmon getHandle() {
+        return (EntitySalmon) super.getHandle();
     }
 
+    @Override
     public String toString() {
         return "CraftSalmon";
     }

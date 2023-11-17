@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.v1_20_R2.persistence;
+package org.bukkit.craftbukkit.persistence;
 
 import org.bukkit.persistence.PersistentDataAdapterContext;
 
@@ -10,6 +10,12 @@ public final class CraftPersistentDataAdapterContext implements PersistentDataAd
         this.registry = registry;
     }
 
+    /**
+     * Creates a new and empty tag container instance
+     *
+     * @return the fresh container instance
+     */
+    @Override
     public CraftPersistentDataContainer newPersistentDataContainer() {
         return new CraftPersistentDataContainer(this.registry);
     }

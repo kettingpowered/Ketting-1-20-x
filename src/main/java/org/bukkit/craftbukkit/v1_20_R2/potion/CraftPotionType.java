@@ -1,92 +1,95 @@
-package org.bukkit.craftbukkit.v1_20_R2.potion;
+package org.bukkit.craftbukkit.potion;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
 import java.util.List;
 import java.util.function.Supplier;
-import net.minecraft.core.Registry;
+import net.minecraft.core.IRegistry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionRegistry;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.v1_20_R2.CraftRegistry;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
+import org.bukkit.Registry;
+import org.bukkit.craftbukkit.CraftRegistry;
+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-import org.bukkit.potion.PotionType.InternalPotionData;
 
-public class CraftPotionType implements InternalPotionData {
+public class CraftPotionType implements PotionType.InternalPotionData {
 
-    private final NamespacedKey key;
-    private final Potion potion;
-    private final Supplier potionEffects;
-    private final Supplier upgradeable;
-    private final Supplier extendable;
-    private final Supplier maxLevel;
-
-    public static PotionType minecraftToBukkit(Potion minecraft) {
+    public static PotionType minecraftToBukkit(PotionRegistry minecraft) {
         Preconditions.checkArgument(minecraft != null);
-        Registry registry = CraftRegistry.getMinecraftRegistry(Registries.POTION);
-        PotionType bukkit = (PotionType) org.bukkit.Registry.POTION.get(CraftNamespacedKey.fromMinecraft(((ResourceKey) registry.getResourceKey(minecraft).orElseThrow()).location()));
+
+        IRegistry<PotionRegistry> registry = CraftRegistry.getMinecraftRegistry(Registries.POTION);
+        PotionType bukkit = Registry.POTION.get(CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location()));
 
         Preconditions.checkArgument(bukkit != null);
+
         return bukkit;
     }
 
-    public static Potion bukkitToMinecraft(PotionType bukkit) {
+    public static PotionRegistry bukkitToMinecraft(PotionType bukkit) {
         Preconditions.checkArgument(bukkit != null);
-        return (Potion) CraftRegistry.getMinecraftRegistry(Registries.POTION).getOptional(CraftNamespacedKey.toMinecraft(bukkit.getKey())).orElseThrow();
+
+        return CraftRegistry.getMinecraftRegistry(Registries.POTION)
+                .getOptional(CraftNamespacedKey.toMinecraft(bukkit.getKey())).orElseThrow();
     }
 
     public static String bukkitToString(PotionType potionType) {
         Preconditions.checkArgument(potionType != null);
+
         return potionType.getKey().toString();
     }
 
     public static PotionType stringToBukkit(String string) {
         Preconditions.checkArgument(string != null);
-        return (PotionType) org.bukkit.Registry.POTION.get(NamespacedKey.fromString(string));
+
+        return Registry.POTION.get(NamespacedKey.fromString(string));
     }
 
-    public CraftPotionType(NamespacedKey key, Potion potion) {
+    private final NamespacedKey key;
+    private final PotionRegistry potion;
+    private final Supplier<List<PotionEffect>> potionEffects;
+    private final Supplier<Boolean> upgradeable;
+    private final Supplier<Boolean> extendable;
+    private final Supplier<Integer> maxLevel;
+
+    public CraftPotionType(NamespacedKey key, PotionRegistry potion) {
         this.key = key;
         this.potion = potion;
-        this.potionEffects = Suppliers.memoize(() -> {
-            return potion.getEffects().stream().map(CraftPotionUtil::toBukkit).toList();
-        });
-        this.upgradeable = Suppliers.memoize(() -> {
-            return org.bukkit.Registry.POTION.get(new NamespacedKey(key.getNamespace(), "strong_" + key.getKey())) != null;
-        });
-        this.extendable = Suppliers.memoize(() -> {
-            return org.bukkit.Registry.POTION.get(new NamespacedKey(key.getNamespace(), "long_" + key.getKey())) != null;
-        });
-        this.maxLevel = Suppliers.memoize(() -> {
-            return this.isUpgradeable() ? 2 : 1;
-        });
+        this.potionEffects = Suppliers.memoize(() -> potion.getEffects().stream().map(CraftPotionUtil::toBukkit).toList());
+        this.upgradeable = Suppliers.memoize(() -> Registry.POTION.get(new NamespacedKey(key.getNamespace(), "strong_" + key.getKey())) != null);
+        this.extendable = Suppliers.memoize(() -> Registry.POTION.get(new NamespacedKey(key.getNamespace(), "long_" + key.getKey())) != null);
+        this.maxLevel = Suppliers.memoize(() -> isUpgradeable() ? 2 : 1);
     }
 
+    @Override
     public PotionEffectType getEffectType() {
-        return this.getPotionEffects().isEmpty() ? null : ((PotionEffect) this.getPotionEffects().get(0)).getType();
+        return getPotionEffects().isEmpty() ? null : getPotionEffects().get(0).getType();
     }
 
-    public List getPotionEffects() {
-        return (List) this.potionEffects.get();
+    @Override
+    public List<PotionEffect> getPotionEffects() {
+        return potionEffects.get();
     }
 
+    @Override
     public boolean isInstant() {
-        return this.potion.hasInstantEffects();
+        return potion.hasInstantEffects();
     }
 
+    @Override
     public boolean isUpgradeable() {
-        return (Boolean) this.upgradeable.get();
+        return upgradeable.get();
     }
 
+    @Override
     public boolean isExtendable() {
-        return (Boolean) this.extendable.get();
+        return extendable.get();
     }
 
+    @Override
     public int getMaxLevel() {
-        return (Integer) this.maxLevel.get();
+        return maxLevel.get();
     }
 }

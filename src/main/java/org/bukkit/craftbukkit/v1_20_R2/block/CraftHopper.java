@@ -1,31 +1,36 @@
-package org.bukkit.craftbukkit.v1_20_R2.block;
+package org.bukkit.craftbukkit.block;
 
-import net.minecraft.world.Container;
-import net.minecraft.world.level.block.entity.HopperBlockEntity;
-import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraft.world.level.block.entity.TileEntityHopper;
 import org.bukkit.World;
 import org.bukkit.block.Hopper;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory;
+import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
 
-public class CraftHopper extends CraftLootable implements Hopper {
+public class CraftHopper extends CraftLootable<TileEntityHopper> implements Hopper {
 
-    public CraftHopper(World world, HopperBlockEntity tileEntity) {
-        super(world, (RandomizableContainerBlockEntity) tileEntity);
+    public CraftHopper(World world, TileEntityHopper tileEntity) {
+        super(world, tileEntity);
     }
 
     protected CraftHopper(CraftHopper state) {
-        super((CraftLootable) state);
+        super(state);
     }
 
+    @Override
     public Inventory getSnapshotInventory() {
-        return new CraftInventory((Container) this.getSnapshot());
+        return new CraftInventory(this.getSnapshot());
     }
 
+    @Override
     public Inventory getInventory() {
-        return (Inventory) (!this.isPlaced() ? this.getSnapshotInventory() : new CraftInventory((Container) this.getTileEntity()));
+        if (!this.isPlaced()) {
+            return this.getSnapshotInventory();
+        }
+
+        return new CraftInventory(this.getTileEntity());
     }
 
+    @Override
     public CraftHopper copy() {
         return new CraftHopper(this);
     }

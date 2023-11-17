@@ -1,31 +1,34 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import net.minecraft.world.level.block.BrushableBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Brushable;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftBrushable extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Brushable {
 
-public final class CraftBrushable extends CraftBlockData implements Brushable {
+    public CraftBrushable() {
+        super();
+    }
 
-    private static final IntegerProperty DUSTED = getInteger(BrushableBlock.class, "dusted");
-
-    public CraftBrushable() {}
-
-    public CraftBrushable(BlockState state) {
+    public CraftBrushable(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.block.data.CraftBrushable
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger DUSTED = getInteger(net.minecraft.world.level.block.BrushableBlock.class, "dusted");
+
+    @Override
     public int getDusted() {
-        return (Integer) this.get(CraftBrushable.DUSTED);
+        return get(DUSTED);
     }
 
+    @Override
     public void setDusted(int dusted) {
-        this.set((Property) CraftBrushable.DUSTED, (Comparable) dusted);
+        set(DUSTED, dusted);
     }
 
+    @Override
     public int getMaximumDusted() {
-        return getMax(CraftBrushable.DUSTED);
+        return getMax(DUSTED);
     }
 }

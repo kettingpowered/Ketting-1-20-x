@@ -1,44 +1,48 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.EndPortalFrameBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.type.EndPortalFrame;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftEnderPortalFrame extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.EndPortalFrame, org.bukkit.block.data.Directional {
 
-public final class CraftEnderPortalFrame extends CraftBlockData implements EndPortalFrame, Directional {
+    public CraftEnderPortalFrame() {
+        super();
+    }
 
-    private static final BooleanProperty EYE = getBoolean(EndPortalFrameBlock.class, "eye");
-    private static final EnumProperty FACING = getEnum(EndPortalFrameBlock.class, "facing");
-
-    public CraftEnderPortalFrame() {}
-
-    public CraftEnderPortalFrame(BlockState state) {
+    public CraftEnderPortalFrame(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.block.data.type.CraftEndPortalFrame
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean EYE = getBoolean(net.minecraft.world.level.block.BlockEnderPortalFrame.class, "eye");
+
+    @Override
     public boolean hasEye() {
-        return (Boolean) this.get(CraftEnderPortalFrame.EYE);
+        return get(EYE);
     }
 
+    @Override
     public void setEye(boolean eye) {
-        this.set((Property) CraftEnderPortalFrame.EYE, (Comparable) eye);
+        set(EYE, eye);
     }
 
-    public BlockFace getFacing() {
-        return (BlockFace) this.get(CraftEnderPortalFrame.FACING, BlockFace.class);
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.BlockEnderPortalFrame.class, "facing");
+
+    @Override
+    public org.bukkit.block.BlockFace getFacing() {
+        return get(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public void setFacing(BlockFace facing) {
-        this.set(CraftEnderPortalFrame.FACING, (Enum) facing);
+    @Override
+    public void setFacing(org.bukkit.block.BlockFace facing) {
+        set(FACING, facing);
     }
 
-    public Set getFaces() {
-        return this.getValues(CraftEnderPortalFrame.FACING, BlockFace.class);
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 }

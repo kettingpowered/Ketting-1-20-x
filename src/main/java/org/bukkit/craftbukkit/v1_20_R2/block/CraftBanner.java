@@ -1,101 +1,111 @@
-package org.bukkit.craftbukkit.v1_20_R2.block;
+package org.bukkit.craftbukkit.block;
 
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.level.block.AbstractBannerBlock;
-import net.minecraft.world.level.block.entity.BannerBlockEntity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.item.EnumColor;
+import net.minecraft.world.level.block.BlockBannerAbstract;
+import net.minecraft.world.level.block.entity.TileEntityBanner;
 import org.bukkit.DyeColor;
 import org.bukkit.World;
 import org.bukkit.block.Banner;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 
-public class CraftBanner extends CraftBlockEntityState implements Banner {
+public class CraftBanner extends CraftBlockEntityState<TileEntityBanner> implements Banner {
 
     private DyeColor base;
-    private List patterns;
+    private List<Pattern> patterns;
 
-    public CraftBanner(World world, BannerBlockEntity tileEntity) {
+    public CraftBanner(World world, TileEntityBanner tileEntity) {
         super(world, tileEntity);
     }
 
     protected CraftBanner(CraftBanner state) {
-        super((CraftBlockEntityState) state);
+        super(state);
     }
 
-    public void load(BannerBlockEntity banner) {
+    @Override
+    public void load(TileEntityBanner banner) {
         super.load(banner);
-        this.base = DyeColor.getByWoolData((byte) ((AbstractBannerBlock) this.data.getBlock()).getColor().getId());
-        this.patterns = new ArrayList();
-        if (banner.itemPatterns != null) {
-            for (int i = 0; i < banner.itemPatterns.size(); ++i) {
-                CompoundTag p = (CompoundTag) banner.itemPatterns.get(i);
 
-                this.patterns.add(new Pattern(DyeColor.getByWoolData((byte) p.getInt("Color")), PatternType.getByIdentifier(p.getString("Pattern"))));
+        base = DyeColor.getByWoolData((byte) ((BlockBannerAbstract) this.data.getBlock()).getColor().getId());
+        patterns = new ArrayList<Pattern>();
+
+        if (banner.itemPatterns != null) {
+            for (int i = 0; i < banner.itemPatterns.size(); i++) {
+                NBTTagCompound p = (NBTTagCompound) banner.itemPatterns.get(i);
+                patterns.add(new Pattern(DyeColor.getByWoolData((byte) p.getInt("Color")), PatternType.getByIdentifier(p.getString("Pattern"))));
             }
         }
-
     }
 
+    @Override
     public DyeColor getBaseColor() {
         return this.base;
     }
 
+    @Override
     public void setBaseColor(DyeColor color) {
         Preconditions.checkArgument(color != null, "color");
         this.base = color;
     }
 
-    public List getPatterns() {
-        return new ArrayList(this.patterns);
+    @Override
+    public List<Pattern> getPatterns() {
+        return new ArrayList<Pattern>(patterns);
     }
 
-    public void setPatterns(List patterns) {
-        this.patterns = new ArrayList(patterns);
+    @Override
+    public void setPatterns(List<Pattern> patterns) {
+        this.patterns = new ArrayList<Pattern>(patterns);
     }
 
+    @Override
     public void addPattern(Pattern pattern) {
         this.patterns.add(pattern);
     }
 
+    @Override
     public Pattern getPattern(int i) {
-        return (Pattern) this.patterns.get(i);
+        return this.patterns.get(i);
     }
 
+    @Override
     public Pattern removePattern(int i) {
-        return (Pattern) this.patterns.remove(i);
+        return this.patterns.remove(i);
     }
 
+    @Override
     public void setPattern(int i, Pattern pattern) {
         this.patterns.set(i, pattern);
     }
 
+    @Override
     public int numberOfPatterns() {
-        return this.patterns.size();
+        return patterns.size();
     }
 
-    public void applyTo(BannerBlockEntity banner) {
+    @Override
+    public void applyTo(TileEntityBanner banner) {
         super.applyTo(banner);
-        banner.baseColor = net.minecraft.world.item.DyeColor.byId(this.base.getWoolData());
-        ListTag newPatterns = new ListTag();
-        Iterator iterator = this.patterns.iterator();
 
-        while (iterator.hasNext()) {
-            Pattern p = (Pattern) iterator.next();
-            CompoundTag compound = new CompoundTag();
+        banner.baseColor = EnumColor.byId(base.getWoolData());
 
+        NBTTagList newPatterns = new NBTTagList();
+
+        for (Pattern p : patterns) {
+            NBTTagCompound compound = new NBTTagCompound();
             compound.putInt("Color", p.getColor().getWoolData());
             compound.putString("Pattern", p.getPattern().getIdentifier());
             newPatterns.add(compound);
         }
-
         banner.itemPatterns = newPatterns;
     }
 
+    @Override
     public CraftBanner copy() {
         return new CraftBanner(this);
     }

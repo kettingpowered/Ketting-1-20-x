@@ -1,26 +1,32 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.monster.Monster;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import net.minecraft.world.entity.monster.EntityEndermite;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Endermite;
 
 public class CraftEndermite extends CraftMonster implements Endermite {
 
-    public CraftEndermite(CraftServer server, net.minecraft.world.entity.monster.Endermite entity) {
-        super(server, (Monster) entity);
+    public CraftEndermite(CraftServer server, EntityEndermite entity) {
+        super(server, entity);
     }
 
-    public net.minecraft.world.entity.monster.Endermite getHandle() {
-        return (net.minecraft.world.entity.monster.Endermite) super.getHandle();
+    @Override
+    public EntityEndermite getHandle() {
+        return (EntityEndermite) super.getHandle();
     }
 
+    @Override
     public String toString() {
         return "CraftEndermite";
     }
 
+    @Override
     public boolean isPlayerSpawned() {
         return false;
     }
 
-    public void setPlayerSpawned(boolean playerSpawned) {}
+    @Override
+    public void setPlayerSpawned(boolean playerSpawned) {
+        // Nop
+    }
 }

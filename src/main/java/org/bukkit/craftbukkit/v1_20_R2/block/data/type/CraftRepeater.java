@@ -1,37 +1,40 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.data.type;
+package org.bukkit.craftbukkit.block.data.type;
 
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
 import org.bukkit.block.data.type.Repeater;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftRepeater extends CraftBlockData implements Repeater {
 
-    private static final IntegerProperty DELAY = getInteger("delay");
-    private static final BooleanProperty LOCKED = getBoolean("locked");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger DELAY = getInteger("delay");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean LOCKED = getBoolean("locked");
 
+    @Override
     public int getDelay() {
-        return (Integer) this.get(CraftRepeater.DELAY);
+        return get(DELAY);
     }
 
+    @Override
     public void setDelay(int delay) {
-        this.set((Property) CraftRepeater.DELAY, (Comparable) delay);
+        set(DELAY, delay);
     }
 
+    @Override
     public int getMinimumDelay() {
-        return getMin(CraftRepeater.DELAY);
+        return getMin(DELAY);
     }
 
+    @Override
     public int getMaximumDelay() {
-        return getMax(CraftRepeater.DELAY);
+        return getMax(DELAY);
     }
 
+    @Override
     public boolean isLocked() {
-        return (Boolean) this.get(CraftRepeater.LOCKED);
+        return get(LOCKED);
     }
 
+    @Override
     public void setLocked(boolean locked) {
-        this.set((Property) CraftRepeater.LOCKED, (Comparable) locked);
+        set(LOCKED, locked);
     }
 }

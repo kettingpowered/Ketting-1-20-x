@@ -1,64 +1,76 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.CampfireBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.Lightable;
-import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.Campfire;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftCampfire extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Campfire, org.bukkit.block.data.Directional, org.bukkit.block.data.Lightable, org.bukkit.block.data.Waterlogged {
 
-public final class CraftCampfire extends CraftBlockData implements Campfire, Directional, Lightable, Waterlogged {
+    public CraftCampfire() {
+        super();
+    }
 
-    private static final BooleanProperty SIGNAL_FIRE = getBoolean(CampfireBlock.class, "signal_fire");
-    private static final EnumProperty FACING = getEnum(CampfireBlock.class, "facing");
-    private static final BooleanProperty LIT = getBoolean(CampfireBlock.class, "lit");
-    private static final BooleanProperty WATERLOGGED = getBoolean(CampfireBlock.class, "waterlogged");
-
-    public CraftCampfire() {}
-
-    public CraftCampfire(BlockState state) {
+    public CraftCampfire(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.block.data.type.CraftCampfire
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean SIGNAL_FIRE = getBoolean(net.minecraft.world.level.block.BlockCampfire.class, "signal_fire");
+
+    @Override
     public boolean isSignalFire() {
-        return (Boolean) this.get(CraftCampfire.SIGNAL_FIRE);
+        return get(SIGNAL_FIRE);
     }
 
+    @Override
     public void setSignalFire(boolean signalFire) {
-        this.set((Property) CraftCampfire.SIGNAL_FIRE, (Comparable) signalFire);
+        set(SIGNAL_FIRE, signalFire);
     }
 
-    public BlockFace getFacing() {
-        return (BlockFace) this.get(CraftCampfire.FACING, BlockFace.class);
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.BlockCampfire.class, "facing");
+
+    @Override
+    public org.bukkit.block.BlockFace getFacing() {
+        return get(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public void setFacing(BlockFace facing) {
-        this.set(CraftCampfire.FACING, (Enum) facing);
+    @Override
+    public void setFacing(org.bukkit.block.BlockFace facing) {
+        set(FACING, facing);
     }
 
-    public Set getFaces() {
-        return this.getValues(CraftCampfire.FACING, BlockFace.class);
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
+    // org.bukkit.craftbukkit.block.data.CraftLightable
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean LIT = getBoolean(net.minecraft.world.level.block.BlockCampfire.class, "lit");
+
+    @Override
     public boolean isLit() {
-        return (Boolean) this.get(CraftCampfire.LIT);
+        return get(LIT);
     }
 
+    @Override
     public void setLit(boolean lit) {
-        this.set((Property) CraftCampfire.LIT, (Comparable) lit);
+        set(LIT, lit);
     }
 
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockCampfire.class, "waterlogged");
+
+    @Override
     public boolean isWaterlogged() {
-        return (Boolean) this.get(CraftCampfire.WATERLOGGED);
+        return get(WATERLOGGED);
     }
 
+    @Override
     public void setWaterlogged(boolean waterlogged) {
-        this.set((Property) CraftCampfire.WATERLOGGED, (Comparable) waterlogged);
+        set(WATERLOGGED, waterlogged);
     }
 }

@@ -1,22 +1,23 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.data;
+package org.bukkit.craftbukkit.block.data;
 
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
 import org.bukkit.block.data.AnaloguePowerable;
 
 public abstract class CraftAnaloguePowerable extends CraftBlockData implements AnaloguePowerable {
 
-    private static final IntegerProperty POWER = getInteger("power");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger POWER = getInteger("power");
 
+    @Override
     public int getPower() {
-        return (Integer) this.get(CraftAnaloguePowerable.POWER);
+        return get(POWER);
     }
 
+    @Override
     public void setPower(int power) {
-        this.set((Property) CraftAnaloguePowerable.POWER, (Comparable) power);
+        set(POWER, power);
     }
 
+    @Override
     public int getMaximumPower() {
-        return getMax(CraftAnaloguePowerable.POWER);
+        return getMax(POWER);
     }
 }

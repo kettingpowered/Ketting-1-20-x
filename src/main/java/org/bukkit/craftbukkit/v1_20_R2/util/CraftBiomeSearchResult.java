@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.v1_20_R2.util;
+package org.bukkit.craftbukkit.util;
 
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
@@ -15,10 +15,10 @@ public class CraftBiomeSearchResult implements BiomeSearchResult {
     }
 
     public Biome getBiome() {
-        return this.biome;
+        return biome;
     }
 
     public Location getLocation() {
-        return this.location;
+        return location;
     }
 }

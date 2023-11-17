@@ -1,31 +1,34 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import net.minecraft.world.level.block.BeetrootBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Ageable;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftBeetroot extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Ageable {
 
-public final class CraftBeetroot extends CraftBlockData implements Ageable {
+    public CraftBeetroot() {
+        super();
+    }
 
-    private static final IntegerProperty AGE = getInteger(BeetrootBlock.class, "age");
-
-    public CraftBeetroot() {}
-
-    public CraftBeetroot(BlockState state) {
+    public CraftBeetroot(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.block.data.CraftAgeable
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger AGE = getInteger(net.minecraft.world.level.block.BlockBeetroot.class, "age");
+
+    @Override
     public int getAge() {
-        return (Integer) this.get(CraftBeetroot.AGE);
+        return get(AGE);
     }
 
+    @Override
     public void setAge(int age) {
-        this.set((Property) CraftBeetroot.AGE, (Comparable) age);
+        set(AGE, age);
     }
 
+    @Override
     public int getMaximumAge() {
-        return getMax(CraftBeetroot.AGE);
+        return getMax(AGE);
     }
 }

@@ -1,19 +1,19 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.data.type;
+package org.bukkit.craftbukkit.block.data.type;
 
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.bukkit.block.data.type.Switch;
-import org.bukkit.block.data.type.Switch.Face;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftSwitch extends CraftBlockData implements Switch {
 
-    private static final EnumProperty FACE = getEnum("face");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACE = getEnum("face");
 
-    public Face getFace() {
-        return (Face) this.get(CraftSwitch.FACE, Face.class);
+    @Override
+    public org.bukkit.block.data.type.Switch.Face getFace() {
+        return get(FACE, org.bukkit.block.data.type.Switch.Face.class);
     }
 
-    public void setFace(Face face) {
-        this.set(CraftSwitch.FACE, (Enum) face);
+    @Override
+    public void setFace(org.bukkit.block.data.type.Switch.Face face) {
+        set(FACE, face);
     }
 }

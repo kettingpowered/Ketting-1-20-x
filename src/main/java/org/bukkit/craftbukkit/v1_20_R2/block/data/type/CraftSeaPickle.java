@@ -1,27 +1,29 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.data.type;
+package org.bukkit.craftbukkit.block.data.type;
 
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
 import org.bukkit.block.data.type.SeaPickle;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftSeaPickle extends CraftBlockData implements SeaPickle {
 
-    private static final IntegerProperty PICKLES = getInteger("pickles");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger PICKLES = getInteger("pickles");
 
+    @Override
     public int getPickles() {
-        return (Integer) this.get(CraftSeaPickle.PICKLES);
+        return get(PICKLES);
     }
 
+    @Override
     public void setPickles(int pickles) {
-        this.set((Property) CraftSeaPickle.PICKLES, (Comparable) pickles);
+        set(PICKLES, pickles);
     }
 
+    @Override
     public int getMinimumPickles() {
-        return getMin(CraftSeaPickle.PICKLES);
+        return getMin(PICKLES);
     }
 
+    @Override
     public int getMaximumPickles() {
-        return getMax(CraftSeaPickle.PICKLES);
+        return getMax(PICKLES);
     }
 }

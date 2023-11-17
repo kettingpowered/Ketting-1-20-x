@@ -1,16 +1,20 @@
-package org.bukkit.craftbukkit.v1_20_R2.persistence;
+package org.bukkit.craftbukkit.persistence;
 
 import java.util.Map;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataType;
 
+/**
+ * A child class of the persistent data container that recalls if it has been
+ * mutated from an external caller.
+ */
 public final class DirtyCraftPersistentDataContainer extends CraftPersistentDataContainer {
 
     private boolean dirty;
 
-    public DirtyCraftPersistentDataContainer(Map customTags, CraftPersistentDataTypeRegistry registry) {
+    public DirtyCraftPersistentDataContainer(Map<String, NBTBase> customTags, CraftPersistentDataTypeRegistry registry) {
         super(customTags, registry);
     }
 
@@ -22,31 +26,36 @@ public final class DirtyCraftPersistentDataContainer extends CraftPersistentData
         return this.dirty;
     }
 
-    public void dirty(boolean dirty) {
+    public void dirty(final boolean dirty) {
         this.dirty = dirty;
     }
 
-    public void set(NamespacedKey key, PersistentDataType type, Object value) {
+    @Override
+    public <T, Z> void set(NamespacedKey key, PersistentDataType<T, Z> type, Z value) {
         super.set(key, type, value);
         this.dirty(true);
     }
 
+    @Override
     public void remove(NamespacedKey key) {
         super.remove(key);
         this.dirty(true);
     }
 
-    public void put(String key, Tag base) {
+    @Override
+    public void put(String key, NBTBase base) {
         super.put(key, base);
         this.dirty(true);
     }
 
-    public void putAll(CompoundTag compound) {
+    @Override
+    public void putAll(NBTTagCompound compound) {
         super.putAll(compound);
         this.dirty(true);
     }
 
-    public void putAll(Map map) {
+    @Override
+    public void putAll(Map<String, NBTBase> map) {
         super.putAll(map);
         this.dirty(true);
     }

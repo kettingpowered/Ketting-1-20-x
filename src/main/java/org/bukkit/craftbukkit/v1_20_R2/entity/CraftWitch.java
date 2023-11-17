@@ -1,24 +1,26 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.raid.Raider;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import net.minecraft.world.entity.monster.EntityWitch;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Witch;
 
 public class CraftWitch extends CraftRaider implements Witch {
-
-    public CraftWitch(CraftServer server, net.minecraft.world.entity.monster.Witch entity) {
-        super(server, (Raider) entity);
+    public CraftWitch(CraftServer server, EntityWitch entity) {
+        super(server, entity);
     }
 
-    public net.minecraft.world.entity.monster.Witch getHandle() {
-        return (net.minecraft.world.entity.monster.Witch) this.entity;
+    @Override
+    public EntityWitch getHandle() {
+        return (EntityWitch) entity;
     }
 
+    @Override
     public String toString() {
         return "CraftWitch";
     }
 
+    @Override
     public boolean isDrinkingPotion() {
-        return this.getHandle().isDrinkingPotion();
+        return getHandle().isDrinkingPotion();
     }
 }

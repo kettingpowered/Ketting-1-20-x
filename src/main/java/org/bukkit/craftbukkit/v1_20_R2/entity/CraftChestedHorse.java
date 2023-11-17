@@ -1,28 +1,29 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import net.minecraft.world.entity.animal.horse.EntityHorseChestedAbstract;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.ChestedHorse;
 
 public abstract class CraftChestedHorse extends CraftAbstractHorse implements ChestedHorse {
 
-    public CraftChestedHorse(CraftServer server, AbstractChestedHorse entity) {
-        super(server, (AbstractHorse) entity);
+    public CraftChestedHorse(CraftServer server, EntityHorseChestedAbstract entity) {
+        super(server, entity);
     }
 
-    public AbstractChestedHorse getHandle() {
-        return (AbstractChestedHorse) super.getHandle();
+    @Override
+    public EntityHorseChestedAbstract getHandle() {
+        return (EntityHorseChestedAbstract) super.getHandle();
     }
 
+    @Override
     public boolean isCarryingChest() {
-        return this.getHandle().hasChest();
+        return getHandle().hasChest();
     }
 
+    @Override
     public void setCarryingChest(boolean chest) {
-        if (chest != this.isCarryingChest()) {
-            this.getHandle().setChest(chest);
-            this.getHandle().createInventory();
-        }
+        if (chest == isCarryingChest()) return;
+        getHandle().setChest(chest);
+        getHandle().createInventory();
     }
 }

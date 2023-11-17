@@ -1,64 +1,70 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.core.BlockPosition;
+import net.minecraft.world.entity.monster.EntityVex;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.entity.Vex;
 
 public class CraftVex extends CraftMonster implements Vex {
 
-    public CraftVex(CraftServer server, net.minecraft.world.entity.monster.Vex entity) {
-        super(server, (Monster) entity);
+    public CraftVex(CraftServer server, EntityVex entity) {
+        super(server, entity);
     }
 
-    public net.minecraft.world.entity.monster.Vex getHandle() {
-        return (net.minecraft.world.entity.monster.Vex) super.getHandle();
+    @Override
+    public EntityVex getHandle() {
+        return (EntityVex) super.getHandle();
     }
 
+    @Override
     public String toString() {
         return "CraftVex";
     }
 
+    @Override
     public boolean isCharging() {
-        return this.getHandle().isCharging();
+        return getHandle().isCharging();
     }
 
+    @Override
     public void setCharging(boolean charging) {
-        this.getHandle().setIsCharging(charging);
+        getHandle().setIsCharging(charging);
     }
 
+    @Override
     public Location getBound() {
-        BlockPos blockPosition = this.getHandle().getBoundOrigin();
-
-        return blockPosition == null ? null : CraftLocation.toBukkit(blockPosition, this.getWorld());
+        BlockPosition blockPosition = getHandle().getBoundOrigin();
+        return (blockPosition == null) ? null : CraftLocation.toBukkit(blockPosition, getWorld());
     }
 
+    @Override
     public void setBound(Location location) {
         if (location == null) {
-            this.getHandle().setBoundOrigin((BlockPos) null);
+            getHandle().setBoundOrigin(null);
         } else {
-            Preconditions.checkArgument(this.getWorld().equals(location.getWorld()), "The bound world cannot be different to the entity's world.");
-            this.getHandle().setBoundOrigin(CraftLocation.toBlockPosition(location));
+            Preconditions.checkArgument(getWorld().equals(location.getWorld()), "The bound world cannot be different to the entity's world.");
+            getHandle().setBoundOrigin(CraftLocation.toBlockPosition(location));
         }
-
     }
 
+    @Override
     public int getLifeTicks() {
-        return this.getHandle().limitedLifeTicks;
+        return getHandle().limitedLifeTicks;
     }
 
+    @Override
     public void setLifeTicks(int lifeTicks) {
-        this.getHandle().setLimitedLife(lifeTicks);
+        getHandle().setLimitedLife(lifeTicks);
         if (lifeTicks < 0) {
-            this.getHandle().hasLimitedLife = false;
+            getHandle().hasLimitedLife = false;
         }
-
     }
 
+    @Override
     public boolean hasLimitedLife() {
-        return this.getHandle().hasLimitedLife;
+        return getHandle().hasLimitedLife;
     }
 }

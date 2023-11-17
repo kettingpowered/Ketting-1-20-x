@@ -1,6 +1,6 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Marker;
 
 public class CraftMarker extends CraftEntity implements Marker {
@@ -9,10 +9,12 @@ public class CraftMarker extends CraftEntity implements Marker {
         super(server, entity);
     }
 
+    @Override
     public net.minecraft.world.entity.Marker getHandle() {
         return (net.minecraft.world.entity.Marker) super.getHandle();
     }
 
+    @Override
     public String toString() {
         return "CraftMarker";
     }

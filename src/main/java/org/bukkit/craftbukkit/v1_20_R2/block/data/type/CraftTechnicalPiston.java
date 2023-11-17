@@ -1,19 +1,19 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.data.type;
+package org.bukkit.craftbukkit.block.data.type;
 
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.bukkit.block.data.type.TechnicalPiston;
-import org.bukkit.block.data.type.TechnicalPiston.Type;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftTechnicalPiston extends CraftBlockData implements TechnicalPiston {
 
-    private static final EnumProperty TYPE = getEnum("type");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> TYPE = getEnum("type");
 
-    public Type getType() {
-        return (Type) this.get(CraftTechnicalPiston.TYPE, Type.class);
+    @Override
+    public org.bukkit.block.data.type.TechnicalPiston.Type getType() {
+        return get(TYPE, org.bukkit.block.data.type.TechnicalPiston.Type.class);
     }
 
-    public void setType(Type type) {
-        this.set(CraftTechnicalPiston.TYPE, (Enum) type);
+    @Override
+    public void setType(org.bukkit.block.data.type.TechnicalPiston.Type type) {
+        set(TYPE, type);
     }
 }

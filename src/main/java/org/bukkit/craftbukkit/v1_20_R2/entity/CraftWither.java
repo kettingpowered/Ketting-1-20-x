@@ -1,66 +1,70 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.boss.wither.WitherBoss;
-import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.boss.wither.EntityWither;
 import org.bukkit.boss.BossBar;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R2.boss.CraftBossBar;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.boss.CraftBossBar;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Wither;
-import org.bukkit.entity.Wither.Head;
 
 public class CraftWither extends CraftMonster implements Wither {
 
     private BossBar bossBar;
 
-    public CraftWither(CraftServer server, WitherBoss entity) {
-        super(server, (Monster) entity);
+    public CraftWither(CraftServer server, EntityWither entity) {
+        super(server, entity);
+
         if (entity.bossEvent != null) {
             this.bossBar = new CraftBossBar(entity.bossEvent);
         }
-
     }
 
-    public WitherBoss getHandle() {
-        return (WitherBoss) this.entity;
+    @Override
+    public EntityWither getHandle() {
+        return (EntityWither) entity;
     }
 
+    @Override
     public String toString() {
         return "CraftWither";
     }
 
+    @Override
     public BossBar getBossBar() {
-        return this.bossBar;
+        return bossBar;
     }
 
+    @Override
     public void setTarget(Head head, LivingEntity livingEntity) {
         Preconditions.checkArgument(head != null, "head cannot be null");
-        int entityId = livingEntity != null ? livingEntity.getEntityId() : 0;
 
-        this.getHandle().setAlternativeTarget(head.ordinal(), entityId);
+        int entityId = (livingEntity != null) ? livingEntity.getEntityId() : 0;
+        getHandle().setAlternativeTarget(head.ordinal(), entityId);
     }
 
+    @Override
     public LivingEntity getTarget(Head head) {
         Preconditions.checkArgument(head != null, "head cannot be null");
-        int entityId = this.getHandle().getAlternativeTarget(head.ordinal());
 
+        int entityId = getHandle().getAlternativeTarget(head.ordinal());
         if (entityId == 0) {
             return null;
-        } else {
-            Entity target = this.getHandle().level().getEntity(entityId);
-
-            return target != null ? (LivingEntity) target.getBukkitEntity() : null;
         }
+        Entity target = getHandle().level().getEntity(entityId);
+        return (target != null) ? (LivingEntity) target.getBukkitEntity() : null;
     }
 
+    @Override
     public int getInvulnerabilityTicks() {
-        return this.getHandle().getInvulnerableTicks();
+        return getHandle().getInvulnerableTicks();
     }
 
+    @Override
     public void setInvulnerabilityTicks(int ticks) {
         Preconditions.checkArgument(ticks >= 0, "ticks must be >=0");
-        this.getHandle().setInvulnerableTicks(ticks);
+
+        getHandle().setInvulnerableTicks(ticks);
     }
 }

@@ -1,67 +1,81 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import net.minecraft.world.level.block.MangrovePropaguleBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Ageable;
-import org.bukkit.block.data.Hangable;
-import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.MangrovePropagule;
-import org.bukkit.block.data.type.Sapling;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftMangrovePropagule extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.MangrovePropagule, org.bukkit.block.data.Ageable, org.bukkit.block.data.Hangable, org.bukkit.block.data.type.Sapling, org.bukkit.block.data.Waterlogged {
 
-public final class CraftMangrovePropagule extends CraftBlockData implements MangrovePropagule, Ageable, Hangable, Sapling, Waterlogged {
+    public CraftMangrovePropagule() {
+        super();
+    }
 
-    private static final IntegerProperty AGE = getInteger(MangrovePropaguleBlock.class, "age");
-    private static final BooleanProperty HANGING = getBoolean(MangrovePropaguleBlock.class, "hanging");
-    private static final IntegerProperty STAGE = getInteger(MangrovePropaguleBlock.class, "stage");
-    private static final BooleanProperty WATERLOGGED = getBoolean(MangrovePropaguleBlock.class, "waterlogged");
-
-    public CraftMangrovePropagule() {}
-
-    public CraftMangrovePropagule(BlockState state) {
+    public CraftMangrovePropagule(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.block.data.CraftAgeable
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger AGE = getInteger(net.minecraft.world.level.block.MangrovePropaguleBlock.class, "age");
+
+    @Override
     public int getAge() {
-        return (Integer) this.get(CraftMangrovePropagule.AGE);
+        return get(AGE);
     }
 
+    @Override
     public void setAge(int age) {
-        this.set((Property) CraftMangrovePropagule.AGE, (Comparable) age);
+        set(AGE, age);
     }
 
+    @Override
     public int getMaximumAge() {
-        return getMax(CraftMangrovePropagule.AGE);
+        return getMax(AGE);
     }
 
+    // org.bukkit.craftbukkit.block.data.CraftHangable
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean HANGING = getBoolean(net.minecraft.world.level.block.MangrovePropaguleBlock.class, "hanging");
+
+    @Override
     public boolean isHanging() {
-        return (Boolean) this.get(CraftMangrovePropagule.HANGING);
+        return get(HANGING);
     }
 
+    @Override
     public void setHanging(boolean hanging) {
-        this.set((Property) CraftMangrovePropagule.HANGING, (Comparable) hanging);
+        set(HANGING, hanging);
     }
 
+    // org.bukkit.craftbukkit.block.data.type.CraftSapling
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger STAGE = getInteger(net.minecraft.world.level.block.MangrovePropaguleBlock.class, "stage");
+
+    @Override
     public int getStage() {
-        return (Integer) this.get(CraftMangrovePropagule.STAGE);
+        return get(STAGE);
     }
 
+    @Override
     public void setStage(int stage) {
-        this.set((Property) CraftMangrovePropagule.STAGE, (Comparable) stage);
+        set(STAGE, stage);
     }
 
+    @Override
     public int getMaximumStage() {
-        return getMax(CraftMangrovePropagule.STAGE);
+        return getMax(STAGE);
     }
 
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.MangrovePropaguleBlock.class, "waterlogged");
+
+    @Override
     public boolean isWaterlogged() {
-        return (Boolean) this.get(CraftMangrovePropagule.WATERLOGGED);
+        return get(WATERLOGGED);
     }
 
+    @Override
     public void setWaterlogged(boolean waterlogged) {
-        this.set((Property) CraftMangrovePropagule.WATERLOGGED, (Comparable) waterlogged);
+        set(WATERLOGGED, waterlogged);
     }
 }

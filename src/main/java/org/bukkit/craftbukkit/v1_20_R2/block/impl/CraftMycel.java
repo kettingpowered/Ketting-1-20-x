@@ -1,27 +1,29 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import net.minecraft.world.level.block.MyceliumBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Snowable;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftMycel extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Snowable {
 
-public final class CraftMycel extends CraftBlockData implements Snowable {
+    public CraftMycel() {
+        super();
+    }
 
-    private static final BooleanProperty SNOWY = getBoolean(MyceliumBlock.class, "snowy");
-
-    public CraftMycel() {}
-
-    public CraftMycel(BlockState state) {
+    public CraftMycel(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.block.data.CraftSnowable
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean SNOWY = getBoolean(net.minecraft.world.level.block.BlockMycel.class, "snowy");
+
+    @Override
     public boolean isSnowy() {
-        return (Boolean) this.get(CraftMycel.SNOWY);
+        return get(SNOWY);
     }
 
+    @Override
     public void setSnowy(boolean snowy) {
-        this.set((Property) CraftMycel.SNOWY, (Comparable) snowy);
+        set(SNOWY, snowy);
     }
 }

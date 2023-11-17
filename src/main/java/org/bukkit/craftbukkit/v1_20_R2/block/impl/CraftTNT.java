@@ -1,27 +1,29 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import net.minecraft.world.level.block.TntBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.type.TNT;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftTNT extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.TNT {
 
-public final class CraftTNT extends CraftBlockData implements TNT {
+    public CraftTNT() {
+        super();
+    }
 
-    private static final BooleanProperty UNSTABLE = getBoolean(TntBlock.class, "unstable");
-
-    public CraftTNT() {}
-
-    public CraftTNT(BlockState state) {
+    public CraftTNT(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.block.data.type.CraftTNT
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean UNSTABLE = getBoolean(net.minecraft.world.level.block.BlockTNT.class, "unstable");
+
+    @Override
     public boolean isUnstable() {
-        return (Boolean) this.get(CraftTNT.UNSTABLE);
+        return get(UNSTABLE);
     }
 
+    @Override
     public void setUnstable(boolean unstable) {
-        this.set((Property) CraftTNT.UNSTABLE, (Comparable) unstable);
+        set(UNSTABLE, unstable);
     }
 }

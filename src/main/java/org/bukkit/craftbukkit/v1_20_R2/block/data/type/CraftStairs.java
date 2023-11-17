@@ -1,19 +1,19 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.data.type;
+package org.bukkit.craftbukkit.block.data.type;
 
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.bukkit.block.data.type.Stairs;
-import org.bukkit.block.data.type.Stairs.Shape;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftStairs extends CraftBlockData implements Stairs {
 
-    private static final EnumProperty SHAPE = getEnum("shape");
+    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> SHAPE = getEnum("shape");
 
-    public Shape getShape() {
-        return (Shape) this.get(CraftStairs.SHAPE, Shape.class);
+    @Override
+    public org.bukkit.block.data.type.Stairs.Shape getShape() {
+        return get(SHAPE, org.bukkit.block.data.type.Stairs.Shape.class);
     }
 
-    public void setShape(Shape shape) {
-        this.set(CraftStairs.SHAPE, (Enum) shape);
+    @Override
+    public void setShape(org.bukkit.block.data.type.Stairs.Shape shape) {
+        set(SHAPE, shape);
     }
 }

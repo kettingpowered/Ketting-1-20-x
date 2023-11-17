@@ -1,16 +1,15 @@
-package org.bukkit.craftbukkit.v1_20_R2.entity;
+package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.world.entity.Entity;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Vehicle;
 
 public abstract class CraftVehicle extends CraftEntity implements Vehicle {
-
-    public CraftVehicle(CraftServer server, Entity entity) {
+    public CraftVehicle(CraftServer server, net.minecraft.world.entity.Entity entity) {
         super(server, entity);
     }
 
+    @Override
     public String toString() {
-        return "CraftVehicle{passenger=" + this.getPassenger() + '}';
+        return "CraftVehicle{passenger=" + getPassenger() + '}';
     }
 }

@@ -1,19 +1,19 @@
-package org.bukkit.craftbukkit.v1_20_R2.block;
+package org.bukkit.craftbukkit.block;
 
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.TileEntityFurnaceFurnace;
 import org.bukkit.World;
 
-public class CraftFurnaceFurnace extends CraftFurnace {
+public class CraftFurnaceFurnace extends CraftFurnace<TileEntityFurnaceFurnace> {
 
-    public CraftFurnaceFurnace(World world, FurnaceBlockEntity tileEntity) {
-        super(world, (AbstractFurnaceBlockEntity) tileEntity);
+    public CraftFurnaceFurnace(World world, TileEntityFurnaceFurnace tileEntity) {
+        super(world, tileEntity);
     }
 
     protected CraftFurnaceFurnace(CraftFurnaceFurnace state) {
-        super((CraftFurnace) state);
+        super(state);
     }
 
+    @Override
     public CraftFurnaceFurnace copy() {
         return new CraftFurnaceFurnace(this);
     }

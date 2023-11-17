@@ -1,27 +1,29 @@
-package org.bukkit.craftbukkit.v1_20_R2.block.impl;
+/**
+ * Automatically generated file, changes will be lost.
+ */
+package org.bukkit.craftbukkit.block.impl;
 
-import net.minecraft.world.level.block.SculkCatalystBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.type.SculkCatalyst;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftSculkCatalyst extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.SculkCatalyst {
 
-public final class CraftSculkCatalyst extends CraftBlockData implements SculkCatalyst {
+    public CraftSculkCatalyst() {
+        super();
+    }
 
-    private static final BooleanProperty BLOOM = getBoolean(SculkCatalystBlock.class, "bloom");
-
-    public CraftSculkCatalyst() {}
-
-    public CraftSculkCatalyst(BlockState state) {
+    public CraftSculkCatalyst(net.minecraft.world.level.block.state.IBlockData state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.block.data.type.CraftSculkCatalyst
+
+    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean BLOOM = getBoolean(net.minecraft.world.level.block.SculkCatalystBlock.class, "bloom");
+
+    @Override
     public boolean isBloom() {
-        return (Boolean) this.get(CraftSculkCatalyst.BLOOM);
+        return get(BLOOM);
     }
 
+    @Override
     public void setBloom(boolean bloom) {
-        this.set((Property) CraftSculkCatalyst.BLOOM, (Comparable) bloom);
+        set(BLOOM, bloom);
     }
 }
