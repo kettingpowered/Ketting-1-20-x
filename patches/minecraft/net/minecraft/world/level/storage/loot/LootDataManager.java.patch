@@ -9,11 +9,11 @@
  import org.slf4j.Logger;
  
  public class LootDataManager implements PreparableReloadListener, LootDataResolver {
-@@ -28,6 +_,7 @@
+@@ -27,7 +_,6 @@
+    public static final LootDataId<LootTable> EMPTY_LOOT_TABLE_KEY = new LootDataId<>(LootDataType.TABLE, BuiltInLootTables.EMPTY);
     private Map<LootDataId<?>, ?> elements = Map.of();
     private Multimap<LootDataType<?>, ResourceLocation> typeKeys = ImmutableMultimap.of();
- 
-+   public Map<?, ResourceLocation> lootTableToKey = ImmutableMap.of(); // CraftBukkit
+-
     public final CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier p_279240_, ResourceManager p_279377_, ProfilerFiller p_279135_, ProfilerFiller p_279088_, Executor p_279148_, Executor p_279169_) {
        Map<LootDataType<?>, Map<ResourceLocation, ?>> map = new HashMap<>();
        CompletableFuture<?>[] completablefuture = LootDataType.values().map((p_279242_) -> {
