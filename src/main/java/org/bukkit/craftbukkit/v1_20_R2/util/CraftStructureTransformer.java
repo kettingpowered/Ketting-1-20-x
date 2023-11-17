@@ -1,13 +1,13 @@
 package org.bukkit.craftbukkit.v1_20_R2.util;
 
 import java.util.Objects;
-import net.minecraft.core.BlockPosition;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.ChunkCoordIntPair;
-import net.minecraft.world.level.GeneratorAccessSeed;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraft.world.level.levelgen.structure.StructureBoundingBox;
 import org.bukkit.Bukkit;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState;
@@ -62,7 +62,7 @@ public class CraftStructureTransformer {
     private BlockTransformer[] blockTransformers;
     private EntityTransformer[] entityTransformers;
 
-    public CraftStructureTransformer(Cause cause, GeneratorAccessSeed generatoraccessseed, StructureManager structuremanager, Structure structure, StructureBoundingBox structureboundingbox, ChunkCoordIntPair chunkcoordintpair) {
+    public CraftStructureTransformer(Cause cause, WorldGenLevel generatoraccessseed, StructureManager structuremanager, Structure structure, BoundingBox structureboundingbox, ChunkPos chunkcoordintpair) {
         AsyncStructureGenerateEvent event = new AsyncStructureGenerateEvent(structuremanager.level.getMinecraftWorld().getWorld(), !Bukkit.isPrimaryThread(), cause, CraftStructure.minecraftToBukkit(structure, structuremanager.registryAccess()), new org.bukkit.util.BoundingBox(structureboundingbox.minX(), structureboundingbox.minY(), structureboundingbox.minZ(), structureboundingbox.maxX(), structureboundingbox.maxY(), structureboundingbox.maxZ()), chunkcoordintpair.x, chunkcoordintpair.z);
         Bukkit.getPluginManager().callEvent(event);
         this.blockTransformers = event.getBlockTransformers().values().toArray(BlockTransformer[]::new);
@@ -105,7 +105,7 @@ public class CraftStructureTransformer {
             return originalState;
         }
         originalState.setWorldHandle(region.getHandle());
-        BlockPosition position = originalState.getPosition();
+        BlockPos position = originalState.getPosition();
         BlockState blockState = originalState.copy();
         CraftTransformationState transformationState = new CraftTransformationState(originalState, region.getBlockState(position.getX(), position.getY(), position.getZ()));
         for (BlockTransformer transformer : transformers) {
