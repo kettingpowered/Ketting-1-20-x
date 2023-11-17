@@ -39,6 +39,7 @@ to make sure that the server runs as smoothly as possible.
 - Step 1: Download the latest version of Ketting from the [releases page](https://github.com/kettingpowered/Ketting-1-20-x/releases).
 
 - Step 2: Place the downloaded jar in an empty (or already existing) server folder.
+  - <b>Note: If you are using an existing server folder, make sure that you have deleted the `libraries` folder.</b>
 
 - Step 3: Run the jar file using the following command:
   ```bash
