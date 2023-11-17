@@ -1,0 +1,47 @@
+--- a/net/minecraft/world/level/block/BasePressurePlateBlock.java
++++ b/net/minecraft/world/level/block/BasePressurePlateBlock.java
+@@ -20,6 +_,7 @@
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.event.block.BlockRedstoneEvent;
+ 
+ public abstract class BasePressurePlateBlock extends Block {
+    protected static final VoxelShape PRESSED_AABB = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 0.5D, 15.0D);
+@@ -75,6 +_,18 @@
+       int i = this.getSignalStrength(p_152145_, p_152146_);
+       boolean flag = p_152148_ > 0;
+       boolean flag1 = i > 0;
++      // CraftBukkit start - Interact Pressure Plate
++      org.bukkit.World bworld = p_152145_.getWorld();
++      org.bukkit.plugin.PluginManager manager = p_152145_.getCraftServer().getPluginManager();
++
++      if (flag != flag1) {
++         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bworld.getBlockAt(p_152146_.getX(), p_152146_.getY(), p_152146_.getZ()), p_152148_, i);
++         manager.callEvent(eventRedstone);
++
++         flag1 = eventRedstone.getNewCurrent() > 0;
++         i = eventRedstone.getNewCurrent();
++      }
++      // CraftBukkit end
+       if (p_152148_ != i) {
+          BlockState blockstate = this.setSignalForState(p_152147_, i);
+          p_152145_.setBlock(p_152146_, blockstate, 2);
+@@ -124,9 +_,14 @@
+    }
+ 
+    protected static int getEntityCount(Level p_289656_, AABB p_289647_, Class<? extends Entity> p_289686_) {
+-      return p_289656_.getEntitiesOfClass(p_289686_, p_289647_, EntitySelector.NO_SPECTATORS.and((p_289691_) -> {
+-         return !p_289691_.isIgnoringBlockTriggers();
+-      })).size();
++      // CraftBukkit start
++      return getEntities(p_289656_, p_289647_, p_289686_).size();
++   }
++   protected static <T extends Entity> java.util.List<T> getEntities(Level world, AABB axisalignedbb, Class<T> oclass) {
++      // CraftBukkit end
++      return world.getEntitiesOfClass(oclass, axisalignedbb, EntitySelector.NO_SPECTATORS.and((entity) -> {
++         return !entity.isIgnoringBlockTriggers();
++      })); // CraftBukkit
+    }
+ 
+    protected abstract int getSignalStrength(Level p_49336_, BlockPos p_49337_);

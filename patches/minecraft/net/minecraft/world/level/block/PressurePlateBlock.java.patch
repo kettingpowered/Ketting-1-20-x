@@ -1,0 +1,53 @@
+--- a/net/minecraft/world/level/block/PressurePlateBlock.java
++++ b/net/minecraft/world/level/block/PressurePlateBlock.java
+@@ -3,6 +_,7 @@
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.LivingEntity;
++import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.state.BlockBehaviour;
+ import net.minecraft.world.level.block.state.BlockState;
+@@ -10,6 +_,7 @@
+ import net.minecraft.world.level.block.state.properties.BlockSetType;
+ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+ import net.minecraft.world.level.block.state.properties.BooleanProperty;
++import org.bukkit.event.entity.EntityInteractEvent;
+ 
+ public class PressurePlateBlock extends BasePressurePlateBlock {
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+@@ -42,8 +_,32 @@
+             throw new IncompatibleClassChangeError();
+       }
+ 
+-      Class oclass = oclass1;
+-      return getEntityCount(p_55264_, TOUCH_AABB.move(p_55265_), oclass) > 0 ? 15 : 0;
++      Class<? extends Entity> oclass = oclass1;
++      // CraftBukkit start - Call interact event when turning on a pressure plate
++      for (Entity entity : getEntities(p_55264_, PressurePlateBlock.TOUCH_AABB.move(p_55265_), oclass)) {
++         if (this.getSignalForState(p_55264_.getBlockState(p_55265_)) == 0) {
++            org.bukkit.World bworld = p_55264_.getWorld();
++            org.bukkit.plugin.PluginManager manager = p_55264_.getCraftServer().getPluginManager();
++            org.bukkit.event.Cancellable cancellable;
++
++            if (entity instanceof Player) {
++               cancellable = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent((Player) entity, org.bukkit.event.block.Action.PHYSICAL, p_55265_, null, null, null);
++            } else {
++               cancellable = new EntityInteractEvent(entity.getBukkitEntity(), bworld.getBlockAt(p_55265_.getX(), p_55265_.getY(), p_55265_.getZ()));
++               manager.callEvent((EntityInteractEvent) cancellable);
++            }
++
++            // We only want to block turning the plate on if all events are cancelled
++            if (cancellable.isCancelled()) {
++               continue;
++            }
++         }
++
++         return 15;
++      }
++
++      return 0;
++      // CraftBukkit end
+    }
+ 
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_55262_) {

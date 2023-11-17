@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/block/LecternBlock.java
++++ b/net/minecraft/world/level/block/LecternBlock.java
+@@ -181,10 +_,11 @@
+    }
+ 
+    private void popBook(BlockState p_54588_, Level p_54589_, BlockPos p_54590_) {
+-      BlockEntity blockentity = p_54589_.getBlockEntity(p_54590_);
++      BlockEntity blockentity = p_54589_.getBlockEntity(p_54590_, false); // CraftBukkit - don't validate, type may be changed already
+       if (blockentity instanceof LecternBlockEntity lecternblockentity) {
+          Direction direction = p_54588_.getValue(FACING);
+          ItemStack itemstack = lecternblockentity.getBook().copy();
++         if (itemstack.isEmpty()) return; // CraftBukkit - SPIGOT-5500
+          float f = 0.25F * (float)direction.getStepX();
+          float f1 = 0.25F * (float)direction.getStepZ();
+          ItemEntity itementity = new ItemEntity(p_54589_, (double)p_54590_.getX() + 0.5D + (double)f, (double)(p_54590_.getY() + 1), (double)p_54590_.getZ() + 0.5D + (double)f1, itemstack);
