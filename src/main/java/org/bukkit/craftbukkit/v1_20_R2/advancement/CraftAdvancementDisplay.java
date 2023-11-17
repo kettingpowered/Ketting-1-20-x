@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.advancement;
 
-import net.minecraft.advancements.AdvancementDisplay;
+import net.minecraft.advancements.DisplayInfo;
 import org.bukkit.advancement.AdvancementDisplayType;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
@@ -8,13 +8,13 @@ import org.bukkit.inventory.ItemStack;
 
 public class CraftAdvancementDisplay implements org.bukkit.advancement.AdvancementDisplay {
 
-    private final AdvancementDisplay handle;
+    private final DisplayInfo handle;
 
-    public CraftAdvancementDisplay(AdvancementDisplay handle) {
+    public CraftAdvancementDisplay(DisplayInfo handle) {
         this.handle = handle;
     }
 
-    public AdvancementDisplay getHandle() {
+    public DisplayInfo getHandle() {
         return handle;
     }
 
