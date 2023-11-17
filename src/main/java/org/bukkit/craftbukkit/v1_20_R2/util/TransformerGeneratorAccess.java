@@ -1,11 +1,11 @@
 package org.bukkit.craftbukkit.v1_20_R2.util;
 
-import net.minecraft.core.BlockPosition;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.block.entity.TileEntity;
-import net.minecraft.world.level.block.state.IBlockData;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
-import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockEntityState;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockStates;
@@ -55,34 +55,34 @@ public class TransformerGeneratorAccess extends DelegatedGeneratorAccess {
         super.addFreshEntityWithPassengers(arg0, arg1);
     }
 
-    public boolean setCraftBlock(BlockPosition position, CraftBlockState craftBlockState, int i, int j) {
+    public boolean setCraftBlock(BlockPos position, CraftBlockState craftBlockState, int i, int j) {
         if (structureTransformer != null) {
             craftBlockState = structureTransformer.transformCraftState(craftBlockState);
         }
         // This code is based on the method 'net.minecraft.world.level.levelgen.structure.StructurePiece#placeBlock'
         // It ensures that any kind of block is updated correctly upon placing it
-        IBlockData iblockdata = craftBlockState.getHandle();
+        BlockState iblockdata = craftBlockState.getHandle();
         boolean result = super.setBlock(position, iblockdata, i, j);
-        Fluid fluid = getFluidState(position);
+        FluidState fluid = getFluidState(position);
         if (!fluid.isEmpty()) {
             scheduleTick(position, fluid.getType(), 0);
         }
         if (StructurePiece.SHAPE_CHECK_BLOCKS.contains(iblockdata.getBlock())) {
             getChunk(position).markPosForPostprocessing(position);
         }
-        TileEntity tileEntity = getBlockEntity(position);
+        BlockEntity tileEntity = getBlockEntity(position);
         if (tileEntity != null && craftBlockState instanceof CraftBlockEntityState<?> craftEntityState) {
             tileEntity.load(craftEntityState.getSnapshotNBT());
         }
         return result;
     }
 
-    public boolean setCraftBlock(BlockPosition position, CraftBlockState craftBlockState, int i) {
+    public boolean setCraftBlock(BlockPos position, CraftBlockState craftBlockState, int i) {
         return setCraftBlock(position, craftBlockState, i, 512);
     }
 
     @Override
-    public boolean setBlock(BlockPosition position, IBlockData iblockdata, int i, int j) {
+    public boolean setBlock(BlockPos position, BlockState iblockdata, int i, int j) {
         if (structureTransformer == null || !structureTransformer.canTransformBlocks()) {
             return super.setBlock(position, iblockdata, i, j);
         }
@@ -90,7 +90,7 @@ public class TransformerGeneratorAccess extends DelegatedGeneratorAccess {
     }
 
     @Override
-    public boolean setBlock(BlockPosition position, IBlockData iblockdata, int i) {
+    public boolean setBlock(BlockPos position, BlockState iblockdata, int i) {
         return setBlock(position, iblockdata, i, 512);
     }
 }
