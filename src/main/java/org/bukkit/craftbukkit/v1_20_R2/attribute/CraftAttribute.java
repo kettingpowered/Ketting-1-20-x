@@ -1,22 +1,22 @@
 package org.bukkit.craftbukkit.v1_20_R2.attribute;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.IRegistry;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.entity.ai.attributes.AttributeBase;
+//import net.minecraft.world.entity.ai.attributes.Attr;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
+//import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_20_R2.CraftRegistry;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 
 public class CraftAttribute {
 
-    public static Attribute minecraftToBukkit(AttributeBase minecraft) {
+    public static Attribute minecraftToBukkit(net.minecraft.world.entity.ai.attributes.Attribute minecraft) {
         Preconditions.checkArgument(minecraft != null);
 
-        IRegistry<AttributeBase> registry = CraftRegistry.getMinecraftRegistry(Registries.ATTRIBUTE);
-        Attribute bukkit = Registry.ATTRIBUTE.get(CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location()));
+        Registry<net.minecraft.world.entity.ai.attributes.Attribute> registry = CraftRegistry.getMinecraftRegistry(Registries.ATTRIBUTE);
+        Attribute bukkit = org.bukkit.Registry.ATTRIBUTE.get(CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location()));
 
         Preconditions.checkArgument(bukkit != null);
 
@@ -26,10 +26,10 @@ public class CraftAttribute {
     public static Attribute stringToBukkit(String bukkit) {
         Preconditions.checkArgument(bukkit != null);
 
-        return Registry.ATTRIBUTE.get(NamespacedKey.fromString(bukkit));
+        return org.bukkit.Registry.ATTRIBUTE.get(NamespacedKey.fromString(bukkit));
     }
 
-    public static AttributeBase bukkitToMinecraft(Attribute bukkit) {
+    public static net.minecraft.world.entity.ai.attributes.Attribute bukkitToMinecraft(Attribute bukkit) {
         Preconditions.checkArgument(bukkit != null);
 
         return CraftRegistry.getMinecraftRegistry(Registries.ATTRIBUTE)
