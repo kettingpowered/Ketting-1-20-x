@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.structure;
+package org.bukkit.craftbukkit.v1_20_R2.structure;
 
 import com.google.common.base.Preconditions;
 import java.io.File;
@@ -19,7 +19,7 @@ import net.minecraft.resources.MinecraftKey;
 import net.minecraft.world.level.levelgen.structure.templatesystem.DefinedStructure;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.bukkit.structure.Structure;
 import org.bukkit.structure.StructureManager;
 

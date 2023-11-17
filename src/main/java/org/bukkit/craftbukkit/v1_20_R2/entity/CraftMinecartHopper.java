@@ -1,8 +1,8 @@
-package org.bukkit.craftbukkit.entity;
+package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import net.minecraft.world.entity.vehicle.EntityMinecartHopper;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory;
 import org.bukkit.entity.minecart.HopperMinecart;
 import org.bukkit.inventory.Inventory;
 

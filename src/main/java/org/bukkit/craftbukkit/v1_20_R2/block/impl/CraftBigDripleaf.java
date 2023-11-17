@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftBigDripleaf extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.BigDripleaf, org.bukkit.block.data.type.Dripleaf, org.bukkit.block.data.Directional, org.bukkit.block.data.Waterlogged {
+public final class CraftBigDripleaf extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.BigDripleaf, org.bukkit.block.data.type.Dripleaf, org.bukkit.block.data.Directional, org.bukkit.block.data.Waterlogged {
 
     public CraftBigDripleaf() {
         super();
@@ -13,7 +13,7 @@ public final class CraftBigDripleaf extends org.bukkit.craftbukkit.block.data.Cr
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftBigDripleaf
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftBigDripleaf
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> TILT = getEnum(net.minecraft.world.level.block.BigDripleafBlock.class, "tilt");
 
@@ -27,7 +27,7 @@ public final class CraftBigDripleaf extends org.bukkit.craftbukkit.block.data.Cr
         set(TILT, tilt);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.BigDripleafBlock.class, "facing");
 
@@ -46,7 +46,7 @@ public final class CraftBigDripleaf extends org.bukkit.craftbukkit.block.data.Cr
         return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.BigDripleafBlock.class, "waterlogged");
 

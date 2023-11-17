@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.generator;
+package org.bukkit.craftbukkit.v1_20_R2.generator;
 
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
@@ -11,7 +11,7 @@ import net.minecraft.world.level.biome.BiomeBase;
 import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.WorldChunkManager;
 import org.bukkit.block.Biome;
-import org.bukkit.craftbukkit.block.CraftBiome;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBiome;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.WorldInfo;
 

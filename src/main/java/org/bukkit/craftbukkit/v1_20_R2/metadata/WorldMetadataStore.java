@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.metadata;
+package org.bukkit.craftbukkit.v1_20_R2.metadata;
 
 import org.bukkit.World;
 import org.bukkit.metadata.MetadataStore;

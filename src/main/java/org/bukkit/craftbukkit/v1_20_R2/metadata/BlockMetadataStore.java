@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.metadata;
+package org.bukkit.craftbukkit.v1_20_R2.metadata;
 
 import com.google.common.base.Preconditions;
 import java.util.List;

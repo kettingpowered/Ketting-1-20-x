@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.inventory;
+package org.bukkit.craftbukkit.v1_20_R2.inventory;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -11,10 +11,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.craftbukkit.block.CraftBanner;
-import org.bukkit.craftbukkit.block.CraftBlockEntityState;
-import org.bukkit.craftbukkit.block.CraftBlockStates;
-import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBanner;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockEntityState;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockStates;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)

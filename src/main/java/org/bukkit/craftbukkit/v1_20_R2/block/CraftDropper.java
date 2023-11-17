@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.block;
+package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import net.minecraft.world.level.block.BlockDropper;
 import net.minecraft.world.level.block.Blocks;
@@ -7,8 +7,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dropper;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
 
 public class CraftDropper extends CraftLootable<TileEntityDropper> implements Dropper {

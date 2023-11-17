@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftFence extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Fence, org.bukkit.block.data.MultipleFacing, org.bukkit.block.data.Waterlogged {
+public final class CraftFence extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Fence, org.bukkit.block.data.MultipleFacing, org.bukkit.block.data.Waterlogged {
 
     public CraftFence() {
         super();
@@ -13,7 +13,7 @@ public final class CraftFence extends org.bukkit.craftbukkit.block.data.CraftBlo
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftMultipleFacing
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean[] FACES = new net.minecraft.world.level.block.state.properties.BlockStateBoolean[]{
         getBoolean(net.minecraft.world.level.block.BlockFence.class, "north", true), getBoolean(net.minecraft.world.level.block.BlockFence.class, "east", true), getBoolean(net.minecraft.world.level.block.BlockFence.class, "south", true), getBoolean(net.minecraft.world.level.block.BlockFence.class, "west", true), getBoolean(net.minecraft.world.level.block.BlockFence.class, "up", true), getBoolean(net.minecraft.world.level.block.BlockFence.class, "down", true)
@@ -63,7 +63,7 @@ public final class CraftFence extends org.bukkit.craftbukkit.block.data.CraftBlo
         return faces.build();
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockFence.class, "waterlogged");
 

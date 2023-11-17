@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.persistence;
+package org.bukkit.craftbukkit.v1_20_R2.persistence;
 
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Primitives;

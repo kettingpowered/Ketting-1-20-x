@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftLight extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Light, org.bukkit.block.data.Levelled, org.bukkit.block.data.Waterlogged {
+public final class CraftLight extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Light, org.bukkit.block.data.Levelled, org.bukkit.block.data.Waterlogged {
 
     public CraftLight() {
         super();
@@ -13,7 +13,7 @@ public final class CraftLight extends org.bukkit.craftbukkit.block.data.CraftBlo
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftLevelled
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftLevelled
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateInteger LEVEL = getInteger(net.minecraft.world.level.block.LightBlock.class, "level");
 
@@ -32,7 +32,7 @@ public final class CraftLight extends org.bukkit.craftbukkit.block.data.CraftBlo
         return getMax(LEVEL);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.LightBlock.class, "waterlogged");
 

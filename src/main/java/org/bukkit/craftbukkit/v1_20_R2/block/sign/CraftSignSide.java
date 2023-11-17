@@ -1,12 +1,12 @@
-package org.bukkit.craftbukkit.block.sign;
+package org.bukkit.craftbukkit.v1_20_R2.block.sign;
 
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.world.item.EnumColor;
 import net.minecraft.world.level.block.entity.SignText;
 import org.bukkit.DyeColor;
 import org.bukkit.block.sign.SignSide;
-import org.bukkit.craftbukkit.block.CraftSign;
-import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftSign;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.inventory.util;
+package org.bukkit.craftbukkit.v1_20_R2.inventory.util;
 
 import java.util.HashMap;
 import java.util.Map;

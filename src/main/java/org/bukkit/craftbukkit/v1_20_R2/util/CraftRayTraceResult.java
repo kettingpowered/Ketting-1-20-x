@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.util;
+package org.bukkit.craftbukkit.v1_20_R2.util;
 
 import net.minecraft.core.BlockPosition;
 import net.minecraft.world.phys.MovingObjectPosition;
@@ -9,7 +9,7 @@ import net.minecraft.world.phys.Vec3D;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;

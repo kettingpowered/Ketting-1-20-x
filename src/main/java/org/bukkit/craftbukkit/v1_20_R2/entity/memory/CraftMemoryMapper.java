@@ -1,12 +1,12 @@
-package org.bukkit.craftbukkit.entity.memory;
+package org.bukkit.craftbukkit.v1_20_R2.entity.memory;
 
 import java.util.UUID;
 import net.minecraft.core.BlockPosition;
 import net.minecraft.core.GlobalPos;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 
 public final class CraftMemoryMapper {
 

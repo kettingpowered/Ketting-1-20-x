@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.map;
+package org.bukkit.craftbukkit.v1_20_R2.map;
 
 import java.util.ArrayList;
 import org.bukkit.map.MapCursor;

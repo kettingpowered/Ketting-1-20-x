@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftBed extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Bed, org.bukkit.block.data.Directional {
+public final class CraftBed extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Bed, org.bukkit.block.data.Directional {
 
     public CraftBed() {
         super();
@@ -13,7 +13,7 @@ public final class CraftBed extends org.bukkit.craftbukkit.block.data.CraftBlock
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftBed
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftBed
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> PART = getEnum(net.minecraft.world.level.block.BlockBed.class, "part");
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean OCCUPIED = getBoolean(net.minecraft.world.level.block.BlockBed.class, "occupied");
@@ -33,7 +33,7 @@ public final class CraftBed extends org.bukkit.craftbukkit.block.data.CraftBlock
         return get(OCCUPIED);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.BlockBed.class, "facing");
 

@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.persistence;
+package org.bukkit.craftbukkit.v1_20_R2.persistence;
 
 import java.util.Map;
 import net.minecraft.nbt.NBTBase;

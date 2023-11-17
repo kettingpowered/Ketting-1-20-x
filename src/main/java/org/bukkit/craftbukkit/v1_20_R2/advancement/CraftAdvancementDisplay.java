@@ -1,9 +1,9 @@
-package org.bukkit.craftbukkit.advancement;
+package org.bukkit.craftbukkit.v1_20_R2.advancement;
 
 import net.minecraft.advancements.AdvancementDisplay;
 import org.bukkit.advancement.AdvancementDisplayType;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 import org.bukkit.inventory.ItemStack;
 
 public class CraftAdvancementDisplay implements org.bukkit.advancement.AdvancementDisplay {

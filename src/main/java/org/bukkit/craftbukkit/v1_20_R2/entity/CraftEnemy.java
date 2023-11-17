@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.entity;
+package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import net.minecraft.world.entity.monster.IMonster;
 import org.bukkit.entity.Enemy;

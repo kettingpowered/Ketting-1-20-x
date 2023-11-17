@@ -1,9 +1,9 @@
-package org.bukkit.craftbukkit.entity;
+package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import net.minecraft.world.entity.animal.EntitySheep;
 import net.minecraft.world.item.EnumColor;
 import org.bukkit.DyeColor;
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.Sheep;
 
 public class CraftSheep extends CraftAnimals implements Sheep {

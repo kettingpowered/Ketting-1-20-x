@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftChorusFruit extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.MultipleFacing {
+public final class CraftChorusFruit extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.MultipleFacing {
 
     public CraftChorusFruit() {
         super();
@@ -13,7 +13,7 @@ public final class CraftChorusFruit extends org.bukkit.craftbukkit.block.data.Cr
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftMultipleFacing
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean[] FACES = new net.minecraft.world.level.block.state.properties.BlockStateBoolean[]{
         getBoolean(net.minecraft.world.level.block.BlockChorusFruit.class, "north", true), getBoolean(net.minecraft.world.level.block.BlockChorusFruit.class, "east", true), getBoolean(net.minecraft.world.level.block.BlockChorusFruit.class, "south", true), getBoolean(net.minecraft.world.level.block.BlockChorusFruit.class, "west", true), getBoolean(net.minecraft.world.level.block.BlockChorusFruit.class, "up", true), getBoolean(net.minecraft.world.level.block.BlockChorusFruit.class, "down", true)

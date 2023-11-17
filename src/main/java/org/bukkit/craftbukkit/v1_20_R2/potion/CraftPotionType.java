@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.potion;
+package org.bukkit.craftbukkit.v1_20_R2.potion;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
@@ -9,8 +9,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.alchemy.PotionRegistry;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
-import org.bukkit.craftbukkit.CraftRegistry;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R2.CraftRegistry;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;

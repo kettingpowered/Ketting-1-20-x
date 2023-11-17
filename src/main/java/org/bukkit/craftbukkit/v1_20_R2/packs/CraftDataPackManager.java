@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.packs;
+package org.bukkit.craftbukkit.v1_20_R2.packs;
 
 import com.google.common.base.Preconditions;
 import java.util.Collection;
@@ -10,9 +10,9 @@ import net.minecraft.world.entity.EntityTypes;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftEntityType;
-import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntityType;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.packs.DataPack;
 import org.bukkit.packs.DataPackManager;

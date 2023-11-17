@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.help;
+package org.bukkit.craftbukkit.v1_20_R2.help;
 
 /**
  * A HelpTopicAmendment represents the contents of a topic amendment from the help.yml

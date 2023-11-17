@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.inventory.tags;
+package org.bukkit.craftbukkit.v1_20_R2.inventory.tags;
 
 import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.bukkit.persistence.PersistentDataAdapterContext;

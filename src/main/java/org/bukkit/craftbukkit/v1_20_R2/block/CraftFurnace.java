@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.block;
+package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
@@ -8,8 +8,8 @@ import net.minecraft.world.level.block.entity.TileEntityFurnace;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Furnace;
-import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryFurnace;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.bukkit.inventory.CookingRecipe;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.Recipe;

@@ -1,9 +1,9 @@
-package org.bukkit.craftbukkit.entity;
+package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.Interaction;
 
 public class CraftInteraction extends CraftEntity implements Interaction {

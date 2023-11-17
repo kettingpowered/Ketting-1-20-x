@@ -1,9 +1,9 @@
-package org.bukkit.craftbukkit.block;
+package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import net.minecraft.world.level.block.entity.TileEntityHopper;
 import org.bukkit.World;
 import org.bukkit.block.Hopper;
-import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
 
 public class CraftHopper extends CraftLootable<TileEntityHopper> implements Hopper {

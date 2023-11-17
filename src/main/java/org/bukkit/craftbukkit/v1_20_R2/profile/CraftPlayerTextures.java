@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.profile;
+package org.bukkit.craftbukkit.v1_20_R2.profile;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
@@ -11,7 +11,7 @@ import java.util.Locale;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.bukkit.craftbukkit.util.JsonHelper;
+import org.bukkit.craftbukkit.v1_20_R2.util.JsonHelper;
 import org.bukkit.profile.PlayerTextures;
 
 final class CraftPlayerTextures implements PlayerTextures {

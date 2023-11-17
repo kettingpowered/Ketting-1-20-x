@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.tag;
+package org.bukkit.craftbukkit.v1_20_R2.tag;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -6,7 +6,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.IRegistry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityTypes;
-import org.bukkit.craftbukkit.entity.CraftEntityType;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntityType;
 import org.bukkit.entity.EntityType;
 
 public class CraftEntityTag extends CraftTag<EntityTypes<?>, EntityType> {

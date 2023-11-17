@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.block;
+package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.world.level.block.EnumBlockMirror;
@@ -10,8 +10,8 @@ import org.bukkit.block.Structure;
 import org.bukkit.block.structure.Mirror;
 import org.bukkit.block.structure.StructureRotation;
 import org.bukkit.block.structure.UsageMode;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.util.CraftBlockVector;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftBlockVector;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.BlockVector;
 

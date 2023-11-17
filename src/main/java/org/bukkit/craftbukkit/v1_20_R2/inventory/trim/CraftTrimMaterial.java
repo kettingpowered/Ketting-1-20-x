@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.inventory.trim;
+package org.bukkit.craftbukkit.v1_20_R2.inventory.trim;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.meta.trim.TrimMaterial;

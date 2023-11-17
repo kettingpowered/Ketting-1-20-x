@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.packs;
+package org.bukkit.craftbukkit.v1_20_R2.packs;
 
 import java.io.IOException;
 import java.util.Set;
@@ -11,9 +11,9 @@ import net.minecraft.util.InclusiveRange;
 import org.bukkit.Bukkit;
 import org.bukkit.FeatureFlag;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.CraftFeatureFlag;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_20_R2.CraftFeatureFlag;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 import org.bukkit.packs.DataPack;
 
 public class CraftDataPack implements DataPack {

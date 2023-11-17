@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.boss;
+package org.bukkit.craftbukkit.v1_20_R2.boss;
 
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
@@ -13,9 +13,9 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.boss.BossBar;
 import org.bukkit.boss.DragonBattle;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftEnderCrystal;
-import org.bukkit.craftbukkit.util.CraftLocation;
+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEnderCrystal;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
 

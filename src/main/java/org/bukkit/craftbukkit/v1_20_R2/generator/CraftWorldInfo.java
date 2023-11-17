@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.generator;
+package org.bukkit.craftbukkit.v1_20_R2.generator;
 
 import java.util.UUID;
 import net.minecraft.world.level.dimension.DimensionManager;
@@ -6,7 +6,7 @@ import net.minecraft.world.level.storage.Convertable;
 import net.minecraft.world.level.storage.IWorldDataServer;
 import net.minecraft.world.level.storage.WorldDataServer;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.util.WorldUUID;
+import org.bukkit.craftbukkit.v1_20_R2.util.WorldUUID;
 import org.bukkit.generator.WorldInfo;
 
 public class CraftWorldInfo implements WorldInfo {

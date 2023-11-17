@@ -1,6 +1,6 @@
-package org.bukkit.craftbukkit.entity;
+package org.bukkit.craftbukkit.v1_20_R2.entity;
 
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.GlowItemFrame;
 
 public class CraftGlowItemFrame extends CraftItemFrame implements GlowItemFrame {

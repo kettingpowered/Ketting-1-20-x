@@ -1,10 +1,10 @@
-package org.bukkit.craftbukkit.entity;
+package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.world.entity.animal.EntityTropicalFish;
 import org.bukkit.DyeColor;
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.TropicalFish;
 import org.bukkit.entity.TropicalFish.Pattern;
 

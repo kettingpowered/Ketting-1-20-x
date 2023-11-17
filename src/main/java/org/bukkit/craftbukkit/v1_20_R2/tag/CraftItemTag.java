@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.tag;
+package org.bukkit.craftbukkit.v1_20_R2.tag;
 
 import java.util.Collections;
 import java.util.Set;
@@ -7,7 +7,7 @@ import net.minecraft.core.IRegistry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
 
 public class CraftItemTag extends CraftTag<Item, Material> {
 

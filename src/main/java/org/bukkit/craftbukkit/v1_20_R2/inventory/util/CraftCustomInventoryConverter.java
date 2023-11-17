@@ -1,6 +1,6 @@
-package org.bukkit.craftbukkit.inventory.util;
+package org.bukkit.craftbukkit.v1_20_R2.inventory.util;
 
-import org.bukkit.craftbukkit.inventory.CraftInventoryCustom;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryCustom;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;

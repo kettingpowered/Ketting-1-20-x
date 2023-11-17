@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.profile;
+package org.bukkit.craftbukkit.v1_20_R2.profile;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.bukkit.craftbukkit.configuration.ConfigSerializationUtil;
+import org.bukkit.craftbukkit.v1_20_R2.configuration.ConfigSerializationUtil;
 
 final class CraftProfileProperty {
 

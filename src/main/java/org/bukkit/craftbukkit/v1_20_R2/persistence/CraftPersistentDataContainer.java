@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.persistence;
+package org.bukkit.craftbukkit.v1_20_R2.persistence;
 
 import com.google.common.base.Preconditions;
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import java.util.Set;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.util.CraftNBTTagConfigSerializer;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftNBTTagConfigSerializer;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;

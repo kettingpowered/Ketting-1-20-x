@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.scoreboard;
+package org.bukkit.craftbukkit.v1_20_R2.scoreboard;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
@@ -9,7 +9,7 @@ import net.minecraft.world.scores.ScoreboardTeamBase.EnumNameTagVisibility;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 import org.bukkit.scoreboard.NameTagVisibility;
 import org.bukkit.scoreboard.Team;
 

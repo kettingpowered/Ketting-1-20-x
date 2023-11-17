@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.potion;
+package org.bukkit.craftbukkit.v1_20_R2.potion;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;

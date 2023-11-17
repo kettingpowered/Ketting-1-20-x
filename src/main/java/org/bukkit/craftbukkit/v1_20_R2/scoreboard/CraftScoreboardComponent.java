@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.scoreboard;
+package org.bukkit.craftbukkit.v1_20_R2.scoreboard;
 
 abstract class CraftScoreboardComponent {
     private CraftScoreboard scoreboard;

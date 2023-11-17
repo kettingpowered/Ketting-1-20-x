@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.help;
+package org.bukkit.craftbukkit.v1_20_R2.help;
 
 import java.util.HashSet;
 import java.util.LinkedList;

@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftBrewingStand extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.BrewingStand {
+public final class CraftBrewingStand extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.BrewingStand {
 
     public CraftBrewingStand() {
         super();
@@ -13,7 +13,7 @@ public final class CraftBrewingStand extends org.bukkit.craftbukkit.block.data.C
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftBrewingStand
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftBrewingStand
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean[] HAS_BOTTLE = new net.minecraft.world.level.block.state.properties.BlockStateBoolean[]{
         getBoolean(net.minecraft.world.level.block.BlockBrewingStand.class, "has_bottle_0"), getBoolean(net.minecraft.world.level.block.BlockBrewingStand.class, "has_bottle_1"), getBoolean(net.minecraft.world.level.block.BlockBrewingStand.class, "has_bottle_2")

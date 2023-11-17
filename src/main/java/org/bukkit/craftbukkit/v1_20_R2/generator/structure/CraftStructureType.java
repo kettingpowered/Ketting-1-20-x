@@ -1,12 +1,12 @@
-package org.bukkit.craftbukkit.generator.structure;
+package org.bukkit.craftbukkit.v1_20_R2.generator.structure;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.core.IRegistry;
 import net.minecraft.core.registries.Registries;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
-import org.bukkit.craftbukkit.CraftRegistry;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R2.CraftRegistry;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.bukkit.generator.structure.StructureType;
 
 public class CraftStructureType extends StructureType {

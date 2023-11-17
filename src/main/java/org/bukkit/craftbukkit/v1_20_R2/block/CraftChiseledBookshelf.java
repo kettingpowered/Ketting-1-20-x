@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.block;
+package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import net.minecraft.world.level.block.ChiseledBookShelfBlock;
 import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
@@ -7,7 +7,7 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.ChiseledBookshelf;
 import org.bukkit.block.data.Directional;
-import org.bukkit.craftbukkit.inventory.CraftInventoryChiseledBookshelf;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryChiseledBookshelf;
 import org.bukkit.inventory.ChiseledBookshelfInventory;
 import org.bukkit.util.Vector;
 

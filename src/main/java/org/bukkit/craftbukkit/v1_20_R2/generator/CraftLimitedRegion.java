@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.generator;
+package org.bukkit.craftbukkit.v1_20_R2.generator;
 
 import com.google.common.base.Preconditions;
 import java.lang.ref.WeakReference;
@@ -25,7 +25,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.CraftRegionAccessor;
+import org.bukkit.craftbukkit.v1_20_R2.CraftRegionAccessor;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.generator.LimitedRegion;

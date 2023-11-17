@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.block.data;
+package org.bukkit.craftbukkit.v1_20_R2.block.data;
 
 import org.bukkit.block.data.Directional;
 

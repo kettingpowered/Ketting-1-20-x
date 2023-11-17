@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.block;
+package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
@@ -10,8 +10,8 @@ import net.minecraft.world.level.block.entity.TileEntityBeehive.ReleaseStatus;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Beehive;
-import org.bukkit.craftbukkit.entity.CraftBee;
-import org.bukkit.craftbukkit.util.CraftLocation;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftBee;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 import org.bukkit.entity.Bee;
 
 public class CraftBeehive extends CraftBlockEntityState<TileEntityBeehive> implements Beehive {

@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.command;
+package org.bukkit.craftbukkit.v1_20_R2.command;
 
 import java.util.Set;
 import java.util.UUID;

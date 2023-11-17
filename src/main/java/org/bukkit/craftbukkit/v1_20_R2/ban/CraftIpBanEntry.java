@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.ban;
+package org.bukkit.craftbukkit.v1_20_R2.ban;
 
 import com.google.common.net.InetAddresses;
 import java.net.InetAddress;

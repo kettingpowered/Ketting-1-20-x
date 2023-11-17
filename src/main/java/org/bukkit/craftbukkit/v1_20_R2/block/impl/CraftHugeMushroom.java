@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftHugeMushroom extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.MultipleFacing {
+public final class CraftHugeMushroom extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.MultipleFacing {
 
     public CraftHugeMushroom() {
         super();
@@ -13,7 +13,7 @@ public final class CraftHugeMushroom extends org.bukkit.craftbukkit.block.data.C
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftMultipleFacing
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean[] FACES = new net.minecraft.world.level.block.state.properties.BlockStateBoolean[]{
         getBoolean(net.minecraft.world.level.block.BlockHugeMushroom.class, "north", true), getBoolean(net.minecraft.world.level.block.BlockHugeMushroom.class, "east", true), getBoolean(net.minecraft.world.level.block.BlockHugeMushroom.class, "south", true), getBoolean(net.minecraft.world.level.block.BlockHugeMushroom.class, "west", true), getBoolean(net.minecraft.world.level.block.BlockHugeMushroom.class, "up", true), getBoolean(net.minecraft.world.level.block.BlockHugeMushroom.class, "down", true)

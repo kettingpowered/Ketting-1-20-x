@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.legacy;
+package org.bukkit.craftbukkit.v1_20_R2.legacy;
 
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
@@ -8,8 +8,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.block.CraftBlock;
-import org.bukkit.craftbukkit.block.CraftBlockState;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState;
 import org.bukkit.inventory.ItemStack;
 
 /**

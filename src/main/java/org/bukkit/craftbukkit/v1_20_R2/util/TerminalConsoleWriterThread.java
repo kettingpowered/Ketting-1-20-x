@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.util;
+package org.bukkit.craftbukkit.v1_20_R2.util;
 
 import com.mojang.logging.LogQueues;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jline.console.ConsoleReader;
-import org.bukkit.craftbukkit.Main;
+import org.bukkit.craftbukkit.v1_20_R2.Main;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Erase;
 

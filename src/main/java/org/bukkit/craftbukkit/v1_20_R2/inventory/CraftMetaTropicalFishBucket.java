@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.inventory;
+package org.bukkit.craftbukkit.v1_20_R2.inventory;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
@@ -7,9 +7,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.craftbukkit.entity.CraftTropicalFish;
-import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
-import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftTropicalFish;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMetaItem.SerializableMeta;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
 import org.bukkit.entity.TropicalFish;
 import org.bukkit.inventory.meta.TropicalFishBucketMeta;
 

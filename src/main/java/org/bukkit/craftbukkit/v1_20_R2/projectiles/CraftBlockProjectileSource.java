@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.projectiles;
+package org.bukkit.craftbukkit.v1_20_R2.projectiles;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.core.EnumDirection;
@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.BlockDispenser;
 import net.minecraft.world.level.block.entity.TileEntityDispenser;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;

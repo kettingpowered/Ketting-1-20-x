@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.block;
+package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.core.EnumDirection;
@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.entity.TileEntityBell;
 import org.bukkit.World;
 import org.bukkit.block.Bell;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 
 public class CraftBell extends CraftBlockEntityState<TileEntityBell> implements Bell {

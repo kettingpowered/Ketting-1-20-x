@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.block;
+package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import com.google.common.base.Preconditions;
 import java.util.Optional;
@@ -9,7 +9,7 @@ import net.minecraft.world.level.MobSpawnerData;
 import net.minecraft.world.level.block.entity.TileEntityMobSpawner;
 import org.bukkit.World;
 import org.bukkit.block.CreatureSpawner;
-import org.bukkit.craftbukkit.entity.CraftEntityType;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntityType;
 import org.bukkit.entity.EntityType;
 
 public class CraftCreatureSpawner extends CraftBlockEntityState<TileEntityMobSpawner> implements CreatureSpawner {

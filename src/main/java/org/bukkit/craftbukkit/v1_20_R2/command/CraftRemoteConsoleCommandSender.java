@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.command;
+package org.bukkit.craftbukkit.v1_20_R2.command;
 
 import java.net.SocketAddress;
 import net.minecraft.network.chat.IChatBaseComponent;

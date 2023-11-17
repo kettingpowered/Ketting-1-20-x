@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.block;
+package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import java.util.Objects;
 import net.minecraft.core.BlockPosition;
@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.entity.TileEntityEndGateway;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.EndGateway;
-import org.bukkit.craftbukkit.util.CraftLocation;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 
 public class CraftEndGateway extends CraftBlockEntityState<TileEntityEndGateway> implements EndGateway {
 

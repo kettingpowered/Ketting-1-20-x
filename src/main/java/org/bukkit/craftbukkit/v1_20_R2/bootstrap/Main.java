@@ -1,5 +1,5 @@
 // Based on net.minecraft.bundler.Main
-package org.bukkit.craftbukkit.bootstrap;
+package org.bukkit.craftbukkit.v1_20_R2.bootstrap;
 
 import java.io.BufferedReader;
 import java.io.IOException;

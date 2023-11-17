@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.event;
+package org.bukkit.craftbukkit.v1_20_R2.event;
 
 import org.bukkit.Location;
 import org.bukkit.event.entity.EntityPortalEvent;

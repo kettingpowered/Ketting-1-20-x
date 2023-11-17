@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.scheduler;
+package org.bukkit.craftbukkit.v1_20_R2.scheduler;
 
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;

@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.inventory;
+package org.bukkit.craftbukkit.v1_20_R2.inventory;
 
 import net.minecraft.world.inventory.InventoryMerchant;
 import net.minecraft.world.item.trading.IMerchant;

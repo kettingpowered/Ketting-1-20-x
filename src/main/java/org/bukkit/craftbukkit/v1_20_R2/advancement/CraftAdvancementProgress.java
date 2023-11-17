@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.advancement;
+package org.bukkit.craftbukkit.v1_20_R2.advancement;
 
 import com.google.common.collect.Lists;
 import java.util.Collection;

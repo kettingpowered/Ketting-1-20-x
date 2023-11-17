@@ -1,9 +1,9 @@
-package org.bukkit.craftbukkit.block;
+package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import net.minecraft.world.level.block.entity.TileEntityCommand;
 import org.bukkit.World;
 import org.bukkit.block.CommandBlock;
-import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 
 public class CraftCommandBlock extends CraftBlockEntityState<TileEntityCommand> implements CommandBlock {
 

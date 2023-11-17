@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.profile;
+package org.bukkit.craftbukkit.v1_20_R2.profile;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
@@ -25,8 +25,8 @@ import net.minecraft.world.level.block.entity.TileEntitySkull;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.SerializableAs;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.configuration.ConfigSerializationUtil;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.configuration.ConfigSerializationUtil;
 import org.bukkit.profile.PlayerProfile;
 import org.bukkit.profile.PlayerTextures;
 

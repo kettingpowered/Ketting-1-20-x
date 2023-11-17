@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.util;
+package org.bukkit.craftbukkit.v1_20_R2.util;
 
 import java.util.Arrays;
 import org.bukkit.Material;
@@ -19,11 +19,11 @@ public final class CraftLegacy {
             return material;
         }
 
-        return org.bukkit.craftbukkit.legacy.CraftLegacy.fromLegacy(material);
+        return org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.fromLegacy(material);
     }
 
     public static Material fromLegacy(MaterialData materialData) {
-        return org.bukkit.craftbukkit.legacy.CraftLegacy.fromLegacy(materialData);
+        return org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy.fromLegacy(materialData);
     }
 
     public static Material[] modern_values() {

@@ -1,12 +1,12 @@
-package org.bukkit.craftbukkit.entity.memory;
+package org.bukkit.craftbukkit.v1_20_R2.entity.memory;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.core.IRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import org.bukkit.Registry;
-import org.bukkit.craftbukkit.CraftRegistry;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R2.CraftRegistry;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.bukkit.entity.memory.MemoryKey;
 
 public final class CraftMemoryKey {

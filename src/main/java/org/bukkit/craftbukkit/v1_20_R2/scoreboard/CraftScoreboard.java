@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.scoreboard;
+package org.bukkit.craftbukkit.v1_20_R2.scoreboard;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -9,7 +9,7 @@ import net.minecraft.world.scores.ScoreboardObjective;
 import net.minecraft.world.scores.ScoreboardTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;

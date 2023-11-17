@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit;
+package org.bukkit.craftbukkit.v1_20_R2;
 
 import org.bukkit.HeightMap;
 

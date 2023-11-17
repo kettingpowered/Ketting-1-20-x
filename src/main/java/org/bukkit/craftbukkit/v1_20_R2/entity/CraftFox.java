@@ -1,10 +1,10 @@
-package org.bukkit.craftbukkit.entity;
+package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.world.entity.animal.EntityFox;
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Fox;
 import org.bukkit.entity.Fox.Type;

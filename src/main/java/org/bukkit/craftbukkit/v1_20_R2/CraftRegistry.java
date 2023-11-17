@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit;
+package org.bukkit.craftbukkit.v1_20_R2;
 
 import com.google.common.base.Preconditions;
 import java.util.HashMap;
@@ -16,11 +16,11 @@ import org.bukkit.Keyed;
 import org.bukkit.MusicInstrument;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
-import org.bukkit.craftbukkit.generator.structure.CraftStructure;
-import org.bukkit.craftbukkit.generator.structure.CraftStructureType;
-import org.bukkit.craftbukkit.inventory.trim.CraftTrimMaterial;
-import org.bukkit.craftbukkit.inventory.trim.CraftTrimPattern;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R2.generator.structure.CraftStructure;
+import org.bukkit.craftbukkit.v1_20_R2.generator.structure.CraftStructureType;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.trim.CraftTrimMaterial;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.trim.CraftTrimPattern;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.bukkit.generator.structure.Structure;
 import org.bukkit.generator.structure.StructureType;
 import org.bukkit.inventory.meta.trim.TrimMaterial;

@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.scheduler;
+package org.bukkit.craftbukkit.v1_20_R2.scheduler;
 
 import java.util.function.Consumer;
 import org.bukkit.Bukkit;

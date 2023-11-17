@@ -1,11 +1,11 @@
-package org.bukkit.craftbukkit.block;
+package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import net.minecraft.world.level.block.BlockLectern;
 import net.minecraft.world.level.block.entity.TileEntityLectern;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Lectern;
-import org.bukkit.craftbukkit.inventory.CraftInventoryLectern;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryLectern;
 import org.bukkit.inventory.Inventory;
 
 public class CraftLectern extends CraftBlockEntityState<TileEntityLectern> implements Lectern {

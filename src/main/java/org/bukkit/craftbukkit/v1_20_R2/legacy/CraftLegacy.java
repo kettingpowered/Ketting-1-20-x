@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.legacy;
+package org.bukkit.craftbukkit.v1_20_R2.legacy;
 
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.Dynamic;
@@ -29,7 +29,7 @@ import net.minecraft.world.level.block.state.BlockStateList;
 import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.level.block.state.properties.IBlockState;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.material.MaterialData;
 

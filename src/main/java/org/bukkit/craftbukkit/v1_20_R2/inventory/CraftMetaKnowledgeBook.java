@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.inventory;
+package org.bukkit.craftbukkit.v1_20_R2.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.ArrayList;
@@ -11,8 +11,8 @@ import net.minecraft.nbt.NBTTagString;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMetaItem.SerializableMeta;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.bukkit.inventory.meta.KnowledgeBookMeta;
 
 @DelegateDeserialization(SerializableMeta.class)

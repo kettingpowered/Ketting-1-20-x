@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.inventory;
+package org.bukkit.craftbukkit.v1_20_R2.inventory;
 
 import net.minecraft.world.IInventory;
 import org.bukkit.inventory.HorseInventory;

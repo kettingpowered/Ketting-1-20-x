@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftRedstoneComparator extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Comparator, org.bukkit.block.data.Directional, org.bukkit.block.data.Powerable {
+public final class CraftRedstoneComparator extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Comparator, org.bukkit.block.data.Directional, org.bukkit.block.data.Powerable {
 
     public CraftRedstoneComparator() {
         super();
@@ -13,7 +13,7 @@ public final class CraftRedstoneComparator extends org.bukkit.craftbukkit.block.
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftComparator
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftComparator
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> MODE = getEnum(net.minecraft.world.level.block.BlockRedstoneComparator.class, "mode");
 
@@ -27,7 +27,7 @@ public final class CraftRedstoneComparator extends org.bukkit.craftbukkit.block.
         set(MODE, mode);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.BlockRedstoneComparator.class, "facing");
 
@@ -46,7 +46,7 @@ public final class CraftRedstoneComparator extends org.bukkit.craftbukkit.block.
         return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftPowerable
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean POWERED = getBoolean(net.minecraft.world.level.block.BlockRedstoneComparator.class, "powered");
 

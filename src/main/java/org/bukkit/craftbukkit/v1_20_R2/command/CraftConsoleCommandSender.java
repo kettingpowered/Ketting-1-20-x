@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.command;
+package org.bukkit.craftbukkit.v1_20_R2.command;
 
 import java.util.UUID;
 import org.bukkit.ChatColor;
@@ -6,7 +6,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ManuallyAbandonedConversationCanceller;
-import org.bukkit.craftbukkit.conversations.ConversationTracker;
+import org.bukkit.craftbukkit.v1_20_R2.conversations.ConversationTracker;
 
 /**
  * Represents CLI input from a console

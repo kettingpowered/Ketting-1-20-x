@@ -1,9 +1,9 @@
-package org.bukkit.craftbukkit.block;
+package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import net.minecraft.world.level.block.entity.TileEntityCampfire;
 import org.bukkit.World;
 import org.bukkit.block.Campfire;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 public class CraftCampfire extends CraftBlockEntityState<TileEntityCampfire> implements Campfire {

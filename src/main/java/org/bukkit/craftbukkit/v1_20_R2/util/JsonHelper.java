@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.util;
+package org.bukkit.craftbukkit.v1_20_R2.util;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

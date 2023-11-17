@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftSculkShrieker extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.SculkShrieker, org.bukkit.block.data.Waterlogged {
+public final class CraftSculkShrieker extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.SculkShrieker, org.bukkit.block.data.Waterlogged {
 
     public CraftSculkShrieker() {
         super();
@@ -13,7 +13,7 @@ public final class CraftSculkShrieker extends org.bukkit.craftbukkit.block.data.
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftSculkShrieker
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSculkShrieker
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean CAN_SUMMON = getBoolean(net.minecraft.world.level.block.SculkShriekerBlock.class, "can_summon");
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean SHRIEKING = getBoolean(net.minecraft.world.level.block.SculkShriekerBlock.class, "shrieking");
@@ -38,7 +38,7 @@ public final class CraftSculkShrieker extends org.bukkit.craftbukkit.block.data.
         set(SHRIEKING, shrieking);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.SculkShriekerBlock.class, "waterlogged");
 

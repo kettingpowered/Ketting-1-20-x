@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.configuration;
+package org.bukkit.craftbukkit.v1_20_R2.configuration;
 
 import java.util.Map;
 import java.util.NoSuchElementException;

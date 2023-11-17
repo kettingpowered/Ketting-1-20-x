@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.conversations;
+package org.bukkit.craftbukkit.v1_20_R2.conversations;
 
 import java.util.LinkedList;
 import java.util.logging.Level;

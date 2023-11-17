@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.attribute;
+package org.bukkit.craftbukkit.v1_20_R2.attribute;
 
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;

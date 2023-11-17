@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.generator;
+package org.bukkit.craftbukkit.v1_20_R2.generator;
 
 import net.minecraft.world.level.biome.Climate;
 import org.bukkit.generator.BiomeParameterPoint;

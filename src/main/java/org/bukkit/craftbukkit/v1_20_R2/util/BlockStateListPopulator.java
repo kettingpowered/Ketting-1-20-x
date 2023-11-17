@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.util;
+package org.bukkit.craftbukkit.v1_20_R2.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,9 +18,9 @@ import net.minecraft.world.level.dimension.DimensionManager;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.WorldData;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.block.CraftBlock;
-import org.bukkit.craftbukkit.block.CraftBlockEntityState;
-import org.bukkit.craftbukkit.block.CraftBlockState;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockEntityState;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState;
 
 public class BlockStateListPopulator extends DummyGeneratorAccess {
     private final GeneratorAccess world;

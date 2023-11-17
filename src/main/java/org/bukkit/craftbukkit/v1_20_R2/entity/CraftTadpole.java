@@ -1,7 +1,7 @@
-package org.bukkit.craftbukkit.entity;
+package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import net.minecraft.world.entity.animal.frog.Tadpole;
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 
 public class CraftTadpole extends CraftFish implements org.bukkit.entity.Tadpole {
 

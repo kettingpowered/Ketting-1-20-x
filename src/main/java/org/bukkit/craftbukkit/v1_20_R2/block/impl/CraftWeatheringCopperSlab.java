@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftWeatheringCopperSlab extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Slab, org.bukkit.block.data.Waterlogged {
+public final class CraftWeatheringCopperSlab extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Slab, org.bukkit.block.data.Waterlogged {
 
     public CraftWeatheringCopperSlab() {
         super();
@@ -13,7 +13,7 @@ public final class CraftWeatheringCopperSlab extends org.bukkit.craftbukkit.bloc
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftSlab
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSlab
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> TYPE = getEnum(net.minecraft.world.level.block.WeatheringCopperSlabBlock.class, "type");
 
@@ -27,7 +27,7 @@ public final class CraftWeatheringCopperSlab extends org.bukkit.craftbukkit.bloc
         set(TYPE, type);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.WeatheringCopperSlabBlock.class, "waterlogged");
 

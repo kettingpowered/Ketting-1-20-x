@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftCandle extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Candle, org.bukkit.block.data.Lightable, org.bukkit.block.data.Waterlogged {
+public final class CraftCandle extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Candle, org.bukkit.block.data.Lightable, org.bukkit.block.data.Waterlogged {
 
     public CraftCandle() {
         super();
@@ -13,7 +13,7 @@ public final class CraftCandle extends org.bukkit.craftbukkit.block.data.CraftBl
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftCandle
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftCandle
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateInteger CANDLES = getInteger(net.minecraft.world.level.block.CandleBlock.class, "candles");
 
@@ -32,7 +32,7 @@ public final class CraftCandle extends org.bukkit.craftbukkit.block.data.CraftBl
         return getMax(CANDLES);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftLightable
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftLightable
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean LIT = getBoolean(net.minecraft.world.level.block.CandleBlock.class, "lit");
 
@@ -46,7 +46,7 @@ public final class CraftCandle extends org.bukkit.craftbukkit.block.data.CraftBl
         set(LIT, lit);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.CandleBlock.class, "waterlogged");
 

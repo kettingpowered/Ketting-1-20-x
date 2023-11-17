@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftDoor extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Door, org.bukkit.block.data.Bisected, org.bukkit.block.data.Directional, org.bukkit.block.data.Openable, org.bukkit.block.data.Powerable {
+public final class CraftDoor extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Door, org.bukkit.block.data.Bisected, org.bukkit.block.data.Directional, org.bukkit.block.data.Openable, org.bukkit.block.data.Powerable {
 
     public CraftDoor() {
         super();
@@ -13,7 +13,7 @@ public final class CraftDoor extends org.bukkit.craftbukkit.block.data.CraftBloc
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftDoor
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftDoor
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> HINGE = getEnum(net.minecraft.world.level.block.BlockDoor.class, "hinge");
 
@@ -27,7 +27,7 @@ public final class CraftDoor extends org.bukkit.craftbukkit.block.data.CraftBloc
         set(HINGE, hinge);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftBisected
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBisected
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> HALF = getEnum(net.minecraft.world.level.block.BlockDoor.class, "half");
 
@@ -41,7 +41,7 @@ public final class CraftDoor extends org.bukkit.craftbukkit.block.data.CraftBloc
         set(HALF, half);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.BlockDoor.class, "facing");
 
@@ -60,7 +60,7 @@ public final class CraftDoor extends org.bukkit.craftbukkit.block.data.CraftBloc
         return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftOpenable
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftOpenable
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean OPEN = getBoolean(net.minecraft.world.level.block.BlockDoor.class, "open");
 
@@ -74,7 +74,7 @@ public final class CraftDoor extends org.bukkit.craftbukkit.block.data.CraftBloc
         set(OPEN, open);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftPowerable
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean POWERED = getBoolean(net.minecraft.world.level.block.BlockDoor.class, "powered");
 

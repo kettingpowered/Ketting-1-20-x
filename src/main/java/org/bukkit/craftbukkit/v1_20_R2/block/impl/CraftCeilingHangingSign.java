@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftCeilingHangingSign extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.HangingSign, org.bukkit.block.data.Attachable, org.bukkit.block.data.Rotatable, org.bukkit.block.data.Waterlogged {
+public final class CraftCeilingHangingSign extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.HangingSign, org.bukkit.block.data.Attachable, org.bukkit.block.data.Rotatable, org.bukkit.block.data.Waterlogged {
 
     public CraftCeilingHangingSign() {
         super();
@@ -13,7 +13,7 @@ public final class CraftCeilingHangingSign extends org.bukkit.craftbukkit.block.
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftAttachable
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAttachable
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean ATTACHED = getBoolean(net.minecraft.world.level.block.CeilingHangingSignBlock.class, "attached");
 
@@ -27,7 +27,7 @@ public final class CraftCeilingHangingSign extends org.bukkit.craftbukkit.block.
         set(ATTACHED, attached);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftRotatable
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftRotatable
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateInteger ROTATION = getInteger(net.minecraft.world.level.block.CeilingHangingSignBlock.class, "rotation");
 
@@ -130,7 +130,7 @@ public final class CraftCeilingHangingSign extends org.bukkit.craftbukkit.block.
         set(ROTATION, val);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.CeilingHangingSignBlock.class, "waterlogged");
 

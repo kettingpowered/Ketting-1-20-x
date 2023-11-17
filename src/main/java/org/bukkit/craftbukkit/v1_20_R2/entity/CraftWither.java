@@ -1,11 +1,11 @@
-package org.bukkit.craftbukkit.entity;
+package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.wither.EntityWither;
 import org.bukkit.boss.BossBar;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.boss.CraftBossBar;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.boss.CraftBossBar;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Wither;
 

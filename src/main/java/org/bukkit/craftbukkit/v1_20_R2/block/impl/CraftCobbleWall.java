@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftCobbleWall extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Wall, org.bukkit.block.data.Waterlogged {
+public final class CraftCobbleWall extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Wall, org.bukkit.block.data.Waterlogged {
 
     public CraftCobbleWall() {
         super();
@@ -13,7 +13,7 @@ public final class CraftCobbleWall extends org.bukkit.craftbukkit.block.data.Cra
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftWall
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftWall
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean UP = getBoolean(net.minecraft.world.level.block.BlockCobbleWall.class, "up");
     private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?>[] HEIGHTS = new net.minecraft.world.level.block.state.properties.BlockStateEnum[]{
@@ -40,7 +40,7 @@ public final class CraftCobbleWall extends org.bukkit.craftbukkit.block.data.Cra
         set(HEIGHTS[face.ordinal()], height);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockCobbleWall.class, "waterlogged");
 

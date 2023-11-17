@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.map;
+package org.bukkit.craftbukkit.v1_20_R2.map;
 
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
@@ -13,8 +13,8 @@ import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.level.saveddata.maps.WorldMap;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 

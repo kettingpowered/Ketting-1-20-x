@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.tag;
+package org.bukkit.craftbukkit.v1_20_R2.tag;
 
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.IRegistry;
@@ -6,7 +6,7 @@ import net.minecraft.tags.TagKey;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 
 public abstract class CraftTag<N, B extends Keyed> implements Tag<B> {
 

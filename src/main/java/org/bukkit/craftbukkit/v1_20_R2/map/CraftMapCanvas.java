@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.map;
+package org.bukkit.craftbukkit.v1_20_R2.map;
 
 import com.google.common.base.Preconditions;
 import java.awt.Color;

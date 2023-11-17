@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.inventory;
+package org.bukkit.craftbukkit.v1_20_R2.inventory;
 
 import com.google.common.base.Preconditions;
 import java.util.HashMap;
@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.entity.TileEntityShulkerBox;
 import net.minecraft.world.level.block.entity.TileEntitySmoker;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.util.CraftLegacy;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLegacy;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;

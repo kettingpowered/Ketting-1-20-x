@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.help;
+package org.bukkit.craftbukkit.v1_20_R2.help;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -18,8 +18,8 @@ import org.bukkit.command.MultipleCommandAlias;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.command.defaults.BukkitCommand;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.command.VanillaCommandWrapper;
 import org.bukkit.help.GenericCommandHelpTopic;
 import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;

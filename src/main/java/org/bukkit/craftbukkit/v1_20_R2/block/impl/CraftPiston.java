@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftPiston extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Piston, org.bukkit.block.data.Directional {
+public final class CraftPiston extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Piston, org.bukkit.block.data.Directional {
 
     public CraftPiston() {
         super();
@@ -13,7 +13,7 @@ public final class CraftPiston extends org.bukkit.craftbukkit.block.data.CraftBl
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftPiston
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftPiston
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean EXTENDED = getBoolean(net.minecraft.world.level.block.piston.BlockPiston.class, "extended");
 
@@ -27,7 +27,7 @@ public final class CraftPiston extends org.bukkit.craftbukkit.block.data.CraftBl
         set(EXTENDED, extended);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.piston.BlockPiston.class, "facing");
 

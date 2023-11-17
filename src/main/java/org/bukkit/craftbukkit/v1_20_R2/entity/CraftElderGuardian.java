@@ -1,7 +1,7 @@
-package org.bukkit.craftbukkit.entity;
+package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import net.minecraft.world.entity.monster.EntityGuardianElder;
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.ElderGuardian;
 
 public class CraftElderGuardian extends CraftGuardian implements ElderGuardian {

@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftPistonExtension extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.PistonHead, org.bukkit.block.data.type.TechnicalPiston, org.bukkit.block.data.Directional {
+public final class CraftPistonExtension extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.PistonHead, org.bukkit.block.data.type.TechnicalPiston, org.bukkit.block.data.Directional {
 
     public CraftPistonExtension() {
         super();
@@ -13,7 +13,7 @@ public final class CraftPistonExtension extends org.bukkit.craftbukkit.block.dat
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftPistonHead
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftPistonHead
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean SHORT = getBoolean(net.minecraft.world.level.block.piston.BlockPistonExtension.class, "short");
 
@@ -27,7 +27,7 @@ public final class CraftPistonExtension extends org.bukkit.craftbukkit.block.dat
         set(SHORT, _short);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftTechnicalPiston
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftTechnicalPiston
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> TYPE = getEnum(net.minecraft.world.level.block.piston.BlockPistonExtension.class, "type");
 
@@ -41,7 +41,7 @@ public final class CraftPistonExtension extends org.bukkit.craftbukkit.block.dat
         set(TYPE, type);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.piston.BlockPistonExtension.class, "facing");
 

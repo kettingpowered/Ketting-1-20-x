@@ -1,9 +1,9 @@
 /**
  * Automatically generated file, changes will be lost.
  */
-package org.bukkit.craftbukkit.block.impl;
+package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftCaveVines extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.CaveVines, org.bukkit.block.data.Ageable, org.bukkit.block.data.type.CaveVinesPlant {
+public final class CraftCaveVines extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.CaveVines, org.bukkit.block.data.Ageable, org.bukkit.block.data.type.CaveVinesPlant {
 
     public CraftCaveVines() {
         super();
@@ -13,7 +13,7 @@ public final class CraftCaveVines extends org.bukkit.craftbukkit.block.data.Craf
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftAgeable
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAgeable
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateInteger AGE = getInteger(net.minecraft.world.level.block.CaveVinesBlock.class, "age");
 
@@ -32,7 +32,7 @@ public final class CraftCaveVines extends org.bukkit.craftbukkit.block.data.Craf
         return getMax(AGE);
     }
 
-    // org.bukkit.craftbukkit.block.data.type.CraftCaveVinesPlant
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftCaveVinesPlant
 
     private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean BERRIES = getBoolean(net.minecraft.world.level.block.CaveVinesBlock.class, "berries");
 

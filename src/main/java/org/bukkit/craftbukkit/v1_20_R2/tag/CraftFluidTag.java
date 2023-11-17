@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.tag;
+package org.bukkit.craftbukkit.v1_20_R2.tag;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -7,7 +7,7 @@ import net.minecraft.core.IRegistry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.FluidType;
 import org.bukkit.Fluid;
-import org.bukkit.craftbukkit.CraftFluid;
+import org.bukkit.craftbukkit.v1_20_R2.CraftFluid;
 
 public class CraftFluidTag extends CraftTag<FluidType, Fluid> {
 

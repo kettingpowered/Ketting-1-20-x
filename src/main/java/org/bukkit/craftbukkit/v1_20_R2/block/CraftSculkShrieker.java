@@ -1,10 +1,10 @@
-package org.bukkit.craftbukkit.block;
+package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.world.level.block.entity.SculkShriekerBlockEntity;
 import org.bukkit.World;
 import org.bukkit.block.SculkShrieker;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class CraftSculkShrieker extends CraftBlockEntityState<SculkShriekerBlockEntity> implements SculkShrieker {

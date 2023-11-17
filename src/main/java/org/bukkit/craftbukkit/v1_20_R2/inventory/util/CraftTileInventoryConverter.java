@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.inventory.util;
+package org.bukkit.craftbukkit.v1_20_R2.inventory.util;
 
 import net.minecraft.core.BlockPosition;
 import net.minecraft.server.MinecraftServer;
@@ -15,10 +15,10 @@ import net.minecraft.world.level.block.entity.TileEntityHopper;
 import net.minecraft.world.level.block.entity.TileEntityLectern;
 import net.minecraft.world.level.block.entity.TileEntityLootable;
 import net.minecraft.world.level.block.entity.TileEntitySmoker;
-import org.bukkit.craftbukkit.inventory.CraftInventory;
-import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
-import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
-import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryBrewer;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryFurnace;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;

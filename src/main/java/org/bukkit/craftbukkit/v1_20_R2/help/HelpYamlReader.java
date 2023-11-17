@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.help;
+package org.bukkit.craftbukkit.v1_20_R2.help;
 
 import com.google.common.base.Charsets;
 import java.io.File;

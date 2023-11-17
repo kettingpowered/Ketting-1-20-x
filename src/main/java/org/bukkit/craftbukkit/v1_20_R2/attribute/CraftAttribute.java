@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.attribute;
+package org.bukkit.craftbukkit.v1_20_R2.attribute;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.core.IRegistry;
@@ -7,8 +7,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeBase;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.craftbukkit.CraftRegistry;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R2.CraftRegistry;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 
 public class CraftAttribute {
 

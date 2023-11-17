@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.potion;
+package org.bukkit.craftbukkit.v1_20_R2.potion;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.core.IRegistry;
@@ -6,8 +6,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffectList;
 import org.bukkit.Color;
-import org.bukkit.craftbukkit.CraftRegistry;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R2.CraftRegistry;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.bukkit.potion.PotionEffectType;
 
 public class CraftPotionEffectType extends PotionEffectType {

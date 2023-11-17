@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.scheduler;
+package org.bukkit.craftbukkit.v1_20_R2.scheduler;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;

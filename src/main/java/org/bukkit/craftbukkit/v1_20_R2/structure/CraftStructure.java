@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.structure;
+package org.bukkit.craftbukkit.v1_20_R2.structure;
 
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
@@ -21,11 +21,11 @@ import org.bukkit.RegionAccessor;
 import org.bukkit.World;
 import org.bukkit.block.structure.Mirror;
 import org.bukkit.block.structure.StructureRotation;
-import org.bukkit.craftbukkit.CraftRegionAccessor;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.util.CraftBlockVector;
-import org.bukkit.craftbukkit.util.CraftLocation;
-import org.bukkit.craftbukkit.util.RandomSourceWrapper;
+import org.bukkit.craftbukkit.v1_20_R2.CraftRegionAccessor;
+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftBlockVector;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
+import org.bukkit.craftbukkit.v1_20_R2.util.RandomSourceWrapper;
 import org.bukkit.entity.Entity;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.structure.Palette;

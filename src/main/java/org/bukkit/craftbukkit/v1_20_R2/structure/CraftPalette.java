@@ -1,10 +1,10 @@
-package org.bukkit.craftbukkit.structure;
+package org.bukkit.craftbukkit.v1_20_R2.structure;
 
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.world.level.levelgen.structure.templatesystem.DefinedStructure;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.block.CraftBlockStates;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockStates;
 import org.bukkit.structure.Palette;
 
 public class CraftPalette implements Palette {

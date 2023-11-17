@@ -1,8 +1,8 @@
-package org.bukkit.craftbukkit.entity;
+package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.world.entity.EntityLightning;
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 

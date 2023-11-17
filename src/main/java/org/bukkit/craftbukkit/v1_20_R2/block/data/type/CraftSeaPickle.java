@@ -1,7 +1,7 @@
-package org.bukkit.craftbukkit.block.data.type;
+package org.bukkit.craftbukkit.v1_20_R2.block.data.type;
 
 import org.bukkit.block.data.type.SeaPickle;
-import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftSeaPickle extends CraftBlockData implements SeaPickle {
 

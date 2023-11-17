@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.ban;
+package org.bukkit.craftbukkit.v1_20_R2.ban;
 
 import com.mojang.authlib.GameProfile;
 import java.time.Instant;
@@ -6,7 +6,7 @@ import java.util.Date;
 import net.minecraft.server.players.GameProfileBanEntry;
 import net.minecraft.server.players.GameProfileBanList;
 import org.bukkit.BanEntry;
-import org.bukkit.craftbukkit.profile.CraftPlayerProfile;
+import org.bukkit.craftbukkit.v1_20_R2.profile.CraftPlayerProfile;
 import org.bukkit.profile.PlayerProfile;
 
 public final class CraftProfileBanEntry implements BanEntry<PlayerProfile> {
