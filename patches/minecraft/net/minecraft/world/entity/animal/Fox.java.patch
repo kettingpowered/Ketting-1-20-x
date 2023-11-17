@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/entity/animal/Fox.java
 +++ b/net/minecraft/world/entity/animal/Fox.java
+@@ -103,8 +_,8 @@
+    private static final int FLAG_SLEEPING = 32;
+    private static final int FLAG_FACEPLANTED = 64;
+    private static final int FLAG_DEFENDING = 128;
+-   private static final EntityDataAccessor<Optional<UUID>> DATA_TRUSTED_ID_0 = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.OPTIONAL_UUID);
+-   private static final EntityDataAccessor<Optional<UUID>> DATA_TRUSTED_ID_1 = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.OPTIONAL_UUID);
++   public static final EntityDataAccessor<Optional<UUID>> DATA_TRUSTED_ID_0 = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.OPTIONAL_UUID);
++   public static final EntityDataAccessor<Optional<UUID>> DATA_TRUSTED_ID_1 = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.OPTIONAL_UUID);
+    static final Predicate<ItemEntity> ALLOWED_ITEMS = (p_296798_) -> {
+       return !p_296798_.hasPickUpDelay() && p_296798_.isAlive();
+    };
 @@ -482,7 +_,8 @@
  
     protected void pickUpItem(ItemEntity p_28514_) {
@@ -92,10 +103,12 @@
              BlockState blockstate = Fox.this.level().getBlockState(this.blockPos);
              if (blockstate.is(Blocks.SWEET_BERRY_BUSH)) {
                 this.pickSweetBerries(blockstate);
-@@ -904,6 +_,11 @@
+@@ -903,7 +_,12 @@
+ 
        private void pickSweetBerries(BlockState p_148929_) {
           int i = p_148929_.getValue(SweetBerryBushBlock.AGE);
-          p_148929_.setValue(SweetBerryBushBlock.AGE, Integer.valueOf(1));
+-         p_148929_.setValue(SweetBerryBushBlock.AGE, Integer.valueOf(1));
++         p_148929_.setValue(SweetBerryBushBlock.AGE, 1);
 +         // CraftBukkit start - call EntityChangeBlockEvent
 +         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(Fox.this, this.blockPos, p_148929_.setValue(SweetBerryBushBlock.AGE, 1))) {
 +            return;
