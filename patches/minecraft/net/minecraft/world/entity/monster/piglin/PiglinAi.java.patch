@@ -82,7 +82,7 @@
        } else if (isAdmiringDisabled(p_34858_) && p_34858_.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET)) {
           return false;
 -      } else if (isBarterCurrency(p_34859_)) {
-+      } else if (isBarterCurrency(p_34859_, p_34858_)) {
++      } else if (isBarterCurrency(p_34859_, p_34858_)) { // CraftBukkit
           return isNotHoldingLovedItemInOffHand(p_34858_);
        } else {
           boolean flag = p_34858_.canAddToInventory(p_34859_);
@@ -126,16 +126,25 @@
     }
  
     private static void admireGoldItem(LivingEntity p_34939_) {
-@@ -713,6 +_,12 @@
-    private static boolean isAdmiringItem(Piglin p_35021_) {
+@@ -714,6 +_,12 @@
        return p_35021_.getBrain().hasMemoryValue(MemoryModuleType.ADMIRING_ITEM);
     }
-+
+ 
 +   // CraftBukkit start - Changes to allow custom payment for bartering
 +   private static boolean isBarterCurrency(ItemStack itemstack, Piglin piglin) {
 +      return isBarterCurrency(itemstack) || piglin.allowedBarterItems.contains(itemstack.getItem());
 +   }
 +   // CraftBukkit end
- 
++
     private static boolean isBarterCurrency(ItemStack p_149968_) {
        return p_149968_.is(BARTERING_ITEM);
+    }
+@@ -751,7 +_,7 @@
+    }
+ 
+    private static boolean isNotHoldingLovedItemInOffHand(Piglin p_35029_) {
+-      return p_35029_.getOffhandItem().isEmpty() || !isLovedItem(p_35029_.getOffhandItem());
++      return p_35029_.getOffhandItem().isEmpty() || !isLovedItem(p_35029_.getOffhandItem()); // CraftBukkit - Changes to allow custom payment for bartering
+    }
+ 
+    public static boolean isZombified(EntityType<?> p_34807_) {

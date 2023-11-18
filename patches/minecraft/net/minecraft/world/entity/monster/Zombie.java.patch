@@ -19,14 +19,25 @@
  import org.joml.Vector3f;
  
  public class Zombie extends Monster {
-@@ -85,6 +_,7 @@
+@@ -84,7 +_,8 @@
+    private final BreakDoorGoal breakDoorGoal = new BreakDoorGoal(this, DOOR_BREAKING_PREDICATE);
     private boolean canBreakDoors;
     private int inWaterTime;
-    private int conversionTime;
+-   private int conversionTime;
++   public int conversionTime;
 +   private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
  
     public Zombie(EntityType<? extends Zombie> p_34271_, Level p_34272_) {
        super(p_34271_, p_34272_);
+@@ -107,7 +_,7 @@
+       this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+       this.targetSelector.addGoal(1, (new HurtByTargetGoal(this)).setAlertOthers(ZombifiedPiglin.class));
+       this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+-      this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false));
++      if ( this.level().spigotConfig.zombieAggressiveTowardsVillager ) this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false)); // Spigot
+       this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
+       this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Turtle.class, 10, true, false, Turtle.BABY_ON_LAND_SELECTOR));
+    }
 @@ -192,8 +_,11 @@
     public void tick() {
        if (!this.level().isClientSide && this.isAlive() && !this.isNoAi()) {
