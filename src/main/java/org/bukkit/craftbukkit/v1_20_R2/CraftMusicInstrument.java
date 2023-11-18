@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.IRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Instrument;
 import org.bukkit.MusicInstrument;
@@ -15,7 +14,7 @@ public class CraftMusicInstrument extends MusicInstrument {
     public static MusicInstrument minecraftToBukkit(Instrument minecraft) {
         Preconditions.checkArgument(minecraft != null);
 
-        IRegistry<Instrument> registry = CraftRegistry.getMinecraftRegistry(Registries.INSTRUMENT);
+        net.minecraft.core.Registry<Instrument> registry = CraftRegistry.getMinecraftRegistry(Registries.INSTRUMENT);
         MusicInstrument bukkit = Registry.INSTRUMENT.get(CraftNamespacedKey.fromMinecraft(registry.getKey(minecraft)));
 
         Preconditions.checkArgument(bukkit != null);

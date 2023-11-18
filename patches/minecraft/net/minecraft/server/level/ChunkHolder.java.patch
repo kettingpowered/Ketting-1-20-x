@@ -8,9 +8,12 @@
  import net.minecraft.util.DebugBuffer;
  import net.minecraft.world.level.ChunkPos;
  import net.minecraft.world.level.Level;
-@@ -63,6 +_,7 @@
+@@ -61,8 +_,9 @@
+    private final BitSet skyChangedLightSectionFilter = new BitSet();
+    private final LevelLightEngine lightEngine;
     private final ChunkHolder.LevelChangeListener onLevelChange;
-    private final ChunkHolder.PlayerProvider playerProvider;
+-   private final ChunkHolder.PlayerProvider playerProvider;
++   public final ChunkHolder.PlayerProvider playerProvider;
     private boolean wasAccessibleSinceLastSave;
 +   LevelChunk currentlyLoading; // Forge: Used to bypass future chain when loading chunks.
     private CompletableFuture<Void> pendingFullStateConfirmation = CompletableFuture.completedFuture((Void)null);

@@ -8,51 +8,37 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import net.minecraft.core.BlockPosition;
-import net.minecraft.core.EnumDirection;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.features.TreeFeatures;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.EntityAreaEffectCloud;
-import net.minecraft.world.entity.EntityExperienceOrb;
-import net.minecraft.world.entity.EntityInsentient;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.EnumMobSpawn;
-import net.minecraft.world.entity.GroupDataEntity;
-import net.minecraft.world.entity.decoration.EntityArmorStand;
-import net.minecraft.world.entity.decoration.EntityHanging;
-import net.minecraft.world.entity.decoration.EntityItemFrame;
-import net.minecraft.world.entity.decoration.EntityLeash;
-import net.minecraft.world.entity.decoration.EntityPainting;
-import net.minecraft.world.entity.item.EntityFallingBlock;
-import net.minecraft.world.entity.item.EntityTNTPrimed;
-import net.minecraft.world.entity.monster.EntityZombie;
-import net.minecraft.world.entity.projectile.EntityEgg;
-import net.minecraft.world.entity.projectile.EntityEnderSignal;
-import net.minecraft.world.entity.projectile.EntityEvokerFangs;
-import net.minecraft.world.entity.projectile.EntityFireball;
-import net.minecraft.world.entity.projectile.EntityFireworks;
-import net.minecraft.world.entity.projectile.EntityPotion;
-import net.minecraft.world.entity.projectile.EntitySnowball;
-import net.minecraft.world.entity.projectile.EntityTippedArrow;
-import net.minecraft.world.entity.vehicle.EntityMinecartChest;
-import net.minecraft.world.entity.vehicle.EntityMinecartCommandBlock;
-import net.minecraft.world.entity.vehicle.EntityMinecartFurnace;
-import net.minecraft.world.entity.vehicle.EntityMinecartHopper;
-import net.minecraft.world.entity.vehicle.EntityMinecartMobSpawner;
-import net.minecraft.world.entity.vehicle.EntityMinecartRideable;
-import net.minecraft.world.entity.vehicle.EntityMinecartTNT;
-import net.minecraft.world.level.GeneratorAccessSeed;
-import net.minecraft.world.level.biome.BiomeBase;
-import net.minecraft.world.level.block.BlockChorusFlower;
-import net.minecraft.world.level.block.BlockDiodeAbstract;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.decoration.HangingEntity;
+import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.EyeOfEnder;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.entity.projectile.ThrownEgg;
+import net.minecraft.world.entity.vehicle.MinecartChest;
+import net.minecraft.world.entity.vehicle.MinecartCommandBlock;
+import net.minecraft.world.entity.vehicle.MinecartFurnace;
+import net.minecraft.world.entity.vehicle.MinecartHopper;
+import net.minecraft.world.entity.vehicle.MinecartSpawner;
+import net.minecraft.world.entity.vehicle.MinecartTNT;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.IBlockData;
+import net.minecraft.world.level.block.ChorusFlowerBlock;
+import net.minecraft.world.level.block.DiodeBlock;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.feature.WorldGenFeatureConfigured;
-import net.minecraft.world.phys.AxisAlignedBB;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.phys.AABB;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.RegionAccessor;
@@ -65,7 +51,6 @@ import org.bukkit.craftbukkit.v1_20_R2.block.CraftBiome;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_20_R2.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
@@ -219,10 +204,10 @@ import org.bukkit.util.Vector;
 
 public abstract class CraftRegionAccessor implements RegionAccessor {
 
-    public abstract GeneratorAccessSeed getHandle();
+    public abstract WorldGenLevel getHandle();
 
     public boolean isNormalWorld() {
-        return getHandle() instanceof net.minecraft.server.level.WorldServer;
+        return getHandle() instanceof ServerLevel;
     }
 
     @Override
@@ -243,11 +228,11 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
     @Override
     public void setBiome(int x, int y, int z, Biome biome) {
         Preconditions.checkArgument(biome != Biome.CUSTOM, "Cannot set the biome to %s", biome);
-        Holder<BiomeBase> biomeBase = CraftBiome.bukkitToMinecraftHolder(biome);
+        Holder<net.minecraft.world.level.biome.Biome> biomeBase = CraftBiome.bukkitToMinecraftHolder(biome);
         setBiome(x, y, z, biomeBase);
     }
 
-    public abstract void setBiome(int x, int y, int z, Holder<BiomeBase> biomeBase);
+    public abstract void setBiome(int x, int y, int z, Holder<net.minecraft.world.level.biome.Biome> biomeBase);
 
     @Override
     public BlockState getBlockState(Location location) {
@@ -256,7 +241,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
 
     @Override
     public BlockState getBlockState(int x, int y, int z) {
-        return CraftBlock.at(getHandle(), new BlockPosition(x, y, z)).getState();
+        return CraftBlock.at(getHandle(), new BlockPos(x, y, z)).getState();
     }
 
     @Override
@@ -279,8 +264,8 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
         return CraftMagicNumbers.getMaterial(getData(x, y, z).getBlock());
     }
 
-    private IBlockData getData(int x, int y, int z) {
-        return getHandle().getBlockState(new BlockPosition(x, y, z));
+    private net.minecraft.world.level.block.state.BlockState getData(int x, int y, int z) {
+        return getHandle().getBlockState(new BlockPos(x, y, z));
     }
 
     @Override
@@ -290,9 +275,9 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
 
     @Override
     public void setBlockData(int x, int y, int z, BlockData blockData) {
-        GeneratorAccessSeed world = getHandle();
-        BlockPosition pos = new BlockPosition(x, y, z);
-        IBlockData old = getHandle().getBlockState(pos);
+        WorldGenLevel world = getHandle();
+        BlockPos pos = new BlockPos(x, y, z);
+        net.minecraft.world.level.block.state.BlockState old = getHandle().getBlockState(pos);
 
         CraftBlock.setTypeAndData(world, pos, old, ((CraftBlockData) blockData).getState(), true);
     }
@@ -329,7 +314,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
 
     @Override
     public boolean generateTree(Location location, Random random, TreeType treeType) {
-        BlockPosition pos = CraftLocation.toBlockPosition(location);
+        BlockPos pos = CraftLocation.toBlockPosition(location);
         return generateTree(getHandle(), getHandle().getMinecraftWorld().getChunkSource().getGenerator(), pos, new RandomSourceWrapper(random), treeType);
     }
 
@@ -343,7 +328,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
 
     @Override
     public boolean generateTree(Location location, Random random, TreeType treeType, Predicate<? super BlockState> predicate) {
-        BlockPosition pos = CraftLocation.toBlockPosition(location);
+        BlockPos pos = CraftLocation.toBlockPosition(location);
         BlockStateListPopulator populator = new BlockStateListPopulator(getHandle());
         boolean result = generateTree(populator, getHandle().getMinecraftWorld().getChunkSource().getGenerator(), pos, new RandomSourceWrapper(random), treeType);
         populator.refreshTiles();
@@ -357,8 +342,8 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
         return result;
     }
 
-    public boolean generateTree(GeneratorAccessSeed access, ChunkGenerator chunkGenerator, BlockPosition pos, RandomSource random, TreeType treeType) {
-        ResourceKey<WorldGenFeatureConfigured<?, ?>> gen;
+    public boolean generateTree(WorldGenLevel access, ChunkGenerator chunkGenerator, BlockPos pos, RandomSource random, TreeType treeType) {
+        ResourceKey<ConfiguredFeature<?, ?>> gen;
         switch (treeType) {
             case BIG_TREE:
                 gen = TreeFeatures.FANCY_OAK;
@@ -406,7 +391,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
                 gen = TreeFeatures.SUPER_BIRCH_BEES_0002;
                 break;
             case CHORUS_PLANT:
-                ((BlockChorusFlower) Blocks.CHORUS_FLOWER).generatePlant(access, pos, random, 8);
+                ((ChorusFlowerBlock) Blocks.CHORUS_FLOWER).generatePlant(access, pos, random, 8);
                 return true;
             case CRIMSON_FUNGUS:
                 gen = TreeFeatures.CRIMSON_FUNGUS_PLANTED;
@@ -432,7 +417,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
                 break;
         }
 
-        Holder<WorldGenFeatureConfigured<?, ?>> holder = access.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(gen).orElse(null);
+        Holder<ConfiguredFeature<?, ?>> holder = access.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(gen).orElse(null);
         return (holder != null) ? holder.value().place(access, chunkGenerator, random, pos) : false;
     }
 
@@ -562,8 +547,8 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
     public <T extends Entity> T addEntity(net.minecraft.world.entity.Entity entity, CreatureSpawnEvent.SpawnReason reason, Consumer<? super T> function, boolean randomizeData) throws IllegalArgumentException {
         Preconditions.checkArgument(entity != null, "Cannot spawn null entity");
 
-        if (randomizeData && entity instanceof EntityInsentient) {
-            ((EntityInsentient) entity).finalizeSpawn(getHandle(), getHandle().getCurrentDifficultyAt(entity.blockPosition()), EnumMobSpawn.COMMAND, (GroupDataEntity) null, null);
+        if (randomizeData && entity instanceof Mob) {
+            ((Mob) entity).finalizeSpawn(getHandle(), getHandle().getCurrentDifficultyAt(entity.blockPosition()), MobSpawnType.COMMAND, (GroupDataEntity) null, null);
         }
 
         if (!isNormalWorld()) {
@@ -591,7 +576,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
         Preconditions.checkArgument(clazz != null, "Entity class cannot be null");
 
         net.minecraft.world.entity.Entity entity = null;
-        net.minecraft.world.level.World world = getHandle().getMinecraftWorld();
+        ServerLevel world = getHandle().getMinecraftWorld();
 
         double x = location.getX();
         double y = location.getY();
@@ -602,288 +587,288 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
         // order is important for some of these
         if (Boat.class.isAssignableFrom(clazz)) {
             if (ChestBoat.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.CHEST_BOAT.create(world);
+                entity = net.minecraft.world.entity.EntityType.CHEST_BOAT.create(world);
             } else {
-                entity = EntityTypes.BOAT.create(world);
+                entity = net.minecraft.world.entity.EntityType.BOAT.create(world);
             }
             entity.moveTo(x, y, z, yaw, pitch);
         } else if (FallingBlock.class.isAssignableFrom(clazz)) {
-            BlockPosition pos = BlockPosition.containing(x, y, z);
-            entity = EntityFallingBlock.fall(world, pos, getHandle().getBlockState(pos));
+            BlockPos pos = BlockPos.containing(x, y, z);
+            entity = FallingBlockEntity.fall(world, pos, getHandle().getBlockState(pos));
         } else if (Projectile.class.isAssignableFrom(clazz)) {
             if (Snowball.class.isAssignableFrom(clazz)) {
-                entity = new EntitySnowball(world, x, y, z);
+                entity = new net.minecraft.world.entity.projectile.Snowball(world, x, y, z);
             } else if (Egg.class.isAssignableFrom(clazz)) {
-                entity = new EntityEgg(world, x, y, z);
+                entity = new ThrownEgg(world, x, y, z);
             } else if (AbstractArrow.class.isAssignableFrom(clazz)) {
                 if (TippedArrow.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.ARROW.create(world);
+                    entity = net.minecraft.world.entity.EntityType.ARROW.create(world);
                     ((Arrow) entity.getBukkitEntity()).setBasePotionData(new PotionData(PotionType.WATER, false, false));
                 } else if (SpectralArrow.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.SPECTRAL_ARROW.create(world);
+                    entity = net.minecraft.world.entity.EntityType.SPECTRAL_ARROW.create(world);
                 } else if (Trident.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.TRIDENT.create(world);
+                    entity = net.minecraft.world.entity.EntityType.TRIDENT.create(world);
                 } else {
-                    entity = EntityTypes.ARROW.create(world);
+                    entity = net.minecraft.world.entity.EntityType.ARROW.create(world);
                 }
                 entity.moveTo(x, y, z, 0, 0);
             } else if (ThrownExpBottle.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.EXPERIENCE_BOTTLE.create(world);
+                entity = net.minecraft.world.entity.EntityType.EXPERIENCE_BOTTLE.create(world);
                 entity.moveTo(x, y, z, 0, 0);
             } else if (EnderPearl.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.ENDER_PEARL.create(world);
+                entity = net.minecraft.world.entity.EntityType.ENDER_PEARL.create(world);
                 entity.moveTo(x, y, z, 0, 0);
             } else if (ThrownPotion.class.isAssignableFrom(clazz)) {
                 if (LingeringPotion.class.isAssignableFrom(clazz)) {
-                    entity = new EntityPotion(world, x, y, z);
-                    ((EntityPotion) entity).setItem(CraftItemStack.asNMSCopy(new ItemStack(org.bukkit.Material.LINGERING_POTION, 1)));
+                    entity = new net.minecraft.world.entity.projectile.ThrownPotion(world, x, y, z);
+                    ((net.minecraft.world.entity.projectile.ThrownPotion) entity).setItem(CraftItemStack.asNMSCopy(new ItemStack(org.bukkit.Material.LINGERING_POTION, 1)));
                 } else {
-                    entity = new EntityPotion(world, x, y, z);
-                    ((EntityPotion) entity).setItem(CraftItemStack.asNMSCopy(new ItemStack(org.bukkit.Material.SPLASH_POTION, 1)));
+                    entity = new net.minecraft.world.entity.projectile.ThrownPotion(world, x, y, z);
+                    ((net.minecraft.world.entity.projectile.ThrownPotion) entity).setItem(CraftItemStack.asNMSCopy(new ItemStack(org.bukkit.Material.SPLASH_POTION, 1)));
                 }
             } else if (Fireball.class.isAssignableFrom(clazz)) {
                 if (SmallFireball.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.SMALL_FIREBALL.create(world);
+                    entity = net.minecraft.world.entity.EntityType.SMALL_FIREBALL.create(world);
                 } else if (WitherSkull.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.WITHER_SKULL.create(world);
+                    entity = net.minecraft.world.entity.EntityType.WITHER_SKULL.create(world);
                 } else if (DragonFireball.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.DRAGON_FIREBALL.create(world);
+                    entity = net.minecraft.world.entity.EntityType.DRAGON_FIREBALL.create(world);
                 } else {
-                    entity = EntityTypes.FIREBALL.create(world);
+                    entity = net.minecraft.world.entity.EntityType.FIREBALL.create(world);
                 }
                 entity.moveTo(x, y, z, yaw, pitch);
                 Vector direction = location.getDirection().multiply(10);
-                ((EntityFireball) entity).setDirection(direction.getX(), direction.getY(), direction.getZ());
+                ((AbstractHurtingProjectile) entity).setDirection(direction.getX(), direction.getY(), direction.getZ());
             } else if (ShulkerBullet.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.SHULKER_BULLET.create(world);
+                entity = net.minecraft.world.entity.EntityType.SHULKER_BULLET.create(world);
                 entity.moveTo(x, y, z, yaw, pitch);
             } else if (LlamaSpit.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.LLAMA_SPIT.create(world);
+                entity = net.minecraft.world.entity.EntityType.LLAMA_SPIT.create(world);
                 entity.moveTo(x, y, z, yaw, pitch);
             } else if (Firework.class.isAssignableFrom(clazz)) {
-                entity = new EntityFireworks(world, x, y, z, net.minecraft.world.item.ItemStack.EMPTY);
+                entity = new FireworkRocketEntity(world, x, y, z, net.minecraft.world.item.ItemStack.EMPTY);
             }
         } else if (Minecart.class.isAssignableFrom(clazz)) {
             if (PoweredMinecart.class.isAssignableFrom(clazz)) {
-                entity = new EntityMinecartFurnace(world, x, y, z);
+                entity = new MinecartFurnace(world, x, y, z);
             } else if (StorageMinecart.class.isAssignableFrom(clazz)) {
-                entity = new EntityMinecartChest(world, x, y, z);
+                entity = new MinecartChest(world, x, y, z);
             } else if (ExplosiveMinecart.class.isAssignableFrom(clazz)) {
-                entity = new EntityMinecartTNT(world, x, y, z);
+                entity = new MinecartTNT(world, x, y, z);
             } else if (HopperMinecart.class.isAssignableFrom(clazz)) {
-                entity = new EntityMinecartHopper(world, x, y, z);
+                entity = new MinecartHopper(world, x, y, z);
             } else if (SpawnerMinecart.class.isAssignableFrom(clazz)) {
-                entity = new EntityMinecartMobSpawner(world, x, y, z);
+                entity = new MinecartSpawner(world, x, y, z);
             } else if (CommandMinecart.class.isAssignableFrom(clazz)) {
-                entity = new EntityMinecartCommandBlock(world, x, y, z);
+                entity = new MinecartCommandBlock(world, x, y, z);
             } else { // Default to rideable minecart for pre-rideable compatibility
-                entity = new EntityMinecartRideable(world, x, y, z);
+                entity = new net.minecraft.world.entity.vehicle.Minecart(world, x, y, z);
             }
         } else if (EnderSignal.class.isAssignableFrom(clazz)) {
-            entity = new EntityEnderSignal(world, x, y, z);
+            entity = new EyeOfEnder(world, x, y, z);
         } else if (EnderCrystal.class.isAssignableFrom(clazz)) {
-            entity = EntityTypes.END_CRYSTAL.create(world);
+            entity = net.minecraft.world.entity.EntityType.END_CRYSTAL.create(world);
             entity.moveTo(x, y, z, 0, 0);
         } else if (LivingEntity.class.isAssignableFrom(clazz)) {
             if (Chicken.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.CHICKEN.create(world);
+                entity = net.minecraft.world.entity.EntityType.CHICKEN.create(world);
             } else if (Cow.class.isAssignableFrom(clazz)) {
                 if (MushroomCow.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.MOOSHROOM.create(world);
+                    entity = net.minecraft.world.entity.EntityType.MOOSHROOM.create(world);
                 } else {
-                    entity = EntityTypes.COW.create(world);
+                    entity = net.minecraft.world.entity.EntityType.COW.create(world);
                 }
             } else if (Golem.class.isAssignableFrom(clazz)) {
                 if (Snowman.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.SNOW_GOLEM.create(world);
+                    entity = net.minecraft.world.entity.EntityType.SNOW_GOLEM.create(world);
                 } else if (IronGolem.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.IRON_GOLEM.create(world);
+                    entity = net.minecraft.world.entity.EntityType.IRON_GOLEM.create(world);
                 } else if (Shulker.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.SHULKER.create(world);
+                    entity = net.minecraft.world.entity.EntityType.SHULKER.create(world);
                 }
             } else if (Creeper.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.CREEPER.create(world);
+                entity = net.minecraft.world.entity.EntityType.CREEPER.create(world);
             } else if (Ghast.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.GHAST.create(world);
+                entity = net.minecraft.world.entity.EntityType.GHAST.create(world);
             } else if (Pig.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.PIG.create(world);
+                entity = net.minecraft.world.entity.EntityType.PIG.create(world);
             } else if (Player.class.isAssignableFrom(clazz)) {
                 // need a net server handler for this one
             } else if (Sheep.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.SHEEP.create(world);
+                entity = net.minecraft.world.entity.EntityType.SHEEP.create(world);
             } else if (AbstractHorse.class.isAssignableFrom(clazz)) {
                 if (ChestedHorse.class.isAssignableFrom(clazz)) {
                     if (Donkey.class.isAssignableFrom(clazz)) {
-                        entity = EntityTypes.DONKEY.create(world);
+                        entity = net.minecraft.world.entity.EntityType.DONKEY.create(world);
                     } else if (Mule.class.isAssignableFrom(clazz)) {
-                        entity = EntityTypes.MULE.create(world);
+                        entity = net.minecraft.world.entity.EntityType.MULE.create(world);
                     } else if (Llama.class.isAssignableFrom(clazz)) {
                         if (TraderLlama.class.isAssignableFrom(clazz)) {
-                            entity = EntityTypes.TRADER_LLAMA.create(world);
+                            entity = net.minecraft.world.entity.EntityType.TRADER_LLAMA.create(world);
                         } else {
-                            entity = EntityTypes.LLAMA.create(world);
+                            entity = net.minecraft.world.entity.EntityType.LLAMA.create(world);
                         }
                     }
                 } else if (SkeletonHorse.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.SKELETON_HORSE.create(world);
+                    entity = net.minecraft.world.entity.EntityType.SKELETON_HORSE.create(world);
                 } else if (ZombieHorse.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.ZOMBIE_HORSE.create(world);
+                    entity = net.minecraft.world.entity.EntityType.ZOMBIE_HORSE.create(world);
                 } else if (Camel.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.CAMEL.create(world);
+                    entity = net.minecraft.world.entity.EntityType.CAMEL.create(world);
                 } else {
-                    entity = EntityTypes.HORSE.create(world);
+                    entity = net.minecraft.world.entity.EntityType.HORSE.create(world);
                 }
             } else if (AbstractSkeleton.class.isAssignableFrom(clazz)) {
                 if (Stray.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.STRAY.create(world);
+                    entity = net.minecraft.world.entity.EntityType.STRAY.create(world);
                 } else if (WitherSkeleton.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.WITHER_SKELETON.create(world);
+                    entity = net.minecraft.world.entity.EntityType.WITHER_SKELETON.create(world);
                 } else if (Skeleton.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.SKELETON.create(world);
+                    entity = net.minecraft.world.entity.EntityType.SKELETON.create(world);
                 }
             } else if (Slime.class.isAssignableFrom(clazz)) {
                 if (MagmaCube.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.MAGMA_CUBE.create(world);
+                    entity = net.minecraft.world.entity.EntityType.MAGMA_CUBE.create(world);
                 } else {
-                    entity = EntityTypes.SLIME.create(world);
+                    entity = net.minecraft.world.entity.EntityType.SLIME.create(world);
                 }
             } else if (Spider.class.isAssignableFrom(clazz)) {
                 if (CaveSpider.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.CAVE_SPIDER.create(world);
+                    entity = net.minecraft.world.entity.EntityType.CAVE_SPIDER.create(world);
                 } else {
-                    entity = EntityTypes.SPIDER.create(world);
+                    entity = net.minecraft.world.entity.EntityType.SPIDER.create(world);
                 }
             } else if (Squid.class.isAssignableFrom(clazz)) {
                 if (GlowSquid.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.GLOW_SQUID.create(world);
+                    entity = net.minecraft.world.entity.EntityType.GLOW_SQUID.create(world);
                 } else {
-                    entity = EntityTypes.SQUID.create(world);
+                    entity = net.minecraft.world.entity.EntityType.SQUID.create(world);
                 }
             } else if (Tameable.class.isAssignableFrom(clazz)) {
                 if (Wolf.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.WOLF.create(world);
+                    entity = net.minecraft.world.entity.EntityType.WOLF.create(world);
                 } else if (Parrot.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.PARROT.create(world);
+                    entity = net.minecraft.world.entity.EntityType.PARROT.create(world);
                 } else if (Cat.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.CAT.create(world);
+                    entity = net.minecraft.world.entity.EntityType.CAT.create(world);
                 }
             } else if (PigZombie.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.ZOMBIFIED_PIGLIN.create(world);
+                entity = net.minecraft.world.entity.EntityType.ZOMBIFIED_PIGLIN.create(world);
             } else if (Zombie.class.isAssignableFrom(clazz)) {
                 if (Husk.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.HUSK.create(world);
+                    entity = net.minecraft.world.entity.EntityType.HUSK.create(world);
                 } else if (ZombieVillager.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.ZOMBIE_VILLAGER.create(world);
+                    entity = net.minecraft.world.entity.EntityType.ZOMBIE_VILLAGER.create(world);
                 } else if (Drowned.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.DROWNED.create(world);
+                    entity = net.minecraft.world.entity.EntityType.DROWNED.create(world);
                 } else {
-                    entity = new EntityZombie(world);
+                    entity = new net.minecraft.world.entity.monster.Zombie(world);
                 }
             } else if (Giant.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.GIANT.create(world);
+                entity = net.minecraft.world.entity.EntityType.GIANT.create(world);
             } else if (Silverfish.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.SILVERFISH.create(world);
+                entity = net.minecraft.world.entity.EntityType.SILVERFISH.create(world);
             } else if (Enderman.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.ENDERMAN.create(world);
+                entity = net.minecraft.world.entity.EntityType.ENDERMAN.create(world);
             } else if (Blaze.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.BLAZE.create(world);
+                entity = net.minecraft.world.entity.EntityType.BLAZE.create(world);
             } else if (AbstractVillager.class.isAssignableFrom(clazz)) {
                 if (Villager.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.VILLAGER.create(world);
+                    entity = net.minecraft.world.entity.EntityType.VILLAGER.create(world);
                 } else if (WanderingTrader.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.WANDERING_TRADER.create(world);
+                    entity = net.minecraft.world.entity.EntityType.WANDERING_TRADER.create(world);
                 }
             } else if (Witch.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.WITCH.create(world);
+                entity = net.minecraft.world.entity.EntityType.WITCH.create(world);
             } else if (Wither.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.WITHER.create(world);
+                entity = net.minecraft.world.entity.EntityType.WITHER.create(world);
             } else if (ComplexLivingEntity.class.isAssignableFrom(clazz)) {
                 if (EnderDragon.class.isAssignableFrom(clazz)) {
                     Preconditions.checkArgument(this.isNormalWorld(), "Cannot spawn entity %s during world generation", clazz.getName());
-                    entity = EntityTypes.ENDER_DRAGON.create(getHandle().getMinecraftWorld());
+                    entity = net.minecraft.world.entity.EntityType.ENDER_DRAGON.create(getHandle().getMinecraftWorld());
                 }
             } else if (Ambient.class.isAssignableFrom(clazz)) {
                 if (Bat.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.BAT.create(world);
+                    entity = net.minecraft.world.entity.EntityType.BAT.create(world);
                 }
             } else if (Rabbit.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.RABBIT.create(world);
+                entity = net.minecraft.world.entity.EntityType.RABBIT.create(world);
             } else if (Endermite.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.ENDERMITE.create(world);
+                entity = net.minecraft.world.entity.EntityType.ENDERMITE.create(world);
             } else if (Guardian.class.isAssignableFrom(clazz)) {
                 if (ElderGuardian.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.ELDER_GUARDIAN.create(world);
+                    entity = net.minecraft.world.entity.EntityType.ELDER_GUARDIAN.create(world);
                 } else {
-                    entity = EntityTypes.GUARDIAN.create(world);
+                    entity = net.minecraft.world.entity.EntityType.GUARDIAN.create(world);
                 }
             } else if (ArmorStand.class.isAssignableFrom(clazz)) {
-                entity = new EntityArmorStand(world, x, y, z);
+                entity = new net.minecraft.world.entity.decoration.ArmorStand(world, x, y, z);
             } else if (PolarBear.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.POLAR_BEAR.create(world);
+                entity = net.minecraft.world.entity.EntityType.POLAR_BEAR.create(world);
             } else if (Vex.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.VEX.create(world);
+                entity = net.minecraft.world.entity.EntityType.VEX.create(world);
             } else if (Illager.class.isAssignableFrom(clazz)) {
                 if (Spellcaster.class.isAssignableFrom(clazz)) {
                     if (Evoker.class.isAssignableFrom(clazz)) {
-                        entity = EntityTypes.EVOKER.create(world);
+                        entity = net.minecraft.world.entity.EntityType.EVOKER.create(world);
                     } else if (Illusioner.class.isAssignableFrom(clazz)) {
-                        entity = EntityTypes.ILLUSIONER.create(world);
+                        entity = net.minecraft.world.entity.EntityType.ILLUSIONER.create(world);
                     }
                 } else if (Vindicator.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.VINDICATOR.create(world);
+                    entity = net.minecraft.world.entity.EntityType.VINDICATOR.create(world);
                 } else if (Pillager.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.PILLAGER.create(world);
+                    entity = net.minecraft.world.entity.EntityType.PILLAGER.create(world);
                 }
             } else if (Turtle.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.TURTLE.create(world);
+                entity = net.minecraft.world.entity.EntityType.TURTLE.create(world);
             } else if (Phantom.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.PHANTOM.create(world);
+                entity = net.minecraft.world.entity.EntityType.PHANTOM.create(world);
             } else if (Fish.class.isAssignableFrom(clazz)) {
                 if (Cod.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.COD.create(world);
+                    entity = net.minecraft.world.entity.EntityType.COD.create(world);
                 } else if (PufferFish.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.PUFFERFISH.create(world);
+                    entity = net.minecraft.world.entity.EntityType.PUFFERFISH.create(world);
                 } else if (Salmon.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.SALMON.create(world);
+                    entity = net.minecraft.world.entity.EntityType.SALMON.create(world);
                 } else if (TropicalFish.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.TROPICAL_FISH.create(world);
+                    entity = net.minecraft.world.entity.EntityType.TROPICAL_FISH.create(world);
                 } else if (Tadpole.class.isAssignableFrom(clazz)) {
-                    entity = EntityTypes.TADPOLE.create(world);
+                    entity = net.minecraft.world.entity.EntityType.TADPOLE.create(world);
                 }
             } else if (Dolphin.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.DOLPHIN.create(world);
+                entity = net.minecraft.world.entity.EntityType.DOLPHIN.create(world);
             } else if (Ocelot.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.OCELOT.create(world);
+                entity = net.minecraft.world.entity.EntityType.OCELOT.create(world);
             } else if (Ravager.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.RAVAGER.create(world);
+                entity = net.minecraft.world.entity.EntityType.RAVAGER.create(world);
             } else if (Panda.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.PANDA.create(world);
+                entity = net.minecraft.world.entity.EntityType.PANDA.create(world);
             } else if (Fox.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.FOX.create(world);
+                entity = net.minecraft.world.entity.EntityType.FOX.create(world);
             } else if (Bee.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.BEE.create(world);
+                entity = net.minecraft.world.entity.EntityType.BEE.create(world);
             } else if (Hoglin.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.HOGLIN.create(world);
+                entity = net.minecraft.world.entity.EntityType.HOGLIN.create(world);
             } else if (Piglin.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.PIGLIN.create(world);
+                entity = net.minecraft.world.entity.EntityType.PIGLIN.create(world);
             } else if (PiglinBrute.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.PIGLIN_BRUTE.create(world);
+                entity = net.minecraft.world.entity.EntityType.PIGLIN_BRUTE.create(world);
             } else if (Strider.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.STRIDER.create(world);
+                entity = net.minecraft.world.entity.EntityType.STRIDER.create(world);
             } else if (Zoglin.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.ZOGLIN.create(world);
+                entity = net.minecraft.world.entity.EntityType.ZOGLIN.create(world);
             } else if (Axolotl.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.AXOLOTL.create(world);
+                entity = net.minecraft.world.entity.EntityType.AXOLOTL.create(world);
             } else if (Goat.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.GOAT.create(world);
+                entity = net.minecraft.world.entity.EntityType.GOAT.create(world);
             } else if (Allay.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.ALLAY.create(world);
+                entity = net.minecraft.world.entity.EntityType.ALLAY.create(world);
             } else if (Frog.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.FROG.create(world);
+                entity = net.minecraft.world.entity.EntityType.FROG.create(world);
             } else if (Warden.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.WARDEN.create(world);
+                entity = net.minecraft.world.entity.EntityType.WARDEN.create(world);
             } else if (Sniffer.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.SNIFFER.create(world);
+                entity = net.minecraft.world.entity.EntityType.SNIFFER.create(world);
             }
 
             if (entity != null) {
@@ -893,7 +878,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
         } else if (Hanging.class.isAssignableFrom(clazz)) {
             if (LeashHitch.class.isAssignableFrom(clazz)) {
                 // SPIGOT-5732: LeashHitch has no direction and is always centered at a block
-                entity = new EntityLeash(world, BlockPosition.containing(x, y, z));
+                entity = new LeashFenceKnotEntity(world, BlockPos.containing(x, y, z));
             } else {
                 BlockFace face = BlockFace.SELF;
                 BlockFace[] faces = new BlockFace[]{BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH};
@@ -907,18 +892,18 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
                     faces = new BlockFace[]{BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.UP, BlockFace.DOWN};
                 }
 
-                final BlockPosition pos = BlockPosition.containing(x, y, z);
+                final BlockPos pos = BlockPos.containing(x, y, z);
                 for (BlockFace dir : faces) {
-                    IBlockData nmsBlock = getHandle().getBlockState(pos.relative(CraftBlock.blockFaceToNotch(dir)));
-                    if (nmsBlock.isSolid() || BlockDiodeAbstract.isDiode(nmsBlock)) {
+                    net.minecraft.world.level.block.state.BlockState nmsBlock = getHandle().getBlockState(pos.relative(CraftBlock.blockFaceToNotch(dir)));
+                    if (nmsBlock.isSolid() || DiodeBlock.isDiode(nmsBlock)) {
                         boolean taken = false;
-                        AxisAlignedBB bb = (ItemFrame.class.isAssignableFrom(clazz))
-                                ? EntityItemFrame.calculateBoundingBox(null, pos, CraftBlock.blockFaceToNotch(dir).getOpposite(), width, height)
-                                : EntityHanging.calculateBoundingBox(null, pos, CraftBlock.blockFaceToNotch(dir).getOpposite(), width, height);
+                        AABB bb = (ItemFrame.class.isAssignableFrom(clazz))
+                                ? net.minecraft.world.entity.decoration.ItemFrame.calculateBoundingBox(null, pos, CraftBlock.blockFaceToNotch(dir).getOpposite(), width, height)
+                                : HangingEntity.calculateBoundingBox(null, pos, CraftBlock.blockFaceToNotch(dir).getOpposite(), width, height);
                         List<net.minecraft.world.entity.Entity> list = (List<net.minecraft.world.entity.Entity>) getHandle().getEntities(null, bb);
                         for (Iterator<net.minecraft.world.entity.Entity> it = list.iterator(); !taken && it.hasNext(); ) {
                             net.minecraft.world.entity.Entity e = it.next();
-                            if (e instanceof EntityHanging) {
+                            if (e instanceof HangingEntity) {
                                 taken = true; // Hanging entities do not like hanging entities which intersect them.
                             }
                         }
@@ -937,47 +922,47 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
                     randomizeData = false; // Don't randomize if no valid face is found, prevents null painting
                 }
 
-                EnumDirection dir = CraftBlock.blockFaceToNotch(face).getOpposite();
+                Direction dir = CraftBlock.blockFaceToNotch(face).getOpposite();
                 if (Painting.class.isAssignableFrom(clazz)) {
                     if (isNormalWorld() && randomizeData) {
-                        entity = EntityPainting.create(world, pos, dir).orElse(null);
+                        entity = net.minecraft.world.entity.decoration.Painting.create(world, pos, dir).orElse(null);
                     } else {
-                        entity = new EntityPainting(EntityTypes.PAINTING, getHandle().getMinecraftWorld());
+                        entity = new net.minecraft.world.entity.decoration.Painting(net.minecraft.world.entity.EntityType.PAINTING, getHandle().getMinecraftWorld());
                         entity.absMoveTo(x, y, z, yaw, pitch);
-                        ((EntityPainting) entity).setDirection(dir);
+                        ((net.minecraft.world.entity.decoration.Painting) entity).setDirection(dir);
                     }
                 } else if (ItemFrame.class.isAssignableFrom(clazz)) {
                     if (GlowItemFrame.class.isAssignableFrom(clazz)) {
-                        entity = new net.minecraft.world.entity.decoration.GlowItemFrame(world, BlockPosition.containing(x, y, z), dir);
+                        entity = new net.minecraft.world.entity.decoration.GlowItemFrame(world, BlockPos.containing(x, y, z), dir);
                     } else {
-                        entity = new EntityItemFrame(world, BlockPosition.containing(x, y, z), dir);
+                        entity = new net.minecraft.world.entity.decoration.Painting(world, BlockPos.containing(x, y, z), dir);
                     }
                 }
             }
         } else if (TNTPrimed.class.isAssignableFrom(clazz)) {
-            entity = new EntityTNTPrimed(world, x, y, z, null);
+            entity = new PrimedTnt(world, x, y, z, null);
         } else if (ExperienceOrb.class.isAssignableFrom(clazz)) {
-            entity = new EntityExperienceOrb(world, x, y, z, 0);
+            entity = new net.minecraft.world.entity.ExperienceOrb(world, x, y, z, 0);
         } else if (LightningStrike.class.isAssignableFrom(clazz)) {
-            entity = EntityTypes.LIGHTNING_BOLT.create(world);
+            entity = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(world);
             entity.moveTo(location.getX(), location.getY(), location.getZ());
         } else if (AreaEffectCloud.class.isAssignableFrom(clazz)) {
-            entity = new EntityAreaEffectCloud(world, x, y, z);
+            entity = new net.minecraft.world.entity.AreaEffectCloud(world, x, y, z);
         } else if (EvokerFangs.class.isAssignableFrom(clazz)) {
-            entity = new EntityEvokerFangs(world, x, y, z, (float) Math.toRadians(yaw), 0, null);
+            entity = new net.minecraft.world.entity.projectile.EvokerFangs(world, x, y, z, (float) Math.toRadians(yaw), 0, null);
         } else if (Marker.class.isAssignableFrom(clazz)) {
-            entity = EntityTypes.MARKER.create(world);
+            entity = net.minecraft.world.entity.EntityType.MARKER.create(world);
             entity.setPos(x, y, z);
         } else if (Interaction.class.isAssignableFrom(clazz)) {
-            entity = EntityTypes.INTERACTION.create(world);
+            entity = net.minecraft.world.entity.EntityType.INTERACTION.create(world);
             entity.setPos(x, y, z);
         } else if (Display.class.isAssignableFrom(clazz)) {
             if (BlockDisplay.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.BLOCK_DISPLAY.create(world);
+                entity = net.minecraft.world.entity.EntityType.BLOCK_DISPLAY.create(world);
             } else if (ItemDisplay.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.ITEM_DISPLAY.create(world);
+                entity = net.minecraft.world.entity.EntityType.ITEM_DISPLAY.create(world);
             } else if (TextDisplay.class.isAssignableFrom(clazz)) {
-                entity = EntityTypes.TEXT_DISPLAY.create(world);
+                entity = net.minecraft.world.entity.EntityType.TEXT_DISPLAY.create(world);
             }
 
             if (entity != null) {

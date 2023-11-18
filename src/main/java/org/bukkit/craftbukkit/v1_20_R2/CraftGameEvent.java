@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.IRegistry;
 import net.minecraft.core.registries.Registries;
 import org.bukkit.GameEvent;
 import org.bukkit.NamespacedKey;
@@ -14,7 +13,7 @@ public class CraftGameEvent extends GameEvent {
     public static GameEvent minecraftToBukkit(net.minecraft.world.level.gameevent.GameEvent minecraft) {
         Preconditions.checkArgument(minecraft != null);
 
-        IRegistry<net.minecraft.world.level.gameevent.GameEvent> registry = CraftRegistry.getMinecraftRegistry(Registries.GAME_EVENT);
+        net.minecraft.core.Registry<net.minecraft.world.level.gameevent.GameEvent> registry = CraftRegistry.getMinecraftRegistry(Registries.GAME_EVENT);
         GameEvent bukkit = Registry.GAME_EVENT.get(CraftNamespacedKey.fromMinecraft(registry.getKey(minecraft)));
 
         Preconditions.checkArgument(bukkit != null);

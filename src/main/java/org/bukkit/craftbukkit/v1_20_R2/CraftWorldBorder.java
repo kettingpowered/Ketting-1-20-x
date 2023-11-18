@@ -2,7 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R2;
 
 import com.google.common.base.Preconditions;
 import java.util.concurrent.TimeUnit;
-import net.minecraft.core.BlockPosition;
+import net.minecraft.core.BlockPos;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
@@ -125,7 +125,7 @@ public class CraftWorldBorder implements WorldBorder {
     public boolean isInside(Location location) {
         Preconditions.checkArgument(location != null, "location cannot be null");
 
-        return (world == null || location.getWorld().equals(this.world)) && this.handle.isWithinBounds(BlockPosition.containing(location.getX(), location.getY(), location.getZ()));
+        return (world == null || location.getWorld().equals(this.world)) && this.handle.isWithinBounds(BlockPos.containing(location.getX(), location.getY(), location.getZ()));
     }
 
     @Override

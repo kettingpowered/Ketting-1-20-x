@@ -15,6 +15,23 @@
  
     protected AbstractHurtingProjectile(EntityType<? extends AbstractHurtingProjectile> p_36833_, Level p_36834_) {
        super(p_36833_, p_36834_);
+@@ -37,6 +_,16 @@
+ 
+    }
+ 
++   //CraftBukkit moves this code from above. We won't do that as Ketting.
++   public void setDirection(double d3, double d4, double d5) {
++      double d0 = Math.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
++      if (d0 != 0.0D) {
++         this.xPower = d3 / d0 * 0.1D;
++         this.yPower = d4 / d0 * 0.1D;
++         this.zPower = d5 / d0 * 0.1D;
++      }
++   }
++
+    public AbstractHurtingProjectile(EntityType<? extends AbstractHurtingProjectile> p_36826_, LivingEntity p_36827_, double p_36828_, double p_36829_, double p_36830_, Level p_36831_) {
+       this(p_36826_, p_36827_.getX(), p_36827_.getY(), p_36827_.getZ(), p_36828_, p_36829_, p_36830_, p_36831_);
+       this.setOwner(p_36827_);
 @@ -65,8 +_,14 @@
           }
  
