@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
@@ -61,11 +61,11 @@ public class CraftMetaArmor extends CraftMetaItem implements ArmorMeta {
         }
     }
 
-    CraftMetaArmor(NBTTagCompound tag) {
+    CraftMetaArmor(CompoundTag tag) {
         super(tag);
 
         if (tag.contains(TRIM.NBT)) {
-            NBTTagCompound trimCompound = tag.getCompound(TRIM.NBT);
+            CompoundTag trimCompound = tag.getCompound(TRIM.NBT);
 
             if (trimCompound.contains(TRIM_MATERIAL.NBT) && trimCompound.contains(TRIM_PATTERN.NBT)) {
                 TrimMaterial trimMaterial = Registry.TRIM_MATERIAL.get(NamespacedKey.fromString(trimCompound.getString(TRIM_MATERIAL.NBT)));
@@ -101,11 +101,11 @@ public class CraftMetaArmor extends CraftMetaItem implements ArmorMeta {
     }
 
     @Override
-    void applyToItem(NBTTagCompound itemTag) {
+    void applyToItem(CompoundTag itemTag) {
         super.applyToItem(itemTag);
 
         if (hasTrim()) {
-            NBTTagCompound trimCompound = new NBTTagCompound();
+            CompoundTag trimCompound = new CompoundTag();
             trimCompound.putString(TRIM_MATERIAL.NBT, trim.getMaterial().getKey().toString());
             trimCompound.putString(TRIM_PATTERN.NBT, trim.getPattern().getKey().toString());
             itemTag.put(TRIM.NBT, trimCompound);

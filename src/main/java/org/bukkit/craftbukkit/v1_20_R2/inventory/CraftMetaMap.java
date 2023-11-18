@@ -3,9 +3,9 @@ package org.bukkit.craftbukkit.v1_20_R2.inventory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.StringTag;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -43,7 +43,7 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
         this.color = map.color;
     }
 
-    CraftMetaMap(NBTTagCompound tag) {
+    CraftMetaMap(CompoundTag tag) {
         super(tag);
 
         if (tag.contains(MAP_ID.NBT, CraftMagicNumbers.NBT.TAG_ANY_NUMBER)) {
@@ -55,7 +55,7 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
         }
 
         if (tag.contains(DISPLAY.NBT)) {
-            NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
+            CompoundTag display = tag.getCompound(DISPLAY.NBT);
 
             if (display.contains(MAP_COLOR.NBT)) {
                 try {
@@ -92,7 +92,7 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
     }
 
     @Override
-    void applyToItem(NBTTagCompound tag) {
+    void applyToItem(CompoundTag tag) {
         super.applyToItem(tag);
 
         if (hasMapId()) {
@@ -104,11 +104,11 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
         }
 
         if (hasLocationName()) {
-            setDisplayTag(tag, MAP_LOC_NAME.NBT, NBTTagString.valueOf(getLocationName()));
+            setDisplayTag(tag, MAP_LOC_NAME.NBT, StringTag.valueOf(getLocationName()));
         }
 
         if (hasColor()) {
-            setDisplayTag(tag, MAP_COLOR.NBT, NBTTagInt.valueOf(color.asRGB()));
+            setDisplayTag(tag, MAP_COLOR.NBT, IntTag.valueOf(color.asRGB()));
         }
     }
 

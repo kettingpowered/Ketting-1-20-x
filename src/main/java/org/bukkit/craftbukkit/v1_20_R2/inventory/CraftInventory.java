@@ -4,24 +4,23 @@ import com.google.common.base.Preconditions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
-import net.minecraft.world.IInventory;
-import net.minecraft.world.entity.player.PlayerInventory;
-import net.minecraft.world.inventory.InventoryCrafting;
-import net.minecraft.world.inventory.InventoryEnderChest;
-import net.minecraft.world.inventory.InventoryMerchant;
-import net.minecraft.world.level.block.BlockComposter;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.MerchantContainer;
+import net.minecraft.world.inventory.PlayerEnderChestContainer;
+import net.minecraft.world.level.block.ComposterBlock;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.BarrelBlockEntity;
+import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
-import net.minecraft.world.level.block.entity.IHopper;
-import net.minecraft.world.level.block.entity.TileEntityBarrel;
-import net.minecraft.world.level.block.entity.TileEntityBlastFurnace;
-import net.minecraft.world.level.block.entity.TileEntityBrewingStand;
-import net.minecraft.world.level.block.entity.TileEntityDispenser;
-import net.minecraft.world.level.block.entity.TileEntityDropper;
-import net.minecraft.world.level.block.entity.TileEntityFurnace;
-import net.minecraft.world.level.block.entity.TileEntityJukeBox;
-import net.minecraft.world.level.block.entity.TileEntityLectern;
-import net.minecraft.world.level.block.entity.TileEntityShulkerBox;
-import net.minecraft.world.level.block.entity.TileEntitySmoker;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.level.block.entity.DropperBlockEntity;
+import net.minecraft.world.level.block.entity.Hopper;
+import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
+import net.minecraft.world.level.block.entity.LecternBlockEntity;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.world.level.block.entity.SmokerBlockEntity;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftLegacy;
@@ -32,13 +31,13 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 public class CraftInventory implements Inventory {
-    protected final IInventory inventory;
+    protected final Container inventory;
 
-    public CraftInventory(IInventory inventory) {
+    public CraftInventory(Container inventory) {
         this.inventory = inventory;
     }
 
-    public IInventory getInventory() {
+    public Container getInventory() {
         return inventory;
     }
 
@@ -134,7 +133,7 @@ public class CraftInventory implements Inventory {
         }
         for (ItemStack item : getStorageContents()) {
             if (item != null && item.getType() == material) {
-                if ((amount -= item.getAmount()) <= 0) {
+                if ((amount = item.getAmount()) <= 0) {
                     return true;
                 }
             }
@@ -453,29 +452,29 @@ public class CraftInventory implements Inventory {
     @Override
     public InventoryType getType() {
         // Thanks to Droppers extending Dispensers, Blast Furnaces & Smokers extending Furnace, order is important.
-        if (inventory instanceof InventoryCrafting) {
+        if (inventory instanceof CraftingContainer) {
             return inventory.getContainerSize() >= 9 ? InventoryType.WORKBENCH : InventoryType.CRAFTING;
-        } else if (inventory instanceof PlayerInventory) {
+        } else if (inventory instanceof net.minecraft.world.entity.player.Inventory) {
             return InventoryType.PLAYER;
-        } else if (inventory instanceof TileEntityDropper) {
+        } else if (inventory instanceof DropperBlockEntity) {
             return InventoryType.DROPPER;
-        } else if (inventory instanceof TileEntityDispenser) {
+        } else if (inventory instanceof DispenserBlockEntity) {
             return InventoryType.DISPENSER;
-        } else if (inventory instanceof TileEntityBlastFurnace) {
+        } else if (inventory instanceof BlastFurnaceBlockEntity) {
             return InventoryType.BLAST_FURNACE;
-        } else if (inventory instanceof TileEntitySmoker) {
+        } else if (inventory instanceof SmokerBlockEntity) {
             return InventoryType.SMOKER;
-        } else if (inventory instanceof TileEntityFurnace) {
+        } else if (inventory instanceof AbstractFurnaceBlockEntity) {
             return InventoryType.FURNACE;
         } else if (this instanceof CraftInventoryEnchanting) {
             return InventoryType.ENCHANTING;
-        } else if (inventory instanceof TileEntityBrewingStand) {
+        } else if (inventory instanceof BrewingStandBlockEntity) {
             return InventoryType.BREWING;
         } else if (inventory instanceof CraftInventoryCustom.MinecraftInventory) {
             return ((CraftInventoryCustom.MinecraftInventory) inventory).getType();
-        } else if (inventory instanceof InventoryEnderChest) {
+        } else if (inventory instanceof PlayerEnderChestContainer) {
             return InventoryType.ENDER_CHEST;
-        } else if (inventory instanceof InventoryMerchant) {
+        } else if (inventory instanceof MerchantContainer) {
             return InventoryType.MERCHANT;
         } else if (this instanceof CraftInventoryBeacon) {
             return InventoryType.BEACON;
@@ -483,13 +482,13 @@ public class CraftInventory implements Inventory {
             return InventoryType.ANVIL;
         } else if (this instanceof CraftInventorySmithing) {
             return InventoryType.SMITHING;
-        } else if (inventory instanceof IHopper) {
+        } else if (inventory instanceof Hopper) {
             return InventoryType.HOPPER;
-        } else if (inventory instanceof TileEntityShulkerBox) {
+        } else if (inventory instanceof ShulkerBoxBlockEntity) {
             return InventoryType.SHULKER_BOX;
-        } else if (inventory instanceof TileEntityBarrel) {
+        } else if (inventory instanceof BarrelBlockEntity) {
             return InventoryType.BARREL;
-        } else if (inventory instanceof TileEntityLectern.LecternInventory) {
+        } else if (inventory instanceof LecternBlockEntity.LecternInventory) {
             return InventoryType.LECTERN;
         } else if (inventory instanceof ChiseledBookShelfBlockEntity) {
             return InventoryType.CHISELED_BOOKSHELF;
@@ -501,9 +500,9 @@ public class CraftInventory implements Inventory {
             return InventoryType.GRINDSTONE;
         } else if (this instanceof CraftInventoryStonecutter) {
             return InventoryType.STONECUTTER;
-        } else if (inventory instanceof BlockComposter.ContainerEmpty || inventory instanceof BlockComposter.ContainerInput || inventory instanceof BlockComposter.ContainerOutput) {
+        } else if (inventory instanceof ComposterBlock.EmptyContainer || inventory instanceof ComposterBlock.InputContainer || inventory instanceof ComposterBlock.OutputContainer) {
             return InventoryType.COMPOSTER;
-        } else if (inventory instanceof TileEntityJukeBox) {
+        } else if (inventory instanceof JukeboxBlockEntity) {
             return InventoryType.JUKEBOX;
         } else {
             return InventoryType.CHEST;

@@ -5,8 +5,8 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Sets;
 import java.util.Map;
 import java.util.Set;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -33,7 +33,7 @@ class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
         readColor(this, meta);
     }
 
-    CraftMetaLeatherArmor(NBTTagCompound tag) {
+    CraftMetaLeatherArmor(CompoundTag tag) {
         super(tag);
         readColor(this, tag);
     }
@@ -44,7 +44,7 @@ class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
     }
 
     @Override
-    void applyToItem(NBTTagCompound itemTag) {
+    void applyToItem(CompoundTag itemTag) {
         super.applyToItem(itemTag);
         applyColor(this, itemTag);
     }
@@ -127,9 +127,9 @@ class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
         meta.setColor(armorMeta.color);
     }
 
-    static void readColor(LeatherArmorMeta meta, NBTTagCompound tag) {
+    static void readColor(LeatherArmorMeta meta, CompoundTag tag) {
         if (tag.contains(DISPLAY.NBT)) {
-            NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
+            CompoundTag display = tag.getCompound(DISPLAY.NBT);
             if (display.contains(COLOR.NBT)) {
                 try {
                     meta.setColor(Color.fromRGB(display.getInt(COLOR.NBT)));
@@ -148,9 +148,9 @@ class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
         return !DEFAULT_LEATHER_COLOR.equals(meta.getColor());
     }
 
-    static void applyColor(LeatherArmorMeta meta, NBTTagCompound tag) {
+    static void applyColor(LeatherArmorMeta meta, CompoundTag tag) {
         if (hasColor(meta)) {
-            ((CraftMetaItem) meta).setDisplayTag(tag, COLOR.NBT, NBTTagInt.valueOf(meta.getColor().asRGB()));
+            ((CraftMetaItem) meta).setDisplayTag(tag, COLOR.NBT, IntTag.valueOf(meta.getColor().asRGB()));
         }
     }
 

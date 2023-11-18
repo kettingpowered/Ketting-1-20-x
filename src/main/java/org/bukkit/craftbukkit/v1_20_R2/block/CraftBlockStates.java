@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPosition;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.GeneratorAccess;
 import net.minecraft.world.level.block.entity.BrushableBlockEntity;
 import net.minecraft.world.level.block.entity.CalibratedSculkSensorBlockEntity;
@@ -391,21 +391,21 @@ public final class CraftBlockStates {
         return blockState;
     }
 
-    public static BlockState getBlockState(Material material, @Nullable NBTTagCompound blockEntityTag) {
+    public static BlockState getBlockState(Material material, @Nullable CompoundTag blockEntityTag) {
         return getBlockState(BlockPosition.ZERO, material, blockEntityTag);
     }
 
-    public static BlockState getBlockState(BlockPosition blockPosition, Material material, @Nullable NBTTagCompound blockEntityTag) {
+    public static BlockState getBlockState(BlockPosition blockPosition, Material material, @Nullable CompoundTag blockEntityTag) {
         Preconditions.checkNotNull(material, "material is null");
         IBlockData blockData = CraftMagicNumbers.getBlock(material).defaultBlockState();
         return getBlockState(blockPosition, blockData, blockEntityTag);
     }
 
-    public static BlockState getBlockState(IBlockData blockData, @Nullable NBTTagCompound blockEntityTag) {
+    public static BlockState getBlockState(IBlockData blockData, @Nullable CompoundTag blockEntityTag) {
         return getBlockState(BlockPosition.ZERO, blockData, blockEntityTag);
     }
 
-    public static BlockState getBlockState(BlockPosition blockPosition, IBlockData blockData, @Nullable NBTTagCompound blockEntityTag) {
+    public static BlockState getBlockState(BlockPosition blockPosition, IBlockData blockData, @Nullable CompoundTag blockEntityTag) {
         Preconditions.checkNotNull(blockPosition, "blockPosition is null");
         Preconditions.checkNotNull(blockData, "blockData is null");
         TileEntity tileEntity = (blockEntityTag == null) ? null : TileEntity.loadStatic(blockPosition, blockData, blockEntityTag);

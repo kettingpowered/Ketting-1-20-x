@@ -4,10 +4,10 @@ import static org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMetaItem.*;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.enchantment.EnchantmentManager;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -181,22 +181,22 @@ public final class CraftItemStack extends ItemStack {
         if (!makeTag(handle)) {
             return;
         }
-        NBTTagList list = getEnchantmentList(handle);
+        ListTag list = getEnchantmentList(handle);
         if (list == null) {
-            list = new NBTTagList();
+            list = new ListTag();
             handle.getTag().put(ENCHANTMENTS.NBT, list);
         }
         int size = list.size();
 
         for (int i = 0; i < size; i++) {
-            NBTTagCompound tag = (NBTTagCompound) list.get(i);
+            CompoundTag tag = (CompoundTag) list.get(i);
             String id = tag.getString(ENCHANTMENTS_ID.NBT);
             if (ench.getKey().equals(NamespacedKey.fromString(id))) {
                 tag.putShort(ENCHANTMENTS_LVL.NBT, (short) level);
                 return;
             }
         }
-        NBTTagCompound tag = new NBTTagCompound();
+        CompoundTag tag = new CompoundTag();
         tag.putString(ENCHANTMENTS_ID.NBT, ench.getKey().toString());
         tag.putShort(ENCHANTMENTS_LVL.NBT, (short) level);
         list.add(tag);
@@ -208,7 +208,7 @@ public final class CraftItemStack extends ItemStack {
         }
 
         if (item.getTag() == null) {
-            item.setTag(new NBTTagCompound());
+            item.setTag(new CompoundTag());
         }
 
         return true;
@@ -225,14 +225,14 @@ public final class CraftItemStack extends ItemStack {
         if (handle == null) {
             return 0;
         }
-        return EnchantmentManager.getItemEnchantmentLevel(CraftEnchantment.getRaw(ench), handle);
+        return EnchantmentHelper.getItemEnchantmentLevel(CraftEnchantment.getRaw(ench), handle);
     }
 
     @Override
     public int removeEnchantment(Enchantment ench) {
         Preconditions.checkArgument(ench != null, "Enchantment cannot be null");
 
-        NBTTagList list = getEnchantmentList(handle), listCopy;
+        ListTag list = getEnchantmentList(handle), listCopy;
         if (list == null) {
             return 0;
         }
@@ -241,7 +241,7 @@ public final class CraftItemStack extends ItemStack {
         int size = list.size();
 
         for (int i = 0; i < size; i++) {
-            NBTTagCompound enchantment = (NBTTagCompound) list.get(i);
+            CompoundTag enchantment = (CompoundTag) list.get(i);
             String id = enchantment.getString(ENCHANTMENTS_ID.NBT);
             if (ench.getKey().equals(NamespacedKey.fromString(id))) {
                 index = i;
@@ -262,7 +262,7 @@ public final class CraftItemStack extends ItemStack {
         }
 
         // This is workaround for not having an index removal
-        listCopy = new NBTTagList();
+        listCopy = new ListTag();
         for (int i = 0; i < size; i++) {
             if (i != index) {
                 listCopy.add(list.get(i));
@@ -279,7 +279,7 @@ public final class CraftItemStack extends ItemStack {
     }
 
     static Map<Enchantment, Integer> getEnchantments(net.minecraft.world.item.ItemStack item) {
-        NBTTagList list = (item != null && item.isEnchanted()) ? item.getEnchantmentTags() : null;
+        ListTag list = (item != null && item.isEnchanted()) ? item.getEnchantmentTags() : null;
 
         if (list == null || list.size() == 0) {
             return ImmutableMap.of();
@@ -288,8 +288,8 @@ public final class CraftItemStack extends ItemStack {
         ImmutableMap.Builder<Enchantment, Integer> result = ImmutableMap.builder();
 
         for (int i = 0; i < list.size(); i++) {
-            String id = ((NBTTagCompound) list.get(i)).getString(ENCHANTMENTS_ID.NBT);
-            int level = 0xffff & ((NBTTagCompound) list.get(i)).getShort(ENCHANTMENTS_LVL.NBT);
+            String id = ((CompoundTag) list.get(i)).getString(ENCHANTMENTS_ID.NBT);
+            int level = 0xffff & ((CompoundTag) list.get(i)).getShort(ENCHANTMENTS_LVL.NBT);
 
             Enchantment enchant = Enchantment.getByKey(CraftNamespacedKey.fromStringOrNull(id));
             if (enchant != null) {
@@ -300,7 +300,7 @@ public final class CraftItemStack extends ItemStack {
         return result.build();
     }
 
-    static NBTTagList getEnchantmentList(net.minecraft.world.item.ItemStack item) {
+    static ListTag getEnchantmentList(net.minecraft.world.item.ItemStack item) {
         return (item != null && item.isEnchanted()) ? item.getEnchantmentTags() : null;
     }
 
@@ -654,7 +654,7 @@ public final class CraftItemStack extends ItemStack {
             item.setItem(newItem);
         }
 
-        NBTTagCompound tag = new NBTTagCompound();
+        CompoundTag tag = new CompoundTag();
         item.setTag(tag);
 
         ((CraftMetaItem) itemMeta).applyToItem(tag);

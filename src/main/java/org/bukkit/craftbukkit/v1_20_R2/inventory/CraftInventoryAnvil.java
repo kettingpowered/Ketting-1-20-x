@@ -1,17 +1,17 @@
 package org.bukkit.craftbukkit.v1_20_R2.inventory;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.world.IInventory;
-import net.minecraft.world.inventory.ContainerAnvil;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AnvilMenu;
 import org.bukkit.Location;
 import org.bukkit.inventory.AnvilInventory;
 
 public class CraftInventoryAnvil extends CraftResultInventory implements AnvilInventory {
 
     private final Location location;
-    private final ContainerAnvil container;
+    private final AnvilMenu container;
 
-    public CraftInventoryAnvil(Location location, IInventory inventory, IInventory resultInventory, ContainerAnvil container) {
+    public CraftInventoryAnvil(Location location, Container inventory, Container resultInventory, AnvilMenu container) {
         super(inventory, resultInventory);
         this.location = location;
         this.container = container;

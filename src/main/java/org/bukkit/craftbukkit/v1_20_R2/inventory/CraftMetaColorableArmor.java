@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Sets;
 import java.util.Map;
 import java.util.Set;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -28,7 +28,7 @@ public class CraftMetaColorableArmor extends CraftMetaArmor implements Colorable
         CraftMetaLeatherArmor.readColor(this, meta);
     }
 
-    CraftMetaColorableArmor(NBTTagCompound tag) {
+    CraftMetaColorableArmor(CompoundTag tag) {
         super(tag);
         CraftMetaLeatherArmor.readColor(this, tag);
     }
@@ -39,7 +39,7 @@ public class CraftMetaColorableArmor extends CraftMetaArmor implements Colorable
     }
 
     @Override
-    void applyToItem(NBTTagCompound itemTag) {
+    void applyToItem(CompoundTag itemTag) {
         super.applyToItem(itemTag);
         CraftMetaLeatherArmor.applyColor(this, itemTag);
     }

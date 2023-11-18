@@ -13,13 +13,12 @@ import net.minecraft.commands.arguments.blocks.ArgumentBlock;
 import net.minecraft.core.BlockPosition;
 import net.minecraft.core.EnumDirection;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.INamable;
 import net.minecraft.world.level.BlockAccessAir;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EnumBlockMirror;
 import net.minecraft.world.level.block.EnumBlockRotation;
-import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.level.block.state.IBlockDataHolder;
 import net.minecraft.world.level.block.state.properties.BlockStateBoolean;
 import net.minecraft.world.level.block.state.properties.BlockStateEnum;
@@ -48,14 +47,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class CraftBlockData implements BlockData {
 
-    private IBlockData state;
+    private net.minecraft.world.level.block.state.BlockState state;
     private Map<IBlockState<?>, Comparable<?>> parsedStates;
 
     protected CraftBlockData() {
         throw new AssertionError("Template Constructor");
     }
 
-    protected CraftBlockData(IBlockData state) {
+    protected CraftBlockData(net.minecraft.world.level.block.state.BlockState state) {
         this.state = state;
     }
 
@@ -64,7 +63,7 @@ public class CraftBlockData implements BlockData {
         return CraftMagicNumbers.getMaterial(state.getBlock());
     }
 
-    public IBlockData getState() {
+    public net.minecraft.world.level.block.state.BlockState getState() {
         return state;
     }
 
@@ -249,8 +248,8 @@ public class CraftBlockData implements BlockData {
         return stateString.toString();
     }
 
-    public NBTTagCompound toStates() {
-        NBTTagCompound compound = new NBTTagCompound();
+    public CompoundTag toStates() {
+        CompoundTag compound = new CompoundTag();
 
         for (Map.Entry<IBlockState<?>, Comparable<?>> entry : state.getValues().entrySet()) {
             IBlockState iblockstate = (IBlockState) entry.getKey();
@@ -355,7 +354,7 @@ public class CraftBlockData implements BlockData {
     }
 
     //
-    private static final Map<Class<? extends Block>, Function<IBlockData, CraftBlockData>> MAP = new HashMap<>();
+    private static final Map<Class<? extends Block>, Function<net.minecraft.world.level.block.state.BlockState, CraftBlockData>> MAP = new HashMap<>();
 
     static {
         //<editor-fold desc="CraftBlockData Registration" defaultstate="collapsed">
@@ -526,14 +525,14 @@ public class CraftBlockData implements BlockData {
         //</editor-fold>
     }
 
-    private static void register(Class<? extends Block> nms, Function<IBlockData, CraftBlockData> bukkit) {
+    private static void register(Class<? extends Block> nms, Function<net.minecraft.world.level.block.state.BlockState, CraftBlockData> bukkit) {
         Preconditions.checkState(MAP.put(nms, bukkit) == null, "Duplicate mapping %s->%s", nms, bukkit);
     }
 
     public static CraftBlockData newData(Material material, String data) {
         Preconditions.checkArgument(material == null || material.isBlock(), "Cannot get data for not block %s", material);
 
-        IBlockData blockData;
+        net.minecraft.world.level.block.state.BlockState blockData;
         Block block = CraftMagicNumbers.getBlock(material);
         Map<IBlockState<?>, Comparable<?>> parsed = null;
 
@@ -563,7 +562,7 @@ public class CraftBlockData implements BlockData {
         return craft;
     }
 
-    public static CraftBlockData fromData(IBlockData data) {
+    public static CraftBlockData fromData(net.minecraft.world.level.block.state.BlockState data) {
         return MAP.getOrDefault(data.getBlock().getClass(), CraftBlockData::new).apply(data);
     }
 
@@ -595,7 +594,7 @@ public class CraftBlockData implements BlockData {
         return isPreferredTool(state, nms);
     }
 
-    public static boolean isPreferredTool(IBlockData iblockdata, net.minecraft.world.item.ItemStack nmsItem) {
+    public static boolean isPreferredTool(net.minecraft.world.level.block.state.BlockState iblockdata, net.minecraft.world.item.ItemStack nmsItem) {
         return !iblockdata.requiresCorrectToolForDrops() || nmsItem.isCorrectToolForDrops(iblockdata);
     }
 

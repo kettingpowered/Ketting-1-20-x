@@ -1,10 +1,10 @@
 package org.bukkit.craftbukkit.v1_20_R2.inventory;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.network.protocol.game.PacketPlayOutHeldItemSlot;
-import net.minecraft.network.protocol.game.PacketPlayOutSetSlot;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.world.entity.player.PlayerInventory;
+import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.EntityEquipment;
@@ -12,13 +12,13 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.inventory.PlayerInventory, EntityEquipment {
-    public CraftInventoryPlayer(net.minecraft.world.entity.player.PlayerInventory inventory) {
+    public CraftInventoryPlayer(Inventory inventory) {
         super(inventory);
     }
 
     @Override
-    public PlayerInventory getInventory() {
-        return (PlayerInventory) inventory;
+    public Inventory getInventory() {
+        return (Inventory) inventory;
     }
 
     @Override
@@ -72,12 +72,12 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
     public void setItem(int index, ItemStack item) {
         super.setItem(index, item);
         if (this.getHolder() == null) return;
-        EntityPlayer player = ((CraftPlayer) this.getHolder()).getHandle();
+        ServerPlayer player = ((CraftPlayer) this.getHolder()).getHandle();
         if (player.connection == null) return;
-        // PacketPlayOutSetSlot places the items differently than setItem()
+        // ClientboundContainerSetSlotPacket places the items differently than setItem()
         //
         // Between, and including, index 9 (the first index outside of the hotbar) and index 35 (the last index before
-        // armor slots) both PacketPlayOutSetSlot and setItem() places the items in the player's inventory the same way.
+        // armor slots) both ClientboundContainerSetSlotPacket and setItem() places the items in the player's inventory the same way.
         // Index 9 starts at the upper left corner of the inventory and moves to the right as it increases. When it
         // reaches the end of the line it goes back to the left side of the new line in the inventory. Basically, it
         // follows the path your eyes would follow as you read a book.
@@ -85,14 +85,14 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
         // The player's hotbar is indexed 0-8 in setItem(). The order goes: 0-8 hotbar, 9-35 normal inventory, 36 boots,
         // 37 leggings, 38 chestplate, and 39 helmet. For indexes > 39 an ArrayIndexOutOfBoundsException will be thrown.
         //
-        // PacketPlayOutSetSlot works very differently. Slots 0-8 are as follows: 0 crafting output, 1-4 crafting input,
+        // ClientboundContainerSetSlotPacket works very differently. Slots 0-8 are as follows: 0 crafting output, 1-4 crafting input,
         // 5 helmet, 6 chestplate, 7 leggings, and 8 boots. Then, 9-35 work exactly the same as setItem(). The hotbar
-        // for PacketPlayOutSetSlot starts at index 36, and continues to index 44. Items placed where index is < 0 or
+        // for ClientboundContainerSetSlotPacket starts at index 36, and continues to index 44. Items placed where index is < 0 or
         // > 44 have no action. Basically, the upper part of the player's inventory (crafting area and armor slots) is
-        // the first "row" of 9 slots for PacketPlayOutSetSlot. From there the rows work as normal, from left to right
+        // the first "row" of 9 slots for ClientboundContainerSetSlotPacket. From there the rows work as normal, from left to right
         // all the way down, including the hotbar.
         //
-        // With this in mind, we have to modify the index we give PacketPlayOutSetSlot to match the index we intended
+        // With this in mind, we have to modify the index we give ClientboundContainerSetSlotPacket to match the index we intended
         // with setItem(). First, if the index is 0-8, we need to add 36, or 4 rows worth of slots, to the index. This
         // will push the item down to the correct spot in the hotbar.
         //
@@ -102,14 +102,14 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
         // to reverse the order of the index from 8. That means we need 0 to correspond to 8, 1 to correspond to 7,
         // 2 to correspond to 6, and 3 to correspond to 5. We do this simply by taking the result of (index - 36) and
         // subtracting that value from 8.
-        if (index < PlayerInventory.getSelectionSize()) {
+        if (index < Inventory.getSelectionSize()) {
             index += 36;
         } else if (index > 39) {
             index += 5; // Off hand
         } else if (index > 35) {
             index = 8 - (index - 36);
         }
-        player.connection.send(new PacketPlayOutSetSlot(player.inventoryMenu.containerId, player.inventoryMenu.incrementStateId(), index, CraftItemStack.asNMSCopy(item)));
+        player.connection.send(new ClientboundContainerSetSlotPacket(player.inventoryMenu.containerId, player.inventoryMenu.incrementStateId(), index, CraftItemStack.asNMSCopy(item)));
     }
 
     @Override
@@ -174,9 +174,9 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
 
     @Override
     public void setHeldItemSlot(int slot) {
-        Preconditions.checkArgument(slot >= 0 && slot < PlayerInventory.getSelectionSize(), "Slot (%s) is not between 0 and %s inclusive", slot, PlayerInventory.getSelectionSize() - 1);
+        Preconditions.checkArgument(slot >= 0 && slot < Inventory.getSelectionSize(), "Slot (%s) is not between 0 and %s inclusive", slot, Inventory.getSelectionSize() - 1);
         this.getInventory().selected = slot;
-        ((CraftPlayer) this.getHolder()).getHandle().connection.send(new PacketPlayOutHeldItemSlot(slot));
+        ((CraftPlayer) this.getHolder()).getHandle().connection.send(new ClientboundSetCarriedItemPacket(slot));
     }
 
     @Override

@@ -1,9 +1,9 @@
 package org.bukkit.craftbukkit.v1_20_R2.inventory;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.world.ITileInventory;
-import net.minecraft.world.InventoryLargeChest;
-import net.minecraft.world.level.block.BlockChest;
+import net.minecraft.world.CompoundContainer;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.level.block.ChestBlock;
 import org.bukkit.Location;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.inventory.DoubleChestInventory;
@@ -11,26 +11,26 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class CraftInventoryDoubleChest extends CraftInventory implements DoubleChestInventory {
-    public ITileInventory tile;
+    public MenuProvider tile;
     private final CraftInventory left;
     private final CraftInventory right;
 
-    public CraftInventoryDoubleChest(BlockChest.DoubleInventory block) {
+    public CraftInventoryDoubleChest(ChestBlock.DoubleInventory block) {
         super(block.inventorylargechest);
         this.tile = block;
         this.left = new CraftInventory(block.inventorylargechest.container1);
         this.right = new CraftInventory(block.inventorylargechest.container2);
     }
 
-    public CraftInventoryDoubleChest(InventoryLargeChest largeChest) {
+    public CraftInventoryDoubleChest(CompoundContainer largeChest) {
         super(largeChest);
-        if (largeChest.container1 instanceof InventoryLargeChest) {
-            left = new CraftInventoryDoubleChest((InventoryLargeChest) largeChest.container1);
+        if (largeChest.container1 instanceof CompoundContainer) {
+            left = new CraftInventoryDoubleChest((CompoundContainer) largeChest.container1);
         } else {
             left = new CraftInventory(largeChest.container1);
         }
-        if (largeChest.container2 instanceof InventoryLargeChest) {
-            right = new CraftInventoryDoubleChest((InventoryLargeChest) largeChest.container2);
+        if (largeChest.container2 instanceof CompoundContainer) {
+            right = new CraftInventoryDoubleChest((CompoundContainer) largeChest.container2);
         } else {
             right = new CraftInventory(largeChest.container2);
         }

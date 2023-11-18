@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.block;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.PacketListenerPlayOut;
 import net.minecraft.network.protocol.game.PacketPlayOutTileEntityData;
@@ -44,21 +44,21 @@ public class CraftBlockEntityState<T extends TileEntity> extends CraftBlockState
             return null;
         }
 
-        NBTTagCompound nbtTagCompound = tileEntity.saveWithFullMetadata();
+        CompoundTag nbtTagCompound = tileEntity.saveWithFullMetadata();
         T snapshot = (T) TileEntity.loadStatic(getPosition(), getHandle(), nbtTagCompound);
 
         return snapshot;
     }
 
     // Loads the specified data into the snapshot TileEntity.
-    public void loadData(NBTTagCompound nbtTagCompound) {
+    public void loadData(CompoundTag nbtTagCompound) {
         snapshot.load(nbtTagCompound);
         load(snapshot);
     }
 
     // copies the TileEntity-specific data, retains the position
     private void copyData(T from, T to) {
-        NBTTagCompound nbtTagCompound = from.saveWithFullMetadata();
+        CompoundTag nbtTagCompound = from.saveWithFullMetadata();
         to.load(nbtTagCompound);
     }
 
@@ -80,7 +80,7 @@ public class CraftBlockEntityState<T extends TileEntity> extends CraftBlockState
     }
 
     // gets the NBT data of the TileEntity represented by this block state
-    public NBTTagCompound getSnapshotNBT() {
+    public CompoundTag getSnapshotNBT() {
         // update snapshot
         applyTo(snapshot);
 

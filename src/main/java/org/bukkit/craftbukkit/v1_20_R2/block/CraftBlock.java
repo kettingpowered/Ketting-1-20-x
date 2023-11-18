@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.minecraft.core.BlockPosition;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.EnumDirection;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.EnumHand;
@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemBoneMeal;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.ItemActionContext;
 import net.minecraft.world.level.EnumSkyBlock;
-import net.minecraft.world.level.GeneratorAccess;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.RayTrace;
 import net.minecraft.world.level.block.BlockRedstoneWire;
 import net.minecraft.world.level.block.BlockSapling;
@@ -62,15 +62,15 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 public class CraftBlock implements Block {
-    private final net.minecraft.world.level.GeneratorAccess world;
-    private final BlockPosition position;
+    private final net.minecraft.world.level.LevelAccessor world;
+    private final BlockPos position;
 
-    public CraftBlock(GeneratorAccess world, BlockPosition position) {
+    public CraftBlock(LevelAccessor world, BlockPos position) {
         this.world = world;
         this.position = position.immutable();
     }
 
-    public static CraftBlock at(GeneratorAccess world, BlockPosition position) {
+    public static CraftBlock at(LevelAccessor world, BlockPos position) {
         return new CraftBlock(world, position);
     }
 
@@ -78,11 +78,11 @@ public class CraftBlock implements Block {
         return world.getBlockState(position);
     }
 
-    public BlockPosition getPosition() {
+    public BlockPos getPosition() {
         return position;
     }
 
-    public GeneratorAccess getHandle() {
+    public LevelAccessor getHandle() {
         return world;
     }
 
@@ -191,7 +191,7 @@ public class CraftBlock implements Block {
         return setTypeAndData(world, position, getNMS(), blockData, applyPhysics);
     }
 
-    public static boolean setTypeAndData(GeneratorAccess world, BlockPosition position, IBlockData old, IBlockData blockData, boolean applyPhysics) {
+    public static boolean setTypeAndData(LevelAccessor world, BlockPos position, IBlockData old, IBlockData blockData, boolean applyPhysics) {
         // SPIGOT-611: need to do this to prevent glitchiness. Easier to handle this here (like /setblock) than to fix weirdness in tile entity cleanup
         if (old.hasBlockEntity() && blockData.getBlock() != old.getBlock()) { // SPIGOT-3725 remove old tile entity if block changes
             // SPIGOT-4612: faster - just clear tile
@@ -399,12 +399,12 @@ public class CraftBlock implements Block {
         int x = getX();
         int y = getY();
         int z = getZ();
-        if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.hasSignal(new BlockPosition(x, y - 1, z), EnumDirection.DOWN)) power = getPower(power, world.getBlockState(new BlockPosition(x, y - 1, z)));
-        if ((face == BlockFace.UP || face == BlockFace.SELF) && world.hasSignal(new BlockPosition(x, y + 1, z), EnumDirection.UP)) power = getPower(power, world.getBlockState(new BlockPosition(x, y + 1, z)));
-        if ((face == BlockFace.EAST || face == BlockFace.SELF) && world.hasSignal(new BlockPosition(x + 1, y, z), EnumDirection.EAST)) power = getPower(power, world.getBlockState(new BlockPosition(x + 1, y, z)));
-        if ((face == BlockFace.WEST || face == BlockFace.SELF) && world.hasSignal(new BlockPosition(x - 1, y, z), EnumDirection.WEST)) power = getPower(power, world.getBlockState(new BlockPosition(x - 1, y, z)));
-        if ((face == BlockFace.NORTH || face == BlockFace.SELF) && world.hasSignal(new BlockPosition(x, y, z - 1), EnumDirection.NORTH)) power = getPower(power, world.getBlockState(new BlockPosition(x, y, z - 1)));
-        if ((face == BlockFace.SOUTH || face == BlockFace.SELF) && world.hasSignal(new BlockPosition(x, y, z + 1), EnumDirection.SOUTH)) power = getPower(power, world.getBlockState(new BlockPosition(x, y, z + 1)));
+        if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.hasSignal(new BlockPos(x, y - 1, z), EnumDirection.DOWN)) power = getPower(power, world.getBlockState(new BlockPos(x, y - 1, z)));
+        if ((face == BlockFace.UP || face == BlockFace.SELF) && world.hasSignal(new BlockPos(x, y + 1, z), EnumDirection.UP)) power = getPower(power, world.getBlockState(new BlockPos(x, y + 1, z)));
+        if ((face == BlockFace.EAST || face == BlockFace.SELF) && world.hasSignal(new BlockPos(x + 1, y, z), EnumDirection.EAST)) power = getPower(power, world.getBlockState(new BlockPos(x + 1, y, z)));
+        if ((face == BlockFace.WEST || face == BlockFace.SELF) && world.hasSignal(new BlockPos(x - 1, y, z), EnumDirection.WEST)) power = getPower(power, world.getBlockState(new BlockPos(x - 1, y, z)));
+        if ((face == BlockFace.NORTH || face == BlockFace.SELF) && world.hasSignal(new BlockPos(x, y, z - 1), EnumDirection.NORTH)) power = getPower(power, world.getBlockState(new BlockPos(x, y, z - 1)));
+        if ((face == BlockFace.SOUTH || face == BlockFace.SELF) && world.hasSignal(new BlockPos(x, y, z + 1), EnumDirection.SOUTH)) power = getPower(power, world.getBlockState(new BlockPos(x, y, z + 1)));
         return power > 0 ? power : (face == BlockFace.SELF ? isBlockIndirectlyPowered() : isBlockFaceIndirectlyPowered(face)) ? 15 : 0;
     }
 

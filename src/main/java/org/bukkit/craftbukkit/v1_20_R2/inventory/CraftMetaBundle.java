@@ -6,8 +6,8 @@ import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
@@ -35,17 +35,17 @@ public class CraftMetaBundle extends CraftMetaItem implements BundleMeta {
         }
     }
 
-    CraftMetaBundle(NBTTagCompound tag) {
+    CraftMetaBundle(CompoundTag tag) {
         super(tag);
 
         if (tag.contains(ITEMS.NBT, CraftMagicNumbers.NBT.TAG_LIST)) {
-            NBTTagList list = tag.getList(ITEMS.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
+            ListTag list = tag.getList(ITEMS.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
 
             if (list != null && !list.isEmpty()) {
                 items = new ArrayList<>();
 
                 for (int i = 0; i < list.size(); i++) {
-                    NBTTagCompound nbttagcompound1 = list.getCompound(i);
+                    CompoundTag nbttagcompound1 = list.getCompound(i);
 
                     ItemStack itemStack = CraftItemStack.asCraftMirror(net.minecraft.world.item.ItemStack.of(nbttagcompound1));
                     if (!itemStack.getType().isAir()) { // SPIGOT-7174 - Avoid adding air
@@ -70,14 +70,14 @@ public class CraftMetaBundle extends CraftMetaItem implements BundleMeta {
     }
 
     @Override
-    void applyToItem(NBTTagCompound tag) {
+    void applyToItem(CompoundTag tag) {
         super.applyToItem(tag);
 
         if (hasItems()) {
-            NBTTagList list = new NBTTagList();
+            ListTag list = new ListTag();
 
             for (ItemStack item : items) {
-                NBTTagCompound saved = new NBTTagCompound();
+                CompoundTag saved = new CompoundTag();
                 CraftItemStack.asNMSCopy(item).save(saved);
                 list.add(saved);
             }

@@ -2,7 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R2.inventory;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Material;
 import org.bukkit.MusicInstrument;
 import org.bukkit.NamespacedKey;
@@ -25,7 +25,7 @@ public class CraftMetaMusicInstrument extends CraftMetaItem implements MusicInst
         }
     }
 
-    CraftMetaMusicInstrument(NBTTagCompound tag) {
+    CraftMetaMusicInstrument(CompoundTag tag) {
         super(tag);
 
         if (tag.contains(GOAT_HORN_INSTRUMENT.NBT)) {
@@ -44,7 +44,7 @@ public class CraftMetaMusicInstrument extends CraftMetaItem implements MusicInst
     }
 
     @Override
-    void applyToItem(NBTTagCompound tag) {
+    void applyToItem(CompoundTag tag) {
         super.applyToItem(tag);
 
         if (instrument != null) {

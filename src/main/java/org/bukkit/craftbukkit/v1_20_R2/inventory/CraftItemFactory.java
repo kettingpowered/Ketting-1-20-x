@@ -3,14 +3,13 @@ package org.bukkit.craftbukkit.v1_20_R2.inventory;
 import com.google.common.base.Preconditions;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.commands.arguments.item.ArgumentParserItemStack;
+import net.minecraft.commands.arguments.item.ItemParser;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemMonsterEgg;
-import net.minecraft.world.item.enchantment.EnchantmentManager;
+import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -429,12 +428,12 @@ public final class CraftItemFactory implements ItemFactory {
     @Override
     public ItemStack createItemStack(String input) throws IllegalArgumentException {
         try {
-            ArgumentParserItemStack.a arg = ArgumentParserItemStack.parseForItem(BuiltInRegistries.ITEM.asLookup(), new StringReader(input));
+            ItemParser.ItemResult arg = ItemParser.parseForItem(BuiltInRegistries.ITEM.asLookup(), new StringReader(input));
 
             Item item = arg.item().value();
             net.minecraft.world.item.ItemStack nmsItemStack = new net.minecraft.world.item.ItemStack(item);
 
-            NBTTagCompound nbt = arg.nbt();
+            CompoundTag nbt = arg.nbt();
             if (nbt != null) {
                 nmsItemStack.setTag(nbt);
             }
@@ -455,8 +454,8 @@ public final class CraftItemFactory implements ItemFactory {
         if (type == EntityType.UNKNOWN) {
             return null;
         }
-        EntityTypes<?> nmsType = CraftEntityType.bukkitToMinecraft(type);
-        Item nmsItem = ItemMonsterEgg.byId(nmsType);
+        net.minecraft.world.entity.EntityType<?> nmsType = CraftEntityType.bukkitToMinecraft(type);
+        Item nmsItem = SpawnEggItem.byId(nmsType);
 
         if (nmsItem == null) {
             return null;
@@ -493,7 +492,7 @@ public final class CraftItemFactory implements ItemFactory {
         }
 
         CraftItemStack craft = (CraftItemStack) itemStack;
-        EnchantmentManager.enchantItem(source, craft.handle, level, allowTreasures);
+        EnchantmentHelper.enchantItem(source, craft.handle, level, allowTreasures);
         return craft;
     }
 }
