@@ -19,10 +19,10 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.minecraft.SystemUtils;
+import net.minecraft.Util;
 import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.world.level.block.entity.TileEntitySkull;
-import org.apache.commons.lang.StringUtils;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import org.apache.commons.lang3.StringUtils;//Ketting lang -> lang3
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
@@ -56,7 +56,7 @@ public final class CraftPlayerProfile implements PlayerProfile {
 
     public CraftPlayerProfile(UUID uniqueId, String name) {
         Preconditions.checkArgument((uniqueId != null) || !StringUtils.isBlank(name), "uniqueId is null or name is blank");
-        this.uniqueId = (uniqueId == null) ? SystemUtils.NIL_UUID : uniqueId;
+        this.uniqueId = (uniqueId == null) ? Util.NIL_UUID : uniqueId;
         this.name = (name == null) ? "" : name;
     }
 
@@ -75,7 +75,7 @@ public final class CraftPlayerProfile implements PlayerProfile {
 
     @Override
     public UUID getUniqueId() {
-        return (uniqueId.equals(SystemUtils.NIL_UUID)) ? null : uniqueId;
+        return (uniqueId.equals(Util.NIL_UUID)) ? null : uniqueId;
     }
 
     @Override
@@ -125,7 +125,7 @@ public final class CraftPlayerProfile implements PlayerProfile {
 
     @Override
     public CompletableFuture<PlayerProfile> update() {
-        return CompletableFuture.supplyAsync(this::getUpdatedProfile, SystemUtils.backgroundExecutor());
+        return CompletableFuture.supplyAsync(this::getUpdatedProfile, Util.backgroundExecutor());
     }
 
     private CraftPlayerProfile getUpdatedProfile() {
@@ -133,15 +133,15 @@ public final class CraftPlayerProfile implements PlayerProfile {
         GameProfile profile = this.buildGameProfile();
 
         // If missing, look up the uuid by name:
-        if (profile.getId().equals(SystemUtils.NIL_UUID)) {
+        if (profile.getId().equals(Util.NIL_UUID)) {
             profile = server.getProfileCache().get(profile.getName()).orElse(profile);
         }
 
         // Look up properties such as the textures:
-        if (!profile.getId().equals(SystemUtils.NIL_UUID)) {
+        if (!profile.getId().equals(Util.NIL_UUID)) {
             GameProfile newProfile;
             try {
-                newProfile = TileEntitySkull.fillProfileTextures(profile).get().orElse(null); // TODO: replace with CompletableFuture
+                newProfile = SkullBlockEntity.fillProfileTextures(profile).get().orElse(null); // TODO: replace with CompletableFuture
             } catch (InterruptedException | ExecutionException ex) {
                 throw new RuntimeException("Exception filling profile textures", ex);
             }
