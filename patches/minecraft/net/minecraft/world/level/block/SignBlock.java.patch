@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/level/block/SignBlock.java
++++ b/net/minecraft/world/level/block/SignBlock.java
+@@ -101,7 +_,7 @@
+             } else if (flag) {
+                return InteractionResult.SUCCESS;
+             } else if (!this.otherPlayerIsEditingSign(p_56281_, signblockentity) && p_56281_.mayBuild() && this.hasEditableText(p_56281_, signblockentity, flag2)) {
+-               this.openTextEdit(p_56281_, signblockentity, flag2);
++               this.openTextEdit(p_56281_, signblockentity, flag2, org.bukkit.event.player.PlayerSignOpenEvent.Cause.INTERACT); // CraftBukkit
+                return this.getInteractionResult(flag1);
+             } else {
+                return InteractionResult.PASS;
+@@ -150,7 +_,16 @@
+       return woodtype;
+    }
+ 
+-   public void openTextEdit(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_) {
++   public void openTextEdit(Player player, SignBlockEntity signblockentity, boolean flag) {
++      // Craftbukkit start
++      openTextEdit(player, signblockentity, flag, org.bukkit.event.player.PlayerSignOpenEvent.Cause.UNKNOWN);
++   }
++
++   public void openTextEdit(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_, org.bukkit.event.player.PlayerSignOpenEvent.Cause cause) {
++      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerSignOpenEvent(p_277738_, p_277467_, p_277771_, cause)) {
++         return;
++      }
++      // Craftbukkit end
+       p_277467_.setAllowedPlayerEditor(p_277738_.getUUID());
+       p_277738_.openTextEdit(p_277467_, p_277771_);
+    }
