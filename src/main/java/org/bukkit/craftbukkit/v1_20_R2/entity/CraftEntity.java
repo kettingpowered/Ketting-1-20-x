@@ -11,7 +11,7 @@ import java.util.UUID;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.chat.IChatBaseComponent;
-import net.minecraft.server.level.EntityPlayer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.PlayerChunkMap;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.server.network.ServerPlayerConnection;
@@ -22,7 +22,7 @@ import net.minecraft.world.entity.EntityCreature;
 import net.minecraft.world.entity.EntityExperienceOrb;
 import net.minecraft.world.entity.EntityFlying;
 import net.minecraft.world.entity.EntityLightning;
-import net.minecraft.world.entity.EntityLiving;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EntityTameableAnimal;
 import net.minecraft.world.entity.GlowSquid;
 import net.minecraft.world.entity.Interaction;
@@ -33,10 +33,10 @@ import net.minecraft.world.entity.animal.EntityAnimal;
 import net.minecraft.world.entity.animal.EntityBee;
 import net.minecraft.world.entity.animal.EntityCat;
 import net.minecraft.world.entity.animal.EntityChicken;
-import net.minecraft.world.entity.animal.EntityCod;
+import net.minecraft.world.entity.animal.Cod;
 import net.minecraft.world.entity.animal.EntityCow;
-import net.minecraft.world.entity.animal.EntityDolphin;
-import net.minecraft.world.entity.animal.EntityFish;
+import net.minecraft.world.entity.animal.Dolphin;
+import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.EntityFox;
 import net.minecraft.world.entity.animal.EntityGolem;
 import net.minecraft.world.entity.animal.EntityIronGolem;
@@ -46,15 +46,15 @@ import net.minecraft.world.entity.animal.EntityPanda;
 import net.minecraft.world.entity.animal.EntityParrot;
 import net.minecraft.world.entity.animal.EntityPig;
 import net.minecraft.world.entity.animal.EntityPolarBear;
-import net.minecraft.world.entity.animal.EntityPufferFish;
+import net.minecraft.world.entity.animal.Pufferfish;
 import net.minecraft.world.entity.animal.EntityRabbit;
-import net.minecraft.world.entity.animal.EntitySalmon;
+import net.minecraft.world.entity.animal.Salmon;
 import net.minecraft.world.entity.animal.EntitySheep;
 import net.minecraft.world.entity.animal.EntitySnowman;
-import net.minecraft.world.entity.animal.EntitySquid;
-import net.minecraft.world.entity.animal.EntityTropicalFish;
+import net.minecraft.world.entity.animal.Squid;
+import net.minecraft.world.entity.animal.TropicalFish;
 import net.minecraft.world.entity.animal.EntityTurtle;
-import net.minecraft.world.entity.animal.EntityWaterAnimal;
+import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.animal.EntityWolf;
 import net.minecraft.world.entity.animal.allay.Allay;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
@@ -129,7 +129,6 @@ import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.npc.EntityVillager;
 import net.minecraft.world.entity.npc.EntityVillagerAbstract;
 import net.minecraft.world.entity.npc.EntityVillagerTrader;
-import net.minecraft.world.entity.player.EntityHuman;
 import net.minecraft.world.entity.projectile.EntityArrow;
 import net.minecraft.world.entity.projectile.EntityDragonFireball;
 import net.minecraft.world.entity.projectile.EntityEgg;
@@ -138,7 +137,7 @@ import net.minecraft.world.entity.projectile.EntityEnderSignal;
 import net.minecraft.world.entity.projectile.EntityEvokerFangs;
 import net.minecraft.world.entity.projectile.EntityFireball;
 import net.minecraft.world.entity.projectile.EntityFireworks;
-import net.minecraft.world.entity.projectile.EntityFishingHook;
+import net.minecraft.world.entity.projectile.AbstractFishingHook;
 import net.minecraft.world.entity.projectile.EntityLargeFireball;
 import net.minecraft.world.entity.projectile.EntityLlamaSpit;
 import net.minecraft.world.entity.projectile.EntityPotion;
@@ -161,7 +160,7 @@ import net.minecraft.world.entity.vehicle.EntityMinecartHopper;
 import net.minecraft.world.entity.vehicle.EntityMinecartMobSpawner;
 import net.minecraft.world.entity.vehicle.EntityMinecartRideable;
 import net.minecraft.world.entity.vehicle.EntityMinecartTNT;
-import net.minecraft.world.phys.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -219,28 +218,28 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
          * Order is *EXTREMELY* important -- keep it right! =D
          */
         // CHECKSTYLE:OFF
-        if (entity instanceof EntityLiving) {
+        if (entity instanceof LivingEntity) {
             // Players
-            if (entity instanceof EntityHuman) {
-                if (entity instanceof EntityPlayer) { return new CraftPlayer(server, (EntityPlayer) entity); }
-                else { return new CraftHumanEntity(server, (EntityHuman) entity); }
+            if (entity instanceof net.minecraft.world.entity.player.Player) {
+                if (entity instanceof ServerPlayer) { return new CraftPlayer(server, (ServerPlayer) entity); }
+                else { return new CraftHumanEntity(server, (Player) entity); }
             }
             // Water Animals
-            else if (entity instanceof EntityWaterAnimal) {
-                if (entity instanceof EntitySquid) {
+            else if (entity instanceof WaterAnimal) {
+                if (entity instanceof Squid) {
                     if (entity instanceof GlowSquid) { return new CraftGlowSquid(server, (GlowSquid) entity); }
-                    else { return new CraftSquid(server, (EntitySquid) entity); }
+                    else { return new CraftSquid(server, (Squid) entity); }
                 }
-                else if (entity instanceof EntityFish) {
-                    if (entity instanceof EntityCod) { return new CraftCod(server, (EntityCod) entity); }
-                    else if (entity instanceof EntityPufferFish) { return new CraftPufferFish(server, (EntityPufferFish) entity); }
-                    else if (entity instanceof EntitySalmon) { return new CraftSalmon(server, (EntitySalmon) entity); }
-                    else if (entity instanceof EntityTropicalFish) { return new CraftTropicalFish(server, (EntityTropicalFish) entity); }
+                else if (entity instanceof AbstractFish) {
+                    if (entity instanceof Cod) { return new CraftCod(server, (Cod) entity); }
+                    else if (entity instanceof Pufferfish) { return new CraftPufferFish(server, (Pufferfish) entity); }
+                    else if (entity instanceof Salmon) { return new CraftSalmon(server, (Salmon) entity); }
+                    else if (entity instanceof TropicalFish) { return new CraftTropicalFish(server, (TropicalFish) entity); }
                     else if (entity instanceof Tadpole) { return new CraftTadpole(server, (Tadpole) entity); }
-                    else { return new CraftFish(server, (EntityFish) entity); }
+                    else { return new CraftFish(server, (AbstractFish) entity); }
                 }
-                else if (entity instanceof EntityDolphin) { return new CraftDolphin(server, (EntityDolphin) entity); }
-                else { return new CraftWaterMob(server, (EntityWaterAnimal) entity); }
+                else if (entity instanceof Dolphin) { return new CraftDolphin(server, (Dolphin) entity); }
+                else { return new CraftWaterMob(server, (WaterAnimal) entity); }
             }
             else if (entity instanceof EntityCreature) {
                 // Animals
@@ -368,7 +367,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                 else { return new CraftAmbient(server, (EntityAmbient) entity); }
             }
             else if (entity instanceof EntityArmorStand) { return new CraftArmorStand(server, (EntityArmorStand) entity); }
-            else  { return new CraftLivingEntity(server, (EntityLiving) entity); }
+            else  { return new CraftLivingEntity(server, (LivingEntity) entity); }
         }
         else if (entity instanceof EntityComplexPart) {
             EntityComplexPart part = (EntityComplexPart) entity;
@@ -403,7 +402,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         }
         else if (entity instanceof EntityEnderSignal) { return new CraftEnderSignal(server, (EntityEnderSignal) entity); }
         else if (entity instanceof EntityEnderCrystal) { return new CraftEnderCrystal(server, (EntityEnderCrystal) entity); }
-        else if (entity instanceof EntityFishingHook) { return new CraftFishHook(server, (EntityFishingHook) entity); }
+        else if (entity instanceof AbstractFishingHook) { return new CraftFishHook(server, (AbstractFishingHook) entity); }
         else if (entity instanceof EntityItem) { return new CraftItem(server, (EntityItem) entity); }
         else if (entity instanceof EntityLightning) { return new CraftLightningStrike(server, (EntityLightning) entity); }
         else if (entity instanceof EntityMinecartAbstract) {
@@ -486,7 +485,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     @Override
     public BoundingBox getBoundingBox() {
-        AxisAlignedBB bb = getHandle().getBoundingBox();
+        AABB bb = getHandle().getBoundingBox();
         return new BoundingBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ);
     }
 

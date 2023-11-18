@@ -1,18 +1,18 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
-import net.minecraft.world.entity.monster.EntityEndermite;
+import net.minecraft.world.entity.monster.Monster;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.Endermite;
 
 public class CraftEndermite extends CraftMonster implements Endermite {
 
-    public CraftEndermite(CraftServer server, EntityEndermite entity) {
+    public CraftEndermite(CraftServer server, Monster entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityEndermite getHandle() {
-        return (EntityEndermite) super.getHandle();
+    public Monster getHandle() {
+        return (Monster) super.getHandle();
     }
 
     @Override

@@ -1,11 +1,11 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
-import net.minecraft.world.entity.EntityAgeable;
+import net.minecraft.world.entity.AgeableMob;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.Ageable;
 
 public class CraftAgeable extends CraftCreature implements Ageable {
-    public CraftAgeable(CraftServer server, EntityAgeable entity) {
+    public CraftAgeable(CraftServer server, AgeableMob entity) {
         super(server, entity);
     }
 
@@ -64,8 +64,8 @@ public class CraftAgeable extends CraftCreature implements Ageable {
     }
 
     @Override
-    public EntityAgeable getHandle() {
-        return (EntityAgeable) entity;
+    public AgeableMob getHandle() {
+        return (AgeableMob) entity;
     }
 
     @Override

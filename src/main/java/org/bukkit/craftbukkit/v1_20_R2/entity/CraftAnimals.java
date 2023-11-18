@@ -2,7 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
 import java.util.UUID;
-import net.minecraft.world.entity.animal.EntityAnimal;
+import net.minecraft.world.entity.animal.Animal;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
@@ -11,13 +11,13 @@ import org.bukkit.inventory.ItemStack;
 
 public class CraftAnimals extends CraftAgeable implements Animals {
 
-    public CraftAnimals(CraftServer server, EntityAnimal entity) {
+    public CraftAnimals(CraftServer server, Animal entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityAnimal getHandle() {
-        return (EntityAnimal) entity;
+    public Animal getHandle() {
+        return (Animal) entity;
     }
 
     @Override

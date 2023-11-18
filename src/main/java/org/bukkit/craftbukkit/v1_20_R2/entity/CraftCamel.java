@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
-import net.minecraft.world.entity.EntityPose;
+import net.minecraft.world.entity.Pose;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.Camel;
 import org.bukkit.entity.Horse;
@@ -38,7 +38,7 @@ public class CraftCamel extends CraftAbstractHorse implements Camel {
 
     @Override
     public boolean isSitting() {
-        return getHandle().getPose() == EntityPose.SITTING;
+        return getHandle().getPose() == Pose.SITTING;
     }
 
     @Override

@@ -4,9 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectList;
-import net.minecraft.world.entity.EntityAreaEffectCloud;
-import net.minecraft.world.entity.EntityLiving;
+import net.minecraft.world.effect.MobEffectInstance;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.craftbukkit.v1_20_R2.CraftParticle;
@@ -25,13 +23,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud {
 
-    public CraftAreaEffectCloud(CraftServer server, EntityAreaEffectCloud entity) {
+    public CraftAreaEffectCloud(CraftServer server, net.minecraft.world.entity.AreaEffectCloud entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityAreaEffectCloud getHandle() {
-        return (EntityAreaEffectCloud) super.getHandle();
+    public net.minecraft.world.entity.AreaEffectCloud getHandle() {
+        return (net.minecraft.world.entity.AreaEffectCloud) super.getHandle();
     }
 
     @Override
@@ -141,9 +139,9 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     @Override
     public boolean addCustomEffect(PotionEffect effect, boolean override) {
-        MobEffectList minecraft = CraftPotionEffectType.bukkitToMinecraft(effect.getType());
-        MobEffect existing = null;
-        for (MobEffect mobEffect : getHandle().effects) {
+        MobEffect minecraft = CraftPotionEffectType.bukkitToMinecraft(effect.getType());
+        MobEffectInstance existing = null;
+        for (MobEffectInstance mobEffect : getHandle().effects) {
             if (mobEffect.getEffect() == minecraft) {
                 existing = mobEffect;
             }
@@ -168,7 +166,7 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
     @Override
     public List<PotionEffect> getCustomEffects() {
         ImmutableList.Builder<PotionEffect> builder = ImmutableList.builder();
-        for (MobEffect effect : getHandle().effects) {
+        for (MobEffectInstance effect : getHandle().effects) {
             builder.add(CraftPotionUtil.toBukkit(effect));
         }
         return builder.build();
@@ -176,7 +174,7 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     @Override
     public boolean hasCustomEffect(PotionEffectType type) {
-        for (MobEffect effect : getHandle().effects) {
+        for (MobEffectInstance effect : getHandle().effects) {
             if (CraftPotionUtil.equals(effect.getEffect(), type)) {
                 return true;
             }
@@ -191,9 +189,9 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     @Override
     public boolean removeCustomEffect(PotionEffectType effect) {
-        MobEffectList minecraft = CraftPotionEffectType.bukkitToMinecraft(effect);
-        MobEffect existing = null;
-        for (MobEffect mobEffect : getHandle().effects) {
+        MobEffect minecraft = CraftPotionEffectType.bukkitToMinecraft(effect);
+        MobEffectInstance existing = null;
+        for (MobEffectInstance mobEffect : getHandle().effects) {
             if (mobEffect.getEffect() == minecraft) {
                 existing = mobEffect;
             }
@@ -234,7 +232,7 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     @Override
     public ProjectileSource getSource() {
-        EntityLiving source = getHandle().getOwner();
+        net.minecraft.world.entity.LivingEntity source = getHandle().getOwner();
         return (source == null) ? null : (LivingEntity) source.getBukkitEntity();
     }
 

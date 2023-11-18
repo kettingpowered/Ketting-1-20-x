@@ -1,18 +1,18 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
-import net.minecraft.world.entity.animal.horse.EntityHorseChestedAbstract;
+import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.ChestedHorse;
 
 public abstract class CraftChestedHorse extends CraftAbstractHorse implements ChestedHorse {
 
-    public CraftChestedHorse(CraftServer server, EntityHorseChestedAbstract entity) {
+    public CraftChestedHorse(CraftServer server, AbstractChestedHorse entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityHorseChestedAbstract getHandle() {
-        return (EntityHorseChestedAbstract) super.getHandle();
+    public AbstractChestedHorse getHandle() {
+        return (AbstractChestedHorse) super.getHandle();
     }
 
     @Override
