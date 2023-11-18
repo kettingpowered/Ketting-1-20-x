@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.generator.structure;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.IRegistry;
 import net.minecraft.core.registries.Registries;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
@@ -14,7 +13,7 @@ public class CraftStructureType extends StructureType {
     public static StructureType minecraftToBukkit(net.minecraft.world.level.levelgen.structure.StructureType<?> minecraft) {
         Preconditions.checkArgument(minecraft != null);
 
-        IRegistry<net.minecraft.world.level.levelgen.structure.StructureType<?>> registry = CraftRegistry.getMinecraftRegistry(Registries.STRUCTURE_TYPE);
+        net.minecraft.core.Registry<net.minecraft.world.level.levelgen.structure.StructureType<?>> registry = CraftRegistry.getMinecraftRegistry(Registries.STRUCTURE_TYPE);
         StructureType bukkit = Registry.STRUCTURE_TYPE.get(CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location()));
 
         Preconditions.checkArgument(bukkit != null);
