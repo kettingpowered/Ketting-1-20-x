@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/level/block/NetherPortalBlock.java
++++ b/net/minecraft/world/level/block/NetherPortalBlock.java
+@@ -23,6 +_,7 @@
+ import net.minecraft.world.level.portal.PortalShape;
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.event.entity.EntityPortalEnterEvent;
+ 
+ public class NetherPortalBlock extends Block {
+    public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
+@@ -52,7 +_,9 @@
+          }
+ 
+          if (p_221800_.getBlockState(p_221801_).isValidSpawn(p_221800_, p_221801_, EntityType.ZOMBIFIED_PIGLIN)) {
+-            Entity entity = EntityType.ZOMBIFIED_PIGLIN.spawn(p_221800_, p_221801_.above(), MobSpawnType.STRUCTURE);
++            // CraftBukkit - set spawn reason to NETHER_PORTAL
++            Entity entity = EntityType.ZOMBIFIED_PIGLIN.spawn(p_221800_, p_221801_.above(), MobSpawnType.STRUCTURE, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NETHER_PORTAL);
++
+             if (entity != null) {
+                entity.setPortalCooldown();
+             }
+@@ -70,6 +_,10 @@
+ 
+    public void entityInside(BlockState p_54915_, Level p_54916_, BlockPos p_54917_, Entity p_54918_) {
+       if (p_54918_.canChangeDimensions()) {
++         // CraftBukkit start - Entity in portal
++         EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_54918_.getBukkitEntity(), new org.bukkit.Location(p_54916_.getWorld(), p_54917_.getX(), p_54917_.getY(), p_54917_.getZ()));
++         p_54916_.getCraftServer().getPluginManager().callEvent(event);
++         // CraftBukkit end
+          p_54918_.handleInsidePortal(p_54917_);
+       }
+ 

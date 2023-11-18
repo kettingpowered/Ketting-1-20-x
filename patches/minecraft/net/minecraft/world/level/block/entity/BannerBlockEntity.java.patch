@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/block/entity/BannerBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BannerBlockEntity.java
+@@ -50,6 +_,12 @@
+          listtag = compoundtag.getList("Patterns", 10).copy();
+       }
+ 
++      // CraftBukkit start
++      while (listtag.size() > 20) {
++         listtag.remove(20);
++      }
++      // CraftBukkit end
++
+       return listtag;
+    }
+ 
