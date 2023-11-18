@@ -5,7 +5,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
-class CraftTask implements BukkitTask, Runnable {
+import org.bukkit.craftbukkit.v1_20_R2.SpigotTimings; // Spigot
+import org.spigotmc.CustomTimingsHandler; // Spigot
+
+public class CraftTask implements BukkitTask, Runnable { // Spigot
 
     private volatile CraftTask next = null;
     public static final int ERROR = 0;
@@ -29,6 +32,7 @@ class CraftTask implements BukkitTask, Runnable {
     private final int id;
     private final long createdAt = System.nanoTime();
 
+    final CustomTimingsHandler timings; // Spigot
     CraftTask() {
         this(null, null, CraftTask.NO_REPEATING, CraftTask.NO_REPEATING);
     }
@@ -54,6 +58,7 @@ class CraftTask implements BukkitTask, Runnable {
         }
         this.id = id;
         this.period = period;
+        this.timings = this.isSync() ? SpigotTimings.getPluginTaskTimings(this, period) : null; // Spigot
     }
 
     @Override
@@ -131,4 +136,10 @@ class CraftTask implements BukkitTask, Runnable {
         setPeriod(CraftTask.CANCEL);
         return true;
     }
+
+    // Spigot start
+    public String getTaskName() {
+        return (getTaskClass() == null) ? "Unknown" : getTaskClass().getName();
+    }
+    // Spigot end
 }

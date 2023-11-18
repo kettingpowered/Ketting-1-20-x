@@ -11,6 +11,9 @@
 [![forge-version][]][forge-commit]
 [![build-status][]][build-link]
 
+CraftBukkit Version: 8e162d008
+Bukkit Version: 96340858187334c2f24f6acdc904561655c6cbab
+
 # Ketting
 
 Ketting is a fork of [MinecraftForge](https://github.com/MinecraftForge/MinecraftForge/)
@@ -23,7 +26,7 @@ Ketting is still in development and is not ready for production use.
 ### PATCHES DONE
 Bukkit: 348 / 530
 <br>
-CraftBukkit: 0 / 685
+CraftBukkit: 685 / 685
 
 ## How does it work?
 

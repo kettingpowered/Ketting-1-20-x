@@ -18,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.entity.AbstractArrow;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Fireball;
@@ -108,20 +109,20 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
                 launch.setPos(d0, d1, d2);
                 double d6 = Math.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
 
-                ((net.minecraft.world.entity.projectile.Fireball) launch).xPower = d3 / d6 * 0.1D;
-                ((net.minecraft.world.entity.projectile.Fireball) launch).yPower = d4 / d6 * 0.1D;
-                ((net.minecraft.world.entity.projectile.Fireball) launch).zPower = d5 / d6 * 0.1D;
+                ((net.minecraft.world.entity.projectile.AbstractHurtingProjectile) launch).xPower = d3 / d6 * 0.1D;
+                ((net.minecraft.world.entity.projectile.AbstractHurtingProjectile) launch).yPower = d4 / d6 * 0.1D;
+                ((net.minecraft.world.entity.projectile.AbstractHurtingProjectile) launch).zPower = d5 / d6 * 0.1D;
             } else {
                 launch = EntityType.FIREBALL.create(world);
                 launch.setPos(d0, d1, d2);
                 double d6 = Math.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
 
-                ((net.minecraft.world.entity.projectile.Fireball) launch).xPower = d3 / d6 * 0.1D;
-                ((net.minecraft.world.entity.projectile.Fireball) launch).yPower = d4 / d6 * 0.1D;
-                ((net.minecraft.world.entity.projectile.Fireball) launch).zPower = d5 / d6 * 0.1D;
+                ((net.minecraft.world.entity.projectile.AbstractHurtingProjectile) launch).xPower = d3 / d6 * 0.1D;
+                ((net.minecraft.world.entity.projectile.AbstractHurtingProjectile) launch).yPower = d4 / d6 * 0.1D;
+                ((net.minecraft.world.entity.projectile.AbstractHurtingProjectile) launch).zPower = d5 / d6 * 0.1D;
             }
 
-            ((net.minecraft.world.entity.projectile.Fireball) launch).projectileSource = this;
+            ((net.minecraft.world.entity.projectile.AbstractHurtingProjectile) launch).projectileSource = this;
         }
 
         Preconditions.checkArgument(launch != null, "Projectile not supported");

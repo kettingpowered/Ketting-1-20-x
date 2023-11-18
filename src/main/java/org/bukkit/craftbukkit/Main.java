@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.util.PathConverter;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.fusesource.jansi.AnsiConsole;
 
 public class Main {
@@ -134,6 +133,14 @@ public class Main {
                 acceptsAll(asList("demo"), "Demo mode");
 
                 acceptsAll(asList("initSettings"), "Only create configuration files and then exit"); // SPIGOT-5761: Add initSettings option
+
+                // Spigot Start
+                acceptsAll(asList("S", "spigot-settings"), "File for spigot settings")
+                        .withRequiredArg()
+                        .ofType(File.class)
+                        .defaultsTo(new File("spigot.yml"))
+                        .describedAs("Yml file");
+                // Spigot End
             }
         };
 
