@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import net.minecraft.network.protocol.game.PacketPlayOutBoss;
-import net.minecraft.server.level.BossBattleServer;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.world.BossBattle;
+import net.minecraft.network.protocol.game.ClientboundBossEventPacket;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.BossEvent;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
@@ -21,11 +21,11 @@ import org.bukkit.entity.Player;
 
 public class CraftBossBar implements BossBar {
 
-    private final BossBattleServer handle;
+    private final ServerBossEvent handle;
     private Map<BarFlag, FlagContainer> flags;
 
     public CraftBossBar(String title, BarColor color, BarStyle style, BarFlag... flags) {
-        handle = new BossBattleServer(
+        handle = new ServerBossEvent(
                 CraftChatMessage.fromString(title, true)[0],
                 convertColor(color),
                 convertStyle(style)
@@ -41,7 +41,7 @@ public class CraftBossBar implements BossBar {
         this.setStyle(style);
     }
 
-    public CraftBossBar(BossBattleServer bossBattleServer) {
+    public CraftBossBar(ServerBossEvent bossBattleServer) {
         this.handle = bossBattleServer;
         this.initialize();
     }
@@ -53,33 +53,33 @@ public class CraftBossBar implements BossBar {
         this.flags.put(BarFlag.CREATE_FOG, new FlagContainer(handle::shouldCreateWorldFog, handle::setCreateWorldFog));
     }
 
-    private BarColor convertColor(BossBattle.BarColor color) {
+    private BarColor convertColor(BossEvent.BossBarColor color) {
         BarColor bukkitColor = BarColor.valueOf(color.name());
         return (bukkitColor == null) ? BarColor.WHITE : bukkitColor;
     }
 
-    private BossBattle.BarColor convertColor(BarColor color) {
-        BossBattle.BarColor nmsColor = BossBattle.BarColor.valueOf(color.name());
-        return (nmsColor == null) ? BossBattle.BarColor.WHITE : nmsColor;
+    private BossEvent.BossBarColor convertColor(BarColor color) {
+        BossEvent.BossBarColor nmsColor = BossEvent.BossBarColor.valueOf(color.name());
+        return (nmsColor == null) ? BossEvent.BossBarColor.WHITE : nmsColor;
     }
 
-    private BossBattle.BarStyle convertStyle(BarStyle style) {
+    private BossEvent.BossBarOverlay convertStyle(BarStyle style) {
         switch (style) {
             default:
             case SOLID:
-                return BossBattle.BarStyle.PROGRESS;
+                return BossEvent.BossBarOverlay.PROGRESS;
             case SEGMENTED_6:
-                return BossBattle.BarStyle.NOTCHED_6;
+                return BossEvent.BossBarOverlay.NOTCHED_6;
             case SEGMENTED_10:
-                return BossBattle.BarStyle.NOTCHED_10;
+                return BossEvent.BossBarOverlay.NOTCHED_10;
             case SEGMENTED_12:
-                return BossBattle.BarStyle.NOTCHED_12;
+                return BossEvent.BossBarOverlay.NOTCHED_12;
             case SEGMENTED_20:
-                return BossBattle.BarStyle.NOTCHED_20;
+                return BossEvent.BossBarOverlay.NOTCHED_20;
         }
     }
 
-    private BarStyle convertStyle(BossBattle.BarStyle style) {
+    private BarStyle convertStyle(BossEvent.BossBarOverlay style) {
         switch (style) {
             default:
             case PROGRESS:
@@ -103,7 +103,7 @@ public class CraftBossBar implements BossBar {
     @Override
     public void setTitle(String title) {
         handle.name = CraftChatMessage.fromString(title, true)[0];
-        handle.broadcast(PacketPlayOutBoss::createUpdateNamePacket);
+        handle.broadcast(ClientboundBossEventPacket::createUpdateNamePacket);
     }
 
     @Override
@@ -114,7 +114,7 @@ public class CraftBossBar implements BossBar {
     @Override
     public void setColor(BarColor color) {
         handle.color = convertColor(color);
-        handle.broadcast(PacketPlayOutBoss::createUpdateStylePacket);
+        handle.broadcast(ClientboundBossEventPacket::createUpdateStylePacket);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class CraftBossBar implements BossBar {
     @Override
     public void setStyle(BarStyle style) {
         handle.overlay = convertStyle(style);
-        handle.broadcast(PacketPlayOutBoss::createUpdateStylePacket);
+        handle.broadcast(ClientboundBossEventPacket::createUpdateStylePacket);
     }
 
     @Override
@@ -182,7 +182,7 @@ public class CraftBossBar implements BossBar {
     @Override
     public List<Player> getPlayers() {
         ImmutableList.Builder<Player> players = ImmutableList.builder();
-        for (EntityPlayer p : handle.getPlayers()) {
+        for (ServerPlayer p : handle.getPlayers()) {
             players.add(p.getBukkitEntity());
         }
         return players.build();
@@ -226,7 +226,7 @@ public class CraftBossBar implements BossBar {
         }
     }
 
-    public BossBattleServer getHandle() {
+    public ServerBossEvent getHandle() {
         return handle;
     }
 }

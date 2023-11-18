@@ -8,6 +8,15 @@
  
  public abstract class SpellcasterIllager extends AbstractIllager {
     private static final EntityDataAccessor<Byte> DATA_SPELL_CASTING_ID = SynchedEntityData.defineId(SpellcasterIllager.class, EntityDataSerializers.BYTE);
+@@ -95,7 +_,7 @@
+ 
+    protected abstract SoundEvent getCastingSoundEvent();
+ 
+-   protected static enum IllagerSpell {
++   public static enum IllagerSpell {
+       NONE(0, 0.0D, 0.0D, 0.0D),
+       SUMMON_VEX(1, 0.7D, 0.7D, 0.8D),
+       FANGS(2, 0.4D, 0.3D, 0.35D),
 @@ -183,6 +_,11 @@
        public void tick() {
           --this.attackWarmupDelay;

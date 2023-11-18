@@ -1,9 +1,9 @@
 package org.bukkit.craftbukkit.v1_20_R2.enchantments;
 
-import net.minecraft.core.IRegistry;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.enchantment.EnchantmentBinding;
-import net.minecraft.world.item.enchantment.EnchantmentVanishing;
+import net.minecraft.world.item.enchantment.BindingCurseEnchantment;
+import net.minecraft.world.item.enchantment.VanishingCurseEnchantment;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -72,7 +72,7 @@ public class CraftEnchantment extends Enchantment {
 
     @Override
     public boolean isCursed() {
-        return target instanceof EnchantmentBinding || target instanceof EnchantmentVanishing;
+        return target instanceof BindingCurseEnchantment || target instanceof VanishingCurseEnchantment;
     }
 
     @Override

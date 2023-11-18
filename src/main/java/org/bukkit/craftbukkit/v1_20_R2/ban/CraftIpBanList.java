@@ -8,8 +8,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
-import net.minecraft.server.players.IpBanEntry;
 import net.minecraft.server.players.IpBanList;
+import net.minecraft.server.players.IpBanListEntry;
 import org.bukkit.BanEntry;
 
 public class CraftIpBanList implements org.bukkit.ban.IpBanList {
@@ -23,7 +23,7 @@ public class CraftIpBanList implements org.bukkit.ban.IpBanList {
     public BanEntry<InetAddress> getBanEntry(String target) {
         Preconditions.checkArgument(target != null, "Target cannot be null");
 
-        IpBanEntry entry = this.list.get(target);
+        IpBanListEntry entry = this.list.get(target);
         if (entry == null) {
             return null;
         }
@@ -40,7 +40,7 @@ public class CraftIpBanList implements org.bukkit.ban.IpBanList {
     public BanEntry<InetAddress> addBan(String target, String reason, Date expires, String source) {
         Preconditions.checkArgument(target != null, "Ban target cannot be null");
 
-        IpBanEntry entry = new IpBanEntry(target, new Date(),
+        IpBanListEntry entry = new IpBanListEntry(target, new Date(),
                 (source == null || source.isBlank()) ? null : source, expires,
                 (reason == null || reason.isBlank()) ? null : reason);
 
@@ -70,7 +70,7 @@ public class CraftIpBanList implements org.bukkit.ban.IpBanList {
     public Set<BanEntry> getBanEntries() {
         ImmutableSet.Builder<BanEntry> builder = ImmutableSet.builder();
         for (String target : list.getUserList()) {
-            IpBanEntry ipBanEntry = list.get(target);
+            IpBanListEntry ipBanEntry = list.get(target);
             if (ipBanEntry != null) {
                 builder.add(new CraftIpBanEntry(target, ipBanEntry, list));
             }
@@ -82,7 +82,7 @@ public class CraftIpBanList implements org.bukkit.ban.IpBanList {
     public Set<BanEntry<InetAddress>> getEntries() {
         ImmutableSet.Builder<BanEntry<InetAddress>> builder = ImmutableSet.builder();
         for (String target : list.getUserList()) {
-            IpBanEntry ipBanEntry = list.get(target);
+            IpBanListEntry ipBanEntry = list.get(target);
             if (ipBanEntry != null) {
                 builder.add(new CraftIpBanEntry(target, ipBanEntry, list));
             }

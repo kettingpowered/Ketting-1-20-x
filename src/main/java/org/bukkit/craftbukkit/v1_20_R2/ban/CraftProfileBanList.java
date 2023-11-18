@@ -9,17 +9,17 @@ import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.players.GameProfileBanEntry;
-import net.minecraft.server.players.GameProfileBanList;
+import net.minecraft.server.players.UserBanList;
+import net.minecraft.server.players.UserBanListEntry;
 import org.bukkit.BanEntry;
 import org.bukkit.ban.ProfileBanList;
 import org.bukkit.craftbukkit.v1_20_R2.profile.CraftPlayerProfile;
 import org.bukkit.profile.PlayerProfile;
 
 public class CraftProfileBanList implements ProfileBanList {
-    private final GameProfileBanList list;
+    private final UserBanList list;
 
-    public CraftProfileBanList(GameProfileBanList list) {
+    public CraftProfileBanList(UserBanList list) {
         this.list = list;
     }
 
@@ -67,7 +67,7 @@ public class CraftProfileBanList implements ProfileBanList {
     @Override
     public Set<BanEntry> getBanEntries() {
         ImmutableSet.Builder<BanEntry> builder = ImmutableSet.builder();
-        for (GameProfileBanEntry entry : list.getEntries()) {
+        for (UserBanListEntry entry : list.getEntries()) {
             GameProfile profile = entry.getUser();
             builder.add(new CraftProfileBanEntry(profile, entry, list));
         }
@@ -78,7 +78,7 @@ public class CraftProfileBanList implements ProfileBanList {
     @Override
     public Set<BanEntry<PlayerProfile>> getEntries() {
         ImmutableSet.Builder<BanEntry<PlayerProfile>> builder = ImmutableSet.builder();
-        for (GameProfileBanEntry entry : list.getEntries()) {
+        for (UserBanListEntry entry : list.getEntries()) {
             GameProfile profile = entry.getUser();
             builder.add(new CraftProfileBanEntry(profile, entry, list));
         }
@@ -119,7 +119,7 @@ public class CraftProfileBanList implements ProfileBanList {
             return null;
         }
 
-        GameProfileBanEntry entry = list.get(profile);
+        UserBanListEntry entry = list.get(profile);
         if (entry == null) {
             return null;
         }
@@ -132,7 +132,7 @@ public class CraftProfileBanList implements ProfileBanList {
             return null;
         }
 
-        GameProfileBanEntry entry = new GameProfileBanEntry(profile, new Date(),
+        UserBanListEntry entry = new UserBanListEntry(profile, new Date(),
                 (source == null || source.isBlank()) ? null : source, expires,
                 (reason == null || reason.isBlank()) ? null : reason);
 

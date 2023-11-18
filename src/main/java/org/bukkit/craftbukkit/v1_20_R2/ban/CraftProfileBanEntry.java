@@ -3,22 +3,22 @@ package org.bukkit.craftbukkit.v1_20_R2.ban;
 import com.mojang.authlib.GameProfile;
 import java.time.Instant;
 import java.util.Date;
-import net.minecraft.server.players.GameProfileBanEntry;
-import net.minecraft.server.players.GameProfileBanList;
+import net.minecraft.server.players.UserBanList;
+import net.minecraft.server.players.UserBanListEntry;
 import org.bukkit.BanEntry;
 import org.bukkit.craftbukkit.v1_20_R2.profile.CraftPlayerProfile;
 import org.bukkit.profile.PlayerProfile;
 
 public final class CraftProfileBanEntry implements BanEntry<PlayerProfile> {
     private static final Date minorDate = Date.from(Instant.parse("1899-12-31T04:00:00Z"));
-    private final GameProfileBanList list;
+    private final UserBanList list;
     private final GameProfile profile;
     private Date created;
     private String source;
     private Date expiration;
     private String reason;
 
-    public CraftProfileBanEntry(GameProfile profile, GameProfileBanEntry entry, GameProfileBanList list) {
+    public CraftProfileBanEntry(GameProfile profile, UserBanListEntry entry, UserBanList list) {
         this.list = list;
         this.profile = profile;
         this.created = entry.getCreated() != null ? new Date(entry.getCreated().getTime()) : null;
@@ -83,7 +83,7 @@ public final class CraftProfileBanEntry implements BanEntry<PlayerProfile> {
 
     @Override
     public void save() {
-        GameProfileBanEntry entry = new GameProfileBanEntry(this.profile, this.created, this.source, this.expiration, this.reason);
+        UserBanListEntry entry = new UserBanListEntry(this.profile, this.created, this.source, this.expiration, this.reason);
         this.list.add(entry);
     }
 
