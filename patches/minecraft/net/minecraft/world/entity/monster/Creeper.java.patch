@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Creeper.java
 +++ b/net/minecraft/world/entity/monster/Creeper.java
-@@ -40,6 +_,9 @@
+@@ -40,15 +_,18 @@
  import net.minecraft.world.item.Items;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
@@ -10,6 +10,18 @@
  
  public class Creeper extends Monster implements PowerableMob {
     private static final EntityDataAccessor<Integer> DATA_SWELL_DIR = SynchedEntityData.defineId(Creeper.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> DATA_IS_POWERED = SynchedEntityData.defineId(Creeper.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_IS_IGNITED = SynchedEntityData.defineId(Creeper.class, EntityDataSerializers.BOOLEAN);
+    private int oldSwell;
+-   private int swell;
+-   private int maxSwell = 30;
+-   private int explosionRadius = 3;
++   public int swell;
++   public int maxSwell = 30;
++   public int explosionRadius = 3;
+    private int droppedSkulls;
+ 
+    public Creeper(EntityType<? extends Creeper> p_32278_, Level p_32279_) {
 @@ -196,9 +_,20 @@
  
     public void thunderHit(ServerLevel p_32286_, LightningBolt p_32287_) {
