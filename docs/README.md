@@ -11,7 +11,12 @@
 [![forge-version][]][forge-commit]
 [![build-status][]][build-link]
 
+//TODO: make this more visually appealing with more badges
+
+Spigot Version: 7de1049b2a99eaca8090596e3b8e2ba8431f27e6
+
 CraftBukkit Version: 8e162d008
+
 Bukkit Version: 96340858187334c2f24f6acdc904561655c6cbab
 
 # Ketting
