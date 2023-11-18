@@ -13,7 +13,7 @@ public class WorldMetadataStore extends MetadataStoreBase<World> implements Meta
      * @param world the world
      * @param metadataKey The name identifying the metadata value
      * @return a unique metadata key
-     * @see WorldMetadataStore#disambiguate(Object, String)
+     * @see MetadataStoreBase#disambiguate(Object, String)
      */
     @Override
     protected String disambiguate(World world, String metadataKey) {

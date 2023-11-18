@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.WorldServer;
-import net.minecraft.world.level.saveddata.maps.WorldMap;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
@@ -23,9 +23,9 @@ public final class CraftMapView implements MapView {
     private final Map<CraftPlayer, RenderData> renderCache = new HashMap<CraftPlayer, RenderData>();
     private final List<MapRenderer> renderers = new ArrayList<MapRenderer>();
     private final Map<MapRenderer, Map<CraftPlayer, CraftMapCanvas>> canvases = new HashMap<MapRenderer, Map<CraftPlayer, CraftMapCanvas>>();
-    protected final WorldMap worldMap;
+    protected final MapItemSavedData worldMap;
 
-    public CraftMapView(WorldMap worldMap) {
+    public CraftMapView(MapItemSavedData worldMap) {
         this.worldMap = worldMap;
         addRenderer(new CraftMapRenderer(this, worldMap));
     }
@@ -58,8 +58,8 @@ public final class CraftMapView implements MapView {
 
     @Override
     public World getWorld() {
-        ResourceKey<net.minecraft.world.level.World> dimension = worldMap.dimension;
-        WorldServer world = MinecraftServer.getServer().getLevel(dimension);
+        ResourceKey<net.minecraft.world.level.Level> dimension = worldMap.dimension;
+        ServerLevel world = MinecraftServer.getServer().getLevel(dimension);
 
         if (world != null) {
             return world.getWorld();

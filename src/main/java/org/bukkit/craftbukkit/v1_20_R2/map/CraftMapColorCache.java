@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
-import net.minecraft.SystemUtils;
+import net.minecraft.Util;
 import org.bukkit.map.MapPalette;
 
 public class CraftMapColorCache implements MapPalette.MapColorCache {
@@ -137,7 +137,7 @@ public class CraftMapColorCache implements MapPalette.MapColorCache {
 
             cached = true;
             logger.info("Map color cache build successfully");
-        }, SystemUtils.backgroundExecutor());
+        }, Util.backgroundExecutor());
     }
 
     private int toInt(Color color) {
