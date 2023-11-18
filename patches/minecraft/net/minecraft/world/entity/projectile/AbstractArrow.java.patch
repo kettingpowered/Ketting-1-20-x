@@ -17,11 +17,39 @@
  
  public abstract class AbstractArrow extends Projectile {
     private static final double ARROW_BASE_DAMAGE = 2.0D;
-@@ -66,6 +_,8 @@
+@@ -53,19 +_,33 @@
+    private static final int FLAG_CROSSBOW = 4;
+    @Nullable
+    private BlockState lastState;
+-   protected boolean inGround;
++   public boolean inGround;
+    protected int inGroundTime;
+    public AbstractArrow.Pickup pickup = AbstractArrow.Pickup.DISALLOWED;
+    public int shakeTime;
+-   private int life;
++   public int life;
+    private double baseDamage = 2.0D;
+-   private int knockback;
++   public int knockback;
+    private SoundEvent soundEvent = this.getDefaultHitGroundSoundEvent();
+    @Nullable
+    private IntOpenHashSet piercingIgnoreEntityIds;
     @Nullable
     private List<Entity> piercedAndKilledEntities;
  
 +   private final IntOpenHashSet ignoredEntities = new IntOpenHashSet();
++
++   // Spigot Start
++   @Override
++   public void inactiveTick()
++   {
++      if ( this.inGround )
++      {
++         this.life += 1;
++      }
++      super.inactiveTick();
++   }
++   // Spigot End
 +
     protected AbstractArrow(EntityType<? extends AbstractArrow> p_36721_, Level p_36722_) {
        super(p_36721_, p_36722_);
@@ -60,7 +88,7 @@
 +                  case STOP_AT_CURRENT:
 +                     this.setPierceLevel((byte) 0);
 +                  case DEFAULT:
-+                     this.onHit(hitresult);
++                     this.preOnHit(hitresult); // CraftBukkit - projectile hit event
 +                     this.hasImpulse = true;
 +                     break;
 +               }
@@ -77,6 +105,15 @@
           vec3 = this.getDeltaMovement();
           double d5 = vec3.x;
           double d6 = vec3.y;
+@@ -264,7 +_,7 @@
+ 
+    protected void tickDespawn() {
+       ++this.life;
+-      if (this.life >= 1200) {
++      if (this.life >= ((this instanceof ThrownTrident) ? this.level().spigotConfig.tridentDespawnRate : this.level().spigotConfig.arrowDespawnRate)) { // Spigot
+          this.discard();
+       }
+ 
 @@ -322,7 +_,14 @@
        boolean flag = entity.getType() == EntityType.ENDERMAN;
        int k = entity.getRemainingFireTicks();
