@@ -587,7 +587,7 @@
                    this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
                 }
              }
-@@ -856,6 +_,18 @@
+@@ -856,11 +_,23 @@
        return this.biomeManager;
     }
  
@@ -606,6 +606,12 @@
     public final boolean isDebug() {
        return this.isDebug;
     }
+ 
+-   protected abstract LevelEntityGetter<Entity> getEntities();
++   public abstract LevelEntityGetter<Entity> getEntities();
+ 
+    public long nextSubTickCount() {
+       return (long)(this.subTickCount++);
 @@ -872,6 +_,11 @@
  
     public DamageSources damageSources() {
