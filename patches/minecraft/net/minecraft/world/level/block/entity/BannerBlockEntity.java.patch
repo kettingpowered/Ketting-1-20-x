@@ -12,12 +12,13 @@
     @Nullable
     private List<Pair<Holder<BannerPattern>, DyeColor>> patterns;
  
-@@ -49,6 +_,12 @@
+@@ -49,6 +_,13 @@
        if (compoundtag != null && compoundtag.contains("Patterns", 9)) {
           listtag = compoundtag.getList("Patterns", 10).copy();
        }
 +
 +      // CraftBukkit start
++      if (listtag != null) //Ketting
 +      while (listtag.size() > 20) {
 +         listtag.remove(20);
 +      }
