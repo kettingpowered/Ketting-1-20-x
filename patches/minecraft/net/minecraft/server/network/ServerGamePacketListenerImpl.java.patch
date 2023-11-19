@@ -192,14 +192,12 @@
     private int dropSpamTickCount;
     private double firstGoodX;
     private double firstGoodY;
-@@ -222,18 +_,36 @@
-    private final FutureChain chatMessageChain;
+@@ -223,17 +_,35 @@
     private boolean waitingForSwitchToConfig;
  
--   public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_, CommonListenerCookie p_300908_) {
+    public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_, CommonListenerCookie p_300908_) {
 -      super(p_9770_, p_9771_, p_300908_);
-+   public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_, CommonListenerCookie p_300908_, ServerPlayer player) { // CraftBukkit
-+      super(p_9770_, p_9771_, p_300908_, player); // CraftBukkit
++      super(p_9770_, p_9771_, p_300908_, p_9772_); // CraftBukkit
        this.chunkSender = new PlayerChunkSender(p_9771_.isMemoryConnection());
        p_9771_.setListener(this);
        this.player = p_9772_;

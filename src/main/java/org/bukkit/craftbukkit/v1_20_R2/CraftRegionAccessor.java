@@ -936,7 +936,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
                     if (GlowItemFrame.class.isAssignableFrom(clazz)) {
                         entity = new net.minecraft.world.entity.decoration.GlowItemFrame(world, BlockPos.containing(x, y, z), dir);
                     } else {
-                        entity = new net.minecraft.world.entity.decoration.Painting(world, BlockPos.containing(x, y, z), dir);
+                        entity = new net.minecraft.world.entity.decoration.ItemFrame(world, BlockPos.containing(x, y, z), dir);
                     }
                 }
             }

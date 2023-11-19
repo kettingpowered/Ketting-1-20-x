@@ -33,7 +33,14 @@
     protected final ContainerData dataAccess = new ContainerData() {
        public int get(int p_58431_) {
           switch (p_58431_) {
-@@ -107,8 +_,11 @@
+@@ -101,14 +_,17 @@
+          return 4;
+       }
+    };
+-   private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
++   public final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
+    private final RecipeManager.CachedCheck<Container, ? extends AbstractCookingRecipe> quickCheck;
+ 
     protected AbstractFurnaceBlockEntity(BlockEntityType<?> p_154991_, BlockPos p_154992_, BlockState p_154993_, RecipeType<? extends AbstractCookingRecipe> p_154994_) {
        super(p_154991_, p_154992_, p_154993_);
        this.quickCheck = RecipeManager.createCheck((RecipeType)p_154994_);
@@ -168,22 +175,10 @@
                 p_155017_.cookingProgress = 0;
                 p_155017_.cookingTotalTime = getTotalCookTime(p_155014_, p_155017_);
 -               if (burn(p_155014_.registryAccess(), recipeholder, p_155017_.items, i)) {
-+               if (p_155017_.burn(p_155017_.level, p_155017_.worldPosition, p_155014_.registryAccess(), recipeholder, p_155017_.items, i)) {
++               if (burn(p_155017_.level, p_155017_.worldPosition, p_155014_.registryAccess(), recipeholder, p_155017_.items, i)) { // CraftBukkit
                    p_155017_.setRecipeUsed(recipeholder);
                 }
  
-@@ -295,9 +_,9 @@
- 
-    }
- 
--   private static boolean canBurn(RegistryAccess p_266924_, @Nullable RecipeHolder<?> p_299207_, NonNullList<ItemStack> p_155007_, int p_155008_) {
-+   private boolean canBurn(RegistryAccess p_266924_, @Nullable RecipeHolder<?> p_299207_, NonNullList<ItemStack> p_155007_, int p_155008_) {
-       if (!p_155007_.get(0).isEmpty() && p_299207_ != null) {
--         ItemStack itemstack = p_299207_.value().getResultItem(p_266924_);
-+         ItemStack itemstack = ((RecipeHolder<net.minecraft.world.item.crafting.Recipe<WorldlyContainer>>)p_299207_).value().assemble(this, p_266924_);
-          if (itemstack.isEmpty()) {
-             return false;
-          } else {
 @@ -306,10 +_,10 @@
                 return true;
              } else if (!ItemStack.isSameItem(itemstack1, itemstack)) {
@@ -202,12 +197,10 @@
     }
  
 -   private static boolean burn(RegistryAccess p_266740_, @Nullable RecipeHolder<?> p_299450_, NonNullList<ItemStack> p_267073_, int p_267157_) {
--      if (p_299450_ != null && canBurn(p_266740_, p_299450_, p_267073_, p_267157_)) {
-+   private boolean burn(Level world, BlockPos blockposition, RegistryAccess p_266740_, @Nullable RecipeHolder<?> p_299450_, NonNullList<ItemStack> p_267073_, int p_267157_) { // CraftBukkit
-+      if (p_299450_ != null && this.canBurn(p_266740_, p_299450_, p_267073_, p_267157_)) {
++   private static boolean burn(Level world, BlockPos blockposition, RegistryAccess p_266740_, @Nullable RecipeHolder<?> p_299450_, NonNullList<ItemStack> p_267073_, int p_267157_) { // CraftBukkit
+       if (p_299450_ != null && canBurn(p_266740_, p_299450_, p_267073_, p_267157_)) {
           ItemStack itemstack = p_267073_.get(0);
--         ItemStack itemstack1 = p_299450_.value().getResultItem(p_266740_);
-+         ItemStack itemstack1 = ((RecipeHolder<net.minecraft.world.item.crafting.Recipe<WorldlyContainer>>)p_299450_).value().assemble(this, p_266740_);
+          ItemStack itemstack1 = p_299450_.value().getResultItem(p_266740_);
           ItemStack itemstack2 = p_267073_.get(2);
 +
 +         // CraftBukkit start - fire FurnaceSmeltEvent
