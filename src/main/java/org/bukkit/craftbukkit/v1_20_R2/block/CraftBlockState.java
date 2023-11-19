@@ -4,9 +4,8 @@ import com.google.common.base.Preconditions;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import javax.annotation.Nullable;
-import net.minecraft.core.BlockPosition;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.GeneratorAccess;
-import net.minecraft.world.level.block.state.IBlockData;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,8 +25,8 @@ import org.bukkit.plugin.Plugin;
 public class CraftBlockState implements BlockState {
 
     protected final CraftWorld world;
-    private final BlockPosition position;
-    protected IBlockData data;
+    private final BlockPos position;
+    protected net.minecraft.world.level.block.state.BlockState data;
     protected int flag;
     private WeakReference<GeneratorAccess> weakWorld;
 
@@ -44,7 +43,7 @@ public class CraftBlockState implements BlockState {
     }
 
     // world can be null for non-placed BlockStates.
-    protected CraftBlockState(@Nullable World world, BlockPosition blockPosition, IBlockData blockData) {
+    protected CraftBlockState(@Nullable World world, BlockPos blockPosition, net.minecraft.world.level.block.state.BlockState blockData) {
         this.world = (CraftWorld) world;
         position = blockPosition;
         data = blockData;
@@ -119,15 +118,15 @@ public class CraftBlockState implements BlockState {
         return world.getChunkAt(getX() >> 4, getZ() >> 4);
     }
 
-    public void setData(IBlockData data) {
+    public void setData(net.minecraft.world.level.block.state.BlockState data) {
         this.data = data;
     }
 
-    public BlockPosition getPosition() {
+    public BlockPos getPosition() {
         return this.position;
     }
 
-    public IBlockData getHandle() {
+    public net.minecraft.world.level.block.state.BlockState getHandle() {
         return this.data;
     }
 
@@ -217,7 +216,7 @@ public class CraftBlockState implements BlockState {
             }
         }
 
-        IBlockData newBlock = this.data;
+        net.minecraft.world.level.block.state.BlockState newBlock = this.data;
         block.setTypeAndData(newBlock, applyPhysics);
         if (access instanceof net.minecraft.world.level.World) {
             world.getHandle().sendBlockUpdated(

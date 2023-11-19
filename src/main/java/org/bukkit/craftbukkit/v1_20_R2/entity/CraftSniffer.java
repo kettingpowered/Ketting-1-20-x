@@ -3,7 +3,7 @@ package org.bukkit.craftbukkit.v1_20_R2.entity;
 import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.stream.Collectors;
-import net.minecraft.core.BlockPosition;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
@@ -38,7 +38,7 @@ public class CraftSniffer extends CraftAnimals implements Sniffer {
             return;
         }
 
-        BlockPosition blockPosition = CraftLocation.toBlockPosition(location);
+        BlockPos blockPosition = CraftLocation.toBlockPosition(location);
         this.getHandle().getBrain().setMemory(MemoryModuleType.SNIFFER_EXPLORED_POSITIONS, this.getHandle().getExploredPositions().filter(blockPositionExplored -> !blockPositionExplored.equals(blockPosition)).collect(Collectors.toList()));
     }
 

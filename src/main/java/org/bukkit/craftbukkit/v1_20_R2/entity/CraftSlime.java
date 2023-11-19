@@ -1,12 +1,11 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
-import net.minecraft.world.entity.monster.EntitySlime;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.Slime;
 
 public class CraftSlime extends CraftMob implements Slime, CraftEnemy {
 
-    public CraftSlime(CraftServer server, EntitySlime entity) {
+    public CraftSlime(CraftServer server, net.minecraft.world.entity.monster.Slime entity) {
         super(server, entity);
     }
 
@@ -21,8 +20,8 @@ public class CraftSlime extends CraftMob implements Slime, CraftEnemy {
     }
 
     @Override
-    public EntitySlime getHandle() {
-        return (EntitySlime) entity;
+    public net.minecraft.world.entity.monster.Slime getHandle() {
+        return (net.minecraft.world.entity.monster.Slime) entity;
     }
 
     @Override

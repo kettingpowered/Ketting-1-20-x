@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.world.entity.raid.EntityRaider;
 import org.bukkit.Raid;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -13,13 +12,13 @@ import org.bukkit.entity.Raider;
 
 public abstract class CraftRaider extends CraftMonster implements Raider {
 
-    public CraftRaider(CraftServer server, EntityRaider entity) {
+    public CraftRaider(CraftServer server, net.minecraft.world.entity.raid.Raider entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityRaider getHandle() {
-        return (EntityRaider) super.getHandle();
+    public net.minecraft.world.entity.raid.Raider getHandle() {
+        return (net.minecraft.world.entity.raid.Raider) super.getHandle();
     }
 
     @Override

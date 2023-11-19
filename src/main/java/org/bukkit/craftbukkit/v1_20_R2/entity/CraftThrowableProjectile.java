@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
-import net.minecraft.world.entity.projectile.EntityProjectileThrowable;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.entity.ThrowableProjectile;
@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class CraftThrowableProjectile extends CraftProjectile implements ThrowableProjectile {
 
-    public CraftThrowableProjectile(CraftServer server, EntityProjectileThrowable entity) {
+    public CraftThrowableProjectile(CraftServer server, ThrowableItemProjectile entity) {
         super(server, entity);
     }
 
@@ -27,7 +27,7 @@ public abstract class CraftThrowableProjectile extends CraftProjectile implement
     }
 
     @Override
-    public EntityProjectileThrowable getHandle() {
-        return (EntityProjectileThrowable) entity;
+    public ThrowableItemProjectile getHandle() {
+        return (ThrowableItemProjectile) entity;
     }
 }

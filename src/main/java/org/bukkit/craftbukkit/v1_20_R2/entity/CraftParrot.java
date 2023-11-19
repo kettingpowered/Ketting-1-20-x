@@ -1,20 +1,19 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.world.entity.animal.EntityParrot;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Parrot.Variant;
 
 public class CraftParrot extends CraftTameableAnimal implements Parrot {
 
-    public CraftParrot(CraftServer server, EntityParrot parrot) {
+    public CraftParrot(CraftServer server, net.minecraft.world.entity.animal.Parrot parrot) {
         super(server, parrot);
     }
 
     @Override
-    public EntityParrot getHandle() {
-        return (EntityParrot) entity;
+    public net.minecraft.world.entity.animal.Parrot getHandle() {
+        return (net.minecraft.world.entity.animal.Parrot) entity;
     }
 
     @Override
@@ -26,7 +25,7 @@ public class CraftParrot extends CraftTameableAnimal implements Parrot {
     public void setVariant(Variant variant) {
         Preconditions.checkArgument(variant != null, "variant");
 
-        getHandle().setVariant(EntityParrot.Variant.byId(variant.ordinal()));
+        getHandle().setVariant(net.minecraft.world.entity.animal.Parrot.Variant.byId(variant.ordinal()));
     }
 
     @Override

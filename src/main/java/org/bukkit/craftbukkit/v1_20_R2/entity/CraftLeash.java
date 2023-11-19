@@ -1,13 +1,13 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.world.entity.decoration.EntityLeash;
+import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.LeashHitch;
 
 public class CraftLeash extends CraftHanging implements LeashHitch {
-    public CraftLeash(CraftServer server, EntityLeash entity) {
+    public CraftLeash(CraftServer server, LeashFenceKnotEntity entity) {
         super(server, entity);
     }
 
@@ -25,8 +25,8 @@ public class CraftLeash extends CraftHanging implements LeashHitch {
     }
 
     @Override
-    public EntityLeash getHandle() {
-        return (EntityLeash) entity;
+    public LeashFenceKnotEntity getHandle() {
+        return (LeashFenceKnotEntity) entity;
     }
 
     @Override

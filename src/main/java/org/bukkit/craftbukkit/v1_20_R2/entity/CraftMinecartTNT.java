@@ -1,12 +1,12 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.world.entity.vehicle.EntityMinecartTNT;
+import net.minecraft.world.entity.vehicle.MinecartTNT;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.minecart.ExplosiveMinecart;
 
 public final class CraftMinecartTNT extends CraftMinecart implements ExplosiveMinecart {
-    CraftMinecartTNT(CraftServer server, EntityMinecartTNT entity) {
+    CraftMinecartTNT(CraftServer server, MinecartTNT entity) {
         super(server, entity);
     }
 
@@ -43,8 +43,8 @@ public final class CraftMinecartTNT extends CraftMinecart implements ExplosiveMi
     }
 
     @Override
-    public EntityMinecartTNT getHandle() {
-        return (EntityMinecartTNT) super.getHandle();
+    public MinecartTNT getHandle() {
+        return (MinecartTNT) super.getHandle();
     }
 
     @Override

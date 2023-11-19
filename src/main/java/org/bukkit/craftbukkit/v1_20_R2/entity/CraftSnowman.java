@@ -1,11 +1,11 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
-import net.minecraft.world.entity.animal.EntitySnowman;
+import net.minecraft.world.entity.animal.SnowGolem;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.Snowman;
 
 public class CraftSnowman extends CraftGolem implements Snowman {
-    public CraftSnowman(CraftServer server, EntitySnowman entity) {
+    public CraftSnowman(CraftServer server, SnowGolem entity) {
         super(server, entity);
     }
 
@@ -20,8 +20,8 @@ public class CraftSnowman extends CraftGolem implements Snowman {
     }
 
     @Override
-    public EntitySnowman getHandle() {
-        return (EntitySnowman) entity;
+    public SnowGolem getHandle() {
+        return (SnowGolem) entity;
     }
 
     @Override

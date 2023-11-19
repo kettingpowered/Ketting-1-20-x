@@ -1,19 +1,19 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.world.entity.vehicle.EntityMinecartFurnace;
+import net.minecraft.world.entity.vehicle.MinecartFurnace;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.minecart.PoweredMinecart;
 
 @SuppressWarnings("deprecation")
 public class CraftMinecartFurnace extends CraftMinecart implements PoweredMinecart {
-    public CraftMinecartFurnace(CraftServer server, EntityMinecartFurnace entity) {
+    public CraftMinecartFurnace(CraftServer server, MinecartFurnace entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityMinecartFurnace getHandle() {
-        return (EntityMinecartFurnace) entity;
+    public MinecartFurnace getHandle() {
+        return (MinecartFurnace) entity;
     }
 
     @Override

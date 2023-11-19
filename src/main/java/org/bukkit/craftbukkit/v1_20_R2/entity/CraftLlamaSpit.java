@@ -1,19 +1,18 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
-import net.minecraft.world.entity.projectile.EntityLlamaSpit;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.LlamaSpit;
 import org.bukkit.projectiles.ProjectileSource;
 
 public class CraftLlamaSpit extends AbstractProjectile implements LlamaSpit {
 
-    public CraftLlamaSpit(CraftServer server, EntityLlamaSpit entity) {
+    public CraftLlamaSpit(CraftServer server, net.minecraft.world.entity.projectile.LlamaSpit entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityLlamaSpit getHandle() {
-        return (EntityLlamaSpit) super.getHandle();
+    public net.minecraft.world.entity.projectile.LlamaSpit getHandle() {
+        return (net.minecraft.world.entity.projectile.LlamaSpit) super.getHandle();
     }
 
     @Override

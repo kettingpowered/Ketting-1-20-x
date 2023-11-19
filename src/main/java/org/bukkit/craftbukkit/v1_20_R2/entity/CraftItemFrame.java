@@ -1,9 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.EnumDirection;
-import net.minecraft.world.entity.decoration.EntityHanging;
-import net.minecraft.world.entity.decoration.EntityItemFrame;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;
@@ -13,15 +11,15 @@ import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.entity.ItemFrame;
 
 public class CraftItemFrame extends CraftHanging implements ItemFrame {
-    public CraftItemFrame(CraftServer server, EntityItemFrame entity) {
+    public CraftItemFrame(CraftServer server, net.minecraft.world.entity.decoration.ItemFrame entity) {
         super(server, entity);
     }
 
     @Override
     public boolean setFacingDirection(BlockFace face, boolean force) {
-        EntityHanging hanging = getHandle();
-        EnumDirection oldDir = hanging.getDirection();
-        EnumDirection newDir = CraftBlock.blockFaceToNotch(face);
+        net.minecraft.world.entity.decoration.ItemFrame hanging = getHandle();
+        Direction oldDir = hanging.getDirection();
+        Direction newDir = CraftBlock.blockFaceToNotch(face);
 
         Preconditions.checkArgument(newDir != null, "%s is not a valid facing direction", face);
 
@@ -41,8 +39,8 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
         super.update();
 
         // mark dirty, so that the client gets updated with item and rotation
-        getHandle().getEntityData().markDirty(EntityItemFrame.DATA_ITEM);
-        getHandle().getEntityData().markDirty(EntityItemFrame.DATA_ROTATION);
+        getHandle().getEntityData().markDirty(net.minecraft.world.entity.decoration.ItemFrame.DATA_ITEM);
+        getHandle().getEntityData().markDirty(net.minecraft.world.entity.decoration.ItemFrame.DATA_ROTATION);
 
         // update redstone
         if (!getHandle().generation) {
@@ -157,8 +155,8 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
     }
 
     @Override
-    public EntityItemFrame getHandle() {
-        return (EntityItemFrame) entity;
+    public net.minecraft.world.entity.decoration.ItemFrame getHandle() {
+        return (net.minecraft.world.entity.decoration.ItemFrame) entity;
     }
 
     @Override

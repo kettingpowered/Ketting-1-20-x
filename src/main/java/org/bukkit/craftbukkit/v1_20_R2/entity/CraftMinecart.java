@@ -1,8 +1,8 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
-import net.minecraft.world.entity.vehicle.EntityMinecartAbstract;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.IBlockData;
+import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
@@ -12,7 +12,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 public abstract class CraftMinecart extends CraftVehicle implements Minecart {
-    public CraftMinecart(CraftServer server, EntityMinecartAbstract entity) {
+    public CraftMinecart(CraftServer server, AbstractMinecart entity) {
         super(server, entity);
     }
 
@@ -69,14 +69,14 @@ public abstract class CraftMinecart extends CraftVehicle implements Minecart {
     }
 
     @Override
-    public EntityMinecartAbstract getHandle() {
-        return (EntityMinecartAbstract) entity;
+    public AbstractMinecart getHandle() {
+        return (AbstractMinecart) entity;
     }
 
     @Override
     public void setDisplayBlock(MaterialData material) {
         if (material != null) {
-            IBlockData block = CraftMagicNumbers.getBlock(material);
+            BlockState block = CraftMagicNumbers.getBlock(material);
             this.getHandle().setDisplayBlockState(block);
         } else {
             // Set block to air (default) and set the flag to not have a display block.
@@ -88,7 +88,7 @@ public abstract class CraftMinecart extends CraftVehicle implements Minecart {
     @Override
     public void setDisplayBlockData(BlockData blockData) {
         if (blockData != null) {
-            IBlockData block = ((CraftBlockData) blockData).getState();
+            BlockState block = ((CraftBlockData) blockData).getState();
             this.getHandle().setDisplayBlockState(block);
         } else {
             // Set block to air (default) and set the flag to not have a display block.
@@ -99,13 +99,13 @@ public abstract class CraftMinecart extends CraftVehicle implements Minecart {
 
     @Override
     public MaterialData getDisplayBlock() {
-        IBlockData blockData = getHandle().getDisplayBlockState();
+        BlockState blockData = getHandle().getDisplayBlockState();
         return CraftMagicNumbers.getMaterial(blockData);
     }
 
     @Override
     public BlockData getDisplayBlockData() {
-        IBlockData blockData = getHandle().getDisplayBlockState();
+        BlockState blockData = getHandle().getDisplayBlockState();
         return CraftBlockData.fromData(blockData);
     }
 

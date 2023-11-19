@@ -158,3 +158,90 @@
           this.entityData.set(DATA_BLOCK_STATE_ID, p_270267_);
        }
  
+@@ -622,19 +_,19 @@
+ 
+       }
+ 
+-      ItemStack getItemStack() {
++      public ItemStack getItemStack() {
+          return this.entityData.get(DATA_ITEM_STACK_ID);
+       }
+ 
+-      void setItemStack(ItemStack p_270310_) {
++      public void setItemStack(ItemStack p_270310_) {
+          this.entityData.set(DATA_ITEM_STACK_ID, p_270310_);
+       }
+ 
+-      private void setItemTransform(ItemDisplayContext p_270370_) {
++      public void setItemTransform(ItemDisplayContext p_270370_) {
+          this.entityData.set(DATA_ITEM_DISPLAY_ID, p_270370_.getId());
+       }
+ 
+-      private ItemDisplayContext getItemTransform() {
++      public ItemDisplayContext getItemTransform() {
+          return ItemDisplayContext.BY_ID.apply(this.entityData.get(DATA_ITEM_DISPLAY_ID));
+       }
+ 
+@@ -733,8 +_,8 @@
+       private static final byte INITIAL_TEXT_OPACITY = -1;
+       public static final int INITIAL_BACKGROUND = 1073741824;
+       private static final EntityDataAccessor<Component> DATA_TEXT_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.COMPONENT);
+-      private static final EntityDataAccessor<Integer> DATA_LINE_WIDTH_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.INT);
+-      private static final EntityDataAccessor<Integer> DATA_BACKGROUND_COLOR_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.INT);
++      public static final EntityDataAccessor<Integer> DATA_LINE_WIDTH_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.INT);
++      public static final EntityDataAccessor<Integer> DATA_BACKGROUND_COLOR_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.INT);
+       private static final EntityDataAccessor<Byte> DATA_TEXT_OPACITY_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.BYTE);
+       private static final EntityDataAccessor<Byte> DATA_STYLE_FLAGS_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.BYTE);
+       private static final IntSet TEXT_RENDER_STATE_IDS = IntSet.of(DATA_TEXT_ID.getId(), DATA_LINE_WIDTH_ID.getId(), DATA_BACKGROUND_COLOR_ID.getId(), DATA_TEXT_OPACITY_ID.getId(), DATA_STYLE_FLAGS_ID.getId());
+@@ -764,15 +_,15 @@
+ 
+       }
+ 
+-      private Component getText() {
++      public Component getText() {
+          return this.entityData.get(DATA_TEXT_ID);
+       }
+ 
+-      private void setText(Component p_270902_) {
++      public void setText(Component p_270902_) {
+          this.entityData.set(DATA_TEXT_ID, p_270902_);
+       }
+ 
+-      private int getLineWidth() {
++      public int getLineWidth() {
+          return this.entityData.get(DATA_LINE_WIDTH_ID);
+       }
+ 
+@@ -780,15 +_,15 @@
+          this.entityData.set(DATA_LINE_WIDTH_ID, p_270545_);
+       }
+ 
+-      private byte getTextOpacity() {
++      public byte getTextOpacity() {
+          return this.entityData.get(DATA_TEXT_OPACITY_ID);
+       }
+ 
+-      private void setTextOpacity(byte p_270583_) {
++      public void setTextOpacity(byte p_270583_) {
+          this.entityData.set(DATA_TEXT_OPACITY_ID, p_270583_);
+       }
+ 
+-      private int getBackgroundColor() {
++      public int getBackgroundColor() {
+          return this.entityData.get(DATA_BACKGROUND_COLOR_ID);
+       }
+ 
+@@ -796,11 +_,11 @@
+          this.entityData.set(DATA_BACKGROUND_COLOR_ID, p_270241_);
+       }
+ 
+-      private byte getFlags() {
++      public byte getFlags() {
+          return this.entityData.get(DATA_STYLE_FLAGS_ID);
+       }
+ 
+-      private void setFlags(byte p_270855_) {
++      public void setFlags(byte p_270855_) {
+          this.entityData.set(DATA_STYLE_FLAGS_ID, p_270855_);
+       }
+ 

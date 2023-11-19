@@ -1,8 +1,8 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.BlockPosition;
-import net.minecraft.world.entity.projectile.EntityFishingHook;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.projectile.FishingHook;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FishHook;
@@ -10,13 +10,13 @@ import org.bukkit.entity.FishHook;
 public class CraftFishHook extends CraftProjectile implements FishHook {
     private double biteChance = -1;
 
-    public CraftFishHook(CraftServer server, EntityFishingHook entity) {
+    public CraftFishHook(CraftServer server, FishingHook entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityFishingHook getHandle() {
-        return (EntityFishingHook) entity;
+    public FishingHook getHandle() {
+        return (FishingHook) entity;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class CraftFishHook extends CraftProjectile implements FishHook {
     @Override
     public void setMinWaitTime(int minWaitTime) {
         Preconditions.checkArgument(minWaitTime >= 0 && minWaitTime <= this.getMaxWaitTime(), "The minimum wait time should be between %s and %s (the maximum wait time)", 0, this.getMaxWaitTime());
-        EntityFishingHook hook = getHandle();
+        FishingHook hook = getHandle();
         hook.minWaitTime = minWaitTime;
     }
 
@@ -44,7 +44,7 @@ public class CraftFishHook extends CraftProjectile implements FishHook {
     @Override
     public void setMaxWaitTime(int maxWaitTime) {
         Preconditions.checkArgument(maxWaitTime >= 0 && maxWaitTime >= this.getMinWaitTime(), "The maximum wait time should be between %s and %s (the minimum wait time)", 0, this.getMinWaitTime());
-        EntityFishingHook hook = getHandle();
+        FishingHook hook = getHandle();
         hook.maxWaitTime = maxWaitTime;
     }
 
@@ -145,10 +145,10 @@ public class CraftFishHook extends CraftProjectile implements FishHook {
 
     @Override
     public double getBiteChance() {
-        EntityFishingHook hook = getHandle();
+        FishingHook hook = getHandle();
 
         if (this.biteChance == -1) {
-            if (hook.level().isRainingAt(BlockPosition.containing(hook.position()).offset(0, 1, 0))) {
+            if (hook.level().isRainingAt(BlockPos.containing(hook.position()).offset(0, 1, 0))) {
                 return 1 / 300.0;
             }
             return 1 / 500.0;
@@ -175,15 +175,15 @@ public class CraftFishHook extends CraftProjectile implements FishHook {
 
     @Override
     public void setHookedEntity(Entity entity) {
-        EntityFishingHook hook = getHandle();
+        FishingHook hook = getHandle();
 
         hook.hookedIn = (entity != null) ? ((CraftEntity) entity).getHandle() : null;
-        hook.getEntityData().set(EntityFishingHook.DATA_HOOKED_ENTITY, hook.hookedIn != null ? hook.hookedIn.getId() + 1 : 0);
+        hook.getEntityData().set(FishingHook.DATA_HOOKED_ENTITY, hook.hookedIn != null ? hook.hookedIn.getId() + 1 : 0);
     }
 
     @Override
     public boolean pullHookedEntity() {
-        EntityFishingHook hook = getHandle();
+        FishingHook hook = getHandle();
         if (hook.hookedIn == null) {
             return false;
         }

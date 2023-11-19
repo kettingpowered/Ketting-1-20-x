@@ -1,13 +1,13 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.world.entity.EntityLightning;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LightningBolt;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 
 public class CraftLightningStrike extends CraftEntity implements LightningStrike {
-    public CraftLightningStrike(final CraftServer server, final EntityLightning entity) {
+    public CraftLightningStrike(final CraftServer server, final LightningBolt entity) {
         super(server, entity);
     }
 
@@ -33,7 +33,7 @@ public class CraftLightningStrike extends CraftEntity implements LightningStrike
     }
 
     public Player getCausingPlayer() {
-        EntityPlayer player = getHandle().getCause();
+        ServerPlayer player = getHandle().getCause();
         return (player != null) ? player.getBukkitEntity() : null;
     }
 
@@ -42,8 +42,8 @@ public class CraftLightningStrike extends CraftEntity implements LightningStrike
     }
 
     @Override
-    public EntityLightning getHandle() {
-        return (EntityLightning) entity;
+    public LightningBolt getHandle() {
+        return (LightningBolt) entity;
     }
 
     @Override

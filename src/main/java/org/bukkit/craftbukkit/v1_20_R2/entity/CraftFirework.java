@@ -2,8 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
 import java.util.Random;
-import net.minecraft.world.entity.EntityLiving;
-import net.minecraft.world.entity.projectile.EntityFireworks;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.bukkit.Material;
@@ -18,14 +17,14 @@ public class CraftFirework extends CraftProjectile implements Firework {
     private final Random random = new Random();
     private final CraftItemStack item;
 
-    public CraftFirework(CraftServer server, EntityFireworks entity) {
+    public CraftFirework(CraftServer server, FireworkRocketEntity entity) {
         super(server, entity);
 
-        ItemStack item = getHandle().getEntityData().get(EntityFireworks.DATA_ID_FIREWORKS_ITEM);
+        ItemStack item = getHandle().getEntityData().get(FireworkRocketEntity.DATA_ID_FIREWORKS_ITEM);
 
         if (item.isEmpty()) {
             item = new ItemStack(Items.FIREWORK_ROCKET);
-            getHandle().getEntityData().set(EntityFireworks.DATA_ID_FIREWORKS_ITEM, item);
+            getHandle().getEntityData().set(FireworkRocketEntity.DATA_ID_FIREWORKS_ITEM, item);
         }
 
         this.item = CraftItemStack.asCraftMirror(item);
@@ -37,8 +36,8 @@ public class CraftFirework extends CraftProjectile implements Firework {
     }
 
     @Override
-    public EntityFireworks getHandle() {
-        return (EntityFireworks) entity;
+    public FireworkRocketEntity getHandle() {
+        return (FireworkRocketEntity) entity;
     }
 
     @Override
@@ -55,10 +54,10 @@ public class CraftFirework extends CraftProjectile implements Firework {
     public void setFireworkMeta(FireworkMeta meta) {
         item.setItemMeta(meta);
 
-        // Copied from EntityFireworks constructor, update firework lifetime/power
+        // Copied from FireworkRocketEntity constructor, update firework lifetime/power
         getHandle().lifetime = 10 * (1 + meta.getPower()) + random.nextInt(6) + random.nextInt(7);
 
-        getHandle().getEntityData().markDirty(EntityFireworks.DATA_ID_FIREWORKS_ITEM);
+        getHandle().getEntityData().markDirty(FireworkRocketEntity.DATA_ID_FIREWORKS_ITEM);
     }
 
     @Override
@@ -73,7 +72,7 @@ public class CraftFirework extends CraftProjectile implements Firework {
 
     @Override
     public LivingEntity getAttachedTo() {
-        EntityLiving entity = getHandle().attachedToEntity;
+        net.minecraft.world.entity.LivingEntity entity = getHandle().attachedToEntity;
         return (entity != null) ? (LivingEntity) entity.getBukkitEntity() : null;
     }
 
@@ -128,6 +127,6 @@ public class CraftFirework extends CraftProjectile implements Firework {
 
     @Override
     public void setShotAtAngle(boolean shotAtAngle) {
-        getHandle().getEntityData().set(EntityFireworks.DATA_SHOT_AT_ANGLE, shotAtAngle);
+        getHandle().getEntityData().set(FireworkRocketEntity.DATA_SHOT_AT_ANGLE, shotAtAngle);
     }
 }

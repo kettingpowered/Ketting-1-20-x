@@ -1,11 +1,10 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
-import net.minecraft.world.entity.projectile.EntityWitherSkull;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.WitherSkull;
 
 public class CraftWitherSkull extends CraftFireball implements WitherSkull {
-    public CraftWitherSkull(CraftServer server, EntityWitherSkull entity) {
+    public CraftWitherSkull(CraftServer server, net.minecraft.world.entity.projectile.WitherSkull entity) {
         super(server, entity);
     }
 
@@ -20,8 +19,8 @@ public class CraftWitherSkull extends CraftFireball implements WitherSkull {
     }
 
     @Override
-    public EntityWitherSkull getHandle() {
-        return (EntityWitherSkull) entity;
+    public net.minecraft.world.entity.projectile.WitherSkull getHandle() {
+        return (net.minecraft.world.entity.projectile.WitherSkull) entity;
     }
 
     @Override
