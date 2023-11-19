@@ -46,8 +46,8 @@ jobs:
           generateReleaseNotes: true
           artifacts: "artifacts/*"
           tag: ${{ github.sha }}
-          #prerelease: true
-          draft: true
+          prerelease: true
+          #sdraft: true
   setup:
     runs-on: ubuntu-latest
     steps:
@@ -152,3 +152,5 @@ jobs:
           name: project-forge-build-libs
           path: |
             projects/forge/build/libs/
+      - name: Run Game Test Server
+        run: java -Dforge.gameTestServer=true -jar ketting-1.20.2-48.0.39-3c86aee1-server.jar -dau -accepteula
