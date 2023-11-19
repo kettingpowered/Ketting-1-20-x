@@ -4,17 +4,16 @@ import com.google.common.base.Preconditions;
 import java.util.Optional;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.SimpleWeightedRandomList;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.level.MobSpawnerData;
-import net.minecraft.world.level.block.entity.TileEntityMobSpawner;
+import net.minecraft.world.level.SpawnData;
+import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import org.bukkit.World;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntityType;
 import org.bukkit.entity.EntityType;
 
-public class CraftCreatureSpawner extends CraftBlockEntityState<TileEntityMobSpawner> implements CreatureSpawner {
+public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEntity> implements CreatureSpawner {
 
-    public CraftCreatureSpawner(World world, TileEntityMobSpawner tileEntity) {
+    public CraftCreatureSpawner(World world, SpawnerBlockEntity tileEntity) {
         super(world, tileEntity);
     }
 
@@ -24,12 +23,12 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<TileEntityMobSpa
 
     @Override
     public EntityType getSpawnedType() {
-        MobSpawnerData spawnData = this.getSnapshot().getSpawner().nextSpawnData;
+        SpawnData spawnData = this.getSnapshot().getSpawner().nextSpawnData;
         if (spawnData == null) {
             return null;
         }
 
-        Optional<EntityTypes<?>> type = EntityTypes.by(spawnData.getEntityToSpawn());
+        Optional<net.minecraft.world.entity.EntityType<?>> type = net.minecraft.world.entity.EntityType.by(spawnData.getEntityToSpawn());
         return type.map(CraftEntityType::minecraftToBukkit).orElse(null);
     }
 
@@ -37,7 +36,7 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<TileEntityMobSpa
     public void setSpawnedType(EntityType entityType) {
         if (entityType == null) {
             this.getSnapshot().getSpawner().spawnPotentials = SimpleWeightedRandomList.empty(); // need clear the spawnPotentials to avoid nextSpawnData being replaced later
-            this.getSnapshot().getSpawner().nextSpawnData = new MobSpawnerData();
+            this.getSnapshot().getSpawner().nextSpawnData = new SpawnData();
             return;
         }
         Preconditions.checkArgument(entityType != EntityType.UNKNOWN, "Can't spawn EntityType %s from mob spawners!", entityType);
@@ -48,13 +47,13 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<TileEntityMobSpa
 
     @Override
     public String getCreatureTypeName() {
-        MobSpawnerData spawnData = this.getSnapshot().getSpawner().nextSpawnData;
+        SpawnData spawnData = this.getSnapshot().getSpawner().nextSpawnData;
         if (spawnData == null) {
             return null;
         }
 
-        Optional<EntityTypes<?>> type = EntityTypes.by(spawnData.getEntityToSpawn());
-        return type.map(entityTypes -> EntityTypes.getKey(entityTypes).getPath()).orElse(null);
+        Optional<net.minecraft.world.entity.EntityType<?>> type = net.minecraft.world.entity.EntityType.by(spawnData.getEntityToSpawn());
+        return type.map(entityTypes -> net.minecraft.world.entity.EntityType.getKey(entityTypes).getPath()).orElse(null);
     }
 
     @Override

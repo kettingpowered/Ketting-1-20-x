@@ -8,10 +8,12 @@
  
  public class BeehiveBlockEntity extends BlockEntity {
     public static final String TAG_FLOWER_POS = "FlowerPos";
-@@ -42,6 +_,7 @@
+@@ -41,7 +_,8 @@
+    public static final int MIN_OCCUPATION_TICKS_NECTARLESS = 600;
     private final List<BeehiveBlockEntity.BeeData> stored = Lists.newArrayList();
     @Nullable
-    private BlockPos savedFlowerPos;
+-   private BlockPos savedFlowerPos;
++   public BlockPos savedFlowerPos;
 +   public int maxBees = 3; // CraftBukkit - allow setting max amount of bees a hive can hold
  
     public BeehiveBlockEntity(BlockPos p_155134_, BlockState p_155135_) {
@@ -42,7 +44,7 @@
 +      return releaseBees(p_58760_, p_58761_, false);
 +   }
 +
-+   private List<Entity> releaseBees(BlockState p_58760_, BeehiveBlockEntity.BeeReleaseStatus p_58761_, boolean force) {
++   public List<Entity> releaseBees(BlockState p_58760_, BeehiveBlockEntity.BeeReleaseStatus p_58761_, boolean force) {
        List<Entity> list = Lists.newArrayList();
        this.stored.removeIf((p_272556_) -> {
 -         return releaseOccupant(this.level, this.worldPosition, p_58760_, p_272556_, list, p_58761_, this.savedFlowerPos);

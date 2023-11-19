@@ -3,10 +3,10 @@ package org.bukkit.craftbukkit.v1_20_R2.block;
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.core.BlockPosition;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.block.entity.TileEntityBeehive;
-import net.minecraft.world.level.block.entity.TileEntityBeehive.ReleaseStatus;
+import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
+import net.minecraft.world.level.block.entity.BeehiveBlockEntity.BeeReleaseStatus;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Beehive;
@@ -14,9 +14,9 @@ import org.bukkit.craftbukkit.v1_20_R2.entity.CraftBee;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 import org.bukkit.entity.Bee;
 
-public class CraftBeehive extends CraftBlockEntityState<TileEntityBeehive> implements Beehive {
+public class CraftBeehive extends CraftBlockEntityState<BeehiveBlockEntity> implements Beehive {
 
-    public CraftBeehive(World world, TileEntityBeehive tileEntity) {
+    public CraftBeehive(World world, BeehiveBlockEntity tileEntity) {
         super(world, tileEntity);
     }
 
@@ -26,7 +26,7 @@ public class CraftBeehive extends CraftBlockEntityState<TileEntityBeehive> imple
 
     @Override
     public Location getFlower() {
-        BlockPosition flower = getSnapshot().savedFlowerPos;
+        BlockPos flower = getSnapshot().savedFlowerPos;
         return (flower == null) ? null : CraftLocation.toBukkit(flower, getWorld());
     }
 
@@ -70,8 +70,8 @@ public class CraftBeehive extends CraftBlockEntityState<TileEntityBeehive> imple
         List<Bee> bees = new ArrayList<>();
 
         if (isPlaced()) {
-            TileEntityBeehive beehive = ((TileEntityBeehive) this.getTileEntityFromWorld());
-            for (Entity bee : beehive.releaseBees(this.getHandle(), ReleaseStatus.BEE_RELEASED, true)) {
+            BeehiveBlockEntity beehive = ((BeehiveBlockEntity) this.getTileEntityFromWorld());
+            for (Entity bee : beehive.releaseBees(this.getHandle(), BeeReleaseStatus.BEE_RELEASED, true)) {
                 bees.add((Bee) bee.getBukkitEntity());
             }
         }

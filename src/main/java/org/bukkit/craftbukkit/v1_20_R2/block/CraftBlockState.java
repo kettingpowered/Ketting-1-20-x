@@ -59,7 +59,7 @@ public class CraftBlockState implements BlockState {
     }
 
     public void setWorldHandle(LevelAccessor generatorAccess) {
-        if (generatorAccess instanceof net.minecraft.world.level.World) {
+        if (generatorAccess instanceof net.minecraft.world.level.Level) {
             this.weakWorld = null;
         } else {
             this.weakWorld = new WeakReference<>(generatorAccess);
@@ -84,7 +84,7 @@ public class CraftBlockState implements BlockState {
 
     protected final boolean isWorldGeneration() {
         LevelAccessor generatorAccess = this.getWorldHandle();
-        return generatorAccess != null && !(generatorAccess instanceof net.minecraft.world.level.World);
+        return generatorAccess != null && !(generatorAccess instanceof net.minecraft.world.level.Level);
     }
 
     protected final void ensureNoWorldGeneration() {

@@ -1,12 +1,12 @@
 package org.bukkit.craftbukkit.v1_20_R2.block;
 
-import net.minecraft.world.level.block.entity.TileEntityJigsaw;
+import net.minecraft.world.level.block.entity.JigsawBlockEntity;
 import org.bukkit.World;
 import org.bukkit.block.Jigsaw;
 
-public class CraftJigsaw extends CraftBlockEntityState<TileEntityJigsaw> implements Jigsaw {
+public class CraftJigsaw extends CraftBlockEntityState<JigsawBlockEntity> implements Jigsaw {
 
-    public CraftJigsaw(World world, TileEntityJigsaw tileEntity) {
+    public CraftJigsaw(World world, JigsawBlockEntity tileEntity) {
         super(world, tileEntity);
     }
 

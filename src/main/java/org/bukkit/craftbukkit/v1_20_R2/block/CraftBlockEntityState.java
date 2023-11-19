@@ -2,8 +2,8 @@ package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketListenerPlayOut;
-import net.minecraft.network.protocol.game.PacketPlayOutTileEntityData;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -45,7 +45,7 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
         }
 
         CompoundTag nbtTagCompound = tileEntity.saveWithFullMetadata();
-        T snapshot = (T) TileEntity.loadStatic(getPosition(), getHandle(), nbtTagCompound);
+        T snapshot = (T) BlockEntity.loadStatic(getPosition(), getHandle(), nbtTagCompound);
 
         return snapshot;
     }
@@ -73,7 +73,7 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
     }
 
     // gets the current TileEntity from the world at this position
-    protected TileEntity getTileEntityFromWorld() {
+    protected BlockEntity getTileEntityFromWorld() {
         requirePlaced();
 
         return getWorldHandle().getBlockEntity(this.getPosition());
@@ -101,7 +101,7 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
         }
     }
 
-    protected boolean isApplicable(TileEntity tileEntity) {
+    protected boolean isApplicable(BlockEntity tileEntity) {
         return tileEntity != null && this.tileEntity.getClass() == tileEntity.getClass();
     }
 
@@ -110,7 +110,7 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
         boolean result = super.update(force, applyPhysics);
 
         if (result && this.isPlaced()) {
-            TileEntity tile = getTileEntityFromWorld();
+            BlockEntity tile = getTileEntityFromWorld();
 
             if (isApplicable(tile)) {
                 applyTo((T) tile);
@@ -127,9 +127,9 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
     }
 
     @Nullable
-    public Packet<PacketListenerPlayOut> getUpdatePacket(@NotNull Location location) {
-        T vanillaTileEntitiy = (T) TileEntity.loadStatic(CraftLocation.toBlockPosition(location), getHandle(), getSnapshotNBT());
-        return PacketPlayOutTileEntityData.create(vanillaTileEntitiy);
+    public Packet<ClientGamePacketListener> getUpdatePacket(@NotNull Location location) {
+        T vanillaTileEntitiy = (T) BlockEntity.loadStatic(CraftLocation.toBlockPosition(location), getHandle(), getSnapshotNBT());
+        return ClientboundBlockEntityDataPacket.create(vanillaTileEntitiy);
     }
 
     @Override

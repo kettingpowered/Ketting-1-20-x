@@ -2,7 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.entity.TileEntitySign;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
 import org.bukkit.DyeColor;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerSignOpenEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class CraftSign<T extends TileEntitySign> extends CraftBlockEntityState<T> implements Sign {
+public class CraftSign<T extends SignBlockEntity> extends CraftBlockEntityState<T> implements Sign {
 
     private final CraftSignSide front;
     private final CraftSignSide back;
@@ -126,7 +126,7 @@ public class CraftSign<T extends TileEntitySign> extends CraftBlockEntityState<T
             return;
         }
 
-        TileEntitySign handle = ((CraftSign<?>) sign).getTileEntity();
+        SignBlockEntity handle = ((CraftSign<?>) sign).getTileEntity();
         handle.setAllowedPlayerEditor(player.getUniqueId());
 
         ((CraftPlayer) player).getHandle().openTextEdit(handle, Side.FRONT == side);

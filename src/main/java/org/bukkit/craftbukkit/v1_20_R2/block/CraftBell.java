@@ -1,20 +1,20 @@
 package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.EnumDirection;
-import net.minecraft.world.level.block.BlockBell;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.BellBlock;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.TileEntity;
-import net.minecraft.world.level.block.entity.TileEntityBell;
+import net.minecraft.world.level.block.entity.BellBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.bukkit.World;
 import org.bukkit.block.Bell;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 
-public class CraftBell extends CraftBlockEntityState<TileEntityBell> implements Bell {
+public class CraftBell extends CraftBlockEntityState<BellBlockEntity> implements Bell {
 
-    public CraftBell(World world, TileEntityBell tileEntity) {
+    public CraftBell(World world, BellBlockEntity tileEntity) {
         super(world, tileEntity);
     }
 
@@ -26,15 +26,15 @@ public class CraftBell extends CraftBlockEntityState<TileEntityBell> implements 
     public boolean ring(Entity entity, BlockFace direction) {
         Preconditions.checkArgument(direction == null || direction.isCartesian(), "direction must be cartesian, given %s", direction);
 
-        TileEntity tileEntity = getTileEntityFromWorld();
+        BlockEntity tileEntity = getTileEntityFromWorld();
         if (tileEntity == null) {
             return false;
         }
 
         net.minecraft.world.entity.Entity nmsEntity = (entity != null) ? ((CraftEntity) entity).getHandle() : null;
-        EnumDirection enumDirection = CraftBlock.blockFaceToNotch(direction);
+        Direction enumDirection = CraftBlock.blockFaceToNotch(direction);
 
-        return ((BlockBell) Blocks.BELL).attemptToRing(nmsEntity, world.getHandle(), getPosition(), enumDirection);
+        return ((BellBlock) Blocks.BELL).attemptToRing(nmsEntity, world.getHandle(), getPosition(), enumDirection);
     }
 
     @Override

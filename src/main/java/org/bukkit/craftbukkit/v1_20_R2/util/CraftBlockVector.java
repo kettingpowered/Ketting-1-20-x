@@ -9,11 +9,11 @@ public final class CraftBlockVector {
     private CraftBlockVector() {
     }
 
-    public static Vec3i toBlockPosition(BlockVector blockVector) {
-        return new Vec3i(blockVector.getBlockX(), blockVector.getBlockY(), blockVector.getBlockZ());
+    public static BlockPos toBlockPosition(BlockVector blockVector) {
+        return new BlockPos(blockVector.getBlockX(), blockVector.getBlockY(), blockVector.getBlockZ());
     }
 
-    public static BlockVector toBukkit(BlockPos baseBlockPosition) {
+    public static BlockVector toBukkit(Vec3i baseBlockPosition) {
         return new BlockVector(baseBlockPosition.getX(), baseBlockPosition.getY(), baseBlockPosition.getZ());
     }
 }

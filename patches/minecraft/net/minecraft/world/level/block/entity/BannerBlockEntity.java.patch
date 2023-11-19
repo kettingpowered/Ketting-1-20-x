@@ -1,15 +1,27 @@
 --- a/net/minecraft/world/level/block/entity/BannerBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BannerBlockEntity.java
-@@ -50,6 +_,12 @@
+@@ -26,9 +_,9 @@
+    public static final String TAG_COLOR = "Color";
+    @Nullable
+    private Component name;
+-   private DyeColor baseColor;
++   public DyeColor baseColor;
+    @Nullable
+-   private ListTag itemPatterns;
++   public ListTag itemPatterns;
+    @Nullable
+    private List<Pair<Holder<BannerPattern>, DyeColor>> patterns;
+ 
+@@ -49,6 +_,12 @@
+       if (compoundtag != null && compoundtag.contains("Patterns", 9)) {
           listtag = compoundtag.getList("Patterns", 10).copy();
        }
- 
++
 +      // CraftBukkit start
 +      while (listtag.size() > 20) {
 +         listtag.remove(20);
 +      }
 +      // CraftBukkit end
-+
+ 
        return listtag;
     }
- 

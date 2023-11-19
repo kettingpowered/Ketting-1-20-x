@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.block;
 
-import net.minecraft.resources.MinecraftKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BrushableBlockEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -35,7 +35,7 @@ public class CraftBrushableBlock extends CraftBlockEntityState<BrushableBlockEnt
         super.applyTo(lootable);
 
         if (this.getSnapshot().lootTable == null) {
-            lootable.setLootTable((MinecraftKey) null, 0L);
+            lootable.setLootTable((ResourceLocation) null, 0L);
         }
     }
 
@@ -45,7 +45,7 @@ public class CraftBrushableBlock extends CraftBlockEntityState<BrushableBlockEnt
             return null;
         }
 
-        MinecraftKey key = getSnapshot().lootTable;
+        ResourceLocation key = getSnapshot().lootTable;
         return Bukkit.getLootTable(CraftNamespacedKey.fromMinecraft(key));
     }
 
@@ -65,7 +65,7 @@ public class CraftBrushableBlock extends CraftBlockEntityState<BrushableBlockEnt
     }
 
     private void setLootTable(LootTable table, long seed) {
-        MinecraftKey key = (table == null) ? null : CraftNamespacedKey.toMinecraft(table.getKey());
+        ResourceLocation key = (table == null) ? null : CraftNamespacedKey.toMinecraft(table.getKey());
         getSnapshot().setLootTable(key, seed);
     }
 

@@ -2,9 +2,9 @@ package org.bukkit.craftbukkit.v1_20_R2;
 
 import java.util.HashMap;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.World;
-import net.minecraft.world.level.block.entity.TileEntity;
-import net.minecraft.world.level.storage.WorldDataServer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.storage.PrimaryLevelData;
 import org.bukkit.craftbukkit.v1_20_R2.scheduler.CraftTask;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitTask;
@@ -100,7 +100,7 @@ public class SpigotTimings {
      * @param entity
      * @return
      */
-    public static CustomTimingsHandler getTileEntityTimings(TileEntity entity) {
+    public static CustomTimingsHandler getTileEntityTimings(BlockEntity entity) {
         String entityType = entity.getClass().getName();
         CustomTimingsHandler result = tileEntityTypeTimingMap.get(entityType);
         if (result == null) {
@@ -134,8 +134,8 @@ public class SpigotTimings {
         public final CustomTimingsHandler syncChunkLoadTileTicksTimer;
         public final CustomTimingsHandler syncChunkLoadPostTimer;
 
-        public WorldTimingsHandler(World server) {
-            String name = ((WorldDataServer) server.levelData).getLevelName() + " - ";
+        public WorldTimingsHandler(Level server) {
+            String name = ((PrimaryLevelData) server.levelData).getLevelName() + " - ";
 
             mobSpawn = new CustomTimingsHandler("** " + name + "mobSpawn");
             doChunkUnload = new CustomTimingsHandler("** " + name + "doChunkUnload");

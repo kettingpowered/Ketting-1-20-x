@@ -1,13 +1,13 @@
 package org.bukkit.craftbukkit.v1_20_R2.block;
 
-import net.minecraft.world.level.block.entity.TileEntityBed;
+import net.minecraft.world.level.block.entity.BedBlockEntity;
 import org.bukkit.DyeColor;
 import org.bukkit.World;
 import org.bukkit.block.Bed;
 
-public class CraftBed extends CraftBlockEntityState<TileEntityBed> implements Bed {
+public class CraftBed extends CraftBlockEntityState<BedBlockEntity> implements Bed {
 
-    public CraftBed(World world, TileEntityBed tileEntity) {
+    public CraftBed(World world, BedBlockEntity tileEntity) {
         super(world, tileEntity);
     }
 

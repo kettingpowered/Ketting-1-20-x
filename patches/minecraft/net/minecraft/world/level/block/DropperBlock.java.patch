@@ -15,6 +15,15 @@
  
     public DropperBlock(BlockBehaviour.Properties p_52942_) {
        super(p_52942_);
+@@ -34,7 +_,7 @@
+       return new DropperBlockEntity(p_153179_, p_153180_);
+    }
+ 
+-   protected void dispenseFrom(ServerLevel p_52944_, BlockState p_301813_, BlockPos p_52945_) {
++   public void dispenseFrom(ServerLevel p_52944_, BlockState p_301813_, BlockPos p_52945_) {
+       DispenserBlockEntity dispenserblockentity = p_52944_.getBlockEntity(p_52945_, BlockEntityType.DROPPER).orElse((DropperBlockEntity)null);
+       if (dispenserblockentity == null) {
+          LOGGER.warn("Ignoring dispensing attempt for Dropper without matching block entity at {}", (Object)p_52945_);
 @@ -45,15 +_,32 @@
              p_52944_.levelEvent(1001, p_52945_, 0);
           } else {
