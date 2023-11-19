@@ -4,12 +4,8 @@ import com.google.common.base.Preconditions;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
-import net.minecraft.core.particles.DustColorTransitionOptions;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
-import net.minecraft.core.particles.SculkChargeParticleOptions;
-import net.minecraft.core.particles.ShriekParticleOption;
-import net.minecraft.core.particles.VibrationParticleOption;
+
+import net.minecraft.core.particles.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.gameevent.BlockPositionSource;
@@ -126,14 +122,14 @@ public abstract class CraftParticle<D> implements Keyed {
             BiFunction<NamespacedKey, net.minecraft.core.particles.ParticleType<?>, CraftParticle<?>> itemStackFunction = (name, particle) -> new CraftParticle<>(name, particle, ItemStack.class) {
                 @Override
                 public ParticleOptions createParticleParam(ItemStack data) {
-                    return new net.minecraft.core.particles.ItemParticleOption((net.minecraft.core.particles.Particle<ParticleParamItem>) getHandle(), CraftItemStack.asNMSCopy(data));
+                    return new net.minecraft.core.particles.ItemParticleOption((net.minecraft.core.particles.ParticleType<ItemParticleOption>) getHandle(), CraftItemStack.asNMSCopy(data));
                 }
             };
 
             BiFunction<NamespacedKey, net.minecraft.core.particles.ParticleType<?>, CraftParticle<?>> blockDataFunction = (name, particle) -> new CraftParticle<>(name, particle, BlockData.class) {
                 @Override
                 public ParticleOptions createParticleParam(BlockData data) {
-                    return new net.minecraft.core.particles.BlockParticleOption((net.minecraft.core.particles.Particle<ParticleParamBlock>) getHandle(), ((CraftBlockData) data).getState());
+                    return new net.minecraft.core.particles.BlockParticleOption((net.minecraft.core.particles.ParticleType<BlockParticleOption>) getHandle(), ((CraftBlockData) data).getState());
                 }
             };
 
