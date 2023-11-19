@@ -1,19 +1,19 @@
 package org.bukkit.craftbukkit.v1_20_R2.block.data.type;
 
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.bukkit.block.data.type.Chest;
-import org.bukkit.block.data.type.Chest.Type;
 import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftChest extends CraftBlockData implements Chest {
 
-    private static final EnumProperty TYPE = getEnum("type");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> TYPE = getEnum("type");
 
-    public Type getType() {
-        return (Type) this.get(CraftChest.TYPE, Type.class);
+    @Override
+    public org.bukkit.block.data.type.Chest.Type getType() {
+        return get(TYPE, org.bukkit.block.data.type.Chest.Type.class);
     }
 
-    public void setType(Type type) {
-        this.set(CraftChest.TYPE, (Enum) type);
+    @Override
+    public void setType(org.bukkit.block.data.type.Chest.Type type) {
+        set(TYPE, type);
     }
 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Pig.java
 +++ b/net/minecraft/world/entity/animal/Pig.java
-@@ -47,6 +_,7 @@
+@@ -47,13 +_,14 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
@@ -8,6 +8,14 @@
  import org.joml.Vector3f;
  
  public class Pig extends Animal implements ItemSteerable, Saddleable {
+    private static final EntityDataAccessor<Boolean> DATA_SADDLE_ID = SynchedEntityData.defineId(Pig.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DATA_BOOST_TIME = SynchedEntityData.defineId(Pig.class, EntityDataSerializers.INT);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.CARROT, Items.POTATO, Items.BEETROOT);
+-   private final ItemBasedSteering steering = new ItemBasedSteering(this.entityData, DATA_BOOST_TIME, DATA_SADDLE_ID);
++   public final ItemBasedSteering steering = new ItemBasedSteering(this.entityData, DATA_BOOST_TIME, DATA_SADDLE_ID);
+ 
+    public Pig(EntityType<? extends Pig> p_29462_, Level p_29463_) {
+       super(p_29462_, p_29463_);
 @@ -203,7 +_,7 @@
     }
  
@@ -22,11 +30,11 @@
  
              zombifiedpiglin.setPersistenceRequired();
 -            p_29473_.addFreshEntity(zombifiedpiglin);
-+            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin);
 +            // CraftBukkit start
 +            if (CraftEventFactory.callPigZapEvent(this, p_29474_, zombifiedpiglin).isCancelled()) {
 +               return;
 +            }
++            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin); //Ketting
 +            // CraftBukkit - added a reason for spawning this creature
 +            p_29473_.addFreshEntity(zombifiedpiglin, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
 +            // CraftBukkit end

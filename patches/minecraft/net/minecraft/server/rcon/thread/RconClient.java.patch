@@ -10,16 +10,23 @@
  import org.slf4j.Logger;
  
  public class RconClient extends GenericThread {
-@@ -24,6 +_,9 @@
+@@ -23,11 +_,14 @@
+    private final Socket client;
     private final byte[] buf = new byte[1460];
     private final String rconPassword;
-    private final ServerInterface serverInterface;
+-   private final ServerInterface serverInterface;
 +   // CraftBukkit start
++   private final DedicatedServer serverInterface;
 +   private final RconConsoleSource rconConsoleSource;
 +   // CraftBukkit end
  
     RconClient(ServerInterface p_11587_, String p_11588_, Socket p_11589_) {
        super("RCON Client " + p_11589_.getInetAddress());
+-      this.serverInterface = p_11587_;
++      this.serverInterface = (DedicatedServer) p_11587_;
+       this.client = p_11589_;
+ 
+       try {
 @@ -37,6 +_,7 @@
        }
  

@@ -1,48 +1,53 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.PinkPetalsBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.type.PinkPetals;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftPinkPetals extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.PinkPetals, org.bukkit.block.data.Directional {
 
-public final class CraftPinkPetals extends CraftBlockData implements PinkPetals, Directional {
+    public CraftPinkPetals() {
+        super();
+    }
 
-    private static final IntegerProperty FLOWER_AMOUNT = getInteger(PinkPetalsBlock.class, "flower_amount");
-    private static final EnumProperty FACING = getEnum(PinkPetalsBlock.class, "facing");
-
-    public CraftPinkPetals() {}
-
-    public CraftPinkPetals(BlockState state) {
+    public CraftPinkPetals(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftPinkPetals
+
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty FLOWER_AMOUNT = getInteger(net.minecraft.world.level.block.PinkPetalsBlock.class, "flower_amount");
+
+    @Override
     public int getFlowerAmount() {
-        return (Integer) this.get(CraftPinkPetals.FLOWER_AMOUNT);
+        return get(FLOWER_AMOUNT);
     }
 
+    @Override
     public void setFlowerAmount(int flower_amount) {
-        this.set((Property) CraftPinkPetals.FLOWER_AMOUNT, (Comparable) flower_amount);
+        set(FLOWER_AMOUNT, flower_amount);
     }
 
+    @Override
     public int getMaximumFlowerAmount() {
-        return getMax(CraftPinkPetals.FLOWER_AMOUNT);
+        return getMax(FLOWER_AMOUNT);
     }
 
-    public BlockFace getFacing() {
-        return (BlockFace) this.get(CraftPinkPetals.FACING, BlockFace.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.PinkPetalsBlock.class, "facing");
+
+    @Override
+    public org.bukkit.block.BlockFace getFacing() {
+        return get(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public void setFacing(BlockFace facing) {
-        this.set(CraftPinkPetals.FACING, (Enum) facing);
+    @Override
+    public void setFacing(org.bukkit.block.BlockFace facing) {
+        set(FACING, facing);
     }
 
-    public Set getFaces() {
-        return this.getValues(CraftPinkPetals.FACING, BlockFace.class);
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 }

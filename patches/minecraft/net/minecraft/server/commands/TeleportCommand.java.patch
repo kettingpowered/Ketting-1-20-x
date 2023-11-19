@@ -32,9 +32,9 @@
 +            result = player.teleportTo(p_139017_, p_139018_, p_139019_, p_139020_, p_139021_, f, f1, PlayerTeleportEvent.TeleportCause.COMMAND);
 +         } else {
 +            Location to = new Location(p_139017_.getWorld(), p_139018_, p_139019_, p_139020_, f, f1);
-+            EntityTeleportEvent event = new EntityTeleportEvent(p_139016_.getBukkitEntity(), p_139016_.getBukkitEntity().getLocation(), to);
-+            p_139017_.getCraftServer().getPluginManager().callEvent(event);
-+            if (event.isCancelled()) {
++            EntityTeleportEvent bevent = new EntityTeleportEvent(p_139016_.getBukkitEntity(), p_139016_.getBukkitEntity().getLocation(), to);
++            p_139017_.getCraftServer().getPluginManager().callEvent(bevent);
++            if (bevent.isCancelled()) {
 +               return;
 +            }
 +

@@ -1,12 +1,21 @@
 --- a/net/minecraft/world/entity/monster/Strider.java
 +++ b/net/minecraft/world/entity/monster/Strider.java
+@@ -82,7 +_,7 @@
+    private static final EntityDataAccessor<Integer> DATA_BOOST_TIME = SynchedEntityData.defineId(Strider.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> DATA_SUFFOCATING = SynchedEntityData.defineId(Strider.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_SADDLE_ID = SynchedEntityData.defineId(Strider.class, EntityDataSerializers.BOOLEAN);
+-   private final ItemBasedSteering steering = new ItemBasedSteering(this.entityData, DATA_BOOST_TIME, DATA_SADDLE_ID);
++   public final ItemBasedSteering steering = new ItemBasedSteering(this.entityData, DATA_BOOST_TIME, DATA_SADDLE_ID);
+    @Nullable
+    private TemptGoal temptGoal;
+ 
 @@ -304,7 +_,14 @@
           }
  
           boolean flag1 = flag2;
 -         this.setSuffocating(!flag || flag1);
 +         // CraftBukkit start
-+         boolean suffocating = !flag || flag2;
++         boolean suffocating = !flag || flag1;
 +         if (suffocating ^ this.isSuffocating()) {
 +            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callStriderTemperatureChangeEvent(this, suffocating)) {
 +               this.setSuffocating(suffocating);

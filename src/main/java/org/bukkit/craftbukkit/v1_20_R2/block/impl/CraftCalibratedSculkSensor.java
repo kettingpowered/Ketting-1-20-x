@@ -1,71 +1,81 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.CalibratedSculkSensorBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.AnaloguePowerable;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.CalibratedSculkSensor;
-import org.bukkit.block.data.type.SculkSensor;
-import org.bukkit.block.data.type.SculkSensor.Phase;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftCalibratedSculkSensor extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.CalibratedSculkSensor, org.bukkit.block.data.Directional, org.bukkit.block.data.type.SculkSensor, org.bukkit.block.data.AnaloguePowerable, org.bukkit.block.data.Waterlogged {
 
-public final class CraftCalibratedSculkSensor extends CraftBlockData implements CalibratedSculkSensor, Directional, SculkSensor, AnaloguePowerable, Waterlogged {
+    public CraftCalibratedSculkSensor() {
+        super();
+    }
 
-    private static final EnumProperty FACING = getEnum(CalibratedSculkSensorBlock.class, "facing");
-    private static final EnumProperty PHASE = getEnum(CalibratedSculkSensorBlock.class, "sculk_sensor_phase");
-    private static final IntegerProperty POWER = getInteger(CalibratedSculkSensorBlock.class, "power");
-    private static final BooleanProperty WATERLOGGED = getBoolean(CalibratedSculkSensorBlock.class, "waterlogged");
-
-    public CraftCalibratedSculkSensor() {}
-
-    public CraftCalibratedSculkSensor(BlockState state) {
+    public CraftCalibratedSculkSensor(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
-    public BlockFace getFacing() {
-        return (BlockFace) this.get(CraftCalibratedSculkSensor.FACING, BlockFace.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.CalibratedSculkSensorBlock.class, "facing");
+
+    @Override
+    public org.bukkit.block.BlockFace getFacing() {
+        return get(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public void setFacing(BlockFace facing) {
-        this.set(CraftCalibratedSculkSensor.FACING, (Enum) facing);
+    @Override
+    public void setFacing(org.bukkit.block.BlockFace facing) {
+        set(FACING, facing);
     }
 
-    public Set getFaces() {
-        return this.getValues(CraftCalibratedSculkSensor.FACING, BlockFace.class);
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public Phase getPhase() {
-        return (Phase) this.get(CraftCalibratedSculkSensor.PHASE, Phase.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSculkSensor
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> PHASE = getEnum(net.minecraft.world.level.block.CalibratedSculkSensorBlock.class, "sculk_sensor_phase");
+
+    @Override
+    public org.bukkit.block.data.type.SculkSensor.Phase getPhase() {
+        return get(PHASE, org.bukkit.block.data.type.SculkSensor.Phase.class);
     }
 
-    public void setPhase(Phase phase) {
-        this.set(CraftCalibratedSculkSensor.PHASE, (Enum) phase);
+    @Override
+    public void setPhase(org.bukkit.block.data.type.SculkSensor.Phase phase) {
+        set(PHASE, phase);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAnaloguePowerable
+
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty POWER = getInteger(net.minecraft.world.level.block.CalibratedSculkSensorBlock.class, "power");
+
+    @Override
     public int getPower() {
-        return (Integer) this.get(CraftCalibratedSculkSensor.POWER);
+        return get(POWER);
     }
 
+    @Override
     public void setPower(int power) {
-        this.set((Property) CraftCalibratedSculkSensor.POWER, (Comparable) power);
+        set(POWER, power);
     }
 
+    @Override
     public int getMaximumPower() {
-        return getMax(CraftCalibratedSculkSensor.POWER);
+        return getMax(POWER);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.CalibratedSculkSensorBlock.class, "waterlogged");
+
+    @Override
     public boolean isWaterlogged() {
-        return (Boolean) this.get(CraftCalibratedSculkSensor.WATERLOGGED);
+        return get(WATERLOGGED);
     }
 
+    @Override
     public void setWaterlogged(boolean waterlogged) {
-        this.set((Property) CraftCalibratedSculkSensor.WATERLOGGED, (Comparable) waterlogged);
+        set(WATERLOGGED, waterlogged);
     }
 }

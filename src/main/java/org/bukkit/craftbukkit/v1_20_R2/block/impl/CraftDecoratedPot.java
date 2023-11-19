@@ -1,45 +1,48 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.DecoratedPotBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.DecoratedPot;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftDecoratedPot extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.DecoratedPot, org.bukkit.block.data.Directional, org.bukkit.block.data.Waterlogged {
 
-public final class CraftDecoratedPot extends CraftBlockData implements DecoratedPot, Directional, Waterlogged {
+    public CraftDecoratedPot() {
+        super();
+    }
 
-    private static final EnumProperty FACING = getEnum(DecoratedPotBlock.class, "facing");
-    private static final BooleanProperty WATERLOGGED = getBoolean(DecoratedPotBlock.class, "waterlogged");
-
-    public CraftDecoratedPot() {}
-
-    public CraftDecoratedPot(BlockState state) {
+    public CraftDecoratedPot(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
-    public BlockFace getFacing() {
-        return (BlockFace) this.get(CraftDecoratedPot.FACING, BlockFace.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.DecoratedPotBlock.class, "facing");
+
+    @Override
+    public org.bukkit.block.BlockFace getFacing() {
+        return get(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public void setFacing(BlockFace facing) {
-        this.set(CraftDecoratedPot.FACING, (Enum) facing);
+    @Override
+    public void setFacing(org.bukkit.block.BlockFace facing) {
+        set(FACING, facing);
     }
 
-    public Set getFaces() {
-        return this.getValues(CraftDecoratedPot.FACING, BlockFace.class);
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.DecoratedPotBlock.class, "waterlogged");
+
+    @Override
     public boolean isWaterlogged() {
-        return (Boolean) this.get(CraftDecoratedPot.WATERLOGGED);
+        return get(WATERLOGGED);
     }
 
+    @Override
     public void setWaterlogged(boolean waterlogged) {
-        this.set((Property) CraftDecoratedPot.WATERLOGGED, (Comparable) waterlogged);
+        set(WATERLOGGED, waterlogged);
     }
 }

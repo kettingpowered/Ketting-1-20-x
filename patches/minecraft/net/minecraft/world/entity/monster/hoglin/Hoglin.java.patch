@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/entity/monster/hoglin/Hoglin.java
 +++ b/net/minecraft/world/entity/monster/hoglin/Hoglin.java
+@@ -59,8 +_,8 @@
+    private static final float BABY_ATTACK_DAMAGE = 0.5F;
+    private static final int CONVERSION_TIME = 300;
+    private int attackAnimationRemainingTicks;
+-   private int timeInOverworld;
+-   private boolean cannotBeHunted;
++   public int timeInOverworld;
++   public boolean cannotBeHunted;
+    protected static final ImmutableList<? extends SensorType<? extends Sensor<? super Hoglin>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ADULT, SensorType.HOGLIN_SPECIFIC_SENSOR);
+    protected static final ImmutableList<? extends MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.BREED_TARGET, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER, MemoryModuleType.LOOK_TARGET, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, MemoryModuleType.PATH, MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLIN, MemoryModuleType.AVOID_TARGET, MemoryModuleType.VISIBLE_ADULT_PIGLIN_COUNT, MemoryModuleType.VISIBLE_ADULT_HOGLIN_COUNT, MemoryModuleType.NEAREST_VISIBLE_ADULT_HOGLINS, MemoryModuleType.NEAREST_VISIBLE_ADULT, MemoryModuleType.NEAREST_REPELLENT, MemoryModuleType.PACIFIED, MemoryModuleType.IS_PANICKING);
+ 
 @@ -128,7 +_,7 @@
        HoglinAi.updateActivity(this);
        if (this.isConverting()) {
@@ -17,3 +28,12 @@
        }
  
     }
+@@ -262,7 +_,7 @@
+       this.getEntityData().set(DATA_IMMUNE_TO_ZOMBIFICATION, p_34565_);
+    }
+ 
+-   private boolean isImmuneToZombification() {
++   public boolean isImmuneToZombification() {
+       return this.getEntityData().get(DATA_IMMUNE_TO_ZOMBIFICATION);
+    }
+ 

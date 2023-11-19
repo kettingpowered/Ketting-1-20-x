@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.scoreboard;
 
 abstract class CraftScoreboardComponent {
-
     private CraftScoreboard scoreboard;
 
     CraftScoreboardComponent(CraftScoreboard scoreboard) {
@@ -11,7 +10,7 @@ abstract class CraftScoreboardComponent {
     abstract CraftScoreboard checkState();
 
     public CraftScoreboard getScoreboard() {
-        return this.scoreboard;
+        return scoreboard;
     }
 
     abstract void unregister();

@@ -1,28 +1,31 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
-import net.minecraft.world.entity.npc.AbstractVillager;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.WanderingTrader;
 
 public class CraftWanderingTrader extends CraftAbstractVillager implements WanderingTrader {
 
     public CraftWanderingTrader(CraftServer server, net.minecraft.world.entity.npc.WanderingTrader entity) {
-        super(server, (AbstractVillager) entity);
+        super(server, entity);
     }
 
+    @Override
     public net.minecraft.world.entity.npc.WanderingTrader getHandle() {
-        return (net.minecraft.world.entity.npc.WanderingTrader) this.entity;
+        return (net.minecraft.world.entity.npc.WanderingTrader) entity;
     }
 
+    @Override
     public String toString() {
         return "CraftWanderingTrader";
     }
 
+    @Override
     public int getDespawnDelay() {
-        return this.getHandle().getDespawnDelay();
+        return getHandle().getDespawnDelay();
     }
 
+    @Override
     public void setDespawnDelay(int despawnDelay) {
-        this.getHandle().setDespawnDelay(despawnDelay);
+        getHandle().setDespawnDelay(despawnDelay);
     }
 }

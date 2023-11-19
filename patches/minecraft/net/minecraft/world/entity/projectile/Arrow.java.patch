@@ -1,5 +1,34 @@
 --- a/net/minecraft/world/entity/projectile/Arrow.java
 +++ b/net/minecraft/world/entity/projectile/Arrow.java
+@@ -26,8 +_,8 @@
+    private static final int NO_EFFECT_COLOR = -1;
+    private static final EntityDataAccessor<Integer> ID_EFFECT_COLOR = SynchedEntityData.defineId(Arrow.class, EntityDataSerializers.INT);
+    private static final byte EVENT_POTION_PUFF = 0;
+-   private Potion potion = Potions.EMPTY;
+-   private final Set<MobEffectInstance> effects = Sets.newHashSet();
++   public Potion potion = Potions.EMPTY;
++   public final Set<MobEffectInstance> effects = Sets.newHashSet();
+    private boolean fixedColor;
+ 
+    public Arrow(EntityType<? extends Arrow> p_36858_, Level p_36859_) {
+@@ -71,7 +_,7 @@
+       return compoundtag != null && compoundtag.contains("CustomPotionColor", 99) ? compoundtag.getInt("CustomPotionColor") : -1;
+    }
+ 
+-   private void updateColor() {
++   public void updateColor() {
+       this.fixedColor = false;
+       if (this.potion == Potions.EMPTY && this.effects.isEmpty()) {
+          this.entityData.set(ID_EFFECT_COLOR, -1);
+@@ -128,7 +_,7 @@
+       return this.entityData.get(ID_EFFECT_COLOR);
+    }
+ 
+-   private void setFixedColor(int p_36883_) {
++   public void setFixedColor(int p_36883_) {
+       this.fixedColor = true;
+       this.entityData.set(ID_EFFECT_COLOR, p_36883_);
+    }
 @@ -180,12 +_,12 @@
        for(MobEffectInstance mobeffectinstance : this.potion.getEffects()) {
           p_36873_.addEffect(new MobEffectInstance(mobeffectinstance.getEffect(), Math.max(mobeffectinstance.mapDuration((p_268168_) -> {

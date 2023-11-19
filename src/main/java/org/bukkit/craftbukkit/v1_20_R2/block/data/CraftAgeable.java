@@ -1,22 +1,23 @@
 package org.bukkit.craftbukkit.v1_20_R2.block.data;
 
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
 import org.bukkit.block.data.Ageable;
 
 public abstract class CraftAgeable extends CraftBlockData implements Ageable {
 
-    private static final IntegerProperty AGE = getInteger("age");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger("age");
 
+    @Override
     public int getAge() {
-        return (Integer) this.get(CraftAgeable.AGE);
+        return get(AGE);
     }
 
+    @Override
     public void setAge(int age) {
-        this.set((Property) CraftAgeable.AGE, (Comparable) age);
+        set(AGE, age);
     }
 
+    @Override
     public int getMaximumAge() {
-        return getMax(CraftAgeable.AGE);
+        return getMax(AGE);
     }
 }

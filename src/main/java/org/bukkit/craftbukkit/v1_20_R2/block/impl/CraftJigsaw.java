@@ -1,27 +1,29 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import net.minecraft.world.level.block.JigsawBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import org.bukkit.block.data.type.Jigsaw;
-import org.bukkit.block.data.type.Jigsaw.Orientation;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftJigsaw extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Jigsaw {
 
-public final class CraftJigsaw extends CraftBlockData implements Jigsaw {
+    public CraftJigsaw() {
+        super();
+    }
 
-    private static final EnumProperty ORIENTATION = getEnum(JigsawBlock.class, "orientation");
-
-    public CraftJigsaw() {}
-
-    public CraftJigsaw(BlockState state) {
+    public CraftJigsaw(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
-    public Orientation getOrientation() {
-        return (Orientation) this.get(CraftJigsaw.ORIENTATION, Orientation.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftJigsaw
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> ORIENTATION = getEnum(net.minecraft.world.level.block.JigsawBlock.class, "orientation");
+
+    @Override
+    public org.bukkit.block.data.type.Jigsaw.Orientation getOrientation() {
+        return get(ORIENTATION, org.bukkit.block.data.type.Jigsaw.Orientation.class);
     }
 
-    public void setOrientation(Orientation orientation) {
-        this.set(CraftJigsaw.ORIENTATION, (Enum) orientation);
+    @Override
+    public void setOrientation(org.bukkit.block.data.type.Jigsaw.Orientation orientation) {
+        set(ORIENTATION, orientation);
     }
 }

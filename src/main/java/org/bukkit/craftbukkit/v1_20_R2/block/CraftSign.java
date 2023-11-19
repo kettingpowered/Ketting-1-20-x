@@ -13,88 +13,107 @@ import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerSignOpenEvent.Cause;
+import org.bukkit.event.player.PlayerSignOpenEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class CraftSign extends CraftBlockEntityState implements Sign {
+public class CraftSign<T extends SignBlockEntity> extends CraftBlockEntityState<T> implements Sign {
 
-    private final CraftSignSide front = new CraftSignSide(((SignBlockEntity) this.getSnapshot()).getFrontText());
-    private final CraftSignSide back = new CraftSignSide(((SignBlockEntity) this.getSnapshot()).getBackText());
-    private static volatile int[] $SWITCH_TABLE$org$bukkit$block$sign$Side;
+    private final CraftSignSide front;
+    private final CraftSignSide back;
 
-    public CraftSign(World world, SignBlockEntity tileEntity) {
+    public CraftSign(World world, T tileEntity) {
         super(world, tileEntity);
+        this.front = new CraftSignSide(this.getSnapshot().getFrontText());
+        this.back = new CraftSignSide(this.getSnapshot().getBackText());
     }
 
-    protected CraftSign(CraftSign state) {
-        super((CraftBlockEntityState) state);
+    protected CraftSign(CraftSign<T> state) {
+        super(state);
+        this.front = new CraftSignSide(this.getSnapshot().getFrontText());
+        this.back = new CraftSignSide(this.getSnapshot().getBackText());
     }
 
+    @Override
     public String[] getLines() {
-        return this.front.getLines();
+        return front.getLines();
     }
 
+    @Override
     public String getLine(int index) throws IndexOutOfBoundsException {
-        return this.front.getLine(index);
+        return front.getLine(index);
     }
 
+    @Override
     public void setLine(int index, String line) throws IndexOutOfBoundsException {
-        this.front.setLine(index, line);
+        front.setLine(index, line);
     }
 
+    @Override
     public boolean isEditable() {
-        return !this.isWaxed();
+        return !isWaxed();
     }
 
+    @Override
     public void setEditable(boolean editable) {
         this.setWaxed(!editable);
     }
 
+    @Override
     public boolean isWaxed() {
-        return ((SignBlockEntity) this.getSnapshot()).isWaxed();
+        return getSnapshot().isWaxed();
     }
 
+    @Override
     public void setWaxed(boolean waxed) {
-        ((SignBlockEntity) this.getSnapshot()).setWaxed(waxed);
+        getSnapshot().setWaxed(waxed);
     }
 
+    @Override
     public boolean isGlowingText() {
-        return this.front.isGlowingText();
+        return front.isGlowingText();
     }
 
+    @Override
     public void setGlowingText(boolean glowing) {
-        this.front.setGlowingText(glowing);
+        front.setGlowingText(glowing);
     }
 
     @NotNull
+    @Override
     public SignSide getSide(Side side) {
         Preconditions.checkArgument(side != null, "side == null");
-        switch ($SWITCH_TABLE$org$bukkit$block$sign$Side()[side.ordinal()]) {
-            case 1:
-                return this.front;
-            case 2:
-                return this.back;
+
+        switch (side) {
+            case FRONT:
+                return front;
+            case BACK:
+                return back;
             default:
                 throw new IllegalArgumentException();
         }
     }
 
+    @Override
     public DyeColor getColor() {
-        return this.front.getColor();
+        return front.getColor();
     }
 
+    @Override
     public void setColor(DyeColor color) {
-        this.front.setColor(color);
+        front.setColor(color);
     }
 
-    public void applyTo(SignBlockEntity sign) {
-        ((SignBlockEntity) this.getSnapshot()).setText(this.front.applyLegacyStringToSignSide(), true);
-        ((SignBlockEntity) this.getSnapshot()).setText(this.back.applyLegacyStringToSignSide(), false);
+    @Override
+    public void applyTo(T sign) {
+        getSnapshot().setText(front.applyLegacyStringToSignSide(), true);
+        getSnapshot().setText(back.applyLegacyStringToSignSide(), false);
+
         super.applyTo(sign);
     }
 
-    public CraftSign copy() {
-        return new CraftSign(this);
+    @Override
+    public CraftSign<T> copy() {
+        return new CraftSign<T>(this);
     }
 
     public static void openSign(Sign sign, Player player, Side side) {
@@ -102,18 +121,21 @@ public class CraftSign extends CraftBlockEntityState implements Sign {
         Preconditions.checkArgument(side != null, "side == null");
         Preconditions.checkArgument(sign.isPlaced(), "Sign must be placed");
         Preconditions.checkArgument(sign.getWorld() == player.getWorld(), "Sign must be in same world as Player");
-        if (CraftEventFactory.callPlayerSignOpenEvent(player, sign, side, Cause.PLUGIN)) {
-            SignBlockEntity handle = (SignBlockEntity) ((CraftSign) sign).getTileEntity();
 
-            handle.setAllowedPlayerEditor(player.getUniqueId());
-            ((CraftPlayer) player).getHandle().openTextEdit(handle, Side.FRONT == side);
+        if (!CraftEventFactory.callPlayerSignOpenEvent(player, sign, side, PlayerSignOpenEvent.Cause.PLUGIN)) {
+            return;
         }
+
+        SignBlockEntity handle = ((CraftSign<?>) sign).getTileEntity();
+        handle.setAllowedPlayerEditor(player.getUniqueId());
+
+        ((CraftPlayer) player).getHandle().openTextEdit(handle, Side.FRONT == side);
     }
 
     public static Component[] sanitizeLines(String[] lines) {
         Component[] components = new Component[4];
 
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < 4; i++) {
             if (i < lines.length && lines[i] != null) {
                 components[i] = CraftChatMessage.fromString(lines[i])[0];
             } else {
@@ -126,40 +148,13 @@ public class CraftSign extends CraftBlockEntityState implements Sign {
 
     public static String[] revertComponents(Component[] components) {
         String[] lines = new String[components.length];
-
-        for (int i = 0; i < lines.length; ++i) {
+        for (int i = 0; i < lines.length; i++) {
             lines[i] = revertComponent(components[i]);
         }
-
         return lines;
     }
 
     private static String revertComponent(Component component) {
         return CraftChatMessage.fromComponent(component);
-    }
-
-    static int[] $SWITCH_TABLE$org$bukkit$block$sign$Side() {
-        int[] aint = CraftSign.$SWITCH_TABLE$org$bukkit$block$sign$Side;
-
-        if (aint != null) {
-            return aint;
-        } else {
-            int[] aint1 = new int[Side.values().length];
-
-            try {
-                aint1[Side.BACK.ordinal()] = 2;
-            } catch (NoSuchFieldError nosuchfielderror) {
-                ;
-            }
-
-            try {
-                aint1[Side.FRONT.ordinal()] = 1;
-            } catch (NoSuchFieldError nosuchfielderror1) {
-                ;
-            }
-
-            CraftSign.$SWITCH_TABLE$org$bukkit$block$sign$Side = aint1;
-            return aint1;
-        }
     }
 }

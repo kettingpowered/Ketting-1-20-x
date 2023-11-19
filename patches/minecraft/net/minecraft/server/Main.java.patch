@@ -164,7 +164,8 @@
 +            return;
 +         }
           LevelStorageSource levelstoragesource = LevelStorageSource.createDefault(file1.toPath());
-          LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s);
+-         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s);
++         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s, LevelStem.OVERWORLD);
 +         levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData();
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.getSummary();
           if (levelsummary != null) {
@@ -253,11 +254,10 @@
              }
           };
           thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
-@@ -210,6 +_,64 @@
-       }
+@@ -211,6 +_,64 @@
  
     }
-+
+ 
 +   //Ketting start - Bukkit Options
 +   private static void acceptBukkitSettings(OptionParser parser) {
 +      parser.acceptsAll(asList("nojline"), "Disables jline and emulates the vanilla console");
@@ -315,6 +315,16 @@
 +      }
 +   }
 +   //Ketting end
- 
++
     private static void writePidFile(Path p_270192_) {
        try {
+          long i = ProcessHandle.current().pid();
+@@ -236,7 +_,7 @@
+       return new WorldLoader.InitConfig(worldloader$packconfig, Commands.CommandSelection.DEDICATED, p_248563_.functionPermissionLevel);
+    }
+ 
+-   private static void forceUpgrade(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, Registry<LevelStem> p_250443_) {
++   public static void forceUpgrade(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, Registry<LevelStem> p_250443_) {
+       LOGGER.info("Forcing world upgrade!");
+       WorldUpgrader worldupgrader = new WorldUpgrader(p_195489_, p_195490_, p_250443_, p_195491_);
+       Component component = null;

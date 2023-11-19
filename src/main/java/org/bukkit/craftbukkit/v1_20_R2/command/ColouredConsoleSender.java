@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.command;
 
+import java.awt.Color;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -11,86 +12,86 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Attribute;
-import org.fusesource.jansi.Ansi.Color;
 
 public class ColouredConsoleSender extends CraftConsoleCommandSender {
-
-    private final Terminal terminal = ((CraftServer) this.getServer()).getReader().getTerminal();
-    private final Map replacements = new EnumMap(ChatColor.class);
+    private final Terminal terminal;
+    private final Map<ChatColor, String> replacements = new EnumMap<ChatColor, String>(ChatColor.class);
     private final ChatColor[] colors = ChatColor.values();
-    private final boolean jansiPassthrough = Boolean.getBoolean("jansi.passthrough");
-    private static final char ANSI_ESC_CHAR = '\u001b';
-    private static final String RGB_STRING = String.valueOf('\u001b') + "[38;2;%d;%d;%dm";
-    private static final Pattern RBG_TRANSLATE = Pattern.compile(String.valueOf('§') + "x(" + '§' + "[A-F0-9]){6}", 2);
+    private final boolean jansiPassthrough;
+    private static final char ANSI_ESC_CHAR = '\u001B';
+    private static final String RGB_STRING = String.valueOf(ANSI_ESC_CHAR) + "[38;2;%d;%d;%dm";
+    private static final Pattern RBG_TRANSLATE = Pattern.compile(String.valueOf(ChatColor.COLOR_CHAR) + "x(" + String.valueOf(ChatColor.COLOR_CHAR) + "[A-F0-9]){6}", Pattern.CASE_INSENSITIVE);
 
     protected ColouredConsoleSender() {
-        this.replacements.put(ChatColor.BLACK, Ansi.ansi().a(Attribute.RESET).fg(Color.BLACK).boldOff().toString());
-        this.replacements.put(ChatColor.DARK_BLUE, Ansi.ansi().a(Attribute.RESET).fg(Color.BLUE).boldOff().toString());
-        this.replacements.put(ChatColor.DARK_GREEN, Ansi.ansi().a(Attribute.RESET).fg(Color.GREEN).boldOff().toString());
-        this.replacements.put(ChatColor.DARK_AQUA, Ansi.ansi().a(Attribute.RESET).fg(Color.CYAN).boldOff().toString());
-        this.replacements.put(ChatColor.DARK_RED, Ansi.ansi().a(Attribute.RESET).fg(Color.RED).boldOff().toString());
-        this.replacements.put(ChatColor.DARK_PURPLE, Ansi.ansi().a(Attribute.RESET).fg(Color.MAGENTA).boldOff().toString());
-        this.replacements.put(ChatColor.GOLD, Ansi.ansi().a(Attribute.RESET).fg(Color.YELLOW).boldOff().toString());
-        this.replacements.put(ChatColor.GRAY, Ansi.ansi().a(Attribute.RESET).fg(Color.WHITE).boldOff().toString());
-        this.replacements.put(ChatColor.DARK_GRAY, Ansi.ansi().a(Attribute.RESET).fg(Color.BLACK).bold().toString());
-        this.replacements.put(ChatColor.BLUE, Ansi.ansi().a(Attribute.RESET).fg(Color.BLUE).bold().toString());
-        this.replacements.put(ChatColor.GREEN, Ansi.ansi().a(Attribute.RESET).fg(Color.GREEN).bold().toString());
-        this.replacements.put(ChatColor.AQUA, Ansi.ansi().a(Attribute.RESET).fg(Color.CYAN).bold().toString());
-        this.replacements.put(ChatColor.RED, Ansi.ansi().a(Attribute.RESET).fg(Color.RED).bold().toString());
-        this.replacements.put(ChatColor.LIGHT_PURPLE, Ansi.ansi().a(Attribute.RESET).fg(Color.MAGENTA).bold().toString());
-        this.replacements.put(ChatColor.YELLOW, Ansi.ansi().a(Attribute.RESET).fg(Color.YELLOW).bold().toString());
-        this.replacements.put(ChatColor.WHITE, Ansi.ansi().a(Attribute.RESET).fg(Color.WHITE).bold().toString());
-        this.replacements.put(ChatColor.MAGIC, Ansi.ansi().a(Attribute.BLINK_SLOW).toString());
-        this.replacements.put(ChatColor.BOLD, Ansi.ansi().a(Attribute.UNDERLINE_DOUBLE).toString());
-        this.replacements.put(ChatColor.STRIKETHROUGH, Ansi.ansi().a(Attribute.STRIKETHROUGH_ON).toString());
-        this.replacements.put(ChatColor.UNDERLINE, Ansi.ansi().a(Attribute.UNDERLINE).toString());
-        this.replacements.put(ChatColor.ITALIC, Ansi.ansi().a(Attribute.ITALIC).toString());
-        this.replacements.put(ChatColor.RESET, Ansi.ansi().a(Attribute.RESET).toString());
+        super();
+        this.terminal = ((CraftServer) getServer()).getReader().getTerminal();
+        this.jansiPassthrough = Boolean.getBoolean("jansi.passthrough");
+
+        replacements.put(ChatColor.BLACK, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.BLACK).boldOff().toString());
+        replacements.put(ChatColor.DARK_BLUE, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.BLUE).boldOff().toString());
+        replacements.put(ChatColor.DARK_GREEN, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.GREEN).boldOff().toString());
+        replacements.put(ChatColor.DARK_AQUA, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.CYAN).boldOff().toString());
+        replacements.put(ChatColor.DARK_RED, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.RED).boldOff().toString());
+        replacements.put(ChatColor.DARK_PURPLE, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.MAGENTA).boldOff().toString());
+        replacements.put(ChatColor.GOLD, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.YELLOW).boldOff().toString());
+        replacements.put(ChatColor.GRAY, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.WHITE).boldOff().toString());
+        replacements.put(ChatColor.DARK_GRAY, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.BLACK).bold().toString());
+        replacements.put(ChatColor.BLUE, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.BLUE).bold().toString());
+        replacements.put(ChatColor.GREEN, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.GREEN).bold().toString());
+        replacements.put(ChatColor.AQUA, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.CYAN).bold().toString());
+        replacements.put(ChatColor.RED, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.RED).bold().toString());
+        replacements.put(ChatColor.LIGHT_PURPLE, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.MAGENTA).bold().toString());
+        replacements.put(ChatColor.YELLOW, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.YELLOW).bold().toString());
+        replacements.put(ChatColor.WHITE, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.WHITE).bold().toString());
+        replacements.put(ChatColor.MAGIC, Ansi.ansi().a(Attribute.BLINK_SLOW).toString());
+        replacements.put(ChatColor.BOLD, Ansi.ansi().a(Attribute.UNDERLINE_DOUBLE).toString());
+        replacements.put(ChatColor.STRIKETHROUGH, Ansi.ansi().a(Attribute.STRIKETHROUGH_ON).toString());
+        replacements.put(ChatColor.UNDERLINE, Ansi.ansi().a(Attribute.UNDERLINE).toString());
+        replacements.put(ChatColor.ITALIC, Ansi.ansi().a(Attribute.ITALIC).toString());
+        replacements.put(ChatColor.RESET, Ansi.ansi().a(Attribute.RESET).toString());
     }
 
+    @Override
     public void sendMessage(String message) {
-        if (!this.jansiPassthrough && !this.terminal.isAnsiSupported()) {
-            super.sendMessage(message);
-        } else if (!this.conversationTracker.isConversingModaly()) {
-            String result = convertRGBColors(message);
-            ChatColor[] achatcolor = this.colors;
-            int i = this.colors.length;
-
-            for (int j = 0; j < i; ++j) {
-                ChatColor color = achatcolor[j];
-
-                if (this.replacements.containsKey(color)) {
-                    result = result.replaceAll("(?i)" + color.toString(), (String) this.replacements.get(color));
-                } else {
-                    result = result.replaceAll("(?i)" + color.toString(), "");
+        // support jansi passthrough VM option when jansi doesn't detect an ANSI supported terminal
+        if (jansiPassthrough || terminal.isAnsiSupported()) {
+            if (!conversationTracker.isConversingModaly()) {
+                String result = convertRGBColors(message);
+                for (ChatColor color : colors) {
+                    if (replacements.containsKey(color)) {
+                        result = result.replaceAll("(?i)" + color.toString(), replacements.get(color));
+                    } else {
+                        result = result.replaceAll("(?i)" + color.toString(), "");
+                    }
                 }
+                System.out.println(result + Ansi.ansi().reset().toString());
             }
-
-            System.out.println(result + Ansi.ansi().reset().toString());
+        } else {
+            super.sendMessage(message);
         }
-
     }
 
     private static String convertRGBColors(String input) {
-        Matcher matcher = ColouredConsoleSender.RBG_TRANSLATE.matcher(input);
+        Matcher matcher = RBG_TRANSLATE.matcher(input);
         StringBuffer buffer = new StringBuffer();
-
         while (matcher.find()) {
             String s = matcher.group().replace("§", "").replace('x', '#');
-            java.awt.Color color = java.awt.Color.decode(s);
+            Color color = Color.decode(s);
             int red = color.getRed();
             int blue = color.getBlue();
             int green = color.getGreen();
-            String replacement = String.format(ColouredConsoleSender.RGB_STRING, red, green, blue);
-
+            String replacement = String.format(RGB_STRING, red, green, blue);
             matcher.appendReplacement(buffer, replacement);
         }
-
         matcher.appendTail(buffer);
         return buffer.toString();
     }
 
     public static ConsoleCommandSender getInstance() {
-        return (ConsoleCommandSender) (Bukkit.getConsoleSender() != null ? Bukkit.getConsoleSender() : new ColouredConsoleSender());
+        if (Bukkit.getConsoleSender() != null) {
+            return Bukkit.getConsoleSender();
+        } else {
+            return new ColouredConsoleSender();
+        }
     }
 }

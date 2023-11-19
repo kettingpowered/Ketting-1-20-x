@@ -81,6 +81,24 @@
     }
  
     protected Brain.Provider<Villager> brainProvider() {
+@@ -205,6 +_,17 @@
+       return this.assignProfessionWhenSpawned;
+    }
+ 
++   // Spigot Start
++   @Override
++   public void inactiveTick() {
++      // SPIGOT-3874, SPIGOT-3894, SPIGOT-3846, SPIGOT-5286 :(
++      if (this.level().spigotConfig.tickInactiveVillagers && this.isEffectiveAi()) {
++         this.customServerAiStep();
++      }
++      super.inactiveTick();
++   }
++   // Spigot End
++
+    protected void customServerAiStep() {
+       this.level().getProfiler().push("villagerBrain");
+       this.getBrain().tick((ServerLevel)this.level(), this);
 @@ -221,7 +_,7 @@
                 this.increaseProfessionLevelOnUpdate = false;
              }
@@ -99,6 +117,15 @@
           if (this.isBaby()) {
              this.setUnhappy();
              return InteractionResult.sidedSuccess(this.level().isClientSide);
+@@ -285,7 +_,7 @@
+       }
+    }
+ 
+-   private void setUnhappy() {
++   public void setUnhappy() {
+       this.setUnhappyCounter(40);
+       if (!this.level().isClientSide()) {
+          this.playSound(SoundEvents.VILLAGER_NO, this.getSoundVolume(), this.getVoicePitch());
 @@ -332,7 +_,13 @@
        this.updateDemand();
  
@@ -129,6 +156,24 @@
           }
        }
  
+@@ -561,7 +_,7 @@
+    }
+ 
+    public void die(DamageSource p_35419_) {
+-      LOGGER.info("Villager {} died, message: '{}'", this, p_35419_.getLocalizedDeathMessage(this).getString());
++      if (org.spigotmc.SpigotConfig.logVillagerDeaths) LOGGER.info("Villager {} died, message: '{}'", this, p_35419_.getLocalizedDeathMessage(this).getString()); // Spigot
+       Entity entity = p_35419_.getEntity();
+       if (entity != null) {
+          this.tellWitnessesThatIWasMurdered(entity);
+@@ -571,7 +_,7 @@
+       super.die(p_35419_);
+    }
+ 
+-   private void releaseAllPois() {
++   public void releaseAllPois() {
+       this.releasePoi(MemoryModuleType.HOME);
+       this.releasePoi(MemoryModuleType.JOB_SITE);
+       this.releasePoi(MemoryModuleType.POTENTIAL_JOB_SITE);
 @@ -670,7 +_,8 @@
     }
  

@@ -107,28 +107,39 @@
     }
  
     public <T> void addTicket(TicketType<T> p_140793_, ChunkPos p_140794_, int p_140795_, T p_140796_) {
-@@ -183,17 +_,33 @@
+@@ -182,18 +_,48 @@
+       this.removeTicket(p_140825_.toLong(), ticket);
     }
  
++   private boolean addRegionTicket$forceTicks; //Ketting
     public <T> void addRegionTicket(TicketType<T> p_140841_, ChunkPos p_140842_, int p_140843_, T p_140844_) {
 -      Ticket<T> ticket = new Ticket<>(p_140841_, ChunkLevel.byStatus(FullChunkStatus.FULL) - p_140843_, p_140844_);
 -      long i = p_140842_.toLong();
 -      this.addTicket(i, ticket);
 -      this.tickingTicketsTracker.addTicket(i, ticket);
+-   }
+-
 +      // CraftBukkit start
 +      addRegionTicketAtDistance(p_140841_, p_140842_, p_140843_, p_140844_);
 +   }
 +
 +   public <T> boolean addRegionTicketAtDistance(TicketType<T> tickettype, ChunkPos chunkcoordintpair, int i, T t0) {
 +      // CraftBukkit end
-+      Ticket<T> ticket = new Ticket<>(tickettype, ChunkLevel.byStatus(FullChunkStatus.FULL) - i, t0);
++      Ticket<T> ticket = new Ticket<>(tickettype, ChunkLevel.byStatus(FullChunkStatus.FULL) - i, t0, addRegionTicket$forceTicks); //Ketting
 +      long j = chunkcoordintpair.toLong();
 +
 +      boolean added = this.addTicket(j, ticket); // CraftBukkit
 +      this.tickingTicketsTracker.addTicket(j, ticket);
 +      return added; // CraftBukkit
-    }
- 
++   }
++
++   public <T> void addRegionTicket(TicketType<T> p_140841_, ChunkPos p_140842_, int p_140843_, T p_140844_, boolean forceTicks) {
++      addRegionTicket$forceTicks = forceTicks; //Ketting
++      addRegionTicket(p_140841_, p_140842_, p_140843_, p_140844_);
++      addRegionTicket$forceTicks = false; //Ketting
++   }
++
++   private boolean removeRegionTicket$forceTicks; //Ketting
     public <T> void removeRegionTicket(TicketType<T> p_140850_, ChunkPos p_140851_, int p_140852_, T p_140853_) {
 -      Ticket<T> ticket = new Ticket<>(p_140850_, ChunkLevel.byStatus(FullChunkStatus.FULL) - p_140852_, p_140853_);
 -      long i = p_140851_.toLong();
@@ -140,12 +151,18 @@
 +
 +   public <T> boolean removeRegionTicketAtDistance(TicketType<T> tickettype, ChunkPos chunkcoordintpair, int i, T t0) {
 +      // CraftBukkit end
-+      Ticket<T> ticket = new Ticket<>(tickettype, ChunkLevel.byStatus(FullChunkStatus.FULL) - i, t0);
++      Ticket<T> ticket = new Ticket<>(tickettype, ChunkLevel.byStatus(FullChunkStatus.FULL) - i, t0, removeRegionTicket$forceTicks); //Ketting
 +      long j = chunkcoordintpair.toLong();
 +
 +      boolean removed = this.removeTicket(j, ticket); // CraftBukkit
 +      this.tickingTicketsTracker.removeTicket(j, ticket);
 +      return removed; // CraftBukkit
++   }
++
++   public <T> void removeRegionTicket(TicketType<T> p_140850_, ChunkPos p_140851_, int p_140852_, T p_140853_, boolean forceTicks) {
++      removeRegionTicket$forceTicks = forceTicks; //Ketting
++      removeRegionTicket(p_140850_, p_140851_, p_140852_, p_140853_);
++      removeRegionTicket$forceTicks = false; //Ketting
     }
  
     private SortedArraySet<Ticket<?>> getTickets(long p_140858_) {

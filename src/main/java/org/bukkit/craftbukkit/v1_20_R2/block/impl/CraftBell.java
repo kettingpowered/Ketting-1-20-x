@@ -1,55 +1,62 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.BellBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.Powerable;
-import org.bukkit.block.data.type.Bell;
-import org.bukkit.block.data.type.Bell.Attachment;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftBell extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Bell, org.bukkit.block.data.Directional, org.bukkit.block.data.Powerable {
 
-public final class CraftBell extends CraftBlockData implements Bell, Directional, Powerable {
+    public CraftBell() {
+        super();
+    }
 
-    private static final EnumProperty ATTACHMENT = getEnum(BellBlock.class, "attachment");
-    private static final EnumProperty FACING = getEnum(BellBlock.class, "facing");
-    private static final BooleanProperty POWERED = getBoolean(BellBlock.class, "powered");
-
-    public CraftBell() {}
-
-    public CraftBell(BlockState state) {
+    public CraftBell(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
-    public Attachment getAttachment() {
-        return (Attachment) this.get(CraftBell.ATTACHMENT, Attachment.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftBell
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> ATTACHMENT = getEnum(net.minecraft.world.level.block.BellBlock.class, "attachment");
+
+    @Override
+    public org.bukkit.block.data.type.Bell.Attachment getAttachment() {
+        return get(ATTACHMENT, org.bukkit.block.data.type.Bell.Attachment.class);
     }
 
-    public void setAttachment(Attachment leaves) {
-        this.set(CraftBell.ATTACHMENT, (Enum) leaves);
+    @Override
+    public void setAttachment(org.bukkit.block.data.type.Bell.Attachment leaves) {
+        set(ATTACHMENT, leaves);
     }
 
-    public BlockFace getFacing() {
-        return (BlockFace) this.get(CraftBell.FACING, BlockFace.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.BellBlock.class, "facing");
+
+    @Override
+    public org.bukkit.block.BlockFace getFacing() {
+        return get(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public void setFacing(BlockFace facing) {
-        this.set(CraftBell.FACING, (Enum) facing);
+    @Override
+    public void setFacing(org.bukkit.block.BlockFace facing) {
+        set(FACING, facing);
     }
 
-    public Set getFaces() {
-        return this.getValues(CraftBell.FACING, BlockFace.class);
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.BellBlock.class, "powered");
+
+    @Override
     public boolean isPowered() {
-        return (Boolean) this.get(CraftBell.POWERED);
+        return get(POWERED);
     }
 
+    @Override
     public void setPowered(boolean powered) {
-        this.set((Property) CraftBell.POWERED, (Comparable) powered);
+        set(POWERED, powered);
     }
 }

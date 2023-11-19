@@ -1,90 +1,89 @@
 package org.bukkit.craftbukkit.v1_20_R2.scoreboard;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
-import java.util.Iterator;
-import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.PlayerTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Team;
 
-public final class CraftScoreboard implements Scoreboard {
+public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
+    final Scoreboard board;
 
-    final net.minecraft.world.scores.Scoreboard board;
-
-    CraftScoreboard(net.minecraft.world.scores.Scoreboard board) {
+    CraftScoreboard(Scoreboard board) {
         this.board = board;
     }
 
+    @Override
     public CraftObjective registerNewObjective(String name, String criteria) {
-        return this.registerNewObjective(name, criteria, name);
+        return registerNewObjective(name, criteria, name);
     }
 
+    @Override
     public CraftObjective registerNewObjective(String name, String criteria, String displayName) {
-        return this.registerNewObjective(name, (Criteria) CraftCriteria.getFromBukkit(criteria), displayName, RenderType.INTEGER);
+        return registerNewObjective(name, CraftCriteria.getFromBukkit(criteria), displayName, RenderType.INTEGER);
     }
 
+    @Override
     public CraftObjective registerNewObjective(String name, String criteria, String displayName, RenderType renderType) {
-        return this.registerNewObjective(name, (Criteria) CraftCriteria.getFromBukkit(criteria), displayName, renderType);
+        return registerNewObjective(name, CraftCriteria.getFromBukkit(criteria), displayName, renderType);
     }
 
+    @Override
     public CraftObjective registerNewObjective(String name, Criteria criteria, String displayName) {
-        return this.registerNewObjective(name, criteria, displayName, RenderType.INTEGER);
+        return registerNewObjective(name, criteria, displayName, RenderType.INTEGER);
     }
 
+    @Override
     public CraftObjective registerNewObjective(String name, Criteria criteria, String displayName, RenderType renderType) {
         Preconditions.checkArgument(name != null, "Objective name cannot be null");
         Preconditions.checkArgument(criteria != null, "Criteria cannot be null");
         Preconditions.checkArgument(displayName != null, "Display name cannot be null");
         Preconditions.checkArgument(renderType != null, "RenderType cannot be null");
-        Preconditions.checkArgument(name.length() <= 32767, "The name '%s' is longer than the limit of 32767 characters (%s)", name, name.length());
-        Preconditions.checkArgument(this.board.getObjective(name) == null, "An objective of name '%s' already exists", name);
-        Objective objective = this.board.addObjective(name, ((CraftCriteria) criteria).criteria, CraftChatMessage.fromStringOrNull(displayName), CraftScoreboardTranslations.fromBukkitRender(renderType));
+        Preconditions.checkArgument(name.length() <= Short.MAX_VALUE, "The name '%s' is longer than the limit of 32767 characters (%s)", name, name.length());
+        Preconditions.checkArgument(board.getObjective(name) == null, "An objective of name '%s' already exists", name);
 
+        net.minecraft.world.scores.Objective objective = board.addObjective(name, ((CraftCriteria) criteria).criteria, CraftChatMessage.fromStringOrNull(displayName), CraftScoreboardTranslations.fromBukkitRender(renderType));
         return new CraftObjective(this, objective);
     }
 
-    public org.bukkit.scoreboard.Objective getObjective(String name) {
+    @Override
+    public Objective getObjective(String name) {
         Preconditions.checkArgument(name != null, "Objective name cannot be null");
-        Objective nms = this.board.getObjective(name);
-
+        net.minecraft.world.scores.Objective nms = board.getObjective(name);
         return nms == null ? null : new CraftObjective(this, nms);
     }
 
-    public ImmutableSet getObjectivesByCriteria(String criteria) {
+    @Override
+    public ImmutableSet<Objective> getObjectivesByCriteria(String criteria) {
         Preconditions.checkArgument(criteria != null, "Criteria name cannot be null");
-        Builder objectives = ImmutableSet.builder();
-        Iterator iterator = this.board.getObjectives().iterator();
 
-        while (iterator.hasNext()) {
-            Objective netObjective = (Objective) iterator.next();
+        ImmutableSet.Builder<Objective> objectives = ImmutableSet.builder();
+        for (net.minecraft.world.scores.Objective netObjective : this.board.getObjectives()) {
             CraftObjective objective = new CraftObjective(this, netObjective);
-
             if (objective.getCriteria().equals(criteria)) {
                 objectives.add(objective);
             }
         }
-
         return objectives.build();
     }
 
-    public ImmutableSet getObjectivesByCriteria(Criteria criteria) {
+    @Override
+    public ImmutableSet<Objective> getObjectivesByCriteria(Criteria criteria) {
         Preconditions.checkArgument(criteria != null, "Criteria cannot be null");
-        Builder objectives = ImmutableSet.builder();
-        Iterator iterator = this.board.getObjectives().iterator();
 
-        while (iterator.hasNext()) {
-            Objective netObjective = (Objective) iterator.next();
+        ImmutableSet.Builder<Objective> objectives = ImmutableSet.builder();
+        for (net.minecraft.world.scores.Objective netObjective : board.getObjectives()) {
             CraftObjective objective = new CraftObjective(this, netObjective);
-
             if (objective.getTrackedCriteria().equals(criteria)) {
                 objectives.add(objective);
             }
@@ -93,121 +92,119 @@ public final class CraftScoreboard implements Scoreboard {
         return objectives.build();
     }
 
-    public ImmutableSet getObjectives() {
-        return ImmutableSet.copyOf(Iterables.transform(this.board.getObjectives(), (inputx) -> {
-            return new CraftObjective(this, inputx);
-        }));
+    @Override
+    public ImmutableSet<Objective> getObjectives() {
+        return ImmutableSet.copyOf(Iterables.transform(this.board.getObjectives(), (Function<net.minecraft.world.scores.Objective, Objective>) input -> new CraftObjective(CraftScoreboard.this, input)));
     }
 
-    public org.bukkit.scoreboard.Objective getObjective(DisplaySlot slot) {
+    @Override
+    public Objective getObjective(DisplaySlot slot) {
         Preconditions.checkArgument(slot != null, "Display slot cannot be null");
-        Objective objective = this.board.getDisplayObjective(CraftScoreboardTranslations.fromBukkitSlot(slot));
-
-        return objective == null ? null : new CraftObjective(this, objective);
+        net.minecraft.world.scores.Objective objective = board.getDisplayObjective(CraftScoreboardTranslations.fromBukkitSlot(slot));
+        if (objective == null) {
+            return null;
+        }
+        return new CraftObjective(this, objective);
     }
 
-    public ImmutableSet getScores(OfflinePlayer player) {
+    @Override
+    public ImmutableSet<Score> getScores(OfflinePlayer player) {
         Preconditions.checkArgument(player != null, "OfflinePlayer cannot be null");
-        return this.getScores(player.getName());
+
+        return getScores(player.getName());
     }
 
-    public ImmutableSet getScores(String entry) {
+    @Override
+    public ImmutableSet<Score> getScores(String entry) {
         Preconditions.checkArgument(entry != null, "Entry cannot be null");
-        Builder scores = ImmutableSet.builder();
-        Iterator iterator = this.board.getObjectives().iterator();
 
-        while (iterator.hasNext()) {
-            Objective objective = (Objective) iterator.next();
-
+        ImmutableSet.Builder<Score> scores = ImmutableSet.builder();
+        for (net.minecraft.world.scores.Objective objective : this.board.getObjectives()) {
             scores.add(new CraftScore(new CraftObjective(this, objective), entry));
         }
-
         return scores.build();
     }
 
+    @Override
     public void resetScores(OfflinePlayer player) {
         Preconditions.checkArgument(player != null, "OfflinePlayer cannot be null");
-        this.resetScores(player.getName());
+
+        resetScores(player.getName());
     }
 
+    @Override
     public void resetScores(String entry) {
         Preconditions.checkArgument(entry != null, "Entry cannot be null");
-        Iterator iterator = this.board.getObjectives().iterator();
 
-        while (iterator.hasNext()) {
-            Objective objective = (Objective) iterator.next();
-
-            this.board.resetPlayerScore(entry, objective);
+        for (net.minecraft.world.scores.Objective objective : this.board.getObjectives()) {
+            board.resetPlayerScore(entry, objective);
         }
-
     }
 
+    @Override
     public Team getPlayerTeam(OfflinePlayer player) {
         Preconditions.checkArgument(player != null, "OfflinePlayer cannot be null");
-        PlayerTeam team = this.board.getPlayersTeam(player.getName());
 
+        PlayerTeam team = board.getPlayersTeam(player.getName());
         return team == null ? null : new CraftTeam(this, team);
     }
 
+    @Override
     public Team getEntryTeam(String entry) {
         Preconditions.checkArgument(entry != null, "Entry cannot be null");
-        PlayerTeam team = this.board.getPlayersTeam(entry);
 
+        PlayerTeam team = board.getPlayersTeam(entry);
         return team == null ? null : new CraftTeam(this, team);
     }
 
+    @Override
     public Team getTeam(String teamName) {
         Preconditions.checkArgument(teamName != null, "Team name cannot be null");
-        PlayerTeam team = this.board.getPlayerTeam(teamName);
 
+        PlayerTeam team = board.getPlayerTeam(teamName);
         return team == null ? null : new CraftTeam(this, team);
     }
 
-    public ImmutableSet getTeams() {
-        return ImmutableSet.copyOf(Iterables.transform(this.board.getPlayerTeams(), (inputx) -> {
-            return new CraftTeam(this, inputx);
-        }));
+    @Override
+    public ImmutableSet<Team> getTeams() {
+        return ImmutableSet.copyOf(Iterables.transform(this.board.getPlayerTeams(), (Function<PlayerTeam, Team>) input -> new CraftTeam(CraftScoreboard.this, input)));
     }
 
+    @Override
     public Team registerNewTeam(String name) {
         Preconditions.checkArgument(name != null, "Team name cannot be null");
-        Preconditions.checkArgument(name.length() <= 32767, "Team name '%s' is longer than the limit of 32767 characters (%s)", name, name.length());
-        Preconditions.checkArgument(this.board.getPlayerTeam(name) == null, "Team name '%s' is already in use", name);
-        return new CraftTeam(this, this.board.addPlayerTeam(name));
+        Preconditions.checkArgument(name.length() <= Short.MAX_VALUE, "Team name '%s' is longer than the limit of 32767 characters (%s)", name, name.length());
+        Preconditions.checkArgument(board.getPlayerTeam(name) == null, "Team name '%s' is already in use", name);
+
+        return new CraftTeam(this, board.addPlayerTeam(name));
     }
 
-    public ImmutableSet getPlayers() {
-        Builder players = ImmutableSet.builder();
-        Iterator iterator = this.board.getTrackedPlayers().iterator();
-
-        while (iterator.hasNext()) {
-            Object playerName = iterator.next();
-
+    @Override
+    public ImmutableSet<OfflinePlayer> getPlayers() {
+        ImmutableSet.Builder<OfflinePlayer> players = ImmutableSet.builder();
+        for (Object playerName : board.getTrackedPlayers()) {
             players.add(Bukkit.getOfflinePlayer(playerName.toString()));
         }
-
         return players.build();
     }
 
-    public ImmutableSet getEntries() {
-        Builder entries = ImmutableSet.builder();
-        Iterator iterator = this.board.getTrackedPlayers().iterator();
-
-        while (iterator.hasNext()) {
-            Object entry = iterator.next();
-
+    @Override
+    public ImmutableSet<String> getEntries() {
+        ImmutableSet.Builder<String> entries = ImmutableSet.builder();
+        for (Object entry : board.getTrackedPlayers()) {
             entries.add(entry.toString());
         }
-
         return entries.build();
     }
 
+    @Override
     public void clearSlot(DisplaySlot slot) {
         Preconditions.checkArgument(slot != null, "Slot cannot be null");
-        this.board.setDisplayObjective(CraftScoreboardTranslations.fromBukkitSlot(slot), (Objective) null);
+        board.setDisplayObjective(CraftScoreboardTranslations.fromBukkitSlot(slot), null);
     }
 
-    public net.minecraft.world.scores.Scoreboard getHandle() {
-        return this.board;
+    // CraftBukkit method
+    public Scoreboard getHandle() {
+        return board;
     }
 }

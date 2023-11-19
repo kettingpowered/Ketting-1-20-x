@@ -11,17 +11,21 @@ import org.bukkit.potion.PotionType;
 
 public class CraftPotionBrewer implements PotionBrewer {
 
-    public Collection getEffects(PotionType type, boolean upgraded, boolean extended) {
+    @Override
+    public Collection<PotionEffect> getEffects(PotionType type, boolean upgraded, boolean extended) {
         Preconditions.checkArgument(!type.getKey().getKey().startsWith("strong_"), "Strong potion type cannot be used directly, got %s", type.getKey());
         Preconditions.checkArgument(!type.getKey().getKey().startsWith("long_"), "Extended potion type cannot be used directly, got %s", type.getKey());
+
         return CraftPotionUtil.fromBukkit(new PotionData(type, upgraded, extended)).getPotionEffects();
     }
 
-    public Collection getEffectsFromDamage(int damage) {
-        return new ArrayList();
+    @Override
+    public Collection<PotionEffect> getEffectsFromDamage(int damage) {
+        return new ArrayList<PotionEffect>();
     }
 
+    @Override
     public PotionEffect createEffect(PotionEffectType potion, int duration, int amplifier) {
-        return new PotionEffect(potion, potion.isInstant() ? 1 : (int) ((double) duration * potion.getDurationModifier()), amplifier);
+        return new PotionEffect(potion, potion.isInstant() ? 1 : (int) (duration * potion.getDurationModifier()), amplifier);
     }
 }

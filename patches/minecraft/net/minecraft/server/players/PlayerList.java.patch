@@ -271,7 +271,7 @@
              if (compoundtag1.hasUUID("Attach")) {
                 uuid = compoundtag1.getUUID("Attach");
              } else {
-@@ -239,6 +_,9 @@
+@@ -239,9 +_,12 @@
        }
  
        p_11263_.initInventoryMenu();
@@ -280,7 +280,11 @@
 +      LOGGER.info("{}[{}] logged in with entity id {} at ([{}]{}, {}, {})", p_11263_.getName().getString(), s1, p_11263_.getId(), serverlevel1.serverLevelData.getLevelName(), p_11263_.getX(), p_11263_.getY(), p_11263_.getZ());
     }
  
-    protected void updateEntireScoreboard(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
+-   protected void updateEntireScoreboard(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
++   public void updateEntireScoreboard(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
+       Set<Objective> set = Sets.newHashSet();
+ 
+       for(PlayerTeam playerteam : p_11274_.getPlayerTeams()) {
 @@ -262,25 +_,26 @@
     }
  
@@ -758,7 +762,7 @@
 +   // CraftBukkit start - add a world/entity limited version
 +   public void broadcastAll(Packet packet, Player player) {
 +      for (ServerPlayer serverPlayer : this.players) {
-+         if (serverPlayer != null && serverPlayer.getBukkitEntity().canSee(player)) {
++         if (serverPlayer != null && serverPlayer.getBukkitEntity().canSee(player.getBukkitEntity())) {
 +            serverPlayer.connection.send(packet);
 +         }
 +      }

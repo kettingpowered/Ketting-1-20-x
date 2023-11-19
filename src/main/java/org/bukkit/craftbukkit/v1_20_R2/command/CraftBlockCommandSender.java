@@ -8,57 +8,54 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 
+/**
+ * Represents input from a command block
+ */
 public class CraftBlockCommandSender extends ServerCommandSender implements BlockCommandSender {
-
     private final CommandSourceStack block;
     private final BlockEntity tile;
 
     public CraftBlockCommandSender(CommandSourceStack commandBlockListenerAbstract, BlockEntity tile) {
+        super();
         this.block = commandBlockListenerAbstract;
         this.tile = tile;
     }
 
+    @Override
     public Block getBlock() {
-        return CraftBlock.at(this.tile.getLevel(), this.tile.getBlockPos());
+        return CraftBlock.at(tile.getLevel(), tile.getBlockPos());
     }
 
+    @Override
     public void sendMessage(String message) {
-        Component[] acomponent;
-        int i = (acomponent = CraftChatMessage.fromString(message)).length;
-
-        for (int j = 0; j < i; ++j) {
-            Component component = acomponent[j];
-
-            this.block.source.sendSystemMessage(component);
+        for (Component component : CraftChatMessage.fromString(message)) {
+            block.source.sendSystemMessage(component);
         }
-
     }
 
+    @Override
     public void sendMessage(String... messages) {
-        String[] astring = messages;
-        int i = messages.length;
-
-        for (int j = 0; j < i; ++j) {
-            String message = astring[j];
-
-            this.sendMessage(message);
+        for (String message : messages) {
+            sendMessage(message);
         }
-
     }
 
+    @Override
     public String getName() {
-        return this.block.getTextName();
+        return block.getTextName();
     }
 
+    @Override
     public boolean isOp() {
         return true;
     }
 
+    @Override
     public void setOp(boolean value) {
         throw new UnsupportedOperationException("Cannot change operator status of a block");
     }
 
     public CommandSourceStack getWrapper() {
-        return this.block;
+        return block;
     }
 }

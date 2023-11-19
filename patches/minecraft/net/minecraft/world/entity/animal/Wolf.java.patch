@@ -57,6 +57,15 @@
              return InteractionResult.SUCCESS;
           } else {
              if (item instanceof DyeItem) {
+@@ -354,7 +_,7 @@
+                this.setOrderedToSit(!this.isOrderedToSit());
+                this.jumping = false;
+                this.navigation.stop();
+-               this.setTarget((LivingEntity)null);
++               this.setTarget((LivingEntity)null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit - reason
+                return InteractionResult.SUCCESS;
+             } else {
+                return interactionresult;
 @@ -365,10 +_,11 @@
              itemstack.shrink(1);
           }

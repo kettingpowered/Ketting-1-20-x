@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/chunk/ChunkGenerator.java
 +++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
+@@ -79,7 +_,7 @@
+    public static final Codec<ChunkGenerator> CODEC = BuiltInRegistries.CHUNK_GENERATOR.byNameCodec().dispatchStable(ChunkGenerator::codec, Function.identity());
+    protected final BiomeSource biomeSource;
+    private final Supplier<List<FeatureSorter.StepFeatureData>> featuresPerStep;
+-   private final Function<Holder<Biome>, BiomeGenerationSettings> generationSettingsGetter;
++   public final Function<Holder<Biome>, BiomeGenerationSettings> generationSettingsGetter;
+ 
+    public ChunkGenerator(BiomeSource p_256133_) {
+       this(p_256133_, (p_223234_) -> {
 @@ -99,8 +_,8 @@
  
     protected abstract Codec<? extends ChunkGenerator> codec();

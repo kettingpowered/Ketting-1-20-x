@@ -20,7 +20,7 @@
  import java.util.Map;
  import java.util.Optional;
  import java.util.Set;
-@@ -20,6 +_,9 @@
+@@ -20,9 +_,13 @@
  import java.util.function.UnaryOperator;
  import java.util.stream.Collectors;
  import javax.annotation.Nullable;
@@ -30,6 +30,10 @@
  import net.minecraft.ChatFormatting;
  import net.minecraft.SharedConstants;
  import net.minecraft.Util;
++import net.minecraft.advancements.AdvancementNode;
+ import net.minecraft.commands.synchronization.ArgumentTypeInfos;
+ import net.minecraft.commands.synchronization.ArgumentUtils;
+ import net.minecraft.commands.synchronization.SuggestionProviders;
 @@ -31,6 +_,7 @@
  import net.minecraft.core.Registry;
  import net.minecraft.data.registries.VanillaRegistries;
@@ -55,10 +59,18 @@
 +import org.bukkit.event.server.ServerCommandEvent;
  import org.slf4j.Logger;
  
-+//Ketting: TODO Forge dispatcher
++//Ketting TODO - Forge dispatcher
  public class Commands {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final int LEVEL_ALL = 0;
+@@ -130,6 +_,7 @@
+    public static final int LEVEL_ADMINS = 3;
+    public static final int LEVEL_OWNERS = 4;
+    private final CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
++   private final CommandDispatcher<CommandSourceStack> forgeDispatcher = new CommandDispatcher<>();
+ 
+    public Commands(Commands.CommandSelection p_230943_, CommandBuildContext p_230944_) {
+       AdvancementCommands.register(this.dispatcher);
 @@ -196,7 +_,7 @@
           JfrCommand.register(this.dispatcher);
        }
@@ -68,18 +80,30 @@
           TestCommand.register(this.dispatcher);
           SpawnArmorTrimsCommand.register(this.dispatcher);
           if (p_230943_.includeDedicated) {
-@@ -224,9 +_,11 @@
+@@ -224,10 +_,20 @@
        if (p_230943_.includeIntegrated) {
           PublishCommand.register(this.dispatcher);
        }
 +      net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.dispatcher, p_230943_, p_230944_);
  
-       this.dispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
-          p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
+-      this.dispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
+-         p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
+-      });
++      // CraftBukkit start
++      // Ketting Start - Don't remove setConsumer here, but instead duplicate
++      this.dispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
 +         p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
-       });
++      });
++   }
++   public Commands() {
++      // CraftBukkkit end
++      this.dispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
++         p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
++      });
++      // Ketting end
     }
  
+    public static <S> ParseResults<S> mapSource(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
 @@ -236,12 +_,59 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }
@@ -211,7 +235,7 @@
 +      // Remove labels that were removed during the event
 +      for (String orig : set) {
 +         if (!event.getCommands().contains(orig)) {
-+               rootcommandnode.removeCommand(orig);
++            //rootcommandnode.removeCommand(orig);
 +         }
 +      }
 +

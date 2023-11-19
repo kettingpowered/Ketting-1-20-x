@@ -5,14 +5,15 @@ import org.bukkit.NamespacedKey;
 
 public final class CraftNamespacedKey {
 
-    public static NamespacedKey fromStringOrNull(String string) {
-        if (string != null && !string.isEmpty()) {
-            ResourceLocation minecraft = ResourceLocation.tryParse(string);
+    public CraftNamespacedKey() {
+    }
 
-            return minecraft == null ? null : fromMinecraft(minecraft);
-        } else {
+    public static NamespacedKey fromStringOrNull(String string) {
+        if (string == null || string.isEmpty()) {
             return null;
         }
+        ResourceLocation minecraft = ResourceLocation.tryParse(string);
+        return (minecraft == null) ? null : fromMinecraft(minecraft);
     }
 
     public static NamespacedKey fromString(String string) {

@@ -5,26 +5,29 @@ import net.minecraft.world.level.block.entity.SculkSensorBlockEntity;
 import org.bukkit.World;
 import org.bukkit.block.SculkSensor;
 
-public class CraftSculkSensor extends CraftBlockEntityState implements SculkSensor {
+public class CraftSculkSensor<T extends SculkSensorBlockEntity> extends CraftBlockEntityState<T> implements SculkSensor {
 
-    public CraftSculkSensor(World world, SculkSensorBlockEntity tileEntity) {
+    public CraftSculkSensor(World world, T tileEntity) {
         super(world, tileEntity);
     }
 
-    protected CraftSculkSensor(CraftSculkSensor state) {
-        super((CraftBlockEntityState) state);
+    protected CraftSculkSensor(CraftSculkSensor<T> state) {
+        super(state);
     }
 
+    @Override
     public int getLastVibrationFrequency() {
-        return ((SculkSensorBlockEntity) this.getSnapshot()).getLastVibrationFrequency();
+        return getSnapshot().getLastVibrationFrequency();
     }
 
+    @Override
     public void setLastVibrationFrequency(int lastVibrationFrequency) {
-        Preconditions.checkArgument(lastVibrationFrequency >= 0 && lastVibrationFrequency <= 15, "Vibration frequency must be between 0-15");
-        ((SculkSensorBlockEntity) this.getSnapshot()).lastVibrationFrequency = lastVibrationFrequency;
+        Preconditions.checkArgument(0 <= lastVibrationFrequency && lastVibrationFrequency <= 15, "Vibration frequency must be between 0-15");
+        getSnapshot().lastVibrationFrequency = lastVibrationFrequency;
     }
 
-    public CraftSculkSensor copy() {
-        return new CraftSculkSensor(this);
+    @Override
+    public CraftSculkSensor<T> copy() {
+        return new CraftSculkSensor<>(this);
     }
 }

@@ -2,99 +2,111 @@ package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
 import java.util.UUID;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.Animal;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryAbstractHorse;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.AnimalTamer;
-import org.bukkit.entity.Horse.Variant;
-import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
+import org.bukkit.entity.Horse;
 import org.bukkit.inventory.AbstractHorseInventory;
 
 public abstract class CraftAbstractHorse extends CraftAnimals implements AbstractHorse {
 
     public CraftAbstractHorse(CraftServer server, net.minecraft.world.entity.animal.horse.AbstractHorse entity) {
-        super(server, (Animal) entity);
+        super(server, entity);
     }
 
+    @Override
     public net.minecraft.world.entity.animal.horse.AbstractHorse getHandle() {
-        return (net.minecraft.world.entity.animal.horse.AbstractHorse) this.entity;
+        return (net.minecraft.world.entity.animal.horse.AbstractHorse) entity;
     }
 
-    public void setVariant(Variant variant) {
+    @Override
+    public void setVariant(Horse.Variant variant) {
         throw new UnsupportedOperationException("Not supported.");
     }
 
+    @Override
     public int getDomestication() {
-        return this.getHandle().getTemper();
+        return getHandle().getTemper();
     }
 
+    @Override
     public void setDomestication(int value) {
         Preconditions.checkArgument(value >= 0 && value <= this.getMaxDomestication(), "Domestication level (%s) need to be between %s and %s (max domestication)", value, 0, this.getMaxDomestication());
-        this.getHandle().setTemper(value);
+        getHandle().setTemper(value);
     }
 
+    @Override
     public int getMaxDomestication() {
-        return this.getHandle().getMaxTemper();
+        return getHandle().getMaxTemper();
     }
 
+    @Override
     public void setMaxDomestication(int value) {
         Preconditions.checkArgument(value > 0, "Max domestication (%s) cannot be zero or less", value);
-        this.getHandle().maxDomestication = value;
+        getHandle().maxDomestication = value;
     }
 
+    @Override
     public double getJumpStrength() {
-        return this.getHandle().getCustomJump();
+        return getHandle().getCustomJump();
     }
 
+    @Override
     public void setJumpStrength(double strength) {
-        Preconditions.checkArgument(strength >= 0.0D, "Jump strength (%s) cannot be less than zero", strength);
-        this.getHandle().getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(strength);
+        Preconditions.checkArgument(strength >= 0, "Jump strength (%s) cannot be less than zero", strength);
+        getHandle().getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(strength);
     }
 
+    @Override
     public boolean isTamed() {
-        return this.getHandle().isTamed();
+        return getHandle().isTamed();
     }
 
+    @Override
     public void setTamed(boolean tamed) {
-        this.getHandle().setTamed(tamed);
+        getHandle().setTamed(tamed);
     }
 
+    @Override
     public AnimalTamer getOwner() {
-        return this.getOwnerUUID() == null ? null : this.getServer().getOfflinePlayer(this.getOwnerUUID());
+        if (getOwnerUUID() == null) return null;
+        return getServer().getOfflinePlayer(getOwnerUUID());
     }
 
+    @Override
     public void setOwner(AnimalTamer owner) {
         if (owner != null) {
-            this.setTamed(true);
-            this.getHandle().setTarget((LivingEntity) null, (TargetReason) null, false);
-            this.setOwnerUUID(owner.getUniqueId());
+            setTamed(true);
+            getHandle().setTarget(null, null, false);
+            setOwnerUUID(owner.getUniqueId());
         } else {
-            this.setTamed(false);
-            this.setOwnerUUID((UUID) null);
+            setTamed(false);
+            setOwnerUUID(null);
         }
-
     }
 
     public UUID getOwnerUUID() {
-        return this.getHandle().getOwnerUUID();
+        return getHandle().getOwnerUUID();
     }
 
     public void setOwnerUUID(UUID uuid) {
-        this.getHandle().setOwnerUUID(uuid);
+        getHandle().setOwnerUUID(uuid);
     }
 
+    @Override
     public boolean isEatingHaystack() {
-        return this.getHandle().isEating();
+        return getHandle().isEating();
     }
 
+    @Override
     public void setEatingHaystack(boolean eatingHaystack) {
-        this.getHandle().setEating(eatingHaystack);
+        getHandle().setEating(eatingHaystack);
     }
 
+    @Override
     public AbstractHorseInventory getInventory() {
-        return new CraftInventoryAbstractHorse(this.getHandle().inventory);
+        return new CraftInventoryAbstractHorse(getHandle().inventory);
     }
 }

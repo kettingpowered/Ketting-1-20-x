@@ -14,16 +14,18 @@ import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 public class CraftMerchantCustom extends CraftMerchant {
 
     public CraftMerchantCustom(String title) {
-        super(new CraftMerchantCustom.MinecraftMerchant(title));
-        this.getMerchant().craftMerchant = this;
+        super(new MinecraftMerchant(title));
+        getMerchant().craftMerchant = this;
     }
 
+    @Override
     public String toString() {
         return "CraftMerchantCustom";
     }
 
-    public CraftMerchantCustom.MinecraftMerchant getMerchant() {
-        return (CraftMerchantCustom.MinecraftMerchant) super.getMerchant();
+    @Override
+    public MinecraftMerchant getMerchant() {
+        return (MinecraftMerchant) super.getMerchant();
     }
 
     public static class MinecraftMerchant implements Merchant {
@@ -38,48 +40,64 @@ public class CraftMerchantCustom extends CraftMerchant {
             this.title = CraftChatMessage.fromString(title)[0];
         }
 
+        @Override
         public CraftMerchant getCraftMerchant() {
-            return this.craftMerchant;
+            return craftMerchant;
         }
 
+        @Override
         public void setTradingPlayer(Player entityhuman) {
             this.tradingPlayer = entityhuman;
         }
 
+        @Override
         public Player getTradingPlayer() {
             return this.tradingPlayer;
         }
 
+        @Override
         public MerchantOffers getOffers() {
             return this.trades;
         }
 
+        @Override
         public void notifyTrade(MerchantOffer merchantrecipe) {
+            // increase recipe's uses
             merchantrecipe.increaseUses();
         }
 
-        public void notifyTradeUpdated(ItemStack itemstack) {}
+        @Override
+        public void notifyTradeUpdated(ItemStack itemstack) {
+        }
 
         public Component getScoreboardDisplayName() {
-            return this.title;
+            return title;
         }
 
+        @Override
         public int getVillagerXp() {
-            return 0;
+            return 0; // xp
         }
 
-        public void overrideXp(int i) {}
+        @Override
+        public void overrideXp(int i) {
+        }
 
+        @Override
         public boolean showProgressBar() {
-            return false;
+            return false; // is-regular-villager flag (hides some gui elements: xp bar, name suffix)
         }
 
+        @Override
         public SoundEvent getNotifyTradeSound() {
             return SoundEvents.VILLAGER_YES;
         }
 
-        public void overrideOffers(MerchantOffers merchantrecipelist) {}
+        @Override
+        public void overrideOffers(MerchantOffers merchantrecipelist) {
+        }
 
+        @Override
         public boolean isClientSide() {
             return false;
         }

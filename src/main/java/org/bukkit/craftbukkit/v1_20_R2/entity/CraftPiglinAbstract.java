@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.PiglinAbstract;
@@ -9,76 +8,94 @@ import org.bukkit.entity.PiglinAbstract;
 public class CraftPiglinAbstract extends CraftMonster implements PiglinAbstract {
 
     public CraftPiglinAbstract(CraftServer server, AbstractPiglin entity) {
-        super(server, (Monster) entity);
+        super(server, entity);
     }
 
+    @Override
     public boolean isImmuneToZombification() {
-        return this.getHandle().isImmuneToZombification();
+        return getHandle().isImmuneToZombification();
     }
 
+    @Override
     public void setImmuneToZombification(boolean flag) {
-        this.getHandle().setImmuneToZombification(flag);
+        getHandle().setImmuneToZombification(flag);
     }
 
+    @Override
     public int getConversionTime() {
-        Preconditions.checkState(this.isConverting(), "Entity not converting");
-        return this.getHandle().timeInOverworld;
+        Preconditions.checkState(isConverting(), "Entity not converting");
+        return getHandle().timeInOverworld;
     }
 
+    @Override
     public void setConversionTime(int time) {
         if (time < 0) {
-            this.getHandle().timeInOverworld = -1;
-            this.getHandle().setImmuneToZombification(false);
+            getHandle().timeInOverworld = -1;
+            getHandle().setImmuneToZombification(false);
         } else {
-            this.getHandle().timeInOverworld = time;
+            getHandle().timeInOverworld = time;
         }
-
     }
 
+    @Override
     public boolean isConverting() {
-        return this.getHandle().isConverting();
+        return getHandle().isConverting();
     }
 
+    @Override
     public boolean isBaby() {
-        return this.getHandle().isBaby();
+        return getHandle().isBaby();
     }
 
+    @Override
     public void setBaby(boolean flag) {
-        this.getHandle().setBaby(flag);
+        getHandle().setBaby(flag);
     }
 
+    @Override
     public int getAge() {
-        return this.getHandle().isBaby() ? -1 : 0;
+        return getHandle().isBaby() ? -1 : 0;
     }
 
+    @Override
     public void setAge(int i) {
-        this.getHandle().setBaby(i < 0);
+        getHandle().setBaby(i < 0);
     }
 
-    public void setAgeLock(boolean b) {}
+    @Override
+    public void setAgeLock(boolean b) {
+    }
 
+    @Override
     public boolean getAgeLock() {
         return false;
     }
 
+    @Override
     public void setBaby() {
-        this.getHandle().setBaby(true);
+        getHandle().setBaby(true);
     }
 
+    @Override
     public void setAdult() {
-        this.getHandle().setBaby(false);
+        getHandle().setBaby(false);
     }
 
+    @Override
     public boolean isAdult() {
-        return !this.getHandle().isBaby();
+        return !getHandle().isBaby();
     }
 
+    @Override
     public boolean canBreed() {
         return false;
     }
 
-    public void setBreed(boolean b) {}
+    @Override
+    public void setBreed(boolean b) {
+    }
 
+    @Override
     public AbstractPiglin getHandle() {
         return (AbstractPiglin) super.getHandle();
     }

@@ -14,10 +14,11 @@ public class CraftAttributeMap implements Attributable {
         this.handle = handle;
     }
 
+    @Override
     public AttributeInstance getAttribute(Attribute attribute) {
         Preconditions.checkArgument(attribute != null, "attribute");
-        net.minecraft.world.entity.ai.attributes.AttributeInstance nms = this.handle.getInstance(CraftAttribute.bukkitToMinecraft(attribute));
+        net.minecraft.world.entity.ai.attributes.AttributeInstance nms = handle.getInstance(CraftAttribute.bukkitToMinecraft(attribute));
 
-        return nms == null ? null : new CraftAttributeInstance(nms, attribute);
+        return (nms == null) ? null : new CraftAttributeInstance(nms, attribute);
     }
 }

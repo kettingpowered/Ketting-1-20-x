@@ -9,6 +9,15 @@
  import org.joml.Vector3f;
  
  public abstract class AbstractHorse extends Animal implements ContainerListener, HasCustomInventoryScreen, OwnableEntity, PlayerRideableJumping, Saddleable {
+@@ -123,7 +_,7 @@
+    public int tailCounter;
+    public int sprintCounter;
+    protected boolean isJumping;
+-   protected SimpleContainer inventory;
++   public SimpleContainer inventory;
+    protected int temper;
+    protected float playerJumpPendingScale;
+    protected boolean allowStandSliding;
 @@ -137,6 +_,7 @@
     protected int gallopSoundCounter;
     @Nullable
@@ -29,9 +38,12 @@
        if (p_149499_ > 1.0F) {
           this.playSound(SoundEvents.HORSE_LAND, 0.4F, 1.0F);
        }
-@@ -313,7 +_,7 @@
+@@ -311,9 +_,9 @@
+       return 2;
+    }
  
-    protected void createInventory() {
+-   protected void createInventory() {
++   public void createInventory() {
        SimpleContainer simplecontainer = this.inventory;
 -      this.inventory = new SimpleContainer(this.getInventorySize());
 +      this.inventory = new SimpleContainer(this.getInventorySize(), (org.bukkit.entity.AbstractHorse) this.getBukkitEntity()); // CraftBukkit

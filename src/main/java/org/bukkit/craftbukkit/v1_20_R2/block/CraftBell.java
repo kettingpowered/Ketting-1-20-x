@@ -12,58 +12,67 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 
-public class CraftBell extends CraftBlockEntityState implements Bell {
+public class CraftBell extends CraftBlockEntityState<BellBlockEntity> implements Bell {
 
     public CraftBell(World world, BellBlockEntity tileEntity) {
         super(world, tileEntity);
     }
 
     protected CraftBell(CraftBell state) {
-        super((CraftBlockEntityState) state);
+        super(state);
     }
 
+    @Override
     public boolean ring(Entity entity, BlockFace direction) {
         Preconditions.checkArgument(direction == null || direction.isCartesian(), "direction must be cartesian, given %s", direction);
-        BlockEntity tileEntity = this.getTileEntityFromWorld();
 
+        BlockEntity tileEntity = getTileEntityFromWorld();
         if (tileEntity == null) {
             return false;
-        } else {
-            net.minecraft.world.entity.Entity nmsEntity = entity != null ? ((CraftEntity) entity).getHandle() : null;
-            Direction enumDirection = CraftBlock.blockFaceToNotch(direction);
-
-            return ((BellBlock) Blocks.BELL).attemptToRing(nmsEntity, this.world.getHandle(), this.getPosition(), enumDirection);
         }
+
+        net.minecraft.world.entity.Entity nmsEntity = (entity != null) ? ((CraftEntity) entity).getHandle() : null;
+        Direction enumDirection = CraftBlock.blockFaceToNotch(direction);
+
+        return ((BellBlock) Blocks.BELL).attemptToRing(nmsEntity, world.getHandle(), getPosition(), enumDirection);
     }
 
+    @Override
     public boolean ring(Entity entity) {
-        return this.ring(entity, (BlockFace) null);
+        return ring(entity, null);
     }
 
+    @Override
     public boolean ring(BlockFace direction) {
-        return this.ring((Entity) null, direction);
+        return ring(null, direction);
     }
 
+    @Override
     public boolean ring() {
-        return this.ring((Entity) null, (BlockFace) null);
+        return ring(null, null);
     }
 
+    @Override
     public boolean isShaking() {
-        return ((BellBlockEntity) this.getSnapshot()).shaking;
+        return getSnapshot().shaking;
     }
 
+    @Override
     public int getShakingTicks() {
-        return ((BellBlockEntity) this.getSnapshot()).ticks;
+        return getSnapshot().ticks;
     }
 
+    @Override
     public boolean isResonating() {
-        return ((BellBlockEntity) this.getSnapshot()).resonating;
+        return getSnapshot().resonating;
     }
 
+    @Override
     public int getResonatingTicks() {
-        return this.isResonating() ? ((BellBlockEntity) this.getSnapshot()).ticks : 0;
+        return isResonating() ? getSnapshot().ticks : 0;
     }
 
+    @Override
     public CraftBell copy() {
         return new CraftBell(this);
     }

@@ -25,16 +25,32 @@
  import org.slf4j.Logger;
  
  public class MapItemSavedData extends SavedData {
-@@ -44,13 +_,20 @@
-    public final byte scale;
+@@ -36,21 +_,28 @@
+    private static final int HALF_MAP_SIZE = 64;
+    public static final int MAX_SCALE = 4;
+    public static final int TRACKED_DECORATION_LIMIT = 256;
+-   public final int centerX;
+-   public final int centerZ;
+-   public final ResourceKey<Level> dimension;
+-   private final boolean trackingPosition;
+-   private final boolean unlimitedTracking;
+-   public final byte scale;
++   public int centerX;
++   public int centerZ;
++   public ResourceKey<Level> dimension;
++   public boolean trackingPosition;
++   public boolean unlimitedTracking;
++   public byte scale;
     public byte[] colors = new byte[16384];
-    public final boolean locked;
+-   public final boolean locked;
 -   private final List<MapItemSavedData.HoldingPlayer> carriedBy = Lists.newArrayList();
 -   private final Map<Player, MapItemSavedData.HoldingPlayer> carriedByPlayers = Maps.newHashMap();
++   public boolean locked;
 +   public final List<MapItemSavedData.HoldingPlayer> carriedBy = Lists.newArrayList();
 +   public final Map<Player, MapItemSavedData.HoldingPlayer> carriedByPlayers = Maps.newHashMap();
     private final Map<String, MapBanner> bannerMarkers = Maps.newHashMap();
-    final Map<String, MapDecoration> decorations = Maps.newLinkedHashMap();
+-   final Map<String, MapDecoration> decorations = Maps.newLinkedHashMap();
++   public final Map<String, MapDecoration> decorations = Maps.newLinkedHashMap();
     private final Map<String, MapFrame> frameMarkers = Maps.newHashMap();
     private int trackedDecorationCount;
  
@@ -114,6 +130,15 @@
        p_77956_.putInt("xCenter", this.centerX);
        p_77956_.putInt("zCenter", this.centerZ);
        p_77956_.putByte("scale", this.scale);
+@@ -315,7 +_,7 @@
+       return mapitemsaveddata$holdingplayer == null ? null : mapitemsaveddata$holdingplayer.nextUpdatePacket(p_164797_);
+    }
+ 
+-   private void setColorsDirty(int p_164790_, int p_164791_) {
++   public void setColorsDirty(int p_164790_, int p_164791_) {
+       this.setDirty();
+ 
+       for(MapItemSavedData.HoldingPlayer mapitemsaveddata$holdingplayer : this.carriedBy) {
 @@ -455,7 +_,7 @@
           this.player = p_77970_;
        }

@@ -23,9 +23,9 @@ public final class CraftMemoryMapper {
             return (Boolean) object;
         } else if (object instanceof Integer) {
             return (Integer) object;
-        } else {
-            throw new UnsupportedOperationException("Do not know how to map " + object);
         }
+
+        throw new UnsupportedOperationException("Do not know how to map " + object);
     }
 
     public static Object toNms(Object object) {
@@ -41,13 +41,13 @@ public final class CraftMemoryMapper {
             return (Boolean) object;
         } else if (object instanceof Integer) {
             return (Integer) object;
-        } else {
-            throw new UnsupportedOperationException("Do not know how to map " + object);
         }
+
+        throw new UnsupportedOperationException("Do not know how to map " + object);
     }
 
     public static Location fromNms(GlobalPos globalPos) {
-        return new Location(((CraftServer) Bukkit.getServer()).getServer().getLevel(globalPos.dimension()).getWorld(), (double) globalPos.pos().getX(), (double) globalPos.pos().getY(), (double) globalPos.pos().getZ());
+        return new org.bukkit.Location(((CraftServer) Bukkit.getServer()).getServer().getLevel(globalPos.dimension()).getWorld(), globalPos.pos().getX(), globalPos.pos().getY(), globalPos.pos().getZ());
     }
 
     public static GlobalPos toNms(Location location) {

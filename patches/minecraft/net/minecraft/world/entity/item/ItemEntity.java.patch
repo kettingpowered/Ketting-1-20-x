@@ -8,7 +8,7 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.Stats;
-@@ -28,6 +_,9 @@
+@@ -28,25 +_,35 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
@@ -18,9 +18,20 @@
  
  public class ItemEntity extends Entity implements TraceableEntity {
     private static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(ItemEntity.class, EntityDataSerializers.ITEM_STACK);
-@@ -42,11 +_,18 @@
+    private static final int LIFETIME = 6000;
+    private static final int INFINITE_PICKUP_DELAY = 32767;
+    private static final int INFINITE_LIFETIME = -32768;
+-   private int age;
+-   private int pickupDelay;
++   public int age;
++   public int pickupDelay;
+    private int health = 5;
     @Nullable
-    private UUID target;
+-   private UUID thrower;
++   public UUID thrower;
+    @Nullable
+-   private UUID target;
++   public UUID target;
     public final float bobOffs;
 +   private int lastTick = MinecraftServer.currentTick - 1; // CraftBukkit
 +   /**

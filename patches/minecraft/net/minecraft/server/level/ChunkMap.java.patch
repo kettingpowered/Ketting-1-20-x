@@ -189,7 +189,7 @@
 -   boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_) {
 +   // CraftBukkit start
 +   private CompoundTag upgradeChunkTag(CompoundTag p_214948_, ChunkPos pos) {
-+      return this.upgradeChunkTag(this.level.dimension(), this.overworldDataStorage, p_214948_, this.generator.getTypeNameForDataFixer(), pos, level);
++      return this.upgradeChunkTag(this.level.getTypeKey(), this.overworldDataStorage, p_214948_, this.generator.getTypeNameForDataFixer(), pos, level);
 +      // CraftBukkit end
 +   }
 +
@@ -277,8 +277,18 @@
        protected DistanceManager(Executor p_140459_, Executor p_140460_) {
           super(p_140459_, p_140460_);
        }
-@@ -1287,7 +_,7 @@
-       private final Set<ServerPlayerConnection> seenBy = Sets.newIdentityHashSet();
+@@ -1279,15 +_,15 @@
+       }
+    }
+ 
+-   class TrackedEntity {
++   public class TrackedEntity {
+       final ServerEntity serverEntity;
+       final Entity entity;
+       private final int range;
+       SectionPos lastSectionPos;
+-      private final Set<ServerPlayerConnection> seenBy = Sets.newIdentityHashSet();
++      public final Set<ServerPlayerConnection> seenBy = Sets.newIdentityHashSet();
  
        public TrackedEntity(Entity p_140478_, int p_140479_, int p_140480_, boolean p_140481_) {
 -         this.serverEntity = new ServerEntity(ChunkMap.this.level, p_140478_, p_140480_, p_140481_, this::broadcast);

@@ -29,17 +29,17 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
     }
 
     protected CraftBlockEntityState(CraftBlockEntityState<T> state) {
-        super((CraftBlockState) state);
-        this.tileEntity = this.createSnapshot(state.snapshot);
-        this.snapshot = this.tileEntity;
-        this.load(this.snapshot);
+        super(state);
+        this.tileEntity = createSnapshot(state.snapshot);
+        this.snapshot = tileEntity;
+        load(snapshot);
     }
 
     public void refreshSnapshot() {
-        this.load(this.tileEntity);
+        this.load(tileEntity);
     }
 
-    private T createSnapshot(BlockEntity tileEntity) {
+    private T createSnapshot(T tileEntity) {
         if (tileEntity == null) {
             return null;
         }
@@ -50,53 +50,62 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
         return snapshot;
     }
 
+    // Loads the specified data into the snapshot TileEntity.
     public void loadData(CompoundTag nbtTagCompound) {
-        this.snapshot.load(nbtTagCompound);
-        this.load(this.snapshot);
+        snapshot.load(nbtTagCompound);
+        load(snapshot);
     }
 
+    // copies the TileEntity-specific data, retains the position
     private void copyData(T from, T to) {
         CompoundTag nbtTagCompound = from.saveWithFullMetadata();
-
         to.load(nbtTagCompound);
     }
 
+    // gets the wrapped TileEntity
     protected T getTileEntity() {
-        return this.tileEntity;
+        return tileEntity;
     }
 
+    // gets the cloned TileEntity which is used to store the captured data
     protected T getSnapshot() {
-        return this.snapshot;
+        return snapshot;
     }
 
+    // gets the current TileEntity from the world at this position
     protected BlockEntity getTileEntityFromWorld() {
-        this.requirePlaced();
-        return this.getWorldHandle().getBlockEntity(this.getPosition());
+        requirePlaced();
+
+        return getWorldHandle().getBlockEntity(this.getPosition());
     }
 
+    // gets the NBT data of the TileEntity represented by this block state
     public CompoundTag getSnapshotNBT() {
-        this.applyTo(this.snapshot);
-        return this.snapshot.saveWithFullMetadata();
+        // update snapshot
+        applyTo(snapshot);
+
+        return snapshot.saveWithFullMetadata();
     }
 
+    // copies the data of the given tile entity to this block state
     protected void load(T tileEntity) {
-        if (tileEntity != null && tileEntity != this.snapshot) {
-            this.copyData(tileEntity, this.snapshot);
+        if (tileEntity != null && tileEntity != snapshot) {
+            copyData(tileEntity, snapshot);
         }
-
     }
 
+    // applies the TileEntity data of this block state to the given TileEntity
     protected void applyTo(T tileEntity) {
-        if (tileEntity != null && tileEntity != this.snapshot) {
-            this.copyData(this.snapshot, tileEntity);
+        if (tileEntity != null && tileEntity != snapshot) {
+            copyData(snapshot, tileEntity);
         }
-
     }
 
     protected boolean isApplicable(BlockEntity tileEntity) {
         return tileEntity != null && this.tileEntity.getClass() == tileEntity.getClass();
     }
 
+    @Override
     public boolean update(boolean force, boolean applyPhysics) {
         boolean result = super.update(force, applyPhysics);
 
@@ -112,6 +121,7 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
         return result;
     }
 
+    @Override
     public PersistentDataContainer getPersistentDataContainer() {
         return this.getSnapshot().persistentDataContainer;
     }
@@ -122,6 +132,7 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
         return ClientboundBlockEntityDataPacket.create(vanillaTileEntitiy);
     }
 
+    @Override
     public CraftBlockEntityState<T> copy() {
         return new CraftBlockEntityState<>(this);
     }

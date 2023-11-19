@@ -1,35 +1,39 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import net.minecraft.world.level.block.SnowLayerBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.type.Snow;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftSnow extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Snow {
 
-public final class CraftSnow extends CraftBlockData implements Snow {
+    public CraftSnow() {
+        super();
+    }
 
-    private static final IntegerProperty LAYERS = getInteger(SnowLayerBlock.class, "layers");
-
-    public CraftSnow() {}
-
-    public CraftSnow(BlockState state) {
+    public CraftSnow(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSnow
+
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty LAYERS = getInteger(net.minecraft.world.level.block.SnowLayerBlock.class, "layers");
+
+    @Override
     public int getLayers() {
-        return (Integer) this.get(CraftSnow.LAYERS);
+        return get(LAYERS);
     }
 
+    @Override
     public void setLayers(int layers) {
-        this.set((Property) CraftSnow.LAYERS, (Comparable) layers);
+        set(LAYERS, layers);
     }
 
+    @Override
     public int getMinimumLayers() {
-        return getMin(CraftSnow.LAYERS);
+        return getMin(LAYERS);
     }
 
+    @Override
     public int getMaximumLayers() {
-        return getMax(CraftSnow.LAYERS);
+        return getMax(LAYERS);
     }
 }

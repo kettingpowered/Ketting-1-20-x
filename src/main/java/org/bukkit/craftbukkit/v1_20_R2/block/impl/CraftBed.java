@@ -1,49 +1,54 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.BedBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.type.Bed;
-import org.bukkit.block.data.type.Bed.Part;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftBed extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Bed, org.bukkit.block.data.Directional {
 
-public final class CraftBed extends CraftBlockData implements Bed, Directional {
+    public CraftBed() {
+        super();
+    }
 
-    private static final EnumProperty PART = getEnum(BedBlock.class, "part");
-    private static final BooleanProperty OCCUPIED = getBoolean(BedBlock.class, "occupied");
-    private static final EnumProperty FACING = getEnum(BedBlock.class, "facing");
-
-    public CraftBed() {}
-
-    public CraftBed(BlockState state) {
+    public CraftBed(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
-    public Part getPart() {
-        return (Part) this.get(CraftBed.PART, Part.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftBed
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> PART = getEnum(net.minecraft.world.level.block.BedBlock.class, "part");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty OCCUPIED = getBoolean(net.minecraft.world.level.block.BedBlock.class, "occupied");
+
+    @Override
+    public org.bukkit.block.data.type.Bed.Part getPart() {
+        return get(PART, org.bukkit.block.data.type.Bed.Part.class);
     }
 
-    public void setPart(Part part) {
-        this.set(CraftBed.PART, (Enum) part);
+    @Override
+    public void setPart(org.bukkit.block.data.type.Bed.Part part) {
+        set(PART, part);
     }
 
+    @Override
     public boolean isOccupied() {
-        return (Boolean) this.get(CraftBed.OCCUPIED);
+        return get(OCCUPIED);
     }
 
-    public BlockFace getFacing() {
-        return (BlockFace) this.get(CraftBed.FACING, BlockFace.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.BedBlock.class, "facing");
+
+    @Override
+    public org.bukkit.block.BlockFace getFacing() {
+        return get(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public void setFacing(BlockFace facing) {
-        this.set(CraftBed.FACING, (Enum) facing);
+    @Override
+    public void setFacing(org.bukkit.block.BlockFace facing) {
+        set(FACING, facing);
     }
 
-    public Set getFaces() {
-        return this.getValues(CraftBed.FACING, BlockFace.class);
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 }
