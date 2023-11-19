@@ -154,6 +154,8 @@ jobs:
         with:
           name: project-forge-build-libs
           path: |
-            projects/forge/build/libs/
+            projects/ketting/build/libs/ketting*.jar
       - name: Run Game Test Server
-        run: java -Dforge.gameTestServer=true -jar ketting-1.20.2-48.0.39-3c86aee1-server.jar -dau -accepteula
+        continue-on-error: true
+        working-directory: projects/ketting/build/libs/
+        run: java -Dketting.setExitCodeOnCrash=true -jar ketting*.jar -dau -accepteula

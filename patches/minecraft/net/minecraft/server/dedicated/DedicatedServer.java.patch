@@ -260,13 +260,21 @@
        }
     }
  
-@@ -263,6 +_,10 @@
+@@ -263,6 +_,18 @@
           this.queryThreadGs4.stop();
        }
  
 +      if (this.dediLanPinger != null) {
 +         this.dediLanPinger.interrupt();
 +         this.dediLanPinger = null;
++      }
++   }
++
++   public void onServerCrash(net.minecraft.CrashReport p_129874_) {
++      super.onServerCrash(p_129874_);
++      if (Boolean.getBoolean("ketting.setExitCodeOnCrash")) {
++         LOGGER.error("Game test server crashed\n{}", p_129874_.getFriendlyReport());
++         System.exit(1);
 +      }
     }
  
