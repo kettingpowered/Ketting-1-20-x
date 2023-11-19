@@ -1,11 +1,38 @@
 --- a/net/minecraft/world/entity/projectile/SmallFireball.java
 +++ b/net/minecraft/world/entity/projectile/SmallFireball.java
-@@ -46,7 +_,7 @@
+@@ -12,6 +_,7 @@
+ import net.minecraft.world.phys.BlockHitResult;
+ import net.minecraft.world.phys.EntityHitResult;
+ import net.minecraft.world.phys.HitResult;
++import org.bukkit.event.entity.EntityCombustByEntityEvent;
+ 
+ public class SmallFireball extends Fireball {
+    public SmallFireball(EntityType<? extends SmallFireball> p_37364_, Level p_37365_) {
+@@ -32,7 +_,14 @@
+          Entity entity = p_37386_.getEntity();
+          Entity entity1 = this.getOwner();
+          int i = entity.getRemainingFireTicks();
+-         entity.setSecondsOnFire(5);
++         // CraftBukkit start - Entity damage by entity event + combust event
++         EntityCombustByEntityEvent event = new EntityCombustByEntityEvent((org.bukkit.entity.Projectile) this.getBukkitEntity(), entity.getBukkitEntity(), 5);
++         entity.level().getCraftServer().getPluginManager().callEvent(event);
++
++         if (!event.isCancelled()) {
++            entity.setSecondsOnFire(event.getDuration(), false);
++         }
++         // CraftBukkit end
+          if (!entity.hurt(this.damageSources().fireball(this, entity1), 5.0F)) {
+             entity.setRemainingFireTicks(i);
+          } else if (entity1 instanceof LivingEntity) {
+@@ -46,9 +_,9 @@
        super.onHitBlock(p_37384_);
        if (!this.level().isClientSide) {
           Entity entity = this.getOwner();
 -         if (!(entity instanceof Mob) || this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-+         if (!(entity instanceof Mob) || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), entity)) {
++         if (isIncendiary || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), entity)) { // CraftBukkit
              BlockPos blockpos = p_37384_.getBlockPos().relative(p_37384_.getDirection());
-             if (this.level().isEmptyBlock(blockpos)) {
+-            if (this.level().isEmptyBlock(blockpos)) {
++            if (this.level().isEmptyBlock(blockpos) && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(this.level(), blockpos, this).isCancelled()) { // CraftBukkit
                 this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level(), blockpos));
+             }
+          }

@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/NeutralMob.java
 +++ b/net/minecraft/world/entity/NeutralMob.java
+@@ -8,6 +_,7 @@
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
++import org.bukkit.event.entity.EntityTargetEvent;
+ 
+ public interface NeutralMob {
+    String TAG_ANGER_TIME = "AngerTime";
 @@ -108,7 +_,7 @@
     default void stopBeingAngry() {
        this.setLastHurtByMob((LivingEntity)null);
@@ -14,7 +22,7 @@
     void setLastHurtByPlayer(@Nullable Player p_21680_);
  
 -   void setTarget(@Nullable LivingEntity p_21681_);
-+   void setTarget(@Nullable LivingEntity p_21681_, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent); // CraftBukkit
++   boolean setTarget(@Nullable LivingEntity p_21681_, EntityTargetEvent.TargetReason reason, boolean fireEvent); // CraftBukkit
  
     boolean canAttack(LivingEntity p_181126_);
  

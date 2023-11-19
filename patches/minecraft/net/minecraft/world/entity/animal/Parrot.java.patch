@@ -5,7 +5,42 @@
  
           if (!this.level().isClientSide) {
 -            if (this.random.nextInt(10) == 0) {
-+            if (this.random.nextInt(10) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29414_)) {
++            if (this.random.nextInt(10) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29414_) && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTameEvent(this, p_29414_).isCancelled()) { // CraftBukkit
                 this.tame(p_29414_);
                 this.level().broadcastEntityEvent(this, (byte)7);
              } else {
+@@ -260,7 +_,7 @@
+             itemstack.shrink(1);
+          }
+ 
+-         this.addEffect(new MobEffectInstance(MobEffects.POISON, 900));
++         this.addEffect(new MobEffectInstance(MobEffects.POISON, 900), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD); // CraftBukkit
+          if (p_29414_.isCreative() || !this.isInvulnerable()) {
+             this.hurt(this.damageSources().playerAttack(p_29414_), Float.MAX_VALUE);
+          }
+@@ -353,7 +_,7 @@
+    }
+ 
+    public boolean isPushable() {
+-      return true;
++      return super.isPushable(); // CraftBukkit - collidable API
+    }
+ 
+    protected void doPush(Entity p_29367_) {
+@@ -366,11 +_,14 @@
+       if (this.isInvulnerableTo(p_29378_)) {
+          return false;
+       } else {
+-         if (!this.level().isClientSide) {
++         // CraftBukkit start
++         boolean result = super.hurt(p_29378_, p_29379_);
++         if (!this.level().isClientSide && result) {
++            // CraftBukkit end
+             this.setOrderedToSit(false);
+          }
+ 
+-         return super.hurt(p_29378_, p_29379_);
++         return result; // CraftBukkit
+       }
+    }
+ 

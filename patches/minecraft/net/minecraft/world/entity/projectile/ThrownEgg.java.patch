@@ -1,0 +1,74 @@
+--- a/net/minecraft/world/entity/projectile/ThrownEgg.java
++++ b/net/minecraft/world/entity/projectile/ThrownEgg.java
+@@ -2,14 +_,18 @@
+ 
+ import net.minecraft.core.particles.ItemParticleOption;
+ import net.minecraft.core.particles.ParticleTypes;
++import net.minecraft.server.level.ServerPlayer;
++import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraft.world.entity.LivingEntity;
+-import net.minecraft.world.entity.animal.Chicken;
+ import net.minecraft.world.item.Item;
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.phys.EntityHitResult;
+ import net.minecraft.world.phys.HitResult;
++import org.bukkit.entity.Ageable;
++import org.bukkit.entity.Player;
++import org.bukkit.event.player.PlayerEggThrowEvent;
+ 
+ public class ThrownEgg extends ThrowableItemProjectile {
+    public ThrownEgg(EntityType<? extends ThrownEgg> p_37473_, Level p_37474_) {
+@@ -43,18 +_,45 @@
+    protected void onHit(HitResult p_37488_) {
+       super.onHit(p_37488_);
+       if (!this.level().isClientSide) {
+-         if (this.random.nextInt(8) == 0) {
++         // CraftBukkit start
++         boolean hatching = this.random.nextInt(8) == 0;
++         if (true) {
++         // CraftBukkit end
+             int i = 1;
+             if (this.random.nextInt(32) == 0) {
+                i = 4;
+             }
+ 
++            // CraftBukkit start
++            org.bukkit.entity.EntityType hatchingType = org.bukkit.entity.EntityType.CHICKEN;
++
++            Entity shooter = this.getOwner();
++            if (!hatching) {
++               i = 0;
++            }
++            if (shooter instanceof ServerPlayer) {
++               PlayerEggThrowEvent event = new PlayerEggThrowEvent((Player) shooter.getBukkitEntity(), (org.bukkit.entity.Egg) this.getBukkitEntity(), hatching, (byte) i, hatchingType);
++               this.level().getCraftServer().getPluginManager().callEvent(event);
++
++               i = event.getNumHatches();
++               hatching = event.isHatching();
++               hatchingType = event.getHatchingType();
++               // If hatching is set to false, ensure child count is 0
++               if (!hatching) {
++                  i = 0;
++               }
++            }
++            // CraftBukkit end
++
+             for(int j = 0; j < i; ++j) {
+-               Chicken chicken = EntityType.CHICKEN.create(this.level());
+-               if (chicken != null) {
+-                  chicken.setAge(-24000);
+-                  chicken.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+-                  this.level().addFreshEntity(chicken);
++               Entity entitychicken = this.level().getWorld().createEntity(new org.bukkit.Location(this.level().getWorld(), this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F), hatchingType.getEntityClass()); // CraftBukkit
++               if (entitychicken != null) {
++                  // CraftBukkit start
++                  if (entitychicken.getBukkitEntity() instanceof Ageable) {
++                     ((Ageable) entitychicken.getBukkitEntity()).setBaby();
++                  }
++                  this.level().addFreshEntity(entitychicken, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG);
++                  // CraftBukkit end
+                }
+             }
+          }

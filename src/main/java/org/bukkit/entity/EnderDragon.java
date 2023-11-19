@@ -64,7 +64,11 @@ public interface EnderDragon extends ComplexLivingEntity, Boss, Mob, Enemy {
         /**
          * The dragon will hover at its current location, not performing any actions.
          */
-        HOVER
+        HOVER,
+        /**
+         * A phase created by a Forge mod.
+         */
+        MODDED;
     }
 
     /**

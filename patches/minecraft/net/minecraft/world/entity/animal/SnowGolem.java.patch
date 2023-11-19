@@ -1,16 +1,22 @@
 --- a/net/minecraft/world/entity/animal/SnowGolem.java
 +++ b/net/minecraft/world/entity/animal/SnowGolem.java
-@@ -40,7 +_,7 @@
+@@ -39,8 +_,9 @@
+ import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  
 -public class SnowGolem extends AbstractGolem implements Shearable, RangedAttackMob {
 +public class SnowGolem extends AbstractGolem implements Shearable, RangedAttackMob, net.minecraftforge.common.IForgeShearable {
     private static final EntityDataAccessor<Byte> DATA_PUMPKIN_ID = SynchedEntityData.defineId(SnowGolem.class, EntityDataSerializers.BYTE);
     private static final byte PUMPKIN_FLAG = 16;
     private static final float EYE_HEIGHT = 1.7F;
-@@ -92,7 +_,7 @@
-             this.hurt(this.damageSources().onFire(), 1.0F);
+@@ -89,10 +_,10 @@
+       super.aiStep();
+       if (!this.level().isClientSide) {
+          if (this.level().getBiome(this.blockPosition()).is(BiomeTags.SNOW_GOLEM_MELTS)) {
+-            this.hurt(this.damageSources().onFire(), 1.0F);
++            this.hurt(this.damageSources().melting, 1.0F); // CraftBukkit - DamageSource.BURN -> CraftEventFactory.MELTING
           }
  
 -         if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
@@ -18,24 +24,45 @@
              return;
           }
  
-@@ -103,7 +_,7 @@
+@@ -103,8 +_,12 @@
              int k = Mth.floor(this.getY());
              int l = Mth.floor(this.getZ() + (double)((float)(i / 2 % 2 * 2 - 1) * 0.25F));
              BlockPos blockpos = new BlockPos(j, k, l);
 -            if (this.level().getBlockState(blockpos).isAir() && blockstate.canSurvive(this.level(), blockpos)) {
+-               this.level().setBlockAndUpdate(blockpos, blockstate);
 +            if (this.level().isEmptyBlock(blockpos) && blockstate.canSurvive(this.level(), blockpos)) {
-                this.level().setBlockAndUpdate(blockpos, blockstate);
++               // CraftBukkit start
++               if (!CraftEventFactory.handleBlockFormEvent(this.level(), blockpos, blockstate, this)) {
++                  continue;
++               }
++               // CraftBukkit end
                 this.level().gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this, blockstate));
              }
-@@ -130,7 +_,7 @@
+          }
+@@ -130,7 +_,12 @@
  
     protected InteractionResult mobInteract(Player p_29920_, InteractionHand p_29921_) {
        ItemStack itemstack = p_29920_.getItemInHand(p_29921_);
 -      if (itemstack.is(Items.SHEARS) && this.readyForShearing()) {
 +      if (false && itemstack.getItem() == Items.SHEARS && this.readyForShearing()) { //Forge: Moved to onSheared
++         // CraftBukkit start
++         if (!CraftEventFactory.handlePlayerShearEntityEvent(p_29920_, this, itemstack, p_29921_)) {
++            return InteractionResult.PASS;
++         }
++         // CraftBukkit end
           this.shear(SoundSource.PLAYERS);
           this.gameEvent(GameEvent.SHEAR, p_29920_);
           if (!this.level().isClientSide) {
+@@ -149,7 +_,9 @@
+       this.level().playSound((Player)null, this, SoundEvents.SNOW_GOLEM_SHEAR, p_29907_, 1.0F, 1.0F);
+       if (!this.level().isClientSide()) {
+          this.setPumpkin(false);
++         this.forceDrops = true; // CraftBukkit
+          this.spawnAtLocation(new ItemStack(Items.CARVED_PUMPKIN), 1.7F);
++         this.forceDrops = false; // CraftBukkit
+       }
+ 
+    }
 @@ -189,5 +_,22 @@
  
     public Vec3 getLeashOffset() {

@@ -43,7 +43,10 @@ public class CraftEnderDragon extends CraftMob implements EnderDragon, CraftEnem
     }
 
     public Phase getPhase() {
-        return Phase.values()[(Integer) this.getHandle().getEntityData().get(net.minecraft.world.entity.boss.enderdragon.EnderDragon.DATA_PHASE)];
+        //Ketting start
+        int phaseId = this.getHandle().getEntityData().get(net.minecraft.world.entity.boss.enderdragon.EnderDragon.DATA_PHASE);
+        return phaseId > Phase.values().length - 1 ? Phase.MODDED : Phase.values()[phaseId];
+        //Ketting end
     }
 
     public void setPhase(Phase phase) {
@@ -51,10 +54,13 @@ public class CraftEnderDragon extends CraftMob implements EnderDragon, CraftEnem
     }
 
     public static Phase getBukkitPhase(EnderDragonPhase phase) {
-        return Phase.values()[phase.getId()];
+        //Ketting start
+        return phase.getId() > Phase.values().length - 1 ? Phase.MODDED : Phase.values()[phase.getId()];
+        //Ketting end
     }
 
     public static EnderDragonPhase getMinecraftPhase(Phase phase) {
+        if (phase == Phase.MODDED) return null; //Ketting
         return EnderDragonPhase.getById(phase.ordinal());
     }
 

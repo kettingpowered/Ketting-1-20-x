@@ -1,10 +1,53 @@
 --- a/net/minecraft/world/entity/animal/Wolf.java
 +++ b/net/minecraft/world/entity/animal/Wolf.java
+@@ -68,6 +_,9 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.level.pathfinder.BlockPathTypes;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityRegainHealthEvent;
++import org.bukkit.event.entity.EntityTargetEvent;
+ import org.joml.Vector3f;
+ 
+ public class Wolf extends TamableAnimal implements NeutralMob {
+@@ -284,15 +_,19 @@
+          return false;
+       } else {
+          Entity entity = p_30386_.getEntity();
+-         if (!this.level().isClientSide) {
+-            this.setOrderedToSit(false);
+-         }
++         // CraftBukkit - move diff down
+ 
+          if (entity != null && !(entity instanceof Player) && !(entity instanceof AbstractArrow)) {
+             p_30387_ = (p_30387_ + 1.0F) / 2.0F;
+          }
+ 
+-         return super.hurt(p_30386_, p_30387_);
++         // CraftBukkit start
++         boolean result = super.hurt(p_30386_, p_30387_);
++         if (!this.level().isClientSide && result) {
++            this.setOrderedToSit(false);
++         }
++         return result;
++         // CraftBukkit end
+       }
+    }
+ 
+@@ -309,7 +_,7 @@
+       super.setTame(p_30443_);
+       if (p_30443_) {
+          this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20.0D);
+-         this.setHealth(20.0F);
++         this.setHealth(this.getMaxHealth()); // CraftBukkit - 20.0 -> getMaxHealth()
+       } else {
+          this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(8.0D);
+       }
 @@ -325,11 +_,12 @@
           return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
        } else if (this.isTame()) {
           if (this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
-+            this.heal((float)itemstack.getFoodProperties(this).getNutrition());
++            this.heal((float) item.getFoodProperties().getNutrition(), EntityRegainHealthEvent.RegainReason.EATING); // CraftBukkit
              if (!p_30412_.getAbilities().instabuild) {
                 itemstack.shrink(1);
              }
@@ -14,15 +57,20 @@
              return InteractionResult.SUCCESS;
           } else {
              if (item instanceof DyeItem) {
-@@ -365,7 +_,7 @@
+@@ -365,10 +_,11 @@
              itemstack.shrink(1);
           }
  
 -         if (this.random.nextInt(3) == 0) {
-+         if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_)) {
++         // CraftBukkit - added event call and isCancelled check.
++         if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_) && !CraftEventFactory.callEntityTameEvent(this, p_30412_).isCancelled()) {
              this.tame(p_30412_);
              this.navigation.stop();
-             this.setTarget((LivingEntity)null);
+-            this.setTarget((LivingEntity)null);
++            this.setTarget((LivingEntity) null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit - reason
+             this.setOrderedToSit(true);
+             this.level().broadcastEntityEvent(this, (byte)7);
+          } else {
 @@ -404,7 +_,7 @@
  
     public boolean isFood(ItemStack p_30440_) {

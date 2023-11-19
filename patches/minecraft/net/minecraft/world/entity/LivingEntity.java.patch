@@ -212,25 +212,30 @@
           this.extinguishFire();
        }
  
-@@ -636,11 +_,17 @@
-    }
- 
-    public void onEquipItem(EquipmentSlot p_238393_, ItemStack p_238394_, ItemStack p_238395_) {
-+      // CraftBukkit start
-+      onEquipItem(p_238393_, p_238394_, p_238395_, false);
-+   }
-+
-+   public void onEquipItem(EquipmentSlot p_238393_, ItemStack p_238394_, ItemStack p_238395_, boolean silent) {
-+      // CraftBukkit end
-       boolean flag = p_238395_.isEmpty() && p_238394_.isEmpty();
+@@ -640,7 +_,7 @@
        if (!flag && !ItemStack.isSameItemSameTags(p_238394_, p_238395_) && !this.firstTick) {
           Equipable equipable = Equipable.get(p_238395_);
           if (!this.level().isClientSide() && !this.isSpectator()) {
 -            if (!this.isSilent() && equipable != null && equipable.getEquipmentSlot() == p_238393_) {
-+            if (!this.isSilent() && equipable != null && equipable.getEquipmentSlot() == p_238393_ && !silent) { // CraftBukkit
++            if (!this.isSilent() && equipable != null && equipable.getEquipmentSlot() == p_238393_ && !isSilentEquip()) { //Ketting
                 this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), equipable.getEquipSound(), this.getSoundSource(), 1.0F, 1.0F);
              }
  
+@@ -652,6 +_,14 @@
+       }
+    }
+ 
++   //Ketting start - forge compat
++   public void onEquipItem(EquipmentSlot p_238393_, ItemStack p_238394_, ItemStack p_238395_, boolean silent) {
++      setSilentEquip(silent);
++      onEquipItem(p_238393_, p_238394_, p_238395_);
++      setSilentEquip(false);
++   }
++   //Ketting end
++
+    public void remove(Entity.RemovalReason p_276115_) {
+       super.remove(p_276115_);
+       this.brain.clearMemories();
 @@ -704,6 +_,17 @@
           }
        }
@@ -1250,15 +1255,30 @@
     }
  
     protected void onBelowWorld() {
-@@ -1895,6 +_,12 @@
+@@ -1895,6 +_,27 @@
  
     public abstract ItemStack getItemBySlot(EquipmentSlot p_21127_);
  
 +   // CraftBukkit start
 +   public void setItemSlot(EquipmentSlot slot, ItemStack itemstack, boolean silent) {
++      //Ketting start - no mixin injects pls
++      setSilentEquip(silent);
 +      this.setItemSlot(slot, itemstack);
++      setSilentEquip(false);
++      //Ketting end
 +   }
 +   // CraftBukkit end
++
++   //Ketting start
++   private boolean setItemSlot$silent = false;
++   protected boolean isSilentEquip() {
++      return setItemSlot$silent;
++   }
++
++   protected void setSilentEquip(boolean silent) {
++      setItemSlot$silent = silent;
++   }
++   //Ketting end
 +
     public abstract void setItemSlot(EquipmentSlot p_21036_, ItemStack p_21037_);
  
