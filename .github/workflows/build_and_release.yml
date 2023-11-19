@@ -17,7 +17,7 @@ jobs:
   #fixme: this is not ready yet, because the project itself doesn't compile.
   create-release:
     needs: build
-    if: ${{ format('refs/heads/{0}', github.event.repository.default_branch) == github.ref }}
+    if: false #&& ${{ format('refs/heads/{0}', github.event.repository.default_branch) == github.ref }}
     runs-on: ubuntu-latest
     steps:
       - name: Download build artifacts
@@ -156,6 +156,7 @@ jobs:
           path: |
             projects/ketting/build/libs/ketting*.jar
       - name: Run Game Test Server
+        if: false
         continue-on-error: true
         working-directory: projects/ketting/build/libs/
         run: echo "stop" | java -Dketting.setExitCodeOnCrash=true -jar ketting*.jar -dau -accepteula
