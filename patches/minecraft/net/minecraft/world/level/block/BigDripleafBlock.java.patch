@@ -9,6 +9,15 @@
  
  public class BigDripleafBlock extends HorizontalDirectionalBlock implements BonemealableBlock, SimpleWaterloggedBlock {
     private static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+@@ -104,7 +_,7 @@
+    }
+ 
+    public void onProjectileHit(Level p_152228_, BlockState p_152229_, BlockHitResult p_152230_, Projectile p_152231_) {
+-      this.setTiltAndScheduleTick(p_152229_, p_152228_, p_152230_.getBlockPos(), Tilt.FULL, SoundEvents.BIG_DRIPLEAF_TILT_DOWN);
++      this.setTiltAndScheduleTick(p_152229_, p_152228_, p_152230_.getBlockPos(), Tilt.FULL, SoundEvents.BIG_DRIPLEAF_TILT_DOWN, p_152231_); // CraftBukkit
+    }
+ 
+    public FluidState getFluidState(BlockState p_152312_) {
 @@ -152,7 +_,20 @@
     public void entityInside(BlockState p_152266_, Level p_152267_, BlockPos p_152268_, Entity p_152269_) {
        if (!p_152267_.isClientSide) {
