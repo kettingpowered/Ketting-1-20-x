@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
-import net.minecraft.commands.CommandListenerWrapper; // CraftBukkit
 import net.minecraft.commands.CommandSourceStack;
 
 public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
