@@ -762,7 +762,7 @@
 +   // CraftBukkit start - add a world/entity limited version
 +   public void broadcastAll(Packet packet, Player player) {
 +      for (ServerPlayer serverPlayer : this.players) {
-+         if (serverPlayer != null && serverPlayer.getBukkitEntity().canSee(player)) {
++         if (serverPlayer != null && serverPlayer.getBukkitEntity().canSee(player.getBukkitEntity())) {
 +            serverPlayer.connection.send(packet);
 +         }
 +      }
