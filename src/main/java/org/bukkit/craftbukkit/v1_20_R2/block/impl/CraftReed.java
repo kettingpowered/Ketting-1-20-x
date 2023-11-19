@@ -15,7 +15,7 @@ public final class CraftReed extends org.bukkit.craftbukkit.v1_20_R2.block.data.
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAgeable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger AGE = getInteger(net.minecraft.world.level.block.BlockReed.class, "age");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger(net.minecraft.world.level.block.BlockReed.class, "age");
 
     @Override
     public int getAge() {

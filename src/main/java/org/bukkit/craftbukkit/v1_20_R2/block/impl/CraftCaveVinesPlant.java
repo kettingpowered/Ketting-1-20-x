@@ -15,7 +15,7 @@ public final class CraftCaveVinesPlant extends org.bukkit.craftbukkit.v1_20_R2.b
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftCaveVinesPlant
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean BERRIES = getBoolean(net.minecraft.world.level.block.CaveVinesPlantBlock.class, "berries");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty BERRIES = getBoolean(net.minecraft.world.level.block.CaveVinesPlantBlock.class, "berries");
 
     @Override
     public boolean isBerries() {

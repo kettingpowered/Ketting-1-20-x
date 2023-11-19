@@ -5,7 +5,7 @@ import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftPistonHead extends CraftBlockData implements PistonHead {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean SHORT = getBoolean("short");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty SHORT = getBoolean("short");
 
     @Override
     public boolean isShort() {

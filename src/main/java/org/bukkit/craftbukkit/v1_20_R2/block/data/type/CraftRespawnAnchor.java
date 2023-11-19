@@ -5,7 +5,7 @@ import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftRespawnAnchor extends CraftBlockData implements RespawnAnchor {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger CHARGES = getInteger("charges");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty CHARGES = getInteger("charges");
 
     @Override
     public int getCharges() {

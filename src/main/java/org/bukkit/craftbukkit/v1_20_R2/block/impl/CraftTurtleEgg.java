@@ -15,7 +15,7 @@ public final class CraftTurtleEgg extends org.bukkit.craftbukkit.v1_20_R2.block.
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftTurtleEgg
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger EGGS = getInteger(net.minecraft.world.level.block.BlockTurtleEgg.class, "eggs");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty EGGS = getInteger(net.minecraft.world.level.block.BlockTurtleEgg.class, "eggs");
 
     @Override
     public int getEggs() {
@@ -39,7 +39,7 @@ public final class CraftTurtleEgg extends org.bukkit.craftbukkit.v1_20_R2.block.
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftHatchable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger HATCH = getInteger(net.minecraft.world.level.block.BlockTurtleEgg.class, "hatch");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty HATCH = getInteger(net.minecraft.world.level.block.BlockTurtleEgg.class, "hatch");
 
     @Override
     public int getHatch() {

@@ -5,8 +5,8 @@ import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftNoteBlock extends CraftBlockData implements NoteBlock {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> INSTRUMENT = getEnum("instrument");
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger NOTE = getInteger("note");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> INSTRUMENT = getEnum("instrument");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty NOTE = getInteger("note");
 
     @Override
     public org.bukkit.Instrument getInstrument() {

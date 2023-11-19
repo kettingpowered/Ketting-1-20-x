@@ -5,7 +5,7 @@ import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftEndPortalFrame extends CraftBlockData implements EndPortalFrame {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean EYE = getBoolean("eye");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty EYE = getBoolean("eye");
 
     @Override
     public boolean hasEye() {

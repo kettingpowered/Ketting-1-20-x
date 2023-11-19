@@ -15,7 +15,7 @@ public final class CraftCalibratedSculkSensor extends org.bukkit.craftbukkit.v1_
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.CalibratedSculkSensorBlock.class, "facing");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.CalibratedSculkSensorBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -34,7 +34,7 @@ public final class CraftCalibratedSculkSensor extends org.bukkit.craftbukkit.v1_
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSculkSensor
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> PHASE = getEnum(net.minecraft.world.level.block.CalibratedSculkSensorBlock.class, "sculk_sensor_phase");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> PHASE = getEnum(net.minecraft.world.level.block.CalibratedSculkSensorBlock.class, "sculk_sensor_phase");
 
     @Override
     public org.bukkit.block.data.type.SculkSensor.Phase getPhase() {
@@ -48,7 +48,7 @@ public final class CraftCalibratedSculkSensor extends org.bukkit.craftbukkit.v1_
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAnaloguePowerable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger POWER = getInteger(net.minecraft.world.level.block.CalibratedSculkSensorBlock.class, "power");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty POWER = getInteger(net.minecraft.world.level.block.CalibratedSculkSensorBlock.class, "power");
 
     @Override
     public int getPower() {
@@ -67,7 +67,7 @@ public final class CraftCalibratedSculkSensor extends org.bukkit.craftbukkit.v1_
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.CalibratedSculkSensorBlock.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.CalibratedSculkSensorBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

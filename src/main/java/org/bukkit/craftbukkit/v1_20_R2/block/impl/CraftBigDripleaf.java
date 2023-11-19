@@ -15,7 +15,7 @@ public final class CraftBigDripleaf extends org.bukkit.craftbukkit.v1_20_R2.bloc
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftBigDripleaf
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> TILT = getEnum(net.minecraft.world.level.block.BigDripleafBlock.class, "tilt");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> TILT = getEnum(net.minecraft.world.level.block.BigDripleafBlock.class, "tilt");
 
     @Override
     public Tilt getTilt() {
@@ -29,7 +29,7 @@ public final class CraftBigDripleaf extends org.bukkit.craftbukkit.v1_20_R2.bloc
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.BigDripleafBlock.class, "facing");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.BigDripleafBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -48,7 +48,7 @@ public final class CraftBigDripleaf extends org.bukkit.craftbukkit.v1_20_R2.bloc
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.BigDripleafBlock.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.BigDripleafBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

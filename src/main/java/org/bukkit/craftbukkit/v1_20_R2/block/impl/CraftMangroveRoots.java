@@ -15,7 +15,7 @@ public final class CraftMangroveRoots extends org.bukkit.craftbukkit.v1_20_R2.bl
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.MangroveRootsBlock.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.MangroveRootsBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

@@ -15,7 +15,7 @@ public final class CraftFire extends org.bukkit.craftbukkit.v1_20_R2.block.data.
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAgeable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger AGE = getInteger(net.minecraft.world.level.block.BlockFire.class, "age");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger(net.minecraft.world.level.block.BlockFire.class, "age");
 
     @Override
     public int getAge() {
@@ -34,13 +34,13 @@ public final class CraftFire extends org.bukkit.craftbukkit.v1_20_R2.block.data.
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftMultipleFacing
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean[] FACES = new net.minecraft.world.level.block.state.properties.BlockStateBoolean[]{
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] FACES = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
         getBoolean(net.minecraft.world.level.block.BlockFire.class, "north", true), getBoolean(net.minecraft.world.level.block.BlockFire.class, "east", true), getBoolean(net.minecraft.world.level.block.BlockFire.class, "south", true), getBoolean(net.minecraft.world.level.block.BlockFire.class, "west", true), getBoolean(net.minecraft.world.level.block.BlockFire.class, "up", true), getBoolean(net.minecraft.world.level.block.BlockFire.class, "down", true)
     };
 
     @Override
     public boolean hasFace(org.bukkit.block.BlockFace face) {
-        net.minecraft.world.level.block.state.properties.BlockStateBoolean state = FACES[face.ordinal()];
+        net.minecraft.world.level.block.state.properties.BooleanProperty state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
         }
@@ -49,7 +49,7 @@ public final class CraftFire extends org.bukkit.craftbukkit.v1_20_R2.block.data.
 
     @Override
     public void setFace(org.bukkit.block.BlockFace face, boolean has) {
-        net.minecraft.world.level.block.state.properties.BlockStateBoolean state = FACES[face.ordinal()];
+        net.minecraft.world.level.block.state.properties.BooleanProperty state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
         }

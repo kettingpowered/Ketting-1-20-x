@@ -15,7 +15,7 @@ public final class CraftPoweredRail extends org.bukkit.craftbukkit.v1_20_R2.bloc
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean POWERED = getBoolean(net.minecraft.world.level.block.BlockPoweredRail.class, "powered");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.BlockPoweredRail.class, "powered");
 
     @Override
     public boolean isPowered() {
@@ -29,7 +29,7 @@ public final class CraftPoweredRail extends org.bukkit.craftbukkit.v1_20_R2.bloc
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftRail
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> SHAPE = getEnum(net.minecraft.world.level.block.BlockPoweredRail.class, "shape");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> SHAPE = getEnum(net.minecraft.world.level.block.BlockPoweredRail.class, "shape");
 
     @Override
     public org.bukkit.block.data.Rail.Shape getShape() {
@@ -48,7 +48,7 @@ public final class CraftPoweredRail extends org.bukkit.craftbukkit.v1_20_R2.bloc
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockPoweredRail.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockPoweredRail.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

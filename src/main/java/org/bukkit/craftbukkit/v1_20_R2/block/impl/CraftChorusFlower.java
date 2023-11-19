@@ -15,7 +15,7 @@ public final class CraftChorusFlower extends org.bukkit.craftbukkit.v1_20_R2.blo
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAgeable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger AGE = getInteger(net.minecraft.world.level.block.BlockChorusFlower.class, "age");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger(net.minecraft.world.level.block.BlockChorusFlower.class, "age");
 
     @Override
     public int getAge() {

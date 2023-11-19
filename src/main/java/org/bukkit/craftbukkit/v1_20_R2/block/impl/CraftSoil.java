@@ -15,7 +15,7 @@ public final class CraftSoil extends org.bukkit.craftbukkit.v1_20_R2.block.data.
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftFarmland
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger MOISTURE = getInteger(net.minecraft.world.level.block.BlockSoil.class, "moisture");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty MOISTURE = getInteger(net.minecraft.world.level.block.BlockSoil.class, "moisture");
 
     @Override
     public int getMoisture() {

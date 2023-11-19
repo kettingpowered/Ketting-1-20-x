@@ -15,7 +15,7 @@ public final class CraftSculkCatalyst extends org.bukkit.craftbukkit.v1_20_R2.bl
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSculkCatalyst
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean BLOOM = getBoolean(net.minecraft.world.level.block.SculkCatalystBlock.class, "bloom");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty BLOOM = getBoolean(net.minecraft.world.level.block.SculkCatalystBlock.class, "bloom");
 
     @Override
     public boolean isBloom() {

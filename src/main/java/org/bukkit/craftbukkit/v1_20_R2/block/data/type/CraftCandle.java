@@ -5,7 +5,7 @@ import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftCandle extends CraftBlockData implements Candle {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger CANDLES = getInteger("candles");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty CANDLES = getInteger("candles");
 
     @Override
     public int getCandles() {

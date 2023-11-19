@@ -15,7 +15,7 @@ public final class CraftSnifferEgg extends org.bukkit.craftbukkit.v1_20_R2.block
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftHatchable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger HATCH = getInteger(net.minecraft.world.level.block.SnifferEggBlock.class, "hatch");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty HATCH = getInteger(net.minecraft.world.level.block.SnifferEggBlock.class, "hatch");
 
     @Override
     public int getHatch() {

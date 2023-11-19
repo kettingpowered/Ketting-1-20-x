@@ -15,7 +15,7 @@ public final class CraftHay extends org.bukkit.craftbukkit.v1_20_R2.block.data.C
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftOrientable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> AXIS = getEnum(net.minecraft.world.level.block.BlockHay.class, "axis");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> AXIS = getEnum(net.minecraft.world.level.block.BlockHay.class, "axis");
 
     @Override
     public org.bukkit.Axis getAxis() {

@@ -4,7 +4,7 @@ import org.bukkit.block.data.Hatchable;
 
 public abstract class CraftHatchable extends CraftBlockData implements Hatchable {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger HATCH = getInteger("hatch");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty HATCH = getInteger("hatch");
 
     @Override
     public int getHatch() {

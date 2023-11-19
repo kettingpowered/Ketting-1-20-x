@@ -4,7 +4,7 @@ import org.bukkit.block.data.Brushable;
 
 public abstract class CraftBrushable extends CraftBlockData implements Brushable {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger DUSTED = getInteger("dusted");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty DUSTED = getInteger("dusted");
 
     @Override
     public int getDusted() {

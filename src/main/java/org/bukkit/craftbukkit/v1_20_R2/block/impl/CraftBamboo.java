@@ -15,7 +15,7 @@ public final class CraftBamboo extends org.bukkit.craftbukkit.v1_20_R2.block.dat
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftBamboo
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> LEAVES = getEnum(net.minecraft.world.level.block.BlockBamboo.class, "leaves");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> LEAVES = getEnum(net.minecraft.world.level.block.BlockBamboo.class, "leaves");
 
     @Override
     public org.bukkit.block.data.type.Bamboo.Leaves getLeaves() {
@@ -29,7 +29,7 @@ public final class CraftBamboo extends org.bukkit.craftbukkit.v1_20_R2.block.dat
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAgeable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger AGE = getInteger(net.minecraft.world.level.block.BlockBamboo.class, "age");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger(net.minecraft.world.level.block.BlockBamboo.class, "age");
 
     @Override
     public int getAge() {
@@ -48,7 +48,7 @@ public final class CraftBamboo extends org.bukkit.craftbukkit.v1_20_R2.block.dat
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSapling
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger STAGE = getInteger(net.minecraft.world.level.block.BlockBamboo.class, "stage");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty STAGE = getInteger(net.minecraft.world.level.block.BlockBamboo.class, "stage");
 
     @Override
     public int getStage() {

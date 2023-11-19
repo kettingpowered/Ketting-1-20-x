@@ -5,7 +5,7 @@ import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftTechnicalPiston extends CraftBlockData implements TechnicalPiston {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> TYPE = getEnum("type");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> TYPE = getEnum("type");
 
     @Override
     public org.bukkit.block.data.type.TechnicalPiston.Type getType() {

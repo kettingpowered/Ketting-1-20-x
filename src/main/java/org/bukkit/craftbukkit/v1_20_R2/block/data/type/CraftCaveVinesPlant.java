@@ -5,7 +5,7 @@ import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftCaveVinesPlant extends CraftBlockData implements CaveVinesPlant {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean BERRIES = getBoolean("berries");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty BERRIES = getBoolean("berries");
 
     @Override
     public boolean isBerries() {

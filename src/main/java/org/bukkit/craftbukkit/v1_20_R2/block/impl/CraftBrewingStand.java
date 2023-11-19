@@ -15,7 +15,7 @@ public final class CraftBrewingStand extends org.bukkit.craftbukkit.v1_20_R2.blo
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftBrewingStand
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean[] HAS_BOTTLE = new net.minecraft.world.level.block.state.properties.BlockStateBoolean[]{
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] HAS_BOTTLE = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
         getBoolean(net.minecraft.world.level.block.BlockBrewingStand.class, "has_bottle_0"), getBoolean(net.minecraft.world.level.block.BlockBrewingStand.class, "has_bottle_1"), getBoolean(net.minecraft.world.level.block.BlockBrewingStand.class, "has_bottle_2")
     };
 

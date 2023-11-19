@@ -15,7 +15,7 @@ public final class CraftTNT extends org.bukkit.craftbukkit.v1_20_R2.block.data.C
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftTNT
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean UNSTABLE = getBoolean(net.minecraft.world.level.block.BlockTNT.class, "unstable");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty UNSTABLE = getBoolean(net.minecraft.world.level.block.BlockTNT.class, "unstable");
 
     @Override
     public boolean isUnstable() {

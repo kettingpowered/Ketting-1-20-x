@@ -15,7 +15,7 @@ public final class CraftBell extends org.bukkit.craftbukkit.v1_20_R2.block.data.
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftBell
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> ATTACHMENT = getEnum(net.minecraft.world.level.block.BlockBell.class, "attachment");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> ATTACHMENT = getEnum(net.minecraft.world.level.block.BlockBell.class, "attachment");
 
     @Override
     public org.bukkit.block.data.type.Bell.Attachment getAttachment() {
@@ -29,7 +29,7 @@ public final class CraftBell extends org.bukkit.craftbukkit.v1_20_R2.block.data.
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.BlockBell.class, "facing");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.BlockBell.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -48,7 +48,7 @@ public final class CraftBell extends org.bukkit.craftbukkit.v1_20_R2.block.data.
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean POWERED = getBoolean(net.minecraft.world.level.block.BlockBell.class, "powered");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.BlockBell.class, "powered");
 
     @Override
     public boolean isPowered() {

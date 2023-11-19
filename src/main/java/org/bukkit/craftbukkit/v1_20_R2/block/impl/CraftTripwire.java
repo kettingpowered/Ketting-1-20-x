@@ -15,7 +15,7 @@ public final class CraftTripwire extends org.bukkit.craftbukkit.v1_20_R2.block.d
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftTripwire
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean DISARMED = getBoolean(net.minecraft.world.level.block.BlockTripwire.class, "disarmed");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty DISARMED = getBoolean(net.minecraft.world.level.block.BlockTripwire.class, "disarmed");
 
     @Override
     public boolean isDisarmed() {
@@ -29,7 +29,7 @@ public final class CraftTripwire extends org.bukkit.craftbukkit.v1_20_R2.block.d
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAttachable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean ATTACHED = getBoolean(net.minecraft.world.level.block.BlockTripwire.class, "attached");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty ATTACHED = getBoolean(net.minecraft.world.level.block.BlockTripwire.class, "attached");
 
     @Override
     public boolean isAttached() {
@@ -43,13 +43,13 @@ public final class CraftTripwire extends org.bukkit.craftbukkit.v1_20_R2.block.d
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftMultipleFacing
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean[] FACES = new net.minecraft.world.level.block.state.properties.BlockStateBoolean[]{
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] FACES = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
         getBoolean(net.minecraft.world.level.block.BlockTripwire.class, "north", true), getBoolean(net.minecraft.world.level.block.BlockTripwire.class, "east", true), getBoolean(net.minecraft.world.level.block.BlockTripwire.class, "south", true), getBoolean(net.minecraft.world.level.block.BlockTripwire.class, "west", true), getBoolean(net.minecraft.world.level.block.BlockTripwire.class, "up", true), getBoolean(net.minecraft.world.level.block.BlockTripwire.class, "down", true)
     };
 
     @Override
     public boolean hasFace(org.bukkit.block.BlockFace face) {
-        net.minecraft.world.level.block.state.properties.BlockStateBoolean state = FACES[face.ordinal()];
+        net.minecraft.world.level.block.state.properties.BooleanProperty state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
         }
@@ -58,7 +58,7 @@ public final class CraftTripwire extends org.bukkit.craftbukkit.v1_20_R2.block.d
 
     @Override
     public void setFace(org.bukkit.block.BlockFace face, boolean has) {
-        net.minecraft.world.level.block.state.properties.BlockStateBoolean state = FACES[face.ordinal()];
+        net.minecraft.world.level.block.state.properties.BooleanProperty state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
         }
@@ -93,7 +93,7 @@ public final class CraftTripwire extends org.bukkit.craftbukkit.v1_20_R2.block.d
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean POWERED = getBoolean(net.minecraft.world.level.block.BlockTripwire.class, "powered");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.BlockTripwire.class, "powered");
 
     @Override
     public boolean isPowered() {

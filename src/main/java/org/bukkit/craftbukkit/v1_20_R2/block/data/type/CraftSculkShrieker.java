@@ -5,8 +5,8 @@ import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftSculkShrieker extends CraftBlockData implements SculkShrieker {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean CAN_SUMMON = getBoolean("can_summon");
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean SHRIEKING = getBoolean("shrieking");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty CAN_SUMMON = getBoolean("can_summon");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty SHRIEKING = getBoolean("shrieking");
 
     @Override
     public boolean isCanSummon() {

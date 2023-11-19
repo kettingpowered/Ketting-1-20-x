@@ -5,8 +5,8 @@ import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftRepeater extends CraftBlockData implements Repeater {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger DELAY = getInteger("delay");
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean LOCKED = getBoolean("locked");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty DELAY = getInteger("delay");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty LOCKED = getBoolean("locked");
 
     @Override
     public int getDelay() {

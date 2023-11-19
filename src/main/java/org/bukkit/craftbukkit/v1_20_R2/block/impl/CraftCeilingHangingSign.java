@@ -15,7 +15,7 @@ public final class CraftCeilingHangingSign extends org.bukkit.craftbukkit.v1_20_
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAttachable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean ATTACHED = getBoolean(net.minecraft.world.level.block.CeilingHangingSignBlock.class, "attached");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty ATTACHED = getBoolean(net.minecraft.world.level.block.CeilingHangingSignBlock.class, "attached");
 
     @Override
     public boolean isAttached() {
@@ -29,7 +29,7 @@ public final class CraftCeilingHangingSign extends org.bukkit.craftbukkit.v1_20_
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftRotatable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger ROTATION = getInteger(net.minecraft.world.level.block.CeilingHangingSignBlock.class, "rotation");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty ROTATION = getInteger(net.minecraft.world.level.block.CeilingHangingSignBlock.class, "rotation");
 
     @Override
     public org.bukkit.block.BlockFace getRotation() {
@@ -132,7 +132,7 @@ public final class CraftCeilingHangingSign extends org.bukkit.craftbukkit.v1_20_
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.CeilingHangingSignBlock.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.CeilingHangingSignBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

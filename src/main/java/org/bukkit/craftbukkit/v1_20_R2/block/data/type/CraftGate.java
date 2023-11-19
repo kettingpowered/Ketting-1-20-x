@@ -5,7 +5,7 @@ import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftGate extends CraftBlockData implements Gate {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean IN_WALL = getBoolean("in_wall");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty IN_WALL = getBoolean("in_wall");
 
     @Override
     public boolean isInWall() {

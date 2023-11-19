@@ -15,7 +15,7 @@ public final class CraftPressurePlateBinary extends org.bukkit.craftbukkit.v1_20
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean POWERED = getBoolean(net.minecraft.world.level.block.BlockPressurePlateBinary.class, "powered");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.BlockPressurePlateBinary.class, "powered");
 
     @Override
     public boolean isPowered() {

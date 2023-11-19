@@ -5,7 +5,7 @@ import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftTurtleEgg extends CraftBlockData implements TurtleEgg {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateInteger EGGS = getInteger("eggs");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty EGGS = getInteger("eggs");
 
     @Override
     public int getEggs() {

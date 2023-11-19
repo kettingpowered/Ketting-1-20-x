@@ -15,7 +15,7 @@ public final class CraftChiseledBookShelf extends org.bukkit.craftbukkit.v1_20_R
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftChiseledBookshelf
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean[] SLOT_OCCUPIED = new net.minecraft.world.level.block.state.properties.BlockStateBoolean[]{
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] SLOT_OCCUPIED = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
         getBoolean(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "slot_0_occupied"), getBoolean(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "slot_1_occupied"), getBoolean(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "slot_2_occupied"),
         getBoolean(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "slot_3_occupied"), getBoolean(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "slot_4_occupied"), getBoolean(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "slot_5_occupied")
     };
@@ -50,7 +50,7 @@ public final class CraftChiseledBookShelf extends org.bukkit.craftbukkit.v1_20_R
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "facing");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

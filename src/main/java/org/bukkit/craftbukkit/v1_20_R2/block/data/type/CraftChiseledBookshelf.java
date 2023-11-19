@@ -5,7 +5,7 @@ import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftChiseledBookshelf extends CraftBlockData implements ChiseledBookshelf {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean[] SLOT_OCCUPIED = new net.minecraft.world.level.block.state.properties.BlockStateBoolean[]{
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] SLOT_OCCUPIED = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
         getBoolean("slot_0_occupied"), getBoolean("slot_1_occupied"), getBoolean("slot_2_occupied"),
         getBoolean("slot_3_occupied"), getBoolean("slot_4_occupied"), getBoolean("slot_5_occupied")
     };

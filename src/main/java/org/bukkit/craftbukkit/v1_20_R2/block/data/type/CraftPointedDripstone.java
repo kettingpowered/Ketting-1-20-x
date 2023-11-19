@@ -5,8 +5,8 @@ import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftPointedDripstone extends CraftBlockData implements PointedDripstone {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> VERTICAL_DIRECTION = getEnum("vertical_direction");
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> THICKNESS = getEnum("thickness");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> VERTICAL_DIRECTION = getEnum("vertical_direction");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> THICKNESS = getEnum("thickness");
 
     @Override
     public org.bukkit.block.BlockFace getVerticalDirection() {

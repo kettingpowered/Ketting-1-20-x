@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.block.sign;
 
-import net.minecraft.network.chat.IChatBaseComponent;
-import net.minecraft.world.item.EnumColor;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignText;
 import org.bukkit.DyeColor;
 import org.bukkit.block.sign.SignSide;
@@ -26,7 +25,7 @@ public class CraftSignSide implements SignSide {
     public String[] getLines() {
         if (lines == null) {
             // Lazy initialization:
-            IChatBaseComponent[] messages = signText.getMessages(false);
+            Component[] messages = signText.getMessages(false);
             lines = new String[messages.length];
             System.arraycopy(CraftSign.revertComponents(messages), 0, lines, 0, lines.length);
             originalLines = new String[lines.length];
@@ -64,7 +63,7 @@ public class CraftSignSide implements SignSide {
 
     @Override
     public void setColor(@NotNull DyeColor color) {
-        signText = signText.setColor(EnumColor.byId(color.getWoolData()));
+        signText = signText.setColor(net.minecraft.world.item.DyeColor.byId(color.getWoolData()));
     }
 
     public SignText applyLegacyStringToSignSide() {

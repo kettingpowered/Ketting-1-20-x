@@ -15,7 +15,7 @@ public final class CraftJukeBox extends org.bukkit.craftbukkit.v1_20_R2.block.da
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftJukebox
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean HAS_RECORD = getBoolean(net.minecraft.world.level.block.BlockJukeBox.class, "has_record");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty HAS_RECORD = getBoolean(net.minecraft.world.level.block.BlockJukeBox.class, "has_record");
 
     @Override
     public boolean hasRecord() {
