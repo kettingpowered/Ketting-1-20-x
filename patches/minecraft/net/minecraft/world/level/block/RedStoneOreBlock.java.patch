@@ -1,11 +1,13 @@
 --- a/net/minecraft/world/level/block/RedStoneOreBlock.java
 +++ b/net/minecraft/world/level/block/RedStoneOreBlock.java
-@@ -20,6 +_,8 @@
+@@ -20,6 +_,10 @@
  import net.minecraft.world.level.block.state.StateDefinition;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.phys.BlockHitResult;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
++
++import javax.annotation.Nullable;
  
  public class RedStoneOreBlock extends Block {
     public static final BooleanProperty LIT = RedstoneTorchBlock.LIT;
@@ -20,7 +22,8 @@
  
     public void stepOn(Level p_154299_, BlockPos p_154300_, BlockState p_154301_, Entity p_154302_) {
        if (!p_154302_.isSteppingCarefully()) {
-          interact(p_154301_, p_154299_, p_154300_);
+-         interact(p_154301_, p_154299_, p_154300_);
++         interact(p_154301_, p_154299_, p_154300_, p_154302_);
 +         // CraftBukkit start
 +         if (p_154302_ instanceof Player) {
 +            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent((Player) p_154302_, org.bukkit.event.block.Action.PHYSICAL, p_154300_, null, null, null);
@@ -38,7 +41,7 @@
        }
  
        super.stepOn(p_154299_, p_154300_, p_154301_, p_154302_);
-@@ -46,16 +_,21 @@
+@@ -46,16 +_,26 @@
        if (p_55473_.isClientSide) {
           spawnParticles(p_55473_, p_55474_);
        } else {
@@ -51,11 +54,16 @@
     }
  
 -   private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_) {
-+   private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_, Entity entity) { // CraftBukkit - add Entity
++   //Ketting start - keep original method head
++   private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_){
++      interact(p_55493_,p_55494_,p_55495_, null);
++   }
++   //Ketting end
++   private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_, @Nullable Entity entity) { // CraftBukkit - add Entity
        spawnParticles(p_55494_, p_55495_);
        if (!p_55493_.getValue(LIT)) {
 +         // CraftBukkit start
-+         if (!CraftEventFactory.callEntityChangeBlockEvent(entity, p_55495_, p_55493_.setValue(RedStoneOreBlock.LIT, true))) {
++         if (entity != null && !CraftEventFactory.callEntityChangeBlockEvent(entity, p_55495_, p_55493_.setValue(RedStoneOreBlock.LIT, true))) {
 +            return;
 +         }
 +         // CraftBukkit end
