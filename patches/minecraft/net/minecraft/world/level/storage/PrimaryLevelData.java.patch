@@ -87,15 +87,17 @@
           p_78547_.put("WorldGenSettings", p_78574_);
        });
        p_78547_.putInt("GameType", this.settings.gameType().getId());
-@@ -203,6 +_,11 @@
+@@ -203,6 +_,13 @@
           p_78547_.putUUID("WanderingTraderId", this.wanderingTraderId);
        }
  
 +      p_78547_.putString("forgeLifecycle", net.minecraftforge.common.ForgeHooks.encodeLifecycle(this.settings.getLifecycle()));
 +      p_78547_.putBoolean("confirmedExperimentalSettings", this.confirmedExperimentalWarning);
 +
-+      p_78547_.putString("Bukkit.Version", Bukkit.getName() + "/" + Bukkit.getVersion() + "/" + Bukkit.getBukkitVersion()); // CraftBukkit
-+      world.getWorld().storeBukkitValues(p_78547_); // CraftBukkit - add pdc
++      if (Bukkit.getServer() != null) {
++         p_78547_.putString("Bukkit.Version", Bukkit.getName() + "/" + Bukkit.getVersion() + "/" + Bukkit.getBukkitVersion()); // CraftBukkit
++         world.getWorld().storeBukkitValues(p_78547_); // CraftBukkit - add pdc
++      }
     }
  
     private static ListTag stringCollectionToTag(Set<String> p_277880_) {
