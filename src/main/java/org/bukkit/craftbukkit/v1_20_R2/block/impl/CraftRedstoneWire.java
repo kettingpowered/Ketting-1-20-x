@@ -9,16 +9,16 @@ public final class CraftRedstoneWire extends org.bukkit.craftbukkit.v1_20_R2.blo
         super();
     }
 
-    public CraftRedstoneWire(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftRedstoneWire(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftRedstoneWire
 
-    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> NORTH = getEnum(net.minecraft.world.level.block.BlockRedstoneWire.class, "north");
-    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> EAST = getEnum(net.minecraft.world.level.block.BlockRedstoneWire.class, "east");
-    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> SOUTH = getEnum(net.minecraft.world.level.block.BlockRedstoneWire.class, "south");
-    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> WEST = getEnum(net.minecraft.world.level.block.BlockRedstoneWire.class, "west");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> NORTH = getEnum(net.minecraft.world.level.block.RedStoneWireBlock.class, "north");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> EAST = getEnum(net.minecraft.world.level.block.RedStoneWireBlock.class, "east");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> SOUTH = getEnum(net.minecraft.world.level.block.RedStoneWireBlock.class, "south");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> WEST = getEnum(net.minecraft.world.level.block.RedStoneWireBlock.class, "west");
 
     @Override
     public org.bukkit.block.data.type.RedstoneWire.Connection getFace(org.bukkit.block.BlockFace face) {
@@ -63,7 +63,7 @@ public final class CraftRedstoneWire extends org.bukkit.craftbukkit.v1_20_R2.blo
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAnaloguePowerable
 
-    private static final net.minecraft.world.level.block.state.properties.IntegerProperty POWER = getInteger(net.minecraft.world.level.block.BlockRedstoneWire.class, "power");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty POWER = getInteger(net.minecraft.world.level.block.RedStoneWireBlock.class, "power");
 
     @Override
     public int getPower() {

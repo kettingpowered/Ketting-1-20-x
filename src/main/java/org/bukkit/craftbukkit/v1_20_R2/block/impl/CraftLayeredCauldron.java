@@ -9,7 +9,7 @@ public final class CraftLayeredCauldron extends org.bukkit.craftbukkit.v1_20_R2.
         super();
     }
 
-    public CraftLayeredCauldron(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftLayeredCauldron(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

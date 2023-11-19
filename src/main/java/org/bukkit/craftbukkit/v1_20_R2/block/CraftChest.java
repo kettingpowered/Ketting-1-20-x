@@ -4,7 +4,7 @@ import net.minecraft.world.ITileInventory;
 import net.minecraft.world.level.block.BlockChest;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.TileEntityChest;
-import net.minecraft.world.level.block.state.IBlockData;
+import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Chest;

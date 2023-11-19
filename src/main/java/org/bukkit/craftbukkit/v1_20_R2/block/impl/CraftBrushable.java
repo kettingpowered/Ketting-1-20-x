@@ -9,7 +9,7 @@ public final class CraftBrushable extends org.bukkit.craftbukkit.v1_20_R2.block.
         super();
     }
 
-    public CraftBrushable(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftBrushable(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

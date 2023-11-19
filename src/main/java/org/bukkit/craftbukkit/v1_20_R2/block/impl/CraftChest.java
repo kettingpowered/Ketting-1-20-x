@@ -9,13 +9,13 @@ public final class CraftChest extends org.bukkit.craftbukkit.v1_20_R2.block.data
         super();
     }
 
-    public CraftChest(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftChest(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftChest
 
-    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> TYPE = getEnum(net.minecraft.world.level.block.BlockChest.class, "type");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> TYPE = getEnum(net.minecraft.world.level.block.ChestBlock.class, "type");
 
     @Override
     public org.bukkit.block.data.type.Chest.Type getType() {
@@ -29,7 +29,7 @@ public final class CraftChest extends org.bukkit.craftbukkit.v1_20_R2.block.data
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
-    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.BlockChest.class, "facing");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.ChestBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -48,7 +48,7 @@ public final class CraftChest extends org.bukkit.craftbukkit.v1_20_R2.block.data
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockChest.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.ChestBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

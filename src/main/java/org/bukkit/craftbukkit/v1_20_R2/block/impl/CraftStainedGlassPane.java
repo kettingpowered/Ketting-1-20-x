@@ -9,14 +9,14 @@ public final class CraftStainedGlassPane extends org.bukkit.craftbukkit.v1_20_R2
         super();
     }
 
-    public CraftStainedGlassPane(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftStainedGlassPane(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftMultipleFacing
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] FACES = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
-        getBoolean(net.minecraft.world.level.block.BlockStainedGlassPane.class, "north", true), getBoolean(net.minecraft.world.level.block.BlockStainedGlassPane.class, "east", true), getBoolean(net.minecraft.world.level.block.BlockStainedGlassPane.class, "south", true), getBoolean(net.minecraft.world.level.block.BlockStainedGlassPane.class, "west", true), getBoolean(net.minecraft.world.level.block.BlockStainedGlassPane.class, "up", true), getBoolean(net.minecraft.world.level.block.BlockStainedGlassPane.class, "down", true)
+        getBoolean(net.minecraft.world.level.block.StainedGlassPaneBlock.class, "north", true), getBoolean(net.minecraft.world.level.block.StainedGlassPaneBlock.class, "east", true), getBoolean(net.minecraft.world.level.block.StainedGlassPaneBlock.class, "south", true), getBoolean(net.minecraft.world.level.block.StainedGlassPaneBlock.class, "west", true), getBoolean(net.minecraft.world.level.block.StainedGlassPaneBlock.class, "up", true), getBoolean(net.minecraft.world.level.block.StainedGlassPaneBlock.class, "down", true)
     };
 
     @Override
@@ -65,7 +65,7 @@ public final class CraftStainedGlassPane extends org.bukkit.craftbukkit.v1_20_R2
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockStainedGlassPane.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.StainedGlassPaneBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

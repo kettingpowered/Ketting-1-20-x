@@ -9,7 +9,7 @@ public final class CraftSnifferEgg extends org.bukkit.craftbukkit.v1_20_R2.block
         super();
     }
 
-    public CraftSnifferEgg(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftSnifferEgg(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

@@ -9,13 +9,13 @@ public final class CraftShulkerBox extends org.bukkit.craftbukkit.v1_20_R2.block
         super();
     }
 
-    public CraftShulkerBox(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftShulkerBox(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
-    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.BlockShulkerBox.class, "facing");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.ShulkerBoxBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

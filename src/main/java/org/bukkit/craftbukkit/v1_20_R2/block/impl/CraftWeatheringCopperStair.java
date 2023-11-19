@@ -9,7 +9,7 @@ public final class CraftWeatheringCopperStair extends org.bukkit.craftbukkit.v1_
         super();
     }
 
-    public CraftWeatheringCopperStair(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftWeatheringCopperStair(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

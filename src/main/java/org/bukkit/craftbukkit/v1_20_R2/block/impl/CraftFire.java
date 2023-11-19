@@ -9,13 +9,13 @@ public final class CraftFire extends org.bukkit.craftbukkit.v1_20_R2.block.data.
         super();
     }
 
-    public CraftFire(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftFire(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAgeable
 
-    private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger(net.minecraft.world.level.block.BlockFire.class, "age");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger(net.minecraft.world.level.block.FireBlock.class, "age");
 
     @Override
     public int getAge() {
@@ -35,7 +35,7 @@ public final class CraftFire extends org.bukkit.craftbukkit.v1_20_R2.block.data.
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftMultipleFacing
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] FACES = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
-        getBoolean(net.minecraft.world.level.block.BlockFire.class, "north", true), getBoolean(net.minecraft.world.level.block.BlockFire.class, "east", true), getBoolean(net.minecraft.world.level.block.BlockFire.class, "south", true), getBoolean(net.minecraft.world.level.block.BlockFire.class, "west", true), getBoolean(net.minecraft.world.level.block.BlockFire.class, "up", true), getBoolean(net.minecraft.world.level.block.BlockFire.class, "down", true)
+        getBoolean(net.minecraft.world.level.block.FireBlock.class, "north", true), getBoolean(net.minecraft.world.level.block.FireBlock.class, "east", true), getBoolean(net.minecraft.world.level.block.FireBlock.class, "south", true), getBoolean(net.minecraft.world.level.block.FireBlock.class, "west", true), getBoolean(net.minecraft.world.level.block.FireBlock.class, "up", true), getBoolean(net.minecraft.world.level.block.FireBlock.class, "down", true)
     };
 
     @Override

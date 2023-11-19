@@ -9,7 +9,7 @@ public final class CraftSmallDripleaf extends org.bukkit.craftbukkit.v1_20_R2.bl
         super();
     }
 
-    public CraftSmallDripleaf(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftSmallDripleaf(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

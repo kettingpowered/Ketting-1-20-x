@@ -9,13 +9,13 @@ public final class CraftBarrel extends org.bukkit.craftbukkit.v1_20_R2.block.dat
         super();
     }
 
-    public CraftBarrel(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftBarrel(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
-    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.BlockBarrel.class, "facing");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.BarrelBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -34,7 +34,7 @@ public final class CraftBarrel extends org.bukkit.craftbukkit.v1_20_R2.block.dat
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftOpenable
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty OPEN = getBoolean(net.minecraft.world.level.block.BlockBarrel.class, "open");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty OPEN = getBoolean(net.minecraft.world.level.block.BarrelBlock.class, "open");
 
     @Override
     public boolean isOpen() {

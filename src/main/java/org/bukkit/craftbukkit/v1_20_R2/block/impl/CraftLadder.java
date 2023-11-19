@@ -9,13 +9,13 @@ public final class CraftLadder extends org.bukkit.craftbukkit.v1_20_R2.block.dat
         super();
     }
 
-    public CraftLadder(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftLadder(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
-    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.BlockLadder.class, "facing");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.LadderBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -34,7 +34,7 @@ public final class CraftLadder extends org.bukkit.craftbukkit.v1_20_R2.block.dat
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockLadder.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.LadderBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

@@ -9,13 +9,13 @@ public final class CraftChorusFlower extends org.bukkit.craftbukkit.v1_20_R2.blo
         super();
     }
 
-    public CraftChorusFlower(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftChorusFlower(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAgeable
 
-    private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger(net.minecraft.world.level.block.BlockChorusFlower.class, "age");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger(net.minecraft.world.level.block.ChorusFlowerBlock.class, "age");
 
     @Override
     public int getAge() {

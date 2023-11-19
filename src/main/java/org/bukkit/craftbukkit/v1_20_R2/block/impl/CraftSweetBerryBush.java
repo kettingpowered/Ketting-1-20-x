@@ -9,13 +9,13 @@ public final class CraftSweetBerryBush extends org.bukkit.craftbukkit.v1_20_R2.b
         super();
     }
 
-    public CraftSweetBerryBush(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftSweetBerryBush(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAgeable
 
-    private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger(net.minecraft.world.level.block.BlockSweetBerryBush.class, "age");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger(net.minecraft.world.level.block.SweetBerryBushBlock.class, "age");
 
     @Override
     public int getAge() {

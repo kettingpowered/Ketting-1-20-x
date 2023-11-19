@@ -9,13 +9,13 @@ public final class CraftWallSign extends org.bukkit.craftbukkit.v1_20_R2.block.d
         super();
     }
 
-    public CraftWallSign(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftWallSign(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
-    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.BlockWallSign.class, "facing");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.WallSignBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -34,7 +34,7 @@ public final class CraftWallSign extends org.bukkit.craftbukkit.v1_20_R2.block.d
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockWallSign.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.WallSignBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

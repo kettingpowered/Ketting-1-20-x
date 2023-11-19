@@ -9,13 +9,13 @@ public final class CraftChain extends org.bukkit.craftbukkit.v1_20_R2.block.data
         super();
     }
 
-    public CraftChain(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftChain(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftOrientable
 
-    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> AXIS = getEnum(net.minecraft.world.level.block.BlockChain.class, "axis");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> AXIS = getEnum(net.minecraft.world.level.block.ChainBlock.class, "axis");
 
     @Override
     public org.bukkit.Axis getAxis() {
@@ -34,7 +34,7 @@ public final class CraftChain extends org.bukkit.craftbukkit.v1_20_R2.block.data
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockChain.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.ChainBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

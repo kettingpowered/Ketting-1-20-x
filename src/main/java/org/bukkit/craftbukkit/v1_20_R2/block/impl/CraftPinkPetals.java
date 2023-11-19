@@ -9,7 +9,7 @@ public final class CraftPinkPetals extends org.bukkit.craftbukkit.v1_20_R2.block
         super();
     }
 
-    public CraftPinkPetals(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftPinkPetals(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

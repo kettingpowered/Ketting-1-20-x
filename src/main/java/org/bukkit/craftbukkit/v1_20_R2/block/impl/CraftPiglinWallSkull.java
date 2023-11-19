@@ -9,7 +9,7 @@ public final class CraftPiglinWallSkull extends org.bukkit.craftbukkit.v1_20_R2.
         super();
     }
 
-    public CraftPiglinWallSkull(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftPiglinWallSkull(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

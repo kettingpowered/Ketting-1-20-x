@@ -9,7 +9,7 @@ public final class CraftInfestedRotatedPillar extends org.bukkit.craftbukkit.v1_
         super();
     }
 
-    public CraftInfestedRotatedPillar(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftInfestedRotatedPillar(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

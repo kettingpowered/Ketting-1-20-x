@@ -9,7 +9,7 @@ public final class CraftMangroveRoots extends org.bukkit.craftbukkit.v1_20_R2.bl
         super();
     }
 
-    public CraftMangroveRoots(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftMangroveRoots(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

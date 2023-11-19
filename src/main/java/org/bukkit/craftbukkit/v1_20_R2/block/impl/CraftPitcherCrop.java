@@ -9,7 +9,7 @@ public final class CraftPitcherCrop extends org.bukkit.craftbukkit.v1_20_R2.bloc
         super();
     }
 
-    public CraftPitcherCrop(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftPitcherCrop(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

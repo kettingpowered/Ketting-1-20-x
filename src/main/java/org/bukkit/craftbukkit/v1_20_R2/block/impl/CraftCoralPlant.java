@@ -9,13 +9,13 @@ public final class CraftCoralPlant extends org.bukkit.craftbukkit.v1_20_R2.block
         super();
     }
 
-    public CraftCoralPlant(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftCoralPlant(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockCoralPlant.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.CoralPlantBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

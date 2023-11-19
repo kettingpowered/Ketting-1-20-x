@@ -9,14 +9,14 @@ public final class CraftVine extends org.bukkit.craftbukkit.v1_20_R2.block.data.
         super();
     }
 
-    public CraftVine(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftVine(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftMultipleFacing
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] FACES = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
-        getBoolean(net.minecraft.world.level.block.BlockVine.class, "north", true), getBoolean(net.minecraft.world.level.block.BlockVine.class, "east", true), getBoolean(net.minecraft.world.level.block.BlockVine.class, "south", true), getBoolean(net.minecraft.world.level.block.BlockVine.class, "west", true), getBoolean(net.minecraft.world.level.block.BlockVine.class, "up", true), getBoolean(net.minecraft.world.level.block.BlockVine.class, "down", true)
+        getBoolean(net.minecraft.world.level.block.VineBlock.class, "north", true), getBoolean(net.minecraft.world.level.block.VineBlock.class, "east", true), getBoolean(net.minecraft.world.level.block.VineBlock.class, "south", true), getBoolean(net.minecraft.world.level.block.VineBlock.class, "west", true), getBoolean(net.minecraft.world.level.block.VineBlock.class, "up", true), getBoolean(net.minecraft.world.level.block.VineBlock.class, "down", true)
     };
 
     @Override

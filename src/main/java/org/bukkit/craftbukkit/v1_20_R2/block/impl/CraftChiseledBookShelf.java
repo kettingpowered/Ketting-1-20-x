@@ -9,7 +9,7 @@ public final class CraftChiseledBookShelf extends org.bukkit.craftbukkit.v1_20_R
         super();
     }
 
-    public CraftChiseledBookShelf(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftChiseledBookShelf(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

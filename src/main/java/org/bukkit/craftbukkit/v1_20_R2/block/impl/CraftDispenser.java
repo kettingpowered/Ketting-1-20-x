@@ -9,13 +9,13 @@ public final class CraftDispenser extends org.bukkit.craftbukkit.v1_20_R2.block.
         super();
     }
 
-    public CraftDispenser(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftDispenser(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftDispenser
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty TRIGGERED = getBoolean(net.minecraft.world.level.block.BlockDispenser.class, "triggered");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty TRIGGERED = getBoolean(net.minecraft.world.level.block.DispenserBlock.class, "triggered");
 
     @Override
     public boolean isTriggered() {
@@ -29,7 +29,7 @@ public final class CraftDispenser extends org.bukkit.craftbukkit.v1_20_R2.block.
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
-    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.BlockDispenser.class, "facing");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.DispenserBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

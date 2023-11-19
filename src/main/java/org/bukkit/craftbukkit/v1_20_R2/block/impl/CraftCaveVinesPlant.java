@@ -9,7 +9,7 @@ public final class CraftCaveVinesPlant extends org.bukkit.craftbukkit.v1_20_R2.b
         super();
     }
 
-    public CraftCaveVinesPlant(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftCaveVinesPlant(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

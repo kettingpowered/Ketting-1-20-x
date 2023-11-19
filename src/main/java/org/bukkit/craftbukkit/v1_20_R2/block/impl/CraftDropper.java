@@ -9,13 +9,13 @@ public final class CraftDropper extends org.bukkit.craftbukkit.v1_20_R2.block.da
         super();
     }
 
-    public CraftDropper(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftDropper(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftDispenser
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty TRIGGERED = getBoolean(net.minecraft.world.level.block.BlockDropper.class, "triggered");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty TRIGGERED = getBoolean(net.minecraft.world.level.block.DropperBlock.class, "triggered");
 
     @Override
     public boolean isTriggered() {
@@ -29,7 +29,7 @@ public final class CraftDropper extends org.bukkit.craftbukkit.v1_20_R2.block.da
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
-    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.BlockDropper.class, "facing");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.DropperBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

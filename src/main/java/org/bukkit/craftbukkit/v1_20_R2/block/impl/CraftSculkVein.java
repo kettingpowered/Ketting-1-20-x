@@ -9,7 +9,7 @@ public final class CraftSculkVein extends org.bukkit.craftbukkit.v1_20_R2.block.
         super();
     }
 
-    public CraftSculkVein(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftSculkVein(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

@@ -190,7 +190,7 @@ public class CraftStructureBlock extends CraftBlockEntityState<TileEntityStructu
         } else if (access != null) {
             // Custom handle during world generation
             // From TileEntityStructure#setUsageMode(BlockPropertyStructureMode)
-            net.minecraft.world.level.block.state.IBlockData data = access.getBlockState(this.getPosition());
+            net.minecraft.world.level.block.state.BlockState data = access.getBlockState(this.getPosition());
             if (data.is(net.minecraft.world.level.block.Blocks.STRUCTURE_BLOCK)) {
                 access.setBlock(this.getPosition(), data.setValue(net.minecraft.world.level.block.BlockStructure.MODE, tileEntity.getMode()), 2);
             }

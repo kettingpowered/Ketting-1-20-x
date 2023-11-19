@@ -9,7 +9,7 @@ public final class CraftCandle extends org.bukkit.craftbukkit.v1_20_R2.block.dat
         super();
     }
 
-    public CraftCandle(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftCandle(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

@@ -9,7 +9,7 @@ public final class CraftCherryLeaves extends org.bukkit.craftbukkit.v1_20_R2.blo
         super();
     }
 
-    public CraftCherryLeaves(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftCherryLeaves(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

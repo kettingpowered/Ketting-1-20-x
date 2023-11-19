@@ -9,7 +9,7 @@ public final class CraftWallHangingSign extends org.bukkit.craftbukkit.v1_20_R2.
         super();
     }
 
-    public CraftWallHangingSign(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftWallHangingSign(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

@@ -9,13 +9,13 @@ public final class CraftLectern extends org.bukkit.craftbukkit.v1_20_R2.block.da
         super();
     }
 
-    public CraftLectern(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftLectern(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftLectern
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty HAS_BOOK = getBoolean(net.minecraft.world.level.block.BlockLectern.class, "has_book");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty HAS_BOOK = getBoolean(net.minecraft.world.level.block.LecternBlock.class, "has_book");
 
     @Override
     public boolean hasBook() {
@@ -24,7 +24,7 @@ public final class CraftLectern extends org.bukkit.craftbukkit.v1_20_R2.block.da
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
 
-    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.BlockLectern.class, "facing");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.LecternBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -43,7 +43,7 @@ public final class CraftLectern extends org.bukkit.craftbukkit.v1_20_R2.block.da
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.BlockLectern.class, "powered");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.LecternBlock.class, "powered");
 
     @Override
     public boolean isPowered() {

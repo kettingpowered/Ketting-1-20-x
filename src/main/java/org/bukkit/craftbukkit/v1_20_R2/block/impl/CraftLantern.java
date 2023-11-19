@@ -9,13 +9,13 @@ public final class CraftLantern extends org.bukkit.craftbukkit.v1_20_R2.block.da
         super();
     }
 
-    public CraftLantern(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftLantern(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftHangable
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty HANGING = getBoolean(net.minecraft.world.level.block.BlockLantern.class, "hanging");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty HANGING = getBoolean(net.minecraft.world.level.block.LanternBlock.class, "hanging");
 
     @Override
     public boolean isHanging() {
@@ -29,7 +29,7 @@ public final class CraftLantern extends org.bukkit.craftbukkit.v1_20_R2.block.da
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockLantern.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.LanternBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

@@ -9,7 +9,7 @@ public final class CraftBigDripleafStem extends org.bukkit.craftbukkit.v1_20_R2.
         super();
     }
 
-    public CraftBigDripleafStem(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftBigDripleafStem(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

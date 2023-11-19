@@ -9,7 +9,7 @@ public final class CraftEquipableCarvedPumpkin extends org.bukkit.craftbukkit.v1
         super();
     }
 
-    public CraftEquipableCarvedPumpkin(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftEquipableCarvedPumpkin(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

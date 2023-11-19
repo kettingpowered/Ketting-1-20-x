@@ -9,13 +9,13 @@ public final class CraftSeaPickle extends org.bukkit.craftbukkit.v1_20_R2.block.
         super();
     }
 
-    public CraftSeaPickle(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftSeaPickle(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSeaPickle
 
-    private static final net.minecraft.world.level.block.state.properties.IntegerProperty PICKLES = getInteger(net.minecraft.world.level.block.BlockSeaPickle.class, "pickles");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty PICKLES = getInteger(net.minecraft.world.level.block.SeaPickleBlock.class, "pickles");
 
     @Override
     public int getPickles() {
@@ -39,7 +39,7 @@ public final class CraftSeaPickle extends org.bukkit.craftbukkit.v1_20_R2.block.
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockSeaPickle.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.SeaPickleBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

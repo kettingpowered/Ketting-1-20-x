@@ -9,13 +9,13 @@ public final class CraftBarrier extends org.bukkit.craftbukkit.v1_20_R2.block.da
         super();
     }
 
-    public CraftBarrier(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftBarrier(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.BlockBarrier.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.BarrierBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

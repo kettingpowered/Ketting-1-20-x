@@ -9,7 +9,7 @@ public final class CraftSculkSensor extends org.bukkit.craftbukkit.v1_20_R2.bloc
         super();
     }
 
-    public CraftSculkSensor(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftSculkSensor(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 

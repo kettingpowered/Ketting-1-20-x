@@ -9,7 +9,7 @@ public final class CraftDecoratedPot extends org.bukkit.craftbukkit.v1_20_R2.blo
         super();
     }
 
-    public CraftDecoratedPot(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftDecoratedPot(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
