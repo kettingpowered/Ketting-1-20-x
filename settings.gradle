@@ -110,32 +110,99 @@ dependencyResolutionManagement {
 
             // These are libraries shipped by the MC launcher, try and keep them in sync with the manifest
             // but honestly if we don't it just means we ship them as normal libraries by adding them to the installer config in the forge project
+            //as listed in https://piston-meta.mojang.com/v1/packages/12888726d2cc035d30965bcf8c825c7ac5f28ea0/1.20.2.json ,except os specific libs
+            //(the link is from https://launchermeta.mojang.com/mc/game/version_manifest.json)
+            library('oshi','com.github.oshi:oshi-core:6.4.5')
             library('gson', 'com.google.code.gson:gson:2.10.1')
-            library('guava', 'com.google.guava:guava:32.1.2-jre')
             library('failureaccess', 'com.google.guava:failureaccess:1.0.1')
+            library('guava', 'com.google.guava:guava:32.1.2-jre')
+            library('ibm-icu4j', 'com.ibm.icu:icu4j:73.2')
+            library('mojang-authlib', 'com.mojang:authlib:5.0.47')
+            library('mojang-blacklist', 'com.mojang:blocklist:1.0.10')
+//            library('mojang-brigadier', 'com.mojang:brigadier:1.1.8')//Ketting - I think we have our own bridadir
+            library('mojang-dfu', 'com.mojang:datafixerupper:6.0.8')
+            library('mojang-logging', 'com.mojang:logging:1.1.1')
+            library('mojang-patchy', 'com.mojang:patchy:2.2.10')
+            library('mojang-text2speech', 'com.mojang:text2speech:1.17.9')
+            library('commons-codec','commons-codec:commons-codec:1.16.0')
+            library('commons-io', 'commons-io:commons-io:2.13.0')
+            library('commons-logging', 'commons-logging:commons-logging:1.2')
+            library('netty-buffer', 'io.netty:netty-buffer:4.1.97.Final')
+            library('netty-codec', 'io.netty:netty-codec:4.1.97.Final')
+            library('netty-common', 'io.netty:netty-common:4.1.97.Final')
+            library('netty-handler', 'io.netty:netty-handler:4.1.97.Final')
+            library('netty-resolver', 'io.netty:netty-resolver:4.1.97.Final')
+            library('netty-transport-classes-epoll', 'io.netty:netty-transport-classes-epoll:4.1.97.Final')
+            library('netty-transport', 'io.netty:netty-transport:4.1.97.Final')
+            library('fastutil', 'it.unimi.dsi:fastutil:8.5.12')
+            library('jna-platform', 'net.java.dev.jna:jna-platform:5.13.0')
+            library('jna', 'net.java.dev.jna:jna:5.13.0')
+            library('jopt-simple', 'net.sf.jopt-simple:jopt-simple:5.0.4')
+            library('apache-commons-compress', 'org.apache.commons:commons-compress:1.22')
+            library('apache-commons', 'org.apache.commons:commons-lang3:3.13.0')
+            library('apache-httpclient', 'org.apache.httpcomponents:httpclient:4.5.13')
+            library('apache-httpcore', 'org.apache.httpcomponents:httpcore:4.4.16')
             library('log4j-api',  'org.apache.logging.log4j', 'log4j-api' ).versionRef('log4j')
             library('log4j-core', 'org.apache.logging.log4j', 'log4j-core').versionRef('log4j')
-            library('apache-commons', 'org.apache.commons:commons-lang3:3.12.0')
-            library('mojang-logging', 'com.mojang:logging:1.1.1')
-            library('mojang-dfu', 'com.mojang:datafixerupper:6.0.8')
-            library('netty-common', 'io.netty:netty-common:4.1.97.Final')
-            library('jopt-simple', 'net.sf.jopt-simple:jopt-simple:5.0.4')
-            library('commons-io', 'commons-io:commons-io:2.13.0')
+            library('log4j-slf4j2-impl', 'org.apache.logging.log4j', 'log4j-slf4j2-impl').versionRef('log4j')
+            library('joml', 'org.joml:joml:1.10.5')
+
+            version('lwjgl', '3.3.2')
+
+
+            library('lwjgl-glfw', 'org.lwjgl','lwjgl-glfw').versionRef('lwjgl')
+            library('lwjgl-jemalloc', 'org.lwjgl','lwjgl-jemalloc').versionRef('lwjgl')
+            library('lwjgl-openal', 'org.lwjgl','lwjgl-openal').versionRef('lwjgl')
+            library('lwjgl-opengl', 'org.lwjgl','lwjgl-opengl').versionRef('lwjgl')
+            library('lwjgl-stb', 'org.lwjgl','lwjgl-stb').versionRef('lwjgl')
+            library('lwjgl-tinyfd', 'org.lwjgl','lwjgl-tinyfd').versionRef('lwjgl')
+            library('lwjgl', 'org.lwjgl','lwjgl').versionRef('lwjgl')
+            library('slf4j-api', 'org.slf4j2:slf4j-api:2.0.7')
+
 
             // Ketting add all missing libraries
             bundle('launcher', [
+                    'oshi',
                     'gson',
-                    'guava',
                     'failureaccess',
+                    'guava',
+                    'ibm-icu4j',
+                    'mojang-authlib',
+                    'mojang-blacklist',
+                    'mojang-dfu',
+                    'mojang-logging',
+                    'mojang-patchy',
+                    'mojang-text2speech',
+                    'commons-codec',
+                    'commons-io',
+                    'commons-logging',
+                    'netty-buffer',
+                    'netty-codec',
+                    'netty-common',
+                    'netty-handler',
+                    'netty-resolver',
+                    'netty-transport-classes-epoll',
+                    'netty-transport',
+                    'fastutil',
+                    'jna-platform',
+                    'jna',
+                    'jopt-simple',
+                    'apache-commons-compress',
+                    'apache-commons',
+                    'apache-httpclient',
+                    'apache-httpcore',
                     'log4j-api',
                     'log4j-core',
-                    'apache-commons',
-                    'mojang-logging',
-                    'jopt-simple',
-                    'commons-io',
-                    'slf4j-api',
-                    'mojang-dfu',
-                    'netty-common'
+                    'log4j-slf4j2-impl',
+                    'joml',
+                    'lwjgl-glfw',
+                    'lwjgl-jemalloc',
+                    'lwjgl-openal',
+                    'lwjgl-opengl',
+                    'lwjgl-stb',
+                    'lwjgl-tinyfd',
+                    'lwjgl',
+                    'slf4j-api'
             ])
             
             version('lwjgl', '3.3.1')
