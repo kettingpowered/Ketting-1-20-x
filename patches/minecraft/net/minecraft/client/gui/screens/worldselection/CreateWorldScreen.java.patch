@@ -17,15 +17,6 @@
                 }
  
              }, Component.translatable("dataPack.validation.failed"), CommonComponents.EMPTY, Component.translatable("dataPack.validation.back"), Component.translatable("dataPack.validation.reset")));
-@@ -414,7 +_,7 @@
-       String s = this.uiState.getTargetFolder();
- 
-       try {
--         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.minecraft.getLevelSource().createAccess(s);
-+         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.minecraft.getLevelSource().createAccess(s, null); //Ketting - clientside stuff won't get called anyway
-          if (this.tempDataPackDir == null) {
-             return Optional.of(levelstoragesource$levelstorageaccess);
-          }
 @@ -478,6 +_,7 @@
        if (path != null) {
           if (this.tempDataPackRepository == null) {
