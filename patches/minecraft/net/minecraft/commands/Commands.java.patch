@@ -46,13 +46,14 @@
  import net.minecraft.server.commands.AdvancementCommands;
  import net.minecraft.server.commands.AttributeCommand;
  import net.minecraft.server.commands.BanIpCommands;
-@@ -120,6 +_,10 @@
+@@ -120,6 +_,11 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.profiling.jfr.JvmProfiler;
 +import net.minecraftforge.server.command.CommandHelper;
 +import org.bukkit.event.player.PlayerCommandSendEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
++import org.kettingpowered.ketting.common.utils.DispatcherRedirector;
 +import org.kettingpowered.ketting.common.utils.Wrapper;
  import org.slf4j.Logger;
  
@@ -252,9 +253,12 @@
           if (commandnode.canUse(p_82115_)) {
              ArgumentBuilder<SharedSuggestionProvider, ?> argumentbuilder = (ArgumentBuilder)commandnode.createBuilder();
              argumentbuilder.requires((p_82126_) -> {
-@@ -365,6 +_,10 @@
+@@ -364,7 +_,13 @@
+    }
  
     public CommandDispatcher<CommandSourceStack> getDispatcher() {
++      if (DispatcherRedirector.needsRedirect())
++         return getForgeDispatcher().unwrap();
        return this.dispatcher;
 +   }
 +
