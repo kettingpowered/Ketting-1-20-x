@@ -1,0 +1,11 @@
+--- a/com/mojang/realmsclient/client/FileDownload.java
++++ b/com/mojang/realmsclient/client/FileDownload.java
+@@ -292,7 +_,7 @@
+             p_86993_.delete();
+          }
+ 
+-         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = p_86994_.validateAndCreateAccess(s)) {
++         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = p_86994_.validateAndCreateAccess(s, null)) { //Ketting - bogus fix, because client stuff will never get called anyways
+             levelstoragesource$levelstorageaccess.renameLevel(s.trim());
+             Path path = levelstoragesource$levelstorageaccess.getLevelPath(LevelResource.LEVEL_DATA_FILE);
+             deletePlayerTag(path.toFile());

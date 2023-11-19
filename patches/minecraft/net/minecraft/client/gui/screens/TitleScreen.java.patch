@@ -33,6 +33,24 @@
     }
  
     @Nullable
+@@ -196,7 +_,7 @@
+       this.resetDemoButton = this.addRenderableWidget(Button.builder(Component.translatable("menu.resetdemo"), (p_232770_) -> {
+          LevelStorageSource levelstoragesource = this.minecraft.getLevelSource();
+ 
+-         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.createAccess("Demo_World")) {
++         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.createAccess("Demo_World", null)) { //Ketting - bogus fix, because client stuff will never get called anyways
+             LevelSummary levelsummary = levelstoragesource$levelstorageaccess.getSummary();
+             if (levelsummary != null) {
+                this.minecraft.setScreen(new ConfirmScreen(this::confirmDemo, Component.translatable("selectWorld.deleteQuestion"), Component.translatable("selectWorld.deleteWarning", levelsummary.getLevelName()), Component.translatable("selectWorld.deleteButton"), CommonComponents.GUI_CANCEL));
+@@ -213,7 +_,7 @@
+    private boolean checkDemoWorldPresence() {
+       try {
+          boolean flag;
+-         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.minecraft.getLevelSource().createAccess("Demo_World")) {
++         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.minecraft.getLevelSource().createAccess("Demo_World", null)) { //Ketting - bogus fix, because client stuff will never get called anyways
+             flag = levelstoragesource$levelstorageaccess.getSummary() != null;
+          }
+ 
 @@ -248,6 +_,7 @@
              this.warningLabel.render(p_282860_, i);
           }
@@ -65,3 +83,12 @@
  
        }
     }
+@@ -308,7 +_,7 @@
+ 
+    private void confirmDemo(boolean p_96778_) {
+       if (p_96778_) {
+-         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.minecraft.getLevelSource().createAccess("Demo_World")) {
++         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.minecraft.getLevelSource().createAccess("Demo_World", null)) { //Ketting - bogus fix, because client stuff will never get called anyways
+             levelstoragesource$levelstorageaccess.deleteLevel();
+          } catch (IOException ioexception) {
+             SystemToast.onWorldDeleteFailure(this.minecraft, "Demo_World");

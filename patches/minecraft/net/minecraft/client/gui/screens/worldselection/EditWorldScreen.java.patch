@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screens/worldselection/EditWorldScreen.java
++++ b/net/minecraft/client/gui/screens/worldselection/EditWorldScreen.java
+@@ -122,7 +_,7 @@
+    public static void makeBackupAndShowToast(LevelStorageSource p_101261_, String p_101262_) {
+       boolean flag = false;
+ 
+-      try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = p_101261_.validateAndCreateAccess(p_101262_)) {
++      try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = p_101261_.validateAndCreateAccess(p_101262_, null)) { //Ketting - bogus fix, because client stuff will never get called anyways
+          flag = true;
+          makeBackupAndShowToast(levelstoragesource$levelstorageaccess);
+       } catch (IOException ioexception) {
