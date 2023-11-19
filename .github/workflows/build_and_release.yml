@@ -144,6 +144,9 @@ jobs:
           echo "Done"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Rename Branch, if Pull_Request
+        if: ${{ github.event_name == 'pull_request' }}
+        run: git checkout -B 'branch'
       - name: Build Ketting Jar
         run: ./gradlew kettingJar
       - name: Upload build artifact
