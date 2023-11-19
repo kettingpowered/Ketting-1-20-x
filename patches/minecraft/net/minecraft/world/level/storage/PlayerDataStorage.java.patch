@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/PlayerDataStorage.java
 +++ b/net/minecraft/world/level/storage/PlayerDataStorage.java
-@@ -3,6 +_,8 @@
+@@ -3,13 +_,17 @@
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
  import java.io.File;
@@ -9,8 +9,9 @@
  import javax.annotation.Nullable;
  import net.minecraft.Util;
  import net.minecraft.nbt.CompoundTag;
-@@ -10,6 +_,7 @@
+ import net.minecraft.nbt.NbtIo;
  import net.minecraft.nbt.NbtUtils;
++import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.datafix.DataFixTypes;
  import net.minecraft.world.entity.player.Player;
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
@@ -65,7 +66,7 @@
  
        if (compoundtag != null) {
 +         // CraftBukkit start
-+         if (p_78436_ instanceof EntityPlayer) {
++         if (p_78436_ instanceof ServerPlayer) {
 +            CraftPlayer player = (CraftPlayer) p_78436_.getBukkitEntity();
 +            // Only update first played if it is older than the one we have
 +            long modified = new File(this.playerDir, p_78436_.getUUID().toString() + ".dat").lastModified();
