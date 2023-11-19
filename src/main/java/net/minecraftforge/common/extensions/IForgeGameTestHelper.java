@@ -51,7 +51,7 @@ public interface IForgeGameTestHelper {
         var channel = new EmbeddedChannel(connection);
         channel.attr(Connection.ATTRIBUTE_SERVERBOUND_PROTOCOL).set(ConnectionProtocol.PLAY.codec(PacketFlow.SERVERBOUND));
         // This sets the connection/listener in the player
-        new ServerGamePacketListenerImpl(level.getServer(), connection, player, cookie, player);
+        new ServerGamePacketListenerImpl(level.getServer(), connection, player, cookie);
         return player;
     }
 }
