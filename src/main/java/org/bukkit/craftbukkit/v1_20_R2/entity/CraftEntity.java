@@ -33,6 +33,7 @@ import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.warden.Warden;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.vehicle.*;
@@ -368,8 +369,8 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     @Override
     public boolean isOnGround() {
-        if (entity instanceof EntityArrow) {
-            return ((EntityArrow) entity).inGround;
+        if (entity instanceof AbstractArrow) {
+            return ((AbstractArrow) entity).inGround;
         }
         return entity.onGround();
     }

@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.IRegistry;
 import net.minecraft.core.registries.Registries;
 import org.bukkit.Registry;
 import org.bukkit.craftbukkit.v1_20_R2.CraftRegistry;
