@@ -16,42 +16,6 @@
           if (this.minecraft.options.touchscreen().get() || p_283396_) {
              p_281612_.fill(p_282820_, p_283181_, p_282820_ + 32, p_283181_ + 32, -1601138544);
              int j = p_283204_ - p_282820_;
-@@ -443,7 +_,7 @@
-                      if (p_296223_) {
-                         String s2 = this.summary.getLevelId();
- 
--                        try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.minecraft.getLevelSource().validateAndCreateAccess(s2)) {
-+                        try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.minecraft.getLevelSource().validateAndCreateAccess(s2, null)) { //Ketting - bogus fix, because client stuff will never get called anyways
-                            EditWorldScreen.makeBackupAndShowToast(levelstoragesource$levelstorageaccess);
-                         } catch (IOException ioexception) {
-                            SystemToast.onWorldAccessFailure(this.minecraft, s2);
-@@ -495,7 +_,7 @@
-          LevelStorageSource levelstoragesource = this.minecraft.getLevelSource();
-          String s = this.summary.getLevelId();
- 
--         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.createAccess(s)) {
-+         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.createAccess(s,null)) { //Ketting - bogus fix, because client stuff will never get called anyways
-             levelstoragesource$levelstorageaccess.deleteLevel();
-          } catch (IOException ioexception) {
-             SystemToast.onWorldDeleteFailure(this.minecraft, s);
-@@ -513,7 +_,7 @@
-             String s = this.summary.getLevelId();
- 
-             try {
--               LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.minecraft.getLevelSource().validateAndCreateAccess(s);
-+               LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.minecraft.getLevelSource().validateAndCreateAccess(s, null); //Ketting - bogus fix, because client stuff will never get called anyways
-                this.minecraft.setScreen(new EditWorldScreen((p_233244_) -> {
-                   try {
-                      levelstoragesource$levelstorageaccess.close();
-@@ -545,7 +_,7 @@
-          } else {
-             this.queueLoadScreen();
- 
--            try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.minecraft.getLevelSource().validateAndCreateAccess(this.summary.getLevelId())) {
-+            try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.minecraft.getLevelSource().validateAndCreateAccess(this.summary.getLevelId(), null)) { //Ketting - bogus fix, because client stuff will never get called anyways
-                Pair<LevelSettings, WorldCreationContext> pair = this.minecraft.createWorldOpenFlows().recreateWorldData(levelstoragesource$levelstorageaccess);
-                LevelSettings levelsettings = pair.getFirst();
-                WorldCreationContext worldcreationcontext = pair.getSecond();
 @@ -608,6 +_,19 @@
  
        public boolean isSelectable() {
