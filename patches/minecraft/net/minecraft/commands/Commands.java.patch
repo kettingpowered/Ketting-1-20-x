@@ -57,14 +57,17 @@
  import org.slf4j.Logger;
  
  public class Commands {
-@@ -130,6 +_,7 @@
+@@ -130,8 +_,10 @@
     public static final int LEVEL_ADMINS = 3;
     public static final int LEVEL_OWNERS = 4;
     private final CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
 +   private final CommandDispatcher<CommandSourceStack> forgeDispatcher = new CommandDispatcher<>(); //Ketting
  
     public Commands(Commands.CommandSelection p_230943_, CommandBuildContext p_230944_) {
++      this(); // CraftBukkit
        AdvancementCommands.register(this.dispatcher);
+       AttributeCommand.register(this.dispatcher, p_230944_);
+       ExecuteCommand.register(this.dispatcher, p_230944_);
 @@ -196,7 +_,7 @@
           JfrCommand.register(this.dispatcher);
        }
@@ -74,15 +77,19 @@
           TestCommand.register(this.dispatcher);
           SpawnArmorTrimsCommand.register(this.dispatcher);
           if (p_230943_.includeDedicated) {
-@@ -224,10 +_,17 @@
+@@ -224,10 +_,21 @@
        if (p_230943_.includeIntegrated) {
           PublishCommand.register(this.dispatcher);
        }
 +      net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.forgeDispatcher, p_230943_, p_230944_); //Ketting
++      // CraftBukkit start
++   }
  
++   public Commands() {
        this.dispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
           p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
        });
++      // CraftBukkit end
 +
 +      //Ketting start
 +      this.forgeDispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
