@@ -18,11 +18,13 @@ public class CraftBlockInventoryHolder implements BlockInventoryHolder {
         this.inventory = new CraftInventory(inv);
     }
 
+    @Override
     public Block getBlock() {
-        return this.block;
+        return block;
     }
 
+    @Override
     public Inventory getInventory() {
-        return this.inventory;
+        return inventory;
     }
 }

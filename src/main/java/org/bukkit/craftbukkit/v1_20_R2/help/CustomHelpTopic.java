@@ -4,8 +4,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.help.HelpTopic;
 
+/**
+ * This is a help topic implementation for general topics registered in the help.yml file.
+ */
 public class CustomHelpTopic extends HelpTopic {
-
     private final String permissionNode;
 
     public CustomHelpTopic(String name, String shortText, String fullText, String permissionNode) {
@@ -15,7 +17,16 @@ public class CustomHelpTopic extends HelpTopic {
         this.fullText = shortText + "\n" + fullText;
     }
 
+    @Override
     public boolean canSee(CommandSender sender) {
-        return sender instanceof ConsoleCommandSender ? true : (!this.permissionNode.equals("") ? sender.hasPermission(this.permissionNode) : true);
+        if (sender instanceof ConsoleCommandSender) {
+            return true;
+        }
+
+        if (!permissionNode.equals("")) {
+            return sender.hasPermission(permissionNode);
+        } else {
+            return true;
+        }
     }
 }

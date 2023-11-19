@@ -1,97 +1,107 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import java.util.Set;
-import net.minecraft.world.level.block.TripWireBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Attachable;
-import org.bukkit.block.data.MultipleFacing;
-import org.bukkit.block.data.Powerable;
-import org.bukkit.block.data.type.Tripwire;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftTripwire extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Tripwire, org.bukkit.block.data.Attachable, org.bukkit.block.data.MultipleFacing, org.bukkit.block.data.Powerable {
 
-public final class CraftTripwire extends CraftBlockData implements Tripwire, Attachable, MultipleFacing, Powerable {
+    public CraftTripwire() {
+        super();
+    }
 
-    private static final BooleanProperty DISARMED = getBoolean(TripWireBlock.class, "disarmed");
-    private static final BooleanProperty ATTACHED = getBoolean(TripWireBlock.class, "attached");
-    private static final BooleanProperty[] FACES = new BooleanProperty[]{getBoolean(TripWireBlock.class, "north", true), getBoolean(TripWireBlock.class, "east", true), getBoolean(TripWireBlock.class, "south", true), getBoolean(TripWireBlock.class, "west", true), getBoolean(TripWireBlock.class, "up", true), getBoolean(TripWireBlock.class, "down", true)};
-    private static final BooleanProperty POWERED = getBoolean(TripWireBlock.class, "powered");
-
-    public CraftTripwire() {}
-
-    public CraftTripwire(BlockState state) {
+    public CraftTripwire(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftTripwire
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty DISARMED = getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "disarmed");
+
+    @Override
     public boolean isDisarmed() {
-        return (Boolean) this.get(CraftTripwire.DISARMED);
+        return get(DISARMED);
     }
 
+    @Override
     public void setDisarmed(boolean disarmed) {
-        this.set((Property) CraftTripwire.DISARMED, (Comparable) disarmed);
+        set(DISARMED, disarmed);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAttachable
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty ATTACHED = getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "attached");
+
+    @Override
     public boolean isAttached() {
-        return (Boolean) this.get(CraftTripwire.ATTACHED);
+        return get(ATTACHED);
     }
 
+    @Override
     public void setAttached(boolean attached) {
-        this.set((Property) CraftTripwire.ATTACHED, (Comparable) attached);
+        set(ATTACHED, attached);
     }
 
-    public boolean hasFace(BlockFace face) {
-        BooleanProperty state = CraftTripwire.FACES[face.ordinal()];
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftMultipleFacing
 
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] FACES = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
+        getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "north", true), getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "east", true), getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "south", true), getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "west", true), getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "up", true), getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "down", true)
+    };
+
+    @Override
+    public boolean hasFace(org.bukkit.block.BlockFace face) {
+        net.minecraft.world.level.block.state.properties.BooleanProperty state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
-        } else {
-            return (Boolean) this.get(state);
         }
+        return get(state);
     }
 
-    public void setFace(BlockFace face, boolean has) {
-        BooleanProperty state = CraftTripwire.FACES[face.ordinal()];
-
+    @Override
+    public void setFace(org.bukkit.block.BlockFace face, boolean has) {
+        net.minecraft.world.level.block.state.properties.BooleanProperty state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
-        } else {
-            this.set((Property) state, (Comparable) has);
         }
+        set(state, has);
     }
 
-    public Set getFaces() {
-        Builder faces = ImmutableSet.builder();
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        com.google.common.collect.ImmutableSet.Builder<org.bukkit.block.BlockFace> faces = com.google.common.collect.ImmutableSet.builder();
 
-        for (int i = 0; i < CraftTripwire.FACES.length; ++i) {
-            if (CraftTripwire.FACES[i] != null && (Boolean) this.get(CraftTripwire.FACES[i])) {
-                faces.add(BlockFace.values()[i]);
+        for (int i = 0; i < FACES.length; i++) {
+            if (FACES[i] != null && get(FACES[i])) {
+                faces.add(org.bukkit.block.BlockFace.values()[i]);
             }
         }
 
         return faces.build();
     }
 
-    public Set getAllowedFaces() {
-        Builder faces = ImmutableSet.builder();
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getAllowedFaces() {
+        com.google.common.collect.ImmutableSet.Builder<org.bukkit.block.BlockFace> faces = com.google.common.collect.ImmutableSet.builder();
 
-        for (int i = 0; i < CraftTripwire.FACES.length; ++i) {
-            if (CraftTripwire.FACES[i] != null) {
-                faces.add(BlockFace.values()[i]);
+        for (int i = 0; i < FACES.length; i++) {
+            if (FACES[i] != null) {
+                faces.add(org.bukkit.block.BlockFace.values()[i]);
             }
         }
 
         return faces.build();
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "powered");
+
+    @Override
     public boolean isPowered() {
-        return (Boolean) this.get(CraftTripwire.POWERED);
+        return get(POWERED);
     }
 
+    @Override
     public void setPowered(boolean powered) {
-        this.set((Property) CraftTripwire.POWERED, (Comparable) powered);
+        set(POWERED, powered);
     }
 }

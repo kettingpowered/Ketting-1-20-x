@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
-@@ -16,6 +_,12 @@
+@@ -16,19 +_,68 @@
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
@@ -13,10 +13,12 @@
  
  public abstract class AbstractMinecartContainer extends AbstractMinecart implements ContainerEntity {
     private NonNullList<ItemStack> itemStacks = NonNullList.withSize(36, ItemStack.EMPTY);
-@@ -23,12 +_,55 @@
-    private ResourceLocation lootTable;
-    private long lootTableSeed;
- 
+    @Nullable
+-   private ResourceLocation lootTable;
+-   private long lootTableSeed;
++   public ResourceLocation lootTable;
++   public long lootTableSeed;
++
 +   // CraftBukkit start
 +   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +   private int maxStack = MAX_STACK;
@@ -57,7 +59,7 @@
 +      return getBukkitEntity().getLocation();
 +   }
 +   // CraftBukkit end
-+
+ 
     protected AbstractMinecartContainer(EntityType<?> p_38213_, Level p_38214_) {
        super(p_38213_, p_38214_);
 +      this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY); // CraftBukkit - SPIGOT-3513

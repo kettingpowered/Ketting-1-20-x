@@ -1,13 +1,17 @@
 --- a/net/minecraft/server/level/TicketType.java
 +++ b/net/minecraft/server/level/TicketType.java
-@@ -7,6 +_,7 @@
+@@ -7,9 +_,10 @@
  import net.minecraft.world.level.ChunkPos;
  
  public class TicketType<T> {
 +
     private final String name;
     private final Comparator<T> comparator;
-    private final long timeout;
+-   private final long timeout;
++   public long timeout;
+    public static final TicketType<Unit> START = create("start", (p_9471_, p_9472_) -> {
+       return 0;
+    });
 @@ -22,6 +_,8 @@
     public static final TicketType<BlockPos> PORTAL = create("portal", Vec3i::compareTo, 300);
     public static final TicketType<Integer> POST_TELEPORT = create("post_teleport", Integer::compareTo, 5);

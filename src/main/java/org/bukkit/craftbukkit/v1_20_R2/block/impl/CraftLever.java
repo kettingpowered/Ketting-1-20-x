@@ -1,66 +1,76 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.LeverBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.FaceAttachable;
-import org.bukkit.block.data.FaceAttachable.AttachedFace;
-import org.bukkit.block.data.Powerable;
-import org.bukkit.block.data.type.Switch;
-import org.bukkit.block.data.type.Switch.Face;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftLever extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Switch, org.bukkit.block.data.Directional, org.bukkit.block.data.FaceAttachable, org.bukkit.block.data.Powerable {
 
-public final class CraftLever extends CraftBlockData implements Switch, Directional, FaceAttachable, Powerable {
+    public CraftLever() {
+        super();
+    }
 
-    private static final EnumProperty FACE = getEnum(LeverBlock.class, "face");
-    private static final EnumProperty FACING = getEnum(LeverBlock.class, "facing");
-    private static final EnumProperty ATTACH_FACE = getEnum(LeverBlock.class, "face");
-    private static final BooleanProperty POWERED = getBoolean(LeverBlock.class, "powered");
-
-    public CraftLever() {}
-
-    public CraftLever(BlockState state) {
+    public CraftLever(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
-    public Face getFace() {
-        return (Face) this.get(CraftLever.FACE, Face.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSwitch
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACE = getEnum(net.minecraft.world.level.block.LeverBlock.class, "face");
+
+    @Override
+    public org.bukkit.block.data.type.Switch.Face getFace() {
+        return get(FACE, org.bukkit.block.data.type.Switch.Face.class);
     }
 
-    public void setFace(Face face) {
-        this.set(CraftLever.FACE, (Enum) face);
+    @Override
+    public void setFace(org.bukkit.block.data.type.Switch.Face face) {
+        set(FACE, face);
     }
 
-    public BlockFace getFacing() {
-        return (BlockFace) this.get(CraftLever.FACING, BlockFace.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.LeverBlock.class, "facing");
+
+    @Override
+    public org.bukkit.block.BlockFace getFacing() {
+        return get(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public void setFacing(BlockFace facing) {
-        this.set(CraftLever.FACING, (Enum) facing);
+    @Override
+    public void setFacing(org.bukkit.block.BlockFace facing) {
+        set(FACING, facing);
     }
 
-    public Set getFaces() {
-        return this.getValues(CraftLever.FACING, BlockFace.class);
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public AttachedFace getAttachedFace() {
-        return (AttachedFace) this.get(CraftLever.ATTACH_FACE, AttachedFace.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftFaceAttachable
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> ATTACH_FACE = getEnum(net.minecraft.world.level.block.LeverBlock.class, "face");
+
+    @Override
+    public org.bukkit.block.data.FaceAttachable.AttachedFace getAttachedFace() {
+        return get(ATTACH_FACE, org.bukkit.block.data.FaceAttachable.AttachedFace.class);
     }
 
-    public void setAttachedFace(AttachedFace face) {
-        this.set(CraftLever.ATTACH_FACE, (Enum) face);
+    @Override
+    public void setAttachedFace(org.bukkit.block.data.FaceAttachable.AttachedFace face) {
+        set(ATTACH_FACE, face);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.LeverBlock.class, "powered");
+
+    @Override
     public boolean isPowered() {
-        return (Boolean) this.get(CraftLever.POWERED);
+        return get(POWERED);
     }
 
+    @Override
     public void setPowered(boolean powered) {
-        this.set((Property) CraftLever.POWERED, (Comparable) powered);
+        set(POWERED, powered);
     }
 }

@@ -1,31 +1,34 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import net.minecraft.world.level.block.CakeBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.type.Cake;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftCake extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Cake {
 
-public final class CraftCake extends CraftBlockData implements Cake {
+    public CraftCake() {
+        super();
+    }
 
-    private static final IntegerProperty BITES = getInteger(CakeBlock.class, "bites");
-
-    public CraftCake() {}
-
-    public CraftCake(BlockState state) {
+    public CraftCake(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftCake
+
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty BITES = getInteger(net.minecraft.world.level.block.CakeBlock.class, "bites");
+
+    @Override
     public int getBites() {
-        return (Integer) this.get(CraftCake.BITES);
+        return get(BITES);
     }
 
+    @Override
     public void setBites(int bites) {
-        this.set((Property) CraftCake.BITES, (Comparable) bites);
+        set(BITES, bites);
     }
 
+    @Override
     public int getMaximumBites() {
-        return getMax(CraftCake.BITES);
+        return getMax(BITES);
     }
 }

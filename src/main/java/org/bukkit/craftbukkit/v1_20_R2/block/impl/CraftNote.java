@@ -1,49 +1,54 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.Instrument;
-import org.bukkit.Note;
-import org.bukkit.block.data.Powerable;
-import org.bukkit.block.data.type.NoteBlock;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftNote extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.NoteBlock, org.bukkit.block.data.Powerable {
 
-public final class CraftNote extends CraftBlockData implements NoteBlock, Powerable {
+    public CraftNote() {
+        super();
+    }
 
-    private static final EnumProperty INSTRUMENT = getEnum(net.minecraft.world.level.block.NoteBlock.class, "instrument");
-    private static final IntegerProperty NOTE = getInteger(net.minecraft.world.level.block.NoteBlock.class, "note");
-    private static final BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.NoteBlock.class, "powered");
-
-    public CraftNote() {}
-
-    public CraftNote(BlockState state) {
+    public CraftNote(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
-    public Instrument getInstrument() {
-        return (Instrument) this.get(CraftNote.INSTRUMENT, Instrument.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftNoteBlock
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> INSTRUMENT = getEnum(net.minecraft.world.level.block.NoteBlock.class, "instrument");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty NOTE = getInteger(net.minecraft.world.level.block.NoteBlock.class, "note");
+
+    @Override
+    public org.bukkit.Instrument getInstrument() {
+        return get(INSTRUMENT, org.bukkit.Instrument.class);
     }
 
-    public void setInstrument(Instrument instrument) {
-        this.set(CraftNote.INSTRUMENT, (Enum) instrument);
+    @Override
+    public void setInstrument(org.bukkit.Instrument instrument) {
+        set(INSTRUMENT, instrument);
     }
 
-    public Note getNote() {
-        return new Note((Integer) this.get(CraftNote.NOTE));
+    @Override
+    public org.bukkit.Note getNote() {
+       return new org.bukkit.Note(get(NOTE));
     }
 
-    public void setNote(Note note) {
-        this.set((Property) CraftNote.NOTE, (Comparable) Integer.valueOf(note.getId()));
+    @Override
+    public void setNote(org.bukkit.Note note) {
+        set(NOTE, (int) note.getId());
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.NoteBlock.class, "powered");
+
+    @Override
     public boolean isPowered() {
-        return (Boolean) this.get(CraftNote.POWERED);
+        return get(POWERED);
     }
 
+    @Override
     public void setPowered(boolean powered) {
-        this.set((Property) CraftNote.POWERED, (Comparable) powered);
+        set(POWERED, powered);
     }
 }

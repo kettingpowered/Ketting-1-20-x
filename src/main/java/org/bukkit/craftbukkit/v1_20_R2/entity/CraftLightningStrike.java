@@ -4,60 +4,66 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LightningBolt;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.LightningStrike;
-import org.bukkit.entity.LightningStrike.Spigot;
 import org.bukkit.entity.Player;
 
 public class CraftLightningStrike extends CraftEntity implements LightningStrike {
-
-    private final Spigot spigot = new Spigot() {
-        public boolean isSilent() {
-            return CraftLightningStrike.this.getHandle().isSilent;
-        }
-    };
-
-    public CraftLightningStrike(CraftServer server, LightningBolt entity) {
+    public CraftLightningStrike(final CraftServer server, final LightningBolt entity) {
         super(server, entity);
     }
 
+    @Override
     public boolean isEffect() {
-        return this.getHandle().visualOnly;
+        return getHandle().visualOnly;
     }
 
     public int getFlashes() {
-        return this.getHandle().flashes;
+        return getHandle().flashes;
     }
 
     public void setFlashes(int flashes) {
-        this.getHandle().flashes = flashes;
+        getHandle().flashes = flashes;
     }
 
     public int getLifeTicks() {
-        return this.getHandle().life;
+        return getHandle().life;
     }
 
     public void setLifeTicks(int ticks) {
-        this.getHandle().life = ticks;
+        getHandle().life = ticks;
     }
 
     public Player getCausingPlayer() {
-        ServerPlayer player = this.getHandle().getCause();
-
-        return player != null ? player.getBukkitEntity() : null;
+        ServerPlayer player = getHandle().getCause();
+        return (player != null) ? player.getBukkitEntity() : null;
     }
 
     public void setCausingPlayer(Player player) {
-        this.getHandle().setCause(player != null ? ((CraftPlayer) player).getHandle() : null);
+        getHandle().setCause((player != null) ? ((CraftPlayer) player).getHandle() : null);
     }
 
+    @Override
     public LightningBolt getHandle() {
-        return (LightningBolt) this.entity;
+        return (LightningBolt) entity;
     }
 
+    @Override
     public String toString() {
         return "CraftLightningStrike";
     }
 
-    public Spigot spigot() {
-        return this.spigot;
+    // Spigot start
+    private final LightningStrike.Spigot spigot = new LightningStrike.Spigot() {
+
+        @Override
+        public boolean isSilent()
+        {
+            return getHandle().isSilent;
+        }
+    };
+
+    @Override
+    public LightningStrike.Spigot spigot() {
+        return spigot;
     }
+    // Spigot end
 }

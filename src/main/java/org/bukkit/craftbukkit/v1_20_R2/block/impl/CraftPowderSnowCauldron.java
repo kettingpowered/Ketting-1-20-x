@@ -1,31 +1,34 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import net.minecraft.world.level.block.PowderSnowCauldronBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Levelled;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftPowderSnowCauldron extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.Levelled {
 
-public final class CraftPowderSnowCauldron extends CraftBlockData implements Levelled {
+    public CraftPowderSnowCauldron() {
+        super();
+    }
 
-    private static final IntegerProperty LEVEL = getInteger(PowderSnowCauldronBlock.class, "level");
-
-    public CraftPowderSnowCauldron() {}
-
-    public CraftPowderSnowCauldron(BlockState state) {
+    public CraftPowderSnowCauldron(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftLevelled
+
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty LEVEL = getInteger(net.minecraft.world.level.block.PowderSnowCauldronBlock.class, "level");
+
+    @Override
     public int getLevel() {
-        return (Integer) this.get(CraftPowderSnowCauldron.LEVEL);
+        return get(LEVEL);
     }
 
+    @Override
     public void setLevel(int level) {
-        this.set((Property) CraftPowderSnowCauldron.LEVEL, (Comparable) level);
+        set(LEVEL, level);
     }
 
+    @Override
     public int getMaximumLevel() {
-        return getMax(CraftPowderSnowCauldron.LEVEL);
+        return getMax(LEVEL);
     }
 }

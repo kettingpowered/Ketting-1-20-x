@@ -5,7 +5,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.Interaction;
-import org.bukkit.entity.Interaction.PreviousInteraction;
 
 public class CraftInteraction extends CraftEntity implements Interaction {
 
@@ -13,48 +12,58 @@ public class CraftInteraction extends CraftEntity implements Interaction {
         super(server, entity);
     }
 
+    @Override
     public net.minecraft.world.entity.Interaction getHandle() {
         return (net.minecraft.world.entity.Interaction) super.getHandle();
     }
 
+    @Override
     public String toString() {
         return "CraftInteraction";
     }
 
+    @Override
     public float getInteractionWidth() {
-        return this.getHandle().getWidth();
+        return getHandle().getWidth();
     }
 
+    @Override
     public void setInteractionWidth(float width) {
-        this.getHandle().setWidth(width);
+        getHandle().setWidth(width);
     }
 
+    @Override
     public float getInteractionHeight() {
-        return this.getHandle().getHeight();
+        return getHandle().getHeight();
     }
 
+    @Override
     public void setInteractionHeight(float height) {
-        this.getHandle().setHeight(height);
+        getHandle().setHeight(height);
     }
 
+    @Override
     public boolean isResponsive() {
-        return this.getHandle().getResponse();
+        return getHandle().getResponse();
     }
 
+    @Override
     public void setResponsive(boolean response) {
-        this.getHandle().setResponse(response);
+        getHandle().setResponse(response);
     }
 
+    @Override
     public PreviousInteraction getLastAttack() {
-        net.minecraft.world.entity.Interaction.PlayerAction last = this.getHandle().attack;
+        net.minecraft.world.entity.Interaction.PlayerAction last = getHandle().attack;
 
-        return last != null ? new CraftInteraction.CraftPreviousInteraction(last.player(), last.timestamp()) : null;
+        return (last != null) ? new CraftPreviousInteraction(last.player(), last.timestamp()) : null;
     }
 
+    @Override
     public PreviousInteraction getLastInteraction() {
-        net.minecraft.world.entity.Interaction.PlayerAction last = this.getHandle().interaction;
+        net.minecraft.world.entity.Interaction.PlayerAction last = getHandle().interaction;
 
-        return last != null ? new CraftInteraction.CraftPreviousInteraction(last.player(), last.timestamp()) : null;
+        return (last != null) ? new CraftPreviousInteraction(last.player(), last.timestamp()) : null;
     }
 
     private static class CraftPreviousInteraction implements PreviousInteraction {
@@ -67,12 +76,14 @@ public class CraftInteraction extends CraftEntity implements Interaction {
             this.timestamp = timestamp;
         }
 
+        @Override
         public OfflinePlayer getPlayer() {
-            return Bukkit.getOfflinePlayer(this.uuid);
+            return Bukkit.getOfflinePlayer(uuid);
         }
 
+        @Override
         public long getTimestamp() {
-            return this.timestamp;
+            return timestamp;
         }
     }
 }

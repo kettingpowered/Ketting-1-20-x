@@ -1,19 +1,20 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
-import net.minecraft.world.entity.monster.Slime;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.MagmaCube;
 
 public class CraftMagmaCube extends CraftSlime implements MagmaCube {
 
     public CraftMagmaCube(CraftServer server, net.minecraft.world.entity.monster.MagmaCube entity) {
-        super(server, (Slime) entity);
+        super(server, entity);
     }
 
+    @Override
     public net.minecraft.world.entity.monster.MagmaCube getHandle() {
-        return (net.minecraft.world.entity.monster.MagmaCube) this.entity;
+        return (net.minecraft.world.entity.monster.MagmaCube) entity;
     }
 
+    @Override
     public String toString() {
         return "CraftMagmaCube";
     }

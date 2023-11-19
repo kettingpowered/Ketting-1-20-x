@@ -1,31 +1,34 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import net.minecraft.world.level.block.RespawnAnchorBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.type.RespawnAnchor;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftRespawnAnchor extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.RespawnAnchor {
 
-public final class CraftRespawnAnchor extends CraftBlockData implements RespawnAnchor {
+    public CraftRespawnAnchor() {
+        super();
+    }
 
-    private static final IntegerProperty CHARGES = getInteger(RespawnAnchorBlock.class, "charges");
-
-    public CraftRespawnAnchor() {}
-
-    public CraftRespawnAnchor(BlockState state) {
+    public CraftRespawnAnchor(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftRespawnAnchor
+
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty CHARGES = getInteger(net.minecraft.world.level.block.RespawnAnchorBlock.class, "charges");
+
+    @Override
     public int getCharges() {
-        return (Integer) this.get(CraftRespawnAnchor.CHARGES);
+        return get(CHARGES);
     }
 
+    @Override
     public void setCharges(int charges) {
-        this.set((Property) CraftRespawnAnchor.CHARGES, (Comparable) charges);
+        set(CHARGES, charges);
     }
 
+    @Override
     public int getMaximumCharges() {
-        return getMax(CraftRespawnAnchor.CHARGES);
+        return getMax(CHARGES);
     }
 }

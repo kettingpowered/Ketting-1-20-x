@@ -1,25 +1,25 @@
 package org.bukkit.craftbukkit.v1_20_R2.block.data.type;
 
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.bukkit.block.data.type.Bed;
-import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftBed extends CraftBlockData implements Bed {
 
-    private static final EnumProperty PART = getEnum("part");
-    private static final BooleanProperty OCCUPIED = getBoolean("occupied");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> PART = getEnum("part");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty OCCUPIED = getBoolean("occupied");
 
-    public Part getPart() {
-        return (Part) this.get(CraftBed.PART, Part.class);
+    @Override
+    public org.bukkit.block.data.type.Bed.Part getPart() {
+        return get(PART, org.bukkit.block.data.type.Bed.Part.class);
     }
 
-    public void setPart(Part part) {
-        this.set(CraftBed.PART, (Enum) part);
+    @Override
+    public void setPart(org.bukkit.block.data.type.Bed.Part part) {
+        set(PART, part);
     }
 
+    @Override
     public boolean isOccupied() {
-        return (Boolean) this.get(CraftBed.OCCUPIED);
+        return get(OCCUPIED);
     }
 }

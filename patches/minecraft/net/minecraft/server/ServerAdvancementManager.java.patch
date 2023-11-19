@@ -1,7 +1,13 @@
 --- a/net/minecraft/server/ServerAdvancementManager.java
 +++ b/net/minecraft/server/ServerAdvancementManager.java
-@@ -29,18 +_,36 @@
-    private Map<ResourceLocation, AdvancementHolder> advancements = Map.of();
+@@ -25,22 +_,40 @@
+ 
+ public class ServerAdvancementManager extends SimpleJsonResourceReloadListener {
+    private static final Logger LOGGER = LogUtils.getLogger();
+-   private static final Gson GSON = (new GsonBuilder()).create();
+-   private Map<ResourceLocation, AdvancementHolder> advancements = Map.of();
++   public static final Gson GSON = (new GsonBuilder()).create();
++   public Map<ResourceLocation, AdvancementHolder> advancements = Map.of();
     private AdvancementTree tree = new AdvancementTree();
     private final LootDataManager lootData;
 +   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context

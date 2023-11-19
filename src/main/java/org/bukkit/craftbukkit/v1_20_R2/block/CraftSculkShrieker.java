@@ -7,31 +7,35 @@ import org.bukkit.block.SculkShrieker;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-public class CraftSculkShrieker extends CraftBlockEntityState implements SculkShrieker {
+public class CraftSculkShrieker extends CraftBlockEntityState<SculkShriekerBlockEntity> implements SculkShrieker {
 
     public CraftSculkShrieker(World world, SculkShriekerBlockEntity tileEntity) {
         super(world, tileEntity);
     }
 
     protected CraftSculkShrieker(CraftSculkShrieker state) {
-        super((CraftBlockEntityState) state);
+        super(state);
     }
 
+    @Override
     public int getWarningLevel() {
-        return ((SculkShriekerBlockEntity) this.getSnapshot()).warningLevel;
+        return getSnapshot().warningLevel;
     }
 
+    @Override
     public void setWarningLevel(int level) {
-        ((SculkShriekerBlockEntity) this.getSnapshot()).warningLevel = level;
+        getSnapshot().warningLevel = level;
     }
 
+    @Override
     public void tryShriek(Player player) {
-        this.requirePlaced();
-        ServerPlayer entityPlayer = player == null ? null : ((CraftPlayer) player).getHandle();
+        requirePlaced();
 
-        ((SculkShriekerBlockEntity) this.getTileEntity()).tryShriek(this.world.getHandle(), entityPlayer);
+        ServerPlayer entityPlayer = (player == null) ? null : ((CraftPlayer) player).getHandle();
+        getTileEntity().tryShriek(world.getHandle(), entityPlayer);
     }
 
+    @Override
     public CraftSculkShrieker copy() {
         return new CraftSculkShrieker(this);
     }

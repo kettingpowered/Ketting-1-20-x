@@ -25,31 +25,27 @@ public class CraftFeatureFlag implements FeatureFlag {
     }
 
     @NotNull
+    @Override
     public NamespacedKey getKey() {
         return this.namespacedKey;
     }
 
+    @Override
     public String toString() {
         return "CraftFeatureFlag{key=" + this.getKey() + ",keyUniverse=" + this.getHandle().universe.toString() + "}";
     }
 
-    public static Set getFromNMS(FeatureFlagSet featureFlagSet) {
-        HashSet set = new HashSet();
-
-        FeatureFlags.REGISTRY.names.forEach((minecraftkeyx, featureflagx) -> {
-            if (featureFlagSet.contains(featureflagx)) {
-                set.add(new CraftFeatureFlag(minecraftkeyx, featureflagx));
+    public static Set<CraftFeatureFlag> getFromNMS(FeatureFlagSet featureFlagSet) {
+        Set<CraftFeatureFlag> set = new HashSet<>();
+        FeatureFlags.REGISTRY.names.forEach((minecraftkey, featureflag) -> {
+            if (featureFlagSet.contains(featureflag)) {
+                set.add(new CraftFeatureFlag(minecraftkey, featureflag));
             }
-
         });
         return set;
     }
 
     public static CraftFeatureFlag getFromNMS(NamespacedKey namespacedKey) {
-        return (CraftFeatureFlag) FeatureFlags.REGISTRY.names.entrySet().stream().filter((entryx) -> {
-            return CraftNamespacedKey.fromMinecraft((ResourceLocation) entryx.getKey()).equals(namespacedKey);
-        }).findFirst().map((entryx) -> {
-            return new CraftFeatureFlag((ResourceLocation) entryx.getKey(), (net.minecraft.world.flag.FeatureFlag) entryx.getValue());
-        }).orElse((Object) null);
+        return FeatureFlags.REGISTRY.names.entrySet().stream().filter(entry -> CraftNamespacedKey.fromMinecraft(entry.getKey()).equals(namespacedKey)).findFirst().map(entry -> new CraftFeatureFlag(entry.getKey(), entry.getValue())).orElse(null);
     }
 }

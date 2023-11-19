@@ -2,113 +2,136 @@ package org.bukkit.craftbukkit.v1_20_R2.command;
 
 import java.util.Set;
 import java.util.UUID;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.CommandSender.Spigot;
 import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
 public abstract class ServerCommandSender implements CommandSender {
-
     private static PermissibleBase blockPermInst;
     private final PermissibleBase perm;
-    private final Spigot spigot = new Spigot() {
-        public void sendMessage(BaseComponent component) {
-            ServerCommandSender.this.sendMessage(TextComponent.toLegacyText(new BaseComponent[]{component}));
-        }
-
-        public void sendMessage(BaseComponent... components) {
-            ServerCommandSender.this.sendMessage(TextComponent.toLegacyText(components));
-        }
-
-        public void sendMessage(UUID sender, BaseComponent... components) {
-            this.sendMessage(components);
-        }
-
-        public void sendMessage(UUID sender, BaseComponent component) {
-            this.sendMessage(component);
-        }
-    };
 
     public ServerCommandSender() {
         if (this instanceof CraftBlockCommandSender) {
-            if (ServerCommandSender.blockPermInst == null) {
-                ServerCommandSender.blockPermInst = new PermissibleBase(this);
+            if (blockPermInst == null) {
+                blockPermInst = new PermissibleBase(this);
             }
-
-            this.perm = ServerCommandSender.blockPermInst;
+            this.perm = blockPermInst;
         } else {
             this.perm = new PermissibleBase(this);
         }
-
     }
 
+    @Override
     public boolean isPermissionSet(String name) {
-        return this.perm.isPermissionSet(name);
+        return perm.isPermissionSet(name);
     }
 
+    @Override
     public boolean isPermissionSet(Permission perm) {
         return this.perm.isPermissionSet(perm);
     }
 
+    @Override
     public boolean hasPermission(String name) {
-        return this.perm.hasPermission(name);
+        return perm.hasPermission(name);
     }
 
+    @Override
     public boolean hasPermission(Permission perm) {
         return this.perm.hasPermission(perm);
     }
 
+    @Override
     public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value) {
-        return this.perm.addAttachment(plugin, name, value);
+        return perm.addAttachment(plugin, name, value);
     }
 
+    @Override
     public PermissionAttachment addAttachment(Plugin plugin) {
-        return this.perm.addAttachment(plugin);
+        return perm.addAttachment(plugin);
     }
 
+    @Override
     public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value, int ticks) {
-        return this.perm.addAttachment(plugin, name, value, ticks);
+        return perm.addAttachment(plugin, name, value, ticks);
     }
 
+    @Override
     public PermissionAttachment addAttachment(Plugin plugin, int ticks) {
-        return this.perm.addAttachment(plugin, ticks);
+        return perm.addAttachment(plugin, ticks);
     }
 
+    @Override
     public void removeAttachment(PermissionAttachment attachment) {
-        this.perm.removeAttachment(attachment);
+        perm.removeAttachment(attachment);
     }
 
+    @Override
     public void recalculatePermissions() {
-        this.perm.recalculatePermissions();
+        perm.recalculatePermissions();
     }
 
-    public Set getEffectivePermissions() {
-        return this.perm.getEffectivePermissions();
+    @Override
+    public Set<PermissionAttachmentInfo> getEffectivePermissions() {
+        return perm.getEffectivePermissions();
     }
 
     public boolean isPlayer() {
         return false;
     }
 
+    @Override
     public Server getServer() {
         return Bukkit.getServer();
     }
 
+    @Override
     public void sendMessage(UUID uuid, String message) {
-        this.sendMessage(message);
+        this.sendMessage(message); // ServerCommandSenders have no use for senders
     }
 
+    @Override
     public void sendMessage(UUID uuid, String... messages) {
-        this.sendMessage(messages);
+        this.sendMessage(messages); // ServerCommandSenders have no use for senders
     }
 
-    public Spigot spigot() {
-        return this.spigot;
+    // Spigot start
+    private final org.bukkit.command.CommandSender.Spigot spigot = new org.bukkit.command.CommandSender.Spigot()
+    {
+        @Override
+        public void sendMessage(net.md_5.bungee.api.chat.BaseComponent component)
+        {
+            ServerCommandSender.this.sendMessage(net.md_5.bungee.api.chat.TextComponent.toLegacyText(component));
+        }
+
+        @Override
+        public void sendMessage(net.md_5.bungee.api.chat.BaseComponent... components)
+        {
+            ServerCommandSender.this.sendMessage(net.md_5.bungee.api.chat.TextComponent.toLegacyText(components));
+        }
+
+        @Override
+        public void sendMessage(UUID sender, net.md_5.bungee.api.chat.BaseComponent... components)
+        {
+            this.sendMessage(components);
+        }
+
+        @Override
+        public void sendMessage(UUID sender, net.md_5.bungee.api.chat.BaseComponent component)
+        {
+            this.sendMessage(component);
+        }
+    };
+
+    @Override
+    public org.bukkit.command.CommandSender.Spigot spigot()
+    {
+        return spigot;
     }
+    // Spigot end
 }

@@ -46,19 +46,28 @@
  import net.minecraft.server.commands.AdvancementCommands;
  import net.minecraft.server.commands.AttributeCommand;
  import net.minecraft.server.commands.BanIpCommands;
-@@ -120,8 +_,12 @@
+@@ -120,6 +_,10 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.profiling.jfr.JvmProfiler;
 +import net.minecraftforge.server.command.CommandHelper;
 +import org.bukkit.event.player.PlayerCommandSendEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
++import org.kettingpowered.ketting.common.utils.Wrapper;
  import org.slf4j.Logger;
  
-+//Ketting: TODO Forge dispatcher
  public class Commands {
-    private static final Logger LOGGER = LogUtils.getLogger();
-    public static final int LEVEL_ALL = 0;
+@@ -130,8 +_,10 @@
+    public static final int LEVEL_ADMINS = 3;
+    public static final int LEVEL_OWNERS = 4;
+    private final CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
++   private final CommandDispatcher<CommandSourceStack> forgeDispatcher = new CommandDispatcher<>(); //Ketting
+ 
+    public Commands(Commands.CommandSelection p_230943_, CommandBuildContext p_230944_) {
++      this(); // CraftBukkit
+       AdvancementCommands.register(this.dispatcher);
+       AttributeCommand.register(this.dispatcher, p_230944_);
+       ExecuteCommand.register(this.dispatcher, p_230944_);
 @@ -196,7 +_,7 @@
           JfrCommand.register(this.dispatcher);
        }
@@ -68,18 +77,28 @@
           TestCommand.register(this.dispatcher);
           SpawnArmorTrimsCommand.register(this.dispatcher);
           if (p_230943_.includeDedicated) {
-@@ -224,9 +_,11 @@
+@@ -224,10 +_,21 @@
        if (p_230943_.includeIntegrated) {
           PublishCommand.register(this.dispatcher);
        }
-+      net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.dispatcher, p_230943_, p_230944_);
++      net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.forgeDispatcher, p_230943_, p_230944_); //Ketting
++      // CraftBukkit start
++   }
  
++   public Commands() {
        this.dispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
           p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
-+         p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
        });
++      // CraftBukkit end
++
++      //Ketting start
++      this.forgeDispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
++         p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
++      });
++      //Ketting end
     }
  
+    public static <S> ParseResults<S> mapSource(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
 @@ -236,12 +_,59 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }
@@ -233,3 +252,14 @@
           if (commandnode.canUse(p_82115_)) {
              ArgumentBuilder<SharedSuggestionProvider, ?> argumentbuilder = (ArgumentBuilder)commandnode.createBuilder();
              argumentbuilder.requires((p_82126_) -> {
+@@ -365,6 +_,10 @@
+ 
+    public CommandDispatcher<CommandSourceStack> getDispatcher() {
+       return this.dispatcher;
++   }
++
++   public Wrapper<CommandDispatcher<CommandSourceStack>> getForgeDispatcher() {
++      return Wrapper.wrap(this.forgeDispatcher);
+    }
+ 
+    @Nullable

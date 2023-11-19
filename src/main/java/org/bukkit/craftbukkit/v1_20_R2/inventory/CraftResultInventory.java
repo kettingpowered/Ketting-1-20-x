@@ -13,35 +13,35 @@ public class CraftResultInventory extends CraftInventory {
     }
 
     public Container getResultInventory() {
-        return this.resultInventory;
+        return resultInventory;
     }
 
     public Container getIngredientsInventory() {
-        return this.inventory;
+        return inventory;
     }
 
+    @Override
     public ItemStack getItem(int slot) {
-        net.minecraft.world.item.ItemStack item;
-
-        if (slot < this.getIngredientsInventory().getContainerSize()) {
-            item = this.getIngredientsInventory().getItem(slot);
+        if (slot < getIngredientsInventory().getContainerSize()) {
+            net.minecraft.world.item.ItemStack item = getIngredientsInventory().getItem(slot);
             return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
         } else {
-            item = this.getResultInventory().getItem(slot - this.getIngredientsInventory().getContainerSize());
+            net.minecraft.world.item.ItemStack item = getResultInventory().getItem(slot - getIngredientsInventory().getContainerSize());
             return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
         }
     }
 
+    @Override
     public void setItem(int index, ItemStack item) {
-        if (index < this.getIngredientsInventory().getContainerSize()) {
-            this.getIngredientsInventory().setItem(index, CraftItemStack.asNMSCopy(item));
+        if (index < getIngredientsInventory().getContainerSize()) {
+            getIngredientsInventory().setItem(index, CraftItemStack.asNMSCopy(item));
         } else {
-            this.getResultInventory().setItem(index - this.getIngredientsInventory().getContainerSize(), CraftItemStack.asNMSCopy(item));
+            getResultInventory().setItem((index - getIngredientsInventory().getContainerSize()), CraftItemStack.asNMSCopy(item));
         }
-
     }
 
+    @Override
     public int getSize() {
-        return this.getResultInventory().getContainerSize() + this.getIngredientsInventory().getContainerSize();
+        return getResultInventory().getContainerSize() + getIngredientsInventory().getContainerSize();
     }
 }

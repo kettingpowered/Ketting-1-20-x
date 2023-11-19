@@ -1,18 +1,18 @@
 package org.bukkit.craftbukkit.v1_20_R2.block.data;
 
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.bukkit.block.data.Bisected;
-import org.bukkit.block.data.Bisected.Half;
 
 public class CraftBisected extends CraftBlockData implements Bisected {
 
-    private static final EnumProperty HALF = getEnum("half");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> HALF = getEnum("half");
 
-    public Half getHalf() {
-        return (Half) this.get(CraftBisected.HALF, Half.class);
+    @Override
+    public org.bukkit.block.data.Bisected.Half getHalf() {
+        return get(HALF, org.bukkit.block.data.Bisected.Half.class);
     }
 
-    public void setHalf(Half half) {
-        this.set(CraftBisected.HALF, (Enum) half);
+    @Override
+    public void setHalf(org.bukkit.block.data.Bisected.Half half) {
+        set(HALF, half);
     }
 }

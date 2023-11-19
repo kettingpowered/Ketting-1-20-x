@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/MerchantContainer.java
 +++ b/net/minecraft/world/inventory/MerchantContainer.java
-@@ -4,11 +_,19 @@
+@@ -4,19 +_,67 @@
  import net.minecraft.core.NonNullList;
  import net.minecraft.world.Container;
  import net.minecraft.world.ContainerHelper;
@@ -20,9 +20,11 @@
  
  public class MerchantContainer implements Container {
     private final Merchant merchant;
-@@ -17,6 +_,46 @@
+    private final NonNullList<ItemStack> itemStacks = NonNullList.withSize(3, ItemStack.EMPTY);
+    @Nullable
     private MerchantOffer activeOffer;
-    private int selectionHint;
+-   private int selectionHint;
++   public int selectionHint;
     private int futureXp;
 +
 +   // CraftBukkit start - add fields and methods

@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.v1_20_R2.map;
 
-import java.util.Iterator;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.bukkit.Bukkit;
@@ -20,31 +19,31 @@ public class CraftMapRenderer extends MapRenderer {
         this.worldMap = worldMap;
     }
 
+    @Override
     public void render(MapView map, MapCanvas canvas, Player player) {
+        // Map
         for (int x = 0; x < 128; ++x) {
             for (int y = 0; y < 128; ++y) {
-                canvas.setPixel(x, y, this.worldMap.colors[y * 128 + x]);
+                canvas.setPixel(x, y, worldMap.colors[y * 128 + x]);
             }
         }
 
+        // Cursors
         MapCursorCollection cursors = canvas.getCursors();
-
         while (cursors.size() > 0) {
             cursors.removeCursor(cursors.getCursor(0));
         }
 
-        Iterator iterator = this.worldMap.decorations.keySet().iterator();
-
-        while (iterator.hasNext()) {
-            String key = (String) iterator.next();
-            Player other = Bukkit.getPlayerExact(key);
-
-            if (other == null || player.canSee(other)) {
-                MapDecoration decoration = (MapDecoration) this.worldMap.decorations.get(key);
-
-                cursors.addCursor(decoration.x(), decoration.y(), (byte) (decoration.rot() & 15), decoration.type().getIcon(), true, CraftChatMessage.fromComponent(decoration.name()));
+        for (String key : worldMap.decorations.keySet()) {
+            // If this cursor is for a player check visibility with vanish system
+            Player other = Bukkit.getPlayerExact((String) key);
+            if (other != null && !player.canSee(other)) {
+                continue;
             }
-        }
 
+            MapDecoration decoration = worldMap.decorations.get(key);
+            cursors.addCursor(decoration.x(), decoration.y(), (byte) (decoration.rot() & 15), decoration.type().getIcon(), true, CraftChatMessage.fromComponent(decoration.name()));
+        }
     }
+
 }

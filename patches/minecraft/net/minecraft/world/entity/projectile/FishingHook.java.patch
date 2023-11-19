@@ -9,8 +9,23 @@
  import org.slf4j.Logger;
  
  public class FishingHook extends Projectile {
-@@ -64,6 +_,17 @@
-    private FishingHook.FishHookState currentState = FishingHook.FishHookState.FLYING;
+@@ -51,7 +_,7 @@
+    private boolean biting;
+    private int outOfWaterTime;
+    private static final int MAX_OUT_OF_WATER_TIME = 10;
+-   private static final EntityDataAccessor<Integer> DATA_HOOKED_ENTITY = SynchedEntityData.defineId(FishingHook.class, EntityDataSerializers.INT);
++   public static final EntityDataAccessor<Integer> DATA_HOOKED_ENTITY = SynchedEntityData.defineId(FishingHook.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> DATA_BITING = SynchedEntityData.defineId(FishingHook.class, EntityDataSerializers.BOOLEAN);
+    private int life;
+    private int nibble;
+@@ -60,10 +_,21 @@
+    private float fishAngle;
+    private boolean openWater = true;
+    @Nullable
+-   private Entity hookedIn;
+-   private FishingHook.FishHookState currentState = FishingHook.FishHookState.FLYING;
++   public Entity hookedIn;
++   public FishingHook.FishHookState currentState = FishingHook.FishHookState.FLYING;
     private final int luck;
     private final int lureSpeed;
 +   // CraftBukkit start - Extra variables to enable modification of fishing wait time, values are minecraft defaults
@@ -195,3 +210,21 @@
        } else {
           return 0;
        }
+@@ -450,7 +_,7 @@
+       super.handleEntityEvent(p_37123_);
+    }
+ 
+-   protected void pullEntity(Entity p_150156_) {
++   public void pullEntity(Entity p_150156_) {
+       Entity entity = this.getOwner();
+       if (entity != null) {
+          Vec3 vec3 = (new Vec3(entity.getX() - this.getX(), entity.getY() - this.getY(), entity.getZ() - this.getZ())).scale(0.1D);
+@@ -514,7 +_,7 @@
+ 
+    }
+ 
+-   static enum FishHookState {
++   public static enum FishHookState {
+       FLYING,
+       HOOKED_IN_ENTITY,
+       BOBBING;

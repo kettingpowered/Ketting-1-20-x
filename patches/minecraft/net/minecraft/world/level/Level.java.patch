@@ -51,11 +51,12 @@
  import net.minecraft.world.level.lighting.LevelLightEngine;
  import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.level.material.Fluids;
-@@ -69,8 +_,17 @@
+@@ -69,8 +_,18 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.Scoreboard;
 +import org.bukkit.Bukkit;
++import org.bukkit.Chunk;
 +import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 +import org.bukkit.craftbukkit.v1_20_R2.SpigotTimings;
@@ -586,12 +587,10 @@
                    this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
                 }
              }
-@@ -854,6 +_,18 @@
- 
-    public BiomeManager getBiomeManager() {
+@@ -856,11 +_,23 @@
        return this.biomeManager;
-+   }
-+
+    }
+ 
 +   private double maxEntityRadius = 2.0D;
 +   @Override
 +   public double getMaxEntityRadius() {
@@ -602,6 +601,26 @@
 +      if (value > maxEntityRadius)
 +         maxEntityRadius = value;
 +      return maxEntityRadius;
++   }
++
+    public final boolean isDebug() {
+       return this.isDebug;
     }
  
-    public final boolean isDebug() {
+-   protected abstract LevelEntityGetter<Entity> getEntities();
++   public abstract LevelEntityGetter<Entity> getEntities();
+ 
+    public long nextSubTickCount() {
+       return (long)(this.subTickCount++);
+@@ -872,6 +_,11 @@
+ 
+    public DamageSources damageSources() {
+       return this.damageSources;
++   }
++
++   // CraftBukkit start - Split off from above in order to directly send client and physic updates
++   public void notifyAndUpdatePhysics(BlockPos blockPosition, Chunk chunk, BlockState oldBlock, BlockState newBlock, BlockState actualBlock, int i, int j) {
++      //Todo: CraftBukkit World.patch
+    }
+ 
+    public static enum ExplosionInteraction {

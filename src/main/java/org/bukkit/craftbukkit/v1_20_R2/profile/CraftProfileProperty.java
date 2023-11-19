@@ -22,59 +22,72 @@ import org.bukkit.craftbukkit.v1_20_R2.configuration.ConfigSerializationUtil;
 
 final class CraftProfileProperty {
 
+    /**
+     * Different JSON formatting styles to use for encoded property values.
+     */
+    public interface JsonFormatter {
+
+        /**
+         * A {@link JsonFormatter} that uses a compact formatting style.
+         */
+        public static final JsonFormatter COMPACT = new JsonFormatter() {
+
+            private final Gson gson = new GsonBuilder().create();
+
+            @Override
+            public String format(JsonElement jsonElement) {
+                return gson.toJson(jsonElement);
+            }
+        };
+
+        public String format(JsonElement jsonElement);
+    }
+
     private static final ServicesKeySet PUBLIC_KEYS;
 
     static {
         try {
-            PUBLIC_KEYS = (new YggdrasilAuthenticationService(Proxy.NO_PROXY)).getServicesKeySet();
-        } catch (Exception exception) {
+            PUBLIC_KEYS = new YggdrasilAuthenticationService(Proxy.NO_PROXY).getServicesKeySet();
+        } catch (Exception e) {
             throw new Error("Could not load yggdrasil_session_pubkey.der! This indicates a bug.");
         }
     }
 
     public static boolean hasValidSignature(@Nonnull Property property) {
-        return property.hasSignature() && CraftProfileProperty.PUBLIC_KEYS.keys(ServicesKeyType.PROFILE_PROPERTY).stream().anyMatch((keyx) -> {
-            return keyx.validateProperty(property);
-        });
+        return property.hasSignature() && PUBLIC_KEYS.keys(ServicesKeyType.PROFILE_PROPERTY).stream().anyMatch((key) -> key.validateProperty(property));
     }
 
     @Nullable
     private static String decodeBase64(@Nonnull String encoded) {
         try {
             return new String(Base64.getDecoder().decode(encoded), StandardCharsets.UTF_8);
-        } catch (IllegalArgumentException illegalargumentexception) {
-            return null;
+        } catch (IllegalArgumentException e) {
+            return null; // Invalid input
         }
     }
 
     @Nullable
     public static JsonObject decodePropertyValue(@Nonnull String encodedPropertyValue) {
         String json = decodeBase64(encodedPropertyValue);
-
-        if (json == null) {
-            return null;
-        } else {
-            try {
-                JsonElement jsonElement = JsonParser.parseString(json);
-
-                return !jsonElement.isJsonObject() ? null : jsonElement.getAsJsonObject();
-            } catch (JsonParseException jsonparseexception) {
-                return null;
-            }
+        if (json == null) return null;
+        try {
+            JsonElement jsonElement = JsonParser.parseString(json);
+            if (!jsonElement.isJsonObject()) return null;
+            return jsonElement.getAsJsonObject();
+        } catch (JsonParseException e) {
+            return null; // Invalid input
         }
     }
 
     @Nonnull
-    public static String encodePropertyValue(@Nonnull JsonObject propertyValue, @Nonnull CraftProfileProperty.JsonFormatter formatter) {
+    public static String encodePropertyValue(@Nonnull JsonObject propertyValue, @Nonnull JsonFormatter formatter) {
         String json = formatter.format(propertyValue);
-
         return Base64.getEncoder().encodeToString(json.getBytes(StandardCharsets.UTF_8));
     }
 
     @Nonnull
     public static String toString(@Nonnull Property property) {
         StringBuilder builder = new StringBuilder();
-
         builder.append("{");
         builder.append("name=");
         builder.append(property.name());
@@ -87,50 +100,38 @@ final class CraftProfileProperty {
     }
 
     public static int hashCode(@Nonnull Property property) {
-        byte result = 1;
-        int result = 31 * result + Objects.hashCode(property.name());
-
+        int result = 1;
+        result = 31 * result + Objects.hashCode(property.name());
         result = 31 * result + Objects.hashCode(property.value());
         result = 31 * result + Objects.hashCode(property.signature());
         return result;
     }
 
     public static boolean equals(@Nullable Property property, @Nullable Property other) {
-        return property != null && other != null ? (!Objects.equals(property.value(), other.value()) ? false : (!Objects.equals(property.name(), other.name()) ? false : Objects.equals(property.signature(), other.signature()))) : property == other;
+        if (property == null || other == null) return (property == other);
+        if (!Objects.equals(property.value(), other.value())) return false;
+        if (!Objects.equals(property.name(), other.name())) return false;
+        if (!Objects.equals(property.signature(), other.signature())) return false;
+        return true;
     }
 
-    public static Map serialize(@Nonnull Property property) {
-        LinkedHashMap map = new LinkedHashMap();
-
+    public static Map<String, Object> serialize(@Nonnull Property property) {
+        Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", property.name());
         map.put("value", property.value());
         if (property.hasSignature()) {
             map.put("signature", property.signature());
         }
-
         return map;
     }
 
-    public static Property deserialize(@Nonnull Map map) {
+    public static Property deserialize(@Nonnull Map<?, ?> map) {
         String name = ConfigSerializationUtil.getString(map, "name", false);
         String value = ConfigSerializationUtil.getString(map, "value", false);
         String signature = ConfigSerializationUtil.getString(map, "signature", true);
-
         return new Property(name, value, signature);
     }
 
-    private CraftProfileProperty() {}
-
-    public interface JsonFormatter {
-
-        CraftProfileProperty.JsonFormatter COMPACT = new CraftProfileProperty.JsonFormatter() {
-            private final Gson gson = (new GsonBuilder()).create();
-
-            public String format(JsonElement jsonElement) {
-                return this.gson.toJson(jsonElement);
-            }
-        };
-
-        String format(JsonElement jsonelement);
+    private CraftProfileProperty() {
     }
 }

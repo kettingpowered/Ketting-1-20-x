@@ -238,11 +238,11 @@
 +            StructureGrowEvent structureEvent = null;
 +            if (treeType != null) {
 +               boolean isBonemeal = getItem() == Items.BONE_MEAL;
-+               structureEvent = new StructureGrowEvent(location, treeType, isBonemeal, (org.bukkit.entity.Player) player.getBukkitEntity(), blocks);
++               structureEvent = new StructureGrowEvent(location, treeType, isBonemeal, (org.bukkit.entity.Player) player.getBukkitEntity(), (List) blocks);
 +               org.bukkit.Bukkit.getPluginManager().callEvent(structureEvent);
 +            }
 +
-+            BlockFertilizeEvent fertilizeEvent = new BlockFertilizeEvent(CraftBlock.at(world, blockpos), (org.bukkit.entity.Player) player.getBukkitEntity(), blocks);
++            BlockFertilizeEvent fertilizeEvent = new BlockFertilizeEvent(CraftBlock.at(world, blockpos), (org.bukkit.entity.Player) player.getBukkitEntity(), (List) blocks);
 +            fertilizeEvent.setCancelled(structureEvent != null && structureEvent.isCancelled());
 +            org.bukkit.Bukkit.getPluginManager().callEvent(fertilizeEvent);
 +

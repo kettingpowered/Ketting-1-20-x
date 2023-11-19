@@ -6,11 +6,19 @@ import net.minecraft.world.level.dimension.LevelStem;
 
 public class CraftDimensionUtil {
 
-    private CraftDimensionUtil() {}
+    private CraftDimensionUtil() {
+    }
 
-    public static ResourceKey getMainDimensionKey(Level world) {
-        ResourceKey typeKey = world.getTypeKey();
+    public static ResourceKey<Level> getMainDimensionKey(Level world) {
+        ResourceKey<LevelStem> typeKey = world.getTypeKey();
+        if (typeKey == LevelStem.OVERWORLD) {
+            return Level.OVERWORLD;
+        } else if (typeKey == LevelStem.NETHER) {
+            return Level.NETHER;
+        } else if (typeKey == LevelStem.END) {
+            return Level.END;
+        }
 
-        return typeKey == LevelStem.OVERWORLD ? Level.OVERWORLD : (typeKey == LevelStem.NETHER ? Level.NETHER : (typeKey == LevelStem.END ? Level.END : world.dimension()));
+        return world.dimension();
     }
 }

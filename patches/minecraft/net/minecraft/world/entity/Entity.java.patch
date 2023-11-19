@@ -91,8 +91,12 @@
     public boolean horizontalCollision;
     public boolean verticalCollision;
     public boolean verticalCollisionBelow;
-@@ -188,9 +_,11 @@
-    protected final RandomSource random = RandomSource.create();
+@@ -185,12 +_,14 @@
+    public double zOld;
+    private float maxUpStep;
+    public boolean noPhysics;
+-   protected final RandomSource random = RandomSource.create();
++   public final RandomSource random = RandomSource.create();
     public int tickCount;
     private int remainingFireTicks = -this.getFireImmuneTicks();
 -   protected boolean wasTouchingWater;
@@ -918,7 +922,7 @@
        this.setSharedFlag(4, p_20283_);
     }
  
-@@ -2239,8 +_,12 @@
+@@ -2239,15 +_,19 @@
        return this.getTeam() != null ? this.getTeam().isAlliedTo(p_20032_) : false;
     }
  
@@ -931,7 +935,16 @@
 +      // CraftBukkit - end
     }
  
-    protected boolean getSharedFlag(int p_20292_) {
+-   protected boolean getSharedFlag(int p_20292_) {
++   public boolean getSharedFlag(int p_20292_) {
+       return (this.entityData.get(DATA_SHARED_FLAGS_ID) & 1 << p_20292_) != 0;
+    }
+ 
+-   protected void setSharedFlag(int p_20116_, boolean p_20117_) {
++   public void setSharedFlag(int p_20116_, boolean p_20117_) {
+       byte b0 = this.entityData.get(DATA_SHARED_FLAGS_ID);
+       if (p_20117_) {
+          this.entityData.set(DATA_SHARED_FLAGS_ID, (byte)(b0 | 1 << p_20116_));
 @@ -2258,7 +_,7 @@
     }
  
@@ -1263,6 +1276,15 @@
     }
  
     protected float getEyeHeight(Pose p_19976_, EntityDimensions p_19977_) {
+@@ -2969,7 +_,7 @@
+       return SoundSource.NEUTRAL;
+    }
+ 
+-   protected int getFireImmuneTicks() {
++   public int getFireImmuneTicks() {
+       return 1;
+    }
+ 
 @@ -3010,9 +_,22 @@
        this.yRotO = this.getYRot();
     }

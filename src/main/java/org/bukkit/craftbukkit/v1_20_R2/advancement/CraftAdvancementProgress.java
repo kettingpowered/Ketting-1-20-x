@@ -21,33 +21,39 @@ public class CraftAdvancementProgress implements AdvancementProgress {
         this.handle = handle;
     }
 
+    @Override
     public Advancement getAdvancement() {
-        return this.advancement;
+        return advancement;
     }
 
+    @Override
     public boolean isDone() {
-        return this.handle.isDone();
+        return handle.isDone();
     }
 
+    @Override
     public boolean awardCriteria(String criteria) {
-        return this.playerData.award(this.advancement.getHandle(), criteria);
+        return playerData.award(advancement.getHandle(), criteria);
     }
 
+    @Override
     public boolean revokeCriteria(String criteria) {
-        return this.playerData.revoke(this.advancement.getHandle(), criteria);
+        return playerData.revoke(advancement.getHandle(), criteria);
     }
 
+    @Override
     public Date getDateAwarded(String criteria) {
-        CriterionProgress criterion = this.handle.getCriterion(criteria);
-
-        return criterion == null ? null : Date.from(criterion.getObtained());
+        CriterionProgress criterion = handle.getCriterion(criteria);
+        return (criterion == null) ? null : Date.from(criterion.getObtained());
     }
 
-    public Collection getRemainingCriteria() {
-        return Collections.unmodifiableCollection(Lists.newArrayList(this.handle.getRemainingCriteria()));
+    @Override
+    public Collection<String> getRemainingCriteria() {
+        return Collections.unmodifiableCollection(Lists.newArrayList(handle.getRemainingCriteria()));
     }
 
-    public Collection getAwardedCriteria() {
-        return Collections.unmodifiableCollection(Lists.newArrayList(this.handle.getCompletedCriteria()));
+    @Override
+    public Collection<String> getAwardedCriteria() {
+        return Collections.unmodifiableCollection(Lists.newArrayList(handle.getCompletedCriteria()));
     }
 }

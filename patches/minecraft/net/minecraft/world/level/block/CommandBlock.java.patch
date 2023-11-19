@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/level/block/CommandBlock.java
++++ b/net/minecraft/world/level/block/CommandBlock.java
+@@ -25,6 +_,7 @@
+ import net.minecraft.world.level.block.state.properties.BooleanProperty;
+ import net.minecraft.world.level.block.state.properties.DirectionProperty;
+ import net.minecraft.world.phys.BlockHitResult;
++import org.bukkit.event.block.BlockRedstoneEvent;
+ import org.slf4j.Logger;
+ 
+ public class CommandBlock extends BaseEntityBlock implements GameMasterBlock {
+@@ -52,6 +_,15 @@
+             CommandBlockEntity commandblockentity = (CommandBlockEntity)blockentity;
+             boolean flag = p_51839_.hasNeighborSignal(p_51840_);
+             boolean flag1 = commandblockentity.isPowered();
++            // CraftBukkit start
++            org.bukkit.block.Block bukkitBlock = p_51839_.getWorld().getBlockAt(p_51840_.getX(), p_51840_.getY(), p_51840_.getZ());
++            int old = flag1 ? 15 : 0;
++            int current = flag ? 15 : 0;
++
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bukkitBlock, old, current);
++            p_51839_.getCraftServer().getPluginManager().callEvent(eventRedstone);
++            flag = eventRedstone.getNewCurrent() > 0;
++            // CraftBukkit end
+             commandblockentity.setPowered(flag);
+             if (!flag1 && !commandblockentity.isAutomatic() && commandblockentity.getMode() != CommandBlockEntity.Mode.SEQUENCE) {
+                if (flag) {

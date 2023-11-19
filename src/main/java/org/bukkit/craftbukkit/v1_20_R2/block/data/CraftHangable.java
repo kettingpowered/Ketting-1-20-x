@@ -1,18 +1,18 @@
 package org.bukkit.craftbukkit.v1_20_R2.block.data;
 
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
 import org.bukkit.block.data.Hangable;
 
 public abstract class CraftHangable extends CraftBlockData implements Hangable {
 
-    private static final BooleanProperty HANGING = getBoolean("hanging");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty HANGING = getBoolean("hanging");
 
+    @Override
     public boolean isHanging() {
-        return (Boolean) this.get(CraftHangable.HANGING);
+        return get(HANGING);
     }
 
+    @Override
     public void setHanging(boolean hanging) {
-        this.set((Property) CraftHangable.HANGING, (Comparable) hanging);
+        set(HANGING, hanging);
     }
 }

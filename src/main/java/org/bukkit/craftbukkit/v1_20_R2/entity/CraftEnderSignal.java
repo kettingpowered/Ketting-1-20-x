@@ -11,49 +11,58 @@ import org.bukkit.entity.EnderSignal;
 import org.bukkit.inventory.ItemStack;
 
 public class CraftEnderSignal extends CraftEntity implements EnderSignal {
-
     public CraftEnderSignal(CraftServer server, EyeOfEnder entity) {
         super(server, entity);
     }
 
+    @Override
     public EyeOfEnder getHandle() {
-        return (EyeOfEnder) this.entity;
+        return (EyeOfEnder) entity;
     }
 
+    @Override
     public String toString() {
         return "CraftEnderSignal";
     }
 
+    @Override
     public Location getTargetLocation() {
-        return new Location(this.getWorld(), this.getHandle().tx, this.getHandle().ty, this.getHandle().tz, this.getHandle().getYRot(), this.getHandle().getXRot());
+        return new Location(getWorld(), getHandle().tx, getHandle().ty, getHandle().tz, getHandle().getYRot(), getHandle().getXRot());
     }
 
+    @Override
     public void setTargetLocation(Location location) {
-        Preconditions.checkArgument(this.getWorld().equals(location.getWorld()), "Cannot target EnderSignal across worlds");
-        this.getHandle().signalTo(CraftLocation.toBlockPosition(location));
+        Preconditions.checkArgument(getWorld().equals(location.getWorld()), "Cannot target EnderSignal across worlds");
+        getHandle().signalTo(CraftLocation.toBlockPosition(location));
     }
 
+    @Override
     public boolean getDropItem() {
-        return this.getHandle().surviveAfterDeath;
+        return getHandle().surviveAfterDeath;
     }
 
+    @Override
     public void setDropItem(boolean shouldDropItem) {
-        this.getHandle().surviveAfterDeath = shouldDropItem;
+        getHandle().surviveAfterDeath = shouldDropItem;
     }
 
+    @Override
     public ItemStack getItem() {
-        return CraftItemStack.asBukkitCopy(this.getHandle().getItem());
+        return CraftItemStack.asBukkitCopy(getHandle().getItem());
     }
 
+    @Override
     public void setItem(ItemStack item) {
-        this.getHandle().setItem(item != null ? CraftItemStack.asNMSCopy(item) : Items.ENDER_EYE.getDefaultInstance());
+        getHandle().setItem(item != null ? CraftItemStack.asNMSCopy(item) : Items.ENDER_EYE.getDefaultInstance());
     }
 
+    @Override
     public int getDespawnTimer() {
-        return this.getHandle().life;
+        return getHandle().life;
     }
 
+    @Override
     public void setDespawnTimer(int time) {
-        this.getHandle().life = time;
+        getHandle().life = time;
     }
 }

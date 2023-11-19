@@ -18,7 +18,7 @@ public class KettingLauncher {
 
     //Libs added here will get ignored by ServerInitHelper
     public static final String[] MANUALLY_PATCHED_LIBS = {
-        //"com/mojang/brigadier" TODO: add this when we implement our custom command system
+        "com/mojang/brigadier"
     };
 
     private static List<String> args;

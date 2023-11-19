@@ -11,7 +11,6 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Erase;
 
 public class TerminalConsoleWriterThread extends Thread {
-
     private final ConsoleReader reader;
     private final OutputStream output;
 
@@ -19,35 +18,40 @@ public class TerminalConsoleWriterThread extends Thread {
         super("TerminalConsoleWriter");
         this.output = output;
         this.reader = reader;
+
         this.setDaemon(true);
     }
 
+    @Override
     public void run() {
+        String message;
+
+        // Using name from log4j config in vanilla jar
         while (true) {
-            String message = LogQueues.getNextLogEvent("TerminalConsole");
+            message = LogQueues.getNextLogEvent("TerminalConsole");
+            if (message == null) {
+                continue;
+            }
 
-            if (message != null) {
-                try {
-                    if (Main.useJline) {
-                        this.reader.print(Ansi.ansi().eraseLine(Erase.ALL).toString() + '\r');
-                        this.reader.flush();
-                        this.output.write(message.getBytes());
-                        this.output.flush();
+            try {
+                if (Main.useJline) {
+                    reader.print(Ansi.ansi().eraseLine(Erase.ALL).toString() + ConsoleReader.RESET_LINE);
+                    reader.flush();
+                    output.write(message.getBytes());
+                    output.flush();
 
-                        try {
-                            this.reader.drawLine();
-                        } catch (Throwable throwable) {
-                            this.reader.getCursorBuffer().clear();
-                        }
-
-                        this.reader.flush();
-                    } else {
-                        this.output.write(message.getBytes());
-                        this.output.flush();
+                    try {
+                        reader.drawLine();
+                    } catch (Throwable ex) {
+                        reader.getCursorBuffer().clear();
                     }
-                } catch (IOException ioexception) {
-                    Logger.getLogger(TerminalConsoleWriterThread.class.getName()).log(Level.SEVERE, (String) null, ioexception);
+                    reader.flush();
+                } else {
+                    output.write(message.getBytes());
+                    output.flush();
                 }
+            } catch (IOException ex) {
+                Logger.getLogger(TerminalConsoleWriterThread.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

@@ -12,6 +12,15 @@
        }), BiomeGenerationSettings.CODEC.forGetter((p_220548_) -> {
           return p_220548_.generationSettings;
        }), MobSpawnSettings.CODEC.forGetter((p_220546_) -> {
+@@ -62,7 +_,7 @@
+    )
+    public static final PerlinSimplexNoise BIOME_INFO_NOISE = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(2345L)), ImmutableList.of(0));
+    private static final int TEMPERATURE_CACHE_SIZE = 1024;
+-   private final Biome.ClimateSettings climateSettings;
++   public final Biome.ClimateSettings climateSettings;
+    private final BiomeGenerationSettings generationSettings;
+    private final MobSpawnSettings mobSettings;
+    private final BiomeSpecialEffects specialEffects;
 @@ -82,6 +_,7 @@
        this.generationSettings = p_220532_;
        this.mobSettings = p_220533_;
@@ -29,6 +38,15 @@
     }
  
     public boolean hasPrecipitation() {
+@@ -116,7 +_,7 @@
+ 
+    /** @deprecated */
+    @Deprecated
+-   private float getTemperature(BlockPos p_47506_) {
++   public float getTemperature(BlockPos p_47506_) {
+       long i = p_47506_.asLong();
+       Long2FloatLinkedOpenHashMap long2floatlinkedopenhashmap = this.temperatureCache.get();
+       float f = long2floatlinkedopenhashmap.get(i);
 @@ -188,7 +_,7 @@
     }
  

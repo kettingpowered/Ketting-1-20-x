@@ -10,47 +10,44 @@ import org.bukkit.craftbukkit.v1_20_R2.util.Waitable;
 import org.bukkit.event.server.TabCompleteEvent;
 
 public class ConsoleCommandCompleter implements Completer {
-
     private final CraftServer server;
 
     public ConsoleCommandCompleter(CraftServer server) {
         this.server = server;
     }
 
-    public int complete(final String buffer, int cursor, List candidates) {
-        Waitable waitable = new Waitable() {
-            protected List evaluate() {
-                List offers = ConsoleCommandCompleter.this.server.getCommandMap().tabComplete(ConsoleCommandCompleter.this.server.getConsoleSender(), buffer);
-                TabCompleteEvent tabEvent = new TabCompleteEvent(ConsoleCommandCompleter.this.server.getConsoleSender(), buffer, offers == null ? Collections.EMPTY_LIST : offers);
+    @Override
+    public int complete(final String buffer, final int cursor, final List<CharSequence> candidates) {
+        Waitable<List<String>> waitable = new Waitable<List<String>>() {
+            @Override
+            protected List<String> evaluate() {
+                List<String> offers = server.getCommandMap().tabComplete(server.getConsoleSender(), buffer);
 
-                ConsoleCommandCompleter.this.server.getPluginManager().callEvent(tabEvent);
+                TabCompleteEvent tabEvent = new TabCompleteEvent(server.getConsoleSender(), buffer, (offers == null) ? Collections.EMPTY_LIST : offers);
+                server.getPluginManager().callEvent(tabEvent);
+
                 return tabEvent.isCancelled() ? Collections.EMPTY_LIST : tabEvent.getCompletions();
             }
         };
-
         this.server.getServer().processQueue.add(waitable);
-
         try {
-            List offers = (List) waitable.get();
-
+            List<String> offers = waitable.get();
             if (offers == null) {
                 return cursor;
             }
-
             candidates.addAll(offers);
-            int lastSpace = buffer.lastIndexOf(32);
 
+            final int lastSpace = buffer.lastIndexOf(' ');
             if (lastSpace == -1) {
                 return cursor - buffer.length();
+            } else {
+                return cursor - (buffer.length() - lastSpace - 1);
             }
-
-            return cursor - (buffer.length() - lastSpace - 1);
-        } catch (ExecutionException executionexception) {
-            this.server.getLogger().log(Level.WARNING, "Unhandled exception when tab completing", executionexception);
-        } catch (InterruptedException interruptedexception) {
+        } catch (ExecutionException e) {
+            this.server.getLogger().log(Level.WARNING, "Unhandled exception when tab completing", e);
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-
         return cursor;
     }
 }

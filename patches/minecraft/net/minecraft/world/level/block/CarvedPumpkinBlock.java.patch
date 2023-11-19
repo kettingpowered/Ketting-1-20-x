@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/level/block/CarvedPumpkinBlock.java
++++ b/net/minecraft/world/level/block/CarvedPumpkinBlock.java
+@@ -21,6 +_,7 @@
+ import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
+ import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
+ import net.minecraft.world.level.block.state.properties.DirectionProperty;
++import org.bukkit.event.entity.CreatureSpawnEvent;
+ 
+ public class CarvedPumpkinBlock extends HorizontalDirectionalBlock {
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+@@ -72,10 +_,14 @@
+    }
+ 
+    private static void spawnGolemInWorld(Level p_249110_, BlockPattern.BlockPatternMatch p_251293_, Entity p_251251_, BlockPos p_251189_) {
+-      clearPatternBlocks(p_249110_, p_251293_);
++      // clearPatternBlocks(p_249110_, p_251293_); // CraftBukkit - moved down
+       p_251251_.moveTo((double)p_251189_.getX() + 0.5D, (double)p_251189_.getY() + 0.05D, (double)p_251189_.getZ() + 0.5D, 0.0F, 0.0F);
+-      p_249110_.addFreshEntity(p_251251_);
+-
++      // CraftBukkit start
++      if (!p_249110_.addFreshEntity(p_251251_, CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM)) {
++         return;
++      }
++      clearPatternBlocks(p_249110_, p_251293_); // CraftBukkit - from above
++      // CraftBukkit end
+       for(ServerPlayer serverplayer : p_249110_.getEntitiesOfClass(ServerPlayer.class, p_251251_.getBoundingBox().inflate(5.0D))) {
+          CriteriaTriggers.SUMMONED_ENTITY.trigger(serverplayer, p_251251_);
+       }

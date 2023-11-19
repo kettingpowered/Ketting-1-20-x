@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
 +++ b/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
+@@ -63,7 +_,7 @@
+ import org.slf4j.Logger;
+ 
+ public class ChunkSerializer {
+-   private static final Codec<PalettedContainer<BlockState>> BLOCK_STATE_CODEC = PalettedContainer.codecRW(Block.BLOCK_STATE_REGISTRY, BlockState.CODEC, PalettedContainer.Strategy.SECTION_STATES, Blocks.AIR.defaultBlockState());
++   public static final Codec<PalettedContainer<BlockState>> BLOCK_STATE_CODEC = PalettedContainer.codecRW(Block.BLOCK_STATE_REGISTRY, BlockState.CODEC, PalettedContainer.Strategy.SECTION_STATES, Blocks.AIR.defaultBlockState());
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final String TAG_UPGRADE_DATA = "UpgradeData";
+    private static final String BLOCK_TICKS_TAG = "block_ticks";
 @@ -91,7 +_,7 @@
        ChunkSource chunksource = p_188231_.getChunkSource();
        LevelLightEngine levellightengine = chunksource.getLightEngine();

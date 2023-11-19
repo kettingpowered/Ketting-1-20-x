@@ -34,8 +34,9 @@
 +   public final List<MobEffectInstance> effects = Lists.newArrayList();
     private final Map<Entity, Integer> victims = Maps.newHashMap();
     private int duration = 600;
-    private int waitTime = 20;
+-   private int waitTime = 20;
 -   private int reapplicationDelay = 20;
++   public int waitTime = 20;
 +   public int reapplicationDelay = 20;
     private boolean fixedColor;
 -   private int durationOnUse;
@@ -47,6 +48,15 @@
     @Nullable
     private LivingEntity owner;
     @Nullable
+@@ -100,7 +_,7 @@
+ 
+    }
+ 
+-   private void updateColor() {
++   public void updateColor() {
+       if (this.potion == Potions.EMPTY && this.effects.isEmpty()) {
+          this.getEntityData().set(DATA_COLOR, 0);
+       } else {
 @@ -150,6 +_,18 @@
        this.duration = p_19735_;
     }

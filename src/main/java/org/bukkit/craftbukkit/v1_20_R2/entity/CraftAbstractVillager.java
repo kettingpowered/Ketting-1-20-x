@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import java.util.List;
-import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.npc.Villager;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory;
@@ -15,50 +14,60 @@ import org.bukkit.inventory.MerchantRecipe;
 public class CraftAbstractVillager extends CraftAgeable implements AbstractVillager, InventoryHolder {
 
     public CraftAbstractVillager(CraftServer server, net.minecraft.world.entity.npc.AbstractVillager entity) {
-        super(server, (AgeableMob) entity);
+        super(server, entity);
     }
 
+    @Override
     public net.minecraft.world.entity.npc.AbstractVillager getHandle() {
-        return (Villager) this.entity;
+        return (Villager) entity;
     }
 
+    @Override
     public String toString() {
         return "CraftAbstractVillager";
     }
 
+    @Override
     public Inventory getInventory() {
-        return new CraftInventory(this.getHandle().getInventory());
+        return new CraftInventory(getHandle().getInventory());
     }
 
     private CraftMerchant getMerchant() {
-        return this.getHandle().getCraftMerchant();
+        return getHandle().getCraftMerchant();
     }
 
-    public List getRecipes() {
-        return this.getMerchant().getRecipes();
+    @Override
+    public List<MerchantRecipe> getRecipes() {
+        return getMerchant().getRecipes();
     }
 
-    public void setRecipes(List recipes) {
+    @Override
+    public void setRecipes(List<MerchantRecipe> recipes) {
         this.getMerchant().setRecipes(recipes);
     }
 
+    @Override
     public MerchantRecipe getRecipe(int i) {
-        return this.getMerchant().getRecipe(i);
+        return getMerchant().getRecipe(i);
     }
 
+    @Override
     public void setRecipe(int i, MerchantRecipe merchantRecipe) {
-        this.getMerchant().setRecipe(i, merchantRecipe);
+        getMerchant().setRecipe(i, merchantRecipe);
     }
 
+    @Override
     public int getRecipeCount() {
-        return this.getMerchant().getRecipeCount();
+        return getMerchant().getRecipeCount();
     }
 
+    @Override
     public boolean isTrading() {
-        return this.getTrader() != null;
+        return getTrader() != null;
     }
 
+    @Override
     public HumanEntity getTrader() {
-        return this.getMerchant().getTrader();
+        return getMerchant().getTrader();
     }
 }

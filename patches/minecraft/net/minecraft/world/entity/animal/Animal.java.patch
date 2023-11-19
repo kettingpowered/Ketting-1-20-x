@@ -10,14 +10,16 @@
  
  public abstract class Animal extends AgeableMob {
     protected static final int PARENT_AGE_AFTER_BREEDING = 6000;
-    private int inLove;
+-   private int inLove;
++   public int inLove;
     @Nullable
-    private UUID loveCause;
+-   private UUID loveCause;
++   public UUID loveCause;
 +   public ItemStack breedItem; // CraftBukkit - Add breedItem variable
  
     protected Animal(EntityType<? extends Animal> p_27557_, Level p_27558_) {
        super(p_27557_, p_27558_);
-@@ -72,8 +_,14 @@
+@@ -72,8 +_,13 @@
        if (this.isInvulnerableTo(p_27567_)) {
           return false;
        } else {
@@ -27,14 +29,13 @@
 +         boolean result = super.hurt(p_27567_, p_27568_);
 +         if (result) {
 +            this.inLove = 0;
-+            return super.hurt(p_27567_, p_27568_);
 +         }
 +         return result;
 +         // CraftBukkit end
        }
     }
  
-@@ -156,7 +_,13 @@
+@@ -156,10 +_,17 @@
     }
  
     public void setInLove(@Nullable Player p_27596_) {
@@ -49,6 +50,10 @@
        if (p_27596_ != null) {
           this.loveCause = p_27596_.getUUID();
        }
++      this.breedItem = p_27596_.getInventory().getSelected(); // CraftBukkit
+ 
+       this.level().broadcastEntityEvent(this, (byte)18);
+    }
 @@ -202,15 +_,43 @@
  
     public void spawnChildFromBreeding(ServerLevel p_27564_, Animal p_27565_) {
@@ -67,7 +72,7 @@
        if (ageablemob != null) {
           ageablemob.setBaby(true);
           ageablemob.moveTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
-          this.finalizeSpawnChildFromBreeding(p_27564_, p_27565_, ageablemob);
+-         this.finalizeSpawnChildFromBreeding(p_27564_, p_27565_, ageablemob);
 -         p_27564_.addFreshEntityWithPassengers(ageablemob);
 +         // CraftBukkit start - call EntityBreedEvent
 +         ServerPlayer breeder = Optional.ofNullable(this.getLoveCause()).or(() -> {
@@ -91,6 +96,7 @@
 +   }
 +
 +   public void finalizeSpawnChildFromBreeding(ServerLevel p_277963_, Animal p_277357_, @Nullable AgeableMob p_277516_, int experience) {
++      // CraftBukkit end
        Optional.ofNullable(this.getLoveCause()).or(() -> {
           return Optional.ofNullable(p_277357_.getLoveCause());
        }).ifPresent((p_277486_) -> {

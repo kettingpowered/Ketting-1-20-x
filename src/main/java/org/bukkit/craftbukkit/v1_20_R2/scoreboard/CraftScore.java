@@ -7,8 +7,13 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
+/**
+ * TL;DR: This class is special and lazily grabs a handle...
+ * ...because a handle is a full fledged (I think permanent) hashMap for the associated name.
+ * <p>
+ * Also, as an added perk, a CraftScore will (intentionally) stay a valid reference so long as objective is valid.
+ */
 final class CraftScore implements Score {
-
     private final String entry;
     private final CraftObjective objective;
 
@@ -17,44 +22,50 @@ final class CraftScore implements Score {
         this.entry = entry;
     }
 
+    @Override
     public OfflinePlayer getPlayer() {
-        return Bukkit.getOfflinePlayer(this.entry);
+        return Bukkit.getOfflinePlayer(entry);
     }
 
+    @Override
     public String getEntry() {
-        return this.entry;
+        return entry;
     }
 
+    @Override
     public Objective getObjective() {
-        return this.objective;
+        return objective;
     }
 
+    @Override
     public int getScore() {
-        Scoreboard board = this.objective.checkState().board;
+        Scoreboard board = objective.checkState().board;
 
-        if (board.getTrackedPlayers().contains(this.entry)) {
-            Map scores = board.getPlayerScores(this.entry);
-            net.minecraft.world.scores.Score score = (net.minecraft.world.scores.Score) scores.get(this.objective.getHandle());
-
-            if (score != null) {
+        if (board.getTrackedPlayers().contains(entry)) { // Lazy
+            Map<net.minecraft.world.scores.Objective, net.minecraft.world.scores.Score> scores = board.getPlayerScores(entry);
+            net.minecraft.world.scores.Score score = scores.get(objective.getHandle());
+            if (score != null) { // Lazy
                 return score.getScore();
             }
         }
 
-        return 0;
+        return 0; // Lazy
     }
 
+    @Override
     public void setScore(int score) {
-        this.objective.checkState().board.getOrCreatePlayerScore(this.entry, this.objective.getHandle()).setScore(score);
+        objective.checkState().board.getOrCreatePlayerScore(entry, objective.getHandle()).setScore(score);
     }
 
+    @Override
     public boolean isScoreSet() {
-        Scoreboard board = this.objective.checkState().board;
+        Scoreboard board = objective.checkState().board;
 
-        return board.getTrackedPlayers().contains(this.entry) && board.getPlayerScores(this.entry).containsKey(this.objective.getHandle());
+        return board.getTrackedPlayers().contains(entry) && board.getPlayerScores(entry).containsKey(objective.getHandle());
     }
 
+    @Override
     public CraftScoreboard getScoreboard() {
-        return this.objective.getScoreboard();
+        return objective.getScoreboard();
     }
 }

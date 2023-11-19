@@ -1,76 +1,90 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.TrapDoorBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Bisected;
-import org.bukkit.block.data.Bisected.Half;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.Openable;
-import org.bukkit.block.data.Powerable;
-import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.TrapDoor;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftTrapdoor extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.TrapDoor, org.bukkit.block.data.Bisected, org.bukkit.block.data.Directional, org.bukkit.block.data.Openable, org.bukkit.block.data.Powerable, org.bukkit.block.data.Waterlogged {
 
-public final class CraftTrapdoor extends CraftBlockData implements TrapDoor, Bisected, Directional, Openable, Powerable, Waterlogged {
+    public CraftTrapdoor() {
+        super();
+    }
 
-    private static final EnumProperty HALF = getEnum(TrapDoorBlock.class, "half");
-    private static final EnumProperty FACING = getEnum(TrapDoorBlock.class, "facing");
-    private static final BooleanProperty OPEN = getBoolean(TrapDoorBlock.class, "open");
-    private static final BooleanProperty POWERED = getBoolean(TrapDoorBlock.class, "powered");
-    private static final BooleanProperty WATERLOGGED = getBoolean(TrapDoorBlock.class, "waterlogged");
-
-    public CraftTrapdoor() {}
-
-    public CraftTrapdoor(BlockState state) {
+    public CraftTrapdoor(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
-    public Half getHalf() {
-        return (Half) this.get(CraftTrapdoor.HALF, Half.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBisected
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> HALF = getEnum(net.minecraft.world.level.block.TrapDoorBlock.class, "half");
+
+    @Override
+    public org.bukkit.block.data.Bisected.Half getHalf() {
+        return get(HALF, org.bukkit.block.data.Bisected.Half.class);
     }
 
-    public void setHalf(Half half) {
-        this.set(CraftTrapdoor.HALF, (Enum) half);
+    @Override
+    public void setHalf(org.bukkit.block.data.Bisected.Half half) {
+        set(HALF, half);
     }
 
-    public BlockFace getFacing() {
-        return (BlockFace) this.get(CraftTrapdoor.FACING, BlockFace.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.TrapDoorBlock.class, "facing");
+
+    @Override
+    public org.bukkit.block.BlockFace getFacing() {
+        return get(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public void setFacing(BlockFace facing) {
-        this.set(CraftTrapdoor.FACING, (Enum) facing);
+    @Override
+    public void setFacing(org.bukkit.block.BlockFace facing) {
+        set(FACING, facing);
     }
 
-    public Set getFaces() {
-        return this.getValues(CraftTrapdoor.FACING, BlockFace.class);
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftOpenable
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty OPEN = getBoolean(net.minecraft.world.level.block.TrapDoorBlock.class, "open");
+
+    @Override
     public boolean isOpen() {
-        return (Boolean) this.get(CraftTrapdoor.OPEN);
+        return get(OPEN);
     }
 
+    @Override
     public void setOpen(boolean open) {
-        this.set((Property) CraftTrapdoor.OPEN, (Comparable) open);
+        set(OPEN, open);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.TrapDoorBlock.class, "powered");
+
+    @Override
     public boolean isPowered() {
-        return (Boolean) this.get(CraftTrapdoor.POWERED);
+        return get(POWERED);
     }
 
+    @Override
     public void setPowered(boolean powered) {
-        this.set((Property) CraftTrapdoor.POWERED, (Comparable) powered);
+        set(POWERED, powered);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.TrapDoorBlock.class, "waterlogged");
+
+    @Override
     public boolean isWaterlogged() {
-        return (Boolean) this.get(CraftTrapdoor.WATERLOGGED);
+        return get(WATERLOGGED);
     }
 
+    @Override
     public void setWaterlogged(boolean waterlogged) {
-        this.set((Property) CraftTrapdoor.WATERLOGGED, (Comparable) waterlogged);
+        set(WATERLOGGED, waterlogged);
     }
 }

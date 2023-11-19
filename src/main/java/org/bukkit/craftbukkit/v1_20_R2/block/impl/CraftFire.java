@@ -1,80 +1,81 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import java.util.Set;
-import net.minecraft.world.level.block.FireBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Ageable;
-import org.bukkit.block.data.MultipleFacing;
-import org.bukkit.block.data.type.Fire;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftFire extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Fire, org.bukkit.block.data.Ageable, org.bukkit.block.data.MultipleFacing {
 
-public final class CraftFire extends CraftBlockData implements Fire, Ageable, MultipleFacing {
+    public CraftFire() {
+        super();
+    }
 
-    private static final IntegerProperty AGE = getInteger(FireBlock.class, "age");
-    private static final BooleanProperty[] FACES = new BooleanProperty[]{getBoolean(FireBlock.class, "north", true), getBoolean(FireBlock.class, "east", true), getBoolean(FireBlock.class, "south", true), getBoolean(FireBlock.class, "west", true), getBoolean(FireBlock.class, "up", true), getBoolean(FireBlock.class, "down", true)};
-
-    public CraftFire() {}
-
-    public CraftFire(BlockState state) {
+    public CraftFire(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAgeable
+
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger(net.minecraft.world.level.block.FireBlock.class, "age");
+
+    @Override
     public int getAge() {
-        return (Integer) this.get(CraftFire.AGE);
+        return get(AGE);
     }
 
+    @Override
     public void setAge(int age) {
-        this.set((Property) CraftFire.AGE, (Comparable) age);
+        set(AGE, age);
     }
 
+    @Override
     public int getMaximumAge() {
-        return getMax(CraftFire.AGE);
+        return getMax(AGE);
     }
 
-    public boolean hasFace(BlockFace face) {
-        BooleanProperty state = CraftFire.FACES[face.ordinal()];
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftMultipleFacing
 
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] FACES = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
+        getBoolean(net.minecraft.world.level.block.FireBlock.class, "north", true), getBoolean(net.minecraft.world.level.block.FireBlock.class, "east", true), getBoolean(net.minecraft.world.level.block.FireBlock.class, "south", true), getBoolean(net.minecraft.world.level.block.FireBlock.class, "west", true), getBoolean(net.minecraft.world.level.block.FireBlock.class, "up", true), getBoolean(net.minecraft.world.level.block.FireBlock.class, "down", true)
+    };
+
+    @Override
+    public boolean hasFace(org.bukkit.block.BlockFace face) {
+        net.minecraft.world.level.block.state.properties.BooleanProperty state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
-        } else {
-            return (Boolean) this.get(state);
         }
+        return get(state);
     }
 
-    public void setFace(BlockFace face, boolean has) {
-        BooleanProperty state = CraftFire.FACES[face.ordinal()];
-
+    @Override
+    public void setFace(org.bukkit.block.BlockFace face, boolean has) {
+        net.minecraft.world.level.block.state.properties.BooleanProperty state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
-        } else {
-            this.set((Property) state, (Comparable) has);
         }
+        set(state, has);
     }
 
-    public Set getFaces() {
-        Builder faces = ImmutableSet.builder();
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        com.google.common.collect.ImmutableSet.Builder<org.bukkit.block.BlockFace> faces = com.google.common.collect.ImmutableSet.builder();
 
-        for (int i = 0; i < CraftFire.FACES.length; ++i) {
-            if (CraftFire.FACES[i] != null && (Boolean) this.get(CraftFire.FACES[i])) {
-                faces.add(BlockFace.values()[i]);
+        for (int i = 0; i < FACES.length; i++) {
+            if (FACES[i] != null && get(FACES[i])) {
+                faces.add(org.bukkit.block.BlockFace.values()[i]);
             }
         }
 
         return faces.build();
     }
 
-    public Set getAllowedFaces() {
-        Builder faces = ImmutableSet.builder();
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getAllowedFaces() {
+        com.google.common.collect.ImmutableSet.Builder<org.bukkit.block.BlockFace> faces = com.google.common.collect.ImmutableSet.builder();
 
-        for (int i = 0; i < CraftFire.FACES.length; ++i) {
-            if (CraftFire.FACES[i] != null) {
-                faces.add(BlockFace.values()[i]);
+        for (int i = 0; i < FACES.length; i++) {
+            if (FACES[i] != null) {
+                faces.add(org.bukkit.block.BlockFace.values()[i]);
             }
         }
 

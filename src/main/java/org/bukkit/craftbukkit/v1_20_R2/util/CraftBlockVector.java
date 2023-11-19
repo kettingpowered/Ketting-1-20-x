@@ -6,7 +6,8 @@ import org.bukkit.util.BlockVector;
 
 public final class CraftBlockVector {
 
-    private CraftBlockVector() {}
+    private CraftBlockVector() {
+    }
 
     public static BlockPos toBlockPosition(BlockVector blockVector) {
         return new BlockPos(blockVector.getBlockX(), blockVector.getBlockY(), blockVector.getBlockZ());

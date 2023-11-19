@@ -2,11 +2,11 @@ package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
+import net.minecraft.world.level.block.entity.BeehiveBlockEntity.BeeReleaseStatus;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Beehive;
@@ -14,59 +14,64 @@ import org.bukkit.craftbukkit.v1_20_R2.entity.CraftBee;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 import org.bukkit.entity.Bee;
 
-public class CraftBeehive extends CraftBlockEntityState implements Beehive {
+public class CraftBeehive extends CraftBlockEntityState<BeehiveBlockEntity> implements Beehive {
 
     public CraftBeehive(World world, BeehiveBlockEntity tileEntity) {
         super(world, tileEntity);
     }
 
     protected CraftBeehive(CraftBeehive state) {
-        super((CraftBlockEntityState) state);
+        super(state);
     }
 
+    @Override
     public Location getFlower() {
-        BlockPos flower = ((BeehiveBlockEntity) this.getSnapshot()).savedFlowerPos;
-
-        return flower == null ? null : CraftLocation.toBukkit(flower, this.getWorld());
+        BlockPos flower = getSnapshot().savedFlowerPos;
+        return (flower == null) ? null : CraftLocation.toBukkit(flower, getWorld());
     }
 
+    @Override
     public void setFlower(Location location) {
         Preconditions.checkArgument(location == null || this.getWorld().equals(location.getWorld()), "Flower must be in same world");
-        ((BeehiveBlockEntity) this.getSnapshot()).savedFlowerPos = location == null ? null : CraftLocation.toBlockPosition(location);
+        getSnapshot().savedFlowerPos = (location == null) ? null : CraftLocation.toBlockPosition(location);
     }
 
+    @Override
     public boolean isFull() {
-        return ((BeehiveBlockEntity) this.getSnapshot()).isFull();
+        return getSnapshot().isFull();
     }
 
+    @Override
     public boolean isSedated() {
-        return this.isPlaced() && ((BeehiveBlockEntity) this.getTileEntity()).isSedated();
+        return isPlaced() && getTileEntity().isSedated();
     }
 
+    @Override
     public int getEntityCount() {
-        return ((BeehiveBlockEntity) this.getSnapshot()).getOccupantCount();
+        return getSnapshot().getOccupantCount();
     }
 
+    @Override
     public int getMaxEntities() {
-        return ((BeehiveBlockEntity) this.getSnapshot()).maxBees;
+        return getSnapshot().maxBees;
     }
 
+    @Override
     public void setMaxEntities(int max) {
         Preconditions.checkArgument(max > 0, "Max bees must be more than 0");
-        ((BeehiveBlockEntity) this.getSnapshot()).maxBees = max;
+
+        getSnapshot().maxBees = max;
     }
 
-    public List releaseEntities() {
-        this.ensureNoWorldGeneration();
-        ArrayList bees = new ArrayList();
+    @Override
+    public List<Bee> releaseEntities() {
+        ensureNoWorldGeneration();
 
-        if (this.isPlaced()) {
-            BeehiveBlockEntity beehive = (BeehiveBlockEntity) this.getTileEntityFromWorld();
-            Iterator iterator = beehive.releaseBees(this.getHandle(), BeehiveBlockEntity.BeeReleaseStatus.BEE_RELEASED, true).iterator();
+        List<Bee> bees = new ArrayList<>();
 
-            while (iterator.hasNext()) {
-                Entity bee = (Entity) iterator.next();
-
+        if (isPlaced()) {
+            BeehiveBlockEntity beehive = ((BeehiveBlockEntity) this.getTileEntityFromWorld());
+            for (Entity bee : beehive.releaseBees(this.getHandle(), BeeReleaseStatus.BEE_RELEASED, true)) {
                 bees.add((Bee) bee.getBukkitEntity());
             }
         }
@@ -74,11 +79,14 @@ public class CraftBeehive extends CraftBlockEntityState implements Beehive {
         return bees;
     }
 
+    @Override
     public void addEntity(Bee entity) {
         Preconditions.checkArgument(entity != null, "Entity must not be null");
-        ((BeehiveBlockEntity) this.getSnapshot()).addOccupant(((CraftBee) entity).getHandle(), false);
+
+        getSnapshot().addOccupant(((CraftBee) entity).getHandle(), false);
     }
 
+    @Override
     public CraftBeehive copy() {
         return new CraftBeehive(this);
     }

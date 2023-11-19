@@ -14,12 +14,13 @@ public class CraftTrimPattern implements TrimPattern {
         this.handle = handle;
     }
 
+    @Override
     @NotNull
     public NamespacedKey getKey() {
-        return this.key;
+        return key;
     }
 
     public net.minecraft.world.item.armortrim.TrimPattern getHandle() {
-        return this.handle;
+        return handle;
     }
 }

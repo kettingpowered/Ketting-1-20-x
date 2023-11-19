@@ -1,38 +1,43 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import net.minecraft.world.level.block.LanternBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Hangable;
-import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.Lantern;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftLantern extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Lantern, org.bukkit.block.data.Hangable, org.bukkit.block.data.Waterlogged {
 
-public final class CraftLantern extends CraftBlockData implements Lantern, Hangable, Waterlogged {
+    public CraftLantern() {
+        super();
+    }
 
-    private static final BooleanProperty HANGING = getBoolean(LanternBlock.class, "hanging");
-    private static final BooleanProperty WATERLOGGED = getBoolean(LanternBlock.class, "waterlogged");
-
-    public CraftLantern() {}
-
-    public CraftLantern(BlockState state) {
+    public CraftLantern(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftHangable
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty HANGING = getBoolean(net.minecraft.world.level.block.LanternBlock.class, "hanging");
+
+    @Override
     public boolean isHanging() {
-        return (Boolean) this.get(CraftLantern.HANGING);
+        return get(HANGING);
     }
 
+    @Override
     public void setHanging(boolean hanging) {
-        this.set((Property) CraftLantern.HANGING, (Comparable) hanging);
+        set(HANGING, hanging);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.LanternBlock.class, "waterlogged");
+
+    @Override
     public boolean isWaterlogged() {
-        return (Boolean) this.get(CraftLantern.WATERLOGGED);
+        return get(WATERLOGGED);
     }
 
+    @Override
     public void setWaterlogged(boolean waterlogged) {
-        this.set((Property) CraftLantern.WATERLOGGED, (Comparable) waterlogged);
+        set(WATERLOGGED, waterlogged);
     }
 }

@@ -14,6 +14,40 @@ permissions:
   actions: write #nessesary for cache deletion
 
 jobs:
+  #fixme: this is not ready yet, because the project itself doesn't compile.
+  create-release:
+    needs: build
+    if: ${{ format('refs/heads/{0}', github.event.repository.default_branch) == github.ref }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+      - name: Rename and move artifacts
+        run: |
+          for dir in artifacts/*/
+          do
+            dir=${dir%*/} # remove the trailing "/"
+            for file in $dir/*
+            do 
+              file=${file##*/} # remove the path before the filename
+              base=${file%.*} # remove the extension
+              ext=${file#"$base"} # remove the filename before the extension
+              echo "moving ${dir}/${file} to artifacts/${file%%.*}-${dir##*/}${ext}"
+              mv "${dir}/${file}" "artifacts/${file%%.*}-${dir##*/}${ext}"
+            done
+            rm -r "${dir}"
+          done
+      - name: release
+        uses: ncipollo/release-action@v1
+        id: create_release
+        with:
+          generateReleaseNotes: true
+          artifacts: "artifacts/*"
+          tag: ${{ github.sha }}
+          prerelease: true
+          #sdraft: true
   setup:
     runs-on: ubuntu-latest
     steps:
@@ -57,7 +91,7 @@ jobs:
         id: build
         run: ./gradlew build
       - name: Save Project Sources
-        if: steps.cache_projects-src_restore.output.cache-hit != 'true'
+        if: steps.cache_projects-src_restore.outputs.cache-hit != 'true'
         uses: actions/cache/save@v3
         with:
           path: |
@@ -110,6 +144,9 @@ jobs:
           echo "Done"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Rename Branch, if Pull_Request
+        if: ${{ github.event_name == 'pull_request' }}
+        run: git checkout -B 'branch'
       - name: Build Ketting Jar
         run: ./gradlew kettingJar
       - name: Upload build artifact
@@ -118,3 +155,6 @@ jobs:
           name: project-forge-build-libs
           path: |
             projects/forge/build/libs/
+      - name: Run Game Test Server
+        continue-on-error: true
+        run: java -Dforge.gameTestServer=true -jar ketting-1.20.2-48.0.39-3c86aee1-server.jar -dau -accepteula

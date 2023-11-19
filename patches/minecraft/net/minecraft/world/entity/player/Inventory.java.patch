@@ -9,18 +9,17 @@
  import java.util.List;
  import java.util.function.Predicate;
  import net.minecraft.CrashReport;
-@@ -23,6 +_,10 @@
+@@ -23,6 +_,9 @@
  import net.minecraft.world.item.Item;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.state.BlockState;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
-+import org.bukkit.inventory.InventoryHolder;
  
  public class Inventory implements Container, Nameable {
     public static final int POP_TIME_DURATION = 5;
-@@ -40,10 +_,80 @@
+@@ -40,6 +_,54 @@
     public final Player player;
     private int timesChanged;
  
@@ -75,6 +74,9 @@
     public Inventory(Player p_35983_) {
        this.player = p_35983_;
     }
+@@ -56,6 +_,28 @@
+       return !p_36015_.isEmpty() && ItemStack.isSameItemSameTags(p_36015_, p_36016_) && p_36015_.isStackable() && p_36015_.getCount() < p_36015_.getMaxStackSize() && p_36015_.getCount() < this.getMaxStackSize();
+    }
  
 +   // CraftBukkit start - Watch method above! :D
 +   public int canHold(ItemStack itemstack) {
@@ -98,9 +100,9 @@
 +   }
 +   // CraftBukkit end
 +
-    public ItemStack getSelected() {
-       return isHotbarSlot(this.selected) ? this.items.get(this.selected) : ItemStack.EMPTY;
-    }
+    public int getFreeSlot() {
+       for(int i = 0; i < this.items.size(); ++i) {
+          if (this.items.get(i).isEmpty()) {
 @@ -130,7 +_,7 @@
  
        for(int k = 0; k < 9; ++k) {

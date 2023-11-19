@@ -1,27 +1,29 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import net.minecraft.world.level.block.BubbleColumnBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.type.BubbleColumn;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftBubbleColumn extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.BubbleColumn {
 
-public final class CraftBubbleColumn extends CraftBlockData implements BubbleColumn {
+    public CraftBubbleColumn() {
+        super();
+    }
 
-    private static final BooleanProperty DRAG = getBoolean(BubbleColumnBlock.class, "drag");
-
-    public CraftBubbleColumn() {}
-
-    public CraftBubbleColumn(BlockState state) {
+    public CraftBubbleColumn(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftBubbleColumn
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty DRAG = getBoolean(net.minecraft.world.level.block.BubbleColumnBlock.class, "drag");
+
+    @Override
     public boolean isDrag() {
-        return (Boolean) this.get(CraftBubbleColumn.DRAG);
+        return get(DRAG);
     }
 
+    @Override
     public void setDrag(boolean drag) {
-        this.set((Property) CraftBubbleColumn.DRAG, (Comparable) drag);
+        set(DRAG, drag);
     }
 }

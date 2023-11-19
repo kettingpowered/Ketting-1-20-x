@@ -1,52 +1,62 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import net.minecraft.world.level.block.CandleBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Lightable;
-import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.Candle;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftCandle extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Candle, org.bukkit.block.data.Lightable, org.bukkit.block.data.Waterlogged {
 
-public final class CraftCandle extends CraftBlockData implements Candle, Lightable, Waterlogged {
+    public CraftCandle() {
+        super();
+    }
 
-    private static final IntegerProperty CANDLES = getInteger(CandleBlock.class, "candles");
-    private static final BooleanProperty LIT = getBoolean(CandleBlock.class, "lit");
-    private static final BooleanProperty WATERLOGGED = getBoolean(CandleBlock.class, "waterlogged");
-
-    public CraftCandle() {}
-
-    public CraftCandle(BlockState state) {
+    public CraftCandle(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftCandle
+
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty CANDLES = getInteger(net.minecraft.world.level.block.CandleBlock.class, "candles");
+
+    @Override
     public int getCandles() {
-        return (Integer) this.get(CraftCandle.CANDLES);
+        return get(CANDLES);
     }
 
+    @Override
     public void setCandles(int candles) {
-        this.set((Property) CraftCandle.CANDLES, (Comparable) candles);
+        set(CANDLES, candles);
     }
 
+    @Override
     public int getMaximumCandles() {
-        return getMax(CraftCandle.CANDLES);
+        return getMax(CANDLES);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftLightable
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty LIT = getBoolean(net.minecraft.world.level.block.CandleBlock.class, "lit");
+
+    @Override
     public boolean isLit() {
-        return (Boolean) this.get(CraftCandle.LIT);
+        return get(LIT);
     }
 
+    @Override
     public void setLit(boolean lit) {
-        this.set((Property) CraftCandle.LIT, (Comparable) lit);
+        set(LIT, lit);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.CandleBlock.class, "waterlogged");
+
+    @Override
     public boolean isWaterlogged() {
-        return (Boolean) this.get(CraftCandle.WATERLOGGED);
+        return get(WATERLOGGED);
     }
 
+    @Override
     public void setWaterlogged(boolean waterlogged) {
-        this.set((Property) CraftCandle.WATERLOGGED, (Comparable) waterlogged);
+        set(WATERLOGGED, waterlogged);
     }
 }

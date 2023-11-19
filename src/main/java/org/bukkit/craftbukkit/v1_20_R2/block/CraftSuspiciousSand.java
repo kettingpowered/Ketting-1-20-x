@@ -11,9 +11,10 @@ public class CraftSuspiciousSand extends CraftBrushableBlock implements Suspicio
     }
 
     protected CraftSuspiciousSand(CraftSuspiciousSand state) {
-        super((CraftBrushableBlock) state);
+        super(state);
     }
 
+    @Override
     public CraftSuspiciousSand copy() {
         return new CraftSuspiciousSand(this);
     }

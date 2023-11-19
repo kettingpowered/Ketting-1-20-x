@@ -1,45 +1,48 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.RedstoneWallTorchBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.Lightable;
-import org.bukkit.block.data.type.RedstoneWallTorch;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftRedstoneTorchWall extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.RedstoneWallTorch, org.bukkit.block.data.Directional, org.bukkit.block.data.Lightable {
 
-public final class CraftRedstoneTorchWall extends CraftBlockData implements RedstoneWallTorch, Directional, Lightable {
+    public CraftRedstoneTorchWall() {
+        super();
+    }
 
-    private static final EnumProperty FACING = getEnum(RedstoneWallTorchBlock.class, "facing");
-    private static final BooleanProperty LIT = getBoolean(RedstoneWallTorchBlock.class, "lit");
-
-    public CraftRedstoneTorchWall() {}
-
-    public CraftRedstoneTorchWall(BlockState state) {
+    public CraftRedstoneTorchWall(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
-    public BlockFace getFacing() {
-        return (BlockFace) this.get(CraftRedstoneTorchWall.FACING, BlockFace.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.RedstoneWallTorchBlock.class, "facing");
+
+    @Override
+    public org.bukkit.block.BlockFace getFacing() {
+        return get(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public void setFacing(BlockFace facing) {
-        this.set(CraftRedstoneTorchWall.FACING, (Enum) facing);
+    @Override
+    public void setFacing(org.bukkit.block.BlockFace facing) {
+        set(FACING, facing);
     }
 
-    public Set getFaces() {
-        return this.getValues(CraftRedstoneTorchWall.FACING, BlockFace.class);
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftLightable
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty LIT = getBoolean(net.minecraft.world.level.block.RedstoneWallTorchBlock.class, "lit");
+
+    @Override
     public boolean isLit() {
-        return (Boolean) this.get(CraftRedstoneTorchWall.LIT);
+        return get(LIT);
     }
 
+    @Override
     public void setLit(boolean lit) {
-        this.set((Property) CraftRedstoneTorchWall.LIT, (Comparable) lit);
+        set(LIT, lit);
     }
 }
