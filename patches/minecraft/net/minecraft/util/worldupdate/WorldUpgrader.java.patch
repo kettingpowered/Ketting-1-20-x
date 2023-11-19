@@ -14,7 +14,7 @@
                          int k = ChunkStorage.getVersion(compoundtag);
                          ChunkGenerator chunkgenerator = this.dimensions.getOrThrow(Registries.levelToLevelStem(resourcekey2)).generator();
 -                        CompoundTag compoundtag1 = chunkstorage.upgradeChunkTag(resourcekey2, () -> {
-+                        CompoundTag compoundtag1 = chunkstorage.upgradeChunkTag(Registries.levelStemToLevel(resourcekey2), () -> { // CraftBukkit
++                        CompoundTag compoundtag1 = chunkstorage.upgradeChunkTag(Registries.levelToLevelStem(resourcekey2), () -> { // CraftBukkit
                             return this.overworldDataStorage;
 -                        }, compoundtag, chunkgenerator.getTypeNameForDataFixer());
 +                        }, compoundtag, chunkgenerator.getTypeNameForDataFixer(), chunkpos, null); // CraftBukkit
