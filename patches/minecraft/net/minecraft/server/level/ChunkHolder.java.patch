@@ -8,6 +8,15 @@
  import net.minecraft.util.DebugBuffer;
  import net.minecraft.world.level.ChunkPos;
  import net.minecraft.world.level.Level;
+@@ -51,7 +_,7 @@
+    private CompletableFuture<ChunkAccess> chunkToSave = CompletableFuture.completedFuture((ChunkAccess)null);
+    @Nullable
+    private final DebugBuffer<ChunkHolder.ChunkSaveDebug> chunkToSaveHistory = null;
+-   private int oldTicketLevel;
++   public int oldTicketLevel;
+    private int ticketLevel;
+    private int queueLevel;
+    final ChunkPos pos;
 @@ -61,8 +_,9 @@
     private final BitSet skyChangedLightSectionFilter = new BitSet();
     private final LevelLightEngine lightEngine;
