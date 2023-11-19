@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.tag;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.core.Registry;
@@ -8,21 +9,26 @@ import net.minecraft.world.level.block.Block;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
 
-public class CraftBlockTag extends CraftTag {
+public class CraftBlockTag extends CraftTag<Block, Material> {
 
-    public CraftBlockTag(Registry registry, TagKey tag) {
+    public CraftBlockTag(Registry<Block> registry, TagKey<Block> tag) {
         super(registry, tag);
     }
 
+    @Override
     public boolean isTagged(Material item) {
         Block block = CraftMagicNumbers.getBlock(item);
 
-        return block == null ? false : block.builtInRegistryHolder().is(this.tag);
+        // SPIGOT-6952: A Material is not necessary a block, in this case return false
+        if (block == null) {
+            return false;
+        }
+
+        return block.builtInRegistryHolder().is(tag);
     }
 
-    public Set getValues() {
-        return (Set) this.getHandle().stream().map((blockx) -> {
-            return CraftMagicNumbers.getMaterial((Block) blockx.value());
-        }).collect(Collectors.toUnmodifiableSet());
+    @Override
+    public Set<Material> getValues() {
+        return getHandle().stream().map((block) -> CraftMagicNumbers.getMaterial(block.value())).collect(Collectors.toUnmodifiableSet());
     }
 }

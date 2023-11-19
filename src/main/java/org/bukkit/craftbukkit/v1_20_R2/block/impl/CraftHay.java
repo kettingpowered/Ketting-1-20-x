@@ -1,32 +1,34 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.HayBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import org.bukkit.Axis;
-import org.bukkit.block.data.Orientable;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftHay extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.Orientable {
 
-public final class CraftHay extends CraftBlockData implements Orientable {
+    public CraftHay() {
+        super();
+    }
 
-    private static final EnumProperty AXIS = getEnum(HayBlock.class, "axis");
-
-    public CraftHay() {}
-
-    public CraftHay(BlockState state) {
+    public CraftHay(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
-    public Axis getAxis() {
-        return (Axis) this.get(CraftHay.AXIS, Axis.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftOrientable
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> AXIS = getEnum(net.minecraft.world.level.block.HayBlock.class, "axis");
+
+    @Override
+    public org.bukkit.Axis getAxis() {
+        return get(AXIS, org.bukkit.Axis.class);
     }
 
-    public void setAxis(Axis axis) {
-        this.set(CraftHay.AXIS, (Enum) axis);
+    @Override
+    public void setAxis(org.bukkit.Axis axis) {
+        set(AXIS, axis);
     }
 
-    public Set getAxes() {
-        return this.getValues(CraftHay.AXIS, Axis.class);
+    @Override
+    public java.util.Set<org.bukkit.Axis> getAxes() {
+        return getValues(AXIS, org.bukkit.Axis.class);
     }
 }

@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R2.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
+import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -9,102 +10,114 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
 public class CraftMetaArmorStand extends CraftMetaItem {
 
-    static final CraftMetaItem.ItemMetaKey ENTITY_TAG = new CraftMetaItem.ItemMetaKey("EntityTag", "entity-tag");
+    static final ItemMetaKey ENTITY_TAG = new ItemMetaKey("EntityTag", "entity-tag");
     CompoundTag entityTag;
 
     CraftMetaArmorStand(CraftMetaItem meta) {
         super(meta);
-        if (meta instanceof CraftMetaArmorStand) {
-            CraftMetaArmorStand armorStand = (CraftMetaArmorStand) meta;
 
-            this.entityTag = armorStand.entityTag;
+        if (!(meta instanceof CraftMetaArmorStand)) {
+            return;
         }
+
+        CraftMetaArmorStand armorStand = (CraftMetaArmorStand) meta;
+        this.entityTag = armorStand.entityTag;
     }
 
     CraftMetaArmorStand(CompoundTag tag) {
         super(tag);
-        if (tag.contains(CraftMetaArmorStand.ENTITY_TAG.NBT)) {
-            this.entityTag = tag.getCompound(CraftMetaArmorStand.ENTITY_TAG.NBT).copy();
-        }
 
+        if (tag.contains(ENTITY_TAG.NBT)) {
+            entityTag = tag.getCompound(ENTITY_TAG.NBT).copy();
+        }
     }
 
-    CraftMetaArmorStand(Map map) {
+    CraftMetaArmorStand(Map<String, Object> map) {
         super(map);
     }
 
+    @Override
     void deserializeInternal(CompoundTag tag, Object context) {
         super.deserializeInternal(tag, context);
-        if (tag.contains(CraftMetaArmorStand.ENTITY_TAG.NBT)) {
-            this.entityTag = tag.getCompound(CraftMetaArmorStand.ENTITY_TAG.NBT);
-        }
 
+        if (tag.contains(ENTITY_TAG.NBT)) {
+            entityTag = tag.getCompound(ENTITY_TAG.NBT);
+        }
     }
 
-    void serializeInternal(Map internalTags) {
-        if (this.entityTag != null && !this.entityTag.isEmpty()) {
-            internalTags.put(CraftMetaArmorStand.ENTITY_TAG.NBT, this.entityTag);
+    @Override
+    void serializeInternal(Map<String, Tag> internalTags) {
+        if (entityTag != null && !entityTag.isEmpty()) {
+            internalTags.put(ENTITY_TAG.NBT, entityTag);
         }
-
     }
 
+    @Override
     void applyToItem(CompoundTag tag) {
         super.applyToItem(tag);
-        if (this.entityTag != null) {
-            tag.put(CraftMetaArmorStand.ENTITY_TAG.NBT, this.entityTag);
-        }
 
+        if (entityTag != null) {
+            tag.put(ENTITY_TAG.NBT, entityTag);
+        }
     }
 
+    @Override
     boolean applicableTo(Material type) {
         return type == Material.ARMOR_STAND;
     }
 
+    @Override
     boolean isEmpty() {
-        return super.isEmpty() && this.isArmorStandEmpty();
+        return super.isEmpty() && isArmorStandEmpty();
     }
 
     boolean isArmorStandEmpty() {
-        return this.entityTag == null;
+        return !(entityTag != null);
     }
 
+    @Override
     boolean equalsCommon(CraftMetaItem meta) {
         if (!super.equalsCommon(meta)) {
             return false;
-        } else if (!(meta instanceof CraftMetaArmorStand)) {
-            return true;
-        } else {
+        }
+        if (meta instanceof CraftMetaArmorStand) {
             CraftMetaArmorStand that = (CraftMetaArmorStand) meta;
 
-            return this.entityTag != null ? that.entityTag != null && this.entityTag.equals(that.entityTag) : this.entityTag == null;
+            return entityTag != null ? that.entityTag != null && this.entityTag.equals(that.entityTag) : entityTag == null;
         }
+        return true;
     }
 
+    @Override
     boolean notUncommon(CraftMetaItem meta) {
-        return super.notUncommon(meta) && (meta instanceof CraftMetaArmorStand || this.isArmorStandEmpty());
+        return super.notUncommon(meta) && (meta instanceof CraftMetaArmorStand || isArmorStandEmpty());
     }
 
+    @Override
     int applyHash() {
-        int original;
+        final int original;
         int hash = original = super.applyHash();
 
-        if (this.entityTag != null) {
-            hash = 73 * hash + this.entityTag.hashCode();
+        if (entityTag != null) {
+            hash = 73 * hash + entityTag.hashCode();
         }
 
         return original != hash ? CraftMetaArmorStand.class.hashCode() ^ hash : hash;
     }
 
-    Builder serialize(Builder builder) {
+    @Override
+    Builder<String, Object> serialize(Builder<String, Object> builder) {
         super.serialize(builder);
+
         return builder;
     }
 
+    @Override
     public CraftMetaArmorStand clone() {
         CraftMetaArmorStand clone = (CraftMetaArmorStand) super.clone();
 
-        if (this.entityTag != null) {
-            clone.entityTag = this.entityTag.copy();
+        if (entityTag != null) {
+            clone.entityTag = entityTag.copy();
         }
 
         return clone;

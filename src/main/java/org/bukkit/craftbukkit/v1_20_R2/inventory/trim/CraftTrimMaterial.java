@@ -14,12 +14,13 @@ public class CraftTrimMaterial implements TrimMaterial {
         this.handle = handle;
     }
 
+    @Override
     @NotNull
     public NamespacedKey getKey() {
-        return this.key;
+        return key;
     }
 
     public net.minecraft.world.item.armortrim.TrimMaterial getHandle() {
-        return this.handle;
+        return handle;
     }
 }

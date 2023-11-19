@@ -1,51 +1,59 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import net.minecraft.world.level.block.ScaffoldingBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.Scaffolding;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftScaffolding extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Scaffolding, org.bukkit.block.data.Waterlogged {
 
-public final class CraftScaffolding extends CraftBlockData implements Scaffolding, Waterlogged {
+    public CraftScaffolding() {
+        super();
+    }
 
-    private static final BooleanProperty BOTTOM = getBoolean(ScaffoldingBlock.class, "bottom");
-    private static final IntegerProperty DISTANCE = getInteger(ScaffoldingBlock.class, "distance");
-    private static final BooleanProperty WATERLOGGED = getBoolean(ScaffoldingBlock.class, "waterlogged");
-
-    public CraftScaffolding() {}
-
-    public CraftScaffolding(BlockState state) {
+    public CraftScaffolding(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftScaffolding
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty BOTTOM = getBoolean(net.minecraft.world.level.block.ScaffoldingBlock.class, "bottom");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty DISTANCE = getInteger(net.minecraft.world.level.block.ScaffoldingBlock.class, "distance");
+
+    @Override
     public boolean isBottom() {
-        return (Boolean) this.get(CraftScaffolding.BOTTOM);
+        return get(BOTTOM);
     }
 
+    @Override
     public void setBottom(boolean bottom) {
-        this.set((Property) CraftScaffolding.BOTTOM, (Comparable) bottom);
+        set(BOTTOM, bottom);
     }
 
+    @Override
     public int getDistance() {
-        return (Integer) this.get(CraftScaffolding.DISTANCE);
+        return get(DISTANCE);
     }
 
+    @Override
     public void setDistance(int distance) {
-        this.set((Property) CraftScaffolding.DISTANCE, (Comparable) distance);
+        set(DISTANCE, distance);
     }
 
+    @Override
     public int getMaximumDistance() {
-        return getMax(CraftScaffolding.DISTANCE);
+        return getMax(DISTANCE);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.ScaffoldingBlock.class, "waterlogged");
+
+    @Override
     public boolean isWaterlogged() {
-        return (Boolean) this.get(CraftScaffolding.WATERLOGGED);
+        return get(WATERLOGGED);
     }
 
+    @Override
     public void setWaterlogged(boolean waterlogged) {
-        this.set((Property) CraftScaffolding.WATERLOGGED, (Comparable) waterlogged);
+        set(WATERLOGGED, waterlogged);
     }
 }

@@ -22,7 +22,7 @@
  import net.minecraft.util.datafix.DataFixTypes;
  import net.minecraft.world.Difficulty;
  import net.minecraft.world.level.GameRules;
-@@ -35,11 +_,16 @@
+@@ -35,18 +_,23 @@
  import net.minecraft.world.level.LevelSettings;
  import net.minecraft.world.level.WorldDataConfiguration;
  import net.minecraft.world.level.border.WorldBorder;
@@ -39,6 +39,14 @@
  import org.slf4j.Logger;
  
  public class PrimaryLevelData implements ServerLevelData, WorldData {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    protected static final String PLAYER = "Player";
+    protected static final String WORLD_GEN_SETTINGS = "WorldGenSettings";
+-   private LevelSettings settings;
++   public LevelSettings settings;
+    private final WorldOptions worldOptions;
+    private final PrimaryLevelData.SpecialWorldProperty specialWorldProperty;
+    private final Lifecycle worldGenSettingsLifecycle;
 @@ -82,6 +_,21 @@
     private boolean wasModded;
     private final Set<String> removedFeatureFlags;

@@ -2,8 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R2.scoreboard;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import java.util.Iterator;
 import java.util.Set;
 import net.minecraft.world.scores.PlayerTeam;
 import org.bukkit.Bukkit;
@@ -12,367 +10,297 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 import org.bukkit.scoreboard.NameTagVisibility;
 import org.bukkit.scoreboard.Team;
-import org.bukkit.scoreboard.Team.Option;
-import org.bukkit.scoreboard.Team.OptionStatus;
 
 final class CraftTeam extends CraftScoreboardComponent implements Team {
-
     private final PlayerTeam team;
-    private static volatile int[] $SWITCH_TABLE$org$bukkit$scoreboard$Team$Option;
-    private static volatile int[] $SWITCH_TABLE$org$bukkit$scoreboard$NameTagVisibility;
-    private static volatile int[] $SWITCH_TABLE$net$minecraft$world$scores$ScoreboardTeamBase$EnumNameTagVisibility;
 
     CraftTeam(CraftScoreboard scoreboard, PlayerTeam team) {
         super(scoreboard);
         this.team = team;
     }
 
+    @Override
     public String getName() {
-        this.checkState();
-        return this.team.getName();
+        checkState();
+
+        return team.getName();
     }
 
+    @Override
     public String getDisplayName() {
-        this.checkState();
-        return CraftChatMessage.fromComponent(this.team.getDisplayName());
+        checkState();
+
+        return CraftChatMessage.fromComponent(team.getDisplayName());
     }
 
+    @Override
     public void setDisplayName(String displayName) {
         Preconditions.checkArgument(displayName != null, "Display name cannot be null");
-        this.checkState();
-        this.team.setDisplayName(CraftChatMessage.fromString(displayName)[0]);
+        checkState();
+
+        team.setDisplayName(CraftChatMessage.fromString(displayName)[0]); // SPIGOT-4112: not nullable
     }
 
+    @Override
     public String getPrefix() {
-        this.checkState();
-        return CraftChatMessage.fromComponent(this.team.getPlayerPrefix());
+        checkState();
+
+        return CraftChatMessage.fromComponent(team.getPlayerPrefix());
     }
 
+    @Override
     public void setPrefix(String prefix) {
         Preconditions.checkArgument(prefix != null, "Prefix cannot be null");
-        this.checkState();
-        this.team.setPlayerPrefix(CraftChatMessage.fromStringOrNull(prefix));
+        checkState();
+
+        team.setPlayerPrefix(CraftChatMessage.fromStringOrNull(prefix));
     }
 
+    @Override
     public String getSuffix() {
-        this.checkState();
-        return CraftChatMessage.fromComponent(this.team.getPlayerSuffix());
+        checkState();
+
+        return CraftChatMessage.fromComponent(team.getPlayerSuffix());
     }
 
+    @Override
     public void setSuffix(String suffix) {
         Preconditions.checkArgument(suffix != null, "Suffix cannot be null");
-        this.checkState();
-        this.team.setPlayerSuffix(CraftChatMessage.fromStringOrNull(suffix));
+        checkState();
+
+        team.setPlayerSuffix(CraftChatMessage.fromStringOrNull(suffix));
     }
 
+    @Override
     public ChatColor getColor() {
-        this.checkState();
-        return CraftChatMessage.getColor(this.team.getColor());
+        checkState();
+
+        return CraftChatMessage.getColor(team.getColor());
     }
 
+    @Override
     public void setColor(ChatColor color) {
         Preconditions.checkArgument(color != null, "Color cannot be null");
-        this.checkState();
-        this.team.setColor(CraftChatMessage.getColor(color));
+        checkState();
+
+        team.setColor(CraftChatMessage.getColor(color));
     }
 
+    @Override
     public boolean allowFriendlyFire() {
-        this.checkState();
-        return this.team.isAllowFriendlyFire();
+        checkState();
+
+        return team.isAllowFriendlyFire();
     }
 
+    @Override
     public void setAllowFriendlyFire(boolean enabled) {
-        this.checkState();
-        this.team.setAllowFriendlyFire(enabled);
+        checkState();
+
+        team.setAllowFriendlyFire(enabled);
     }
 
+    @Override
     public boolean canSeeFriendlyInvisibles() {
-        this.checkState();
-        return this.team.canSeeFriendlyInvisibles();
+        checkState();
+
+        return team.canSeeFriendlyInvisibles();
     }
 
+    @Override
     public void setCanSeeFriendlyInvisibles(boolean enabled) {
-        this.checkState();
-        this.team.setSeeFriendlyInvisibles(enabled);
+        checkState();
+
+        team.setSeeFriendlyInvisibles(enabled);
     }
 
+    @Override
     public NameTagVisibility getNameTagVisibility() throws IllegalArgumentException {
-        this.checkState();
-        return notchToBukkit(this.team.getNameTagVisibility());
+        checkState();
+
+        return notchToBukkit(team.getNameTagVisibility());
     }
 
+    @Override
     public void setNameTagVisibility(NameTagVisibility visibility) throws IllegalArgumentException {
-        this.checkState();
-        this.team.setNameTagVisibility(bukkitToNotch(visibility));
+        checkState();
+
+        team.setNameTagVisibility(bukkitToNotch(visibility));
     }
 
-    public Set getPlayers() {
-        this.checkState();
-        Builder players = ImmutableSet.builder();
-        Iterator iterator = this.team.getPlayers().iterator();
+    @Override
+    public Set<OfflinePlayer> getPlayers() {
+        checkState();
 
-        while (iterator.hasNext()) {
-            String playerName = (String) iterator.next();
-
+        ImmutableSet.Builder<OfflinePlayer> players = ImmutableSet.builder();
+        for (String playerName : team.getPlayers()) {
             players.add(Bukkit.getOfflinePlayer(playerName));
         }
-
         return players.build();
     }
 
-    public Set getEntries() {
-        this.checkState();
-        Builder entries = ImmutableSet.builder();
-        Iterator iterator = this.team.getPlayers().iterator();
+    @Override
+    public Set<String> getEntries() {
+        checkState();
 
-        while (iterator.hasNext()) {
-            String playerName = (String) iterator.next();
-
+        ImmutableSet.Builder<String> entries = ImmutableSet.builder();
+        for (String playerName : team.getPlayers()) {
             entries.add(playerName);
         }
-
         return entries.build();
     }
 
+    @Override
     public int getSize() {
-        this.checkState();
-        return this.team.getPlayers().size();
+        checkState();
+
+        return team.getPlayers().size();
     }
 
+    @Override
     public void addPlayer(OfflinePlayer player) {
         Preconditions.checkArgument(player != null, "OfflinePlayer cannot be null");
-        this.addEntry(player.getName());
+        addEntry(player.getName());
     }
 
+    @Override
     public void addEntry(String entry) {
         Preconditions.checkArgument(entry != null, "Entry cannot be null");
-        CraftScoreboard scoreboard = this.checkState();
+        CraftScoreboard scoreboard = checkState();
 
-        scoreboard.board.addPlayerToTeam(entry, this.team);
+        scoreboard.board.addPlayerToTeam(entry, team);
     }
 
+    @Override
     public boolean removePlayer(OfflinePlayer player) {
         Preconditions.checkArgument(player != null, "OfflinePlayer cannot be null");
-        return this.removeEntry(player.getName());
+        return removeEntry(player.getName());
     }
 
+    @Override
     public boolean removeEntry(String entry) {
         Preconditions.checkArgument(entry != null, "Entry cannot be null");
-        CraftScoreboard scoreboard = this.checkState();
+        CraftScoreboard scoreboard = checkState();
 
-        if (!this.team.getPlayers().contains(entry)) {
+        if (!team.getPlayers().contains(entry)) {
             return false;
-        } else {
-            scoreboard.board.removePlayerFromTeam(entry, this.team);
-            return true;
         }
+
+        scoreboard.board.removePlayerFromTeam(entry, team);
+        return true;
     }
 
+    @Override
     public boolean hasPlayer(OfflinePlayer player) throws IllegalArgumentException, IllegalStateException {
         Preconditions.checkArgument(player != null, "OfflinePlayer cannot be null");
-        return this.hasEntry(player.getName());
+        return hasEntry(player.getName());
     }
 
+    @Override
     public boolean hasEntry(String entry) throws IllegalArgumentException, IllegalStateException {
         Preconditions.checkArgument(entry != null, "Entry cannot be null");
-        this.checkState();
-        return this.team.getPlayers().contains(entry);
+        checkState();
+
+        return team.getPlayers().contains(entry);
     }
 
+    @Override
     public void unregister() {
-        CraftScoreboard scoreboard = this.checkState();
+        CraftScoreboard scoreboard = checkState();
 
-        scoreboard.board.removePlayerTeam(this.team);
+        scoreboard.board.removePlayerTeam(team);
     }
 
+    @Override
     public OptionStatus getOption(Option option) {
-        this.checkState();
-        switch ($SWITCH_TABLE$org$bukkit$scoreboard$Team$Option()[option.ordinal()]) {
-            case 1:
-                return OptionStatus.values()[this.team.getNameTagVisibility().ordinal()];
-            case 2:
-                return OptionStatus.values()[this.team.getDeathMessageVisibility().ordinal()];
-            case 3:
-                return OptionStatus.values()[this.team.getCollisionRule().ordinal()];
+        checkState();
+
+        switch (option) {
+            case NAME_TAG_VISIBILITY:
+                return OptionStatus.values()[team.getNameTagVisibility().ordinal()];
+            case DEATH_MESSAGE_VISIBILITY:
+                return OptionStatus.values()[team.getDeathMessageVisibility().ordinal()];
+            case COLLISION_RULE:
+                return OptionStatus.values()[team.getCollisionRule().ordinal()];
             default:
                 throw new IllegalArgumentException("Unrecognised option " + option);
         }
     }
 
+    @Override
     public void setOption(Option option, OptionStatus status) {
-        this.checkState();
-        switch ($SWITCH_TABLE$org$bukkit$scoreboard$Team$Option()[option.ordinal()]) {
-            case 1:
-                this.team.setNameTagVisibility(net.minecraft.world.scores.Team.Visibility.values()[status.ordinal()]);
+        checkState();
+
+        switch (option) {
+            case NAME_TAG_VISIBILITY:
+                team.setNameTagVisibility(net.minecraft.world.scores.Team.Visibility.values()[status.ordinal()]);
                 break;
-            case 2:
-                this.team.setDeathMessageVisibility(net.minecraft.world.scores.Team.Visibility.values()[status.ordinal()]);
+            case DEATH_MESSAGE_VISIBILITY:
+                team.setDeathMessageVisibility(net.minecraft.world.scores.Team.Visibility.values()[status.ordinal()]);
                 break;
-            case 3:
-                this.team.setCollisionRule(net.minecraft.world.scores.Team.CollisionRule.values()[status.ordinal()]);
+            case COLLISION_RULE:
+                team.setCollisionRule(net.minecraft.world.scores.Team.CollisionRule.values()[status.ordinal()]);
                 break;
             default:
                 throw new IllegalArgumentException("Unrecognised option " + option);
         }
-
     }
 
     public static net.minecraft.world.scores.Team.Visibility bukkitToNotch(NameTagVisibility visibility) {
-        switch ($SWITCH_TABLE$org$bukkit$scoreboard$NameTagVisibility()[visibility.ordinal()]) {
-            case 1:
+        switch (visibility) {
+            case ALWAYS:
                 return net.minecraft.world.scores.Team.Visibility.ALWAYS;
-            case 2:
+            case NEVER:
                 return net.minecraft.world.scores.Team.Visibility.NEVER;
-            case 3:
+            case HIDE_FOR_OTHER_TEAMS:
                 return net.minecraft.world.scores.Team.Visibility.HIDE_FOR_OTHER_TEAMS;
-            case 4:
+            case HIDE_FOR_OWN_TEAM:
                 return net.minecraft.world.scores.Team.Visibility.HIDE_FOR_OWN_TEAM;
             default:
                 throw new IllegalArgumentException("Unknown visibility level " + visibility);
         }
     }
 
+    @SuppressWarnings("deprecation")//Kettle
     public static NameTagVisibility notchToBukkit(net.minecraft.world.scores.Team.Visibility visibility) {
-        switch ($SWITCH_TABLE$net$minecraft$world$scores$ScoreboardTeamBase$EnumNameTagVisibility()[visibility.ordinal()]) {
-            case 1:
+        switch (visibility) {
+            case ALWAYS:
                 return NameTagVisibility.ALWAYS;
-            case 2:
+            case NEVER:
                 return NameTagVisibility.NEVER;
-            case 3:
+            case HIDE_FOR_OTHER_TEAMS:
                 return NameTagVisibility.HIDE_FOR_OTHER_TEAMS;
-            case 4:
+            case HIDE_FOR_OWN_TEAM:
                 return NameTagVisibility.HIDE_FOR_OWN_TEAM;
             default:
                 throw new IllegalArgumentException("Unknown visibility level " + visibility);
         }
     }
 
+    @Override
     CraftScoreboard checkState() {
-        Preconditions.checkState(this.getScoreboard().board.getPlayerTeam(this.team.getName()) != null, "Unregistered scoreboard component");
-        return this.getScoreboard();
+        Preconditions.checkState(getScoreboard().board.getPlayerTeam(team.getName()) != null, "Unregistered scoreboard component");
+
+        return getScoreboard();
     }
 
+    @Override
     public int hashCode() {
-        byte hash = 7;
-        int hash = 43 * hash + (this.team != null ? this.team.hashCode() : 0);
-
+        int hash = 7;
+        hash = 43 * hash + (this.team != null ? this.team.hashCode() : 0);
         return hash;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
-        } else if (this.getClass() != obj.getClass()) {
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        } else {
-            CraftTeam other = (CraftTeam) obj;
-
-            return this.team == other.team || this.team != null && this.team.equals(other.team);
         }
+        final CraftTeam other = (CraftTeam) obj;
+        return !(this.team != other.team && (this.team == null || !this.team.equals(other.team)));
     }
 
-    static int[] $SWITCH_TABLE$org$bukkit$scoreboard$Team$Option() {
-        int[] aint = CraftTeam.$SWITCH_TABLE$org$bukkit$scoreboard$Team$Option;
-
-        if (aint != null) {
-            return aint;
-        } else {
-            int[] aint1 = new int[Option.values().length];
-
-            try {
-                aint1[Option.COLLISION_RULE.ordinal()] = 3;
-            } catch (NoSuchFieldError nosuchfielderror) {
-                ;
-            }
-
-            try {
-                aint1[Option.DEATH_MESSAGE_VISIBILITY.ordinal()] = 2;
-            } catch (NoSuchFieldError nosuchfielderror1) {
-                ;
-            }
-
-            try {
-                aint1[Option.NAME_TAG_VISIBILITY.ordinal()] = 1;
-            } catch (NoSuchFieldError nosuchfielderror2) {
-                ;
-            }
-
-            CraftTeam.$SWITCH_TABLE$org$bukkit$scoreboard$Team$Option = aint1;
-            return aint1;
-        }
-    }
-
-    static int[] $SWITCH_TABLE$org$bukkit$scoreboard$NameTagVisibility() {
-        int[] aint = CraftTeam.$SWITCH_TABLE$org$bukkit$scoreboard$NameTagVisibility;
-
-        if (aint != null) {
-            return aint;
-        } else {
-            int[] aint1 = new int[NameTagVisibility.values().length];
-
-            try {
-                aint1[NameTagVisibility.ALWAYS.ordinal()] = 1;
-            } catch (NoSuchFieldError nosuchfielderror) {
-                ;
-            }
-
-            try {
-                aint1[NameTagVisibility.HIDE_FOR_OTHER_TEAMS.ordinal()] = 3;
-            } catch (NoSuchFieldError nosuchfielderror1) {
-                ;
-            }
-
-            try {
-                aint1[NameTagVisibility.HIDE_FOR_OWN_TEAM.ordinal()] = 4;
-            } catch (NoSuchFieldError nosuchfielderror2) {
-                ;
-            }
-
-            try {
-                aint1[NameTagVisibility.NEVER.ordinal()] = 2;
-            } catch (NoSuchFieldError nosuchfielderror3) {
-                ;
-            }
-
-            CraftTeam.$SWITCH_TABLE$org$bukkit$scoreboard$NameTagVisibility = aint1;
-            return aint1;
-        }
-    }
-
-    static int[] $SWITCH_TABLE$net$minecraft$world$scores$ScoreboardTeamBase$EnumNameTagVisibility() {
-        int[] aint = CraftTeam.$SWITCH_TABLE$net$minecraft$world$scores$ScoreboardTeamBase$EnumNameTagVisibility;
-
-        if (aint != null) {
-            return aint;
-        } else {
-            int[] aint1 = new int[net.minecraft.world.scores.Team.Visibility.values().length];
-
-            try {
-                aint1[net.minecraft.world.scores.Team.Visibility.ALWAYS.ordinal()] = 1;
-            } catch (NoSuchFieldError nosuchfielderror) {
-                ;
-            }
-
-            try {
-                aint1[net.minecraft.world.scores.Team.Visibility.HIDE_FOR_OTHER_TEAMS.ordinal()] = 3;
-            } catch (NoSuchFieldError nosuchfielderror1) {
-                ;
-            }
-
-            try {
-                aint1[net.minecraft.world.scores.Team.Visibility.HIDE_FOR_OWN_TEAM.ordinal()] = 4;
-            } catch (NoSuchFieldError nosuchfielderror2) {
-                ;
-            }
-
-            try {
-                aint1[net.minecraft.world.scores.Team.Visibility.NEVER.ordinal()] = 2;
-            } catch (NoSuchFieldError nosuchfielderror3) {
-                ;
-            }
-
-            CraftTeam.$SWITCH_TABLE$net$minecraft$world$scores$ScoreboardTeamBase$EnumNameTagVisibility = aint1;
-            return aint1;
-        }
-    }
 }

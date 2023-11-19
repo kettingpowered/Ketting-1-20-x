@@ -8,59 +8,63 @@ import org.bukkit.World;
 import org.bukkit.block.EndGateway;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 
-public class CraftEndGateway extends CraftBlockEntityState implements EndGateway {
+public class CraftEndGateway extends CraftBlockEntityState<TheEndGatewayBlockEntity> implements EndGateway {
 
     public CraftEndGateway(World world, TheEndGatewayBlockEntity tileEntity) {
         super(world, tileEntity);
     }
 
     protected CraftEndGateway(CraftEndGateway state) {
-        super((CraftBlockEntityState) state);
+        super(state);
     }
 
+    @Override
     public Location getExitLocation() {
-        BlockPos pos = ((TheEndGatewayBlockEntity) this.getSnapshot()).exitPortal;
-
+        BlockPos pos = this.getSnapshot().exitPortal;
         return pos == null ? null : CraftLocation.toBukkit(pos, this.isPlaced() ? this.getWorld() : null);
     }
 
+    @Override
     public void setExitLocation(Location location) {
         if (location == null) {
-            ((TheEndGatewayBlockEntity) this.getSnapshot()).exitPortal = null;
+            this.getSnapshot().exitPortal = null;
+        } else if (!Objects.equals(location.getWorld(), this.isPlaced() ? this.getWorld() : null)) {
+            throw new IllegalArgumentException("Cannot set exit location to different world");
         } else {
-            if (!Objects.equals(location.getWorld(), this.isPlaced() ? this.getWorld() : null)) {
-                throw new IllegalArgumentException("Cannot set exit location to different world");
-            }
-
-            ((TheEndGatewayBlockEntity) this.getSnapshot()).exitPortal = CraftLocation.toBlockPosition(location);
+            this.getSnapshot().exitPortal = CraftLocation.toBlockPosition(location);
         }
-
     }
 
+    @Override
     public boolean isExactTeleport() {
-        return ((TheEndGatewayBlockEntity) this.getSnapshot()).exactTeleport;
+        return this.getSnapshot().exactTeleport;
     }
 
+    @Override
     public void setExactTeleport(boolean exact) {
-        ((TheEndGatewayBlockEntity) this.getSnapshot()).exactTeleport = exact;
+        this.getSnapshot().exactTeleport = exact;
     }
 
+    @Override
     public long getAge() {
-        return ((TheEndGatewayBlockEntity) this.getSnapshot()).age;
+        return this.getSnapshot().age;
     }
 
+    @Override
     public void setAge(long age) {
-        ((TheEndGatewayBlockEntity) this.getSnapshot()).age = age;
+        this.getSnapshot().age = age;
     }
 
+    @Override
     public void applyTo(TheEndGatewayBlockEntity endGateway) {
         super.applyTo(endGateway);
-        if (((TheEndGatewayBlockEntity) this.getSnapshot()).exitPortal == null) {
+
+        if (this.getSnapshot().exitPortal == null) {
             endGateway.exitPortal = null;
         }
-
     }
 
+    @Override
     public CraftEndGateway copy() {
         return new CraftEndGateway(this);
     }

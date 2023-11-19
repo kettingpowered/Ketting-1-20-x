@@ -4,27 +4,31 @@ import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 
-public final class DeprecatedItemTagType implements PersistentDataType {
+public final class DeprecatedItemTagType<T, Z> implements PersistentDataType<T, Z> {
 
-    private final ItemTagType deprecated;
+    private final ItemTagType<T, Z> deprecated;
 
-    public DeprecatedItemTagType(ItemTagType deprecated) {
+    public DeprecatedItemTagType(ItemTagType<T, Z> deprecated) {
         this.deprecated = deprecated;
     }
 
-    public Class getPrimitiveType() {
-        return this.deprecated.getPrimitiveType();
+    @Override
+    public Class<T> getPrimitiveType() {
+        return deprecated.getPrimitiveType();
     }
 
-    public Class getComplexType() {
-        return this.deprecated.getComplexType();
+    @Override
+    public Class<Z> getComplexType() {
+        return deprecated.getComplexType();
     }
 
-    public Object toPrimitive(Object complex, PersistentDataAdapterContext context) {
+    @Override
+    public T toPrimitive(Z complex, PersistentDataAdapterContext context) {
         return this.deprecated.toPrimitive(complex, new DeprecatedItemAdapterContext(context));
     }
 
-    public Object fromPrimitive(Object primitive, PersistentDataAdapterContext context) {
+    @Override
+    public Z fromPrimitive(T primitive, PersistentDataAdapterContext context) {
         return this.deprecated.fromPrimitive(primitive, new DeprecatedItemAdapterContext(context));
     }
 }

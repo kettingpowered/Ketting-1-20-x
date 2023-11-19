@@ -1,31 +1,34 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import net.minecraft.world.level.block.CactusBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Ageable;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftCactus extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.Ageable {
 
-public final class CraftCactus extends CraftBlockData implements Ageable {
+    public CraftCactus() {
+        super();
+    }
 
-    private static final IntegerProperty AGE = getInteger(CactusBlock.class, "age");
-
-    public CraftCactus() {}
-
-    public CraftCactus(BlockState state) {
+    public CraftCactus(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAgeable
+
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger(net.minecraft.world.level.block.CactusBlock.class, "age");
+
+    @Override
     public int getAge() {
-        return (Integer) this.get(CraftCactus.AGE);
+        return get(AGE);
     }
 
+    @Override
     public void setAge(int age) {
-        this.set((Property) CraftCactus.AGE, (Comparable) age);
+        set(AGE, age);
     }
 
+    @Override
     public int getMaximumAge() {
-        return getMax(CraftCactus.AGE);
+        return getMax(AGE);
     }
 }

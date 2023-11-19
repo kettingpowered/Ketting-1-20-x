@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R2.command;
 
 import java.util.Map;
 import org.bukkit.Server;
+import org.bukkit.command.Command;
 import org.bukkit.command.SimpleCommandMap;
 
 public class CraftCommandMap extends SimpleCommandMap {
@@ -10,7 +11,7 @@ public class CraftCommandMap extends SimpleCommandMap {
         super(server);
     }
 
-    public Map getKnownCommands() {
-        return this.knownCommands;
+    public Map<String, Command> getKnownCommands() {
+        return knownCommands;
     }
 }

@@ -1,27 +1,29 @@
 package org.bukkit.craftbukkit.v1_20_R2.block.data.type;
 
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
 import org.bukkit.block.data.type.Snow;
 import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public class CraftSnow extends CraftBlockData implements Snow {
 
-    private static final IntegerProperty LAYERS = getInteger("layers");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty LAYERS = getInteger("layers");
 
+    @Override
     public int getLayers() {
-        return (Integer) this.get(CraftSnow.LAYERS);
+        return get(LAYERS);
     }
 
+    @Override
     public void setLayers(int layers) {
-        this.set((Property) CraftSnow.LAYERS, (Comparable) layers);
+        set(LAYERS, layers);
     }
 
+    @Override
     public int getMinimumLayers() {
-        return getMin(CraftSnow.LAYERS);
+        return getMin(LAYERS);
     }
 
+    @Override
     public int getMaximumLayers() {
-        return getMax(CraftSnow.LAYERS);
+        return getMax(LAYERS);
     }
 }

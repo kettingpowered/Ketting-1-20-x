@@ -10,7 +10,6 @@ import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.StonecuttingRecipe;
 
 public class CraftStonecuttingRecipe extends StonecuttingRecipe implements CraftRecipe {
-
     public CraftStonecuttingRecipe(NamespacedKey key, ItemStack result, RecipeChoice source) {
         super(key, result, source);
     }
@@ -18,17 +17,16 @@ public class CraftStonecuttingRecipe extends StonecuttingRecipe implements Craft
     public static CraftStonecuttingRecipe fromBukkitRecipe(StonecuttingRecipe recipe) {
         if (recipe instanceof CraftStonecuttingRecipe) {
             return (CraftStonecuttingRecipe) recipe;
-        } else {
-            CraftStonecuttingRecipe ret = new CraftStonecuttingRecipe(recipe.getKey(), recipe.getResult(), recipe.getInputChoice());
-
-            ret.setGroup(recipe.getGroup());
-            return ret;
         }
+        CraftStonecuttingRecipe ret = new CraftStonecuttingRecipe(recipe.getKey(), recipe.getResult(), recipe.getInputChoice());
+        ret.setGroup(recipe.getGroup());
+        return ret;
     }
 
+    @Override
     public void addToCraftingManager() {
         ItemStack result = this.getResult();
 
-        MinecraftServer.getServer().getRecipeManager().addRecipe(new RecipeHolder(CraftNamespacedKey.toMinecraft(this.getKey()), new StonecutterRecipe(this.getGroup(), this.toNMS(this.getInputChoice(), true), CraftItemStack.asNMSCopy(result))));
+        MinecraftServer.getServer().getRecipeManager().addRecipe(new RecipeHolder<>(CraftNamespacedKey.toMinecraft(this.getKey()), new StonecutterRecipe(this.getGroup(), toNMS(this.getInputChoice(), true), CraftItemStack.asNMSCopy(result))));
     }
 }

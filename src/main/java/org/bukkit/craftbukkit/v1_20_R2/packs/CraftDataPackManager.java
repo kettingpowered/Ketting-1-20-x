@@ -28,56 +28,73 @@ public class CraftDataPackManager implements DataPackManager {
         return this.handle;
     }
 
-    public Collection getDataPacks() {
+    @Override
+    public Collection<DataPack> getDataPacks() {
+        // Based in the command for datapacks need reload for get the updated list of datapacks
         this.getHandle().reload();
-        Collection availablePacks = this.getHandle().getAvailablePacks();
 
-        return (Collection) availablePacks.stream().map(CraftDataPack::new).collect(Collectors.toUnmodifiableList());
+        Collection<Pack> availablePacks = this.getHandle().getAvailablePacks();
+        return availablePacks.stream().map(CraftDataPack::new).collect(Collectors.toUnmodifiableList());
     }
 
+    @Override
     public DataPack getDataPack(NamespacedKey namespacedKey) {
         Preconditions.checkArgument(namespacedKey != null, "namespacedKey cannot be null");
+
         return new CraftDataPack(this.getHandle().getPack(namespacedKey.getKey()));
     }
 
-    public Collection getEnabledDataPacks(World world) {
+    @Override
+    public Collection<DataPack> getEnabledDataPacks(World world) {
         Preconditions.checkArgument(world != null, "world cannot be null");
-        CraftWorld craftWorld = (CraftWorld) world;
 
-        return (Collection) craftWorld.getHandle().K.getDataConfiguration().dataPacks().getEnabled().stream().map((packNamex) -> {
-            Pack resourcePackLoader = this.getHandle().getPack(packNamex);
-
-            return resourcePackLoader != null ? new CraftDataPack(resourcePackLoader) : null;
+        CraftWorld craftWorld = ((CraftWorld) world);
+        return craftWorld.getHandle().serverLevelData.getDataConfiguration().dataPacks().getEnabled().stream().map(packName -> {
+            Pack resourcePackLoader = this.getHandle().getPack(packName);
+            if (resourcePackLoader != null) {
+                return new CraftDataPack(resourcePackLoader);
+            }
+            return null;
         }).filter(Objects::nonNull).collect(Collectors.toUnmodifiableList());
     }
 
-    public Collection getDisabledDataPacks(World world) {
+    @Override
+    public Collection<DataPack> getDisabledDataPacks(World world) {
         Preconditions.checkArgument(world != null, "world cannot be null");
-        CraftWorld craftWorld = (CraftWorld) world;
 
-        return (Collection) craftWorld.getHandle().K.getDataConfiguration().dataPacks().getDisabled().stream().map((packNamex) -> {
-            Pack resourcePackLoader = this.getHandle().getPack(packNamex);
-
-            return resourcePackLoader != null ? new CraftDataPack(resourcePackLoader) : null;
+        CraftWorld craftWorld = ((CraftWorld) world);
+        return craftWorld.getHandle().serverLevelData.getDataConfiguration().dataPacks().getDisabled().stream().map(packName -> {
+            Pack resourcePackLoader = this.getHandle().getPack(packName);
+            if (resourcePackLoader != null) {
+                return new CraftDataPack(resourcePackLoader);
+            }
+            return null;
         }).filter(Objects::nonNull).collect(Collectors.toUnmodifiableList());
     }
 
+    @Override
     public boolean isEnabledByFeature(Material material, World world) {
         Preconditions.checkArgument(material != null, "material cannot be null");
         Preconditions.checkArgument(material.isItem() || material.isBlock(), "material need to be a item or block");
         Preconditions.checkArgument(world != null, "world cannot be null");
-        CraftWorld craftWorld = (CraftWorld) world;
 
-        return material.isItem() ? CraftMagicNumbers.getItem(material).isEnabled(craftWorld.getHandle().enabledFeatures()) : (material.isBlock() ? CraftMagicNumbers.getBlock(material).isEnabled(craftWorld.getHandle().enabledFeatures()) : false);
+        CraftWorld craftWorld = ((CraftWorld) world);
+        if (material.isItem()) {
+            return CraftMagicNumbers.getItem(material).isEnabled(craftWorld.getHandle().enabledFeatures());
+        } else if (material.isBlock()) {
+            return CraftMagicNumbers.getBlock(material).isEnabled(craftWorld.getHandle().enabledFeatures());
+        }
+        return false;
     }
 
+    @Override
     public boolean isEnabledByFeature(EntityType entityType, World world) {
         Preconditions.checkArgument(entityType != null, "entityType cannot be null");
         Preconditions.checkArgument(world != null, "world cannot be null");
         Preconditions.checkArgument(entityType != EntityType.UNKNOWN, "EntityType.UNKNOWN its not allowed here");
-        CraftWorld craftWorld = (CraftWorld) world;
-        net.minecraft.world.entity.EntityType nmsEntity = CraftEntityType.bukkitToMinecraft(entityType);
 
+        CraftWorld craftWorld = ((CraftWorld) world);
+        net.minecraft.world.entity.EntityType<?> nmsEntity = CraftEntityType.bukkitToMinecraft(entityType);
         return nmsEntity.isEnabled(craftWorld.getHandle().enabledFeatures());
     }
 }

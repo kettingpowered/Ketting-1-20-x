@@ -1,31 +1,34 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import net.minecraft.world.level.block.ComposterBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Levelled;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftComposter extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.Levelled {
 
-public final class CraftComposter extends CraftBlockData implements Levelled {
+    public CraftComposter() {
+        super();
+    }
 
-    private static final IntegerProperty LEVEL = getInteger(ComposterBlock.class, "level");
-
-    public CraftComposter() {}
-
-    public CraftComposter(BlockState state) {
+    public CraftComposter(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftLevelled
+
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty LEVEL = getInteger(net.minecraft.world.level.block.ComposterBlock.class, "level");
+
+    @Override
     public int getLevel() {
-        return (Integer) this.get(CraftComposter.LEVEL);
+        return get(LEVEL);
     }
 
+    @Override
     public void setLevel(int level) {
-        this.set((Property) CraftComposter.LEVEL, (Comparable) level);
+        set(LEVEL, level);
     }
 
+    @Override
     public int getMaximumLevel() {
-        return getMax(CraftComposter.LEVEL);
+        return getMax(LEVEL);
     }
 }

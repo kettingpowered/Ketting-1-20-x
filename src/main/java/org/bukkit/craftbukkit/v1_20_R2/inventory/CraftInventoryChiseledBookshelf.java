@@ -9,8 +9,10 @@ public class CraftInventoryChiseledBookshelf extends CraftInventory implements C
 
     public CraftInventoryChiseledBookshelf(ChiseledBookShelfBlockEntity inventory) {
         super(inventory);
+
     }
 
+    @Override
     public void setItem(int index, ItemStack item) {
         net.minecraft.world.item.ItemStack nms = CraftItemStack.asNMSCopy(item);
 
@@ -19,10 +21,10 @@ public class CraftInventoryChiseledBookshelf extends CraftInventory implements C
         } else {
             this.getInventory().setItem(index, nms);
         }
-
     }
 
+    @Override
     public ChiseledBookshelf getHolder() {
-        return (ChiseledBookshelf) this.inventory.getOwner();
+        return (ChiseledBookshelf) inventory.getOwner();
     }
 }

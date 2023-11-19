@@ -15,10 +15,10 @@ public class CraftInventoryLectern extends CraftInventory implements LecternInve
         if (inventory instanceof LecternBlockEntity.LecternInventory) {
             this.tile = ((LecternBlockEntity.LecternInventory) inventory).getLectern();
         }
-
     }
 
+    @Override
     public Lectern getHolder() {
-        return (Lectern) this.inventory.getOwner();
+        return (Lectern) inventory.getOwner();
     }
 }

@@ -67,14 +67,24 @@
        }
     }
  
-    static class EmptyContainer extends SimpleContainer implements WorldlyContainer {
+-   static class EmptyContainer extends SimpleContainer implements WorldlyContainer {
 -      public EmptyContainer() {
++   public static class EmptyContainer extends SimpleContainer implements WorldlyContainer {
 +      public EmptyContainer(LevelAccessor generatoraccess, BlockPos blockposition) {
           super(0);
 +         this.bukkitOwner = new CraftBlockInventoryHolder(generatoraccess, blockposition, this); // CraftBukkit
        }
  
        public int[] getSlotsForFace(Direction p_52012_) {
+@@ -333,7 +_,7 @@
+       }
+    }
+ 
+-   static class InputContainer extends SimpleContainer implements WorldlyContainer {
++   public static class InputContainer extends SimpleContainer implements WorldlyContainer {
+       private final BlockState state;
+       private final LevelAccessor level;
+       private final BlockPos pos;
 @@ -341,6 +_,7 @@
  
        public InputContainer(BlockState p_52022_, LevelAccessor p_52023_, BlockPos p_52024_) {
@@ -83,6 +93,15 @@
           this.state = p_52022_;
           this.level = p_52023_;
           this.pos = p_52024_;
+@@ -374,7 +_,7 @@
+       }
+    }
+ 
+-   static class OutputContainer extends SimpleContainer implements WorldlyContainer {
++   public static class OutputContainer extends SimpleContainer implements WorldlyContainer {
+       private final BlockState state;
+       private final LevelAccessor level;
+       private final BlockPos pos;
 @@ -385,6 +_,7 @@
           this.state = p_52042_;
           this.level = p_52043_;

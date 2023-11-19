@@ -1,11 +1,9 @@
 package org.bukkit.craftbukkit.v1_20_R2.block;
 
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -16,40 +14,44 @@ import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
 import org.bukkit.inventory.JukeboxInventory;
 
-public class CraftJukebox extends CraftBlockEntityState implements Jukebox {
+public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> implements Jukebox {
 
     public CraftJukebox(World world, JukeboxBlockEntity tileEntity) {
         super(world, tileEntity);
     }
 
     protected CraftJukebox(CraftJukebox state) {
-        super((CraftBlockEntityState) state);
+        super(state);
     }
 
+    @Override
     public JukeboxInventory getSnapshotInventory() {
-        return new CraftInventoryJukebox((Container) this.getSnapshot());
+        return new CraftInventoryJukebox(this.getSnapshot());
     }
 
+    @Override
     public JukeboxInventory getInventory() {
-        return (JukeboxInventory) (!this.isPlaced() ? this.getSnapshotInventory() : new CraftInventoryJukebox((Container) this.getTileEntity()));
+        if (!this.isPlaced()) {
+            return this.getSnapshotInventory();
+        }
+
+        return new CraftInventoryJukebox(this.getTileEntity());
     }
 
+    @Override
     public boolean update(boolean force, boolean applyPhysics) {
         boolean result = super.update(force, applyPhysics);
 
         if (result && this.isPlaced() && this.getType() == Material.JUKEBOX) {
             Material record = this.getPlaying();
+            getWorldHandle().setBlock(this.getPosition(), data, 3);
 
-            this.getWorldHandle().setBlock(this.getPosition(), this.data, 3);
             BlockEntity tileEntity = this.getTileEntityFromWorld();
-            JukeboxBlockEntity jukebox;
-
-            if (tileEntity instanceof JukeboxBlockEntity && (jukebox = (JukeboxBlockEntity) tileEntity) == (JukeboxBlockEntity) tileEntity) {
+            if (tileEntity instanceof JukeboxBlockEntity jukebox) {
                 CraftWorld world = (CraftWorld) this.getWorld();
-
                 if (record.isAir()) {
                     jukebox.setRecordWithoutPlaying(ItemStack.EMPTY);
-                    world.playEffect(this.getLocation(), Effect.IRON_DOOR_CLOSE, 0);
+                    world.playEffect(this.getLocation(), Effect.IRON_DOOR_CLOSE, 0); // TODO: Fix this enum constant. This stops jukeboxes
                 } else {
                     world.playEffect(this.getLocation(), Effect.RECORD_PLAY, record);
                 }
@@ -59,93 +61,98 @@ public class CraftJukebox extends CraftBlockEntityState implements Jukebox {
         return result;
     }
 
+    @Override
     public Material getPlaying() {
-        return this.getRecord().getType();
+        return getRecord().getType();
     }
 
+    @Override
     public void setPlaying(Material record) {
         if (record == null || CraftMagicNumbers.getItem(record) == null) {
             record = Material.AIR;
         }
 
-        this.setRecord(new org.bukkit.inventory.ItemStack(record));
+        setRecord(new org.bukkit.inventory.ItemStack(record));
     }
 
+    @Override
     public boolean hasRecord() {
-        return (Boolean) this.getHandle().getValue(JukeboxBlock.HAS_RECORD) && !this.getPlaying().isAir();
+        return getHandle().getValue(JukeboxBlock.HAS_RECORD) && !getPlaying().isAir();
     }
 
+    @Override
     public org.bukkit.inventory.ItemStack getRecord() {
-        ItemStack record = ((JukeboxBlockEntity) this.getSnapshot()).getFirstItem();
-
+        ItemStack record = this.getSnapshot().getFirstItem();
         return CraftItemStack.asBukkitCopy(record);
     }
 
+    @Override
     public void setRecord(org.bukkit.inventory.ItemStack record) {
         ItemStack nms = CraftItemStack.asNMSCopy(record);
-        JukeboxBlockEntity snapshot = (JukeboxBlockEntity) this.getSnapshot();
 
+        JukeboxBlockEntity snapshot = this.getSnapshot();
         snapshot.setRecordWithoutPlaying(nms);
         snapshot.recordStartedTick = snapshot.tickCount;
         snapshot.isPlaying = !nms.isEmpty();
-        this.data = (BlockState) this.data.setValue(JukeboxBlock.HAS_RECORD, !nms.isEmpty());
+
+        this.data = this.data.setValue(JukeboxBlock.HAS_RECORD, !nms.isEmpty());
     }
 
+    @Override
     public boolean isPlaying() {
-        this.requirePlaced();
-        BlockEntity tileEntity = this.getTileEntityFromWorld();
-        JukeboxBlockEntity jukebox;
+        requirePlaced();
 
-        return tileEntity instanceof JukeboxBlockEntity && (jukebox = (JukeboxBlockEntity) tileEntity) == (JukeboxBlockEntity) tileEntity && jukebox.isRecordPlaying();
+        BlockEntity tileEntity = this.getTileEntityFromWorld();
+        return tileEntity instanceof JukeboxBlockEntity jukebox && jukebox.isRecordPlaying();
     }
 
+    @Override
     public boolean startPlaying() {
-        this.requirePlaced();
+        requirePlaced();
+
         BlockEntity tileEntity = this.getTileEntityFromWorld();
-        JukeboxBlockEntity jukebox;
-
-        if (tileEntity instanceof JukeboxBlockEntity && (jukebox = (JukeboxBlockEntity) tileEntity) == (JukeboxBlockEntity) tileEntity) {
-            ItemStack record = jukebox.getFirstItem();
-
-            if (!record.isEmpty() && !this.isPlaying()) {
-                jukebox.isPlaying = true;
-                jukebox.recordStartedTick = jukebox.tickCount;
-                this.getWorld().playEffect(this.getLocation(), Effect.RECORD_PLAY, CraftMagicNumbers.getMaterial(record.getItem()));
-                return true;
-            } else {
-                return false;
-            }
-        } else {
+        if (!(tileEntity instanceof JukeboxBlockEntity jukebox)) {
             return false;
         }
+
+        ItemStack record = jukebox.getFirstItem();
+        if (record.isEmpty() || isPlaying()) {
+            return false;
+        }
+
+        jukebox.isPlaying = true;
+        jukebox.recordStartedTick = jukebox.tickCount;
+        getWorld().playEffect(getLocation(), Effect.RECORD_PLAY, CraftMagicNumbers.getMaterial(record.getItem()));
+        return true;
     }
 
+    @Override
     public void stopPlaying() {
-        this.requirePlaced();
-        BlockEntity tileEntity = this.getTileEntityFromWorld();
-        JukeboxBlockEntity jukebox;
+        requirePlaced();
 
-        if (tileEntity instanceof JukeboxBlockEntity && (jukebox = (JukeboxBlockEntity) tileEntity) == (JukeboxBlockEntity) tileEntity) {
-            jukebox.isPlaying = false;
-            this.getWorld().playEffect(this.getLocation(), Effect.IRON_DOOR_CLOSE, 0);
+        BlockEntity tileEntity = this.getTileEntityFromWorld();
+        if (!(tileEntity instanceof JukeboxBlockEntity jukebox)) {
+            return;
         }
+
+        jukebox.isPlaying = false;
+        getWorld().playEffect(getLocation(), Effect.IRON_DOOR_CLOSE, 0); // TODO: Fix this enum constant. This stops jukeboxes
     }
 
+    @Override
     public boolean eject() {
-        this.ensureNoWorldGeneration();
+        ensureNoWorldGeneration();
+
         BlockEntity tileEntity = this.getTileEntityFromWorld();
+        if (!(tileEntity instanceof JukeboxBlockEntity)) return false;
 
-        if (!(tileEntity instanceof JukeboxBlockEntity)) {
-            return false;
-        } else {
-            JukeboxBlockEntity jukebox = (JukeboxBlockEntity) tileEntity;
-            boolean result = !jukebox.getFirstItem().isEmpty();
-
-            jukebox.popOutRecord();
-            return result;
-        }
+        JukeboxBlockEntity jukebox = (JukeboxBlockEntity) tileEntity;
+        boolean result = !jukebox.getFirstItem().isEmpty();
+        jukebox.popOutRecord();
+        return result;
     }
 
+    @Override
     public CraftJukebox copy() {
         return new CraftJukebox(this);
     }

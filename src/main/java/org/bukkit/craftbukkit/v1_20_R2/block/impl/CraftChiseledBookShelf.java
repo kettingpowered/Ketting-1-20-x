@@ -1,42 +1,41 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import java.util.Set;
-import net.minecraft.world.level.block.ChiseledBookShelfBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.type.ChiseledBookshelf;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftChiseledBookShelf extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.ChiseledBookshelf, org.bukkit.block.data.Directional {
 
-public final class CraftChiseledBookShelf extends CraftBlockData implements ChiseledBookshelf, Directional {
+    public CraftChiseledBookShelf() {
+        super();
+    }
 
-    private static final BooleanProperty[] SLOT_OCCUPIED = new BooleanProperty[]{getBoolean(ChiseledBookShelfBlock.class, "slot_0_occupied"), getBoolean(ChiseledBookShelfBlock.class, "slot_1_occupied"), getBoolean(ChiseledBookShelfBlock.class, "slot_2_occupied"), getBoolean(ChiseledBookShelfBlock.class, "slot_3_occupied"), getBoolean(ChiseledBookShelfBlock.class, "slot_4_occupied"), getBoolean(ChiseledBookShelfBlock.class, "slot_5_occupied")};
-    private static final EnumProperty FACING = getEnum(ChiseledBookShelfBlock.class, "facing");
-
-    public CraftChiseledBookShelf() {}
-
-    public CraftChiseledBookShelf(BlockState state) {
+    public CraftChiseledBookShelf(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftChiseledBookshelf
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] SLOT_OCCUPIED = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
+        getBoolean(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "slot_0_occupied"), getBoolean(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "slot_1_occupied"), getBoolean(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "slot_2_occupied"),
+        getBoolean(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "slot_3_occupied"), getBoolean(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "slot_4_occupied"), getBoolean(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "slot_5_occupied")
+    };
+
+    @Override
     public boolean isSlotOccupied(int slot) {
-        return (Boolean) this.get(CraftChiseledBookShelf.SLOT_OCCUPIED[slot]);
+        return get(SLOT_OCCUPIED[slot]);
     }
 
+    @Override
     public void setSlotOccupied(int slot, boolean has) {
-        this.set((Property) CraftChiseledBookShelf.SLOT_OCCUPIED[slot], (Comparable) has);
+        set(SLOT_OCCUPIED[slot], has);
     }
 
-    public Set getOccupiedSlots() {
-        Builder slots = ImmutableSet.builder();
+    @Override
+    public java.util.Set<Integer> getOccupiedSlots() {
+        com.google.common.collect.ImmutableSet.Builder<Integer> slots = com.google.common.collect.ImmutableSet.builder();
 
-        for (int index = 0; index < this.getMaximumOccupiedSlots(); ++index) {
-            if (this.isSlotOccupied(index)) {
+        for (int index = 0; index < getMaximumOccupiedSlots(); index++) {
+            if (isSlotOccupied(index)) {
                 slots.add(index);
             }
         }
@@ -44,19 +43,27 @@ public final class CraftChiseledBookShelf extends CraftBlockData implements Chis
         return slots.build();
     }
 
+    @Override
     public int getMaximumOccupiedSlots() {
-        return CraftChiseledBookShelf.SLOT_OCCUPIED.length;
+        return SLOT_OCCUPIED.length;
     }
 
-    public BlockFace getFacing() {
-        return (BlockFace) this.get(CraftChiseledBookShelf.FACING, BlockFace.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "facing");
+
+    @Override
+    public org.bukkit.block.BlockFace getFacing() {
+        return get(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    public void setFacing(BlockFace facing) {
-        this.set(CraftChiseledBookShelf.FACING, (Enum) facing);
+    @Override
+    public void setFacing(org.bukkit.block.BlockFace facing) {
+        set(FACING, facing);
     }
 
-    public Set getFaces() {
-        return this.getValues(CraftChiseledBookShelf.FACING, BlockFace.class);
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 }

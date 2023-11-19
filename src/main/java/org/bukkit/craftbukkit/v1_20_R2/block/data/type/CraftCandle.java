@@ -1,23 +1,24 @@
 package org.bukkit.craftbukkit.v1_20_R2.block.data.type;
 
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
 import org.bukkit.block.data.type.Candle;
 import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 public abstract class CraftCandle extends CraftBlockData implements Candle {
 
-    private static final IntegerProperty CANDLES = getInteger("candles");
+    private static final net.minecraft.world.level.block.state.properties.IntegerProperty CANDLES = getInteger("candles");
 
+    @Override
     public int getCandles() {
-        return (Integer) this.get(CraftCandle.CANDLES);
+        return get(CANDLES);
     }
 
+    @Override
     public void setCandles(int candles) {
-        this.set((Property) CraftCandle.CANDLES, (Comparable) candles);
+        set(CANDLES, candles);
     }
 
+    @Override
     public int getMaximumCandles() {
-        return getMax(CraftCandle.CANDLES);
+        return getMax(CANDLES);
     }
 }

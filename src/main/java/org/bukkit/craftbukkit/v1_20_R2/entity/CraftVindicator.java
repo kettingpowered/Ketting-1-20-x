@@ -1,28 +1,31 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
-import net.minecraft.world.entity.monster.AbstractIllager;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.Vindicator;
 
 public class CraftVindicator extends CraftIllager implements Vindicator {
 
     public CraftVindicator(CraftServer server, net.minecraft.world.entity.monster.Vindicator entity) {
-        super(server, (AbstractIllager) entity);
+        super(server, entity);
     }
 
+    @Override
     public net.minecraft.world.entity.monster.Vindicator getHandle() {
         return (net.minecraft.world.entity.monster.Vindicator) super.getHandle();
     }
 
+    @Override
     public String toString() {
         return "CraftVindicator";
     }
 
+    @Override
     public boolean isJohnny() {
-        return this.getHandle().isJohnny;
+        return getHandle().isJohnny;
     }
 
+    @Override
     public void setJohnny(boolean johnny) {
-        this.getHandle().isJohnny = johnny;
+        getHandle().isJohnny = johnny;
     }
 }

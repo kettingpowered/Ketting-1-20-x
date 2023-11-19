@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/LockCode.java
 +++ b/net/minecraft/world/LockCode.java
-@@ -3,6 +_,8 @@
+@@ -3,19 +_,33 @@
  import javax.annotation.concurrent.Immutable;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.world.item.ItemStack;
@@ -9,7 +9,13 @@
  
  @Immutable
  public class LockCode {
-@@ -15,7 +_,19 @@
+    public static final LockCode NO_LOCK = new LockCode("");
+    public static final String TAG_LOCK = "Lock";
+-   private final String key;
++   public final String key;
+ 
+    public LockCode(String p_19106_) {
+       this.key = p_19106_;
     }
  
     public boolean unlocksWith(ItemStack p_19108_) {

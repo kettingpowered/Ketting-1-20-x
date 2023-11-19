@@ -70,12 +70,12 @@
        return this.jukeboxPos == null || !this.jukeboxPos.closerToCenterThan(this.position(), (double)GameEvent.JUKEBOX_PLAY.getNotificationRadius()) || !this.level().getBlockState(this.jukeboxPos).is(Blocks.JUKEBOX);
     }
  
-@@ -459,16 +_,16 @@
+@@ -459,24 +_,24 @@
        return DUPLICATION_ITEM.test(p_239736_);
     }
  
 -   private void duplicateAllay() {
-+   private Allay duplicateAllay() { // CraftBukkit - return allay
++   public Allay duplicateAllay() { // CraftBukkit - return allay
        Allay allay = EntityType.ALLAY.create(this.level());
        if (allay != null) {
           allay.moveTo(this.position());
@@ -89,4 +89,14 @@
 +      return allay; // CraftBukkit
     }
  
-    private void resetDuplicationCooldown() {
+-   private void resetDuplicationCooldown() {
++   public void resetDuplicationCooldown() {
+       this.duplicationCooldown = 6000L;
+       this.entityData.set(DATA_CAN_DUPLICATE, false);
+    }
+ 
+-   private boolean canDuplicate() {
++   public boolean canDuplicate() {
+       return this.entityData.get(DATA_CAN_DUPLICATE);
+    }
+ 

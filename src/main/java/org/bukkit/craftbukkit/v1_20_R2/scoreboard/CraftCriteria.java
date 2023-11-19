@@ -1,41 +1,36 @@
 package org.bukkit.craftbukkit.v1_20_R2.scoreboard;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.RenderType;
 
 public final class CraftCriteria implements Criteria {
-
-    static final Map DEFAULTS;
+    static final Map<String, CraftCriteria> DEFAULTS;
     static final CraftCriteria DUMMY;
-    final ObjectiveCriteria criteria;
-    final String bukkitName;
 
     static {
-        Builder defaults = ImmutableMap.builder();
-        Iterator iterator = ObjectiveCriteria.CRITERIA_CACHE.entrySet().iterator();
+        ImmutableMap.Builder<String, CraftCriteria> defaults = ImmutableMap.builder();
 
-        while (iterator.hasNext()) {
-            Entry entry = (Entry) iterator.next();
-            String name = (String) entry.getKey();
-            ObjectiveCriteria criteria = (ObjectiveCriteria) entry.getValue();
+        for (Map.Entry<String, ObjectiveCriteria> entry : ObjectiveCriteria.CRITERIA_CACHE.entrySet()) {
+            String name = entry.getKey();
+            ObjectiveCriteria criteria = entry.getValue();
 
             defaults.put(name, new CraftCriteria(criteria));
         }
 
         DEFAULTS = defaults.build();
-        DUMMY = (CraftCriteria) CraftCriteria.DEFAULTS.get("dummy");
+        DUMMY = DEFAULTS.get("dummy");
     }
+
+    final ObjectiveCriteria criteria;
+    final String bukkitName;
 
     private CraftCriteria(String bukkitName) {
         this.bukkitName = bukkitName;
-        this.criteria = CraftCriteria.DUMMY.criteria;
+        this.criteria = DUMMY.criteria;
     }
 
     private CraftCriteria(ObjectiveCriteria criteria) {
@@ -43,34 +38,43 @@ public final class CraftCriteria implements Criteria {
         this.bukkitName = criteria.getName();
     }
 
+    @Override
     public String getName() {
-        return this.bukkitName;
+        return bukkitName;
     }
 
+    @Override
     public boolean isReadOnly() {
-        return this.criteria.isReadOnly();
+        return criteria.isReadOnly();
     }
 
+    @Override
     public RenderType getDefaultRenderType() {
-        return RenderType.values()[this.criteria.getDefaultRenderType().ordinal()];
+        return RenderType.values()[criteria.getDefaultRenderType().ordinal()];
     }
 
     static CraftCriteria getFromNMS(Objective objective) {
-        return (CraftCriteria) CraftCriteria.DEFAULTS.get(objective.getCriteria().getName());
+        return DEFAULTS.get(objective.getCriteria().getName());
     }
 
     public static CraftCriteria getFromBukkit(String name) {
-        CraftCriteria criteria = (CraftCriteria) CraftCriteria.DEFAULTS.get(name);
+        CraftCriteria criteria = DEFAULTS.get(name);
+        if (criteria != null) {
+            return criteria;
+        }
 
-        return criteria != null ? criteria : (CraftCriteria) ObjectiveCriteria.byName(name).map(CraftCriteria::new).orElseGet(() -> {
-            return new CraftCriteria(name);
-        });
+        return ObjectiveCriteria.byName(name).map(CraftCriteria::new).orElseGet(() -> new CraftCriteria(name));
     }
 
+    @Override
     public boolean equals(Object that) {
-        return !(that instanceof CraftCriteria) ? false : ((CraftCriteria) that).bukkitName.equals(this.bukkitName);
+        if (!(that instanceof CraftCriteria)) {
+            return false;
+        }
+        return ((CraftCriteria) that).bukkitName.equals(this.bukkitName);
     }
 
+    @Override
     public int hashCode() {
         return this.bukkitName.hashCode() ^ CraftCriteria.class.hashCode();
     }

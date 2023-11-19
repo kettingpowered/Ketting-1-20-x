@@ -1,78 +1,79 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import java.util.Set;
-import net.minecraft.world.level.block.FenceBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.MultipleFacing;
-import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.Fence;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftFence extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Fence, org.bukkit.block.data.MultipleFacing, org.bukkit.block.data.Waterlogged {
 
-public final class CraftFence extends CraftBlockData implements Fence, MultipleFacing, Waterlogged {
+    public CraftFence() {
+        super();
+    }
 
-    private static final BooleanProperty[] FACES = new BooleanProperty[]{getBoolean(FenceBlock.class, "north", true), getBoolean(FenceBlock.class, "east", true), getBoolean(FenceBlock.class, "south", true), getBoolean(FenceBlock.class, "west", true), getBoolean(FenceBlock.class, "up", true), getBoolean(FenceBlock.class, "down", true)};
-    private static final BooleanProperty WATERLOGGED = getBoolean(FenceBlock.class, "waterlogged");
-
-    public CraftFence() {}
-
-    public CraftFence(BlockState state) {
+    public CraftFence(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
-    public boolean hasFace(BlockFace face) {
-        BooleanProperty state = CraftFence.FACES[face.ordinal()];
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftMultipleFacing
 
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] FACES = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
+        getBoolean(net.minecraft.world.level.block.FenceBlock.class, "north", true), getBoolean(net.minecraft.world.level.block.FenceBlock.class, "east", true), getBoolean(net.minecraft.world.level.block.FenceBlock.class, "south", true), getBoolean(net.minecraft.world.level.block.FenceBlock.class, "west", true), getBoolean(net.minecraft.world.level.block.FenceBlock.class, "up", true), getBoolean(net.minecraft.world.level.block.FenceBlock.class, "down", true)
+    };
+
+    @Override
+    public boolean hasFace(org.bukkit.block.BlockFace face) {
+        net.minecraft.world.level.block.state.properties.BooleanProperty state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
-        } else {
-            return (Boolean) this.get(state);
         }
+        return get(state);
     }
 
-    public void setFace(BlockFace face, boolean has) {
-        BooleanProperty state = CraftFence.FACES[face.ordinal()];
-
+    @Override
+    public void setFace(org.bukkit.block.BlockFace face, boolean has) {
+        net.minecraft.world.level.block.state.properties.BooleanProperty state = FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
-        } else {
-            this.set((Property) state, (Comparable) has);
         }
+        set(state, has);
     }
 
-    public Set getFaces() {
-        Builder faces = ImmutableSet.builder();
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
+        com.google.common.collect.ImmutableSet.Builder<org.bukkit.block.BlockFace> faces = com.google.common.collect.ImmutableSet.builder();
 
-        for (int i = 0; i < CraftFence.FACES.length; ++i) {
-            if (CraftFence.FACES[i] != null && (Boolean) this.get(CraftFence.FACES[i])) {
-                faces.add(BlockFace.values()[i]);
+        for (int i = 0; i < FACES.length; i++) {
+            if (FACES[i] != null && get(FACES[i])) {
+                faces.add(org.bukkit.block.BlockFace.values()[i]);
             }
         }
 
         return faces.build();
     }
 
-    public Set getAllowedFaces() {
-        Builder faces = ImmutableSet.builder();
+    @Override
+    public java.util.Set<org.bukkit.block.BlockFace> getAllowedFaces() {
+        com.google.common.collect.ImmutableSet.Builder<org.bukkit.block.BlockFace> faces = com.google.common.collect.ImmutableSet.builder();
 
-        for (int i = 0; i < CraftFence.FACES.length; ++i) {
-            if (CraftFence.FACES[i] != null) {
-                faces.add(BlockFace.values()[i]);
+        for (int i = 0; i < FACES.length; i++) {
+            if (FACES[i] != null) {
+                faces.add(org.bukkit.block.BlockFace.values()[i]);
             }
         }
 
         return faces.build();
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.FenceBlock.class, "waterlogged");
+
+    @Override
     public boolean isWaterlogged() {
-        return (Boolean) this.get(CraftFence.WATERLOGGED);
+        return get(WATERLOGGED);
     }
 
+    @Override
     public void setWaterlogged(boolean waterlogged) {
-        this.set((Property) CraftFence.WATERLOGGED, (Comparable) waterlogged);
+        set(WATERLOGGED, waterlogged);
     }
 }

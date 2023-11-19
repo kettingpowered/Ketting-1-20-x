@@ -1,45 +1,48 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import java.util.Set;
-import net.minecraft.world.level.block.ChainBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.Axis;
-import org.bukkit.block.data.Orientable;
-import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.Chain;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftChain extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.Chain, org.bukkit.block.data.Orientable, org.bukkit.block.data.Waterlogged {
 
-public final class CraftChain extends CraftBlockData implements Chain, Orientable, Waterlogged {
+    public CraftChain() {
+        super();
+    }
 
-    private static final EnumProperty AXIS = getEnum(ChainBlock.class, "axis");
-    private static final BooleanProperty WATERLOGGED = getBoolean(ChainBlock.class, "waterlogged");
-
-    public CraftChain() {}
-
-    public CraftChain(BlockState state) {
+    public CraftChain(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
-    public Axis getAxis() {
-        return (Axis) this.get(CraftChain.AXIS, Axis.class);
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftOrientable
+
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> AXIS = getEnum(net.minecraft.world.level.block.ChainBlock.class, "axis");
+
+    @Override
+    public org.bukkit.Axis getAxis() {
+        return get(AXIS, org.bukkit.Axis.class);
     }
 
-    public void setAxis(Axis axis) {
-        this.set(CraftChain.AXIS, (Enum) axis);
+    @Override
+    public void setAxis(org.bukkit.Axis axis) {
+        set(AXIS, axis);
     }
 
-    public Set getAxes() {
-        return this.getValues(CraftChain.AXIS, Axis.class);
+    @Override
+    public java.util.Set<org.bukkit.Axis> getAxes() {
+        return getValues(AXIS, org.bukkit.Axis.class);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.ChainBlock.class, "waterlogged");
+
+    @Override
     public boolean isWaterlogged() {
-        return (Boolean) this.get(CraftChain.WATERLOGGED);
+        return get(WATERLOGGED);
     }
 
+    @Override
     public void setWaterlogged(boolean waterlogged) {
-        this.set((Property) CraftChain.WATERLOGGED, (Comparable) waterlogged);
+        set(WATERLOGGED, waterlogged);
     }
 }

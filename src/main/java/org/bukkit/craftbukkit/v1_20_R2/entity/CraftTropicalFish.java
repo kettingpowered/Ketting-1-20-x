@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraft.world.entity.animal.AbstractFish;
 import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.TropicalFish;
@@ -11,88 +10,102 @@ import org.bukkit.entity.TropicalFish.Pattern;
 public class CraftTropicalFish extends CraftFish implements TropicalFish {
 
     public CraftTropicalFish(CraftServer server, net.minecraft.world.entity.animal.TropicalFish entity) {
-        super(server, (AbstractFish) entity);
+        super(server, entity);
     }
 
+    @Override
     public net.minecraft.world.entity.animal.TropicalFish getHandle() {
-        return (net.minecraft.world.entity.animal.TropicalFish) this.entity;
+        return (net.minecraft.world.entity.animal.TropicalFish) entity;
     }
 
+    @Override
     public String toString() {
         return "CraftTropicalFish";
     }
 
+    @Override
     public DyeColor getPatternColor() {
-        return getPatternColor(this.getHandle().getPackedVariant());
+        return getPatternColor(getHandle().getPackedVariant());
     }
 
+    @Override
     public void setPatternColor(DyeColor color) {
-        this.getHandle().setPackedVariant(getData(color, this.getBodyColor(), this.getPattern()));
+        getHandle().setPackedVariant(getData(color, getBodyColor(), getPattern()));
     }
 
+    @Override
     public DyeColor getBodyColor() {
-        return getBodyColor(this.getHandle().getPackedVariant());
+        return getBodyColor(getHandle().getPackedVariant());
     }
 
+    @Override
     public void setBodyColor(DyeColor color) {
-        this.getHandle().setPackedVariant(getData(this.getPatternColor(), color, this.getPattern()));
+        getHandle().setPackedVariant(getData(getPatternColor(), color, getPattern()));
     }
 
+    @Override
     public Pattern getPattern() {
-        return getPattern(this.getHandle().getPackedVariant());
+        return getPattern(getHandle().getPackedVariant());
     }
 
+    @Override
     public void setPattern(Pattern pattern) {
-        this.getHandle().setPackedVariant(getData(this.getPatternColor(), this.getBodyColor(), pattern));
-    }
-
-    public static int getData(DyeColor patternColor, DyeColor bodyColor, Pattern type) {
-        return patternColor.getWoolData() << 24 | bodyColor.getWoolData() << 16 | CraftTropicalFish.CraftPattern.values()[type.ordinal()].getDataValue();
-    }
-
-    public static DyeColor getPatternColor(int data) {
-        return DyeColor.getByWoolData((byte) (data >> 24 & 255));
-    }
-
-    public static DyeColor getBodyColor(int data) {
-        return DyeColor.getByWoolData((byte) (data >> 16 & 255));
-    }
-
-    public static Pattern getPattern(int data) {
-        return CraftTropicalFish.CraftPattern.fromData(data & '\uffff');
+        getHandle().setPackedVariant(getData(getPatternColor(), getBodyColor(), pattern));
     }
 
     public static enum CraftPattern {
-
-        KOB(0, false), SUNSTREAK(1, false), SNOOPER(2, false), DASHER(3, false), BRINELY(4, false), SPOTTY(5, false), FLOPPER(0, true), STRIPEY(1, true), GLITTER(2, true), BLOCKFISH(3, true), BETTY(4, true), CLAYFISH(5, true);
+        KOB(0, false),
+        SUNSTREAK(1, false),
+        SNOOPER(2, false),
+        DASHER(3, false),
+        BRINELY(4, false),
+        SPOTTY(5, false),
+        FLOPPER(0, true),
+        STRIPEY(1, true),
+        GLITTER(2, true),
+        BLOCKFISH(3, true),
+        BETTY(4, true),
+        CLAYFISH(5, true);
 
         private final int variant;
         private final boolean large;
-        private static final Map BY_DATA = new HashMap();
+
+        //
+        private static final Map<Integer, Pattern> BY_DATA = new HashMap<>();
 
         static {
-            CraftTropicalFish.CraftPattern[] acrafttropicalfish_craftpattern;
-            int i = (acrafttropicalfish_craftpattern = values()).length;
-
-            for (int j = 0; j < i; ++j) {
-                CraftTropicalFish.CraftPattern type = acrafttropicalfish_craftpattern[j];
-
-                CraftTropicalFish.CraftPattern.BY_DATA.put(type.getDataValue(), Pattern.values()[type.ordinal()]);
+            for (CraftPattern type : values()) {
+                BY_DATA.put(type.getDataValue(), Pattern.values()[type.ordinal()]);
             }
-
         }
 
         public static Pattern fromData(int data) {
-            return (Pattern) CraftTropicalFish.CraftPattern.BY_DATA.get(data);
+            return BY_DATA.get(data);
         }
 
-        private CraftPattern(int i, boolean large) {
-            this.variant = i;
+        private CraftPattern(int variant, boolean large) {
+            this.variant = variant;
             this.large = large;
         }
 
         public int getDataValue() {
-            return this.variant << 8 | (this.large ? 1 : 0);
+            return variant << 8 | ((large) ? 1 : 0);
         }
+    }
+
+    public static int getData(DyeColor patternColor, DyeColor bodyColor, Pattern type) {
+        return patternColor.getWoolData() << 24 | bodyColor.getWoolData() << 16 | CraftPattern.values()[type.ordinal()].getDataValue();
+    }
+
+    public static DyeColor getPatternColor(int data) {
+        return DyeColor.getByWoolData((byte) ((data >> 24) & 0xFF));
+    }
+
+    public static DyeColor getBodyColor(int data) {
+        return DyeColor.getByWoolData((byte) ((data >> 16) & 0xFF));
+    }
+
+    public static Pattern getPattern(int data) {
+        return CraftPattern.fromData(data & 0xFFFF);
     }
 }

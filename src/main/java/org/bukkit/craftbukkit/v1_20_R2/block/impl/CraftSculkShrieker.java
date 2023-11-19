@@ -1,46 +1,54 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import net.minecraft.world.level.block.SculkShriekerBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Waterlogged;
-import org.bukkit.block.data.type.SculkShrieker;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftSculkShrieker extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.SculkShrieker, org.bukkit.block.data.Waterlogged {
 
-public final class CraftSculkShrieker extends CraftBlockData implements SculkShrieker, Waterlogged {
+    public CraftSculkShrieker() {
+        super();
+    }
 
-    private static final BooleanProperty CAN_SUMMON = getBoolean(SculkShriekerBlock.class, "can_summon");
-    private static final BooleanProperty SHRIEKING = getBoolean(SculkShriekerBlock.class, "shrieking");
-    private static final BooleanProperty WATERLOGGED = getBoolean(SculkShriekerBlock.class, "waterlogged");
-
-    public CraftSculkShrieker() {}
-
-    public CraftSculkShrieker(BlockState state) {
+    public CraftSculkShrieker(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSculkShrieker
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty CAN_SUMMON = getBoolean(net.minecraft.world.level.block.SculkShriekerBlock.class, "can_summon");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty SHRIEKING = getBoolean(net.minecraft.world.level.block.SculkShriekerBlock.class, "shrieking");
+
+    @Override
     public boolean isCanSummon() {
-        return (Boolean) this.get(CraftSculkShrieker.CAN_SUMMON);
+        return get(CAN_SUMMON);
     }
 
+    @Override
     public void setCanSummon(boolean can_summon) {
-        this.set((Property) CraftSculkShrieker.CAN_SUMMON, (Comparable) can_summon);
+        set(CAN_SUMMON, can_summon);
     }
 
+    @Override
     public boolean isShrieking() {
-        return (Boolean) this.get(CraftSculkShrieker.SHRIEKING);
+        return get(SHRIEKING);
     }
 
+    @Override
     public void setShrieking(boolean shrieking) {
-        this.set((Property) CraftSculkShrieker.SHRIEKING, (Comparable) shrieking);
+        set(SHRIEKING, shrieking);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.SculkShriekerBlock.class, "waterlogged");
+
+    @Override
     public boolean isWaterlogged() {
-        return (Boolean) this.get(CraftSculkShrieker.WATERLOGGED);
+        return get(WATERLOGGED);
     }
 
+    @Override
     public void setWaterlogged(boolean waterlogged) {
-        this.set((Property) CraftSculkShrieker.WATERLOGGED, (Comparable) waterlogged);
+        set(WATERLOGGED, waterlogged);
     }
 }

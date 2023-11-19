@@ -5,20 +5,23 @@ import java.util.stream.Collectors;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.tags.TagKey;
+//import net.minecraft.world.level.material.Fluid;
 import org.bukkit.Fluid;
 import org.bukkit.craftbukkit.v1_20_R2.CraftFluid;
 
-public class CraftFluidTag extends CraftTag {
+public class CraftFluidTag extends CraftTag<net.minecraft.world.level.material.Fluid, Fluid> {
 
-    public CraftFluidTag(Registry registry, TagKey tag) {
+    public CraftFluidTag(Registry<net.minecraft.world.level.material.Fluid> registry, TagKey<net.minecraft.world.level.material.Fluid> tag) {
         super(registry, tag);
     }
 
+    @Override
     public boolean isTagged(Fluid fluid) {
-        return CraftFluid.bukkitToMinecraft(fluid).is(this.tag);
+        return CraftFluid.bukkitToMinecraft(fluid).is(tag);
     }
 
-    public Set getValues() {
-        return (Set) this.getHandle().stream().map(Holder::value).map(CraftFluid::minecraftToBukkit).collect(Collectors.toUnmodifiableSet());
+    @Override
+    public Set<Fluid> getValues() {
+        return getHandle().stream().map(Holder::value).map(CraftFluid::minecraftToBukkit).collect(Collectors.toUnmodifiableSet());
     }
 }

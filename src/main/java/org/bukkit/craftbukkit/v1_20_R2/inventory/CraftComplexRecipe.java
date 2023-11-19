@@ -19,15 +19,18 @@ public class CraftComplexRecipe implements CraftRecipe, ComplexRecipe {
         this.recipe = recipe;
     }
 
+    @Override
     public ItemStack getResult() {
-        return CraftItemStack.asCraftMirror(this.recipe.getResultItem(RegistryAccess.EMPTY));
+        return CraftItemStack.asCraftMirror(recipe.getResultItem(RegistryAccess.EMPTY));
     }
 
+    @Override
     public NamespacedKey getKey() {
-        return this.key;
+        return key;
     }
 
+    @Override
     public void addToCraftingManager() {
-        MinecraftServer.getServer().getRecipeManager().addRecipe(new RecipeHolder(CraftNamespacedKey.toMinecraft(this.key), this.recipe));
+        MinecraftServer.getServer().getRecipeManager().addRecipe(new RecipeHolder<>(CraftNamespacedKey.toMinecraft(key), recipe));
     }
 }

@@ -11,6 +11,14 @@
 [![forge-version][]][forge-commit]
 [![build-status][]][build-link]
 
+//TODO: make this more visually appealing with more badges
+
+Spigot Version: 7de1049b2a99eaca8090596e3b8e2ba8431f27e6
+
+CraftBukkit Version: 8e162d008
+
+Bukkit Version: 96340858187334c2f24f6acdc904561655c6cbab
+
 # Ketting
 
 Ketting is a fork of [MinecraftForge](https://github.com/MinecraftForge/MinecraftForge/)
@@ -23,7 +31,7 @@ Ketting is still in development and is not ready for production use.
 ### PATCHES DONE
 Bukkit: 404 / 530
 <br>
-CraftBukkit: 0 / 685
+CraftBukkit: 685 / 685
 
 ## How does it work?
 

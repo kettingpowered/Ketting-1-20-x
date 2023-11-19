@@ -251,16 +251,33 @@
           int i = serverchunkcache.getGenerator().getSpawnHeight(p_177897_);
           if (i < p_177897_.getMinBuildHeight()) {
              BlockPos blockpos = chunkpos.getWorldPosition();
-@@ -440,7 +_,9 @@
+@@ -440,8 +_,26 @@
        serverleveldata.setGameType(GameType.SPECTATOR);
     }
  
 +   //Ketting - TODO add bukkit compat
++   //Ketting Start
++   private @Nullable ServerLevel worldserver = null;
++   private void preparePrepareLevels(ServerLevel worldserver){
++      this.worldserver = worldserver;
++   }
++   public void prepareLevels(ChunkProgressListener p_129941_, ServerLevel worldserver){
++      preparePrepareLevels(worldserver);
++      prepareLevels(p_129941_);
++   }
++   //Ketting End
     private void prepareLevels(ChunkProgressListener p_129941_) {
 +      this.forceTicks = true; // CraftBukkit
        ServerLevel serverlevel = this.overworld();
++      //Ketting Start
++      if (worldserver != null) {
++         serverlevel = worldserver;
++         worldserver = null;
++      }
++      //Ketting End
        LOGGER.info("Preparing start region for dimension {}", (Object)serverlevel.dimension().location());
        BlockPos blockpos = serverlevel.getSharedSpawnPos();
+       p_129941_.updateSpawnPos(new ChunkPos(blockpos));
 @@ -467,6 +_,7 @@
                 ChunkPos chunkpos = new ChunkPos(i);
                 serverlevel1.getChunkSource().updateChunkForced(chunkpos, true);

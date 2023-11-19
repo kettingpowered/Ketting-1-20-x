@@ -1,27 +1,29 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-import net.minecraft.world.level.block.PressurePlateBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import org.bukkit.block.data.Powerable;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+public final class CraftPressurePlateBinary extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.Powerable {
 
-public final class CraftPressurePlateBinary extends CraftBlockData implements Powerable {
+    public CraftPressurePlateBinary() {
+        super();
+    }
 
-    private static final BooleanProperty POWERED = getBoolean(PressurePlateBlock.class, "powered");
-
-    public CraftPressurePlateBinary() {}
-
-    public CraftPressurePlateBinary(BlockState state) {
+    public CraftPressurePlateBinary(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
+    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
+
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.PressurePlateBlock.class, "powered");
+
+    @Override
     public boolean isPowered() {
-        return (Boolean) this.get(CraftPressurePlateBinary.POWERED);
+        return get(POWERED);
     }
 
+    @Override
     public void setPowered(boolean powered) {
-        this.set((Property) CraftPressurePlateBinary.POWERED, (Comparable) powered);
+        set(POWERED, powered);
     }
 }

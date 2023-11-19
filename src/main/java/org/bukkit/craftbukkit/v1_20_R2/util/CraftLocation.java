@@ -8,10 +8,11 @@ import org.bukkit.World;
 
 public final class CraftLocation {
 
-    private CraftLocation() {}
+    private CraftLocation() {
+    }
 
     public static Location toBukkit(Vec3 vec3D) {
-        return toBukkit(vec3D, (World) null);
+        return toBukkit(vec3D, null);
     }
 
     public static Location toBukkit(Vec3 vec3D, World world) {
@@ -25,17 +26,15 @@ public final class CraftLocation {
     public static Location toBukkit(BlockPos blockPosition) {
         return toBukkit(blockPosition, (World) null);
     }
-
     public static Location toBukkit(BlockPos blockPosition, Level world) {
         return toBukkit(blockPosition, world.getWorld(), 0.0F, 0.0F);
     }
-
     public static Location toBukkit(BlockPos blockPosition, World world) {
         return toBukkit(blockPosition, world, 0.0F, 0.0F);
     }
 
     public static Location toBukkit(BlockPos blockPosition, World world, float yaw, float pitch) {
-        return new Location(world, (double) blockPosition.getX(), (double) blockPosition.getY(), (double) blockPosition.getZ(), yaw, pitch);
+        return new Location(world, blockPosition.getX(), blockPosition.getY(), blockPosition.getZ(), yaw, pitch);
     }
 
     public static BlockPos toBlockPosition(Location location) {

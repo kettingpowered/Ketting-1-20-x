@@ -68,18 +68,30 @@
           TestCommand.register(this.dispatcher);
           SpawnArmorTrimsCommand.register(this.dispatcher);
           if (p_230943_.includeDedicated) {
-@@ -224,9 +_,11 @@
+@@ -224,10 +_,20 @@
        if (p_230943_.includeIntegrated) {
           PublishCommand.register(this.dispatcher);
        }
 +      net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.dispatcher, p_230943_, p_230944_);
  
-       this.dispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
-          p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
+-      this.dispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
+-         p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
+-      });
++      // CraftBukkit start
++      // Ketting Start - Don't remove setConsumer here, but instead duplicate
++      this.dispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
 +         p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
-       });
++      });
++   }
++   public Commands() {
++      // CraftBukkkit end
++      this.dispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
++         p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
++      });
++      // Ketting end
     }
  
+    public static <S> ParseResults<S> mapSource(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
 @@ -236,12 +_,59 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }

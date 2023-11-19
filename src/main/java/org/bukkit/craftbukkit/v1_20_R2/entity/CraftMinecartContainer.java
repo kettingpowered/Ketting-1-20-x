@@ -16,37 +16,39 @@ public abstract class CraftMinecartContainer extends CraftMinecart implements Lo
         super(server, entity);
     }
 
+    @Override
     public AbstractMinecartContainer getHandle() {
-        return (AbstractMinecartContainer) this.entity;
+        return (AbstractMinecartContainer) entity;
     }
 
+    @Override
     public void setLootTable(LootTable table) {
-        this.setLootTable(table, this.getSeed());
+        setLootTable(table, getSeed());
     }
 
+    @Override
     public LootTable getLootTable() {
-        ResourceLocation nmsTable = this.getHandle().lootTable;
-
+        ResourceLocation nmsTable = getHandle().lootTable;
         if (nmsTable == null) {
-            return null;
-        } else {
-            NamespacedKey key = CraftNamespacedKey.fromMinecraft(nmsTable);
-
-            return Bukkit.getLootTable(key);
+            return null; // return empty loot table?
         }
+
+        NamespacedKey key = CraftNamespacedKey.fromMinecraft(nmsTable);
+        return Bukkit.getLootTable(key);
     }
 
+    @Override
     public void setSeed(long seed) {
-        this.setLootTable(this.getLootTable(), seed);
+        setLootTable(getLootTable(), seed);
     }
 
+    @Override
     public long getSeed() {
-        return this.getHandle().lootTableSeed;
+        return getHandle().lootTableSeed;
     }
 
     private void setLootTable(LootTable table, long seed) {
-        ResourceLocation newKey = table == null ? null : CraftNamespacedKey.toMinecraft(table.getKey());
-
-        this.getHandle().setLootTable(newKey, seed);
+        ResourceLocation newKey = (table == null) ? null : CraftNamespacedKey.toMinecraft(table.getKey());
+        getHandle().setLootTable(newKey, seed);
     }
 }

@@ -1,6 +1,17 @@
 --- a/net/minecraft/world/level/chunk/ChunkAccess.java
 +++ b/net/minecraft/world/level/chunk/ChunkAccess.java
-@@ -80,6 +_,11 @@
+@@ -71,15 +_,20 @@
+    protected final UpgradeData upgradeData;
+    @Nullable
+    protected BlendingData blendingData;
+-   protected final Map<Heightmap.Types, Heightmap> heightmaps = Maps.newEnumMap(Heightmap.Types.class);
++   public final Map<Heightmap.Types, Heightmap> heightmaps = Maps.newEnumMap(Heightmap.Types.class);
+    protected ChunkSkyLightSources skyLightSources;
+    private final Map<Structure, StructureStart> structureStarts = Maps.newHashMap();
+    private final Map<Structure, LongSet> structuresRefences = Maps.newHashMap();
+    protected final Map<BlockPos, CompoundTag> pendingBlockEntities = Maps.newHashMap();
+-   protected final Map<BlockPos, BlockEntity> blockEntities = Maps.newHashMap();
++   public final Map<BlockPos, BlockEntity> blockEntities = Maps.newHashMap();
     protected final LevelHeightAccessor levelHeightAccessor;
     protected final LevelChunkSection[] sections;
  

@@ -7,10 +7,12 @@ import org.bukkit.inventory.InventoryHolder;
 
 public class CraftCustomInventoryConverter implements CraftInventoryCreator.InventoryConverter {
 
+    @Override
     public Inventory createInventory(InventoryHolder holder, InventoryType type) {
         return new CraftInventoryCustom(holder, type);
     }
 
+    @Override
     public Inventory createInventory(InventoryHolder owner, InventoryType type, String title) {
         return new CraftInventoryCustom(owner, type, title);
     }

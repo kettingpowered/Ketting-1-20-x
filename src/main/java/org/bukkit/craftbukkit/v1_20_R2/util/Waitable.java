@@ -4,50 +4,42 @@ import com.google.common.base.Preconditions;
 import java.util.concurrent.ExecutionException;
 
 public abstract class Waitable<T> implements Runnable {
-
+    private enum Status {
+        WAITING,
+        RUNNING,
+        FINISHED,
+    }
     Throwable t = null;
     T value = null;
-    Waitable.Status status;
+    Status status = Status.WAITING;
 
-    public Waitable() {
-        this.status = Waitable.Status.WAITING;
-    }
-
+    @Override
     public final void run() {
         synchronized (this) {
-            Preconditions.checkState(this.status == Waitable.Status.WAITING, "Invalid state %s", this.status);
-            this.status = Waitable.Status.RUNNING;
+            Preconditions.checkState(status == Status.WAITING, "Invalid state %s", status);
+            status = Status.RUNNING;
         }
-
         try {
-            this.value = this.evaluate();
-        } catch (Throwable throwable) {
-            this.t = throwable;
+            value = evaluate();
+        } catch (Throwable t) {
+            this.t = t;
         } finally {
             synchronized (this) {
-                this.status = Waitable.Status.FINISHED;
+                status = Status.FINISHED;
                 this.notifyAll();
             }
         }
-
     }
 
     protected abstract T evaluate();
 
     public synchronized T get() throws InterruptedException, ExecutionException {
-        while (this.status != Waitable.Status.FINISHED) {
+        while (status != Status.FINISHED) {
             this.wait();
         }
-
-        if (this.t != null) {
-            throw new ExecutionException(this.t);
-        } else {
-            return this.value;
+        if (t != null) {
+            throw new ExecutionException(t);
         }
-    }
-
-    private enum Status {
-
-        WAITING, RUNNING, FINISHED;
+        return value;
     }
 }

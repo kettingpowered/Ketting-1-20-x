@@ -11,20 +11,22 @@ public class CraftInventoryJukebox extends CraftInventory implements JukeboxInve
         super(inventory);
     }
 
+    @Override
     public void setRecord(ItemStack item) {
         if (item == null) {
-            this.inventory.removeItem(0, 0);
+            inventory.removeItem(0, 0); // Second parameter is unused in TileEntityJukebox
         } else {
-            this.setItem(0, item);
+            setItem(0, item);
         }
-
     }
 
+    @Override
     public ItemStack getRecord() {
-        return this.getItem(0);
+        return getItem(0);
     }
 
+    @Override
     public Jukebox getHolder() {
-        return (Jukebox) this.inventory.getOwner();
+        return (Jukebox) inventory.getOwner();
     }
 }

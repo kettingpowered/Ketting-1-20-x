@@ -16,6 +16,21 @@
  import org.slf4j.Logger;
  
  public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {
+@@ -38,11 +_,11 @@
+    private static final int ATTENTION_INTERVAL = 2400;
+    private static final int EVENT_COOLDOWN = 1;
+    private static final int GATEWAY_HEIGHT_ABOVE_SURFACE = 10;
+-   private long age;
++   public long age;
+    private int teleportCooldown;
+    @Nullable
+-   private BlockPos exitPortal;
+-   private boolean exactTeleport;
++   public BlockPos exitPortal;
++   public boolean exactTeleport;
+ 
+    public TheEndGatewayBlockEntity(BlockPos p_155813_, BlockState p_155814_) {
+       super(BlockEntityType.END_GATEWAY, p_155813_, p_155814_);
 @@ -154,7 +_,7 @@
     public static void teleportEntity(Level p_155829_, BlockPos p_155830_, BlockState p_155831_, Entity p_155832_, TheEndGatewayBlockEntity p_155833_) {
        if (p_155829_ instanceof ServerLevel serverlevel && !p_155833_.isCoolingDown()) {

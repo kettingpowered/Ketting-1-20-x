@@ -10,11 +10,13 @@ public class CraftInventoryHorse extends CraftInventoryAbstractHorse implements 
         super(inventory);
     }
 
+    @Override
     public ItemStack getArmor() {
-        return this.getItem(1);
+       return getItem(1);
     }
 
+    @Override
     public void setArmor(ItemStack stack) {
-        this.setItem(1, stack);
+        setItem(1, stack);
     }
 }

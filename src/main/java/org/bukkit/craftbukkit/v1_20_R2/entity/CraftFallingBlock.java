@@ -14,74 +14,91 @@ public class CraftFallingBlock extends CraftEntity implements FallingBlock {
         super(server, entity);
     }
 
+    @Override
     public FallingBlockEntity getHandle() {
-        return (FallingBlockEntity) this.entity;
+        return (FallingBlockEntity) entity;
     }
 
+    @Override
     public String toString() {
         return "CraftFallingBlock";
     }
 
+    @Override
     public Material getMaterial() {
-        return this.getBlockData().getMaterial();
+        return getBlockData().getMaterial();
     }
 
+    @Override
     public BlockData getBlockData() {
-        return CraftBlockData.fromData(this.getHandle().getBlockState());
+        return CraftBlockData.fromData(getHandle().getBlockState());
     }
 
+    @Override
     public boolean getDropItem() {
-        return this.getHandle().dropItem;
+        return getHandle().dropItem;
     }
 
+    @Override
     public void setDropItem(boolean drop) {
-        this.getHandle().dropItem = drop;
+        getHandle().dropItem = drop;
     }
 
+    @Override
     public boolean getCancelDrop() {
-        return this.getHandle().cancelDrop;
+        return getHandle().cancelDrop;
     }
 
+    @Override
     public void setCancelDrop(boolean cancelDrop) {
-        this.getHandle().cancelDrop = cancelDrop;
+        getHandle().cancelDrop = cancelDrop;
     }
 
+    @Override
     public boolean canHurtEntities() {
-        return this.getHandle().hurtEntities;
+        return getHandle().hurtEntities;
     }
 
+    @Override
     public void setHurtEntities(boolean hurtEntities) {
-        this.getHandle().hurtEntities = hurtEntities;
+        getHandle().hurtEntities = hurtEntities;
     }
 
+    @Override
     public void setTicksLived(int value) {
         super.setTicksLived(value);
-        this.getHandle().time = value;
+
+        // Second field for FallingBlockEntity
+        getHandle().time = value;
     }
 
+    @Override
     public float getDamagePerBlock() {
-        return this.getHandle().fallDamagePerDistance;
+        return getHandle().fallDamagePerDistance;
     }
 
+    @Override
     public void setDamagePerBlock(float damage) {
-        Preconditions.checkArgument((double) damage >= 0.0D, "damage must be >= 0.0, given %s", damage);
-        this.getHandle().fallDamagePerDistance = damage;
-        if ((double) damage > 0.0D) {
+        Preconditions.checkArgument(damage >= 0.0, "damage must be >= 0.0, given %s", damage);
+
+        getHandle().fallDamagePerDistance = damage;
+        if (damage > 0.0) {
             this.setHurtEntities(true);
         }
-
     }
 
+    @Override
     public int getMaxDamage() {
-        return this.getHandle().fallDamageMax;
+        return getHandle().fallDamageMax;
     }
 
+    @Override
     public void setMaxDamage(int damage) {
         Preconditions.checkArgument(damage >= 0, "damage must be >= 0, given %s", damage);
-        this.getHandle().fallDamageMax = damage;
+
+        getHandle().fallDamageMax = damage;
         if (damage > 0) {
             this.setHurtEntities(true);
         }
-
     }
 }
