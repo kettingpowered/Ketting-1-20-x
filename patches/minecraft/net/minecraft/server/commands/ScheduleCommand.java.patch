@@ -1,11 +1,44 @@
 --- a/net/minecraft/server/commands/ScheduleCommand.java
 +++ b/net/minecraft/server/commands/ScheduleCommand.java
-@@ -52,7 +_,7 @@
+@@ -10,6 +_,8 @@
+ import com.mojang.datafixers.util.Either;
+ import com.mojang.datafixers.util.Pair;
+ import java.util.Collection;
++
++import com.mojang.logging.LogUtils;
+ import net.minecraft.commands.CommandFunction;
+ import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.commands.Commands;
+@@ -19,11 +_,15 @@
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.world.level.storage.PrimaryLevelData;
++import net.minecraft.world.level.storage.WorldData;
+ import net.minecraft.world.level.timers.FunctionCallback;
+ import net.minecraft.world.level.timers.FunctionTagCallback;
+ import net.minecraft.world.level.timers.TimerQueue;
++import org.slf4j.Logger;
+ 
+ public class ScheduleCommand {
++   private static final Logger LOGGER = LogUtils.getLogger();
+    private static final SimpleCommandExceptionType ERROR_SAME_TICK = new SimpleCommandExceptionType(Component.translatable("commands.schedule.same_tick"));
+    private static final DynamicCommandExceptionType ERROR_CANT_REMOVE = new DynamicCommandExceptionType((p_138437_) -> {
+       return Component.translatable("commands.schedule.cleared.failure", p_138437_);
+@@ -52,7 +_,15 @@
        } else {
           long i = p_138429_.getLevel().getGameTime() + (long)p_138431_;
           ResourceLocation resourcelocation = p_138430_.getFirst();
 -         TimerQueue<MinecraftServer> timerqueue = p_138429_.getServer().getWorldData().overworldData().getScheduledEvents();
-+         TimerQueue<MinecraftServer> timerqueue = p_138429_.getLevel().serverLevelData.overworldData().getScheduledEvents(); // CraftBukkit - SPIGOT-6667: Use world specific function timer
++         TimerQueue<MinecraftServer> timerqueue;
++         // Ketting start - keep Vanilla Compat
++         if (p_138429_.getLevel().serverLevelData instanceof WorldData primaryLevelData){
++            timerqueue = primaryLevelData.overworldData().getScheduledEvents(); // CraftBukkit - SPIGOT-6667: Use world specific function timer
++         } else{
++            LOGGER.error("Cannot get World Specific timerqueue. Falling back to server-wide World Data, which will use the server-wide overworld's timerqueue.", new ClassCastException("Cannot cast ServerLevelData to WorldData"));
++            timerqueue = p_138429_.getServer().getWorldData().overworldData().getScheduledEvents();
++         }
++         // Ketting end - keep Vanilla Compat
           p_138430_.getSecond().ifLeft((p_288541_) -> {
              String s = resourcelocation.toString();
              if (p_138432_) {

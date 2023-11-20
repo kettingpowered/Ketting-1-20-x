@@ -5,6 +5,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -61,6 +62,8 @@ import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.ImposterProtoChunk;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.level.storage.PrimaryLevelData;
+import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -142,8 +145,10 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.StructureSearchResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 public class CraftWorld extends CraftRegionAccessor implements World {
+    private static final Logger LOGGER = LogUtils.getLogger();
     public static final int CUSTOM_DIMENSION_OFFSET = 10;
     private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
 
@@ -1022,7 +1027,13 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public void setDifficulty(Difficulty difficulty) {
-        this.getHandle().serverLevelData.setDifficulty(net.minecraft.world.Difficulty.byId(difficulty.getValue()));
+        //Ketting start - keep vanilla compat
+        if (this.getHandle().serverLevelData instanceof WorldData worldData)
+            worldData.setDifficulty(net.minecraft.world.Difficulty.byId(difficulty.getValue()));
+        else {
+            LOGGER.error("Error setting per world difficulty.", new ClassCastException("Unable to cast ServerLevelData to WorldData"));
+        }
+        //Ketting end - keep vanilla compat
     }
 
     @Override
@@ -1331,7 +1342,14 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public boolean canGenerateStructures() {
-        return world.serverLevelData.worldGenOptions().generateStructures();
+        //Ketting start - keep vanilla compat
+        if (world.serverLevelData instanceof WorldData worldData)
+            return worldData.worldGenOptions().generateStructures();
+        else {
+            LOGGER.error("Error getting per World generateStructures Setting. Falling back to Global Server setting", new ClassCastException("Cannot cast ServerLevelData to WorldData"));
+            return world.getServer().getWorldData().worldGenOptions().generateStructures();
+        }
+        //Ketting end - keep vanilla compat
     }
 
     @Override
@@ -1341,7 +1359,13 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public void setHardcore(boolean hardcore) {
-        world.serverLevelData.settings.hardcore = hardcore;
+        //Ketting start - keep vanilla compat
+        if (world.serverLevelData instanceof PrimaryLevelData primaryLevelData)
+            primaryLevelData.settings.hardcore = hardcore;
+        else {
+            LOGGER.error("Error setting per World hardcore Setting.", new ClassCastException("Cannot cast ServerLevelData to WorldData"));
+        }
+        //Ketting end - keep vanilla compat
     }
 
     @Override

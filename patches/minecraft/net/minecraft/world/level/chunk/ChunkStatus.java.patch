@@ -1,11 +1,19 @@
 --- a/net/minecraft/world/level/chunk/ChunkStatus.java
 +++ b/net/minecraft/world/level/chunk/ChunkStatus.java
+@@ -27,6 +_,7 @@
+ import net.minecraft.world.level.levelgen.Heightmap;
+ import net.minecraft.world.level.levelgen.blending.Blender;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
++import net.minecraft.world.level.storage.WorldData;
+ 
+ public class ChunkStatus {
+    public static final int MAX_STRUCTURE_DISTANCE = 8;
 @@ -38,7 +_,7 @@
     public static final ChunkStatus EMPTY = registerSimple("empty", (ChunkStatus)null, -1, PRE_FEATURES, ChunkStatus.ChunkType.PROTOCHUNK, (p_156307_, p_156308_, p_156309_, p_156310_, p_156311_) -> {
     });
     public static final ChunkStatus STRUCTURE_STARTS = register("structure_starts", EMPTY, 0, false, PRE_FEATURES, ChunkStatus.ChunkType.PROTOCHUNK, (p_296976_, p_296977_, p_296978_, p_296979_, p_296980_, p_296981_, p_296982_, p_296983_, p_296984_) -> {
 -      if (p_296978_.getServer().getWorldData().worldGenOptions().generateStructures()) {
-+      if (p_296978_.serverLevelData.worldGenOptions().generateStructures()) { // CraftBukkit
++      if ((p_296978_.serverLevelData instanceof WorldData worldData && worldData.worldGenOptions().generateStructures()) || p_296978_.getServer().getWorldData().worldGenOptions().generateStructures()) { // CraftBukkit // Ketting - keep Vanilla compat
           p_296979_.createStructures(p_296978_.registryAccess(), p_296978_.getChunkSource().getGeneratorState(), p_296978_.structureManager(), p_296984_, p_296980_);
        }
  

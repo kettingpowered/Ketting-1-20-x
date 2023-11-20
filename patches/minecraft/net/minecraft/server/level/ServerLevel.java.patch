@@ -34,15 +34,17 @@
  import net.minecraft.world.level.levelgen.structure.BoundingBox;
  import net.minecraft.world.level.levelgen.structure.Structure;
  import net.minecraft.world.level.levelgen.structure.StructureCheck;
-@@ -148,6 +_,7 @@
+@@ -146,15 +_,20 @@
+ import net.minecraft.world.level.portal.PortalForcer;
+ import net.minecraft.world.level.saveddata.maps.MapIndex;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
- import net.minecraft.world.level.storage.DimensionDataStorage;
- import net.minecraft.world.level.storage.LevelStorageSource;
-+import net.minecraft.world.level.storage.PrimaryLevelData;
- import net.minecraft.world.level.storage.ServerLevelData;
+-import net.minecraft.world.level.storage.DimensionDataStorage;
+-import net.minecraft.world.level.storage.LevelStorageSource;
+-import net.minecraft.world.level.storage.ServerLevelData;
++import net.minecraft.world.level.storage.*;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -155,6 +_,13 @@
+ import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
@@ -61,14 +63,14 @@
     private final ServerChunkCache chunkSource;
     private final MinecraftServer server;
 -   private final ServerLevelData serverLevelData;
-+   public final PrimaryLevelData serverLevelData; // CraftBukkit - type
++   public final ServerLevelData serverLevelData; // CraftBukkit - type // Ketting - keep vanilla and forge compat
     final EntityTickList entityTickList = new EntityTickList();
 -   private final PersistentEntitySectionManager<Entity> entityManager;
 +   public final PersistentEntitySectionManager<Entity> entityManager;
     private final GameEventDispatcher gameEventDispatcher;
     public boolean noSave;
     private final SleepStatus sleepStatus;
-@@ -188,24 +_,116 @@
+@@ -188,24 +_,121 @@
     private final List<CustomSpawner> customSpawners;
     @Nullable
     private EndDragonFight dragonFight;
@@ -107,7 +109,7 @@
 +      this.serverLevelData = p_215002_;
 +      ChunkGenerator chunkgenerator = p_215004_.generator();
 +      // CraftBukkit start
-+      serverLevelData.setWorld(this);
++      ((PrimaryLevelData)serverLevelData).setWorld(this);
 +
 +      if (biomeProvider != null) {
 +         BiomeSource worldChunkManager = new CustomWorldChunkManager(getWorld(), biomeProvider, server.registryAccess().registryOrThrow(Registries.BIOME));
@@ -143,9 +145,9 @@
 +      long i = p_214999_.getWorldData().worldGenOptions().seed();
 +      this.structureCheck = new StructureCheck(this.chunkSource.chunkScanner(), this.registryAccess(), p_214999_.getStructureManager(), p_215003_, chunkgenerator, this.chunkSource.randomState(), this, chunkgenerator.getBiomeSource(), i, datafixer);
 +      this.structureCheck.setTypeKey(getTypeKey()); //Ketting
-+      this.structureManager = new StructureManager(this, this.serverLevelData.worldGenOptions(), this.structureCheck); // CraftBukkit
++      this.structureManager = new StructureManager(this, ((PrimaryLevelData)this.serverLevelData).worldGenOptions(), this.structureCheck); // CraftBukkit
 +      if ((this.dimension() == Level.END && this.dimensionTypeRegistration().is(BuiltinDimensionTypes.END)) || env == org.bukkit.World.Environment.THE_END) { // CraftBukkit - Allow to create EnderDragonBattle in default and custom END
-+         this.dragonFight = new EndDragonFight(this, this.serverLevelData.worldGenOptions().seed(), this.serverLevelData.endDragonFightData()); // CraftBukkit
++         this.dragonFight = new EndDragonFight(this, ((PrimaryLevelData)this.serverLevelData).worldGenOptions().seed(), ((PrimaryLevelData)this.serverLevelData).endDragonFightData()); // CraftBukkit
 +      } else {
 +         this.dragonFight = null;
 +      }
@@ -173,11 +175,15 @@
        this.tickTime = p_215009_;
        this.server = p_214999_;
        this.customSpawners = p_215008_;
--      this.serverLevelData = p_215002_;
-+      this.serverLevelData = (PrimaryLevelData) p_215002_;
+       this.serverLevelData = p_215002_;
        ChunkGenerator chunkgenerator = p_215004_.generator();
 +      // CraftBukkit start
-+      serverLevelData.setWorld(this);
++      // Ketting start - vanilla compat
++      if (serverLevelData instanceof PrimaryLevelData primaryLevelData)
++         primaryLevelData.setWorld(this);
++      else
++         LOGGER.error("Cannot setWorld on passed ServerLevelData", new ClassCastException("Cannot cast ServerLevelData to PrimaryLevelData"));
++      // Ketting end - vanilla compat
 +      // CraftBukkit end
        boolean flag = p_214999_.forceSynchronousWrites();
        DataFixer datafixer = p_214999_.getFixerUpper();
@@ -189,19 +195,32 @@
           return p_214999_.overworld().getDataStorage();
        });
        this.chunkSource.getGeneratorState().ensureStructuresGenerated();
-@@ -220,9 +_,9 @@
+@@ -220,18 +_,31 @@
  
        long i = p_214999_.getWorldData().worldGenOptions().seed();
        this.structureCheck = new StructureCheck(this.chunkSource.chunkScanner(), this.registryAccess(), p_214999_.getStructureManager(), p_215003_, chunkgenerator, this.chunkSource.randomState(), this, chunkgenerator.getBiomeSource(), i, datafixer);
 -      this.structureManager = new StructureManager(this, p_214999_.getWorldData().worldGenOptions(), this.structureCheck);
-+      this.structureManager = new StructureManager(this, this.serverLevelData.worldGenOptions(), this.structureCheck); // CraftBukkit
++      //Ketting start - keep vanilla compat
++      if (serverLevelData instanceof PrimaryLevelData primaryLevelData){
++         this.structureManager = new StructureManager(this, primaryLevelData.worldGenOptions(), this.structureCheck); // CraftBukkit
++      } else {
++         LOGGER.error("Cannot set Level structureManager with passed ServerLevelData. Falling back and using server-wide WorldData instead.", new ClassCastException("Cannot cast ServerLevelData to PrimaryLevelData"));
++         this.structureManager = new StructureManager(this, getServer().getWorldData().worldGenOptions(), this.structureCheck);
++      }
        if (this.dimension() == Level.END && this.dimensionTypeRegistration().is(BuiltinDimensionTypes.END)) {
 -         this.dragonFight = new EndDragonFight(this, i, p_214999_.getWorldData().endDragonFightData());
-+         this.dragonFight = new EndDragonFight(this, this.serverLevelData.worldGenOptions().seed(), this.serverLevelData.endDragonFightData()); // CraftBukkit
++         if (serverLevelData instanceof PrimaryLevelData primaryLevelData) {
++            this.dragonFight = new EndDragonFight(this, primaryLevelData.worldGenOptions().seed(), primaryLevelData.endDragonFightData()); // CraftBukkit
++         }else {
++            this.dragonFight = new EndDragonFight(this, getServer().getWorldData().worldGenOptions().seed(), getServer().getWorldData().endDragonFightData()); // CraftBukkit
++         }
        } else {
           this.dragonFight = null;
        }
-@@ -232,6 +_,8 @@
++      //Ketting end
+ 
+       this.sleepStatus = new SleepStatus();
+       this.gameEventDispatcher = new GameEventDispatcher(this);
        this.randomSequences = Objects.requireNonNullElseGet(p_288977_, () -> {
           return this.getDataStorage().computeIfAbsent(RandomSequences.factory(i), "random_sequences");
        });
@@ -478,7 +497,7 @@
           if (p_8644_ != null) {
              p_8644_.progressStartNoAbort(Component.translatable("menu.savingLevel"));
           }
-@@ -736,12 +_,20 @@
+@@ -736,12 +_,34 @@
              this.entityManager.autoSave();
           }
  
@@ -486,8 +505,17 @@
 +         ServerLevel serverlevel = this;
 +
 +         serverLevelData.setWorldBorder(serverlevel.getWorldBorder().createSettings());
-+         serverLevelData.setCustomBossEvents(this.server.getCustomBossEvents().save());
-+         convertable.saveDataTag(this.server.registryAccess(), this.serverLevelData, this.server.getPlayerList().getSingleplayerData());
++         // Ketting start - vanilla compat
++         WorldData worldData;
++         if (this.serverLevelData instanceof WorldData worldData1) {
++            worldData = worldData1;
++         } else {
++            LOGGER.error("Cannot save Boss Event Data to World specific ServerLevelData. Using server-wide WorldData instead.", new ClassCastException("Cannot cast ServerLevelData to WorldData"));
++            worldData = getServer().getWorldData();
++         }
++         worldData.setCustomBossEvents(this.server.getCustomBossEvents().save());
++         convertable.saveDataTag(this.server.registryAccess(), worldData, this.server.getPlayerList().getSingleplayerData());
++         // Ketting end - vanilla compat
 +         // CraftBukkit end
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Save(this));
        }
@@ -496,7 +524,12 @@
     private void saveLevelData() {
        if (this.dragonFight != null) {
 -         this.server.getWorldData().setEndDragonFightData(this.dragonFight.saveData());
-+         this.serverLevelData.setEndDragonFightData(this.dragonFight.saveData()); // CraftBukkit
++         if (this.serverLevelData instanceof WorldData worldData) {
++            worldData.setEndDragonFightData(this.dragonFight.saveData()); // CraftBukkit
++         } else {
++            LOGGER.error("Cannot save EndDragon Fight Data to World specific ServerLevelData. Using server-wide WorldData instead", new ClassCastException("Cannot cast ServerLevelData to WorldData"));
++            getServer().getWorldData().setEndDragonFightData(this.dragonFight.saveData()); // CraftBukkit
++         }
        }
  
        this.getChunkSource().getDataStorage().save();
@@ -768,7 +801,7 @@
     @Nullable
     public BlockPos findNearestMapStructure(TagKey<Structure> p_215012_, BlockPos p_215013_, int p_215014_, boolean p_215015_) {
 -      if (!this.server.getWorldData().worldGenOptions().generateStructures()) {
-+      if (!this.serverLevelData.worldGenOptions().generateStructures()) { // CraftBukkit
++      if (!this.getWorld().canGenerateStructures()) { // CraftBukkit
           return null;
        } else {
           Optional<HolderSet.Named<Structure>> optional = this.registryAccess().registryOrThrow(Registries.STRUCTURE).getTag(p_215012_);
@@ -792,17 +825,31 @@
           this.updateNeighborsAt(p_8743_, p_8744_);
        }
  
-@@ -1327,11 +_,11 @@
+@@ -1327,11 +_,25 @@
     }
  
     public boolean isFlat() {
 -      return this.server.getWorldData().isFlatWorld();
-+      return this.serverLevelData.isFlatWorld(); // CraftBukkit
++      //Ketting start - vanilla compat
++      if (this.serverLevelData instanceof WorldData worldData)
++         return worldData.isFlatWorld(); //CraftBukkit
++      else {
++         LOGGER.error("Cannot get per World isFlat property from ServerLevelData. Using server-wide isFlatWorld property ", new ClassCastException("Cannot Cast ServerLevelData to WorldData"));
++         return getServer().getWorldData().isFlatWorld();
++      }
++      //Ketting end - vanilla compat
     }
  
     public long getSeed() {
 -      return this.server.getWorldData().worldGenOptions().seed();
-+      return this.serverLevelData.worldGenOptions().seed(); // CraftBukkit
++      //Ketting start - vanilla compat
++      if (this.serverLevelData instanceof WorldData worldData)
++         return worldData.worldGenOptions().seed(); //CraftBukkit
++      else {
++         LOGGER.error("Cannot get per World seed from ServerLevelData. Using server-wide seed property ", new ClassCastException("Cannot Cast ServerLevelData to WorldData"));
++         return getServer().getWorldData().worldGenOptions().seed();
++      }
++      //Ketting end - vanilla compat
     }
  
     @Nullable

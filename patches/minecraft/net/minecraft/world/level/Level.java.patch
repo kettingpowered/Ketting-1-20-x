@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -3,8 +_,10 @@
+@@ -3,11 +_,14 @@
  import com.google.common.collect.Lists;
  import com.mojang.serialization.Codec;
  import java.io.IOException;
@@ -11,6 +11,10 @@
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.Supplier;
++import javax.annotation.Nonnull;
+ import javax.annotation.Nullable;
+ import net.minecraft.CrashReport;
+ import net.minecraft.CrashReportCategory;
 @@ -22,10 +_,12 @@
  import net.minecraft.core.registries.Registries;
  import net.minecraft.nbt.CompoundTag;
@@ -97,7 +101,7 @@
     private final Supplier<ProfilerFiller> profiler;
     public final boolean isClientSide;
     private final WorldBorder worldBorder;
-@@ -110,8 +_,79 @@
+@@ -110,8 +_,81 @@
     private final RegistryAccess registryAccess;
     private final DamageSources damageSources;
     private long subTickCount;
@@ -109,7 +113,7 @@
 +   private final java.util.ArrayList<BlockEntity> pendingFreshBlockEntities = new java.util.ArrayList<>();
 +
 +   // CraftBukkit start Added the following
-+   private CraftWorld world;
++   private @Nullable CraftWorld world;
 +   public boolean pvpMode;
 +   public boolean keepSpawnInMemory = true;
 +   public org.bukkit.generator.ChunkGenerator generator;
@@ -132,7 +136,9 @@
 +   private org.spigotmc.TickLimiter tileLimiter;
 +   private int tileTickPosition;
 +
-+   public CraftWorld getWorld() {
++   public @Nonnull CraftWorld getWorld() {
++      if (this.world == null)
++         return this.world = new CraftWorld((ServerLevel) this, this.generator, biomeProvider, this.environment);
 +      //Ketting TODO - init world here!
 +      return this.world;
 +   }
