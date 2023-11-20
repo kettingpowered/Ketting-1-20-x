@@ -39,15 +39,16 @@ jobs:
             done
             rm -r "${dir}"
           done
-      - name: release
-        uses: ncipollo/release-action@v1
-        id: create_release
-        with:
-          generateReleaseNotes: true
-          artifacts: "artifacts/*"
-          tag: $(git rev-parse --short ${{ github.sha }})
-          prerelease: true
-          #draft: true
+      - name: Create Release
+        run: |
+          tag=$(git rev-parse --short ${{ github.sha }})
+          gh release create "$tag" artifacts/* \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
+              --prerelease \
+              --generate-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   setup:
     runs-on: ubuntu-latest
     steps:
