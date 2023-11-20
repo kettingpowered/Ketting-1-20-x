@@ -14,7 +14,6 @@ permissions:
   actions: write #nessesary for cache deletion
 
 jobs:
-  #fixme: this is not ready yet, because the project itself doesn't compile.
   create-release:
     needs: build
     if: ${{ format('refs/heads/{0}', github.event.repository.default_branch) == github.ref }}
@@ -33,11 +32,6 @@ jobs:
             dir=${dir%*/} # remove the trailing "/"
             for file in $dir/*
             do 
-              #file=${file##*/} # remove the path before the filename
-              #base=${file%.*} # remove the extension
-              #ext=${file#"$base"} # remove the filename before the extension
-              #echo "moving ${dir}/${file} to artifacts/${file%%.*}-${dir##*/}${ext}"
-              #mv "${dir}/${file}" "artifacts/${file%%.*}-${dir##*/}${ext}"
               echo "moving $file one folder higher"
               mv $file artifacts/
             done
