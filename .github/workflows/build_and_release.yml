@@ -53,6 +53,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      - name: test
+        run: git rev-parse --short ${{ github.sha }}
       - name: Setup Java 17
         uses: actions/setup-java@v3
         with:
