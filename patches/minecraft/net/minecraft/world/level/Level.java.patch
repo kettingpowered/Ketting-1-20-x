@@ -136,7 +136,7 @@
 +
 +   public CraftWorld getWorld() {
 +      if (this.world == null) {
-+         //TODO: check not null
++         //Ketting TODO - generator and biomeProvider
 +         if (environment == null) {
 +            environment = (World.Environment) Ketting.getInstance().getDimensionRegistry().getKey(getTypeKey());
 +         }
@@ -250,7 +250,7 @@
        if (this.isOutsideBuildHeight(p_46605_)) {
           return false;
        } else if (!this.isClientSide && this.isDebug()) {
-@@ -198,17 +_,69 @@
+@@ -198,17 +_,75 @@
        } else {
           LevelChunk levelchunk = this.getChunkAt(p_46605_);
           Block block = p_46606_.getBlock();
@@ -305,6 +305,12 @@
 +         }
 +      }
 +   }
++
++   //Ketting start - craftbukkit compat
++   public void notifyAndUpdatePhysics(BlockPos blockPosition, Chunk chunk, BlockState oldBlock, BlockState newBlock, BlockState actualBlock, int i, int j) {
++      markAndNotifyBlock(blockPosition, chunk == null ? null : (LevelChunk) chunk, oldBlock, newBlock, i, j);
++   }
++   //Ketting end
 +
 +   // Split off from original setBlockState(BlockPos, BlockState, int, int) method in order to directly send client and physic updates
 +   public void markAndNotifyBlock(BlockPos p_46605_, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState p_46606_, int p_46607_, int p_46608_) {
@@ -620,15 +626,3 @@
  
     public long nextSubTickCount() {
        return (long)(this.subTickCount++);
-@@ -872,6 +_,11 @@
- 
-    public DamageSources damageSources() {
-       return this.damageSources;
-+   }
-+
-+   // CraftBukkit start - Split off from above in order to directly send client and physic updates
-+   public void notifyAndUpdatePhysics(BlockPos blockPosition, Chunk chunk, BlockState oldBlock, BlockState newBlock, BlockState actualBlock, int i, int j) {
-+      //Todo: CraftBukkit World.patch
-    }
- 
-    public static enum ExplosionInteraction {
