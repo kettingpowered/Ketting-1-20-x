@@ -28,10 +28,20 @@ jobs:
           path: artifacts
       - name: Rename and move artifacts
         run: |
-          for file in artifacts/*
+          for dir in artifacts/*/
           do
-            tar -xvf $file
-            rm $file
+            dir=${dir%*/} # remove the trailing "/"
+            for file in $dir/*
+            do 
+              #file=${file##*/} # remove the path before the filename
+              #base=${file%.*} # remove the extension
+              #ext=${file#"$base"} # remove the filename before the extension
+              #echo "moving ${dir}/${file} to artifacts/${file%%.*}-${dir##*/}${ext}"
+              #mv "${dir}/${file}" "artifacts/${file%%.*}-${dir##*/}${ext}"
+              echo "moving $file one folder higher"
+              mv $file .
+            done
+            rm -r "${dir}"
           done
       - name: Create Release
         run: |
