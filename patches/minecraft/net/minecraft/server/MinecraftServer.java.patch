@@ -89,7 +89,7 @@
     protected long nextTickTime = Util.getMillis();
     private long delayedTasksMaxNextTickTime;
     private boolean mayHaveDelayedTasks;
-@@ -235,18 +_,39 @@
+@@ -235,18 +_,40 @@
     private final ServerFunctionManager functionManager;
     private boolean enforceWhitelist;
     private float averageTickTime;
@@ -126,8 +126,9 @@
 -      Thread thread = new Thread(() -> {
 +      Thread thread = new Thread(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER, () -> {
           atomicreference.get().runServer();
++         LOGGER.info("Would halt Server now. If the server does not exit within 10 seconds, please let Ketting know.");
 +         //Ketting start - fix rare condition where the server just hangs for no reason
-+         Runtime.getRuntime().halt(0);
++         //Runtime.getRuntime().halt(0);
 +         //Ketting end
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
