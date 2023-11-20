@@ -31,7 +31,7 @@
  import net.minecraft.server.packs.repository.PackRepository;
  import net.minecraft.server.packs.repository.ServerPacksSource;
  import net.minecraft.util.Mth;
-@@ -52,11 +_,16 @@
+@@ -52,11 +_,17 @@
  import net.minecraft.world.level.levelgen.WorldDimensions;
  import net.minecraft.world.level.levelgen.WorldOptions;
  import net.minecraft.world.level.levelgen.presets.WorldPresets;
@@ -42,6 +42,7 @@
 +import net.minecraft.world.level.storage.*;
 +import org.bukkit.configuration.file.YamlConfiguration;
 +import org.fusesource.jansi.AnsiConsole;
++import org.kettingpowered.ketting.adapters.DimensionRegistry_1_20_2_Adapter;
 +import org.kettingpowered.ketting.adapters.Forge_1_20_2_Adapter;
 +import org.kettingpowered.ketting.core.Ketting;
 +import org.kettingpowered.ketting.core.injectprotect.InjectProtect;
@@ -61,7 +62,7 @@
        OptionSpec<Void> optionspec2 = optionparser.accepts("demo");
        OptionSpec<Void> optionspec3 = optionparser.accepts("bonusChest");
        OptionSpec<Void> optionspec4 = optionparser.accepts("forceUpgrade");
-@@ -80,13 +_,51 @@
+@@ -80,13 +_,52 @@
        OptionSpec<Void> optionspec12 = optionparser.accepts("jfrProfile");
        OptionSpec<Path> optionspec13 = optionparser.accepts("pidFile").withRequiredArg().withValuesConvertedBy(new PathConverter());
        OptionSpec<String> optionspec14 = optionparser.nonOptions();
@@ -80,8 +81,9 @@
 +      //Ketting end
 +
 +      //Ketting start - Initialize Ketting
-+      Ketting.init(SharedConstants.getCurrentVersion().getName())
-+              .registerAdapter(new Forge_1_20_2_Adapter());
++      Ketting ketting = Ketting.init(SharedConstants.getCurrentVersion().getName());
++      ketting.registerAdapter(new Forge_1_20_2_Adapter());
++      ketting.registerDimensionRegistry(new DimensionRegistry_1_20_2_Adapter());
 +      //Ketting end
  
        try {
