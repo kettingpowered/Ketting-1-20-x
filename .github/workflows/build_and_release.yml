@@ -45,7 +45,7 @@ jobs:
         with:
           generateReleaseNotes: true
           artifacts: "artifacts/*"
-          #tag: ${{ github.sha }}
+          tag: $(git rev-parse --short ${{ github.sha }})
           prerelease: true
           #draft: true
   setup:
@@ -53,8 +53,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: test
-        run: git rev-parse --short ${{ github.sha }}
       - name: Setup Java 17
         uses: actions/setup-java@v3
         with:
