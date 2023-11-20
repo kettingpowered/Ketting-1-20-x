@@ -1,7 +1,5 @@
 package io.izzel.arclight.api;
 
-import org.objectweb.asm.ClassReader;
-
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -296,24 +294,6 @@ public class Unsafe {
             }
         }
         H_DEF_CLASS = handle;
-    }
-
-    public static Class<?> defineAnonymousClass(Class<?> aClass, byte[] bytes) {
-        return defineAnonymousClass(aClass, bytes, null);
-    }
-
-    public static Class<?> defineAnonymousClass(Class<?> aClass, byte[] bytes, Object[] objects) {
-        if (H_DEF_CLASS != null) {
-            try {
-                return (Class<?>) H_DEF_CLASS.invokeExact(aClass.getClassLoader(), aClass, new ClassReader(bytes).getClassName(),
-                        bytes, 0, bytes.length, aClass.getProtectionDomain(), false, 11, (Object) objects);
-            } catch (Throwable t) {
-                throwException(t);
-                return null;
-            }
-        } else {
-            return unsafe.defineAnonymousClass(aClass, bytes, objects);
-        }
     }
 
     public static Object allocateInstance(Class<?> aClass) throws InstantiationException {
