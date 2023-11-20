@@ -28,18 +28,10 @@ jobs:
           path: artifacts
       - name: Rename and move artifacts
         run: |
-          for dir in artifacts/*/
+          for file in artifacts/*
           do
-            dir=${dir%*/} # remove the trailing "/"
-            for file in $dir/*
-            do 
-              file=${file##*/} # remove the path before the filename
-              base=${file%.*} # remove the extension
-              ext=${file#"$base"} # remove the filename before the extension
-              echo "moving ${dir}/${file} to artifacts/${file%%.*}-${dir##*/}${ext}"
-              mv "${dir}/${file}" "artifacts/${file%%.*}-${dir##*/}${ext}"
-            done
-            rm -r "${dir}"
+            tar -xvf $file
+            rm $file
           done
       - name: Create Release
         run: |
@@ -152,12 +144,17 @@ jobs:
         run: git checkout -B 'branch'
       - name: Build Ketting Jar
         run: ./gradlew kettingJar
+      - name: Put ketting jar in an archive
+        working-directory: projects/ketting/build/libs
+        run: |
+          tar -czf ketting.tar.gz ketting*.jar
+          mv ketting.tar.gz ../../../../
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
           name: $(basename projects/ketting/build/libs/ketting*.jar)
           path: |
-            projects/ketting/build/libs/ketting*.jar
+            ketting.tar.gz
       - name: Run Game Test Server
         continue-on-error: true
         working-directory: projects/ketting/build/libs/
