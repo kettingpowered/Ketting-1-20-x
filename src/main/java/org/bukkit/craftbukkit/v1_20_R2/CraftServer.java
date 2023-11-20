@@ -830,7 +830,7 @@ public final class CraftServer implements Server {
         return new ArrayList<World>(worlds.values());
     }
 
-    public <T extends PlayerList> T getHandle() {
+    public <T extends PlayerList> T getHandle() throws ClassCastException {
         return (T) playerList; // Ketting - if this is not what we expect... well too bad. I'm sorry you feel that way.
     }
 
