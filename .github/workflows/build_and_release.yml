@@ -43,6 +43,11 @@ jobs:
             done
             rm -r "${dir}"
           done
+          for archive in artifacts/*.tar.*
+          do
+            tar -xvf $archive -C artifacts
+            rm $archive
+          done
       - name: Create Release
         run: |
           tag=$(git rev-parse --short ${{ github.sha }})
