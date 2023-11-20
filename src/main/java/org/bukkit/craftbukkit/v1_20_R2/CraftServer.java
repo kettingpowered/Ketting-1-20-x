@@ -830,8 +830,8 @@ public final class CraftServer implements Server {
         return new ArrayList<World>(worlds.values());
     }
 
-    public PlayerList getHandle() {
-        return playerList;
+    public <T extends PlayerList> T getHandle() {
+        return (T) playerList; // Ketting - if this is not what we expect... well too bad. I'm sorry you feel that way.
     }
 
     // NOTE: Should only be called from DedicatedServer.ah()
