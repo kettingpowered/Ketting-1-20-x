@@ -152,10 +152,10 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
-          name: $(basename projects/ketting/build/libs/ketting*.jar)
+          name: ketting-server
           path: |
             ketting.tar.gz
       - name: Run Game Test Server
         continue-on-error: true
         working-directory: projects/ketting/build/libs/
-        run: echo "stop" | java -Dketting.setExitCodeOnCrash=true -jar ketting*.jar -dau -accepteula
+        run: echo "stop" | java -Dforge.enableGameTest=true -Dforge.gameTestServer=true -jar ketting*.jar -dau -accepteula

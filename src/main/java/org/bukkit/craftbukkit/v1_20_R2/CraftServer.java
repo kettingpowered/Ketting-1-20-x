@@ -24,20 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,6 +40,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.gametest.framework.GameTestServer;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
@@ -273,8 +261,8 @@ public final class CraftServer implements Server {
     private final StandardMessenger messenger = new StandardMessenger();
     private final SimplePluginManager pluginManager = new SimplePluginManager(this, commandMap);
     private final StructureManager structureManager;
-    protected final DedicatedServer console;
-    protected final DedicatedPlayerList playerList;
+    protected final MinecraftServer console;
+    protected final PlayerList playerList;
     private final Map<String, World> worlds = new LinkedHashMap<String, World>();
     private final Map<Class<?>, Registry<?>> registries = new HashMap<>();
     private YamlConfiguration configuration;
@@ -304,9 +292,9 @@ public final class CraftServer implements Server {
         CraftItemFactory.instance();
     }
 
-    public CraftServer(DedicatedServer console, PlayerList playerList) {
+    public CraftServer(MinecraftServer console, PlayerList playerList) {
         this.console = console;
-        this.playerList = (DedicatedPlayerList) playerList;
+        this.playerList = playerList;
         this.playerView = Collections.unmodifiableList(Lists.transform(playerList.players, new Function<ServerPlayer, CraftPlayer>() {
             @Override
             public CraftPlayer apply(ServerPlayer player) {
@@ -751,7 +739,10 @@ public final class CraftServer implements Server {
 
     // NOTE: Temporary calls through to server.properies until its replaced
     private DedicatedServerProperties getProperties() {
-        return this.console.getProperties();
+        if (this.console instanceof DedicatedServer dedicatedServer)
+            return dedicatedServer.getProperties();
+        else
+            return new DedicatedServerProperties(new Properties(), console.options);
     }
     // End Temporary calls
 
@@ -839,7 +830,7 @@ public final class CraftServer implements Server {
         return new ArrayList<World>(worlds.values());
     }
 
-    public DedicatedPlayerList getHandle() {
+    public PlayerList getHandle() {
         return playerList;
     }
 
@@ -889,8 +880,13 @@ public final class CraftServer implements Server {
         configuration = YamlConfiguration.loadConfiguration(getConfigFile());
         commandsConfiguration = YamlConfiguration.loadConfiguration(getCommandsConfigFile());
 
-        console.settings = new DedicatedServerSettings(console.options);
-        DedicatedServerProperties config = console.settings.getProperties();
+        DedicatedServerProperties config;
+        if (console instanceof DedicatedServer dedicatedServer){
+            dedicatedServer.settings = new DedicatedServerSettings(console.options);
+            config = dedicatedServer.settings.getProperties();
+        }else {
+            config = new DedicatedServerProperties(new Properties(), console.options);
+        }
 
         console.setPvpAllowed(config.pvp);
         console.setFlightAllowed(config.allowFlight);
@@ -1144,7 +1140,7 @@ public final class CraftServer implements Server {
         }
 
         ResourceKey<net.minecraft.world.level.Level> worldKey;
-        String levelName = this.getServer().getProperties().levelName;
+        String levelName = this.getProperties().levelName;
         if (name.equals(levelName + "_nether")) {
             worldKey = net.minecraft.world.level.Level.NETHER;
         } else if (name.equals(levelName + "_the_end")) {
@@ -1161,7 +1157,8 @@ public final class CraftServer implements Server {
             return null;
         }
 
-        console.initWorld(internal, worlddata, worlddata, worlddata.worldGenOptions());
+        if (console instanceof DedicatedServer dedicatedServer)
+            dedicatedServer.initWorld(internal, worlddata, worlddata, worlddata.worldGenOptions());
 
         internal.setSpawnSettings(true, true);
         console.addLevel(internal);
@@ -1222,8 +1219,8 @@ public final class CraftServer implements Server {
         return true;
     }
 
-    public DedicatedServer getServer() {
-        return console;
+    public <T extends MinecraftServer> T getServer() throws ClassCastException {
+        return (T) console; // Ketting - if this is not what we expect... well too bad. I'm sorry you feel that way.
     }
 
     @Override
@@ -1850,7 +1847,8 @@ public final class CraftServer implements Server {
     @Override
     public void setWhitelist(boolean value) {
         playerList.setUsingWhiteList(value);
-        console.storeUsingWhiteList(value);
+        if (console instanceof DedicatedServer dedicatedServer)
+            dedicatedServer.storeUsingWhiteList(value);
     }
 
     @Override

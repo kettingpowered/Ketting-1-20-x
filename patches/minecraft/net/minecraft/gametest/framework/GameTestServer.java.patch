@@ -16,12 +16,16 @@
  import org.slf4j.Logger;
  
  public class GameTestServer extends MinecraftServer {
-@@ -105,13 +_,14 @@
+@@ -105,13 +_,18 @@
     public boolean initServer() {
        this.setPlayerList(new PlayerList(this, this.registries(), this.playerDataStorage, 1) {
        });
 -      this.loadLevel();
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
++      // Ketting start
++      org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
++      org.spigotmc.SpigotConfig.registerCommands();
++      // Ketting end
 +      this.loadLevel(storageSource.getLevelId()); // CraftBukkit
        ServerLevel serverlevel = this.overworld();
        serverlevel.setDefaultSpawnPos(this.spawnPos, 0.0F);

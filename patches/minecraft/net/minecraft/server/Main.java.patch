@@ -226,10 +226,10 @@
 +               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, testBatches, spawnPos);
 +            } else {
 +               dedicatedserver1 = new DedicatedServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.getDataFixer(), services, LoggerChunkProgressListener::new);
-+               //Ketting start - add optionset and worldloader
-+               ((DedicatedServer) dedicatedserver1).setBukkitOptions(optionset, worldLoader.get());
-+               //Ketting end
 +            }
++            //Ketting start - add optionset and worldloader
++            dedicatedserver1.setBukkitOptions(optionset, worldLoader.get());
++            //Ketting end
              dedicatedserver1.setPort(optionset.valueOf(optionspec10));
              dedicatedserver1.setDemo(optionset.has(optionspec2));
              dedicatedserver1.setId(optionset.valueOf(optionspec11));

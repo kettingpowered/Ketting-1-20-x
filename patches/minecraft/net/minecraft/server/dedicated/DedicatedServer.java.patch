@@ -53,7 +53,7 @@
  import org.slf4j.Logger;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
-@@ -60,31 +_,73 @@
+@@ -60,31 +_,66 @@
     public final List<ConsoleInput> consoleInput = Collections.synchronizedList(Lists.newArrayList());
     @Nullable
     private QueryThreadGs4 queryThreadGs4;
@@ -78,13 +78,6 @@
        this.textFilterClient = TextFilterClient.createFromConfig(p_214793_.getProperties().textFilteringConfig);
     }
  
-+   //Ketting start - bukkit options
-+   public void setBukkitOptions(OptionSet options, WorldLoader.DataLoadContext dataLoadContext) {
-+      super.options = options;
-+      super.worldLoader = dataLoadContext;
-+   }
-+   //Ketting end
-+
     public boolean initServer() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
@@ -260,21 +253,13 @@
        }
     }
  
-@@ -263,6 +_,18 @@
+@@ -263,6 +_,10 @@
           this.queryThreadGs4.stop();
        }
  
 +      if (this.dediLanPinger != null) {
 +         this.dediLanPinger.interrupt();
 +         this.dediLanPinger = null;
-+      }
-+   }
-+
-+   public void onServerCrash(net.minecraft.CrashReport p_129874_) {
-+      super.onServerCrash(p_129874_);
-+      if (Boolean.getBoolean("ketting.setExitCodeOnCrash")) {
-+         LOGGER.error("Game test server crashed\n{}", p_129874_.getFriendlyReport());
-+         Runtime.getRuntime().halt(1);
 +      }
     }
  

@@ -151,10 +151,11 @@
           this.progressListenerFactory = p_236730_;
           this.storageSource = p_236724_;
           this.playerDataStorage = p_236724_.createPlayerStorage();
-@@ -287,6 +_,31 @@
+@@ -287,7 +_,39 @@
           this.serverThread = p_236723_;
           this.executor = Util.backgroundExecutor();
        }
+-   }
 +      // CraftBukkit start
 +      this.vanillaCommandDispatcher = p_236726_.dataPackResources().commands; // CraftBukkit
 +      // Try to see if we're actually running in a terminal, disable jline if not
@@ -180,9 +181,17 @@
 +      }
 +      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.v1_20_R2.util.ServerShutdownThread(this));
 +      // CraftBukkit end
-    }
++   }
++
++   //Ketting start - bukkit options
++   public void setBukkitOptions(OptionSet options, WorldLoader.DataLoadContext dataLoadContext) {
++      this.options = options;
++      this.worldLoader = dataLoadContext;
++   }
++   //Ketting end
  
     private void readScoreboard(DimensionDataStorage p_129842_) {
+       p_129842_.computeIfAbsent(this.getScoreboard().dataFactory(), "scoreboard");
 @@ -295,17 +_,19 @@
  
     protected abstract boolean initServer() throws IOException;
