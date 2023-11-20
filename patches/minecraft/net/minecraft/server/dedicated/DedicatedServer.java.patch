@@ -274,7 +274,7 @@
 +      super.onServerCrash(p_129874_);
 +      if (Boolean.getBoolean("ketting.setExitCodeOnCrash")) {
 +         LOGGER.error("Game test server crashed\n{}", p_129874_.getFriendlyReport());
-+         System.exit(1);
++         Runtime.getRuntime().halt(1);
 +      }
     }
  
@@ -359,7 +359,7 @@
     }
  
     public void storeUsingWhiteList(boolean p_139689_) {
-@@ -496,7 +_,12 @@
+@@ -496,9 +_,15 @@
     }
  
     public void stopServer() {
@@ -371,7 +371,10 @@
 +      }
        Util.shutdownExecutors();
        SkullBlockEntity.clear();
++      LOGGER.info("At the end of DedicatedServer Stop server: ", new Throwable());
     }
+ 
+    public boolean isSingleplayerOwner(GameProfile p_139642_) {
 @@ -529,4 +_,19 @@
     public Optional<MinecraftServer.ServerResourcePackInfo> getServerResourcePack() {
        return this.settings.getProperties().serverResourcePackInfo;
