@@ -222,7 +222,7 @@
        if (profiledduration != null) {
           profiledduration.finish();
        }
-@@ -332,12 +_,15 @@
+@@ -332,12 +_,16 @@
        long j = BiomeManager.obfuscateSeed(i);
        List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(serverleveldata));
        LevelStem levelstem = registry.get(LevelStem.OVERWORLD);
@@ -231,6 +231,7 @@
 +      Ketting.getInstance().getDimensionRegistry().register(this.registryAccess().registryOrThrow(Registries.LEVEL_STEM)); //Ketting
        this.levels.put(Level.OVERWORLD, serverlevel);
        DimensionDataStorage dimensiondatastorage = serverlevel.getDataStorage();
++      this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_20_R2.scoreboard.CraftScoreboardManager(this, serverlevel.getScoreboard()); // CraftBukkit
        this.readScoreboard(dimensiondatastorage);
        this.commandStorage = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.getWorldBorder();
