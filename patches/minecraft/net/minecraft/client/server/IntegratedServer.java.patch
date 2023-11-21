@@ -16,13 +16,13 @@
  import org.slf4j.Logger;
  
  @OnlyIn(Dist.CLIENT)
-@@ -59,11 +_,12 @@
+@@ -59,11 +_,13 @@
        this.setPvpAllowed(true);
        this.setFlightAllowed(true);
        this.initializeKeyPair();
--      this.loadLevel();
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-+      this.loadLevel(storageSource.getLevelId()); // CraftBukkit
++      this.prepareLoadLevel(storageSource.getLevelId()); //Ketting
+       this.loadLevel();
        GameProfile gameprofile = this.getSingleplayerProfile();
        String s = this.getWorldData().getLevelName();
        this.setMotd(gameprofile != null ? gameprofile.getName() + " - " + s : s);

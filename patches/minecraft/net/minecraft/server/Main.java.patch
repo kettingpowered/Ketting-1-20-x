@@ -62,7 +62,7 @@
        OptionSpec<Void> optionspec2 = optionparser.accepts("demo");
        OptionSpec<Void> optionspec3 = optionparser.accepts("bonusChest");
        OptionSpec<Void> optionspec4 = optionparser.accepts("forceUpgrade");
-@@ -80,13 +_,52 @@
+@@ -80,13 +_,51 @@
        OptionSpec<Void> optionspec12 = optionparser.accepts("jfrProfile");
        OptionSpec<Path> optionspec13 = optionparser.accepts("pidFile").withRequiredArg().withValuesConvertedBy(new PathConverter());
        OptionSpec<String> optionspec14 = optionparser.nonOptions();
@@ -83,7 +83,6 @@
 +      //Ketting start - Initialize Ketting
 +      Ketting ketting = Ketting.init(SharedConstants.getCurrentVersion().getName());
 +      ketting.registerAdapter(new Forge_1_20_2_Adapter());
-+      ketting.registerDimensionRegistry(new DimensionRegistry_1_20_2_Adapter());
 +      //Ketting end
  
        try {
@@ -115,7 +114,7 @@
  
           Path path = optionset.valueOf(optionspec13);
           if (path != null) {
-@@ -98,29 +_,46 @@
+@@ -98,29 +_,51 @@
              JvmProfiler.INSTANCE.start(Environment.SERVER);
           }
  
@@ -127,6 +126,11 @@
 +         }
 +
           Bootstrap.validate();
++
++         //Ketting start - init dimension registry after bootstrap
++         ketting.registerDimensionRegistry(new DimensionRegistry_1_20_2_Adapter());
++         //Ketting end
++
           Util.startTimerHackThread();
           Path path1 = Paths.get("server.properties");
 -         DedicatedServerSettings dedicatedserversettings = new DedicatedServerSettings(path1);

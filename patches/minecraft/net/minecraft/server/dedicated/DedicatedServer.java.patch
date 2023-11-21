@@ -15,17 +15,18 @@
  import java.nio.file.Files;
  import java.nio.file.Path;
  import java.util.Collections;
-@@ -19,6 +_,8 @@
+@@ -19,18 +_,12 @@
  import java.util.Optional;
  import java.util.function.BooleanSupplier;
  import javax.annotation.Nullable;
+-import net.minecraft.DefaultUncaughtExceptionHandler;
+-import net.minecraft.DefaultUncaughtExceptionHandlerWithName;
+-import net.minecraft.SharedConstants;
+-import net.minecraft.SystemReport;
+-import net.minecraft.Util;
 +
 +import joptsimple.OptionSet;
- import net.minecraft.DefaultUncaughtExceptionHandler;
- import net.minecraft.DefaultUncaughtExceptionHandlerWithName;
- import net.minecraft.SharedConstants;
-@@ -26,11 +_,7 @@
- import net.minecraft.Util;
++import net.minecraft.*;
  import net.minecraft.commands.CommandSourceStack;
  import net.minecraft.core.BlockPos;
 -import net.minecraft.server.ConsoleInput;
@@ -37,10 +38,11 @@
  import net.minecraft.server.gui.MinecraftServerGui;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
-@@ -50,7 +_,15 @@
+@@ -50,7 +_,16 @@
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
++import net.minecraft.world.level.border.WorldBorder;
 +import net.minecraft.world.level.levelgen.WorldOptions;
  import net.minecraft.world.level.storage.LevelStorageSource;
 +import net.minecraft.world.level.storage.PrimaryLevelData;
@@ -217,7 +219,7 @@
           LOGGER.warn("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
           LOGGER.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
        }
-@@ -152,15 +_,17 @@
+@@ -152,15 +_,18 @@
        if (!OldUsersConverter.serverReadyAfterUserconversion(this)) {
           return false;
        } else {
@@ -228,8 +230,8 @@
           GameProfileCache.setUsesAuthentication(this.usesAuthentication());
 +         if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
           LOGGER.info("Preparing level \"{}\"", (Object)this.getLevelIdName());
--         this.loadLevel();
-+         this.loadLevel(storageSource.getLevelId()); // CraftBukkit
++         this.prepareLoadLevel(storageSource.getLevelId()); //Ketting
+          this.loadLevel();
           long j = Util.getNanos() - i;
           String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
           LOGGER.info("Done ({})! For help, type \"help\"", (Object)s);
@@ -364,7 +366,7 @@
        Util.shutdownExecutors();
        SkullBlockEntity.clear();
     }
-@@ -529,4 +_,19 @@
+@@ -529,4 +_,49 @@
     public Optional<MinecraftServer.ServerResourcePackInfo> getServerResourcePack() {
        return this.settings.getProperties().serverResourcePackInfo;
     }
@@ -379,8 +381,38 @@
 +      return console;
 +   }
 +
-+   public void initWorld(ServerLevel worldserver, PrimaryLevelData iworlddataserver, PrimaryLevelData saveData, WorldOptions worldOptions) {
-+      //Todo: CraftBukkit Patch
++   public void initWorld(ServerLevel worldserver, PrimaryLevelData iworlddataserver, PrimaryLevelData saveData, WorldOptions worldoptions) {
++      boolean flag = saveData.isDebugWorld();
++      // CraftBukkit start
++      if (worldserver.generator != null) {
++         worldserver.getWorld().getPopulators().addAll(worldserver.generator.getDefaultPopulators(worldserver.getWorld()));
++      }
++      WorldBorder worldborder = worldserver.getWorldBorder();
++      worldborder.applySettings(iworlddataserver.getWorldBorder()); // CraftBukkit - move up so that WorldBorder is set during WorldInitEvent
++      this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(worldserver.getWorld())); // CraftBukkit - SPIGOT-5569: Call WorldInitEvent before any chunks are generated
++
++      if (!iworlddataserver.isInitialized()) {
++         try {
++            setInitialSpawn(worldserver, iworlddataserver, worldoptions.generateBonusChest(), flag);
++            iworlddataserver.setInitialized(true);
++            if (flag) {
++               this.setupDebugLevel(this.worldData);
++            }
++         } catch (Throwable throwable) {
++            CrashReport crashreport = CrashReport.forThrowable(throwable, "Exception initializing level");
++
++            try {
++               worldserver.fillReportDetails(crashreport);
++            } catch (Throwable throwable1) {
++               ;
++            }
++
++            throw new ReportedException(crashreport);
++         }
++
++         iworlddataserver.setInitialized(true);
++      }
++
 +   }
 +   // CraftBukkit end
  }

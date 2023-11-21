@@ -28,13 +28,18 @@
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
-@@ -155,10 +_,17 @@
+@@ -153,12 +_,22 @@
+ import net.minecraft.world.level.storage.ServerLevelData;
+ import net.minecraft.world.level.storage.WorldData;
  import net.minecraft.world.level.storage.loot.LootDataManager;
++import net.minecraft.world.level.validation.ContentValidationException;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Bukkit;
++import org.bukkit.World;
 +import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R2.SpigotTimings;
++import org.bukkit.event.server.ServerLoadEvent;
 +import org.kettingpowered.ketting.core.Ketting;
 +import org.kettingpowered.ketting.core.injectprotect.InjectProtect;
 +import org.kettingpowered.ketting.internal.KettingConstants;
@@ -183,12 +188,19 @@
     }
  
     private void readScoreboard(DimensionDataStorage p_129842_) {
-@@ -295,17 +_,19 @@
+@@ -295,17 +_,32 @@
  
     protected abstract boolean initServer() throws IOException;
  
 -   protected void loadLevel() {
-+   protected void loadLevel(String s) { // CraftBukkit
++   //Ketting start
++   private String loadLevel$worldName;
++   protected void prepareLoadLevel(String worldName) {
++      this.loadLevel$worldName = worldName;
++   }
++   //Ketting end
++
++   protected void loadLevel() { // CraftBukkit
        if (!JvmProfiler.INSTANCE.isRunning()) {
        }
  
@@ -201,21 +213,21 @@
        this.forceDifficulty();
        this.prepareLevels(chunkprogresslistener);
 +
++      //Ketting start
++      this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
++      this.server.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
++      this.connection.acceptConnections();
++      //Ketting end
++
        if (profiledduration != null) {
           profiledduration.finish();
        }
-@@ -323,6 +_,7 @@
-    protected void forceDifficulty() {
-    }
- 
-+   //Ketting - TODO add bukkit compat + give dimensions their own uuid
-    protected void createLevels(ChunkProgressListener p_129816_) {
-       ServerLevelData serverleveldata = this.worldData.overworldData();
-       boolean flag = this.worldData.isDebugWorld();
-@@ -333,11 +_,13 @@
+@@ -332,12 +_,15 @@
+       long j = BiomeManager.obfuscateSeed(i);
        List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(serverleveldata));
        LevelStem levelstem = registry.get(LevelStem.OVERWORLD);
-       ServerLevel serverlevel = new ServerLevel(this, this.executor, this.storageSource, serverleveldata, Level.OVERWORLD, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null);
+-      ServerLevel serverlevel = new ServerLevel(this, this.executor, this.storageSource, serverleveldata, Level.OVERWORLD, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null);
++      ServerLevel serverlevel = new ServerLevel(this, this.executor, this.storageSource, serverleveldata, Level.OVERWORLD, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null, World.Environment.NORMAL, this.server.getGenerator(loadLevel$worldName), this.server.getBiomeProvider(loadLevel$worldName));
 +      Ketting.getInstance().getDimensionRegistry().register(this.registryAccess().registryOrThrow(Registries.LEVEL_STEM)); //Ketting
        this.levels.put(Level.OVERWORLD, serverlevel);
        DimensionDataStorage dimensiondatastorage = serverlevel.getDataStorage();
@@ -223,18 +235,67 @@
        this.commandStorage = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.getWorldBorder();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Load(levels.get(Level.OVERWORLD)));
++      this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(levels.get(Level.OVERWORLD).getWorld())); // CraftBukkit - SPIGOT-5569: Call WorldInitEvent before any chunks are generated
        if (!serverleveldata.isInitialized()) {
           try {
              setInitialSpawn(serverlevel, serverleveldata, worldoptions.generateBonusChest(), flag);
-@@ -374,6 +_,7 @@
-             ServerLevel serverlevel1 = new ServerLevel(this, this.executor, this.storageSource, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false, randomsequences);
+@@ -371,21 +_,77 @@
+          if (resourcekey != LevelStem.OVERWORLD) {
+             ResourceKey<Level> resourcekey1 = ResourceKey.create(Registries.DIMENSION, resourcekey.location());
+             DerivedLevelData derivedleveldata = new DerivedLevelData(this.worldData, serverleveldata);
+-            ServerLevel serverlevel1 = new ServerLevel(this, this.executor, this.storageSource, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false, randomsequences);
++            derivedleveldata.setTypeKey(resourcekey); //Ketting
++
++            int dimension = 0;
++
++            if (resourcekey == LevelStem.NETHER) {
++               if (isNetherEnabled()) {
++                  dimension = -1;
++               } else {
++                  continue;
++               }
++            } else if (resourcekey == LevelStem.END) {
++               if (server.getAllowEnd()) {
++                  dimension = 1;
++               } else {
++                  continue;
++               }
++            } else {
++               dimension = -999;
++            }
++
++            String worldType = (dimension == -999) ? resourcekey.location().getNamespace() + "_" + resourcekey.location().getPath() : org.bukkit.World.Environment.getEnvironment(dimension).toString().toLowerCase();
++            String name = loadLevel$worldName + "_" + worldType;
++
++            org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(name);
++            org.bukkit.generator.BiomeProvider biomeProvider = this.server.getBiomeProvider(name);
++
++            LevelStorageSource.LevelStorageAccess source;
++            try {
++               source = LevelStorageSource.createDefault(this.storageSource.getDimensionPath(Level.OVERWORLD)).validateAndCreateAccess(name, resourcekey);
++            } catch (IOException | ContentValidationException e) {
++               throw new RuntimeException(e);
++            }
++
++            ServerLevel serverlevel1 = new ServerLevel(this, this.executor, source, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false, randomsequences, (World.Environment) Ketting.getInstance().getDimensionRegistry().getKey(resourcekey), gen, biomeProvider);
++
++            if (serverlevel1.generator != null) {
++               serverlevel1.getWorld().getPopulators().addAll(serverlevel1.generator.getDefaultPopulators(serverlevel1.getWorld()));
++            }
++
              worldborder.addListener(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.getWorldBorder()));
              this.levels.put(resourcekey1, serverlevel1);
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Load(levels.get(resourcekey)));
++            this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(serverlevel1.getWorld())); // CraftBukkit - SPIGOT-5569: Call WorldInitEvent before any chunks are generated
           }
        }
  
-@@ -385,7 +_,23 @@
+       worldborder.applySettings(serverleveldata.getWorldBorder());
+    }
+ 
+-   private static void setInitialSpawn(ServerLevel p_177897_, ServerLevelData p_177898_, boolean p_177899_, boolean p_177900_) {
++   protected static void setInitialSpawn(ServerLevel p_177897_, ServerLevelData p_177898_, boolean p_177899_, boolean p_177900_) {
+       if (p_177900_) {
           p_177898_.setSpawn(BlockPos.ZERO.above(80), 0.0F);
        } else {
           ServerChunkCache serverchunkcache = p_177897_.getChunkSource();
@@ -258,21 +319,27 @@
           int i = serverchunkcache.getGenerator().getSpawnHeight(p_177897_);
           if (i < p_177897_.getMinBuildHeight()) {
              BlockPos blockpos = chunkpos.getWorldPosition();
-@@ -440,8 +_,26 @@
+@@ -429,7 +_,7 @@
+       }
+    }
+ 
+-   private void setupDebugLevel(WorldData p_129848_) {
++   protected void setupDebugLevel(WorldData p_129848_) {
+       p_129848_.setDifficulty(Difficulty.PEACEFUL);
+       p_129848_.setDifficultyLocked(true);
+       ServerLevelData serverleveldata = p_129848_.overworldData();
+@@ -440,8 +_,23 @@
        serverleveldata.setGameType(GameType.SPECTATOR);
     }
  
-+   //Ketting - TODO add bukkit compat
 +   //Ketting Start
 +   private @Nullable ServerLevel worldserver = null;
-+   private void preparePrepareLevels(ServerLevel worldserver){
-+      this.worldserver = worldserver;
-+   }
 +   public void prepareLevels(ChunkProgressListener p_129941_, ServerLevel worldserver){
-+      preparePrepareLevels(worldserver);
++      this.worldserver = worldserver;
 +      prepareLevels(p_129941_);
 +   }
 +   //Ketting End
++
     private void prepareLevels(ChunkProgressListener p_129941_) {
 +      this.forceTicks = true; // CraftBukkit
        ServerLevel serverlevel = this.overworld();
@@ -285,15 +352,20 @@
        LOGGER.info("Preparing start region for dimension {}", (Object)serverlevel.dimension().location());
        BlockPos blockpos = serverlevel.getSharedSpawnPos();
        p_129941_.updateSpawnPos(new ChunkPos(blockpos));
-@@ -467,6 +_,7 @@
+@@ -467,13 +_,20 @@
                 ChunkPos chunkpos = new ChunkPos(i);
                 serverlevel1.getChunkSource().updateChunkForced(chunkpos, true);
              }
 +            net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverlevel1, forcedchunkssaveddata);
           }
++
++         // CraftBukkit start
++         serverlevel1.entityManager.tick(); // SPIGOT-6526: Load pending entities so they are available to the API
++         this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(serverlevel1.getWorld()));
++         // CraftBukkit end
        }
  
-@@ -474,6 +_,7 @@
+       this.nextTickTime = Util.getMillis() + 10L;
        this.waitUntilNextTick();
        p_129941_.stop();
        this.updateMobSpawningFlags();

@@ -134,9 +134,9 @@ public class SpigotTimings {
         public final CustomTimingsHandler syncChunkLoadTileTicksTimer;
         public final CustomTimingsHandler syncChunkLoadPostTimer;
 
-        public WorldTimingsHandler(Level server) {
-            String name = ((PrimaryLevelData) server.levelData).getLevelName() + " - ";
-
+        //Ketting start
+        public WorldTimingsHandler(String name) {
+            //Ketting end
             mobSpawn = new CustomTimingsHandler("** " + name + "mobSpawn");
             doChunkUnload = new CustomTimingsHandler("** " + name + "doChunkUnload");
             doTickPending = new CustomTimingsHandler("** " + name + "doTickPending");
