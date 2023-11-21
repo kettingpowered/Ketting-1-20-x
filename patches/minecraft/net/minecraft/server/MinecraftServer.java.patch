@@ -272,7 +272,7 @@
 +
 +            LevelStorageSource.LevelStorageAccess source;
 +            try {
-+               source = LevelStorageSource.createDefault(this.storageSource.getDimensionPath(Level.OVERWORLD)).validateAndCreateAccess(name, resourcekey);
++               source = LevelStorageSource.createDefault(server.getWorldContainer().toPath()).validateAndCreateAccess(name, resourcekey);
 +            } catch (IOException | ContentValidationException e) {
 +               throw new RuntimeException(e);
 +            }
@@ -352,7 +352,24 @@
        LOGGER.info("Preparing start region for dimension {}", (Object)serverlevel.dimension().location());
        BlockPos blockpos = serverlevel.getSharedSpawnPos();
        p_129941_.updateSpawnPos(new ChunkPos(blockpos));
-@@ -467,13 +_,20 @@
+@@ -449,13 +_,11 @@
+       this.nextTickTime = Util.getMillis();
+       serverchunkcache.addRegionTicket(TicketType.START, new ChunkPos(blockpos), 11, Unit.INSTANCE);
+ 
+-      while(serverchunkcache.getTickingGenerated() != 441) {
+-         this.nextTickTime = Util.getMillis() + 10L;
+-         this.waitUntilNextTick();
++      while (serverchunkcache.getTickingGenerated() < 441) {
++         this.executeModerately();
+       }
+ 
+-      this.nextTickTime = Util.getMillis() + 10L;
+-      this.waitUntilNextTick();
++      this.executeModerately();
+ 
+       for(ServerLevel serverlevel1 : this.levels.values()) {
+          ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.getDataStorage().get(ForcedChunksSavedData.factory(), "chunks");
+@@ -467,13 +_,19 @@
                 ChunkPos chunkpos = new ChunkPos(i);
                 serverlevel1.getChunkSource().updateChunkForced(chunkpos, true);
              }
@@ -365,8 +382,9 @@
 +         // CraftBukkit end
        }
  
-       this.nextTickTime = Util.getMillis() + 10L;
-       this.waitUntilNextTick();
+-      this.nextTickTime = Util.getMillis() + 10L;
+-      this.waitUntilNextTick();
++      this.executeModerately();
        p_129941_.stop();
        this.updateMobSpawningFlags();
 +      this.forceTicks = false; // CraftBukkit
@@ -570,11 +588,23 @@
     }
  
     protected void waitUntilNextTick() {
-@@ -719,7 +_,7 @@
+@@ -719,7 +_,19 @@
        });
     }
  
 -   protected TickTask wrapRunnable(Runnable p_129852_) {
++   private void executeModerately() {
++      this.runAllTasks();
++      this.drainQueuedTasks();
++      java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
++   }
++
++   public void drainQueuedTasks() {
++      while (!processQueue.isEmpty()) {
++         processQueue.remove().run();
++      }
++   }
++
 +   public TickTask wrapRunnable(Runnable p_129852_) {
        return new TickTask(this.tickCount, p_129852_);
     }
