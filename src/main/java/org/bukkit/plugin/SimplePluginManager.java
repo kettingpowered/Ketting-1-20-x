@@ -560,10 +560,7 @@ public final class SimplePluginManager implements PluginManager {
      * @param event Event details
      */
     @Override
-    public void callEvent(@NotNull Event event){
-        callEvent(event, true);
-    }
-    public void callEvent(@NotNull Event event, boolean tryAgain) {
+    public void callEvent(@NotNull Event event) {
         if (event.isAsynchronous()) {
             if (Thread.holdsLock(this)) {
                 throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from inside synchronized code.");

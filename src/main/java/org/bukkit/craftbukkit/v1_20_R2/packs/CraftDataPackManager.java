@@ -4,11 +4,8 @@ import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import com.mojang.logging.LogUtils;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackRepository;
-import net.minecraft.world.level.storage.WorldData;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -18,10 +15,9 @@ import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.packs.DataPack;
 import org.bukkit.packs.DataPackManager;
-import org.slf4j.Logger;
 
 public class CraftDataPackManager implements DataPackManager {
-    public static final Logger LOGGER = LogUtils.getLogger();
+
     private final PackRepository handle;
 
     public CraftDataPackManager(PackRepository resourcePackRepository) {
@@ -53,14 +49,7 @@ public class CraftDataPackManager implements DataPackManager {
         Preconditions.checkArgument(world != null, "world cannot be null");
 
         CraftWorld craftWorld = ((CraftWorld) world);
-        WorldData worldData;
-        if (craftWorld.getHandle().serverLevelData instanceof WorldData worldData1)
-            worldData = worldData1;
-        else {
-            LOGGER.error("Unable to get per World enabled data packs. Using server-wide enabled data packs as a fallback.", new ClassCastException("Unable to cast ServerLevelData to WorldData"));
-            worldData = craftWorld.getHandle().getServer().getWorldData();
-        }
-        return worldData.getDataConfiguration().dataPacks().getEnabled().stream().map(packName -> {
+        return craftWorld.getHandle().serverLevelData.getDataConfiguration().dataPacks().getEnabled().stream().map(packName -> {
             Pack resourcePackLoader = this.getHandle().getPack(packName);
             if (resourcePackLoader != null) {
                 return new CraftDataPack(resourcePackLoader);
@@ -74,14 +63,7 @@ public class CraftDataPackManager implements DataPackManager {
         Preconditions.checkArgument(world != null, "world cannot be null");
 
         CraftWorld craftWorld = ((CraftWorld) world);
-        WorldData worldData;
-        if (craftWorld.getHandle().serverLevelData instanceof WorldData worldData1)
-            worldData = worldData1;
-        else {
-            LOGGER.error("Unable to get per World disabled data packs. Using server-wide disabled data packs as a fallback.", new ClassCastException("Unable to cast ServerLevelData to WorldData"));
-            worldData = craftWorld.getHandle().getServer().getWorldData();
-        }
-        return worldData.getDataConfiguration().dataPacks().getDisabled().stream().map(packName -> {
+        return craftWorld.getHandle().serverLevelData.getDataConfiguration().dataPacks().getDisabled().stream().map(packName -> {
             Pack resourcePackLoader = this.getHandle().getPack(packName);
             if (resourcePackLoader != null) {
                 return new CraftDataPack(resourcePackLoader);

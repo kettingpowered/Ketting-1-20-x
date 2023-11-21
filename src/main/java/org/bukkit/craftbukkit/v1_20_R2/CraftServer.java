@@ -13,7 +13,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.logging.LogUtils;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -263,7 +262,6 @@ import org.yaml.snakeyaml.error.MarkedYAMLException;
 import net.md_5.bungee.api.chat.BaseComponent; // Spigot
 
 public final class CraftServer implements Server {
-    public static final org.slf4j.Logger LOGGER = LogUtils.getLogger();
     private final String serverName = "CraftBukkit";
     private final String serverVersion;
     private final String bukkitVersion = Versioning.getBukkitVersion();
@@ -918,13 +916,7 @@ public final class CraftServer implements Server {
 
         org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
         for (ServerLevel world : console.getAllLevels()) {
-            //Ketting start - keep vanilla compat
-            if (world.serverLevelData instanceof WorldData worldData)
-                worldData.setDifficulty(config.difficulty);
-            else {
-                LOGGER.error("Unable to set per level Difficulty.", new ClassCastException("Unable to cast ServerLevelData to WorldData"));
-            }
-            //Ketting end - keep vanilla compat
+            world.serverLevelData.setDifficulty(config.difficulty);
             world.setSpawnSettings(config.spawnMonsters, config.spawnAnimals);
 
             for (SpawnCategory spawnCategory : SpawnCategory.values()) {
