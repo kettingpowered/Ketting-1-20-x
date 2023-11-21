@@ -51,12 +51,13 @@
  import net.minecraft.world.level.lighting.LevelLightEngine;
  import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.level.material.Fluids;
-@@ -69,8 +_,18 @@
+@@ -69,8 +_,20 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.Scoreboard;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Chunk;
++import org.bukkit.World;
 +import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 +import org.bukkit.craftbukkit.v1_20_R2.SpigotTimings;
@@ -65,6 +66,7 @@
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftSpawnCategory;
 +import org.bukkit.entity.SpawnCategory;
 +import org.bukkit.event.block.BlockPhysicsEvent;
++import org.kettingpowered.ketting.core.Ketting;
  
 -public abstract class Level implements LevelAccessor, AutoCloseable {
 +public abstract class Level extends net.minecraftforge.common.capabilities.CapabilityProvider<Level> implements LevelAccessor, AutoCloseable, net.minecraftforge.common.extensions.IForgeLevel {
@@ -97,7 +99,7 @@
     private final Supplier<ProfilerFiller> profiler;
     public final boolean isClientSide;
     private final WorldBorder worldBorder;
-@@ -110,8 +_,79 @@
+@@ -110,8 +_,85 @@
     private final RegistryAccess registryAccess;
     private final DamageSources damageSources;
     private long subTickCount;
@@ -133,7 +135,13 @@
 +   private int tileTickPosition;
 +
 +   public CraftWorld getWorld() {
-+      //Ketting TODO - init world here!
++      if (this.world == null) {
++         //Ketting TODO - generator and biomeProvider
++         if (environment == null) {
++            environment = (World.Environment) Ketting.getInstance().getDimensionRegistry().getKey(getTypeKey());
++         }
++         this.world = new CraftWorld((ServerLevel) this, generator, biomeProvider, environment);
++      }
 +      return this.world;
 +   }
 +
@@ -242,7 +250,7 @@
        if (this.isOutsideBuildHeight(p_46605_)) {
           return false;
        } else if (!this.isClientSide && this.isDebug()) {
-@@ -198,17 +_,69 @@
+@@ -198,17 +_,75 @@
        } else {
           LevelChunk levelchunk = this.getChunkAt(p_46605_);
           Block block = p_46606_.getBlock();
@@ -297,6 +305,12 @@
 +         }
 +      }
 +   }
++
++   //Ketting start - craftbukkit compat
++   public void notifyAndUpdatePhysics(BlockPos blockPosition, Chunk chunk, BlockState oldBlock, BlockState newBlock, BlockState actualBlock, int i, int j) {
++      markAndNotifyBlock(blockPosition, chunk == null ? null : (LevelChunk) chunk, oldBlock, newBlock, i, j);
++   }
++   //Ketting end
 +
 +   // Split off from original setBlockState(BlockPos, BlockState, int, int) method in order to directly send client and physic updates
 +   public void markAndNotifyBlock(BlockPos p_46605_, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState p_46606_, int p_46607_, int p_46608_) {
@@ -612,15 +626,3 @@
  
     public long nextSubTickCount() {
        return (long)(this.subTickCount++);
-@@ -872,6 +_,11 @@
- 
-    public DamageSources damageSources() {
-       return this.damageSources;
-+   }
-+
-+   // CraftBukkit start - Split off from above in order to directly send client and physic updates
-+   public void notifyAndUpdatePhysics(BlockPos blockPosition, Chunk chunk, BlockState oldBlock, BlockState newBlock, BlockState actualBlock, int i, int j) {
-+      //Todo: CraftBukkit World.patch
-    }
- 
-    public static enum ExplosionInteraction {

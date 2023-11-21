@@ -28,13 +28,14 @@
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
-@@ -155,10 +_,16 @@
+@@ -155,10 +_,17 @@
  import net.minecraft.world.level.storage.loot.LootDataManager;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R2.SpigotTimings;
++import org.kettingpowered.ketting.core.Ketting;
 +import org.kettingpowered.ketting.core.injectprotect.InjectProtect;
 +import org.kettingpowered.ketting.internal.KettingConstants;
  import org.slf4j.Logger;
@@ -211,7 +212,13 @@
     protected void createLevels(ChunkProgressListener p_129816_) {
        ServerLevelData serverleveldata = this.worldData.overworldData();
        boolean flag = this.worldData.isDebugWorld();
-@@ -338,6 +_,7 @@
+@@ -333,11 +_,13 @@
+       List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(serverleveldata));
+       LevelStem levelstem = registry.get(LevelStem.OVERWORLD);
+       ServerLevel serverlevel = new ServerLevel(this, this.executor, this.storageSource, serverleveldata, Level.OVERWORLD, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null);
++      Ketting.getInstance().getDimensionRegistry().register(this.registryAccess().registryOrThrow(Registries.LEVEL_STEM)); //Ketting
+       this.levels.put(Level.OVERWORLD, serverlevel);
+       DimensionDataStorage dimensiondatastorage = serverlevel.getDataStorage();
        this.readScoreboard(dimensiondatastorage);
        this.commandStorage = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.getWorldBorder();
