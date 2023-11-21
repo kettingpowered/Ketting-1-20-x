@@ -18,6 +18,9 @@ public final class WorldUUID {
     }
 
     public static UUID getUUID(File baseDir) {
+        if (!baseDir.exists())
+            baseDir.mkdirs(); //Ketting
+
         File file1 = new File(baseDir, "uid.dat");
         if (file1.exists()) {
             DataInputStream dis = null;

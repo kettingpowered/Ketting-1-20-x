@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -564,11 +565,11 @@ public final class SimplePluginManager implements PluginManager {
             if (Thread.holdsLock(this)) {
                 throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from inside synchronized code.");
             }
-            if (server.isPrimaryThread()) {
+            if (org.spigotmc.AsyncCatcher.enabled && server.isPrimaryThread()) { // Ketting - turning off the async catcher makes isPrimaryThread permanently true
                 throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from primary server thread.");
             }
         } else {
-            if (!server.isPrimaryThread()) {
+            if (org.spigotmc.AsyncCatcher.enabled && !server.isPrimaryThread()) { // Ketting - turning off the async catcher makes isPrimaryThread permanently true
                 throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from another thread.");
             }
         }

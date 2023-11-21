@@ -31,6 +31,20 @@
     private static final int CACHE_SIZE = 4;
     private final long[] lastChunkPos = new long[4];
     private final ChunkStatus[] lastChunkStatus = new ChunkStatus[4];
+@@ -67,6 +_,13 @@
+    @VisibleForDebug
+    private NaturalSpawner.SpawnState lastSpawnState;
+ 
++   //Ketting start
++   @Override
++   public void setChunkGenerator(ChunkGenerator chunkGenerator) {
++      this.chunkMap.setChunkGenerator(chunkGenerator);
++   }
++   //Ketting end
++
+    public ServerChunkCache(ServerLevel p_214982_, LevelStorageSource.LevelStorageAccess p_214983_, DataFixer p_214984_, StructureTemplateManager p_214985_, Executor p_214986_, ChunkGenerator p_214987_, int p_214988_, int p_214989_, boolean p_214990_, ChunkProgressListener p_214991_, ChunkStatusUpdateListener p_214992_, Supplier<DimensionDataStorage> p_214993_) {
+       this.level = p_214982_;
+       this.mainThreadProcessor = new ServerChunkCache.MainThreadExecutor(p_214982_);
 @@ -81,6 +_,16 @@
        this.clearCache();
     }

@@ -34,15 +34,17 @@
  import net.minecraft.world.level.levelgen.structure.BoundingBox;
  import net.minecraft.world.level.levelgen.structure.Structure;
  import net.minecraft.world.level.levelgen.structure.StructureCheck;
-@@ -148,6 +_,7 @@
+@@ -146,15 +_,21 @@
+ import net.minecraft.world.level.portal.PortalForcer;
+ import net.minecraft.world.level.saveddata.maps.MapIndex;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
- import net.minecraft.world.level.storage.DimensionDataStorage;
- import net.minecraft.world.level.storage.LevelStorageSource;
-+import net.minecraft.world.level.storage.PrimaryLevelData;
- import net.minecraft.world.level.storage.ServerLevelData;
+-import net.minecraft.world.level.storage.DimensionDataStorage;
+-import net.minecraft.world.level.storage.LevelStorageSource;
+-import net.minecraft.world.level.storage.ServerLevelData;
++import net.minecraft.world.level.storage.*;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -155,6 +_,13 @@
+ import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
@@ -53,6 +55,7 @@
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.weather.LightningStrikeEvent;
 +import org.bukkit.event.world.TimeSkipEvent;
++import org.kettingpowered.ketting.utils.DelegateWorldInfo;
  import org.slf4j.Logger;
  
  public class ServerLevel extends Level implements WorldGenLevel {
@@ -68,7 +71,7 @@
     private final GameEventDispatcher gameEventDispatcher;
     public boolean noSave;
     private final SleepStatus sleepStatus;
-@@ -188,24 +_,116 @@
+@@ -188,24 +_,121 @@
     private final List<CustomSpawner> customSpawners;
     @Nullable
     private EndDragonFight dragonFight;
@@ -95,8 +98,8 @@
 +   }
 +
 +   //Ketting start
-+   // Add env and gen to constructor, ServerLevelData -> PrimaryLevelData
-+   public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, PrimaryLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
++   // Add env and gen to constructor
++   public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
 +      super(p_215002_, p_215003_, p_214999_.registryAccess(), p_215004_.type(), p_214999_::getProfiler, false, p_215006_, p_215007_, p_214999_.getMaxChainedNeighborUpdates(), gen, biomeProvider, env);
 +      convertable = p_215001_;
 +      uuid = WorldUUID.getUUID(p_215001_.levelDirectory.path().toFile());
@@ -104,7 +107,10 @@
 +      this.tickTime = p_215009_;
 +      this.server = p_214999_;
 +      this.customSpawners = p_215008_;
-+      this.serverLevelData = p_215002_;
++      if (p_215002_ instanceof PrimaryLevelData primary)
++         this.serverLevelData = primary;
++      else
++         this.serverLevelData = DelegateWorldInfo.wrap((DerivedLevelData) p_215002_);
 +      ChunkGenerator chunkgenerator = p_215004_.generator();
 +      // CraftBukkit start
 +      serverLevelData.setWorld(this);
@@ -156,25 +162,27 @@
 +         return this.getDataStorage().computeIfAbsent(RandomSequences.factory(i), "random_sequences");
 +      });
 +      this.initCapabilities();
-+      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
 +   }
 +
 +   /**
 +    * Use bukkit version
-+    * @see #ServerLevel(MinecraftServer, Executor, LevelStorageSource.LevelStorageAccess, PrimaryLevelData, ResourceKey, LevelStem, ChunkProgressListener, boolean, long, List, boolean, RandomSequences, org.bukkit.World.Environment, org.bukkit.generator.ChunkGenerator, org.bukkit.generator.BiomeProvider)
++    * @see #ServerLevel(MinecraftServer, Executor, LevelStorageSource.LevelStorageAccess, ServerLevelData, ResourceKey, LevelStem, ChunkProgressListener, boolean, long, List, boolean, RandomSequences, org.bukkit.World.Environment, org.bukkit.generator.ChunkGenerator, org.bukkit.generator.BiomeProvider)
 +    */
 +   @Deprecated
 +   //Ketting end
     public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_) {
        super(p_215002_, p_215003_, p_214999_.registryAccess(), p_215004_.type(), p_214999_::getProfiler, false, p_215006_, p_215007_, p_214999_.getMaxChainedNeighborUpdates());
 +      convertable = p_215001_;
-+      uuid = WorldUUID.getUUID(p_215001_.levelDirectory.path().toFile());
++      uuid = WorldUUID.getUUID((p_215002_ instanceof DerivedLevelData ? p_215001_.getDimensionPath(p_215003_) : p_215001_.levelDirectory.path()).toFile()); //Ketting
 +      // CraftBukkit end
        this.tickTime = p_215009_;
        this.server = p_214999_;
        this.customSpawners = p_215008_;
 -      this.serverLevelData = p_215002_;
-+      this.serverLevelData = (PrimaryLevelData) p_215002_;
++      if (p_215002_ instanceof PrimaryLevelData primary)
++         this.serverLevelData = primary;
++      else
++         this.serverLevelData = DelegateWorldInfo.wrap((DerivedLevelData) p_215002_);
        ChunkGenerator chunkgenerator = p_215004_.generator();
 +      // CraftBukkit start
 +      serverLevelData.setWorld(this);
@@ -201,12 +209,11 @@
        } else {
           this.dragonFight = null;
        }
-@@ -232,6 +_,8 @@
+@@ -232,6 +_,7 @@
        this.randomSequences = Objects.requireNonNullElseGet(p_288977_, () -> {
           return this.getDataStorage().computeIfAbsent(RandomSequences.factory(i), "random_sequences");
        });
 +      this.initCapabilities();
-+      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
     }
  
     /** @deprecated */

@@ -8,7 +8,7 @@
  import org.slf4j.Logger;
  
  public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider {
-@@ -106,36 +_,57 @@
+@@ -106,36 +_,71 @@
     public static final int MIN_VIEW_DISTANCE = 2;
     public static final int MAX_VIEW_DISTANCE = 32;
     public static final int FORCED_TICKET_LEVEL = ChunkLevel.byStatus(FullChunkStatus.ENTITY_TICKING);
@@ -23,8 +23,9 @@
     private final ThreadedLevelLightEngine lightEngine;
     private final BlockableEventLoop<Runnable> mainThreadExecutor;
 -   private ChunkGenerator generator;
+-   private final RandomState randomState;
 +   public ChunkGenerator generator;
-    private final RandomState randomState;
++   private RandomState randomState; //Ketting - not final
     private final ChunkGeneratorStructureState chunkGeneratorState;
     private final Supplier<DimensionDataStorage> overworldDataStorage;
     private final PoiManager poiManager;
@@ -70,6 +71,20 @@
 +      }
 +   };
 +   // CraftBukkit end
++
++   //Ketting start
++   public void setChunkGenerator(ChunkGenerator generator) {
++      this.generator = generator;
++      if (generator instanceof CustomChunkGenerator custom) {
++         generator = custom.getDelegate();
++      }
++      if (generator instanceof NoiseBasedChunkGenerator noisebasedchunkgenerator) {
++         this.randomState = RandomState.create(noisebasedchunkgenerator.generatorSettings().value(), this.level.registryAccess().lookupOrThrow(Registries.NOISE), this.level.getSeed());
++      } else {
++         this.randomState = RandomState.create(NoiseGeneratorSettings.dummy(), this.level.registryAccess().lookupOrThrow(Registries.NOISE), this.level.getSeed());
++      }
++   }
++   //Ketting end
 +
     public ChunkMap(ServerLevel p_214836_, LevelStorageSource.LevelStorageAccess p_214837_, DataFixer p_214838_, StructureTemplateManager p_214839_, Executor p_214840_, BlockableEventLoop<Runnable> p_214841_, LightChunkGetter p_214842_, ChunkGenerator p_214843_, ChunkProgressListener p_214844_, ChunkStatusUpdateListener p_214845_, Supplier<DimensionDataStorage> p_214846_, int p_214847_, boolean p_214848_) {
        super(p_214837_.getDimensionPath(p_214836_.dimension()).resolve("region"), p_214838_, p_214848_);
@@ -149,14 +164,6 @@
              }
  
              return levelchunk;
-@@ -756,6 +_,7 @@
-       for(ServerPlayer serverplayer : this.playerMap.getAllPlayers()) {
-          if (serverplayer.getChunkTrackingView().contains(chunkpos)) {
-             markChunkPendingToSend(serverplayer, p_299599_);
-+            net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(serverplayer, p_299599_, this.level);
-          }
-       }
- 
 @@ -823,6 +_,7 @@
  
              this.level.getProfiler().incrementCounter("chunkSave");
@@ -165,14 +172,6 @@
              this.write(chunkpos, compoundtag);
              this.markPosition(chunkpos, chunkstatus.getChunkType());
              return true;
-@@ -877,6 +_,7 @@
-       LevelChunk levelchunk = this.getChunkToSend(p_298062_.toLong());
-       if (levelchunk != null) {
-          markChunkPendingToSend(p_297974_, levelchunk);
-+         net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_297974_, levelchunk, this.level);
-       }
- 
-    }
 @@ -947,20 +_,33 @@
  
     private CompletableFuture<Optional<CompoundTag>> readChunk(ChunkPos p_214964_) {
@@ -238,14 +237,6 @@
        }
     }
  
-@@ -1099,6 +_,7 @@
-             this.markChunkPendingToSend(p_301380_, p_296566_);
-          }, (p_296568_) -> {
-             dropChunk(p_301380_, p_296568_);
-+            net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_301380_, p_296568_, this.level);
-          });
-          p_301380_.setChunkTrackingView(p_301057_);
-       }
 @@ -1118,9 +_,12 @@
     }
  

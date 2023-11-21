@@ -16,17 +16,17 @@
  import org.slf4j.Logger;
  
  public class GameTestServer extends MinecraftServer {
-@@ -105,13 +_,18 @@
+@@ -105,13 +_,19 @@
     public boolean initServer() {
        this.setPlayerList(new PlayerList(this, this.registries(), this.playerDataStorage, 1) {
        });
--      this.loadLevel();
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
++      this.prepareLoadLevel(storageSource.getLevelId()); //Ketting
+       this.loadLevel();
 +      // Ketting start
 +      org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
 +      org.spigotmc.SpigotConfig.registerCommands();
 +      // Ketting end
-+      this.loadLevel(storageSource.getLevelId()); // CraftBukkit
        ServerLevel serverlevel = this.overworld();
        serverlevel.setDefaultSpawnPos(this.spawnPos, 0.0F);
        int i = 20000000;
@@ -37,17 +37,24 @@
     }
  
     public void tickServer(BooleanSupplier p_177619_) {
-@@ -221,6 +_,13 @@
+@@ -217,12 +_,19 @@
+    public boolean isPublished() {
+       return false;
+    }
+-
     public boolean shouldInformAdmins() {
        return false;
     }
-+
+ 
 +   // Ketting start
 +   @Override
 +   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
 +      return null;
 +   }
 +   // Ketting end
- 
++
     public boolean isSingleplayerOwner(GameProfile p_177617_) {
++      return false;
        return false;
+    }
+ }
