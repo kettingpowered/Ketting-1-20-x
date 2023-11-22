@@ -4,6 +4,7 @@ import org.kettingpowered.ketting.common.betterui.BetterUI;
 import org.kettingpowered.ketting.internal.utils.JarTool;
 import org.kettingpowered.ketting.utils.FileUtils;
 import org.kettingpowered.ketting.utils.ServerInitHelper;
+import org.kettingpowered.ketting.utils.Unsafe;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -81,6 +82,7 @@ public class KettingLauncher {
         System.out.println("Launching Ketting...");
 
         fsHacks();
+        clearReservedIdentifiers();
 
         List<String> launchArgs = JarTool.readFileLinesFromJar("data/" + (System.getProperty("os.name").toLowerCase().contains("win") ? "win" : "unix") + "_args.txt");
         ServerInitHelper.init(launchArgs);
@@ -113,6 +115,14 @@ public class KettingLauncher {
             installedProvidersField.set(null, null);
         } catch (Exception e) {
             throw new RuntimeException("Could not set filesystem", e);
+        }
+    }
+
+    private static void clearReservedIdentifiers() {
+        try {
+            Unsafe.lookup().findStaticSetter(Class.forName("jdk.internal.module.Checks"), "RESERVED", Set.class).invoke(Set.of());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
         }
     }
 }
