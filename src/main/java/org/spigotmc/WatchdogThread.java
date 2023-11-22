@@ -20,6 +20,7 @@ public class WatchdogThread extends Thread
     private WatchdogThread(long timeoutTime, boolean restart)
     {
         super( "Spigot Watchdog Thread" );
+        setDaemon(true);
         this.timeoutTime = timeoutTime;
         this.restart = restart;
     }
