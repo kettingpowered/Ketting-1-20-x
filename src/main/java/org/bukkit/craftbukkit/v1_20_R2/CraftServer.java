@@ -242,6 +242,7 @@ import org.bukkit.structure.StructureManager;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
 import org.jetbrains.annotations.NotNull;
+import org.kettingpowered.ketting.internal.KettingConstants;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
@@ -252,7 +253,7 @@ import net.md_5.bungee.api.chat.BaseComponent; // Spigot
 public final class CraftServer implements Server {
     private final String serverName = "CraftBukkit";
     private final String serverVersion;
-    private final String bukkitVersion = Versioning.getBukkitVersion();
+    private final String bukkitVersion = KettingConstants.BUKKIT_VERSION; //Ketting
     private final Logger logger = Logger.getLogger("Minecraft");
     private final ServicesManager servicesManager = new SimpleServicesManager();
     private final CraftScheduler scheduler = new CraftScheduler();
@@ -301,7 +302,7 @@ public final class CraftServer implements Server {
                 return player.getBukkitEntity();
             }
         }));
-        this.serverVersion = CraftServer.class.getPackage().getImplementationVersion();
+        this.serverVersion = "git-" + KettingConstants.NAME.toLowerCase() + "-" + KettingConstants.VERSION; //Ketting
         this.structureManager = new CraftStructureManager(console.getStructureManager());
         this.dataPackManager = new CraftDataPackManager(this.getServer().getPackRepository());
 
