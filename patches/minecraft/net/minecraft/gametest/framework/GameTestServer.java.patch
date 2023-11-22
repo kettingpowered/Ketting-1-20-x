@@ -1,5 +1,15 @@
 --- a/net/minecraft/gametest/framework/GameTestServer.java
 +++ b/net/minecraft/gametest/framework/GameTestServer.java
+@@ -8,6 +_,9 @@
+ import com.mojang.authlib.yggdrasil.ServicesKeySet;
+ import com.mojang.logging.LogUtils;
+ import com.mojang.serialization.Lifecycle;
++
++import java.io.IOException;
++import java.net.InetAddress;
+ import java.net.Proxy;
+ import java.util.ArrayList;
+ import java.util.Collection;
 @@ -18,6 +_,7 @@
  import net.minecraft.CrashReport;
  import net.minecraft.SystemReport;
@@ -16,11 +26,26 @@
  import org.slf4j.Logger;
  
  public class GameTestServer extends MinecraftServer {
-@@ -105,13 +_,15 @@
+@@ -105,13 +_,30 @@
     public boolean initServer() {
        this.setPlayerList(new PlayerList(this, this.registries(), this.playerDataStorage, 1) {
        });
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
++      // Ketting start
++      org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
++      org.spigotmc.SpigotConfig.registerCommands();
++      if (this.getPort() < 0) {
++         this.setPort(25565);
++      }
++      try {
++         this.getConnection().startTcpServerListener(InetAddress.getLocalHost(), this.getPort());
++      } catch (IOException ioexception) {
++         LOGGER.warn("**** FAILED TO BIND TO PORT!");
++         LOGGER.warn("The exception was: {}", (Object)ioexception.toString());
++         LOGGER.warn("Perhaps a server is already running on that port?");
++         return false;
++      }
++      // Ketting end
 +      this.prepareLoadLevel(storageSource.getLevelId()); //Ketting
        this.loadLevel();
        ServerLevel serverlevel = this.overworld();
@@ -33,7 +58,11 @@
     }
  
     public void tickServer(BooleanSupplier p_177619_) {
-@@ -221,6 +_,13 @@
+@@ -217,10 +_,16 @@
+    public boolean isPublished() {
+       return false;
+    }
+-
     public boolean shouldInformAdmins() {
        return false;
     }

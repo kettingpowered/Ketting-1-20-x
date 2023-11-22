@@ -14,6 +14,44 @@ permissions:
   actions: write #nessesary for cache deletion
 
 jobs:
+  create-release:
+    needs: build
+    if: false #${{ format('refs/heads/{0}', github.event.repository.default_branch) == github.ref }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+      - name: Rename and move artifacts
+        run: |
+          for dir in artifacts/*/
+          do
+            dir=${dir%*/} # remove the trailing "/"
+            for file in $dir/*
+            do 
+              echo "moving $file one folder higher"
+              mv $file artifacts/
+            done
+            rm -r "${dir}"
+          done
+          for archive in artifacts/*.tar.*
+          do
+            tar -xvf $archive -C artifacts
+            rm $archive
+          done
+      - name: Create Release
+        run: |
+          tag=$(git rev-parse --short ${{ github.sha }})
+          gh release create "$tag" artifacts/* \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
+              --prerelease \
+              --generate-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   setup:
     runs-on: ubuntu-latest
     steps:
@@ -40,9 +78,12 @@ jobs:
         with:
           path: |
            projects/
-          key: project-src-cache-${{ hashFiles('patches') }}
+          key: project-src-cache-${{ hashFiles('patches/**') }}
           restore-keys: |
            project-src-cache-
+      - name: Rename Branch, if Pull_Request
+        if: ${{ github.event_name == 'pull_request' }}
+        run: git checkout -B 'branch'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Setup Gradle
@@ -50,22 +91,23 @@ jobs:
       - name: Setup Ketting
         id: setup
         run: ./gradlew setup
+      - name: Check Setup Ketting
+        id: build
+        run: ./gradlew build
       - name: Save Project Sources
-        if: steps.cache_projects-src_restore.output.cache-hit == 'false'
+        if: steps.cache_projects-src_restore.outputs.cache-hit != 'true'
         uses: actions/cache/save@v3
         with:
           path: |
             projects/
           key: ${{ steps.cache_projects-src_restore.outputs.cache-primary-key }}
       - name: Save Project Sources for build
-        if: false
         uses: actions/cache/save@v3
         with:
           path: |
             projects/
           key: project-src-cache-${{ github.ref }}-${{ github.sha }}
   build:
-    if: false
     runs-on: ubuntu-latest
     needs: setup
     steps:
@@ -89,10 +131,12 @@ jobs:
       - name: Restore Project Sources for build
         uses: actions/cache/restore@v3
         with:
+          fail-on-cache-miss: true
           path: |
             projects/
           key: project-src-cache-${{ github.ref }}-${{ github.sha }}
       - name: Delete Project Sources for build
+        continue-on-error: true
         run: |
           gh extension install actions/gh-actions-cache
           REPO=${{ github.repository }}
@@ -104,11 +148,27 @@ jobs:
           echo "Done"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Rename Branch, if Pull_Request
+        if: ${{ github.event_name == 'pull_request' }}
+        run: git checkout -B 'branch'
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
       - name: Build Ketting Jar
         run: ./gradlew kettingJar
+      - name: Put ketting jar in an archive
+        working-directory: projects/ketting/build/libs
+        run: |
+          tar -czf ketting.tar.gz ketting*.jar
+          mv ketting.tar.gz ../../../../
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
-          name: project-forge-build-libs
+          name: ketting-server
           path: |
-            projects/forge/build/libs/
+            ketting.tar.gz
+      - name: Run Game Test Server
+        timeout-minutes: 5
+        working-directory: projects/ketting/build/libs/
+        run: echo "stop" | java -Dforge.enableGameTest=true -Dforge.gameTestServer=true -jar ketting*.jar -dau -accepteula

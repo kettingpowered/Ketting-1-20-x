@@ -11,14 +11,20 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 //Copied from https://git.magmafoundation.org/JustRed23/Magma-1-18-x/-/blob/1.18.x/magmalauncher/src/main/java/org/magmafoundation/magma/installer/NetworkUtils.java
 public class NetworkUtils {
 
-    private static final ExecutorService downloadSrvc = java.util.concurrent.Executors.newFixedThreadPool(4);
+    private static final AtomicInteger threadNr = new AtomicInteger();
+    private static final ExecutorService downloadSrvc  = java.util.concurrent.Executors.newFixedThreadPool(4, runnable -> {
+        Thread thread = new Thread(runnable);
+        thread.setDaemon(true);
+        thread.setName("network-utils-download-thread-"+threadNr.incrementAndGet());
+        return thread;
+    });
+
 
     public static URLConnection getConnection(String url) {
         URLConnection conn = null;

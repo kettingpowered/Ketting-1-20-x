@@ -95,7 +95,7 @@
     protected long nextTickTime = Util.getMillis();
     private long delayedTasksMaxNextTickTime;
     private boolean mayHaveDelayedTasks;
-@@ -235,18 +_,39 @@
+@@ -235,17 +_,35 @@
     private final ServerFunctionManager functionManager;
     private boolean enforceWhitelist;
     private float averageTickTime;
@@ -132,12 +132,8 @@
 -      Thread thread = new Thread(() -> {
 +      Thread thread = new Thread(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER, () -> {
           atomicreference.get().runServer();
-+         //Ketting start - fix rare condition where the server just hangs for no reason
-+         Runtime.getRuntime().halt(0);
-+         //Ketting end
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
-          LOGGER.error("Uncaught exception in server thread", p_177910_);
 @@ -265,7 +_,7 @@
        super("Server");
        this.registries = p_236726_.registries();
@@ -188,7 +184,7 @@
     }
  
     private void readScoreboard(DimensionDataStorage p_129842_) {
-@@ -295,17 +_,32 @@
+@@ -295,17 +_,37 @@
  
     protected abstract boolean initServer() throws IOException;
  
@@ -197,6 +193,11 @@
 +   private String loadLevel$worldName;
 +   protected void prepareLoadLevel(String worldName) {
 +      this.loadLevel$worldName = worldName;
++   }
++
++   public void setBukkitOptions(OptionSet options, WorldLoader.DataLoadContext dataLoadContext) {
++      this.options = options;
++      this.worldLoader = dataLoadContext;
 +   }
 +   //Ketting end
 +

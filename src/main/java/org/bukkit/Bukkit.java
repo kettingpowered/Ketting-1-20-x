@@ -102,6 +102,8 @@ public final class Bukkit {
      */
     @NotNull
     public static String getName() {
+        if (server == null)
+            return "null";
         return server.getName();
     }
 
@@ -112,6 +114,8 @@ public final class Bukkit {
      */
     @NotNull
     public static String getVersion() {
+        if (server == null)
+            return "null";
         return server.getVersion();
     }
 
@@ -122,6 +126,8 @@ public final class Bukkit {
      */
     @NotNull
     public static String getBukkitVersion() {
+        if (server == null)
+            return "null";
         return server.getBukkitVersion();
     }
 

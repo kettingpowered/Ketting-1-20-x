@@ -38,7 +38,7 @@
  import net.minecraft.server.gui.MinecraftServerGui;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
-@@ -50,7 +_,17 @@
+@@ -50,7 +_,16 @@
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
@@ -46,7 +46,6 @@
 +import net.minecraft.world.level.levelgen.WorldOptions;
  import net.minecraft.world.level.storage.LevelStorageSource;
 +import net.minecraft.world.level.storage.PrimaryLevelData;
-+import net.minecrell.terminalconsole.TerminalConsoleAppender;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.io.IoBuilder;
 +import org.bukkit.command.CommandSender;
@@ -56,7 +55,7 @@
  import org.slf4j.Logger;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
-@@ -60,31 +_,73 @@
+@@ -60,31 +_,66 @@
     public final List<ConsoleInput> consoleInput = Collections.synchronizedList(Lists.newArrayList());
     @Nullable
     private QueryThreadGs4 queryThreadGs4;
@@ -81,13 +80,6 @@
        this.textFilterClient = TextFilterClient.createFromConfig(p_214793_.getProperties().textFilteringConfig);
     }
  
-+   //Ketting start - bukkit options
-+   public void setBukkitOptions(OptionSet options, WorldLoader.DataLoadContext dataLoadContext) {
-+      super.options = options;
-+      super.worldLoader = dataLoadContext;
-+   }
-+   //Ketting end
-+
     public boolean initServer() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
@@ -156,7 +148,7 @@
 +         }
 +      }
 +
-+      // new org.bukkit.craftbukkit.v1_20_R2.util.TerminalConsoleWriterThread(System.out, this.reader).start(); //Ketting - disable for now
++      new org.bukkit.craftbukkit.v1_20_R2.util.TerminalConsoleWriterThread(System.out, this.reader).start();
 +
 +      System.setOut(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.INFO).buildPrintStream());
 +      System.setErr(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.WARN).buildPrintStream());
@@ -263,19 +255,13 @@
        }
     }
  
-@@ -263,6 +_,16 @@
+@@ -263,6 +_,10 @@
           this.queryThreadGs4.stop();
        }
  
 +      if (this.dediLanPinger != null) {
 +         this.dediLanPinger.interrupt();
 +         this.dediLanPinger = null;
-+      }
-+
-+      try {
-+         TerminalConsoleAppender.close();
-+      } catch (IOException e) {
-+         throw new RuntimeException(e);
 +      }
     }
  

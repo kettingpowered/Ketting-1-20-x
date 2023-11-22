@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.Util;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import org.apache.commons.lang3.StringUtils;//Ketting lang -> lang3
@@ -129,7 +130,7 @@ public final class CraftPlayerProfile implements PlayerProfile {
     }
 
     private CraftPlayerProfile getUpdatedProfile() {
-        DedicatedServer server = ((CraftServer) Bukkit.getServer()).getServer();
+        MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
         GameProfile profile = this.buildGameProfile();
 
         // If missing, look up the uuid by name:
