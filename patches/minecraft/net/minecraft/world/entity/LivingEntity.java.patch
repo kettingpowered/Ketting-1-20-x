@@ -1025,7 +1025,7 @@
                 }
              }
           }
-@@ -1610,8 +_,186 @@
+@@ -1610,8 +_,195 @@
        }
     }
  
@@ -1033,8 +1033,16 @@
 +   // CraftBukkit start
 +   protected boolean damageEntity0(final DamageSource damagesource, float f) { // void -> boolean, add final
 +      if (!this.isInvulnerableTo(damagesource)) {
++         // Check if entity is a "human" aka player
 +         final boolean human = this instanceof ServerPlayer;
 +         float originalDamage = f;
++         // Cauldron start - apply forge damage hook
++         f = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damagesource, f);
++         // If the damage is negative return true
++         if (f < 0) return true;
++         // Thermos detect null damage
++         final boolean nulldmg = f == 0;
++         // Cauldron end
 +         Function<Double, Double> hardHat = new Function<Double, Double>() {
 +            @Override
 +            public Double apply(Double f) {
@@ -1107,6 +1115,7 @@
 +         }
 +
 +         f = (float) event.getFinalDamage();
++         if (nulldmg) return true; // Preclude any stupidity with null head items
 +
 +         // Resistance
 +         if (event.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE) < 0) {
