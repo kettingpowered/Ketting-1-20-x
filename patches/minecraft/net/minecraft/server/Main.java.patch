@@ -31,7 +31,7 @@
  import net.minecraft.server.packs.repository.PackRepository;
  import net.minecraft.server.packs.repository.ServerPacksSource;
  import net.minecraft.util.Mth;
-@@ -52,11 +_,17 @@
+@@ -52,11 +_,18 @@
  import net.minecraft.world.level.levelgen.WorldDimensions;
  import net.minecraft.world.level.levelgen.WorldOptions;
  import net.minecraft.world.level.levelgen.presets.WorldPresets;
@@ -44,6 +44,7 @@
 +import org.fusesource.jansi.AnsiConsole;
 +import org.kettingpowered.ketting.adapters.DimensionRegistry_1_20_2_Adapter;
 +import org.kettingpowered.ketting.adapters.Forge_1_20_2_Adapter;
++import org.kettingpowered.ketting.config.KettingConfig;
 +import org.kettingpowered.ketting.core.Ketting;
 +import org.kettingpowered.ketting.core.injectprotect.InjectProtect;
  import org.slf4j.Logger;
@@ -114,7 +115,7 @@
  
           Path path = optionset.valueOf(optionspec13);
           if (path != null) {
-@@ -98,29 +_,51 @@
+@@ -98,29 +_,52 @@
              JvmProfiler.INSTANCE.start(Environment.SERVER);
           }
  
@@ -139,6 +140,7 @@
           dedicatedserversettings.forceSave();
 -         Path path2 = Paths.get("eula.txt");
 -         Eula eula = new Eula(path2);
++         KettingConfig.getInstance(); // Ketting
           if (optionset.has(optionspec1)) {
 +            // CraftBukkit start - SPIGOT-5761: Create bukkit.yml and commands.yml if not present
 +            File configFile = (File) optionset.valueOf("bukkit-settings");

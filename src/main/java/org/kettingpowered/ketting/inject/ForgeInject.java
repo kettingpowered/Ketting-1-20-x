@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import net.minecraft.resources.ResourceLocation;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
+import org.kettingpowered.ketting.config.KettingConfig;
 import org.kettingpowered.ketting.core.Ketting;
 
 import java.util.Locale;
@@ -11,30 +12,30 @@ import java.util.Locale;
 public class ForgeInject {
 
     public static void debug(String message) {
-        /*TODO if (KettingConfig.instance.debugPrintInjections.getValues())
-            LOGGER.info(message);
-        else*/
+        if (KettingConfig.getInstance().PRINT_INJECTIONS.getValue())
+            Ketting.LOGGER.info(message);
+        else
             Ketting.LOGGER.debug(message);
     }
 
     public static void debug(String message, Object... args) {
-        /* TODO if (MagmaConfig.instance.debugPrintInjections.getValues())
-            Magma.LOGGER.info(message, args);
-        else*/
+        if (KettingConfig.getInstance().PRINT_INJECTIONS.getValue())
+            Ketting.LOGGER.info(message, args);
+        else
             Ketting.LOGGER.debug(message, args);
     }
 
     public static void debugWarn(String message) {
-        /* TODO if (MagmaConfig.instance.debugPrintInjections.getValues())
-            Magma.LOGGER.warn(message);
-        else*/
+        if (KettingConfig.getInstance().PRINT_INJECTIONS.getValue())
+            Ketting.LOGGER.warn(message);
+        else
             Ketting.LOGGER.debug("WARN - " + message);
     }
 
     public static void debugWarn(String message, Object... args) {
-        /* TODO if (MagmaConfig.instance.debugPrintInjections.getValues())
-            Magma.LOGGER.warn(message, args);
-        else*/
+        if (KettingConfig.getInstance().PRINT_INJECTIONS.getValue())
+            Ketting.LOGGER.warn(message, args);
+        else
             Ketting.LOGGER.debug("WARN - " + message, args);
     }
 
