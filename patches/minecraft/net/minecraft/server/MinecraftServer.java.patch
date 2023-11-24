@@ -95,7 +95,7 @@
     protected long nextTickTime = Util.getMillis();
     private long delayedTasksMaxNextTickTime;
     private boolean mayHaveDelayedTasks;
-@@ -235,18 +_,55 @@
+@@ -235,18 +_,56 @@
     private final ServerFunctionManager functionManager;
     private boolean enforceWhitelist;
     private float averageTickTime;
@@ -136,6 +136,7 @@
 +                 .entrySet()
 +                 .parallelStream()
 +                 .filter(e -> !e.getKey().isDaemon())
++                 .filter(e -> e.getKey() != Thread.currentThread())
 +                 .map(e -> {
 +                           e.getKey().stop();
 +                            @Nullable
