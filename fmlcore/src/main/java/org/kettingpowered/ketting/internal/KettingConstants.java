@@ -10,7 +10,8 @@ public class KettingConstants {
     public static final String BRAND = "Kettingpowered";
     public static final String VERSION = !Objects.equals(fullVersion, "dev-env") ? fullVersion.split("-")[0] + "-" + fullVersion.split("-")[2] : "dev-env";
     public static final String MINECRAFT_VERSION = !Objects.equals(fullVersion, "dev-env") ? fullVersion.split("-")[0] : "dev-env";
-    public static final String BUKKIT_VERSION = "v1_20.2_R0.1";
+    public static final String BUKKIT_PACKAGE_VERSION = "v1_20_R2";
+    public static final String BUKKIT_VERSION = "1.20.2-R0.1-SNAPSHOT";
     public static final String FORGE_VERSION = !Objects.equals(fullVersion, "dev-env") ? fullVersion.split("-")[1] : "dev-env";
     public static final String MCP_VERSION = !Objects.equals(fullVersion, "dev-env") ? fullVersion.split("-")[3] : "dev-env";
     public static final String INSTALLER_LIBRARIES_FOLDER = "libraries";

@@ -33,7 +33,7 @@ public class KettingLauncher {
 
         parseArgs(eula);
 
-        BetterUI.printTitle(NAME, BRAND, System.getProperty("java.version") + " (" + System.getProperty("java.vendor") + ")", VERSION, BUKKIT_VERSION, FORGE_VERSION);
+        BetterUI.printTitle(NAME, BRAND, System.getProperty("java.version") + " (" + System.getProperty("java.vendor") + ")", VERSION, BUKKIT_PACKAGE_VERSION, FORGE_VERSION);
         if(!BetterUI.checkEula(eula)) System.exit(0);
 
         if (Patcher.updateNeeded()) {
@@ -95,6 +95,8 @@ public class KettingLauncher {
 
         String[] invokeArgs = Stream.concat(forgeArgs.stream(), KettingLauncher.args.stream()).toArray(String[]::new);
 
+        setProperties();
+
         try {
             Class.forName("net.minecraftforge.bootstrap.BootstrapLauncher")
                     .getMethod("main", String[].class)
@@ -124,5 +126,9 @@ public class KettingLauncher {
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void setProperties() {
+        System.setProperty("ketting.remapper.dump", "./.mixin.out/plugin_classes");
     }
 }

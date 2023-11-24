@@ -13,17 +13,25 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kettingpowered.ketting.remapper.generated.RemappingURLClassLoader;
 
 class LibraryLoader {
 
     private final Logger logger;
 
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(20);
+    private static final AtomicInteger threadNr = new AtomicInteger();
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(20, runnable -> {
+        Thread thread = new Thread(runnable);
+        thread.setDaemon(true);
+        thread.setName("library-loader-downloader-thread-"+threadNr.incrementAndGet());
+        return thread;
+    });
 
     public LibraryLoader(@NotNull Logger logger) {
         this.logger = logger;
@@ -117,7 +125,7 @@ class LibraryLoader {
                     });
         }
 
-        return new URLClassLoader(jarFiles.toArray(new URL[0]), getClass().getClassLoader());
+        return new RemappingURLClassLoader(jarFiles.toArray(new URL[0]), getClass().getClassLoader());
     }
 
 
