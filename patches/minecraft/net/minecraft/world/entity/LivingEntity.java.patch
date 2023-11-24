@@ -1147,7 +1147,7 @@
 +
 +            if (!ev.isCanceled()) {
 +               this.level().broadcastEntityEvent(this, (byte) 29); // SPIGOT-4635 - shield damage sound
-+               if (ev.shieldTakesDamage()) this.hurtCurrentlyUsedShield((float) -event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING));
++               if (ev.shieldTakesDamage()) this.hurtCurrentlyUsedShield(-ev.getBlockedDamage());
 +               Entity entity = damagesource.getDirectEntity();
 +
 +               if (entity instanceof LivingEntity) {
