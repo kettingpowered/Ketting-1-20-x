@@ -1114,8 +1114,7 @@ public class CraftEventFactory {
             return callEntityDamageEvent(null, entity, cause, modifiers, modifierFunctions, cancelled);
         }else {
             return new EntityDamageEvent(entity.getBukkitEntity(), DamageCause.CUSTOM, modifiers, modifierFunctions);
-        }
-        //SHOULD NEVER HAVE UNHANDLED DAMAGE
+        }//Ketting - handle unhandled damage
     }
 
     private static EntityDamageEvent callEntityDamageEvent(Entity damager, Entity damagee, DamageCause cause, Map<DamageModifier, Double> modifiers, Map<DamageModifier, Function<? super Double, Double>> modifierFunctions) {
