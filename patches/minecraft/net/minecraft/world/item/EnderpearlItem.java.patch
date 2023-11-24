@@ -15,12 +15,13 @@
 -      p_41190_.playSound((Player)null, p_41191_.getX(), p_41191_.getY(), p_41191_.getZ(), SoundEvents.ENDER_PEARL_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (p_41190_.getRandom().nextFloat() * 0.4F + 0.8F));
 -      p_41191_.getCooldowns().addCooldown(this, 20);
 +
-+      // CraftBukkit start - change order
++
        if (!p_41190_.isClientSide) {
           ThrownEnderpearl thrownenderpearl = new ThrownEnderpearl(p_41190_, p_41191_);
           thrownenderpearl.setItem(itemstack);
           thrownenderpearl.shootFromRotation(p_41191_, p_41191_.getXRot(), p_41191_.getYRot(), 0.0F, 1.5F, 1.0F);
-          p_41190_.addFreshEntity(thrownenderpearl);
+-         p_41190_.addFreshEntity(thrownenderpearl);
++         // CraftBukkit start - change order
 +         if (!p_41190_.addFreshEntity(thrownenderpearl)) {
 +            if (p_41191_ instanceof net.minecraft.server.level.ServerPlayer) {
 +               ((net.minecraft.server.level.ServerPlayer) p_41191_).getBukkitEntity().updateInventory();
