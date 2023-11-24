@@ -95,7 +95,7 @@
     protected long nextTickTime = Util.getMillis();
     private long delayedTasksMaxNextTickTime;
     private boolean mayHaveDelayedTasks;
-@@ -235,17 +_,35 @@
+@@ -235,18 +_,55 @@
     private final ServerFunctionManager functionManager;
     private boolean enforceWhitelist;
     private float averageTickTime;
@@ -132,8 +132,28 @@
 -      Thread thread = new Thread(() -> {
 +      Thread thread = new Thread(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER, () -> {
           atomicreference.get().runServer();
++         Thread.getAllStackTraces()
++                 .entrySet()
++                 .parallelStream()
++                 .filter(e -> !e.getKey().isDaemon())
++                 .map(e -> {
++                           e.getKey().stop();
++                            @Nullable
++                            ThreadGroup threadGroup = e.getKey().getThreadGroup();
++                            return "[ ThreadGroup: " + (threadGroup != null ? e.getKey().getThreadGroup().getName() : "None") +
++                                    ", Daemon: " + e.getKey().isDaemon() + "] Thread name: "
++                                    + e.getKey().getName()
++                                    + " (id: " + e.getKey().getId() + ", priority:" + e.getKey().getPriority() + ", Status:" + e.getKey().getState() + ", Alive:" + e.getKey().isAlive() + ")\n"
++                                    + Arrays.stream(e.getValue())
++                                    .map(StackTraceElement::toString)
++                                    .collect(Collectors.joining("\n\tat "));
++                         }
++                 ).forEach(threadStacktrace -> {
++                     LOGGER.error("A Non-Daemon Thread was found after server stop. Killing thread\n{}",threadStacktrace);
++                 });
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
+          LOGGER.error("Uncaught exception in server thread", p_177910_);
 @@ -265,7 +_,7 @@
        super("Server");
        this.registries = p_236726_.registries();
