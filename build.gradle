@@ -123,8 +123,8 @@ subprojects {
     //println(name + ' Version: ' + version)
 
     repositories {
-        maven { url = 'https://nexus.c0d3m4513r.com/repository/Magma/' }
-        maven { url = 'https://jitpack.io' }
+        maven { url = 'https://nexus.c0d3m4513r.com/repository/Magma/' } // Cached general libraries
+        maven { url = 'https://nexus.c0d3m4513r.com/repository/Ketting/' } // Ketting specific libraries
         mavenCentral()
         maven gradleutils.forgeMaven
         maven gradleutils.minecraftLibsMaven
@@ -1132,7 +1132,8 @@ project(':forge') {
 
         //Add KettingCore to the jar, this contains BetterUI and some more common utils
         project(':fmlcore').configurations.runtimeClasspath.getFiles().each { file ->
-            if (file.isFile() && file.name.startsWith('common-')) {
+            if (file.isFile() && file.name.startsWith('kettingcore')) {
+                println("Adding ${file.name} to the jar")
                 from(zipTree(file)) {
                     exclude 'META-INF/'
                 }
