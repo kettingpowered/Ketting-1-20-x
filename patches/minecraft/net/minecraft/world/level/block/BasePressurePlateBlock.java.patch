@@ -8,7 +8,7 @@
  
  public abstract class BasePressurePlateBlock extends Block {
     protected static final VoxelShape PRESSED_AABB = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 0.5D, 15.0D);
-@@ -75,6 +_,18 @@
+@@ -75,8 +_,21 @@
        int i = this.getSignalStrength(p_152145_, p_152146_);
        boolean flag = p_152148_ > 0;
        boolean flag1 = i > 0;
@@ -26,8 +26,11 @@
 +      // CraftBukkit end
        if (p_152148_ != i) {
           BlockState blockstate = this.setSignalForState(p_152147_, i);
++
           p_152145_.setBlock(p_152146_, blockstate, 2);
-@@ -124,9 +_,14 @@
+          this.updateNeighbours(p_152145_, p_152146_);
+          p_152145_.setBlocksDirty(p_152146_, p_152147_, blockstate);
+@@ -124,9 +_,15 @@
     }
  
     protected static int getEntityCount(Level p_289656_, AABB p_289647_, Class<? extends Entity> p_289686_) {
@@ -37,6 +40,7 @@
 +      // CraftBukkit start
 +      return getEntities(p_289656_, p_289647_, p_289686_).size();
 +   }
++
 +   protected static <T extends Entity> java.util.List<T> getEntities(Level world, AABB axisalignedbb, Class<T> oclass) {
 +      // CraftBukkit end
 +      return world.getEntitiesOfClass(oclass, axisalignedbb, EntitySelector.NO_SPECTATORS.and((entity) -> {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SpreadingSnowyDirtBlock.java
 +++ b/net/minecraft/world/level/block/SpreadingSnowyDirtBlock.java
-@@ -35,14 +_,22 @@
+@@ -35,15 +_,22 @@
  
     public void randomTick(BlockState p_222508_, ServerLevel p_222509_, BlockPos p_222510_, RandomSource p_222511_) {
        if (!canBeGrass(p_222508_, p_222509_, p_222510_)) {
@@ -19,7 +19,8 @@
              for(int i = 0; i < 4; ++i) {
                 BlockPos blockpos = p_222510_.offset(p_222511_.nextInt(3) - 1, p_222511_.nextInt(5) - 3, p_222511_.nextInt(3) - 1);
                 if (p_222509_.getBlockState(blockpos).is(Blocks.DIRT) && canPropagate(blockstate, p_222509_, blockpos)) {
+-                  p_222509_.setBlockAndUpdate(blockpos, blockstate.setValue(SNOWY, Boolean.valueOf(p_222509_.getBlockState(blockpos.above()).is(Blocks.SNOW))));
 +                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_222509_, p_222510_, blockpos, (BlockState) blockstate.setValue(SpreadingSnowyDirtBlock.SNOWY, p_222509_.getBlockState(blockpos.above()).is(Blocks.SNOW))); // CraftBukkit
-                   p_222509_.setBlockAndUpdate(blockpos, blockstate.setValue(SNOWY, Boolean.valueOf(p_222509_.getBlockState(blockpos.above()).is(Blocks.SNOW))));
                 }
              }
+          }
