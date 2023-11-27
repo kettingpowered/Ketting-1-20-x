@@ -1,9 +1,11 @@
 --- a/net/minecraft/world/level/block/grower/AbstractMegaTreeGrower.java
 +++ b/net/minecraft/world/level/block/grower/AbstractMegaTreeGrower.java
-@@ -36,9 +_,13 @@
+@@ -35,10 +_,14 @@
+       if (resourcekey == null) {
           return false;
        } else {
-          Holder<ConfiguredFeature<?, ?>> holder = p_222897_.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(resourcekey).orElse((Holder.Reference<ConfiguredFeature<?, ?>>)null);
+-         Holder<ConfiguredFeature<?, ?>> holder = p_222897_.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(resourcekey).orElse((Holder.Reference<ConfiguredFeature<?, ?>>)null);
++         Holder<ConfiguredFeature<?, ?>> holder = p_222897_.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(resourcekey).orElse(null);
 +         var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_222897_, p_222901_, p_222899_, holder);
 +         holder = event.getFeature();
 +         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return false;

@@ -97,4 +97,10 @@ public enum TreeType {
      * Cherry tree
      */
     CHERRY,
+    //Ketting start
+    /**
+     * Custom tree, likely modded
+     */
+    CUSTOM,
+    //Ketting end
 }

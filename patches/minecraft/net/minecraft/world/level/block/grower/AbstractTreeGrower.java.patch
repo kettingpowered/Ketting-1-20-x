@@ -18,10 +18,12 @@
  
  public abstract class AbstractTreeGrower {
     @Nullable
-@@ -23,9 +_,13 @@
+@@ -22,10 +_,14 @@
+       if (resourcekey == null) {
           return false;
        } else {
-          Holder<ConfiguredFeature<?, ?>> holder = p_222905_.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(resourcekey).orElse((Holder.Reference<ConfiguredFeature<?, ?>>)null);
+-         Holder<ConfiguredFeature<?, ?>> holder = p_222905_.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(resourcekey).orElse((Holder.Reference<ConfiguredFeature<?, ?>>)null);
++         Holder<ConfiguredFeature<?, ?>> holder = p_222905_.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(resourcekey).orElse(null);
 +         var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_222905_, p_222909_, p_222907_, holder);
 +         holder = event.getFeature();
 +         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return false;
@@ -32,7 +34,7 @@
              ConfiguredFeature<?, ?> configuredfeature = holder.value();
              BlockState blockstate = p_222905_.getFluidState(p_222907_).createLegacyBlock();
              p_222905_.setBlock(p_222907_, blockstate, 4);
-@@ -52,4 +_,55 @@
+@@ -52,4 +_,58 @@
  
        return false;
     }
@@ -83,7 +85,10 @@
 +      } else if (worldgentreeabstract == TreeFeatures.CHERRY || worldgentreeabstract == TreeFeatures.CHERRY_BEES_005) {
 +         SaplingBlock.treeType = TreeType.CHERRY;
 +      } else {
-+         throw new IllegalArgumentException("Unknown tree generator " + worldgentreeabstract);
++         //Ketting start
++         // throw new IllegalArgumentException("Unknown tree generator " + worldgentreeabstract);
++         SaplingBlock.treeType = TreeType.CUSTOM;
++         //Ketting end
 +      }
 +   }
 +   // CraftBukkit end

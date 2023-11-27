@@ -18,11 +18,18 @@
     }
  
     /** @deprecated */
-@@ -150,7 +_,7 @@
+@@ -145,12 +_,14 @@
+    /** @deprecated */
+    @Deprecated
+    public void onPlace(BlockState p_60566_, Level p_60567_, BlockPos p_60568_, BlockState p_60569_, boolean p_60570_) {
++      org.spigotmc.AsyncCatcher.catchOp("block onPlace"); // Spigot
+    }
+ 
     /** @deprecated */
     @Deprecated
     public void onRemove(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
 -      if (p_60515_.hasBlockEntity() && !p_60515_.is(p_60518_.getBlock())) {
++      org.spigotmc.AsyncCatcher.catchOp("block remove"); // Spigot
 +      if (p_60515_.hasBlockEntity() && (!p_60515_.is(p_60518_.getBlock()) || !p_60518_.hasBlockEntity())) {
           p_60516_.removeBlockEntity(p_60517_);
        }
