@@ -21,12 +21,12 @@
 +   // CraftBukkit start - fix MC-253819
 +   @Override
 +   public BlockState rotate(BlockState blockstate, Rotation rotation) {
-+      return blockstate.setValue(BellBlock.FACING, rotation.rotate(blockstate.getValue(BellBlock.FACING)));
++      return blockstate.setValue(FACING, rotation.rotate(blockstate.getValue(FACING)));
 +   }
 +
 +   @Override
 +   public BlockState mirror(BlockState blockstate, Mirror mirror) {
-+      return blockstate.rotate(mirror.getRotation(blockstate.getValue(BellBlock.FACING)));
++      return blockstate.rotate(mirror.getRotation(blockstate.getValue(FACING)));
 +   }
 +   // CraftBukkit end
  }
