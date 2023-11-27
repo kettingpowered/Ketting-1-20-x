@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/BambooSaplingBlock.java
 +++ b/net/minecraft/world/level/block/BambooSaplingBlock.java
+@@ -34,7 +_,7 @@
+    }
+ 
+    public void randomTick(BlockState p_220753_, ServerLevel p_220754_, BlockPos p_220755_, RandomSource p_220756_) {
+-      if (p_220756_.nextInt(3) == 0 && p_220754_.isEmptyBlock(p_220755_.above()) && p_220754_.getRawBrightness(p_220755_.above(), 0) >= 9) {
++      if (p_220756_.nextFloat() < (p_220754_.spigotConfig.bambooModifier / (100.0f * 3)) && p_220754_.isEmptyBlock(p_220755_.above()) && p_220754_.getRawBrightness(p_220755_.above(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution
+          this.growBamboo(p_220754_, p_220755_);
+       }
+ 
 @@ -73,10 +_,10 @@
     }
  
