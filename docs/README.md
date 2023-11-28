@@ -36,12 +36,7 @@ that enables the use of Bukkit plugins on Forge servers.
 
 Ketting is still in development and is not ready for production use.
 
-### PATCHES DONE
-Bukkit: 530 / 530
-<br>
-CraftBukkit: 685 / 685
-<br>
-#### Final patches before beta release
+### Final patches before beta release
 - [ ] Forge dispatcher patch
 - [ ] Permissions patch
 - [ ] ForgeCaps patch
