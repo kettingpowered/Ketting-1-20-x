@@ -8,7 +8,7 @@
  
  public class CropBlock extends BushBlock implements BonemealableBlock {
     public static final int MAX_AGE = 7;
-@@ -64,12 +_,14 @@
+@@ -64,12 +_,28 @@
     }
  
     public void randomTick(BlockState p_221050_, ServerLevel p_221051_, BlockPos p_221052_, RandomSource p_221053_) {
@@ -19,7 +19,21 @@
              float f = getGrowthSpeed(this, p_221051_, p_221052_);
 -            if (p_221053_.nextInt((int)(25.0F / f) + 1) == 0) {
 -               p_221051_.setBlock(p_221052_, this.getStateForAge(i + 1), 2);
-+            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221051_, p_221052_, p_221050_, p_221053_.nextInt((int)(25.0F / f) + 1) == 0)) {
++
++            // Spigot start
++            int modifier;
++            if (this == Blocks.BEETROOTS) {
++               modifier = p_221051_.spigotConfig.beetrootModifier;
++            } else if (this == Blocks.CARROTS) {
++               modifier = p_221051_.spigotConfig.carrotModifier;
++            } else if (this == Blocks.POTATOES) {
++               modifier = p_221051_.spigotConfig.potatoModifier;
++            } else {
++               modifier = p_221051_.spigotConfig.wheatModifier;
++            }
++
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221051_, p_221052_, p_221050_, p_221053_.nextFloat() < (modifier / (100.0f * (Math.floor((25.0F / f) + 1)))))) {
++               // Spigot end
 +               CraftEventFactory.handleBlockGrowEvent(p_221051_, p_221052_, this.getStateForAge(i + 1), 2); // CraftBukkit
 +               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221051_, p_221052_, p_221050_);
              }

@@ -1030,7 +1030,10 @@ public class CraftEventFactory {
             } else if (source.is(DamageTypes.IN_FIRE)) {
                 cause = DamageCause.FIRE;
             } else {
-                throw new IllegalStateException(String.format("Unhandled damage of %s by %s from %s", entity, damager, source.getMsgId()));
+                //Ketting start - handle unhandled damage
+                //throw new IllegalStateException(String.format("Unhandled damage of %s by %s from %s", entity, damager, source.getMsgId()));
+                cause = DamageCause.CUSTOM;
+                //Ketting end
             }
             EntityDamageEvent event = new EntityDamageByBlockEvent(damager, entity.getBukkitEntity(), cause, modifiers, modifierFunctions);
             event.setCancelled(cancelled);
@@ -1060,7 +1063,10 @@ public class CraftEventFactory {
             } else if (source.is(DamageTypes.MAGIC)) {
                 cause = DamageCause.MAGIC;
             } else {
-                throw new IllegalStateException(String.format("Unhandled damage of %s by %s from %s", entity, damager.getHandle(), source.getMsgId()));
+                //Ketting start - handle unhandled damage
+                //throw new IllegalStateException(String.format("Unhandled damage of %s by %s from %s", entity, damager.getHandle(), source.getMsgId()));
+                cause = DamageCause.CUSTOM;
+                //Ketting end
             }
             EntityDamageEvent event = new EntityDamageByEntityEvent(damager, entity.getBukkitEntity(), cause, modifiers, modifierFunctions);
             event.setCancelled(cancelled);
@@ -1110,11 +1116,7 @@ public class CraftEventFactory {
             cause = DamageCause.CUSTOM;
         }
 
-        if (cause != null) {
-            return callEntityDamageEvent(null, entity, cause, modifiers, modifierFunctions, cancelled);
-        }else {
-            return new EntityDamageEvent(entity.getBukkitEntity(), DamageCause.CUSTOM, modifiers, modifierFunctions);
-        }//Ketting - handle unhandled damage
+        return callEntityDamageEvent(null, entity, cause, modifiers, modifierFunctions, cancelled);
     }
 
     private static EntityDamageEvent callEntityDamageEvent(Entity damager, Entity damagee, DamageCause cause, Map<DamageModifier, Double> modifiers, Map<DamageModifier, Function<? super Double, Double>> modifierFunctions) {

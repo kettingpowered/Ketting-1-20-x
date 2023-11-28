@@ -26,7 +26,7 @@
 +      int power = bukkitBlock.getBlockPower();
 +      int powerTop = blockTop.getBlockPower();
 +      if (powerTop > power) power = powerTop;
-+      int oldPower = (Boolean) p_52776_.getValue(DoorBlock.POWERED) ? 15 : 0;
++      int oldPower = p_52776_.getValue(DoorBlock.POWERED) ? 15 : 0;
 +
 +      if (oldPower == 0 ^ power == 0) {
 +         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bukkitBlock, oldPower, power);
@@ -40,7 +40,7 @@
           }
  
 -         p_52777_.setBlock(p_52778_, p_52776_.setValue(POWERED, Boolean.valueOf(flag)).setValue(OPEN, Boolean.valueOf(flag)), 2);
-+         p_52777_.setBlock(p_52778_, p_52776_.setValue(POWERED, Boolean.valueOf(flag1)).setValue(OPEN, Boolean.valueOf(flag1)), 2);
++         p_52777_.setBlock(p_52778_, p_52776_.setValue(POWERED, flag1).setValue(OPEN, flag1), 2);
        }
  
     }

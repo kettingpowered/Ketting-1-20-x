@@ -24,7 +24,7 @@
 -               p_220981_.setBlock(p_220982_, this.plant.getStateForPlacement(p_220981_, p_220982_), 2);
 -               this.placeGrownFlower(p_220981_, blockpos, i);
 +               // CraftBukkit start - add event
-+               if (CraftEventFactory.handleBlockSpreadEvent(p_220981_, p_220982_, blockpos, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, Integer.valueOf(i)), 2)) {
++               if (CraftEventFactory.handleBlockSpreadEvent(p_220981_, p_220982_, blockpos, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, i), 2)) {
 +                  p_220981_.setBlock(p_220982_, this.plant.getStateForPlacement(p_220981_, p_220982_), 2);
 +                  this.placeGrownFlower(p_220981_, blockpos, i);
 +               }
@@ -39,7 +39,7 @@
 -                     this.placeGrownFlower(p_220981_, blockpos1, i + 1);
 -                     flag2 = true;
 +                     // CraftBukkit start - add event
-+                     if (CraftEventFactory.handleBlockSpreadEvent(p_220981_, p_220982_, blockpos1, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, Integer.valueOf(i + 1)), 2)) {
++                     if (CraftEventFactory.handleBlockSpreadEvent(p_220981_, p_220982_, blockpos1, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, i + 1), 2)) {
 +                        this.placeGrownFlower(p_220981_, blockpos1, i + 1);
 +                        flag2 = true;
 +                     }
@@ -52,7 +52,7 @@
                 } else {
 -                  this.placeDeadFlower(p_220981_, p_220982_);
 +                  // CraftBukkit start - add event
-+                  if (CraftEventFactory.handleBlockGrowEvent(p_220981_, p_220982_, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, Integer.valueOf(5)), 2)) {
++                  if (CraftEventFactory.handleBlockGrowEvent(p_220981_, p_220982_, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, 5), 2)) {
 +                     this.placeDeadFlower(p_220981_, p_220982_);
 +                  }
 +                  // CraftBukkit end
@@ -60,7 +60,7 @@
              } else {
 -               this.placeDeadFlower(p_220981_, p_220982_);
 +               // CraftBukkit start - add event
-+               if (CraftEventFactory.handleBlockGrowEvent(p_220981_, p_220982_, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, Integer.valueOf(5)), 2)) {
++               if (CraftEventFactory.handleBlockGrowEvent(p_220981_, p_220982_, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, 5), 2)) {
 +                  this.placeDeadFlower(p_220981_, p_220982_);
 +               }
 +               // CraftBukkit end

@@ -12,6 +12,15 @@
  
  public class FireBlock extends BaseFireBlock {
     public static final int MAX_AGE = 15;
+@@ -53,7 +_,7 @@
+    private static final int BURN_EASY = 60;
+    private static final int BURN_MEDIUM = 20;
+    private static final int BURN_HARD = 5;
+-   private final Object2IntMap<Block> igniteOdds = new Object2IntOpenHashMap<>();
++   public final Object2IntMap<Block> igniteOdds = new Object2IntOpenHashMap<>();
+    private final Object2IntMap<Block> burnOdds = new Object2IntOpenHashMap<>();
+ 
+    public FireBlock(BlockBehaviour.Properties p_53425_) {
 @@ -90,7 +_,24 @@
     }
  
@@ -127,7 +136,7 @@
                             }
                          }
                       }
-@@ -205,28 +_,44 @@
+@@ -205,28 +_,55 @@
        return p_53429_.isRainingAt(p_53430_) || p_53429_.isRainingAt(p_53430_.west()) || p_53429_.isRainingAt(p_53430_.east()) || p_53429_.isRainingAt(p_53430_.north()) || p_53429_.isRainingAt(p_53430_.south());
     }
  
@@ -148,26 +157,37 @@
 -         if (p_221154_.nextInt(p_221155_ + 10) < 5 && !p_221151_.isRainingAt(p_221152_)) {
 -            int j = Math.min(p_221155_ + p_221154_.nextInt(5) / 4, 15);
 -            p_221151_.setBlock(p_221152_, this.getStateWithAge(p_221151_, p_221152_, j), 3);
-+   private void trySpread(Level p_53432_, BlockPos p_53433_, int p_53434_, RandomSource p_53435_, int p_53436_, Direction face, BlockPos sourceposition) { // CraftBukkit add sourceposition
++   //Ketting start - mixin inject
++   private BlockPos trySpread$sourceposition;
++   private void trySpread(Level p_53432_, BlockPos p_53433_, int p_53434_, RandomSource p_53435_, int p_53436_, Direction face, BlockPos sourceposition) {
++      this.trySpread$sourceposition = sourceposition;
++      this.trySpread(p_53432_, p_53433_, p_53434_, p_53435_, p_53436_, face);
++      this.trySpread$sourceposition = null;
++   }
++   //Ketting end
++
++   private void trySpread(Level p_53432_, BlockPos p_53433_, int p_53434_, RandomSource p_53435_, int p_53436_, Direction face) {
 +      int i = p_53432_.getBlockState(p_53433_).getFlammability(p_53432_, p_53433_, face);
 +      if (p_53435_.nextInt(p_53434_) < i) {
 +         BlockState blockstate = p_53432_.getBlockState(p_53433_);
 +
-+         // CraftBukkit start
-+         org.bukkit.block.Block theBlock = p_53432_.getWorld().getBlockAt(p_53433_.getX(), p_53433_.getY(), p_53433_.getZ());
-+         org.bukkit.block.Block sourceBlock = p_53432_.getWorld().getBlockAt(sourceposition.getX(), sourceposition.getY(), sourceposition.getZ());
++         if (trySpread$sourceposition != null) { //Ketting
++            // CraftBukkit start
++            org.bukkit.block.Block theBlock = p_53432_.getWorld().getBlockAt(p_53433_.getX(), p_53433_.getY(), p_53433_.getZ());
++            org.bukkit.block.Block sourceBlock = p_53432_.getWorld().getBlockAt(trySpread$sourceposition.getX(), trySpread$sourceposition.getY(), trySpread$sourceposition.getZ());
 +
-+         BlockBurnEvent event = new BlockBurnEvent(theBlock, sourceBlock);
-+         p_53432_.getCraftServer().getPluginManager().callEvent(event);
++            BlockBurnEvent event = new BlockBurnEvent(theBlock, sourceBlock);
++            p_53432_.getCraftServer().getPluginManager().callEvent(event);
 +
-+         if (event.isCancelled()) {
-+            return;
-+         }
++            if (event.isCancelled()) {
++               return;
++            }
 +
-+         if (blockstate.getBlock() instanceof TntBlock && !CraftEventFactory.callTNTPrimeEvent(p_53432_, p_53433_, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.FIRE, null, sourceposition)) {
-+            return;
-+         }
-+         // CraftBukkit end
++            if (blockstate.getBlock() instanceof TntBlock && !CraftEventFactory.callTNTPrimeEvent(p_53432_, p_53433_, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.FIRE, null, trySpread$sourceposition)) {
++               return;
++            }
++            // CraftBukkit end
++         } //Ketting
 +
 +         blockstate.onCaughtFire(p_53432_, p_53433_, face, null);
 +
