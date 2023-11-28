@@ -231,7 +231,7 @@
        LevelStem levelstem = registry.get(LevelStem.OVERWORLD);
 -      ServerLevel serverlevel = new ServerLevel(this, this.executor, this.storageSource, serverleveldata, Level.OVERWORLD, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null);
 +      ServerLevel serverlevel = new ServerLevel(this, this.executor, this.storageSource, serverleveldata, Level.OVERWORLD, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null, World.Environment.NORMAL, this.server.getGenerator(loadLevel$worldName), this.server.getBiomeProvider(loadLevel$worldName));
-+      Ketting.getInstance().getDimensionRegistry().register(this.registryAccess().registryOrThrow(Registries.LEVEL_STEM)); //Ketting
++      Ketting.getInstance().getDimensionRegistry().get().register(this.registryAccess().registryOrThrow(Registries.LEVEL_STEM)); //Ketting
        this.levels.put(Level.OVERWORLD, serverlevel);
        DimensionDataStorage dimensiondatastorage = serverlevel.getDataStorage();
 +      this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_20_R2.scoreboard.CraftScoreboardManager(this, serverlevel.getScoreboard()); // CraftBukkit
@@ -281,7 +281,7 @@
 +               throw new RuntimeException(e);
 +            }
 +
-+            ServerLevel serverlevel1 = new ServerLevel(this, this.executor, source, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false, randomsequences, (World.Environment) Ketting.getInstance().getDimensionRegistry().getKey(resourcekey), gen, biomeProvider);
++            ServerLevel serverlevel1 = new ServerLevel(this, this.executor, source, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false, randomsequences, (World.Environment) Ketting.getInstance().getDimensionRegistry().get().getKey(resourcekey), gen, biomeProvider);
 +
 +            if (serverlevel1.generator != null) {
 +               serverlevel1.getWorld().getPopulators().addAll(serverlevel1.generator.getDefaultPopulators(serverlevel1.getWorld()));
