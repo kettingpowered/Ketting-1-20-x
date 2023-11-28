@@ -8,7 +8,14 @@
  
  public class NetherPortalBlock extends Block {
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
-@@ -52,7 +_,9 @@
+@@ -46,13 +_,15 @@
+    }
+ 
+    public void randomTick(BlockState p_221799_, ServerLevel p_221800_, BlockPos p_221801_, RandomSource p_221802_) {
+-      if (p_221800_.dimensionType().natural() && p_221800_.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) && p_221802_.nextInt(2000) < p_221800_.getDifficulty().getId()) {
++      if (p_221800_.spigotConfig.enableZombiePigmenPortalSpawns && p_221800_.dimensionType().natural() && p_221800_.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) && p_221802_.nextInt(2000) < p_221800_.getDifficulty().getId()) { // Spigot
+          while(p_221800_.getBlockState(p_221801_).is(this)) {
+             p_221801_ = p_221801_.below();
           }
  
           if (p_221800_.getBlockState(p_221801_).isValidSpawn(p_221800_, p_221801_, EntityType.ZOMBIFIED_PIGLIN)) {

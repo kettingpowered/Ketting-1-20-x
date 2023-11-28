@@ -57,6 +57,7 @@
        boolean flag = p_55232_.getValue(POWERED);
        boolean flag1 = p_55233_.hasNeighborSignal(p_55234_) || this.findPoweredRailSignal(p_55233_, p_55234_, p_55232_, true, 0) || this.findPoweredRailSignal(p_55233_, p_55234_, p_55232_, false, 0);
        if (flag1 != flag) {
+-         p_55233_.setBlock(p_55234_, p_55232_.setValue(POWERED, Boolean.valueOf(flag1)), 3);
 +         // CraftBukkit start
 +         int power = flag ? 15 : 0;
 +         int newPower = CraftEventFactory.callRedstoneChange(p_55233_, p_55234_, power, 15 - power).getNewCurrent();
@@ -64,7 +65,7 @@
 +            return;
 +         }
 +         // CraftBukkit end
-          p_55233_.setBlock(p_55234_, p_55232_.setValue(POWERED, Boolean.valueOf(flag1)), 3);
++         p_55233_.setBlock(p_55234_, p_55232_.setValue(POWERED, flag1), 3);
           p_55233_.updateNeighborsAt(p_55234_.below(), this);
 -         if (p_55232_.getValue(SHAPE).isAscending()) {
 +         if (p_55232_.getValue(getShapeProperty()).isAscending()) {

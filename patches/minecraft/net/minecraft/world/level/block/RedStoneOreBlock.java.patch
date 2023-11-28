@@ -41,7 +41,7 @@
        }
  
        super.stepOn(p_154299_, p_154300_, p_154301_, p_154302_);
-@@ -46,16 +_,26 @@
+@@ -46,16 +_,30 @@
        if (p_55473_.isClientSide) {
           spawnParticles(p_55473_, p_55474_);
        } else {
@@ -53,17 +53,20 @@
        return itemstack.getItem() instanceof BlockItem && (new BlockPlaceContext(p_55475_, p_55476_, itemstack, p_55477_)).canPlace() ? InteractionResult.PASS : InteractionResult.SUCCESS;
     }
  
--   private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_) {
-+   //Ketting start - keep original method head
-+   private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_){
-+      interact(p_55493_,p_55494_,p_55495_, null);
++   //Ketting start - mixin inject
++   private static Entity interact$entity = null;
++   private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_, @Nullable Entity entity) { // CraftBukkit - add Entity
++      interact$entity = entity;
++      interact(p_55493_, p_55494_, p_55495_);
++      interact$entity = null;
 +   }
 +   //Ketting end
-+   private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_, @Nullable Entity entity) { // CraftBukkit - add Entity
++
+    private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_) {
        spawnParticles(p_55494_, p_55495_);
        if (!p_55493_.getValue(LIT)) {
 +         // CraftBukkit start
-+         if (entity != null && !CraftEventFactory.callEntityChangeBlockEvent(entity, p_55495_, p_55493_.setValue(RedStoneOreBlock.LIT, true))) {
++         if (interact$entity != null && !CraftEventFactory.callEntityChangeBlockEvent(interact$entity, p_55495_, p_55493_.setValue(RedStoneOreBlock.LIT, true))) {
 +            return;
 +         }
 +         // CraftBukkit end

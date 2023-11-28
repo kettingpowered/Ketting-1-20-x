@@ -17,6 +17,15 @@
  
  public class MushroomBlock extends BushBlock implements BonemealableBlock {
     protected static final float AABB_OFFSET = 3.0F;
+@@ -32,7 +_,7 @@
+    }
+ 
+    public void randomTick(BlockState p_221784_, ServerLevel p_221785_, BlockPos p_221786_, RandomSource p_221787_) {
+-      if (p_221787_.nextInt(25) == 0) {
++      if (p_221787_.nextFloat() < (p_221785_.spigotConfig.mushroomModifier / (100.0f * 25))) { // Spigot - SPIGOT-7159: Better modifier resolution
+          int i = 5;
+          int j = 4;
+ 
 @@ -56,7 +_,7 @@
           }
  
