@@ -42,11 +42,12 @@ Bukkit: 530 / 530
 CraftBukkit: 685 / 685
 <br>
 #### Final patches before beta release
-- [X] KettingCore patch
 - [ ] Forge dispatcher patch
 - [ ] Permissions patch
-- [ ] WorldEdit patch
 - [ ] ForgeCaps patch
+- [ ] ForgeInject patch
+- [ ] Auto update patch
+- [ ] WorldEdit patch
 
 ## How does it work?
 
