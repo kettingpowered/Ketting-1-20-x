@@ -74,13 +74,14 @@
           p_58745_.stopRiding();
           p_58745_.ejectPassengers();
           CompoundTag compoundtag = new CompoundTag();
-@@ -154,9 +_,13 @@
+@@ -154,9 +_,14 @@
     public void storeBee(CompoundTag p_155158_, int p_155159_, boolean p_155160_) {
        this.stored.add(new BeehiveBlockEntity.BeeData(p_155158_, p_155159_, p_155160_ ? 2400 : 600));
     }
 -
     private static boolean releaseOccupant(Level p_155137_, BlockPos p_155138_, BlockState p_155139_, BeehiveBlockEntity.BeeData p_155140_, @Nullable List<Entity> p_155141_, BeehiveBlockEntity.BeeReleaseStatus p_155142_, @Nullable BlockPos p_155143_) {
 -      if ((p_155137_.isNight() || p_155137_.isRaining()) && p_155142_ != BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY) {
++      // CraftBukkit start - This allows us to bypass the night/rain/emergency check
 +      return releaseBee(p_155137_, p_155138_, p_155139_, p_155140_, p_155141_, p_155142_, p_155143_, false);
 +   }
 +

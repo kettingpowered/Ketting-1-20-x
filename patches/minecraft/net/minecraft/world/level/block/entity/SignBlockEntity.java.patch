@@ -16,7 +16,7 @@
  import net.minecraft.server.network.FilteredText;
  import net.minecraft.util.Mth;
  import net.minecraft.world.entity.Entity;
-@@ -27,9 +_,13 @@
+@@ -27,14 +_,18 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
@@ -31,6 +31,12 @@
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int MAX_TEXT_LINE_WIDTH = 90;
     private static final int TEXT_LINE_HEIGHT = 10;
+    @Nullable
+-   private UUID playerWhoMayEdit;
++   public UUID playerWhoMayEdit;
+    private SignText frontText = this.createDefaultSignText();
+    private SignText backText = this.createDefaultSignText();
+    private boolean isWaxed;
 @@ -142,12 +_,13 @@
     public void updateSignText(Player p_278048_, boolean p_278103_, List<FilteredText> p_277990_) {
        if (!this.isWaxed() && p_278048_.getUUID().equals(this.getPlayerWhoMayEdit()) && this.level != null) {

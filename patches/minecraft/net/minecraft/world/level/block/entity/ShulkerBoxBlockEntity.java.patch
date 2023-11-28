@@ -9,7 +9,14 @@
  
  public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity implements WorldlyContainer {
     public static final int COLUMNS = 9;
-@@ -48,6 +_,36 @@
+@@ -42,12 +_,42 @@
+    public static final String ITEMS_TAG = "Items";
+    private static final int[] SLOTS = IntStream.range(0, 27).toArray();
+    private NonNullList<ItemStack> itemStacks = NonNullList.withSize(27, ItemStack.EMPTY);
+-   private int openCount;
++   public int openCount;
+    private ShulkerBoxBlockEntity.AnimationStatus animationStatus = ShulkerBoxBlockEntity.AnimationStatus.CLOSED;
+    private float progress;
     private float progressOld;
     @Nullable
     private final DyeColor color;

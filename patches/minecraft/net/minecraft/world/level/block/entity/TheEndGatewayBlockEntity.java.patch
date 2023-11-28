@@ -31,12 +31,13 @@
  
     public TheEndGatewayBlockEntity(BlockPos p_155813_, BlockState p_155814_) {
        super(BlockEntityType.END_GATEWAY, p_155813_, p_155814_);
-@@ -154,7 +_,7 @@
+@@ -154,7 +_,8 @@
     public static void teleportEntity(Level p_155829_, BlockPos p_155830_, BlockState p_155831_, Entity p_155832_, TheEndGatewayBlockEntity p_155833_) {
        if (p_155829_ instanceof ServerLevel serverlevel && !p_155833_.isCoolingDown()) {
           p_155833_.teleportCooldown = 100;
 -         if (p_155833_.exitPortal == null && p_155829_.dimension() == Level.END) {
-+         if (p_155833_.exitPortal == null && p_155829_.getTypeKey() == LevelStem.END) {
++
++         if (p_155833_.exitPortal == null && p_155829_.getTypeKey() == LevelStem.END) { // CraftBukkit - work in alternate worlds
              BlockPos blockpos = findOrCreateValidTeleportPos(serverlevel, p_155830_);
              blockpos = blockpos.above(10);
              LOGGER.debug("Creating portal at {}", (Object)blockpos);

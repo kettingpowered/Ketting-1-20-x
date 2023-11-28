@@ -48,7 +48,7 @@
           if (itemstack.isEmpty()) {
 -            this.cookingTime[i] = p_238287_;
 +            // CraftBukkit start
-+            CampfireStartEvent event = new CampfireStartEvent(CraftBlock.at(this.level,this.worldPosition), CraftItemStack.asCraftMirror(itemstack), (CampfireRecipe) getCookableRecipe(itemstack).get().toBukkitRecipe());
++            CampfireStartEvent event = new CampfireStartEvent(CraftBlock.at(this.level,this.worldPosition), CraftItemStack.asCraftMirror(p_238286_), (CampfireRecipe) getCookableRecipe(p_238286_).get().toBukkitRecipe());
 +            this.level.getCraftServer().getPluginManager().callEvent(event);
 +            this.cookingTime[i] = event.getTotalCookTime(); // i -> event.getTotalCookTime()
 +            // CraftBukkit end

@@ -12,17 +12,23 @@
     @Nullable
     private List<Pair<Holder<BannerPattern>, DyeColor>> patterns;
  
-@@ -49,6 +_,13 @@
+@@ -46,6 +_,7 @@
+    public static ListTag getItemPatterns(ItemStack p_58488_) {
+       ListTag listtag = null;
+       CompoundTag compoundtag = BlockItem.getBlockEntityData(p_58488_);
++
        if (compoundtag != null && compoundtag.contains("Patterns", 9)) {
           listtag = compoundtag.getList("Patterns", 10).copy();
        }
-+
+@@ -96,6 +_,11 @@
+       }
+ 
+       this.itemPatterns = p_155042_.getList("Patterns", 10);
 +      // CraftBukkit start
-+      if (listtag != null) //Ketting
-+      while (listtag.size() > 20) {
-+         listtag.remove(20);
++      while (this.itemPatterns.size() > 20) {
++         this.itemPatterns.remove(20);
 +      }
 +      // CraftBukkit end
- 
-       return listtag;
+       this.patterns = null;
     }
+ 

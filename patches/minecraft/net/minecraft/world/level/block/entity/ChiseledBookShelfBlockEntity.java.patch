@@ -70,6 +70,15 @@
        this.items.clear();
        ContainerHelper.loadAllItems(p_249911_, this.items);
        this.lastInteractedSlot = p_249911_.getInt("last_interacted_slot");
+@@ -80,7 +_,7 @@
+       ItemStack itemstack = Objects.requireNonNullElse(this.items.get(p_255828_), ItemStack.EMPTY);
+       this.items.set(p_255828_, ItemStack.EMPTY);
+       if (!itemstack.isEmpty()) {
+-         this.updateState(p_255828_);
++         if (level != null) this.updateState(p_255828_); // CraftBukkit - SPIGOT-7381: check for null world
+       }
+ 
+       return itemstack;
 @@ -93,7 +_,7 @@
     public void setItem(int p_256610_, ItemStack p_255789_) {
        if (p_255789_.is(ItemTags.BOOKSHELF_BOOKS)) {
