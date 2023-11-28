@@ -42,7 +42,7 @@ Bukkit: 530 / 530
 CraftBukkit: 685 / 685
 <br>
 #### Final patches before beta release
-- [ ] KettingCore patch
+- [X] KettingCore patch
 - [ ] Forge dispatcher patch
 - [ ] Permissions patch
 - [ ] WorldEdit patch

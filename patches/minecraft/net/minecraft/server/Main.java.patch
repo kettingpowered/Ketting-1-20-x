@@ -31,7 +31,7 @@
  import net.minecraft.server.packs.repository.PackRepository;
  import net.minecraft.server.packs.repository.ServerPacksSource;
  import net.minecraft.util.Mth;
-@@ -52,11 +_,18 @@
+@@ -52,11 +_,19 @@
  import net.minecraft.world.level.levelgen.WorldDimensions;
  import net.minecraft.world.level.levelgen.WorldOptions;
  import net.minecraft.world.level.levelgen.presets.WorldPresets;
@@ -42,6 +42,7 @@
 +import net.minecraft.world.level.storage.*;
 +import org.bukkit.configuration.file.YamlConfiguration;
 +import org.fusesource.jansi.AnsiConsole;
++import org.kettingpowered.ketting.adapters.Bukkit_1_20_2_Adapter;
 +import org.kettingpowered.ketting.adapters.DimensionRegistry_1_20_2_Adapter;
 +import org.kettingpowered.ketting.adapters.Forge_1_20_2_Adapter;
 +import org.kettingpowered.ketting.config.KettingConfig;
@@ -83,7 +84,7 @@
 +
 +      //Ketting start - Initialize Ketting
 +      Ketting ketting = Ketting.init(SharedConstants.getCurrentVersion().getName());
-+      ketting.registerAdapter(new Forge_1_20_2_Adapter());
++      ketting.registerAdapter(new Forge_1_20_2_Adapter(), new Bukkit_1_20_2_Adapter());
 +      //Ketting end
  
        try {

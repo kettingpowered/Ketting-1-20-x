@@ -24,6 +24,8 @@ public class DimensionRegistry_1_20_2_Adapter implements DimensionRegistry<Regis
         return "1.20.2";
     }
 
+    public void reload() {}
+
     public void createDefaults() {
         DIMENSION_REGISTRY = HashBiMap.create(ImmutableMap.<ResourceKey<LevelStem>, World.Environment>builder()
                         .put(LevelStem.OVERWORLD, World.Environment.NORMAL)

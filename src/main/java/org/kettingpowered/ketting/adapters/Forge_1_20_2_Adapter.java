@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.kettingpowered.ketting.adapter.ForgeAdapter;
 import org.kettingpowered.ketting.types.Mod;
 import org.kettingpowered.ketting.types.ModDependency;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -19,6 +20,14 @@ public class Forge_1_20_2_Adapter implements ForgeAdapter {
 
     public String getMcVersion() {
         return "1.20.2";
+    }
+
+    public void reload() {
+        int modCacheSize = modCache.size();
+        int dependencyCacheSize = dependencyCache.size();
+        modCache.clear();
+        dependencyCache.clear();
+        LoggerFactory.getLogger(getClass()).info("Released cache of {} mods and {} dependencies", modCacheSize, dependencyCacheSize);
     }
 
     public @Nullable Mod getMod(String modId) {
