@@ -30,7 +30,7 @@
              this.decreaseEggs(p_154851_, p_154853_, p_154852_);
           }
  
-@@ -85,8 +_,13 @@
+@@ -85,11 +_,21 @@
        if (this.shouldUpdateHatchLevel(p_222645_) && onSand(p_222645_, p_222646_)) {
           int i = p_222644_.getValue(HATCH);
           if (i < 2) {
@@ -44,7 +44,16 @@
 +            // p_222645_.setBlock(p_222646_, p_222644_.setValue(HATCH, Integer.valueOf(i + 1)), 2); // CraftBukkit - handled above
              p_222645_.gameEvent(GameEvent.BLOCK_CHANGE, p_222646_, GameEvent.Context.of(p_222644_));
           } else {
-             p_222645_.playSound((Player)null, p_222646_, SoundEvents.TURTLE_EGG_HATCH, SoundSource.BLOCKS, 0.7F, 0.9F + p_222647_.nextFloat() * 0.2F);
+-            p_222645_.playSound((Player)null, p_222646_, SoundEvents.TURTLE_EGG_HATCH, SoundSource.BLOCKS, 0.7F, 0.9F + p_222647_.nextFloat() * 0.2F);
++            // CraftBukkit start - Call BlockFadeEvent
++            if (CraftEventFactory.callBlockFadeEvent(p_222645_, p_222646_, Blocks.AIR.defaultBlockState()).isCancelled()) {
++               return;
++            }
++            // CraftBukkit end
++            p_222645_.playSound(null, p_222646_, SoundEvents.TURTLE_EGG_HATCH, SoundSource.BLOCKS, 0.7F, 0.9F + p_222647_.nextFloat() * 0.2F);
+             p_222645_.removeBlock(p_222646_, false);
+             p_222645_.gameEvent(GameEvent.BLOCK_DESTROY, p_222646_, GameEvent.Context.of(p_222644_));
+ 
 @@ -100,7 +_,7 @@
                    turtle.setAge(-24000);
                    turtle.setHomePos(p_222646_);

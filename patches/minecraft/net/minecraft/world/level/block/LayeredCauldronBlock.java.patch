@@ -10,14 +10,14 @@
  
  public class LayeredCauldronBlock extends AbstractCauldronBlock {
     public static final int MIN_FILL_LEVEL = 1;
-@@ -51,10 +_,15 @@
+@@ -51,10 +_,14 @@
  
     public void entityInside(BlockState p_153534_, Level p_153535_, BlockPos p_153536_, Entity p_153537_) {
        if (!p_153535_.isClientSide && p_153537_.isOnFire() && this.isEntityInsideContent(p_153534_, p_153536_, p_153537_)) {
 -         p_153537_.clearFire();
 +         // CraftBukkit start
           if (p_153537_.mayInteract(p_153535_, p_153536_)) {
-             this.handleEntityOnFireInside(p_153534_, p_153535_, p_153536_);
+-            this.handleEntityOnFireInside(p_153534_, p_153535_, p_153536_);
 +            if (!lowerFillLevel(p_153534_, p_153535_, p_153536_, p_153537_, CauldronLevelChangeEvent.ChangeReason.EXTINGUISH)) {
 +               return;
 +            }
@@ -37,10 +37,11 @@
 +
 +   public static boolean lowerFillLevel(BlockState p_153560_, Level p_153561_, BlockPos p_153562_, Entity entity, CauldronLevelChangeEvent.ChangeReason reason) {
        int i = p_153560_.getValue(LEVEL) - 1;
-       BlockState blockstate = i == 0 ? Blocks.CAULDRON.defaultBlockState() : p_153560_.setValue(LEVEL, Integer.valueOf(i));
+-      BlockState blockstate = i == 0 ? Blocks.CAULDRON.defaultBlockState() : p_153560_.setValue(LEVEL, Integer.valueOf(i));
 -      p_153561_.setBlockAndUpdate(p_153562_, blockstate);
 -      p_153561_.gameEvent(GameEvent.BLOCK_CHANGE, p_153562_, GameEvent.Context.of(blockstate));
 -   }
++      BlockState blockstate = i == 0 ? Blocks.CAULDRON.defaultBlockState() : p_153560_.setValue(LEVEL, i);
 +      return changeLevel(p_153560_, p_153561_, p_153562_, blockstate, entity, reason);
 +   }
 +

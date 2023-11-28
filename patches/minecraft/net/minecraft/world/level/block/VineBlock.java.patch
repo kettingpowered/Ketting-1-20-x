@@ -16,11 +16,11 @@
     public void randomTick(BlockState p_222655_, ServerLevel p_222656_, BlockPos p_222657_, RandomSource p_222658_) {
        if (p_222656_.getGameRules().getBoolean(GameRules.RULE_DO_VINES_SPREAD)) {
 -         if (p_222658_.nextInt(4) == 0) {
-+      if (p_222656_.random.nextInt(4) == 0 && p_222656_.isAreaLoaded(p_222657_, 4)) { // Forge: check area to prevent loading unloaded chunks
++      if (p_222658_.nextFloat() < (p_222656_.spigotConfig.vineModifier / (100.0f * 4)) && p_222656_.isAreaLoaded(p_222657_, 4)) { // Forge: check area to prevent loading unloaded chunks // Spigot - SPIGOT-7159: Better modifier resolution
              Direction direction = Direction.getRandom(p_222658_);
              BlockPos blockpos = p_222657_.above();
              if (direction.getAxis().isHorizontal() && !p_222655_.getValue(getPropertyForFace(direction))) {
-@@ -172,18 +_,21 @@
+@@ -172,29 +_,33 @@
                       boolean flag1 = p_222655_.getValue(getPropertyForFace(direction4));
                       BlockPos blockpos2 = blockpos4.relative(direction3);
                       BlockPos blockpos3 = blockpos4.relative(direction4);
@@ -45,9 +45,14 @@
 -                           p_222656_.setBlock(blockpos4, this.defaultBlockState().setValue(UP, Boolean.valueOf(true)), 2);
 +                           CraftEventFactory.handleBlockSpreadEvent(p_222656_, source, blockpos4, (BlockState) this.defaultBlockState().setValue(VineBlock.UP, true), 2);
                          }
++                        // CraftBukkit end
                       }
                    } else if (isAcceptableNeighbour(p_222656_, blockpos4, direction)) {
-@@ -194,7 +_,7 @@
+-                     p_222656_.setBlock(p_222657_, p_222655_.setValue(getPropertyForFace(direction), Boolean.valueOf(true)), 2);
++                     CraftEventFactory.handleBlockGrowEvent(p_222656_, p_222657_, (BlockState) p_222655_.setValue(getPropertyForFace(direction), true), 2); // CraftBukkit
+                   }
+ 
+                }
              } else {
                 if (direction == Direction.UP && p_222657_.getY() < p_222656_.getMaxBuildHeight() - 1) {
                    if (this.canSupportAtFace(p_222656_, p_222657_, direction)) {

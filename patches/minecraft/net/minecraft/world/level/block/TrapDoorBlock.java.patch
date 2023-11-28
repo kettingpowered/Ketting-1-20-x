@@ -8,7 +8,7 @@
  
  public class TrapDoorBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
-@@ -102,6 +_,19 @@
+@@ -102,12 +_,25 @@
        if (!p_57548_.isClientSide) {
           boolean flag = p_57548_.hasNeighborSignal(p_57549_);
           if (flag != p_57547_.getValue(POWERED)) {
@@ -26,8 +26,16 @@
 +            }
 +            // CraftBukkit end
              if (p_57547_.getValue(OPEN) != flag) {
-                p_57547_ = p_57547_.setValue(OPEN, Boolean.valueOf(flag));
+-               p_57547_ = p_57547_.setValue(OPEN, Boolean.valueOf(flag));
++               p_57547_ = p_57547_.setValue(OPEN, flag);
                 this.playSound((Player)null, p_57548_, p_57549_, flag);
+             }
+ 
+-            p_57548_.setBlock(p_57549_, p_57547_.setValue(POWERED, Boolean.valueOf(flag)), 2);
++            p_57548_.setBlock(p_57549_, p_57547_.setValue(POWERED, flag), 2);
+             if (p_57547_.getValue(WATERLOGGED)) {
+                p_57548_.scheduleTick(p_57549_, Fluids.WATER, Fluids.WATER.getTickDelay(p_57548_));
+             }
 @@ -148,4 +_,17 @@
  
        return super.updateShape(p_57554_, p_57555_, p_57556_, p_57557_, p_57558_, p_57559_);
