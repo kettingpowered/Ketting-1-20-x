@@ -125,6 +125,8 @@ subprojects {
     repositories {
         maven { url = 'https://nexus.c0d3m4513r.com/repository/Magma/' } // Cached general libraries
         maven { url = 'https://nexus.c0d3m4513r.com/repository/Ketting/' } // Ketting specific libraries
+        //Everything below is not required, but kept for redundancy
+        //maven { url = 'https://maven.pkg.github.com/kettingpowered/KettingCore' } //Needs github token auth
         mavenCentral()
         maven gradleutils.forgeMaven
         maven gradleutils.minecraftLibsMaven
@@ -756,7 +758,7 @@ project(':forge') {
         inputJars.from(baseForgeVersionProperty.map { inputVersion ->
             def output = project.layout.buildDirectory.dir(name).map { it.file("forge-${inputVersion}-universal.jar") }.get().asFile
             project.rootProject.extensions.download.run {
-                src "https://maven.minecraftforge.net/net/minecraftforge/forge/${inputVersion}/forge-${inputVersion}-universal.jar"
+                src "https://nexus.c0d3m4513r.com/repository/Forge/net/minecraftforge/forge/${inputVersion}/forge-${inputVersion}-universal.jar"
                 dest output
             }
             return output
