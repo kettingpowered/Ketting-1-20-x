@@ -21,6 +21,8 @@ import net.minecraftforge.server.permission.nodes.PermissionNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
+import org.kettingpowered.ketting.command.KettingForwardingHandler;
+import org.kettingpowered.ketting.core.Ketting;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -128,6 +130,12 @@ public final class PermissionAPI
                 LOGGER.warn("Identifier for permission handler {} does not match registered one {}", activeHandler.getIdentifier(), selectedPermissionHandler);
 
             LOGGER.info("Successfully initialized permission handler {}", PermissionAPI.activeHandler.getIdentifier());
+
+            //Ketting start
+            var handler = new KettingForwardingHandler(activeHandler);
+            Ketting.LOGGER.info("Forwarding forge permission[{}] to bukkit", activeHandler.getIdentifier());
+            activeHandler = handler;
+            //Ketting end
         }
         catch (ResourceLocationException e)
         {
