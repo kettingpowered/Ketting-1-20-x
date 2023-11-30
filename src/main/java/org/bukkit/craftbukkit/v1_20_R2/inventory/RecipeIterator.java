@@ -38,8 +38,12 @@ public class RecipeIterator implements Iterator<Recipe> {
             current = recipes.next().getValue().values().iterator();
             return next();
         }
-
-        return current.next().toBukkitRecipe();
+        var recipe = current.next();
+        try {
+            return recipe.toBukkitRecipe();
+        } catch (Throwable e) {
+            throw new RuntimeException("Error converting recipe " + recipe.id(), e);
+        }
     }
 
     @Override
