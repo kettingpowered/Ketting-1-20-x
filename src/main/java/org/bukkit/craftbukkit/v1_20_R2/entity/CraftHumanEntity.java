@@ -234,6 +234,12 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         perm.recalculatePermissions();
     }
 
+    //Ketting start
+    public boolean isPermissibleInjected() {
+        return !perm.getClass().getSimpleName().equals(PermissibleBase.class.getSimpleName());
+    }
+    //Ketting end
+
     @Override
     public Set<PermissionAttachmentInfo> getEffectivePermissions() {
         return perm.getEffectivePermissions();

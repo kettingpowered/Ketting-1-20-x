@@ -203,4 +203,15 @@ public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
     }
 
     public abstract Collection<String> getExamples();
+
+    //Ketting start - add forge support
+    private boolean forge = false;
+    public void setForgeCommand() {
+        forge = true;
+    }
+
+    public boolean isForgeCommand() {
+        return forge;
+    }
+    //Ketting end
 }

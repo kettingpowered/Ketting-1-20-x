@@ -242,6 +242,7 @@ import org.bukkit.structure.StructureManager;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
 import org.jetbrains.annotations.NotNull;
+import org.kettingpowered.ketting.command.ForgeCommandWrapper;
 import org.kettingpowered.ketting.internal.KettingConstants;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -447,19 +448,33 @@ public final class CraftServer implements Server {
         }
 
         if (type == PluginLoadOrder.POSTWORLD) {
-            // Spigot start - Allow vanilla commands to be forced to be the main command
-            setVanillaCommands(true);
-            commandMap.setFallbackCommands();
-            setVanillaCommands(false);
-            // Spigot end
-            commandMap.registerServerAliases();
+            //Ketting start
+            doSync(console.vanillaCommandDispatcher);
+        }
+    }
+
+    private boolean firstSync = true;
+    public void doSync(Commands dispatcher) {
+        // Spigot start - Allow vanilla commands to be forced to be the main command
+        setVanillaCommands(true);
+        setForgeCommands(true, dispatcher); //Ketting
+        commandMap.setFallbackCommands();
+        setVanillaCommands(false);
+        setForgeCommands(false, dispatcher); //Ketting
+        // Spigot end
+        commandMap.registerServerAliases();
+
+        if (firstSync) {
             DefaultPermissions.registerCorePermissions();
             CraftDefaultPermissions.registerCorePermissions();
             loadCustomPermissions();
             helpMap.initializeCommands();
-            syncCommands();
-        }
+        } else helpMap.updateCommands();
+
+        syncCommands();
+        firstSync = false;
     }
+    //Ketting end
 
     public void disablePlugins() {
         pluginManager.disablePlugins();
@@ -478,6 +493,25 @@ public final class CraftServer implements Server {
                 }
             } else if (!first) {
                 commandMap.register("minecraft", wrapper);
+            }
+            // Spigot end
+        }
+    }
+
+    //Ketting start
+    private void setForgeCommands(boolean first, Commands dispatcher) {
+        // Build a list of all Forge commands and create wrappers
+        for (CommandNode<CommandSourceStack> cmd : dispatcher.getDispatcher().getRoot().getChildren()) {
+            // Spigot start
+            ForgeCommandWrapper wrapper = new ForgeCommandWrapper(dispatcher, cmd);
+            if (org.spigotmc.SpigotConfig.replaceCommands.contains( wrapper.getName() ) ) {
+                if (first) {
+                    commandMap.register("forge", wrapper);
+                    cmd.setForgeCommand();
+                }
+            } else if (!first) {
+                commandMap.register("forge", wrapper);
+                cmd.setForgeCommand();
             }
             // Spigot end
         }
@@ -504,6 +538,19 @@ public final class CraftServer implements Server {
                 }
 
                 dispatcher.getDispatcher().getRoot().addChild(node);
+            } else if (command instanceof ForgeCommandWrapper forge) {
+                LiteralCommandNode<CommandSourceStack> node = (LiteralCommandNode<CommandSourceStack>) forge.forgeCommand;
+                if (!node.getLiteral().equals(label)) {
+                    LiteralCommandNode<CommandSourceStack> clone = new LiteralCommandNode(label, node.getCommand(), node.getRequirement(), node.getRedirect(), node.getRedirectModifier(), node.isFork());
+
+                    for (CommandNode<CommandSourceStack> child : node.getChildren()) {
+                        clone.addChild(child);
+                    }
+                    node = clone;
+                }
+
+                dispatcher.getForgeDispatcher().unwrap().getRoot().addChild(node);
+                //Ketting end
             } else {
                 new BukkitCommandWrapper(this, entry.getValue()).register(dispatcher.getDispatcher(), label);
             }

@@ -32,7 +32,7 @@
     public boolean hasPermission(int p_81370_) {
 +      // CraftBukkit start
 +      CommandNode currentCommand = this.currentCommand;
-+      if (currentCommand != null) {
++      if (currentCommand != null && !currentCommand.isForgeCommand()) { //Ketting - skip if forge command
 +         return hasPermission(p_81370_, org.bukkit.craftbukkit.v1_20_R2.command.VanillaCommandWrapper.getPermission(currentCommand));
 +      }
 +      // CraftBukkit end

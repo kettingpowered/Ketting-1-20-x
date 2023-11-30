@@ -7,12 +7,13 @@
  import com.google.common.collect.Maps;
  import com.mojang.brigadier.CommandDispatcher;
  import com.mojang.brigadier.ParseResults;
-@@ -10,9 +_,12 @@
+@@ -10,9 +_,13 @@
  import com.mojang.brigadier.builder.RequiredArgumentBuilder;
  import com.mojang.brigadier.context.CommandContextBuilder;
  import com.mojang.brigadier.exceptions.CommandSyntaxException;
 +import com.mojang.brigadier.suggestion.SuggestionProvider;
  import com.mojang.brigadier.tree.CommandNode;
++import com.mojang.brigadier.tree.LiteralCommandNode;
  import com.mojang.brigadier.tree.RootCommandNode;
  import com.mojang.logging.LogUtils;
 +
@@ -100,7 +101,7 @@
     }
  
     public static <S> ParseResults<S> mapSource(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
-@@ -236,12 +_,59 @@
+@@ -236,12 +_,68 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }
  
@@ -129,11 +130,16 @@
 +      String cmd = args[0];
 +      if (cmd.startsWith("minecraft:")) cmd = cmd.substring("minecraft:".length());
 +      if (cmd.startsWith("bukkit:")) cmd = cmd.substring("bukkit:".length());
++      if (cmd.startsWith("forge:")) {
++         setForgeCommand(true);
++         cmd = cmd.substring("forge:".length());
++      }
 +
 +      // Block disallowed commands
 +      if (cmd.equalsIgnoreCase("stop") || cmd.equalsIgnoreCase("kick") || cmd.equalsIgnoreCase("op")
 +              || cmd.equalsIgnoreCase("deop") || cmd.equalsIgnoreCase("ban") || cmd.equalsIgnoreCase("ban-ip")
 +              || cmd.equalsIgnoreCase("pardon") || cmd.equalsIgnoreCase("pardon-ip") || cmd.equalsIgnoreCase("reload")) {
++         setForgeCommand(false);
 +         return 0;
 +      }
 +
@@ -143,7 +149,11 @@
 +      }
 +
 +      String newCommand = joiner.join(args);
-+      return this.performPrefixedCommand(p_230958_, newCommand, newCommand);
++      try {
++         return this.performPrefixedCommand(p_230958_, newCommand, newCommand);
++      } finally {
++         setForgeCommand(false);
++      }
 +   }
 +   // CraftBukkit end
 +
@@ -154,7 +164,7 @@
 +
 +   public int performPrefixedCommand(CommandSourceStack commandlistenerwrapper, String s, String label) {
 +      s = s.startsWith("/") ? s.substring(1) : s;
-+      return this.performCommand(this.dispatcher.parse(s, commandlistenerwrapper), s, label);
++      return this.performCommand(this.getCorrectDispatcher(s).unwrap().parse(s, commandlistenerwrapper), s, label);
 +      // CraftBukkit end
 +   }
 +
@@ -180,7 +190,7 @@
 +               }
 +               return 1;
 +            }
-+            return this.dispatcher.execute(event.getParseResults());
++            return this.getCorrectDispatcher(p_242841_).unwrap().execute(event.getParseResults());
           } catch (CommandRuntimeException commandruntimeexception) {
              commandsourcestack.sendFailure(commandruntimeexception.getComponent());
              return 0;
@@ -257,7 +267,7 @@
           if (commandnode.canUse(p_82115_)) {
              ArgumentBuilder<SharedSuggestionProvider, ?> argumentbuilder = (ArgumentBuilder)commandnode.createBuilder();
              argumentbuilder.requires((p_82126_) -> {
-@@ -364,7 +_,13 @@
+@@ -364,7 +_,44 @@
     }
  
     public CommandDispatcher<CommandSourceStack> getDispatcher() {
@@ -268,6 +278,37 @@
 +
 +   public Wrapper<CommandDispatcher<CommandSourceStack>> getForgeDispatcher() {
 +      return Wrapper.wrap(this.forgeDispatcher);
++   }
++
++   //Ketting start - dispatcher correction
++   private boolean forgeCommand = false;
++   public void setForgeCommand(boolean forgeCommand) {
++      this.forgeCommand = forgeCommand;
++   }
++
++   public Wrapper<CommandDispatcher<CommandSourceStack>> getCorrectDispatcher(String cmd) {
++      if (forgeCommand) return getForgeDispatcher();
++
++      String literal = cmd.split(" ")[0]; //the command root, ex. deop
++      if (literal.startsWith("/"))
++         literal = literal.substring(1);
++      if (literal.startsWith("forge:"))
++         return getForgeDispatcher();
++
++      final String search = literal;
++      CommandNode<CommandSourceStack> found = getForgeDispatcher().unwrap()
++              .getRoot()
++              .getChildren()
++              .stream()
++              .filter(node -> node instanceof LiteralCommandNode)
++              .filter(node -> ((LiteralCommandNode<?>) node).getLiteral().equals(search))
++              .findFirst()
++              .orElse(null);
++
++      if (found != null)
++         return getForgeDispatcher();
++
++      return Wrapper.wrap(getDispatcher()); //Call getDispatcher so we can still redirect if needed
     }
  
     @Nullable

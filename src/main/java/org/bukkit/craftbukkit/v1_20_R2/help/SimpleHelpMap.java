@@ -26,6 +26,8 @@ import org.bukkit.help.HelpTopic;
 import org.bukkit.help.HelpTopicComparator;
 import org.bukkit.help.HelpTopicFactory;
 import org.bukkit.help.IndexHelpTopic;
+import org.kettingpowered.ketting.command.ForgeCommandWrapper;
+import org.kettingpowered.ketting.core.Ketting;
 
 /**
  * Standard implementation of {@link HelpMap} for CraftBukkit servers.
@@ -110,6 +112,13 @@ public class SimpleHelpMap implements HelpMap {
                 addTopic(topic);
             }
         }
+    }
+
+    public synchronized void updateCommands() {
+        helpTopics.clear();
+        initializeGeneralTopics();
+        initializeCommands();
+        Ketting.LOGGER.info("Reloaded {} help topics", helpTopics.size());
     }
 
     /**
@@ -203,6 +212,10 @@ public class SimpleHelpMap implements HelpMap {
         if (command instanceof VanillaCommandWrapper) {
             return "Minecraft";
         }
+        //Ketting start
+        if (command instanceof ForgeCommandWrapper)
+            return "Forge";
+        //Ketting end
         if (command instanceof BukkitCommand) {
             return "Bukkit";
         }

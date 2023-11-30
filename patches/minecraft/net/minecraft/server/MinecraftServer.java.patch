@@ -814,7 +814,7 @@
        }).thenAcceptAsync((p_248090_) -> {
           this.resources.close();
           this.resources = p_248090_;
-+         this.server.syncCommands(); // SPIGOT-5884: Lost on reload
++         this.server.doSync(p_248090_.managers().commands); //Ketting - sync forge commands
 +         Ketting.getInstance().reload(); //Ketting
           this.packRepository.setSelected(p_129862_);
           WorldDataConfiguration worlddataconfiguration = new WorldDataConfiguration(getSelectedPacks(this.packRepository), this.worldData.enabledFeatures());
