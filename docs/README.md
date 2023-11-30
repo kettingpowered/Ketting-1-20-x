@@ -39,7 +39,7 @@ Ketting is still in development and is not ready for production use.
 ### Final patches before beta release
 - [ ] Forge dispatcher patch
 - [ ] Permissions patch
-- [ ] ForgeCaps patch
+- [X] ForgeCaps patch
 - [ ] ForgeInject patch
 - [ ] Auto update patch
 - [ ] WorldEdit patch
