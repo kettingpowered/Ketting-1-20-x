@@ -898,6 +898,11 @@ public class CraftEventFactory {
 
         victim.expToDrop = event.getDroppedExp();
 
+        //Ketting start - ignore drops for now, will be called later in callPlayerDeathEvent
+        if (victim instanceof ServerPlayer)
+            return event;
+        //Ketting end
+
         for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {
             if (stack == null || stack.getType() == Material.AIR || stack.getAmount() == 0) continue;
 

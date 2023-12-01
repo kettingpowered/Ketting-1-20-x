@@ -1,9 +1,15 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -13,6 +_,7 @@
- import java.util.Optional;
- import java.util.OptionalInt;
- import java.util.Set;
+@@ -8,11 +_,8 @@
+ import com.mojang.serialization.Dynamic;
+ import java.net.InetSocketAddress;
+ import java.net.SocketAddress;
+-import java.util.Collection;
+-import java.util.List;
+-import java.util.Optional;
+-import java.util.OptionalInt;
+-import java.util.Set;
++import java.util.*;
 +import java.util.concurrent.atomic.AtomicReference;
  import javax.annotation.Nullable;
  import net.minecraft.BlockUtil;
@@ -319,7 +325,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.addCategory("Player being ticked");
-@@ -562,13 +_,17 @@
+@@ -562,16 +_,55 @@
     }
  
     private void updateScoreForCriteria(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -330,14 +336,89 @@
        });
     }
  
-+   //Ketting TODO - add our own version here from Magma
-+   //TODO - implement getForgeCapturesAndClear();
     public void die(DamageSource p_9035_) {
        this.gameEvent(GameEvent.ENTITY_DIE);
 +      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_9035_)) return;
        boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES);
-       if (flag) {
-          Component component = this.getCombatTracker().getDeathMessage();
+-      if (flag) {
+-         Component component = this.getCombatTracker().getDeathMessage();
++      // CraftBukkit start - fire PlayerDeathEvent
++      if (this.dead) {
++         return;
++      }
++      boolean keepInventory = this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || this.isSpectator();
++
++      //Ketting start
++      Inventory copy = new Inventory(this);
++      copy.replaceWith(getInventory()); // Create a deep copy
++
++      if (!this.isSpectator()) {
++         this.dropAllDeathLoot(p_9035_);
++      }
++
++      List<org.bukkit.inventory.ItemStack> capturedDrops = new ArrayList<>(this.drops);
++      this.drops.clear();
++
++      Component defaultMessage = this.getCombatTracker().getDeathMessage();
++      String deathmessage = defaultMessage.getString();
++      keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
++      org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, capturedDrops, deathmessage, keepInventory); //Ketting - capturedDrops
++      //Ketting end
++
++      // SPIGOT-943 - only call if they have an inventory open
++      if (this.containerMenu != this.inventoryMenu) {
++         this.closeContainer();
++      }
++
++      String deathMessage = event.getDeathMessage();
++
++      if (deathMessage != null && deathMessage.length() > 0 && flag) { // TODO: allow plugins to override?
++         Component component;
++
++         if (deathMessage.equals(deathmessage)) {
++            component = this.getCombatTracker().getDeathMessage();
++         } else {
++            component = org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage.fromStringOrNull(deathMessage);
++         }
++
+          this.connection.send(new ClientboundPlayerCombatKillPacket(this.getId(), component), PacketSendListener.exceptionallySend(() -> {
+             int i = 256;
+             String s = component.getString(256);
+@@ -582,6 +_,7 @@
+             return new ClientboundPlayerCombatKillPacket(this.getId(), component2);
+          }));
+          Team team = this.getTeam();
++
+          if (team != null && team.getDeathMessageVisibility() != Team.Visibility.ALWAYS) {
+             if (team.getDeathMessageVisibility() == Team.Visibility.HIDE_FOR_OTHER_TEAMS) {
+                this.server.getPlayerList().broadcastSystemToTeam(this, component);
+@@ -600,12 +_,23 @@
+          this.tellNeutralMobsThatIDied();
+       }
+ 
+-      if (!this.isSpectator()) {
+-         this.dropAllDeathLoot(p_9035_);
++      // SPIGOT-5478 must be called manually now
++      this.dropExperience();
++      // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
++      if (!event.getKeepInventory()) {
++         this.getInventory().clearContent();
++      } else { //Ketting - if keepInventory is modified by a plugin, reset the inventory and clear the forge captures
++         this.getInventory().replaceWith(copy);
++         getForgeCapturesAndClear();
+       }
+ 
+-      this.getScoreboard().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this.getScoreboardName(), Score::increment);
++      this.setCamera(this); // Remove spectated target
++      // CraftBukkit end
++
++      // CraftBukkit - Get our scores instead
++      this.level().getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.DEATH_COUNT, this.getScoreboardName(), Score::increment);
+       LivingEntity livingentity = this.getKillCredit();
++
+       if (livingentity != null) {
+          this.awardStat(Stats.ENTITY_KILLED_BY.get(livingentity.getType()));
+          livingentity.awardKillScore(this, this.deathScore, p_9035_);
 @@ -638,10 +_,13 @@
           this.increaseScore(p_9051_);
           String s = this.getScoreboardName();
