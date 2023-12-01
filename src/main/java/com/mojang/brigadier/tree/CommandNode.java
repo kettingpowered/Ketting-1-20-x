@@ -73,17 +73,26 @@ public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
 
     // CraftBukkit start
     public synchronized boolean canUse(final S source) {
-        if (source instanceof CommandSourceStack) {
+        if (source instanceof CommandSourceStack src) {
             try {
-                ((CommandSourceStack) source).currentCommand = this;
+                src.currentCommand = this;
+                src.isForgeCommand = forge;
                 return requirement.test(source);
             } finally {
-                ((CommandSourceStack) source).currentCommand = null;
+                src.currentCommand = null;
+                src.isForgeCommand = false;
             }
         }
         // CraftBukkit end
         return requirement.test(source);
     }
+
+    //Ketting start - add forge support
+    private boolean forge = false;
+    public void setForgeCommand() {
+        forge = true;
+    }
+    //Ketting end
 
     public void addChild(final CommandNode<S> node) {
         if (node instanceof RootCommandNode) {
@@ -203,15 +212,4 @@ public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
     }
 
     public abstract Collection<String> getExamples();
-
-    //Ketting start - add forge support
-    private boolean forge = false;
-    public void setForgeCommand() {
-        forge = true;
-    }
-
-    public boolean isForgeCommand() {
-        return forge;
-    }
-    //Ketting end
 }
