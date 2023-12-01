@@ -38,7 +38,7 @@
  import net.minecraft.server.gui.MinecraftServerGui;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
-@@ -50,7 +_,16 @@
+@@ -50,7 +_,18 @@
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
@@ -52,10 +52,12 @@
 +import org.bukkit.craftbukkit.v1_20_R2.SpigotTimings;
 +import org.bukkit.event.server.RemoteServerCommandEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
++import org.kettingpowered.ketting.adapters.BetterServerGUI_1_20_2_Adapter;
++import org.kettingpowered.ketting.common.betterservergui.BetterServerGUI;
  import org.slf4j.Logger;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
-@@ -60,31 +_,66 @@
+@@ -60,31 +_,68 @@
     public final List<ConsoleInput> consoleInput = Collections.synchronizedList(Lists.newArrayList());
     @Nullable
     private QueryThreadGs4 queryThreadGs4;
@@ -68,6 +70,8 @@
     @Nullable
     private MinecraftServerGui gui;
     @Nullable
++   public BetterServerGUI betterGui; //Ketting
++   @Nullable
     private final TextFilterClient textFilterClient;
 +   @Nullable
 +   private net.minecraft.client.server.LanServerPinger dediLanPinger;
@@ -255,6 +259,23 @@
        }
     }
  
+@@ -251,9 +_,16 @@
+          this.textFilterClient.close();
+       }
+ 
++      //Ketting start
++      /*
+       if (this.gui != null) {
+          this.gui.close();
+       }
++      */
++      if (this.betterGui != null) {
++         this.betterGui.close();
++      }
++      //Ketting end
+ 
+       if (this.rconThread != null) {
+          this.rconThread.stop();
 @@ -263,6 +_,10 @@
           this.queryThreadGs4.stop();
        }
@@ -290,6 +311,35 @@
     }
  
     public boolean isDedicatedServer() {
+@@ -319,14 +_,26 @@
+    }
+ 
+    public void showGui() {
++      //Ketting start
++      /*
+       if (this.gui == null) {
+          this.gui = MinecraftServerGui.showFrameFor(this);
+       }
+-
++      */
++      if (this.betterGui == null) {
++         final BetterServerGUI_1_20_2_Adapter adapter = new BetterServerGUI_1_20_2_Adapter(this);
++         this.betterGui = new BetterServerGUI.Builder()
++                 .setAdapter(adapter)
++                 .build();
++         adapter.startAppender(this.betterGui);
++         this.addTickable(betterGui::tick);
++      }
++      //Ketting end
+    }
+ 
+    public boolean hasGui() {
+-      return this.gui != null;
++      //return this.gui != null; //Ketting
++      return this.betterGui != null;
+    }
+ 
+    public boolean isCommandBlockEnabled() {
 @@ -478,15 +_,51 @@
     }
  

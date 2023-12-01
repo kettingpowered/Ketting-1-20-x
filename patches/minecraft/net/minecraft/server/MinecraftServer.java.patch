@@ -28,6 +28,14 @@
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
+@@ -71,6 +_,7 @@
+ import net.minecraft.resources.ResourceKey;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.bossevents.CustomBossEvents;
++import net.minecraft.server.dedicated.DedicatedServer;
+ import net.minecraft.server.level.DemoMode;
+ import net.minecraft.server.level.PlayerRespawnLogic;
+ import net.minecraft.server.level.ServerChunkCache;
 @@ -153,12 +_,22 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.level.storage.WorldData;
@@ -810,11 +818,13 @@
     }
  
     public boolean isReady() {
-@@ -1310,6 +_,8 @@
+@@ -1310,6 +_,10 @@
        }).thenAcceptAsync((p_248090_) -> {
           this.resources.close();
           this.resources = p_248090_;
 +         this.server.doSync(p_248090_.managers().commands); //Ketting - sync forge commands
++         if (this instanceof DedicatedServer ded && ded.betterGui != null)
++            ded.betterGui.reload();
 +         Ketting.getInstance().reload(); //Ketting
           this.packRepository.setSelected(p_129862_);
           WorldDataConfiguration worlddataconfiguration = new WorldDataConfiguration(getSelectedPacks(this.packRepository), this.worldData.enabledFeatures());
