@@ -76,23 +76,14 @@ public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
         if (source instanceof CommandSourceStack src) {
             try {
                 src.currentCommand = this;
-                src.isForgeCommand = forge;
                 return requirement.test(source);
             } finally {
                 src.currentCommand = null;
-                src.isForgeCommand = false;
             }
         }
         // CraftBukkit end
         return requirement.test(source);
     }
-
-    //Ketting start - add forge support
-    private boolean forge = false;
-    public void setForgeCommand() {
-        forge = true;
-    }
-    //Ketting end
 
     public void addChild(final CommandNode<S> node) {
         if (node instanceof RootCommandNode) {

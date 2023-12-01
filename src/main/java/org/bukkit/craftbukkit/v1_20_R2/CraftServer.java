@@ -242,6 +242,7 @@ import org.bukkit.structure.StructureManager;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
 import org.jetbrains.annotations.NotNull;
+import org.kettingpowered.ketting.command.ForgeCommand;
 import org.kettingpowered.ketting.command.ForgeCommandWrapper;
 import org.kettingpowered.ketting.internal.KettingConstants;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -507,11 +508,11 @@ public final class CraftServer implements Server {
             if (org.spigotmc.SpigotConfig.replaceCommands.contains( wrapper.getName() ) ) {
                 if (first) {
                     commandMap.register("forge", wrapper);
-                    cmd.setForgeCommand();
+                    ForgeCommand.addForgeCommand(cmd);
                 }
             } else if (!first) {
                 commandMap.register("forge", wrapper);
-                cmd.setForgeCommand();
+                ForgeCommand.addForgeCommand(cmd);
             }
             // Spigot end
         }

@@ -9,9 +9,11 @@
  import net.minecraft.ChatFormatting;
  import net.minecraft.commands.arguments.EntityAnchorArgument;
  import net.minecraft.core.Registry;
-@@ -40,7 +_,7 @@
+@@ -39,8 +_,9 @@
+ import net.minecraft.world.level.dimension.DimensionType;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
++import org.kettingpowered.ketting.command.ForgeCommand;
  
 -public class CommandSourceStack implements SharedSuggestionProvider {
 +public class CommandSourceStack implements SharedSuggestionProvider, net.minecraftforge.common.extensions.IForgeCommandSourceStack {
@@ -33,7 +35,7 @@
     public boolean hasPermission(int p_81370_) {
 +      // CraftBukkit start
 +      CommandNode currentCommand = this.currentCommand;
-+      if (currentCommand != null && !isForgeCommand) { //Ketting - skip if forge command
++      if (currentCommand != null && !ForgeCommand.checkIfForgeCommand(currentCommand)) { //Ketting - skip if forge command
 +         return hasPermission(p_81370_, org.bukkit.craftbukkit.v1_20_R2.command.VanillaCommandWrapper.getPermission(currentCommand));
 +      }
 +      // CraftBukkit end
