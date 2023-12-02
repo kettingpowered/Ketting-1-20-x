@@ -134,7 +134,7 @@
 +         // CraftBukkit start - these are spawned serialized (DefinedStructure) and we don't call an add event below at the moment due to ordering complexities
 +         p_143065_.addWorldGenChunkEntities(EntityType.loadEntitiesRecursive(p_143066_, p_143065_).filter((entity) -> {
 +            boolean needsRemoval = false;
-+            net.minecraft.server.MinecraftServer server = p_143065_.getCraftServer().getServer();
++            net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
 +            if (!server.areNpcsEnabled() && entity instanceof net.minecraft.world.entity.npc.Npc) {
 +               entity.discard();
 +               needsRemoval = true;

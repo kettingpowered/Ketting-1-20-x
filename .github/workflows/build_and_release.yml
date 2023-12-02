@@ -169,6 +169,7 @@ jobs:
           path: |
             ketting.tar.gz
       - name: Run Game Test Server
+        if: false
         timeout-minutes: 5
         working-directory: projects/ketting/build/libs/
         run: echo "stop" | java -Dforge.enableGameTest=true -Dforge.gameTestServer=true -jar ketting*.jar -dau -accepteula

@@ -130,7 +130,7 @@ public final class CraftPlayerProfile implements PlayerProfile {
     }
 
     private CraftPlayerProfile getUpdatedProfile() {
-        MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
+        DedicatedServer server = ((CraftServer) Bukkit.getServer()).getServer();
         GameProfile profile = this.buildGameProfile();
 
         // If missing, look up the uuid by name:

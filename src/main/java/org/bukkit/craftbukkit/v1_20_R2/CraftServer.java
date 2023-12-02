@@ -264,8 +264,8 @@ public final class CraftServer implements Server {
     private final StandardMessenger messenger = new StandardMessenger();
     private final SimplePluginManager pluginManager = new SimplePluginManager(this, commandMap);
     private final StructureManager structureManager;
-    protected final MinecraftServer console;
-    protected final PlayerList playerList;
+    protected final DedicatedServer console;
+    protected final DedicatedPlayerList playerList;
     private final Map<String, World> worlds = new LinkedHashMap<String, World>();
     private final Map<Class<?>, Registry<?>> registries = new HashMap<>();
     private YamlConfiguration configuration;
@@ -295,9 +295,9 @@ public final class CraftServer implements Server {
         CraftItemFactory.instance();
     }
 
-    public CraftServer(MinecraftServer console, PlayerList playerList) {
+    public CraftServer(DedicatedServer console, PlayerList playerList) {
         this.console = console;
-        this.playerList = playerList;
+        this.playerList = (DedicatedPlayerList) playerList;
         this.playerView = Collections.unmodifiableList(Lists.transform(playerList.players, new Function<ServerPlayer, CraftPlayer>() {
             @Override
             public CraftPlayer apply(ServerPlayer player) {
@@ -788,10 +788,7 @@ public final class CraftServer implements Server {
 
     // NOTE: Temporary calls through to server.properies until its replaced
     private DedicatedServerProperties getProperties() {
-        if (this.console instanceof DedicatedServer dedicatedServer)
-            return dedicatedServer.getProperties();
-        else
-            return new DedicatedServerProperties(new Properties(), console.options);
+        return this.console.getProperties();
     }
     // End Temporary calls
 
@@ -879,8 +876,8 @@ public final class CraftServer implements Server {
         return new ArrayList<World>(worlds.values());
     }
 
-    public <T extends PlayerList> T getHandle() throws ClassCastException {
-        return (T) playerList; // Ketting - if this is not what we expect... well too bad. I'm sorry you feel that way.
+    public DedicatedPlayerList getHandle() {
+        return playerList;
     }
 
     // NOTE: Should only be called from DedicatedServer.ah()
@@ -929,13 +926,8 @@ public final class CraftServer implements Server {
         configuration = YamlConfiguration.loadConfiguration(getConfigFile());
         commandsConfiguration = YamlConfiguration.loadConfiguration(getCommandsConfigFile());
 
-        DedicatedServerProperties config;
-        if (console instanceof DedicatedServer dedicatedServer){
-            dedicatedServer.settings = new DedicatedServerSettings(console.options);
-            config = dedicatedServer.settings.getProperties();
-        }else {
-            config = new DedicatedServerProperties(new Properties(), console.options);
-        }
+        console.settings = new DedicatedServerSettings(console.options);
+        DedicatedServerProperties config = console.settings.getProperties();
 
         console.setPvpAllowed(config.pvp);
         console.setFlightAllowed(config.allowFlight);
@@ -1189,7 +1181,7 @@ public final class CraftServer implements Server {
         }
 
         ResourceKey<net.minecraft.world.level.Level> worldKey;
-        String levelName = this.getProperties().levelName;
+        String levelName = this.getServer().getProperties().levelName;
         if (name.equals(levelName + "_nether")) {
             worldKey = net.minecraft.world.level.Level.NETHER;
         } else if (name.equals(levelName + "_the_end")) {
@@ -1206,8 +1198,7 @@ public final class CraftServer implements Server {
             return null;
         }
 
-        if (console instanceof DedicatedServer dedicatedServer)
-            dedicatedServer.initWorld(internal, worlddata, worlddata, worlddata.worldGenOptions());
+        console.initWorld(internal, worlddata, worlddata, worlddata.worldGenOptions());
 
         internal.setSpawnSettings(true, true);
         console.addLevel(internal);
@@ -1268,8 +1259,8 @@ public final class CraftServer implements Server {
         return true;
     }
 
-    public <T extends MinecraftServer> T getServer() throws ClassCastException {
-        return (T) console; // Ketting - if this is not what we expect... well too bad. I'm sorry you feel that way.
+    public DedicatedServer getServer() {
+        return console;
     }
 
     @Override
@@ -1896,8 +1887,7 @@ public final class CraftServer implements Server {
     @Override
     public void setWhitelist(boolean value) {
         playerList.setUsingWhiteList(value);
-        if (console instanceof DedicatedServer dedicatedServer)
-            dedicatedServer.storeUsingWhiteList(value);
+        console.storeUsingWhiteList(value);
     }
 
     @Override
