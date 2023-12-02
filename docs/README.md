@@ -35,12 +35,8 @@ that enables the use of Bukkit plugins on Forge servers.
 ## Notice
 
 Ketting is still in development and is not ready for production use.
-
-### Final patches before beta release
-- [X] Player death event patch
-- [X] ForgeInject patch
-- [X] Auto update patch
-- [X] WorldEdit patch
+<br>
+Current status: **beta**
 
 ## How does it work?
 
