@@ -39,7 +39,7 @@ Ketting is still in development and is not ready for production use.
 ### Final patches before beta release
 - [X] Player death event patch
 - [X] ForgeInject patch
-- [ ] Auto update patch
+- [X] Auto update patch
 - [ ] WorldEdit patch
 
 ## How does it work?
