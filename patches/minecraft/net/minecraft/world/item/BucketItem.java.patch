@@ -20,8 +20,7 @@
 +import org.bukkit.event.player.PlayerBucketFillEvent;
  
  public class BucketItem extends Item implements DispensibleContainerItem {
--   private final Fluid content;
-+   public final Fluid content;
+    private final Fluid content;
  
 +   // Forge: Use the other constructor that takes a Supplier
 +   @Deprecated
@@ -155,7 +154,7 @@
                 LiquidBlockContainer liquidblockcontainer1 = (LiquidBlockContainer)$$7;
                 if (this.content == Fluids.WATER) {
                    liquidblockcontainer1.placeLiquid(p_150717_, p_150718_, blockstate, flowingfluid.getSource(false));
-@@ -166,8 +_,24 @@
+@@ -166,8 +_,30 @@
     }
  
     protected void playEmptySound(@Nullable Player p_40696_, LevelAccessor p_40697_, BlockPos p_40698_) {
@@ -176,6 +175,12 @@
 +
 +   private final java.util.function.Supplier<? extends Fluid> fluidSupplier;
 +   public Fluid getFluid() { return fluidSupplier.get(); }
++
++   //Ketting start - fix transformer error
++   public Fluid getContent() {
++      return content;
++   }
++   //Ketting end
 +
 +   protected boolean canBlockContainFluid(Level worldIn, BlockPos posIn, BlockState blockstate) {
 +      return blockstate.getBlock() instanceof LiquidBlockContainer liquid && liquid.canPlaceLiquid(null, worldIn, posIn, blockstate, this.content);

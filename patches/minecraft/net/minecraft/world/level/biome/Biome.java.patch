@@ -12,16 +12,18 @@
        }), BiomeGenerationSettings.CODEC.forGetter((p_220548_) -> {
           return p_220548_.generationSettings;
        }), MobSpawnSettings.CODEC.forGetter((p_220546_) -> {
-@@ -62,7 +_,7 @@
-    )
-    public static final PerlinSimplexNoise BIOME_INFO_NOISE = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(2345L)), ImmutableList.of(0));
-    private static final int TEMPERATURE_CACHE_SIZE = 1024;
--   private final Biome.ClimateSettings climateSettings;
-+   public final Biome.ClimateSettings climateSettings;
-    private final BiomeGenerationSettings generationSettings;
-    private final MobSpawnSettings mobSettings;
-    private final BiomeSpecialEffects specialEffects;
-@@ -82,6 +_,7 @@
+@@ -77,11 +_,18 @@
+       });
+    });
+ 
++   //Ketting start - fix transformer error
++   public Biome.ClimateSettings getClimateSettings() {
++      return this.climateSettings;
++   }
++   //Ketting end
++
+    Biome(Biome.ClimateSettings p_220530_, BiomeSpecialEffects p_220531_, BiomeGenerationSettings p_220532_, MobSpawnSettings p_220533_) {
+       this.climateSettings = p_220530_;
        this.generationSettings = p_220532_;
        this.mobSettings = p_220533_;
        this.specialEffects = p_220531_;
