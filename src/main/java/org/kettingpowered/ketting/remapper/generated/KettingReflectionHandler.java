@@ -229,6 +229,8 @@ public class KettingReflectionHandler extends ClassLoader {
 
     // bukkit -> srg
     public static Class<?> redirectClassForName(String cl, boolean initialize, ClassLoader classLoader) throws ClassNotFoundException {
+        if (cl.isEmpty())
+            throw new ClassNotFoundException();
         try {
             String replace = remapper.mapType(cl.replace('.', '/')).replace('/', '.');
             return Class.forName(replace, initialize, classLoader);
