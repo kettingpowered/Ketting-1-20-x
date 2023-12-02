@@ -3,9 +3,9 @@ package org.kettingpowered.ketting;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-public class PatcherClassLoader extends URLClassLoader {
+public class LibraryClassLoader extends URLClassLoader {
 
-    public PatcherClassLoader(URL[] urls) {
+    public LibraryClassLoader(URL[] urls) {
         super(urls, null);
     }
 

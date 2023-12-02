@@ -27,7 +27,7 @@ public class Patcher {
     public static void init() throws Exception {
         URL[] urls = Libraries.getLoadedLibs();
 
-        try (URLClassLoader loader = new PatcherClassLoader(urls)) {
+        try (URLClassLoader loader = new LibraryClassLoader(urls)) {
             Class<?> clazz = loader.loadClass(Patcher.class.getName());
             clazz.getDeclaredConstructor().newInstance();
         } catch (InvocationTargetException e) {
