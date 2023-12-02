@@ -244,6 +244,7 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
+import org.kettingpowered.ketting.entity.CraftCustomEntity;
 
 public class CraftEventFactory {
     public static org.bukkit.block.Block blockDamage; // For use in EntityDamageByBlockEvent
@@ -731,7 +732,13 @@ public class CraftEventFactory {
      * CreatureSpawnEvent
      */
     public static CreatureSpawnEvent callCreatureSpawnEvent(LivingEntity entityliving, SpawnReason spawnReason) {
-        org.bukkit.entity.LivingEntity entity = (org.bukkit.entity.LivingEntity) entityliving.getBukkitEntity();
+        //Ketting start - class cast exception
+        final CraftEntity bukkitEntity = entityliving.getBukkitEntity();
+        org.bukkit.entity.LivingEntity entity;
+        if (bukkitEntity instanceof CraftCustomEntity custom)
+            entity = custom.asLivingEntity();
+        else entity = (org.bukkit.entity.LivingEntity) bukkitEntity;
+        //Ketting end
         CraftServer craftServer = (CraftServer) entity.getServer();
 
         CreatureSpawnEvent event = new CreatureSpawnEvent(entity, spawnReason);
@@ -1590,9 +1597,17 @@ public class CraftEventFactory {
                 event = new PlayerStatisticIncrementEvent(player, stat, current, newValue);
             } else if (stat.getType() == Type.ENTITY) {
                 EntityType entityType = CraftStatistic.getEntityTypeFromStatistic((net.minecraft.stats.Stat<net.minecraft.world.entity.EntityType<?>>) statistic);
+
+                if (stat.isInjected() && entityType == null) //Ketting
+                    return null;
+
                 event = new PlayerStatisticIncrementEvent(player, stat, current, newValue, entityType);
             } else {
                 Material material = CraftStatistic.getMaterialFromStatistic(statistic);
+
+                if (stat.isInjected() && material == null) //Ketting
+                    return null;
+
                 event = new PlayerStatisticIncrementEvent(player, stat, current, newValue, material);
             }
         }

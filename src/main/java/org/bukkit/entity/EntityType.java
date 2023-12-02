@@ -306,8 +306,8 @@ public enum EntityType implements Keyed, Translatable {
     private final boolean independent, living;
     private final NamespacedKey key;
 
-    private static final Map<String, EntityType> NAME_MAP = new HashMap<String, EntityType>();
-    private static final Map<Short, EntityType> ID_MAP = new HashMap<Short, EntityType>();
+    public static final Map<String, EntityType> NAME_MAP = new HashMap<String, EntityType>(); //Ketting - public
+    public static final Map<Short, EntityType> ID_MAP = new HashMap<Short, EntityType>(); //Ketting - public
 
     static {
         for (EntityType type : values()) {

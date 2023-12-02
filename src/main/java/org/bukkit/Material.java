@@ -4,9 +4,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import java.lang.reflect.Constructor;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import io.izzel.arclight.api.EnumHelper;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
@@ -10977,4 +10980,28 @@ public enum Material implements Keyed, Translatable {
     public boolean isEnabledByFeature(@NotNull World world) {
         return Bukkit.getDataPackManager().isEnabledByFeature(this, world);
     }
+
+    //Ketting start <Used from https://git.magmafoundation.org/magmafoundation/Magma-1-18-x/blob/1.18.x/src/main/java/org/bukkit/Material.java>
+    public static Material addMaterial(String name, int id, NamespacedKey key, boolean block, boolean item) {
+        try {
+            var material = EnumHelper.makeEnum(Material.class, name, id, List.of(Integer.TYPE, NamespacedKey.class, Boolean.TYPE, Boolean.TYPE), List.of(id, key, block, item));
+            BY_NAME.put(name, material);
+            return material;
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Material addMaterial(String name, int id, Class<?> data, NamespacedKey key, boolean block, boolean item) {
+        try {
+            var material = EnumHelper.makeEnum(Material.class, name, id, List.of(Integer.TYPE, Integer.TYPE, Integer.TYPE, Class.class, NamespacedKey.class, Boolean.TYPE, Boolean.TYPE), List.of(id, 64, 0, data, key, block, item));
+            BY_NAME.put(name, material);
+            return material;
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    //Ketting end
 }

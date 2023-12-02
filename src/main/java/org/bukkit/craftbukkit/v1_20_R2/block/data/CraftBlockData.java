@@ -565,6 +565,31 @@ public class CraftBlockData implements BlockData {
         return MAP.getOrDefault(data.getBlock().getClass(), CraftBlockData::new).apply(data);
     }
 
+    //Ketting start - from Magma
+    public static Class<?> getClosestBlockDataClass(Class<? extends Block> blockClass) {
+        if (MAP.containsKey(blockClass))
+            return MAP.get(blockClass).apply(null).getClass();
+
+        // Try obtaining closest CraftBlockData subclass
+        Class<?> superClass = blockClass.getSuperclass();
+        Class<?> matchedClass = null;
+        Function<net.minecraft.world.level.block.state.BlockState, CraftBlockData> matchedFunction = null;
+
+        while (superClass != null) {
+            if (MAP.containsKey(superClass)) {
+                matchedFunction = MAP.get(superClass);
+                matchedClass = matchedFunction.apply(null).getClass();
+                break;
+            }
+            superClass = superClass.getSuperclass();
+        }
+        if (matchedClass == null)
+            return null;
+        register(blockClass, matchedFunction);
+        return matchedClass;
+    }
+    //Ketting end
+
     @Override
     public SoundGroup getSoundGroup() {
         return CraftSoundGroup.getSoundGroup(state.getSoundType());

@@ -64,7 +64,7 @@ public enum PotionType implements Keyed {
     private final Supplier<InternalPotionData> internalPotionDataSupplier;
 
     PotionType(String key) {
-        this.key = NamespacedKey.minecraft(key);
+        this.key = NamespacedKey.fromString(key); //Ketting - minecraft -> fromString
         this.internalPotionDataSupplier = Suppliers.memoize(() -> Bukkit.getUnsafe().getInternalPotionData(this.key));
     }
 

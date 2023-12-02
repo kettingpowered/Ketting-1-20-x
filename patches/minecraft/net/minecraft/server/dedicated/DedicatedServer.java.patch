@@ -38,7 +38,7 @@
  import net.minecraft.server.gui.MinecraftServerGui;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
-@@ -50,7 +_,18 @@
+@@ -50,7 +_,19 @@
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
@@ -54,6 +54,7 @@
 +import org.bukkit.event.server.ServerCommandEvent;
 +import org.kettingpowered.ketting.adapters.BetterServerGUI_1_20_2_Adapter;
 +import org.kettingpowered.ketting.common.betterservergui.BetterServerGUI;
++import org.kettingpowered.ketting.inject.ForgeInject;
  import org.slf4j.Logger;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
@@ -169,7 +170,7 @@
        if (this.isSingleplayer()) {
           this.setLocalIp("127.0.0.1");
        } else {
-@@ -109,15 +_,21 @@
+@@ -109,15 +_,23 @@
           this.setPreventProxyConnections(dedicatedserverproperties.preventProxyConnections);
           this.setLocalIp(dedicatedserverproperties.serverIp);
        }
@@ -178,6 +179,8 @@
 +      org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
 +      org.spigotmc.SpigotConfig.registerCommands();
 +      // Spigot end
++
++      ForgeInject.doInjectingMagic(); //Ketting
  
        this.setPvpAllowed(dedicatedserverproperties.pvp);
        this.setFlightAllowed(dedicatedserverproperties.allowFlight);

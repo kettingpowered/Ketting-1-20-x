@@ -8,6 +8,7 @@ public class KettingConstants {
 
     public static final String NAME = "Ketting";
     public static final String BRAND = "Kettingpowered";
+    public static final String SITE_LINK = "https://github.com/kettingpowered/";
     public static final String VERSION = !Objects.equals(fullVersion, "dev-env") ? fullVersion.split("-")[0] + "-" + fullVersion.split("-")[2] : "dev-env";
     public static final String MINECRAFT_VERSION = !Objects.equals(fullVersion, "dev-env") ? fullVersion.split("-")[0] : "dev-env";
     public static final String BUKKIT_PACKAGE_VERSION = "v1_20_R2";

@@ -73,6 +73,10 @@ import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
 import net.md_5.bungee.api.chat.BaseComponent; // Spigot
+import org.kettingpowered.ketting.config.KettingConfig;
+import org.kettingpowered.ketting.core.Ketting;
+import org.kettingpowered.ketting.entity.CraftCustomEntity;
+import org.kettingpowered.ketting.internal.KettingConstants;
 
 public abstract class CraftEntity implements org.bukkit.entity.Entity {
     private static PermissibleBase perm;
@@ -316,7 +320,13 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         }
         // CHECKSTYLE:ON
 
-        throw new AssertionError("Unknown entity " + (entity == null ? null : entity.getClass()));
+        //Magma - instead of throwing an AssertionError we return a custom entity
+        if (KettingConfig.getInstance().WARN_ON_UNKNOWN_ENTITY.getValue()) {
+            String superclass = entity.getClass().getSuperclass() == null ? "" : " (" + entity.getClass().getSuperclass().getName() + ")";
+            Ketting.LOGGER.warn("Unknown entity type: " + entity.getClass().getName() + superclass);
+            Ketting.LOGGER.warn("Please report this to the " + KettingConstants.NAME + " developers at " + KettingConstants.SITE_LINK);
+        }
+        return new CraftCustomEntity(server, entity);
     }
 
     @Override

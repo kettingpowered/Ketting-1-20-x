@@ -101,10 +101,10 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     // ========================================================================
-    private static final Map<Block, Material> BLOCK_MATERIAL = new HashMap<>();
-    private static final Map<Item, Material> ITEM_MATERIAL = new HashMap<>();
-    private static final Map<Material, Item> MATERIAL_ITEM = new HashMap<>();
-    private static final Map<Material, Block> MATERIAL_BLOCK = new HashMap<>();
+    public static final Map<Block, Material> BLOCK_MATERIAL = new HashMap<>(); //Ketting - public
+    public static final Map<Item, Material> ITEM_MATERIAL = new HashMap<>(); //Ketting - public
+    public static final Map<Material, Item> MATERIAL_ITEM = new HashMap<>(); //Ketting - public
+    public static final Map<Material, Block> MATERIAL_BLOCK = new HashMap<>(); //Ketting - public
 
     static {
         for (Block block : BuiltInRegistries.BLOCK) {

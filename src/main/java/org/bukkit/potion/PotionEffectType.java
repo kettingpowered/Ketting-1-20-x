@@ -353,6 +353,12 @@ public abstract class PotionEffectType implements Keyed {
         acceptingNew = false;
     }
 
+    //Ketting start
+    public static void startAcceptingRegistrations() {
+        acceptingNew = true;
+    }
+    //Ketting end
+
     /**
      * Returns an array of all the registered {@link PotionEffectType}s.
      * This array is not necessarily in any particular order.

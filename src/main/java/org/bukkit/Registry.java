@@ -298,22 +298,27 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
 
     static final class SimpleRegistry<T extends Enum<T> & Keyed> implements Registry<T> {
 
-        private final Map<NamespacedKey, T> map;
+        private Map<NamespacedKey, T> map; //Ketting - remove final
+
+        public Runnable reloader; //Ketting
 
         protected SimpleRegistry(@NotNull Class<T> type) {
             this(type, Predicates.<T>alwaysTrue());
         }
 
         protected SimpleRegistry(@NotNull Class<T> type, @NotNull Predicate<T> predicate) {
-            ImmutableMap.Builder<NamespacedKey, T> builder = ImmutableMap.builder();
+            reloader = () -> { //Ketting
+                ImmutableMap.Builder<NamespacedKey, T> builder = ImmutableMap.builder();
 
-            for (T entry : type.getEnumConstants()) {
-                if (predicate.test(entry)) {
-                    builder.put(entry.getKey(), entry);
+                for (T entry : type.getEnumConstants()) {
+                    if (predicate.test(entry)) {
+                        builder.put(entry.getKey(), entry);
+                    }
                 }
-            }
 
-            map = builder.build();
+                map = builder.build();
+            };
+            reloader.run();
         }
 
         @Nullable
