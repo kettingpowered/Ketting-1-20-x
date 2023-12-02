@@ -7,6 +7,8 @@ import org.kettingpowered.ketting.utils.ServerInitHelper;
 import org.kettingpowered.ketting.utils.Unsafe;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLStreamHandlerFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.spi.FileSystemProvider;
@@ -43,6 +45,11 @@ public class KettingLauncher {
         }
 
         Libraries.setup();
+
+        setStreamFactory();
+        if (enableUpdate) UpdateChecker.init();
+        removeStreamFactory();
+
         Patcher.init();
         launch();
     }
@@ -106,6 +113,28 @@ public class KettingLauncher {
         }
     }
 
+    private static void setProperties() {
+        System.setProperty("ketting.remapper.dump", "./.mixin.out/plugin_classes");
+    }
+
+    //We love hacks
+    public static void setStreamFactory() {
+        try {
+            var factory = Unsafe.lookup().findStaticGetter(URL.class, "defaultFactory", URLStreamHandlerFactory.class).invoke();
+            Unsafe.lookup().findStaticSetter(URL.class, "factory", URLStreamHandlerFactory.class).invoke(factory);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void removeStreamFactory() {
+        try {
+            Unsafe.lookup().findStaticSetter(URL.class, "factory", URLStreamHandlerFactory.class).invoke((Object) null);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static void fsHacks() {
         try {
             ServerInitHelper.addOpens("java.base", "java.nio.file.spi", "ALL-UNNAMED");
@@ -126,9 +155,5 @@ public class KettingLauncher {
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static void setProperties() {
-        System.setProperty("ketting.remapper.dump", "./.mixin.out/plugin_classes");
     }
 }
