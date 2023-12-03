@@ -502,7 +502,7 @@ public final class CraftServer implements Server {
     //Ketting start
     private void setForgeCommands(boolean first, Commands dispatcher) {
         // Build a list of all Forge commands and create wrappers
-        for (CommandNode<CommandSourceStack> cmd : dispatcher.getDispatcher().getRoot().getChildren()) {
+        for (CommandNode<CommandSourceStack> cmd : dispatcher.getForgeDispatcher().unwrap().getRoot().getChildren()) {
             // Spigot start
             ForgeCommandWrapper wrapper = new ForgeCommandWrapper(dispatcher, cmd);
             if (org.spigotmc.SpigotConfig.replaceCommands.contains( wrapper.getName() ) ) {
