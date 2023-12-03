@@ -8,10 +8,10 @@ assignees: ''
 ---
 
 ### Experienced behavior
-A clear and concise description of what the bug is and what actually happens.
+> A clear and concise description of what the bug is, and what actually happens.
 
 ### Expected behavior
-A clear and concise description of what you expected to happen instead
+> A clear and concise description of what you expected to happen.
 
 ### To Reproduce
 Steps to reproduce the behavior:
@@ -21,7 +21,7 @@ Steps to reproduce the behavior:
 4. See error
 
 ### Screenshots
-If applicable, add screenshots to help explain your problem.
+> If applicable, add screenshots to help explain your problem.
 
 ### Server (please complete the following information)
  - OS: [e.g. Linux]
@@ -29,9 +29,8 @@ If applicable, add screenshots to help explain your problem.
  - Startup Flags [e.g. `java -jar Ketting.jar`]
 
 ### Logs
-Please add your server's logs (just the latest logs for the initial report).
-You can upload your server logs to https://mclo.gs. 
-That website will (try to) redact sensitive information (such as paths) automatically. 
+> Please add your server's logs (just the latest logs for the initial report).
+> You can upload your server logs to https://mclo.gs - That website will (try to) redact sensitive information (such as file paths) automatically. 
 
 ### Additional context
-Add any other context about the problem here.
+> Add any other context about the problem here.
