@@ -27,7 +27,6 @@ public class KettingFiles {
 
     public static final String
             FMLCORE_NAME = "fmlcore-" + MC_FORGE + ".jar",
-            FMLEARLYDISPLAY_NAME = "fmlearlydisplay-" + MC_FORGE + ".jar",
             FMLLOADER_NAME = "fmlloader-" + MC_FORGE + ".jar",
             JAVAFMLLANGUAGE_NAME = "javafmllanguage-" + MC_FORGE + ".jar",
             LOWCODELANGUAGE_NAME = "lowcodelanguage-" + MC_FORGE + ".jar",
@@ -35,7 +34,6 @@ public class KettingFiles {
 
     public static final File
             FMLCORE = new File(FORGE_BASE_DIR, "fmlcore/" + MC_FORGE + "/" + FMLCORE_NAME),
-            FMLEARLYDISPLAY = new File(FORGE_BASE_DIR, "fmlearlydisplay/" + MC_FORGE + "/" + FMLEARLYDISPLAY_NAME),
             FMLLOADER = new File(FORGE_BASE_DIR, "fmlloader/" + MC_FORGE + "/" + FMLLOADER_NAME),
             JAVAFMLLANGUAGE = new File(FORGE_BASE_DIR, "javafmllanguage/" + MC_FORGE + "/" + JAVAFMLLANGUAGE_NAME),
             LOWCODELANGUAGE = new File(FORGE_BASE_DIR, "lowcodelanguage/" + MC_FORGE + "/" + LOWCODELANGUAGE_NAME),
