@@ -48,7 +48,6 @@ jobs:
           gh release create "$tag" artifacts/* \
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
-              --prerelease \
               --generate-notes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
