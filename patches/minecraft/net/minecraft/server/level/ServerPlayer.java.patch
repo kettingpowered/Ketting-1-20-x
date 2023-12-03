@@ -99,13 +99,12 @@
     @Nullable
     private Vec3 startingToFallPosition;
     @Nullable
-@@ -243,6 +_,20 @@
+@@ -243,6 +_,19 @@
     public int containerCounter;
     public boolean wonGame;
  
 +   // CraftBukkit start
 +   public String displayName;
-+   public Component listName;
 +   public org.bukkit.Location compassTarget;
 +   public int newExp = 0;
 +   public int newLevel = 0;
@@ -1244,8 +1243,8 @@
 +   }
 +
 +   // We need this as tablistDisplayname may be null even if the event was fired.
-+   private boolean hasTabListName = false;
-+   private Component tabListDisplayName = null;
++   public boolean hasTabListName = false;
++   public Component tabListDisplayName = null;
 +   /**
 +    * Force the name displayed in the tab list to refresh, by firing {@link net.minecraftforge.event.entity.player.PlayerEvent.TabListNameFormat}.
 +    */
