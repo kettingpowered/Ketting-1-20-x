@@ -75,7 +75,6 @@ public class UpdateChecker {
     }
 
     public void downloadUpdate() {
-        System.out.println("Downloading update...");
         try {
             String manifest = NetworkUtils.readFile(API_DOWNLOAD);
 
