@@ -377,7 +377,7 @@ project(':forge') {
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config.get()
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
-        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':fmlearlydisplay:jar', ':javafmllanguage:jar', ':lowcodelanguage:jar', ':mclanguage:jar']
+        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':lowcodelanguage:jar', ':mclanguage:jar']
         MAVEN_PATH = "${group.replace('.', '/')}/${project.name}/${VERSION}"
     }
 
@@ -425,7 +425,6 @@ project(':forge') {
 
         implementation project(':fmlcore')
         implementation project(':fmlloader')
-        implementation project(':fmlearlydisplay')
         implementation project(':javafmllanguage')
         implementation project(':lowcodelanguage')
         implementation project(':mclanguage')
@@ -781,7 +780,7 @@ project(':forge') {
     }
 
     task launcherJson(type: LauncherJson) {
-        packedDependencies = [':fmlloader:jar',':fmlearlydisplay:jar']
+        packedDependencies = [':fmlloader:jar']
         doFirst {
             def forge_client = project(':forge').patcher.runs.forge_client
             json = [
