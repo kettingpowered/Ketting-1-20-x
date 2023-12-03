@@ -80,7 +80,7 @@ public class UpdateChecker {
             String manifest = NetworkUtils.readFile(API_DOWNLOAD);
 
             if (manifest == null) {
-                System.out.println("Failed to read manifest. Skipping update check.");
+                System.out.println("Failed to read manifest. Skipping update.");
                 return;
             }
 

@@ -3,6 +3,7 @@ package org.kettingpowered.ketting.internal.utils;
 import org.kettingpowered.ketting.internal.KettingConstants;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -76,6 +77,8 @@ public class NetworkUtils {
             File f = File.createTempFile(KettingConstants.NAME, ".tmp");
             downloadFile(URL, f);
             return new String(Files.readAllBytes(f.toPath()));
+        } catch (FileNotFoundException fnf) {
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
