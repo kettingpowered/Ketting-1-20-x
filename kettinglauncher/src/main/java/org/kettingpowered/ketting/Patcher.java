@@ -149,7 +149,6 @@ public class Patcher {
     private void extractJarContents() throws IOException {
         extractJarContent(dataDir + KettingFiles.FORGE_UNIVERSAL_NAME, KettingFiles.FORGE_UNIVERSAL_JAR);
         extractJarContent(dataDir + KettingFiles.FMLCORE_NAME, KettingFiles.FMLCORE);
-        extractJarContent(dataDir + KettingFiles.FMLEARLYDISPLAY_NAME, KettingFiles.FMLEARLYDISPLAY);
         extractJarContent(dataDir + KettingFiles.FMLLOADER_NAME, KettingFiles.FMLLOADER);
         extractJarContent(dataDir + KettingFiles.JAVAFMLLANGUAGE_NAME, KettingFiles.JAVAFMLLANGUAGE);
         extractJarContent(dataDir + KettingFiles.LOWCODELANGUAGE_NAME, KettingFiles.LOWCODELANGUAGE);
