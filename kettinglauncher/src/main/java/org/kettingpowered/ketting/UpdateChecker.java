@@ -95,7 +95,7 @@ public class UpdateChecker {
 
     private boolean verifyConnection() {
         try {
-            return InetAddress.getByName("api.github.com").isReachable(5000);
+            return InetAddress.getByName("api.github.com").isReachable(20_000);
         } catch (IOException e) {
             return false;
         }
