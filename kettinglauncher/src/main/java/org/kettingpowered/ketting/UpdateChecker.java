@@ -9,9 +9,9 @@ import org.kettingpowered.ketting.internal.utils.NetworkUtils;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLConnection;
 
 public class UpdateChecker {
 
@@ -95,7 +95,12 @@ public class UpdateChecker {
 
     private boolean verifyConnection() {
         try {
-            return InetAddress.getByName("api.github.com").isReachable(20_000);
+            URL url = new URL("https://api.github.com");
+            final URLConnection connection = url.openConnection();
+            connection.setConnectTimeout(15_000);
+            connection.connect();
+            connection.getInputStream().close();
+            return true;
         } catch (IOException e) {
             return false;
         }
