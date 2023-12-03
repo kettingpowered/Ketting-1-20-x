@@ -4399,6 +4399,15 @@ public enum Material implements Keyed, Translatable {
     public final Class<?> data;
     private final boolean legacy;
     private final NamespacedKey key;
+    //Ketting start
+    private final boolean modded;
+    private final boolean block;
+    private final boolean item;
+
+    public boolean isModded() {
+        return modded;
+    }
+    //Ketting end
 
     private Material(final int id) {
         this(id, 64);
@@ -4420,13 +4429,26 @@ public enum Material implements Keyed, Translatable {
         this(id, stack, 0, data);
     }
 
+    //Ketting start - add methods and fields
     private Material(final int id, final int stack, final int durability, /*@NotNull*/ final Class<?> data) {
+        this(id, stack, durability, data, null, false, false);
+    }
+
+    private Material(final int id, final NamespacedKey key, final boolean block, final boolean item) {
+        this(id, 64, 0, MaterialData.class, key, block, item);
+    }
+
+    private Material(final int id, final int stack, final int durability, /*@NotNull*/ final Class<?> data, final NamespacedKey key, final boolean block, final boolean item) {
+        this.block = block;
+        this.item = item;
+        this.modded = (key != null);
+        //Ketting end
         this.id = id;
         this.durability = (short) durability;
         this.maxStack = stack;
         this.data = data;
         this.legacy = this.name().startsWith(LEGACY_PREFIX);
-        this.key = NamespacedKey.minecraft(this.name().toLowerCase(Locale.ROOT));
+        this.key = key != null ? key : NamespacedKey.minecraft(this.name().toLowerCase(Locale.ROOT)); //Ketting
         // try to cache the constructor for this material
         try {
             if (MaterialData.class.isAssignableFrom(data)) {
@@ -4570,6 +4592,8 @@ public enum Material implements Keyed, Translatable {
      * @return true if this material is a block
      */
     public boolean isBlock() {
+        if (block) return true; //Ketting
+
         switch (this) {
             //<editor-fold defaultstate="collapsed" desc="isBlock">
             case ACACIA_BUTTON:
@@ -8444,6 +8468,8 @@ public enum Material implements Keyed, Translatable {
      * @return true if this material is an item
      */
     public boolean isItem() {
+        if (item) return true; //Ketting
+
         switch (this) {
             //<editor-fold defaultstate="collapsed" desc="isItem">
             case ACACIA_WALL_HANGING_SIGN:
@@ -10984,6 +11010,7 @@ public enum Material implements Keyed, Translatable {
     //Ketting start <Used from https://git.magmafoundation.org/magmafoundation/Magma-1-18-x/blob/1.18.x/src/main/java/org/bukkit/Material.java>
     public static Material addMaterial(String name, int id, NamespacedKey key, boolean block, boolean item) {
         try {
+            //final int id, final int stack, final int durability, /*@NotNull*/ final Class<?> data
             var material = EnumHelper.makeEnum(Material.class, name, id, List.of(Integer.TYPE, NamespacedKey.class, Boolean.TYPE, Boolean.TYPE), List.of(id, key, block, item));
             BY_NAME.put(name, material);
             return material;
