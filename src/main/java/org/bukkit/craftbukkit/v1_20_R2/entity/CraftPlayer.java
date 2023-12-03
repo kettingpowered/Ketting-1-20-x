@@ -306,7 +306,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public String getPlayerListName() {
-        return getHandle().listName == null ? getName() : CraftChatMessage.fromComponent(getHandle().listName);
+        return getHandle().tabListDisplayName == null ? getName() : CraftChatMessage.fromComponent(getHandle().tabListDisplayName);
     }
 
     @Override
@@ -314,7 +314,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         if (name == null) {
             name = getName();
         }
-        getHandle().listName = name.equals(getName()) ? null : CraftChatMessage.fromStringOrNull(name);
+        getHandle().tabListDisplayName = name.equals(getName()) ? null : CraftChatMessage.fromStringOrNull(name);
+        getHandle().hasTabListName = true;
         for (ServerPlayer player : (List<ServerPlayer>) server.getHandle().players) {
             if (player.getBukkitEntity().canSee(this)) {
                 player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, getHandle()));
