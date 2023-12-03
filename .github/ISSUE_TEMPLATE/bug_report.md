@@ -2,12 +2,12 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: ''
+labels: 'bug'
 assignees: ''
 
 ---
 
-### Experienced behaviour
+### Experienced behavior
 A clear and concise description of what the bug is and what actually happens.
 
 ### Expected behavior
