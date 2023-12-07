@@ -3,6 +3,8 @@ package org.kettingpowered.ketting.internal.utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +14,7 @@ import java.util.Objects;
 public class JarTool {
 
     public static File getJar() {
-        return new File(JarTool.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        return new File(URLDecoder.decode(JarTool.class.getProtectionDomain().getCodeSource().getLocation().getFile(), StandardCharsets.UTF_8));
     }
 
     public static File getJarDir() {
