@@ -38,7 +38,7 @@
  import net.minecraft.server.gui.MinecraftServerGui;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
-@@ -50,7 +_,20 @@
+@@ -50,7 +_,21 @@
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
@@ -56,6 +56,7 @@
 +import org.kettingpowered.ketting.command.commands.KettingCommands;
 +import org.kettingpowered.ketting.common.betterservergui.BetterServerGUI;
 +import org.kettingpowered.ketting.inject.ForgeInject;
++import org.kettingpowered.ketting.metrics.MetricManager;
  import org.slf4j.Logger;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
@@ -250,7 +251,7 @@
              Thread thread1 = new Thread(new ServerWatchdog(this));
              thread1.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandlerWithName(LOGGER));
              thread1.setName("Server Watchdog");
-@@ -188,7 +_,12 @@
+@@ -188,7 +_,14 @@
              LOGGER.info("JMX monitoring enabled");
           }
  
@@ -260,11 +261,13 @@
 +            this.dediLanPinger.start();
 +         }
 +
++         MetricManager.init(); //Ketting
++
 +         return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
        }
     }
  
-@@ -251,9 +_,16 @@
+@@ -251,9 +_,18 @@
           this.textFilterClient.close();
        }
  
@@ -277,6 +280,8 @@
 +      if (this.betterGui != null) {
 +         this.betterGui.close();
 +      }
++
++      MetricManager.shutdown(); //Ketting
 +      //Ketting end
  
        if (this.rconThread != null) {

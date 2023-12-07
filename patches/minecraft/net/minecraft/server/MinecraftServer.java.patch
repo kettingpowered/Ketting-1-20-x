@@ -36,7 +36,7 @@
  import net.minecraft.server.level.DemoMode;
  import net.minecraft.server.level.PlayerRespawnLogic;
  import net.minecraft.server.level.ServerChunkCache;
-@@ -153,12 +_,22 @@
+@@ -153,12 +_,23 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.level.storage.WorldData;
  import net.minecraft.world.level.storage.loot.LootDataManager;
@@ -51,6 +51,7 @@
 +import org.kettingpowered.ketting.core.Ketting;
 +import org.kettingpowered.ketting.core.injectprotect.InjectProtect;
 +import org.kettingpowered.ketting.internal.KettingConstants;
++import org.kettingpowered.ketting.metrics.MetricManager;
  import org.slf4j.Logger;
 +import org.spongepowered.asm.mixin.throwables.MixinError;
  
@@ -818,14 +819,17 @@
     }
  
     public boolean isReady() {
-@@ -1310,6 +_,10 @@
+@@ -1310,6 +_,13 @@
        }).thenAcceptAsync((p_248090_) -> {
           this.resources.close();
           this.resources = p_248090_;
-+         this.server.doSync(p_248090_.managers().commands); //Ketting - sync forge commands
++         //Ketting start
++         this.server.doSync(p_248090_.managers().commands);
 +         if (this instanceof DedicatedServer ded && ded.betterGui != null)
 +            ded.betterGui.reload();
-+         Ketting.getInstance().reload(); //Ketting
++         Ketting.getInstance().reload();
++         MetricManager.reload();
++         //Ketting end
           this.packRepository.setSelected(p_129862_);
           WorldDataConfiguration worlddataconfiguration = new WorldDataConfiguration(getSelectedPacks(this.packRepository), this.worldData.enabledFeatures());
           this.worldData.setDataConfiguration(worlddataconfiguration);
