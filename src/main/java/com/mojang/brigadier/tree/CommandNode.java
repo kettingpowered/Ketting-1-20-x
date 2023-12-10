@@ -3,7 +3,6 @@
 
 package com.mojang.brigadier.tree;
 
-// CHECKSTYLE:OFF
 import com.mojang.brigadier.AmbiguityConsumer;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.RedirectModifier;
@@ -24,7 +23,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
-import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.CommandSourceStack; //Ketting/Craftbukkit
 
 public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
     private final Map<String, CommandNode<S>> children = new LinkedHashMap<>();
