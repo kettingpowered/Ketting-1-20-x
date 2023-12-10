@@ -3,7 +3,7 @@ import net.minecraftforge.gradleutils.PomUtils
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'org.cadixdev.licenser'
+//    id 'org.cadixdev.licenser' //Ketting we use other licensed files and thus cannot use this
     id 'net.minecraftforge.gradleutils'
 }
 
@@ -37,14 +37,7 @@ tasks.named('jar', Jar).configure {
             'Implementation-Title':     'FML',
             'Implementation-Version':   '1.0',
             'Implementation-Vendor':    'Forge Development LLC'
-        ] as LinkedHashMap, 'net/minecraftforge/fml/',
-        'org/kettingpowered/ketting/internal/': [
-                'Specification-Title':      'Kettingpowered',
-                'Specification-Vendor':     'Kettingpowered',
-                'Implementation-Title':     'Ketting',
-                'Implementation-Version':   "${KETTING_VERSION}-${MCP_VERSION}",
-                'Implementation-Vendor':    'Kettingpowered'
-        ] as LinkedHashMap)
+        ] as LinkedHashMap, 'net/minecraftforge/fml/')
     }
 }
 
@@ -52,9 +45,13 @@ tasks.withType(JavaCompile) {
     options.compilerArgs << '-Xlint:-unchecked'
 }
 
+//Ketting start - we use other licensed files and thus cannot use this
+/*
 license {
     header = rootProject.file('LICENSE-header.txt')
 }
+*/
+//Ketting end
 
 publishing {
     publications.register('mavenJava', MavenPublication).configure {

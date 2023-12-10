@@ -28,6 +28,7 @@ plugins {
     id 'net.minecraftforge.gradleutils'
     id 'net.minecraftforge.gradle.patcher'
     id 'net.minecraftforge.gradlejarsigner'
+    id "dev.vankka.dependencydownload.plugin" version "1.3.1"//Ketting
 }
 
 Util.init() //Init all our extension methods!
@@ -79,7 +80,6 @@ ext {
     EXTRA_TXTS = [
         rootProject.file('CREDITS.txt'),
         rootProject.file('LICENSE.txt'),
-        rootProject.tasks.createChangelog.outputFile
     ]
 }
 
@@ -90,6 +90,11 @@ configurations {
         extendsFrom(bootstrap)
         transitive = false 
     }
+
+    internallibs
+    internallibs.extendsFrom(installer)
+    internallibs.extendsFrom(moduleonly)
+
     api.extendsFrom(installer)
 }
 
@@ -120,14 +125,27 @@ dependencies {
     installer(libs.mixin)
     installer(libs.bundles.jarjar)
 
+    //Ketting start
+    installer(libs.ketting)
+    installer(libs.bundles.bukkitlibs)
+    installer(libs.bundles.launcher) // Add missing libraries
+    //Ketting end
+
     installer(project(':fmlcore'))
     installer(project(':fmlloader'))
-    installer(project(':fmlearlydisplay'))
+//    installer(project(':fmlearlydisplay')) //Ketting - we yeeted that.
     installer(project(':javafmllanguage'))
     installer(project(':lowcodelanguage'))
     installer(project(':mclanguage'))
 
     runtimeOnly(libs.bootstrap)
+
+    //Ketting start
+    internallibs BINPATCH_TOOL
+    internallibs INSTALLER_TOOLS
+    internallibs JAR_SPLITTER
+    internallibs FART
+    //Ketting end
 }
 
 patcher {
@@ -545,7 +563,7 @@ CheckTask.registerTask(tasks, 'Patches', CheckPatches) {
 }
 
 genPatches {
-    finalizedBy checkAndFixPatches
+//    finalizedBy checkAndFixPatches
     autoHeader true
     lineEnding = '\n'
 }
@@ -812,13 +830,6 @@ tasks.register('installerJson', InstallerJson) {
     }
 }
 
-task generateKettingLibraries(dependsOn: ['jar'], type: dev.vankka.dependencydownload.task.GenerateDependencyDownloadResourceTask) {
-    var conf = configurations.internallibs
-    configuration = conf
-    file = "data/ketting_libraries.txt"
-    includeShadowJarRelocations = false
-}
-
 tasks.named('universalJar').configure {
     dependsOn downloadCrowdin
         from zipTree(downloadCrowdin.dest).matching {
@@ -846,6 +857,22 @@ tasks.named('universalJar').configure {
             'Implementation-Vendor': 'Forge Development LLC',
             'Implementation-Version': MCP_VERSION
         ] as LinkedHashMap, 'net/minecraftforge/versions/mcp/')
+        //Ketting start
+        attributes([
+                'Specification-Title':      'Kettingpowered',
+                'Specification-Vendor':     'Kettingpowered',
+                'Implementation-Title':     'Ketting',
+                'Implementation-Version':   "${KETTING_VERSION}-${MCP_VERSION}",
+                'Implementation-Vendor':    'Kettingpowered'
+        ] as LinkedHashMap, 'org/kettingpowered/ketting/')
+        attributes([
+                'Specification-Title':      'Kettingpowered',
+                'Specification-Vendor':     'Kettingpowered',
+                'Implementation-Title':     'Ketting',
+                'Implementation-Version':   "${KETTING_VERSION}-${MCP_VERSION}",
+                'Implementation-Vendor':    'Kettingpowered'
+        ] as LinkedHashMap, 'org/kettingpowered/ketting/internal/')
+        //Keting end
     }
     jarSigner.sign(it)
 }
@@ -866,21 +893,42 @@ tasks.register('installerJar', InstallerJar) {
     jarSigner.sign(it)
 }
 
-ask kettingJar(type: Jar, dependsOn: [downloadServerRaw, genServerBinPatches, 'signUniversalJar']) {
+//Ketting start
+tasks.register('generateKettingLibraries', dev.vankka.dependencydownload.task.GenerateDependencyDownloadResourceTask) {
+    dependsOn['jar']
+//    var conf =
+    configuration = configurations.internallibs
+    file = "data/ketting_libraries.txt"
+    includeShadowJarRelocations = false
+}
+
+tasks.register('kettingJar', Jar) {
+    dependsOn ':forge:downloadServerRaw'
+    dependsOn ':forge:genServerBinPatches'
+    mustRunAfter ':setup'
+
+    def bundledJars = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':lowcodelanguage:jar', ':mclanguage:jar']
+    bundledJars.each { item -> {
+        dependsOn item
+        mustRunAfter item
+    }}
+
     archiveClassifier = 'server'
     archiveExtension = 'jar'
     archiveBaseName = 'ketting'
     archiveVersion = KETTING_VERSION
     destinationDirectory = file('build/libs')
 
-    def CLASS_PATH = Util.getArtifacts(project, project.configurations.installer, false).values().collect{"libraries/${it.downloads.artifact.path}"} +
+
+    def CLASS_PATH = Util.getArtifacts(project(':forge'), project(':forge').configurations.installer).values().collect { "libraries/${it.downloads.artifact.path}" } +
             [
-                    'libraries/' + Util.getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
+                    'libraries/' + Util.getMavenInfoFromTask(rootProject.tasks.findByPath(':fmlloader:jar')),
                     "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
             ]
     def claimed = CLASS_PATH.collect { it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
-    if (rootProject.downloadServerRaw.dest.exists()) {
-        try (def zip = new java.util.zip.ZipFile(rootProject.downloadServerRaw.dest)) {
+    def downloadServerRaw = rootProject.tasks.findByPath(':forge:downloadServerRaw')
+    if (downloadServerRaw.dest.exists()) {
+        try (def zip = new java.util.zip.ZipFile(downloadServerRaw.dest)) {
             CLASS_PATH += zip.getInputStream(zip.getEntry('META-INF/classpath-joined')).text.split(';')
                     .findAll { it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
         }
@@ -888,32 +936,14 @@ ask kettingJar(type: Jar, dependsOn: [downloadServerRaw, genServerBinPatches, 's
         println("Can't read server")
     }
 
-    def MODULE_PATH = Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect{"libraries/${it.downloads.artifact.path}"}.sort()
-    def tokens = [
-            TASK:          'forge_server',
-            MAVEN_PATH:    project.ext.MAVEN_PATH.toString(),
-            FORGE_VERSION: FORGE_VERSION,
-            MC_VERSION:    MC_VERSION,
-            MCP_VERSION:   MCP_VERSION,
-            FORGE_GROUP:   project.group,
-            IGNORE_LIST: Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect{it.downloads.artifact.path.rsplit('/', 1)[1]}.sort().join(','),
-            MODULES: 'ALL-MODULE-PATH'
-    ]
-
-    doFirst {
-        MANIFESTS.each { pkg, values ->
-            if (pkg == '/') {
-                manifest.attributes(values += [
-                        'Main-Class': 'org.kettingpowered.ketting.KettingLauncher',
-                        'Class-Path': CLASS_PATH.toString().replace("[", "").replace("]", "").replace(",", "")
-                ])
-            } else {
-                manifest.attributes(values, pkg)
-            }
-        }
+    manifest {
+        attributes([
+                'Main-Class': 'org.kettingpowered.ketting.KettingLauncher',
+                'Class-Path': CLASS_PATH.toString().replace("[", "").replace("]", "").replace(",", "")
+        ])
     }
 
-    PACKED_DEPS.each { dep ->
+    bundledJars.each { dep ->
         //cut ':jar' from dep name
         dep = dep.substring(1, dep.length() - 4)
         from(project(':' + dep).tasks.jar.outputs) {
@@ -923,7 +953,7 @@ ask kettingJar(type: Jar, dependsOn: [downloadServerRaw, genServerBinPatches, 's
 
     from(project(':kettinglauncher').project.sourceSets.main.output)
     from(project(':fmlcore').project.sourceSets.main.output)
-    from(generateKettingLibraries)
+    from(':forge:generateKettingLibraries')
 
     //Add KettingCore to the jar, this contains BetterUI and some more common utils
     project(':fmlcore').configurations.runtimeClasspath.getFiles().each { file ->
@@ -935,37 +965,20 @@ ask kettingJar(type: Jar, dependsOn: [downloadServerRaw, genServerBinPatches, 's
         }
     }
 
+    from(project(':forge').ext.EXTRA_TXTS)
+    from(rootProject.file('/forge_installer_logo.png')) {
+        rename { 'big_logo.png' }
+    }
+    from(genClientBinPatches.output) {
+        rename { 'data/client.lzma' }
+    }
     from(genServerBinPatches.output) {
         rename { 'data/server.lzma' }
     }
-
-    from(universalJar) {
-        rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-universal.jar' }
-    }
-
-    from(installerJson.output) {
-        rename { 'data/installscript.json' }
-    }
-
-    from(rootProject.file('server_files/libraries.txt')) {
-        filter(ReplaceTokens, tokens: [CLASS_PATH: CLASS_PATH.join(';')])
-        rename { 'data/libraries.txt' }
-    }
-
-    from(rootProject.file('server_files/args.txt')) {
-        filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';')])
-        rename { 'data/win_args.txt' }
-    }
-
-    from(rootProject.file('server_files/args.txt')) {
-        filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':')])
-        rename { 'data/unix_args.txt' }
-    }
-
-    from(rootProject.file('server_files/user_jvm_args.txt')) {
-        rename { 'data/user_jvm_args.txt' }
-    }
+    jarSigner.sign(it)
 }
+//Ketting end
+
 
 license {
     header = file("$rootDir/LICENSE-header.txt")
@@ -1079,7 +1092,7 @@ publishing {
     publications.register('mavenJava', MavenPublication).configure {
         artifact universalJar
         artifact installerJar
-        artifact mdkZip
+        //artifact mdkZip //Ketting - we yeeted that
         artifact userdevJar
         artifact sourcesJar
         artifact serverShimJar

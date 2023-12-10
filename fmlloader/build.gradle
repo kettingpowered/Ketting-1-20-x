@@ -3,7 +3,7 @@ import net.minecraftforge.gradleutils.PomUtils
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'org.cadixdev.licenser'
+//    id 'org.cadixdev.licenser' //Ketting - we integrate other stuff, that is not applicable with the licensing used here
     id 'net.minecraftforge.gradleutils'
 }
 
@@ -68,10 +68,13 @@ tasks.named('jar', Jar).configure {
 tasks.withType(JavaCompile) {
     options.compilerArgs << '-Xlint:unchecked'
 }
-
+//Ketting start - we integrate other stuff, that is not applicable with the licensing used here
+/*
 license {
     header = rootProject.file('LICENSE-header.txt')
 }
+*/
+//Ketting end
 
 publishing {
     publications.register('mavenJava', MavenPublication).configure {

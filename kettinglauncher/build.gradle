@@ -13,6 +13,8 @@ repositories {
 
 dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
 
+apply from: rootProject.file('build_shared.gradle')
+
 dependencies {
     implementation project(':fmlcore')
     implementation(libs.yaml)
