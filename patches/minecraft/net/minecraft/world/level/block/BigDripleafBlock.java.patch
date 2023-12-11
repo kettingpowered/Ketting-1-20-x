@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/BigDripleafBlock.java
 +++ b/net/minecraft/world/level/block/BigDripleafBlock.java
-@@ -39,6 +_,8 @@
+@@ -40,6 +_,8 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -8,8 +8,8 @@
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class BigDripleafBlock extends HorizontalDirectionalBlock implements BonemealableBlock, SimpleWaterloggedBlock {
-    private static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-@@ -104,7 +_,7 @@
+    public static final MapCodec<BigDripleafBlock> CODEC = simpleCodec(BigDripleafBlock::new);
+@@ -110,7 +_,7 @@
     }
  
     public void onProjectileHit(Level p_152228_, BlockState p_152229_, BlockHitResult p_152230_, Projectile p_152231_) {
@@ -18,7 +18,7 @@
     }
  
     public FluidState getFluidState(BlockState p_152312_) {
-@@ -152,7 +_,20 @@
+@@ -158,7 +_,20 @@
     public void entityInside(BlockState p_152266_, Level p_152267_, BlockPos p_152268_, Entity p_152269_) {
        if (!p_152267_.isClientSide) {
           if (p_152266_.getValue(TILT) == Tilt.NONE && canEntityTilt(p_152268_, p_152269_) && !p_152267_.hasNeighborSignal(p_152268_)) {
@@ -40,7 +40,7 @@
           }
  
        }
-@@ -164,9 +_,9 @@
+@@ -170,9 +_,9 @@
        } else {
           Tilt tilt = p_220798_.getValue(TILT);
           if (tilt == Tilt.UNSTABLE) {
@@ -52,7 +52,7 @@
           } else if (tilt == Tilt.FULL) {
              resetTilt(p_220798_, p_220799_, p_220800_);
           }
-@@ -190,8 +_,10 @@
+@@ -196,8 +_,10 @@
        return p_152303_.onGround() && p_152303_.position().y > (double)((float)p_152302_.getY() + 0.6875F);
     }
  
@@ -65,7 +65,7 @@
        if (p_152287_ != null) {
           playTiltSound(p_152284_, p_152285_, p_152287_);
        }
-@@ -204,20 +_,28 @@
+@@ -210,20 +_,28 @@
     }
  
     private static void resetTilt(BlockState p_152314_, Level p_152315_, BlockPos p_152316_) {

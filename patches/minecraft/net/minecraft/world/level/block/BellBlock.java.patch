@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/BellBlock.java
 +++ b/net/minecraft/world/level/block/BellBlock.java
-@@ -127,6 +_,12 @@
+@@ -136,6 +_,12 @@
              p_152192_ = p_152190_.getBlockState(p_152191_).getValue(FACING);
           }
  
@@ -13,7 +13,7 @@
           ((BellBlockEntity)blockentity).onHit(p_152192_);
           p_152190_.playSound((Player)null, p_152191_, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2.0F, 1.0F);
           p_152190_.gameEvent(p_152189_, GameEvent.BLOCK_CHANGE, p_152191_);
-@@ -247,4 +_,16 @@
+@@ -264,4 +_,16 @@
     public boolean isPathfindable(BlockState p_49717_, BlockGetter p_49718_, BlockPos p_49719_, PathComputationType p_49720_) {
        return false;
     }
@@ -29,4 +29,4 @@
 +      return blockstate.rotate(mirror.getRotation(blockstate.getValue(FACING)));
 +   }
 +   // CraftBukkit end
- }
+ 
