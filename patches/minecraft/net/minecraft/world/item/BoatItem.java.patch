@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/BoatItem.java
 +++ b/net/minecraft/world/item/BoatItem.java
-@@ -14,6 +_,7 @@
+@@ -16,6 +_,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
@@ -8,7 +8,7 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  
-@@ -30,7 +_,7 @@
+@@ -32,7 +_,7 @@
  
     public InteractionResultHolder<ItemStack> use(Level p_40622_, Player p_40623_, InteractionHand p_40624_) {
        ItemStack itemstack = p_40623_.getItemInHand(p_40624_);
@@ -17,7 +17,7 @@
        if (hitresult.getType() == HitResult.Type.MISS) {
           return InteractionResultHolder.pass(itemstack);
        } else {
-@@ -49,6 +_,13 @@
+@@ -51,6 +_,13 @@
           }
  
           if (hitresult.getType() == HitResult.Type.BLOCK) {
@@ -28,10 +28,10 @@
 +               return InteractionResultHolder.pass(itemstack);
 +            }
 +            // CraftBukkit end
-             Boat boat = this.getBoat(p_40622_, hitresult);
+             Boat boat = this.getBoat(p_40622_, hitresult, itemstack, p_40623_);
              boat.setVariant(this.type);
              boat.setYRot(p_40623_.getYRot());
-@@ -56,7 +_,15 @@
+@@ -58,7 +_,15 @@
                 return InteractionResultHolder.fail(itemstack);
              } else {
                 if (!p_40622_.isClientSide) {

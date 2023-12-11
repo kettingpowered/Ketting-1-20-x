@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/MinecartItem.java
 +++ b/net/minecraft/world/item/MinecartItem.java
-@@ -17,6 +_,12 @@
+@@ -19,6 +_,12 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
  
@@ -22,11 +22,11 @@
           double d3;
           if (blockstate.is(BlockTags.RAILS)) {
              if (railshape.isAscending()) {
-@@ -52,13 +_,43 @@
+@@ -54,9 +_,39 @@
              }
           }
  
--         AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(level, d0, d1 + d3, d2, ((MinecartItem)p_42950_.getItem()).type);
+-         AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(serverlevel, d0, d1 + d3, d2, ((MinecartItem)p_42950_.getItem()).type, p_42950_, (Player)null);
 +         // CraftBukkit start
 +         // AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(level, d0, d1 + d3, d2, ((MinecartItem)p_42950_.getItem()).type);
 +         ItemStack itemstack1 = p_42950_.split(1);
@@ -57,11 +57,7 @@
 +         itemstack1 = CraftItemStack.asNMSCopy(event.getItem());
 +         AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(level, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), ((MinecartItem) itemstack1.getItem()).type);
 +
-          if (p_42950_.hasCustomHoverName()) {
-             abstractminecart.setCustomName(p_42950_.getHoverName());
-          }
- 
--         level.addFreshEntity(abstractminecart);
+-         serverlevel.addFreshEntity(abstractminecart);
 -         p_42950_.shrink(1);
 +         if (!level.addFreshEntity(abstractminecart)) p_42950_.grow(1);
 +         // itemstack.shrink(1); // CraftBukkit - handled during event processing
@@ -78,17 +74,17 @@
              double d0 = 0.0D;
              if (railshape.isAscending()) {
                 d0 = 0.5D;
-@@ -94,7 +_,12 @@
-                abstractminecart.setCustomName(itemstack.getHoverName());
+@@ -89,7 +_,12 @@
              }
  
--            level.addFreshEntity(abstractminecart);
+             AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(serverlevel, (double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.0625D + d0, (double)blockpos.getZ() + 0.5D, this.type, itemstack, p_42943_.getPlayer());
+-            serverlevel.addFreshEntity(abstractminecart);
 +            // CraftBukkit start
 +            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPlaceEvent(p_42943_, abstractminecart).isCancelled()) {
 +               return InteractionResult.FAIL;
 +            }
 +            // CraftBukkit end
-+            if (!level.addFreshEntity(abstractminecart)) return InteractionResult.PASS; // CraftBukkit
-             level.gameEvent(GameEvent.ENTITY_PLACE, blockpos, GameEvent.Context.of(p_42943_.getPlayer(), level.getBlockState(blockpos.below())));
++            if (!serverlevel.addFreshEntity(abstractminecart)) return InteractionResult.PASS; // CraftBukkit
+             serverlevel.gameEvent(GameEvent.ENTITY_PLACE, blockpos, GameEvent.Context.of(p_42943_.getPlayer(), serverlevel.getBlockState(blockpos.below())));
           }
  

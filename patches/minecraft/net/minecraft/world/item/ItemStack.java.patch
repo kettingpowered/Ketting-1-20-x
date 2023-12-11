@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -71,17 +_,38 @@
+@@ -75,17 +_,48 @@
  import net.minecraft.world.item.enchantment.Enchantments;
  import net.minecraft.world.level.ItemLike;
  import net.minecraft.world.level.Level;
@@ -36,7 +36,7 @@
 +import org.bukkit.event.world.StructureGrowEvent;
 +import org.kettingpowered.ketting.core.Ketting;
 +//Ketting end
-
+ 
 -public final class ItemStack {
 +public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements net.minecraftforge.common.extensions.IForgeItemStack {
     public static final Codec<ItemStack> CODEC = RecordCodecBuilder.create((p_309238_) -> {
@@ -51,7 +51,7 @@
     private static final Codec<Item> ITEM_NON_AIR_CODEC = ExtraCodecs.validate(BuiltInRegistries.ITEM.byNameCodec(), (p_309237_) -> {
        return p_309237_ == Items.AIR ? DataResult.error(() -> {
           return "Item must not be minecraft:air";
-@@ -106,7 +_,7 @@
+@@ -129,7 +_,7 @@
     /** @deprecated */
     @Deprecated
     @Nullable
@@ -60,7 +60,7 @@
     @Nullable
     private CompoundTag tag;
     @Nullable
-@@ -120,6 +_,23 @@
+@@ -143,6 +_,23 @@
        return this.getItem().getTooltipImage(this);
     }
  
@@ -84,7 +84,7 @@
     public ItemStack(ItemLike p_41599_) {
        this(p_41599_, 1);
     }
-@@ -138,30 +_,65 @@
+@@ -161,30 +_,65 @@
     }
  
     public ItemStack(ItemLike p_41601_, int p_41602_) {
@@ -437,7 +437,7 @@
     }
  
     public boolean hurt(int p_220158_, RandomSource p_220159_, @Nullable ServerPlayer p_220160_) {
-@@ -318,6 +_,21 @@
+@@ -341,6 +_,21 @@
              }
  
              p_220158_ -= j;
@@ -503,7 +503,7 @@
        }
     }
  
-@@ -488,6 +_,17 @@
+@@ -515,6 +_,17 @@
        return this.tag;
     }
  
@@ -568,7 +568,7 @@
        return multimap;
     }
  
-@@ -885,6 +_,14 @@
+@@ -912,6 +_,14 @@
        listtag.add(compoundtag);
     }
  

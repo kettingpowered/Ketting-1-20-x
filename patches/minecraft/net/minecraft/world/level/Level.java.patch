@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -68,12 +_,30 @@
+@@ -68,12 +_,44 @@
  import net.minecraft.world.level.redstone.NeighborUpdater;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
  import net.minecraft.world.level.storage.LevelData;
@@ -12,7 +12,6 @@
 +//Ketting start
 +import java.util.HashMap;
 +import java.util.Map;
- import javax.annotation.Nullable;
 +import joptsimple.internal.Strings;
 +import net.minecraft.network.protocol.game.*;
 +import net.minecraft.server.level.ServerLevel;
@@ -47,7 +46,7 @@
     public static final Codec<ResourceKey<Level>> RESOURCE_KEY_CODEC = ResourceKey.codec(Registries.DIMENSION);
     public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("the_nether"));
-@@ -86,14 +_,14 @@
+@@ -89,14 +_,14 @@
     protected final NeighborUpdater neighborUpdater;
     private final List<TickingBlockEntity> pendingBlockEntityTickers = Lists.newArrayList();
     private boolean tickingBlockEntities;
@@ -64,7 +63,7 @@
     public float thunderLevel;
     public final RandomSource random = RandomSource.create();
     /** @deprecated */
-@@ -101,7 +_,7 @@
+@@ -104,7 +_,7 @@
     private final RandomSource threadSafeRandom = RandomSource.createThreadSafe();
     private final ResourceKey<DimensionType> dimensionTypeId;
     private final Holder<DimensionType> dimensionTypeRegistration;
@@ -183,7 +182,7 @@
        this.profiler = p_270692_;
        this.levelData = p_270739_;
        this.dimensionTypeRegistration = p_270240_;
-@@ -141,6 +_,45 @@
+@@ -144,6 +_,45 @@
        this.neighborUpdater = new CollectingNeighborUpdater(this, p_270466_);
        this.registryAccess = p_270200_;
        this.damageSources = new DamageSources(p_270200_);
@@ -229,7 +228,7 @@
     }
  
     public boolean isClientSide() {
-@@ -191,6 +_,17 @@
+@@ -194,6 +_,17 @@
     }
  
     public boolean setBlock(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
@@ -325,7 +324,7 @@
                    this.sendBlockUpdated(p_46605_, blockstate, p_46606_, p_46607_);
                 }
  
-@@ -221,15 +_,30 @@
+@@ -224,15 +_,30 @@
  
                 if ((p_46607_ & 16) == 0 && p_46608_ > 0) {
                    int i = p_46607_ & -34;
@@ -367,7 +366,7 @@
     }
  
     public void updateNeighborsAtExceptFromFacing(BlockPos p_46591_, Block p_46592_, Direction p_46593_) {
-@@ -314,6 +_,14 @@
+@@ -317,6 +_,14 @@
     }
  
     public BlockState getBlockState(BlockPos p_46732_) {
@@ -382,7 +381,7 @@
        if (this.isOutsideBuildHeight(p_46732_)) {
           return Blocks.VOID_AIR.defaultBlockState();
        } else {
-@@ -398,38 +_,86 @@
+@@ -408,39 +_,88 @@
        (this.tickingBlockEntities ? this.pendingBlockEntityTickers : this.blockEntityTickers).add(p_151526_);
     }
  
@@ -411,8 +410,9 @@
           this.blockEntityTickers.addAll(this.pendingBlockEntityTickers);
           this.pendingBlockEntityTickers.clear();
        }
--
+ 
 -      Iterator<TickingBlockEntity> iterator = this.blockEntityTickers.iterator();
+       boolean flag = this.tickRateManager().runsNormally();
 -
 -      while(iterator.hasNext()) {
 -         TickingBlockEntity tickingblockentity = iterator.next();
@@ -444,7 +444,7 @@
 +            tilesThisCycle--;
 +            this.blockEntityTickers.remove(tileTickPosition--);
 +            // Spigot end
-          } else if (this.shouldTickBlocksAt(tickingblockentity.getPos())) {
+          } else if (flag && this.shouldTickBlocksAt(tickingblockentity.getPos())) {
              tickingblockentity.tick();
           }
        }
@@ -492,7 +492,7 @@
        explosion.explode();
        explosion.finalizeExplosion(p_309655_);
        return explosion;
-@@ -494,7 +_,18 @@
+@@ -512,7 +_,18 @@
     public abstract String gatherChunkSourceStats();
  
     @Nullable
@@ -511,7 +511,7 @@
        if (this.isOutsideBuildHeight(p_46716_)) {
           return null;
        } else {
-@@ -505,6 +_,12 @@
+@@ -523,6 +_,12 @@
     public void setBlockEntity(BlockEntity p_151524_) {
        BlockPos blockpos = p_151524_.getBlockPos();
        if (!this.isOutsideBuildHeight(blockpos)) {
@@ -598,7 +598,7 @@
                    this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
                 }
              }
-@@ -856,11 +_,23 @@
+@@ -876,11 +_,23 @@
        return this.biomeManager;
     }
  

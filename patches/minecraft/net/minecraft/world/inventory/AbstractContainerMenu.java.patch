@@ -128,23 +128,23 @@
                    ItemStack itemstack1 = this.getCarried();
                    if (slot1 != null && canItemQuickReplace(slot1, itemstack1, true) && slot1.mayPlace(itemstack1) && (this.quickcraftType == 2 || itemstack1.getCount() >= this.quickcraftSlots.size()) && this.canDragTo(slot1)) {
 @@ -354,12 +_,48 @@
-                      int k = Math.min(itemstack2.getMaxStackSize(), slot1.getMaxStackSize(itemstack2));
-                      int l = Math.min(getQuickCraftPlaceCount(this.quickcraftSlots, this.quickcraftType, itemstack2) + j, k);
+                      int k = Math.min(itemstack3.getMaxStackSize(), slot1.getMaxStackSize(itemstack3));
+                      int l = Math.min(getQuickCraftPlaceCount(this.quickcraftSlots, this.quickcraftType, itemstack3) + j, k);
                       k1 -= l - j;
--                     slot1.setByPlayer(itemstack2.copyWithCount(l));
+-                     slot1.setByPlayer(itemstack3.copyWithCount(l));
 -                  }
 -               }
 -
--               itemstack2.setCount(k1);
--               this.setCarried(itemstack2);
-+                     // slot1.setByPlayer(itemstack2.copyWithCount(l));
-+                     draggedSlots.put(slot1.index, itemstack2.copyWithCount(l)); // CraftBukkit - Put in map instead of setting
+-               itemstack3.setCount(k1);
+-               this.setCarried(itemstack3);
++                     // slot1.setByPlayer(itemstack3.copyWithCount(l));
++                     draggedSlots.put(slot1.index, itemstack3.copyWithCount(l)); // CraftBukkit - Put in map instead of setting
 +                  }
 +               }
 +
 +               // CraftBukkit start - InventoryDragEvent
 +               InventoryView view = getBukkitView();
-+               org.bukkit.inventory.ItemStack newcursor = CraftItemStack.asCraftMirror(itemstack2);
++               org.bukkit.inventory.ItemStack newcursor = CraftItemStack.asCraftMirror(itemstack3);
 +               newcursor.setAmount(k1);
 +               Map<Integer, org.bukkit.inventory.ItemStack> eventmap = new HashMap<Integer, org.bukkit.inventory.ItemStack>();
 +               for (Map.Entry<Integer, ItemStack> ditem : draggedSlots.entrySet()) {
@@ -217,8 +217,8 @@
 +            }
 +            // CraftBukkit end
           }
-       } else if (p_150433_ == ClickType.SWAP) {
-          Slot slot2 = this.slots.get(p_150431_);
+       } else if (p_150433_ == ClickType.SWAP && (p_150432_ >= 0 && p_150432_ < 9 || p_150432_ == 40)) {
+          ItemStack itemstack2 = inventory.getItem(p_150432_);
 @@ -536,13 +_,14 @@
        if (p_38940_ instanceof ServerPlayer) {
           ItemStack itemstack = this.getCarried();
