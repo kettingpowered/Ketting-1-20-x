@@ -1,25 +1,17 @@
 --- a/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
-@@ -1,6 +_,8 @@
- package net.minecraft.world.level.block.entity;
- 
- import com.google.common.annotations.VisibleForTesting;
-+
-+import java.util.List;
- import java.util.Objects;
- import javax.annotation.Nullable;
- import net.minecraft.core.BlockPos;
-@@ -23,14 +_,53 @@
+@@ -21,14 +_,54 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.ticks.ContainerSingleItem;
++import java.util.List; 
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
  
  public class JukeboxBlockEntity extends BlockEntity implements Clearable, ContainerSingleItem {
     private static final int SONG_END_PADDING = 20;
-    private final NonNullList<ItemStack> items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+    private ItemStack item = ItemStack.EMPTY;
     private int ticksSinceLastEvent;
 -   private long tickCount;
 -   private long recordStartedTick;
@@ -66,7 +58,7 @@
  
     public JukeboxBlockEntity(BlockPos p_155613_, BlockState p_155614_) {
        super(BlockEntityType.JUKEBOX, p_155613_, p_155614_);
-@@ -141,7 +_,7 @@
+@@ -139,7 +_,7 @@
     }
  
     public int getMaxStackSize() {
@@ -74,11 +66,11 @@
 +      return maxStack; // CraftBukkit
     }
  
-    public boolean stillValid(Player p_273466_) {
-@@ -187,7 +_,11 @@
+    public BlockEntity getContainerBlockEntity() {
+@@ -185,7 +_,11 @@
     @VisibleForTesting
     public void setRecordWithoutPlaying(ItemStack p_272693_) {
-       this.items.set(0, p_272693_);
+       this.item = p_272693_;
 -      this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
 +      // CraftBukkit start - add null check for level
 +      if (level != null) {

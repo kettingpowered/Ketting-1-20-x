@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SculkSensorBlock.java
 +++ b/net/minecraft/world/level/block/SculkSensorBlock.java
-@@ -39,6 +_,8 @@
+@@ -40,6 +_,8 @@
  import net.minecraft.world.level.pathfinder.PathComputationType;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -8,8 +8,8 @@
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class SculkSensorBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
-    public static final int ACTIVE_TICKS = 30;
-@@ -88,6 +_,18 @@
+    public static final MapCodec<SculkSensorBlock> CODEC = simpleCodec(SculkSensorBlock::new);
+@@ -94,6 +_,18 @@
  
     public void stepOn(Level p_222132_, BlockPos p_222133_, BlockState p_222134_, Entity p_222135_) {
        if (!p_222132_.isClientSide() && canActivate(p_222134_) && p_222135_.getType() != EntityType.WARDEN) {
@@ -28,7 +28,7 @@
           BlockEntity blockentity = p_222132_.getBlockEntity(p_222133_);
           if (blockentity instanceof SculkSensorBlockEntity) {
              SculkSensorBlockEntity sculksensorblockentity = (SculkSensorBlockEntity)blockentity;
-@@ -177,6 +_,15 @@
+@@ -183,6 +_,15 @@
     }
  
     public static void deactivate(Level p_154408_, BlockPos p_154409_, BlockState p_154410_) {
@@ -44,7 +44,7 @@
        p_154408_.setBlock(p_154409_, p_154410_.setValue(PHASE, SculkSensorPhase.COOLDOWN).setValue(POWER, Integer.valueOf(0)), 3);
        p_154408_.scheduleTick(p_154409_, p_154410_.getBlock(), 10);
        updateNeighbours(p_154408_, p_154409_, p_154410_);
-@@ -188,6 +_,15 @@
+@@ -194,6 +_,15 @@
     }
  
     public void activate(@Nullable Entity p_277529_, Level p_277340_, BlockPos p_277386_, BlockState p_277799_, int p_277993_, int p_278003_) {

@@ -1,12 +1,13 @@
 --- a/net/minecraft/world/level/block/PoweredRailBlock.java
 +++ b/net/minecraft/world/level/block/PoweredRailBlock.java
-@@ -12,13 +_,24 @@
+@@ -11,18 +_,29 @@
  import net.minecraft.world.level.block.state.properties.EnumProperty;
  import net.minecraft.world.level.block.state.properties.Property;
  import net.minecraft.world.level.block.state.properties.RailShape;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory; //Ketting
  
  public class PoweredRailBlock extends BaseRailBlock {
+    public static final MapCodec<PoweredRailBlock> CODEC = simpleCodec(PoweredRailBlock::new);
     public static final EnumProperty<RailShape> SHAPE = BlockStateProperties.RAIL_SHAPE_STRAIGHT;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 +   private final boolean isActivator;  // TRUE for an Activator Rail, FALSE for Powered Rail
