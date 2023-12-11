@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
-@@ -35,18 +_,23 @@
+@@ -33,9 +_,22 @@
  import net.minecraft.world.level.LevelSettings;
  import net.minecraft.world.level.WorldDataConfiguration;
  import net.minecraft.world.level.border.WorldBorder;
@@ -11,7 +11,7 @@
  import net.minecraft.world.level.timers.TimerQueue;
  import org.slf4j.Logger;
 +
-+//Ketting
++//Ketting Start
 +import net.minecraft.core.Registry;
 +import net.minecraft.core.registries.Registries;
 +import net.minecraft.network.protocol.game.ClientboundChangeDifficultyPacket;
@@ -22,10 +22,10 @@
 +import org.bukkit.Bukkit;
 +import org.bukkit.event.weather.ThunderChangeEvent;
 +import org.bukkit.event.weather.WeatherChangeEvent;
-+//Ketting
- 
- public class PrimaryLevelData implements ServerLevelData, WorldData {
++//Ketting End
+@@ -44,8 +_,8 @@
     private static final Logger LOGGER = LogUtils.getLogger();
+    public static final String LEVEL_NAME = "LevelName";
     protected static final String PLAYER = "Player";
     protected static final String WORLD_GEN_SETTINGS = "WorldGenSettings";
 -   private LevelSettings settings;
@@ -33,7 +33,7 @@
     private final WorldOptions worldOptions;
     private final PrimaryLevelData.SpecialWorldProperty specialWorldProperty;
     private final Lifecycle worldGenSettingsLifecycle;
-@@ -77,6 +_,21 @@
+@@ -77,3 +_,18 @@
     private boolean wasModded;
     private final Set<String> removedFeatureFlags;
     private final TimerQueue<MinecraftServer> scheduledEvents;
@@ -52,9 +52,6 @@
 +      pdc = null;
 +   }
 +   // CraftBukkit end
- 
-    private PrimaryLevelData(@Nullable CompoundTag p_277888_, boolean p_278109_, int p_277672_, int p_277714_, int p_278088_, float p_277542_, long p_277414_, long p_277635_, int p_278037_, int p_277595_, int p_277794_, boolean p_277943_, int p_278007_, boolean p_277644_, boolean p_277749_, boolean p_278004_, WorldBorder.Settings p_277729_, int p_277674_, int p_277856_, @Nullable UUID p_277341_, Set<String> p_277989_, Set<String> p_277399_, TimerQueue<MinecraftServer> p_277860_, @Nullable CompoundTag p_277936_, EndDragonFight.Data p_289764_, LevelSettings p_278064_, WorldOptions p_278072_, PrimaryLevelData.SpecialWorldProperty p_277548_, Lifecycle p_277915_) {
-       this.wasModded = p_278109_;
 @@ -120,7 +_,7 @@
           return p_78529_.asString().result().stream();
        }).collect(Collectors.toCollection(Sets::newLinkedHashSet)), p_78531_.get("removed_features").asStream().flatMap((p_277335_) -> {
@@ -64,7 +61,7 @@
     }
  
     public CompoundTag createTag(RegistryAccess p_78543_, @Nullable CompoundTag p_78544_) {
-@@ -156,7 +_,7 @@
+@@ -148,7 +_,7 @@
        p_78547_.put("Version", compoundtag);
        NbtUtils.addCurrentDataVersion(p_78547_);
        DynamicOps<Tag> dynamicops = RegistryOps.create(NbtOps.INSTANCE, p_78546_);
@@ -87,7 +84,7 @@
     }
  
     private static ListTag stringCollectionToTag(Set<String> p_277880_) {
-@@ -306,6 +_,20 @@
+@@ -284,6 +_,20 @@
     }
  
     public void setThundering(boolean p_78562_) {
@@ -108,7 +105,7 @@
        this.thundering = p_78562_;
     }
  
-@@ -322,6 +_,20 @@
+@@ -300,6 +_,20 @@
     }
  
     public void setRaining(boolean p_78576_) {
@@ -129,7 +126,7 @@
        this.raining = p_78576_;
     }
  
-@@ -375,6 +_,12 @@
+@@ -353,6 +_,12 @@
  
     public void setDifficulty(Difficulty p_78521_) {
        this.settings = this.settings.withDifficulty(p_78521_);

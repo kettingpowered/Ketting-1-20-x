@@ -1,15 +1,14 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
-@@ -266,6 +_,8 @@
-          WorldDimensions.Complete worlddimensions$complete = worldgensettings.dimensions().bake(p_249363_);
-          Lifecycle lifecycle = worlddimensions$complete.lifecycle().add(p_251214_);
-          PrimaryLevelData primaryleveldata = PrimaryLevelData.parse(dynamic, p_265021_, i, compoundtag2, levelsettings, levelversion, worlddimensions$complete.specialWorldProperty(), worldgensettings.options(), lifecycle);
-+         primaryleveldata.pdc = compoundtag1.get("BukkitValues"); // CraftBukkit - Add PDC to world
+@@ -139,5 +_,7 @@
+       WorldDimensions.Complete worlddimensions$complete = worldgensettings.dimensions().bake(p_311619_);
+       Lifecycle lifecycle = worlddimensions$complete.lifecycle().add(p_313214_.allRegistriesLifecycle());
+       PrimaryLevelData primaryleveldata = PrimaryLevelData.parse(dynamic, levelsettings, worlddimensions$complete.specialWorldProperty(), worldgensettings.options(), lifecycle);
++     primaryleveldata.pdc = compoundtag1.get("BukkitValues"); // CraftBukkit - Add PDC to world
 +
-          return Pair.of(primaryleveldata, worlddimensions$complete);
-       };
+       return new LevelDataAndDimensions(primaryleveldata, worlddimensions$complete);
     }
-@@ -356,24 +_,46 @@
+@@ -343,24 +_,46 @@
     }
  
     public LevelStorageSource.LevelStorageAccess validateAndCreateAccess(String p_289980_) throws IOException, ContentValidationException {
@@ -58,7 +57,7 @@
     public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> levels) implements Iterable<LevelStorageSource.LevelDirectory> {
        public boolean isEmpty() {
           return this.levels.isEmpty();
-@@ -416,11 +_,21 @@
+@@ -407,11 +_,21 @@
  
     public class LevelStorageAccess implements AutoCloseable {
        final DirectoryLock lock;
@@ -83,7 +82,7 @@
           this.levelId = p_289967_;
           this.levelDirectory = new LevelStorageSource.LevelDirectory(p_289988_);
           this.lock = DirectoryLock.create(p_289988_);
-@@ -439,7 +_,7 @@
+@@ -443,7 +_,7 @@
        }
  
        public Path getDimensionPath(ResourceKey<Level> p_197395_) {
@@ -92,14 +91,13 @@
        }
  
        private void checkLock() {
-@@ -483,6 +_,7 @@
+@@ -483,5 +_,6 @@
           CompoundTag compoundtag = p_78292_.createTag(p_78291_, p_78293_);
           CompoundTag compoundtag1 = new CompoundTag();
           compoundtag1.put("Data", compoundtag);
 +         net.minecraftforge.common.ForgeHooks.writeAdditionalLevelSaveData(p_78292_, compoundtag1);
           this.saveLevelData(compoundtag1);
        }
- 
 @@ -503,6 +_,10 @@
  
        public Optional<Path> getIconFile() {
@@ -109,5 +107,18 @@
 +      public Path getWorldDir() {
 +         return baseDir;
        }
- 
+
++      public void readAdditionalLevelSaveData() {
++         checkLock();
++         LevelStorageSource.this.readLevelData(this.levelDirectory, (path, dataFixer) -> {
++            try {
++               CompoundTag compoundTag = NbtIo.readCompressed(path.toFile());
++               net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(compoundTag, this.levelDirectory);
++            } catch (Exception e) {
++                LOGGER.error("Exception reading {}", path, e);
++            }
++            return ""; // Return non-null to prevent level.dat-old inject
++         });
++      }
++
        public void deleteLevel() throws IOException {
