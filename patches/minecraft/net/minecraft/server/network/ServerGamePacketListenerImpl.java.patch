@@ -1,158 +1,17 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -6,21 +_,18 @@
- import com.mojang.brigadier.CommandDispatcher;
- import com.mojang.brigadier.ParseResults;
- import com.mojang.brigadier.StringReader;
-+import com.mojang.datafixers.util.Pair;
- import com.mojang.logging.LogUtils;
- import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
- import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
- import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
- import java.net.SocketAddress;
- import java.time.Instant;
--import java.util.Collections;
--import java.util.EnumSet;
--import java.util.List;
--import java.util.Map;
--import java.util.Objects;
--import java.util.Optional;
--import java.util.Set;
-+import java.util.*;
- import java.util.concurrent.CancellationException;
- import java.util.concurrent.CompletableFuture;
-+import java.util.concurrent.ExecutionException;
-+import java.util.concurrent.atomic.AtomicInteger;
- import java.util.concurrent.atomic.AtomicReference;
- import java.util.function.BiFunction;
- import java.util.function.Consumer;
-@@ -44,79 +_,11 @@
- import net.minecraft.nbt.StringTag;
- import net.minecraft.network.Connection;
- import net.minecraft.network.TickablePacketListener;
--import net.minecraft.network.chat.ChatType;
--import net.minecraft.network.chat.Component;
--import net.minecraft.network.chat.LastSeenMessages;
--import net.minecraft.network.chat.LastSeenMessagesValidator;
--import net.minecraft.network.chat.MessageSignature;
--import net.minecraft.network.chat.MessageSignatureCache;
--import net.minecraft.network.chat.PlayerChatMessage;
--import net.minecraft.network.chat.RemoteChatSession;
--import net.minecraft.network.chat.SignableCommand;
--import net.minecraft.network.chat.SignedMessageBody;
--import net.minecraft.network.chat.SignedMessageChain;
-+import net.minecraft.network.chat.*;
- import net.minecraft.network.protocol.Packet;
- import net.minecraft.network.protocol.PacketUtils;
- import net.minecraft.network.protocol.common.ServerboundClientInformationPacket;
--import net.minecraft.network.protocol.game.ClientboundBlockChangedAckPacket;
--import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
--import net.minecraft.network.protocol.game.ClientboundCommandSuggestionsPacket;
--import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
--import net.minecraft.network.protocol.game.ClientboundDisguisedChatPacket;
--import net.minecraft.network.protocol.game.ClientboundMoveVehiclePacket;
--import net.minecraft.network.protocol.game.ClientboundPlayerChatPacket;
--import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
--import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
--import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
--import net.minecraft.network.protocol.game.ClientboundStartConfigurationPacket;
--import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
--import net.minecraft.network.protocol.game.ClientboundTagQueryPacket;
--import net.minecraft.network.protocol.game.ServerGamePacketListener;
--import net.minecraft.network.protocol.game.ServerboundAcceptTeleportationPacket;
--import net.minecraft.network.protocol.game.ServerboundBlockEntityTagQuery;
--import net.minecraft.network.protocol.game.ServerboundChangeDifficultyPacket;
--import net.minecraft.network.protocol.game.ServerboundChatAckPacket;
--import net.minecraft.network.protocol.game.ServerboundChatCommandPacket;
--import net.minecraft.network.protocol.game.ServerboundChatPacket;
--import net.minecraft.network.protocol.game.ServerboundChatSessionUpdatePacket;
--import net.minecraft.network.protocol.game.ServerboundChunkBatchReceivedPacket;
--import net.minecraft.network.protocol.game.ServerboundClientCommandPacket;
--import net.minecraft.network.protocol.game.ServerboundCommandSuggestionPacket;
--import net.minecraft.network.protocol.game.ServerboundConfigurationAcknowledgedPacket;
--import net.minecraft.network.protocol.game.ServerboundContainerButtonClickPacket;
--import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
--import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
--import net.minecraft.network.protocol.game.ServerboundEditBookPacket;
--import net.minecraft.network.protocol.game.ServerboundEntityTagQuery;
--import net.minecraft.network.protocol.game.ServerboundInteractPacket;
--import net.minecraft.network.protocol.game.ServerboundJigsawGeneratePacket;
--import net.minecraft.network.protocol.game.ServerboundLockDifficultyPacket;
--import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
--import net.minecraft.network.protocol.game.ServerboundMoveVehiclePacket;
--import net.minecraft.network.protocol.game.ServerboundPaddleBoatPacket;
--import net.minecraft.network.protocol.game.ServerboundPickItemPacket;
--import net.minecraft.network.protocol.game.ServerboundPlaceRecipePacket;
--import net.minecraft.network.protocol.game.ServerboundPlayerAbilitiesPacket;
--import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
--import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
--import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
--import net.minecraft.network.protocol.game.ServerboundRecipeBookChangeSettingsPacket;
--import net.minecraft.network.protocol.game.ServerboundRecipeBookSeenRecipePacket;
--import net.minecraft.network.protocol.game.ServerboundRenameItemPacket;
--import net.minecraft.network.protocol.game.ServerboundSeenAdvancementsPacket;
--import net.minecraft.network.protocol.game.ServerboundSelectTradePacket;
--import net.minecraft.network.protocol.game.ServerboundSetBeaconPacket;
--import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
--import net.minecraft.network.protocol.game.ServerboundSetCommandBlockPacket;
--import net.minecraft.network.protocol.game.ServerboundSetCommandMinecartPacket;
--import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
--import net.minecraft.network.protocol.game.ServerboundSetJigsawBlockPacket;
--import net.minecraft.network.protocol.game.ServerboundSetStructureBlockPacket;
--import net.minecraft.network.protocol.game.ServerboundSignUpdatePacket;
--import net.minecraft.network.protocol.game.ServerboundSwingPacket;
--import net.minecraft.network.protocol.game.ServerboundTeleportToEntityPacket;
--import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
--import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
-+import net.minecraft.network.protocol.game.*;
- import net.minecraft.network.protocol.status.ClientboundPongResponsePacket;
- import net.minecraft.network.protocol.status.ServerboundPingRequestPacket;
- import net.minecraft.resources.ResourceKey;
-@@ -131,13 +_,9 @@
- import net.minecraft.world.InteractionHand;
- import net.minecraft.world.InteractionResult;
- import net.minecraft.world.effect.MobEffects;
--import net.minecraft.world.entity.Entity;
--import net.minecraft.world.entity.ExperienceOrb;
--import net.minecraft.world.entity.HasCustomInventoryScreen;
--import net.minecraft.world.entity.LivingEntity;
--import net.minecraft.world.entity.MoverType;
--import net.minecraft.world.entity.PlayerRideableJumping;
--import net.minecraft.world.entity.RelativeMovement;
-+import net.minecraft.world.entity.*;
-+import net.minecraft.world.entity.animal.Bucketable;
-+import net.minecraft.world.entity.animal.allay.Allay;
- import net.minecraft.world.entity.item.ItemEntity;
- import net.minecraft.world.entity.player.ChatVisiblity;
- import net.minecraft.world.entity.player.Inventory;
-@@ -145,21 +_,13 @@
- import net.minecraft.world.entity.player.ProfilePublicKey;
- import net.minecraft.world.entity.projectile.AbstractArrow;
- import net.minecraft.world.entity.vehicle.Boat;
--import net.minecraft.world.inventory.AbstractContainerMenu;
--import net.minecraft.world.inventory.AnvilMenu;
--import net.minecraft.world.inventory.BeaconMenu;
--import net.minecraft.world.inventory.MerchantMenu;
--import net.minecraft.world.inventory.RecipeBookMenu;
-+import net.minecraft.world.inventory.*;
- import net.minecraft.world.item.BlockItem;
- import net.minecraft.world.item.BucketItem;
- import net.minecraft.world.item.Item;
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.Items;
--import net.minecraft.world.level.BaseCommandBlock;
--import net.minecraft.world.level.GameRules;
--import net.minecraft.world.level.GameType;
--import net.minecraft.world.level.Level;
--import net.minecraft.world.level.LevelReader;
-+import net.minecraft.world.level.*;
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.block.CommandBlock;
- import net.minecraft.world.level.block.entity.BlockEntity;
 @@ -175,10 +_,31 @@
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
+ import org.slf4j.Logger;
++
++//Ketting start
++import com.mojang.datafixers.util.Pair;
++import java.util.concurrent.ExecutionException;
++import java.util.concurrent.atomic.AtomicInteger;
++import net.minecraft.world.entity.animal.Bucketable;
++import net.minecraft.world.entity.animal.allay.Allay;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
@@ -168,7 +27,7 @@
 +import org.bukkit.inventory.EquipmentSlot;
 +import org.bukkit.inventory.InventoryView;
 +import org.bukkit.inventory.SmithingInventory;
- import org.slf4j.Logger;
++//Ketting end
  
  public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl implements ServerGamePacketListener, ServerPlayerConnection, TickablePacketListener {
     static final Logger LOGGER = LogUtils.getLogger();
@@ -303,7 +162,7 @@
              if (entity instanceof LivingEntity) {
                 LivingEntity livingentity = (LivingEntity)entity;
                 if (livingentity.onClimbable()) {
-@@ -398,6 +_,7 @@
+@@ -414,6 +_,7 @@
              }
  
              entity.move(MoverType.PLAYER, new Vec3(d6, d7, d8));
@@ -764,7 +623,7 @@
        BlockPos blockpos = p_9889_.getPos();
        this.player.resetLastActionTime();
        ServerboundPlayerActionPacket.Action serverboundplayeractionpacket$action = p_9889_.getAction();
-@@ -960,14 +_,45 @@
+@@ -981,14 +_,45 @@
           case SWAP_ITEM_WITH_OFFHAND:
              if (!this.player.isSpectator()) {
                 ItemStack itemstack = this.player.getItemInHand(InteractionHand.OFF_HAND);
@@ -842,7 +701,7 @@
        this.player.connection.ackBlockChangesUpTo(p_9930_.getSequence());
        ServerLevel serverlevel = this.player.serverLevel();
        InteractionHand interactionhand = p_9930_.getHand();
-@@ -1012,7 +_,7 @@
+@@ -1033,7 +_,7 @@
           Vec3 vec3 = blockhitresult.getLocation();
           BlockPos blockpos = blockhitresult.getBlockPos();
           Vec3 vec31 = Vec3.atCenterOf(blockpos);
@@ -851,7 +710,7 @@
              Vec3 vec32 = vec3.subtract(vec31);
              double d0 = 1.0000001D;
              if (Math.abs(vec32.x()) < 1.0000001D && Math.abs(vec32.y()) < 1.0000001D && Math.abs(vec32.z()) < 1.0000001D) {
-@@ -1020,7 +_,8 @@
+@@ -1041,7 +_,8 @@
                 this.player.resetLastActionTime();
                 int i = this.player.level().getMaxBuildHeight();
                 if (blockpos.getY() < i) {
@@ -999,14 +858,13 @@
        if (isChatMessageIllegal(p_9841_.message())) {
           this.disconnect(Component.translatable("multiplayer.disconnect.illegal_characters"));
        } else {
-@@ -1135,9 +_,10 @@
+@@ -1156,9 +_,10 @@
                 }
  
                 CompletableFuture<FilteredText> completablefuture = this.filterTextPacket(playerchatmessage.signedContent());
 -               Component component = this.server.getChatDecorator().decorate(this.player, playerchatmessage.decoratedContent());
 +               Component component = net.minecraftforge.common.ForgeHooks.onServerChatSubmittedEvent(this.player, playerchatmessage.decoratedContent());
-                this.chatMessageChain.append((p_296593_) -> {
-                   return completablefuture.thenAcceptAsync((p_296589_) -> {
+                this.chatMessageChain.append(completablefuture, (p_296589_) -> {
 +                     if (component == null) return;
                       PlayerChatMessage playerchatmessage1 = playerchatmessage.withUnsignedContent(component).filter(p_296589_.mask());
                       this.broadcastChatMessage(playerchatmessage1);
@@ -1358,7 +1216,7 @@
        this.player.resetLastActionTime();
        this.player.setShiftKeyDown(p_9866_.isUsingSecondaryAction());
        if (entity != null) {
-@@ -1398,13 +_,52 @@
+@@ -1400,13 +_,52 @@
           }
  
           AABB aabb = entity.getBoundingBox();

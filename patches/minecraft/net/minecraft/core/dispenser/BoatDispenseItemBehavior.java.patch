@@ -10,19 +10,11 @@
  
  public class BoatDispenseItemBehavior extends DefaultDispenseItemBehavior {
     private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
-@@ -35,6 +_,7 @@
-       double d3 = vec3.z() + (double)direction.getStepZ() * d0;
-       BlockPos blockpos = p_123375_.pos().relative(direction);
-       double d4;
-+
-       if (level.getFluidState(blockpos).is(FluidTags.WATER)) {
-          d4 = 1.0D;
-       } else {
 @@ -45,11 +_,40 @@
           d4 = 0.0D;
        }
  
--      Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(level, d1, d2 + d4, d3) : new Boat(level, d1, d2 + d4, d3));
+-      Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(serverlevel, d1, d2 + d4, d3) : new Boat(serverlevel, d1, d2 + d4, d3));
 +      // Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(level, d0, d1, d2) : new Boat(level, d0, d1, d2));
 +      // CraftBukkit start
 +      ItemStack itemstack1 = p_123376_.split(1);
@@ -50,14 +42,15 @@
 +         }
 +      }
 +
-+      Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(level, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ()) : new Boat(level, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ()));
++      Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(serverlevel, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ()) : new Boat(serverlevel, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ()));
 +      // CraftBukkit end
 +
+       EntityType.<Boat>createDefaultStackConfig(serverlevel, p_123376_, (Player)null).accept(boat);
        boat.setVariant(this.type);
        boat.setYRot(direction.toYRot());
--      level.addFreshEntity(boat);
+-      serverlevel.addFreshEntity(boat);
 -      p_123376_.shrink(1);
-+      if (!level.addFreshEntity(boat)) p_123376_.grow(1); // CraftBukkit
++      if (!serverlevel.addFreshEntity(boat)) p_123376_.grow(1); // CraftBukkit
 +      // p_123376_.shrink(1); // CraftBukkit - handled during event processing
        return p_123376_;
     }

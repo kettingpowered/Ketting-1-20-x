@@ -1,48 +1,17 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -25,16 +_,7 @@
- import java.nio.file.Files;
- import java.nio.file.Path;
- import java.security.KeyPair;
--import java.util.Arrays;
--import java.util.Collection;
--import java.util.Collections;
--import java.util.Comparator;
--import java.util.List;
--import java.util.Locale;
--import java.util.Map;
--import java.util.Objects;
--import java.util.Optional;
--import java.util.Set;
-+import java.util.*;
- import java.util.concurrent.CompletableFuture;
- import java.util.concurrent.Executor;
- import java.util.concurrent.RejectedExecutionException;
-@@ -45,6 +_,9 @@
- import java.util.stream.Collectors;
- import javax.annotation.Nullable;
- import javax.imageio.ImageIO;
-+
-+import jline.console.ConsoleReader;
-+import joptsimple.OptionSet;
- import net.minecraft.CrashReport;
- import net.minecraft.ReportedException;
- import net.minecraft.SharedConstants;
-@@ -71,6 +_,7 @@
- import net.minecraft.resources.ResourceKey;
- import net.minecraft.resources.ResourceLocation;
- import net.minecraft.server.bossevents.CustomBossEvents;
-+import net.minecraft.server.dedicated.DedicatedServer;
- import net.minecraft.server.level.DemoMode;
- import net.minecraft.server.level.PlayerRespawnLogic;
- import net.minecraft.server.level.ServerChunkCache;
 @@ -153,12 +_,23 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.level.storage.WorldData;
  import net.minecraft.world.level.storage.loot.LootDataManager;
-+import net.minecraft.world.level.validation.ContentValidationException;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
++
++//Ketting start
++import jline.console.ConsoleReader;
++import joptsimple.OptionSet;
++import net.minecraft.server.dedicated.DedicatedServer;
++import net.minecraft.world.level.validation.ContentValidationException;
 +import org.bukkit.Bukkit;
 +import org.bukkit.World;
 +import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
@@ -54,6 +23,7 @@
 +import org.kettingpowered.ketting.metrics.MetricManager;
  import org.slf4j.Logger;
 +import org.spongepowered.asm.mixin.throwables.MixinError;
++//Ketting end
  
  public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements ServerInfo, CommandSource, AutoCloseable {
 -   private static final Logger LOGGER = LogUtils.getLogger();
@@ -461,7 +431,7 @@
        }
  
        LOGGER.info("Saving worlds");
-@@ -577,6 +_,7 @@
+@@ -585,6 +_,7 @@
        for(ServerLevel serverlevel2 : this.getAllLevels()) {
           if (serverlevel2 != null) {
              try {
@@ -500,7 +470,7 @@
           }
  
 +         net.minecraftforge.server.ServerLifecycleHooks.handleServerStarted(this);
-          this.nextTickTime = Util.getMillis();
+          this.nextTickTimeNanos = Util.getNanos();
 -         this.statusIcon = this.loadStatusIcon().orElse((ServerStatus.Favicon)null);
 +         this.statusIcon = this.loadStatusIcon().orElse((ServerStatus.Favicon) null);
           this.status = this.buildServerStatus();
@@ -547,7 +517,7 @@
              this.profiler.push("tick");
 @@ -656,17 +_,30 @@
              this.isReady = true;
-             JvmProfiler.INSTANCE.onServerTick(this.averageTickTime);
+             JvmProfiler.INSTANCE.onServerTick(this.smoothedTickTimeMillis);
           }
 +         net.minecraftforge.server.ServerLifecycleHooks.handleServerStopping(this);
 +         net.minecraftforge.server.ServerLifecycleHooks.expectServerStopped(); // Forge: Has to come before MinecraftServer#onServerCrash to avoid race conditions
@@ -576,7 +546,7 @@
           this.onServerCrash(crashreport);
        } finally {
           try {
-@@ -679,6 +_,15 @@
+@@ -702,6 +_,15 @@
                 this.services.profileCache().clearExecutor();
              }
  
@@ -631,13 +601,15 @@
 +
 +      net.minecraftforge.event.ForgeEventFactory.onPreServerTick(p_129871_, this);
        ++this.tickCount;
+       this.tickRateManager.tick();
        this.tickChildren(p_129871_);
-       if (i - this.lastServerStatus >= 5000000000L) {
+       if (i - this.lastServerStatus >= STATUS_EXPIRE_TIME_NANOS) {
           this.lastServerStatus = i;
           this.status = this.buildServerStatus();
 +         resetStatusCache(status);
        }
  
+        --this.ticksUntilAutosave;
 -      if (this.tickCount % 6000 == 0) {
 +      if (autosavePeriod > 0 && this.tickCount % autosavePeriod == 0) { // CraftBukkit
 +         SpigotTimings.worldSaveTimer.startTiming(); // Spigot
@@ -653,8 +625,8 @@
        long j = this.tickTimes[this.tickCount % 100] = Util.getNanos() - i;
 +
        this.averageTickTime = this.averageTickTime * 0.8F + (float)j / 1000000.0F * 0.19999999F;
-       long k = Util.getNanos();
-       this.logTickTime(k - i);
+       long l = Util.getNanos();
+       this.logTickTime(l - i);
        this.profiler.pop();
 +      net.minecraftforge.event.ForgeEventFactory.onPostServerTick(p_129871_, this);
 +      org.spigotmc.WatchdogThread.tick(); // Spigot
@@ -672,8 +644,8 @@
 +      return cachedServerStatus;
     }
  
-    protected void logTickTime(long p_298126_) {
-@@ -821,7 +_,7 @@
+    private int computeNextAutosaveInterval() {
+@@ -876,7 +_,7 @@
  
     private ServerStatus buildServerStatus() {
        ServerStatus.Players serverstatus$players = this.buildPlayerStatus();
@@ -762,7 +734,7 @@
        this.profiler.popPush("players");
 +      SpigotTimings.playerListTimer.startTiming(); // Spigot
        this.playerList.tick();
--      if (SharedConstants.IS_RUNNING_IN_IDE) {
+-      if (SharedConstants.IS_RUNNING_IN_IDE && this.tickRateManager.runsNormally()) {
 +      SpigotTimings.playerListTimer.stopTiming(); // Spigot
 +      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
           GameTestTicker.SINGLETON.tick();
@@ -801,7 +773,7 @@
     public Set<ResourceKey<Level>> levelKeys() {
        return this.levels.keySet();
     }
-@@ -969,7 +_,7 @@
+@@ -1024,7 +_,7 @@
  
     @DontObfuscate
     public String getServerModName() {
@@ -841,7 +813,7 @@
        }, this);
        if (this.isSameThread()) {
           this.managedBlock(completablefuture::isDone);
-@@ -1327,10 +_,13 @@
+@@ -1382,10 +_,13 @@
     }
  
     public static WorldDataConfiguration configurePackRepository(PackRepository p_248681_, DataPackConfig p_248920_, boolean p_249869_, FeatureFlagSet p_251243_) {
@@ -857,7 +829,7 @@
        } else {
           Set<String> set = Sets.newLinkedHashSet();
  
-@@ -1484,6 +_,31 @@
+@@ -1551,6 +_,31 @@
  
     public abstract boolean isSingleplayerOwner(GameProfile p_129840_);
  

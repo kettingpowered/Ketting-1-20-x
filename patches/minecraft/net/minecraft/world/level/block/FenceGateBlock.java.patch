@@ -1,26 +1,30 @@
 --- a/net/minecraft/world/level/block/FenceGateBlock.java
 +++ b/net/minecraft/world/level/block/FenceGateBlock.java
-@@ -41,11 +_,16 @@
-    protected static final VoxelShape X_OCCLUSION_SHAPE = Shapes.or(Block.box(7.0D, 5.0D, 0.0D, 9.0D, 16.0D, 2.0D), Block.box(7.0D, 5.0D, 14.0D, 9.0D, 16.0D, 16.0D));
+@@ -52,14 +_,21 @@
     protected static final VoxelShape Z_OCCLUSION_SHAPE_LOW = Shapes.or(Block.box(0.0D, 2.0D, 7.0D, 2.0D, 13.0D, 9.0D), Block.box(14.0D, 2.0D, 7.0D, 16.0D, 13.0D, 9.0D));
     protected static final VoxelShape X_OCCLUSION_SHAPE_LOW = Shapes.or(Block.box(7.0D, 2.0D, 0.0D, 9.0D, 13.0D, 2.0D), Block.box(7.0D, 2.0D, 14.0D, 9.0D, 13.0D, 16.0D));
--   private final WoodType type;
+    private final WoodType type;
 +   private final net.minecraft.sounds.SoundEvent openSound;
 +   private final net.minecraft.sounds.SoundEvent closeSound;
  
-    public FenceGateBlock(BlockBehaviour.Properties p_273352_, WoodType p_273340_) {
+    public MapCodec<FenceGateBlock> codec() {
+       return CODEC;
+    }
+ 
+    public FenceGateBlock(WoodType p_273340_, BlockBehaviour.Properties p_273352_) {
 -      super(p_273352_.sound(p_273340_.soundType()));
 -      this.type = p_273340_;
-+      this(p_273352_.sound(p_273340_.soundType()), p_273340_.fenceGateOpen(), p_273340_.fenceGateClose());
++      this(p_273352_.sound(p_273340_.soundType()), p_273340_.fenceGateOpen(), p_273340_.fenceGateClose(), p_273340_);
 +   }
-+   public FenceGateBlock(BlockBehaviour.Properties props, net.minecraft.sounds.SoundEvent openSound, net.minecraft.sounds.SoundEvent closeSound) {
++   public FenceGateBlock(BlockBehaviour.Properties props, net.minecraft.sounds.SoundEvent openSound, net.minecraft.sounds.SoundEvent closeSound, WoodType woodType) {
 +      super(props);
++      this.type = woodType;
 +      this.openSound = openSound;
 +      this.closeSound = closeSound;
        this.registerDefaultState(this.stateDefinition.any().setValue(OPEN, Boolean.valueOf(false)).setValue(POWERED, Boolean.valueOf(false)).setValue(IN_WALL, Boolean.valueOf(false)));
     }
  
-@@ -133,7 +_,7 @@
+@@ -147,7 +_,7 @@
        }
  
        boolean flag = p_53365_.getValue(OPEN);

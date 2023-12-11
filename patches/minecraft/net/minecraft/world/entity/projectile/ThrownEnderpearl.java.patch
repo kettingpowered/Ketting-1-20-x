@@ -11,7 +11,7 @@
  
  public class ThrownEnderpearl extends ThrowableItemProjectile {
     public ThrownEnderpearl(EntityType<? extends ThrownEnderpearl> p_37491_, Level p_37492_) {
-@@ -45,22 +_,39 @@
+@@ -48,22 +_,39 @@
           if (entity instanceof ServerPlayer) {
              ServerPlayer serverplayer = (ServerPlayer)entity;
              if (serverplayer.connection.isAcceptingMessages() && serverplayer.level() == this.level() && !serverplayer.isSleeping()) {
@@ -61,12 +61,13 @@
 -
 -               entity.resetFallDistance();
 -               entity.hurt(this.damageSources().fall(), 5.0F);
+                this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_TELEPORT, SoundSource.PLAYERS);
 +                  // CraftBukkit end
 +               } //Forge: End
              }
           } else if (entity != null) {
              entity.teleportTo(this.getX(), this.getY(), this.getZ());
-@@ -83,12 +_,12 @@
+@@ -87,12 +_,12 @@
     }
  
     @Nullable

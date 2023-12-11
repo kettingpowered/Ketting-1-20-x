@@ -1,28 +1,16 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -22,6 +_,7 @@
- import net.minecraft.network.syncher.SynchedEntityData;
- import net.minecraft.resources.ResourceLocation;
- import net.minecraft.server.level.ServerLevel;
-+import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.sounds.SoundEvent;
- import net.minecraft.tags.TagKey;
- import net.minecraft.util.Mth;
-@@ -62,7 +_,6 @@
- import net.minecraft.world.item.SpawnEggItem;
- import net.minecraft.world.item.SwordItem;
- import net.minecraft.world.item.enchantment.EnchantmentHelper;
--import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.LevelAccessor;
- import net.minecraft.world.level.LevelReader;
-@@ -71,6 +_,9 @@
+@@ -71,6 +_,13 @@
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.AABB;
++
++//Ketting start
++import net.minecraft.server.level.ServerPlayer;
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 +import org.bukkit.event.entity.*;
++//Ketting end
  
  public abstract class Mob extends LivingEntity implements Targeting {
     private static final EntityDataAccessor<Byte> DATA_MOB_FLAGS_ID = SynchedEntityData.defineId(Mob.class, EntityDataSerializers.BYTE);
@@ -54,7 +42,7 @@
     @Nullable
     private Entity leashHolder;
     private int delayedLeashHolderId;
-@@ -117,6 +_,11 @@
+@@ -118,6 +_,11 @@
     private CompoundTag leashInfoTag;
     private BlockPos restrictCenter = BlockPos.ZERO;
     private float restrictRadius = -1.0F;
@@ -79,7 +67,7 @@
     protected void registerGoals() {
     }
  
-@@ -231,7 +_,43 @@
+@@ -232,7 +_,43 @@
     }
  
     public void setTarget(@Nullable LivingEntity p_21544_) {
@@ -137,7 +125,7 @@
     public void addAdditionalSaveData(CompoundTag p_21484_) {
        super.addAdditionalSaveData(p_21484_);
        p_21484_.putBoolean("CanPickUpLoot", this.canPickUpLoot());
-@@ -429,15 +_,29 @@
+@@ -430,15 +_,29 @@
           p_21484_.putBoolean("NoAI", this.isNoAi());
        }
  
@@ -169,7 +157,7 @@
        if (p_21450_.contains("ArmorItems", 9)) {
           ListTag listtag = p_21450_.getList("ArmorItems", 10);
  
-@@ -481,6 +_,20 @@
+@@ -482,6 +_,20 @@
        }
  
        this.setNoAi(p_21450_.getBoolean("NoAI"));
@@ -190,7 +178,7 @@
     }
  
     protected void dropFromLootTable(DamageSource p_21389_, boolean p_21390_) {
-@@ -520,9 +_,9 @@
+@@ -521,9 +_,9 @@
     public void aiStep() {
        super.aiStep();
        this.level().getProfiler().push("looting");
@@ -243,7 +231,7 @@
           }
  
           if (equipmentslot.isArmor() && p_255842_.getCount() > 1) {
-@@ -698,6 +_,14 @@
+@@ -699,6 +_,14 @@
           this.discard();
        } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
           Entity entity = this.level().getNearestPlayer(this, -1.0D);
@@ -258,7 +246,7 @@
           if (entity != null) {
              double d0 = entity.distanceToSqr(this);
              int i = this.getType().getCategory().getDespawnDistance();
-@@ -722,6 +_,7 @@
+@@ -723,6 +_,7 @@
  
     protected final void serverAiStep() {
        ++this.noActionTime;
@@ -266,7 +254,7 @@
        this.level().getProfiler().push("sensing");
        this.sensing.tick();
        this.level().getProfiler().pop();
-@@ -1031,6 +_,16 @@
+@@ -1032,6 +_,16 @@
  
     }
  
@@ -283,7 +271,7 @@
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_21434_, DifficultyInstance p_21435_, MobSpawnType p_21436_, @Nullable SpawnGroupData p_21437_, @Nullable CompoundTag p_21438_) {
        RandomSource randomsource = p_21434_.getRandom();
-@@ -1041,6 +_,7 @@
+@@ -1042,6 +_,7 @@
           this.setLeftHanded(false);
        }
  
@@ -422,6 +410,7 @@
 +      this.jumpInLiquidInternal(() -> super.jumpInFluid(type));
 +   }
 +
+    @VisibleForTesting
     public void removeFreeWill() {
        this.removeAllGoals((p_262562_) -> {
           return true;

@@ -1,58 +1,20 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -8,11 +_,8 @@
- import com.mojang.serialization.Dynamic;
- import java.net.InetSocketAddress;
- import java.net.SocketAddress;
--import java.util.Collection;
--import java.util.List;
--import java.util.Optional;
--import java.util.OptionalInt;
--import java.util.Set;
-+import java.util.*;
-+import java.util.concurrent.atomic.AtomicReference;
- import javax.annotation.Nullable;
- import net.minecraft.BlockUtil;
- import net.minecraft.ChatFormatting;
-@@ -29,6 +_,7 @@
- import net.minecraft.core.SectionPos;
- import net.minecraft.core.registries.BuiltInRegistries;
- import net.minecraft.nbt.CompoundTag;
-+import net.minecraft.nbt.ListTag;
- import net.minecraft.nbt.NbtOps;
- import net.minecraft.network.PacketSendListener;
- import net.minecraft.network.chat.ChatType;
-@@ -91,6 +_,7 @@
- import net.minecraft.world.Container;
- import net.minecraft.world.InteractionHand;
- import net.minecraft.world.MenuProvider;
-+import net.minecraft.world.damagesource.CombatTracker;
- import net.minecraft.world.damagesource.DamageSource;
- import net.minecraft.world.effect.MobEffectInstance;
- import net.minecraft.world.effect.MobEffects;
-@@ -109,6 +_,7 @@
- import net.minecraft.world.entity.player.Inventory;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.entity.projectile.AbstractArrow;
-+import net.minecraft.world.food.FoodData;
- import net.minecraft.world.inventory.AbstractContainerMenu;
- import net.minecraft.world.inventory.ContainerListener;
- import net.minecraft.world.inventory.ContainerSynchronizer;
-@@ -129,6 +_,7 @@
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.biome.BiomeManager;
- import net.minecraft.world.level.block.Blocks;
-+import net.minecraft.world.level.block.ChestBlock;
- import net.minecraft.world.level.block.HorizontalDirectionalBlock;
- import net.minecraft.world.level.block.NetherPortalBlock;
- import net.minecraft.world.level.block.entity.BlockEntity;
 @@ -143,11 +_,24 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Score;
-+import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
+ import org.slf4j.Logger;
++
++//Ketting start
++import java.util.concurrent.atomic.AtomicReference;
++import net.minecraft.nbt.ListTag;
++import net.minecraft.world.damagesource.CombatTracker;
++import net.minecraft.world.food.FoodData;
++import net.minecraft.world.level.block.ChestBlock;
++import net.minecraft.world.scores.Scoreboard;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.WeatherType;
@@ -65,7 +27,7 @@
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 +import org.bukkit.event.player.*;
 +import org.bukkit.inventory.MainHand;
- import org.slf4j.Logger;
++//Ketting end
  
 -public class ServerPlayer extends Player {
 +public class ServerPlayer extends Player implements net.minecraftforge.common.extensions.IForgeServerPlayer {
@@ -694,7 +656,7 @@
           this.enteredNetherPosition = null;
        }
  
-@@ -828,36 +_,70 @@
+@@ -833,36 +_,70 @@
        this.containerMenu.broadcastChanges();
     }
  
@@ -785,7 +747,7 @@
     }
  
     public void startSleeping(BlockPos p_9190_) {
-@@ -877,6 +_,7 @@
+@@ -882,6 +_,7 @@
     }
  
     private boolean bedInRange(BlockPos p_9117_, Direction p_9118_) {
@@ -1082,7 +1044,7 @@
           }
  
           if (p_9214_ != null) {
-@@ -1387,7 +_,11 @@
+@@ -1486,7 +_,11 @@
  
     @Nullable
     public Component getTabListDisplayName() {
@@ -1137,7 +1099,7 @@
  
     }
  
-@@ -1449,6 +_,35 @@
+@@ -1548,6 +_,35 @@
     }
  
     public void setRespawnPosition(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_) {
@@ -1173,7 +1135,7 @@
        if (p_9160_ != null) {
           boolean flag = p_9160_.equals(this.respawnPosition) && p_9159_.equals(this.respawnDimension);
           if (p_9163_ && !flag) {
-@@ -1493,6 +_,9 @@
+@@ -1592,6 +_,9 @@
        if (itementity == null) {
           return null;
        } else {
@@ -1183,7 +1145,7 @@
           this.level().addFreshEntity(itementity);
           ItemStack itemstack = itementity.getItem();
           if (p_9087_) {
-@@ -1507,6 +_,75 @@
+@@ -1606,6 +_,75 @@
        }
     }
  
@@ -1259,7 +1221,7 @@
     public TextFilter getTextFilter() {
        return this.textFilter;
     }
-@@ -1566,11 +_,14 @@
+@@ -1665,11 +_,14 @@
  
     public boolean drop(boolean p_182295_) {
        Inventory inventory = this.getInventory();

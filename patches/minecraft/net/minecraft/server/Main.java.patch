@@ -176,6 +176,7 @@
 -         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s);
 +         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s, LevelStem.OVERWORLD);
 +         levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData();
+          Dynamic<?> dynamic;
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.getSummary();
           if (levelsummary != null) {
              if (levelsummary.requiresManualConversion()) {
@@ -202,6 +203,8 @@
 +         AtomicReference<WorldLoader.DataLoadContext> worldLoader = new AtomicReference<>();
 +         // CraftBukkit end
 +
++         if (dynamic != null)
++             net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(dynamic, levelstoragesource$levelstorageaccess.getLevelDirectory());
           WorldStem worldstem;
           try {
              WorldLoader.InitConfig worldloader$initconfig = loadOrCreateConfig(dedicatedserversettings.getProperties(), levelstoragesource$levelstorageaccess, flag, packrepository);
@@ -216,11 +219,12 @@
                       }
  
 +                     //Forge: Do a write-read-cycle to inject modded dimensions on first start of a dedicated server into its generated world dimensions list.
++                     net.minecraft.resources.RegistryOps<net.minecraft.nbt.Tag> dynamicops = net.minecraft.resources.RegistryOps.create(net.minecraft.nbt.NbtOps.INSTANCE, p_308589_.datapackWorldgen());
 +                     worlddimensions = WorldDimensions.CODEC.encoder().encodeStart(dynamicops, worlddimensions).flatMap((writtenPayloadWithModdedDimensions) -> WorldDimensions.CODEC.decoder().parse(dynamicops, writtenPayloadWithModdedDimensions)).resultOrPartial(LOGGER::error).orElse(worlddimensions);
                       WorldDimensions.Complete worlddimensions$complete = worlddimensions.bake(registry);
-                      Lifecycle lifecycle = worlddimensions$complete.lifecycle().add(p_248079_.datapackWorldgen().allRegistriesLifecycle());
+                      Lifecycle lifecycle = worlddimensions$complete.lifecycle().add(p_308589_.datapackWorldgen().allRegistriesLifecycle());
                       return new WorldLoader.DataLoadOutput<>(new PrimaryLevelData(levelsettings, worldoptions, worlddimensions$complete.specialWorldProperty(), lifecycle), worlddimensions$complete.dimensionsRegistryAccess());
-@@ -186,21 +_,38 @@
+@@ -210,21 +_,38 @@
  
           WorldData worlddata = worldstem.worldData();
           levelstoragesource$levelstorageaccess.saveDataTag(registryaccess$frozen, worlddata);

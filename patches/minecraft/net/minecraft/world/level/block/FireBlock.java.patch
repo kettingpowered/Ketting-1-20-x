@@ -47,7 +47,7 @@
     }
  
     public VoxelShape getShape(BlockState p_53474_, BlockGetter p_53475_, BlockPos p_53476_, CollisionContext p_53477_) {
-@@ -104,13 +_,13 @@
+@@ -110,13 +_,13 @@
     protected BlockState getStateForPlacement(BlockGetter p_53471_, BlockPos p_53472_) {
        BlockPos blockpos = p_53472_.below();
        BlockState blockstate = p_53471_.getBlockState(blockpos);
@@ -63,7 +63,7 @@
              }
           }
  
-@@ -129,14 +_,14 @@
+@@ -135,14 +_,14 @@
        p_221161_.scheduleTick(p_221162_, this, getFireTickDelay(p_221161_.random));
        if (p_221161_.getGameRules().getBoolean(GameRules.RULE_DOFIRETICK)) {
           if (!p_221160_.canSurvive(p_221161_, p_221162_)) {
@@ -205,7 +205,7 @@
           }
        }
  
-@@ -239,7 +_,7 @@
+@@ -245,7 +_,7 @@
  
     private boolean isValidFireLocation(BlockGetter p_53486_, BlockPos p_53487_) {
        for(Direction direction : Direction.values()) {
@@ -214,7 +214,7 @@
              return true;
           }
        }
-@@ -255,13 +_,14 @@
+@@ -261,13 +_,14 @@
  
           for(Direction direction : Direction.values()) {
              BlockState blockstate = p_221157_.getBlockState(p_221158_.relative(direction));
@@ -230,10 +230,10 @@
     protected boolean canBurn(BlockState p_53489_) {
        return this.getIgniteOdds(p_53489_) > 0;
     }
-@@ -280,8 +_,21 @@
+@@ -286,8 +_,21 @@
     }
  
-    private void setFlammable(Block p_53445_, int p_53446_, int p_53447_) {
+    public void setFlammable(Block p_53445_, int p_53446_, int p_53447_) {
 +      if (p_53445_ == Blocks.AIR) throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
        this.igniteOdds.put(p_53445_, p_53446_);
        this.burnOdds.put(p_53445_, p_53447_);

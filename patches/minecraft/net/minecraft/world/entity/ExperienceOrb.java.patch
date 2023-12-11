@@ -79,8 +79,8 @@
        Map.Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.getRandomItemWith(Enchantments.MENDING, p_147093_, ItemStack::isDamaged);
        if (entry != null) {
           ItemStack itemstack = entry.getValue();
--         int i = Math.min(this.xpToDurability(this.value), itemstack.getDamageValue());
-+         int i = Math.min((int) (this.value * itemstack.getXpRepairRatio()), itemstack.getDamageValue());
+-         int i = Math.min(this.xpToDurability(p_147094_), itemstack.getDamageValue());
++         int i = Math.min((int) (p_147094_ * itemstack.getXpRepairRatio()), itemstack.getDamageValue());
 +         // CraftBukkit start
 +         org.bukkit.event.player.PlayerItemMendEvent event = CraftEventFactory.callPlayerItemMendEvent(p_147093_, this, itemstack, entry.getKey(), i);
 +         i = event.getRepairAmount();

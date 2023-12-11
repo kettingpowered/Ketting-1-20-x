@@ -1,39 +1,5 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -18,14 +_,7 @@
- import java.io.Writer;
- import java.nio.file.Files;
- import java.nio.file.Path;
--import java.util.ArrayList;
--import java.util.Comparator;
--import java.util.List;
--import java.util.Locale;
--import java.util.Objects;
--import java.util.Optional;
--import java.util.Set;
--import java.util.UUID;
-+import java.util.*;
- import java.util.concurrent.Executor;
- import java.util.function.BooleanSupplier;
- import java.util.function.Function;
-@@ -114,6 +_,7 @@
- import net.minecraft.world.level.StructureManager;
- import net.minecraft.world.level.WorldGenLevel;
- import net.minecraft.world.level.biome.Biome;
-+import net.minecraft.world.level.biome.BiomeSource;
- import net.minecraft.world.level.block.Block;
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.block.SnowLayerBlock;
-@@ -136,7 +_,9 @@
- import net.minecraft.world.level.gameevent.DynamicGameEventListener;
- import net.minecraft.world.level.gameevent.GameEvent;
- import net.minecraft.world.level.gameevent.GameEventDispatcher;
-+import net.minecraft.world.level.levelgen.FlatLevelSource;
- import net.minecraft.world.level.levelgen.Heightmap;
-+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
- import net.minecraft.world.level.levelgen.structure.BoundingBox;
- import net.minecraft.world.level.levelgen.structure.Structure;
- import net.minecraft.world.level.levelgen.structure.StructureCheck;
 @@ -146,15 +_,21 @@
  import net.minecraft.world.level.portal.PortalForcer;
  import net.minecraft.world.level.saveddata.maps.MapIndex;
@@ -48,6 +14,12 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
+ import org.slf4j.Logger;
++
++//Ketting start
++import net.minecraft.world.level.biome.BiomeSource;
++import net.minecraft.world.level.levelgen.FlatLevelSource;
++import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 +import org.bukkit.WeatherType;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R2.generator.CustomWorldChunkManager;
@@ -56,7 +28,7 @@
 +import org.bukkit.event.weather.LightningStrikeEvent;
 +import org.bukkit.event.world.TimeSkipEvent;
 +import org.kettingpowered.ketting.utils.DelegateWorldInfo;
- import org.slf4j.Logger;
++//Ketting end
  
  public class ServerLevel extends Level implements WorldGenLevel {
 @@ -169,9 +_,9 @@
@@ -71,7 +43,7 @@
     private final GameEventDispatcher gameEventDispatcher;
     public boolean noSave;
     private final SleepStatus sleepStatus;
-@@ -188,24 +_,121 @@
+@@ -190,24 +_,121 @@
     private final List<CustomSpawner> customSpawners;
     @Nullable
     private EndDragonFight dragonFight;
@@ -209,7 +181,7 @@
        } else {
           this.dragonFight = null;
        }
-@@ -232,6 +_,7 @@
+@@ -234,6 +_,7 @@
        this.randomSequences = Objects.requireNonNullElseGet(p_288977_, () -> {
           return this.getDataStorage().computeIfAbsent(RandomSequences.factory(i), "random_sequences");
        });
@@ -217,7 +189,7 @@
     }
  
     /** @deprecated */
-@@ -265,13 +_,23 @@
+@@ -272,13 +_,23 @@
        profilerfiller.popPush("weather");
        this.advanceWeatherCycle();
        int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
@@ -268,9 +240,9 @@
 +      timings.doSounds.stopTiming(); // Spigot
        this.handlingTick = false;
        profilerfiller.pop();
--      boolean flag = !this.players.isEmpty() || !this.getForcedChunks().isEmpty();
-+      boolean flag = true || !this.players.isEmpty() || net.minecraftforge.common.world.ForgeChunkManager.hasForcedChunks(this); //Forge: Replace vanilla's has forced chunk check with forge's that checks both the vanilla and forge added ones // CraftBukkit - this prevents entity cleanup, other issues on servers with no players
-       if (flag) {
+-      boolean flag1 = !this.players.isEmpty() || !this.getForcedChunks().isEmpty();
++      boolean flag1 = true || !this.players.isEmpty() || net.minecraftforge.common.world.ForgeChunkManager.hasForcedChunks(this); //Forge: Replace vanilla's has forced chunk check with forge's that checks both the vanilla and forge added ones // CraftBukkit - this prevents entity cleanup, other issues on servers with no players
+       if (flag1) {
           this.resetEmptyTime();
        }
  
@@ -295,11 +267,9 @@
 @@ -329,12 +_,16 @@
                       }
  
++                     if (p_308944_.isRemoved() || p_308944_ instanceof net.minecraftforge.entity.PartEntity) return;
                       profilerfiller.push("tick");
--                     this.guardEntityTick(this::tickNonPassenger, p_184065_);
-+                     if (!p_184065_.isRemoved() && !(p_184065_ instanceof net.minecraftforge.entity.PartEntity)) {
-+                        this.guardEntityTick(this::tickNonPassenger, p_184065_);
-+                     }
+                      this.guardEntityTick(this::tickNonPassenger, p_308944_);
                       profilerfiller.pop();
                    }
                 }
@@ -368,7 +338,7 @@
        if (this.oRainLevel != this.rainLevel) {
           this.server.getPlayerList().broadcastAll(new ClientboundGameEventPacket(ClientboundGameEventPacket.RAIN_LEVEL_CHANGE, this.rainLevel), this.dimension());
        }
-@@ -633,24 +_,60 @@
+@@ -650,24 +_,60 @@
           this.server.getPlayerList().broadcastAll(new ClientboundGameEventPacket(ClientboundGameEventPacket.THUNDER_LEVEL_CHANGE, this.thunderLevel), this.dimension());
        }
  
@@ -548,7 +518,7 @@
     }
  
     public void addDuringCommandTeleport(ServerPlayer p_8623_) {
-@@ -828,6 +_,7 @@
+@@ -846,6 +_,7 @@
     }
  
     private void addPlayer(ServerPlayer p_8854_) {
@@ -556,7 +526,7 @@
        Entity entity = this.getEntities().get(p_8854_.getUUID());
        if (entity != null) {
           LOGGER.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.getUUID());
-@@ -835,28 +_,56 @@
+@@ -853,28 +_,56 @@
           this.removePlayerImmediately((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -660,7 +630,7 @@
              if (d0 * d0 + d1 * d1 + d2 * d2 < 1024.0D) {
                 serverplayer.connection.send(new ClientboundBlockDestructionPacket(p_8612_, p_8613_, p_8614_));
              }
-@@ -880,10 +_,22 @@
+@@ -898,10 +_,22 @@
     }
  
     public void playSeededSound(@Nullable Player p_263330_, double p_263393_, double p_263369_, double p_263354_, Holder<SoundEvent> p_263412_, SoundSource p_263338_, float p_263352_, float p_263390_, long p_263403_) {
@@ -683,7 +653,7 @@
        this.server.getPlayerList().broadcast(p_263545_, p_263544_.getX(), p_263544_.getY(), p_263544_.getZ(), (double)p_263491_.value().getRange(p_263530_), this.dimension(), new ClientboundSoundEntityPacket(p_263491_, p_263542_, p_263544_, p_263530_, p_263520_, p_263490_));
     }
  
-@@ -905,6 +_,7 @@
+@@ -923,6 +_,7 @@
     }
  
     public void gameEvent(GameEvent p_215041_, Vec3 p_215042_, GameEvent.Context p_215043_) {
@@ -870,7 +840,7 @@
           ServerLevel.this.getChunkSource().addEntity(p_143371_);
           if (p_143371_ instanceof ServerPlayer serverplayer) {
              ServerLevel.this.players.add(serverplayer);
-@@ -1475,16 +_,48 @@
+@@ -1505,16 +_,48 @@
              ServerLevel.this.navigatingMobs.add(mob);
           }
  
@@ -921,7 +891,7 @@
           ServerLevel.this.getChunkSource().removeEntity(p_143375_);
           if (p_143375_ instanceof ServerPlayer serverplayer) {
              ServerLevel.this.players.remove(serverplayer);
-@@ -1500,17 +_,34 @@
+@@ -1530,17 +_,34 @@
              ServerLevel.this.navigatingMobs.remove(mob);
           }
  

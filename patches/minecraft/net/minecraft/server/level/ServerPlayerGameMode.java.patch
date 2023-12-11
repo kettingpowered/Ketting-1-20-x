@@ -229,8 +229,8 @@
 +   private org.bukkit.block.Block destroyBlock$bblock;
 +   private Optional<BlockBreakEvent> destroyBlock$event;
     public boolean destroyBlock(BlockPos p_9281_) {
-       BlockState blockstate = this.level.getBlockState(p_9281_);
--      if (!this.player.getMainHandItem().getItem().canAttackBlock(blockstate, this.level, p_9281_, this.player)) {
+       BlockState blockstate1 = this.level.getBlockState(p_9281_);
+-      if (!this.player.getMainHandItem().getItem().canAttackBlock(blockstate1, this.level, p_9281_, this.player)) {
 +      // CraftBukkit start - fire BlockBreakEvent
 +      destroyBlock$bblock = CraftBlock.at(level, p_9281_);
 +      destroyBlock$event = callBukkitBlockBreakEvent(p_9281_, blockstate, destroyBlock$bblock);
@@ -247,22 +247,23 @@
           BlockEntity blockentity = this.level.getBlockEntity(p_9281_);
           Block block = blockstate.getBlock();
           if (block instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks()) {
-             this.level.sendBlockUpdated(p_9281_, blockstate, blockstate, 3);
+             this.level.sendBlockUpdated(p_9281_, blockstate1, blockstate1, 3);
              return false;
 +         } else if (player.getMainHandItem().onBlockStartBreak(p_9281_, player)) {
 +            return false;
           } else if (this.player.blockActionRestricted(this.level, p_9281_, this.gameModeForPlayer)) {
              return false;
           } else {
--            block.playerWillDestroy(this.level, p_9281_, blockstate, this.player);
--            boolean flag = this.level.removeBlock(p_9281_, false);
+-            BlockState blockstate = block.playerWillDestroy(this.level, p_9281_, blockstate1, this.player);
+-            boolean flag1 = this.level.removeBlock(p_9281_, false);
 +            // CraftBukkit start
 +            org.bukkit.block.BlockState state = destroyBlock$bblock.getState();
 +            level.captureDrops = new ArrayList<>();
 +            // CraftBukkit end
++            BlockState blockstate = blockstate1;
 +            boolean flag = /*this.level*/removeBlock(p_9281_, false); //Ketting
-+
-             if (flag) {
+ 
+             if (flag1) {
                 block.destroy(this.level, p_9281_, blockstate);
              }
  
@@ -272,15 +273,15 @@
              } else {
                 ItemStack itemstack = this.player.getMainHandItem();
                 ItemStack itemstack1 = itemstack.copy();
--               boolean flag1 = this.player.hasCorrectToolForDrops(blockstate);
-+               boolean flag1 = blockstate.canHarvestBlock(this.level, p_9281_, this.player); // previously player.hasCorrectToolForDrops(blockstate)
+-               boolean flag = this.player.hasCorrectToolForDrops(blockstate);
++               boolean flag = blockstate.canHarvestBlock(this.level, p_9281_, this.player); // previously player.hasCorrectToolForDrops(blockstate)
 +
                 itemstack.mineBlock(this.level, blockstate, p_9281_, this.player);
--               if (flag && flag1) {
+-               if (flag1 && flag) {
 +               if (itemstack.isEmpty() && !itemstack1.isEmpty())
 +                  net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.player, itemstack1, InteractionHand.MAIN_HAND);
 +
-+               if (flag && flag1 && destroyBlock$event.get().isDropItems()) { // CraftBukkit - Check if block should drop items
++               if (flag1 && flag && destroyBlock$event.get().isDropItems()) { // CraftBukkit - Check if block should drop items
                    block.playerDestroy(this.level, this.player, p_9281_, blockstate, blockentity, itemstack1);
                 }
  
@@ -298,7 +299,7 @@
 +
 +            // Drop event experience
 +            if (flag && !destroyBlock$event.isEmpty()) {
-+               blockstate.getBlock().popExperience(this.level, p_9281_, destroyBlock$event.get().getExpToDrop());
++               blockstate1.getBlock().popExperience(this.level, p_9281_, destroyBlock$event.get().getExpToDrop());
 +            }
 +
 +            return true;

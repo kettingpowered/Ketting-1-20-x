@@ -1,9 +1,12 @@
 --- a/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/net/minecraft/world/entity/vehicle/Boat.java
-@@ -50,9 +_,16 @@
+@@ -50,9 +_,19 @@
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
+ import org.joml.Vector3f;
++
++//Ketting start
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 +import org.bukkit.entity.Vehicle;
@@ -11,13 +14,13 @@
 +import org.bukkit.event.vehicle.VehicleDestroyEvent;
 +import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 +import org.bukkit.event.vehicle.VehicleMoveEvent;
- import org.joml.Vector3f;
++//Ketting end
  
--public class Boat extends Entity implements VariantHolder<Boat.Type> {
-+public class Boat extends Entity implements net.minecraftforge.common.extensions.IForgeBoat {
-    private static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> DATA_ID_HURTDIR = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.FLOAT);
+-public class Boat extends VehicleEntity implements VariantHolder<Boat.Type> {
++public class Boat extends VehicleEntity implements net.minecraftforge.common.extensions.IForgeBoat {
+    private static final EntityDataAccessor<Integer> DATA_ID_TYPE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_LEFT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_RIGHT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
 @@ -82,7 +_,7 @@
     private boolean inputDown;
     private double waterLevel;
@@ -138,7 +141,7 @@
        this.tickBubbleColumn();
  
        for(int i = 0; i <= 1; ++i) {
-@@ -483,7 +_,7 @@
+@@ -450,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.set(l1, k1, i2);
                 FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
@@ -147,7 +150,7 @@
                    f = Math.max(f, fluidstate.getHeight(this.level(), blockpos$mutableblockpos));
                 }
  
-@@ -524,7 +_,7 @@
+@@ -491,7 +_,7 @@
                       blockpos$mutableblockpos.set(l1, k2, i2);
                       BlockState blockstate = this.level().getBlockState(blockpos$mutableblockpos);
                       if (!(blockstate.getBlock() instanceof WaterlilyBlock) && Shapes.joinIsNotEmpty(blockstate.getCollisionShape(this.level(), blockpos$mutableblockpos).move((double)l1, (double)k2, (double)i2), voxelshape, BooleanOp.AND)) {
@@ -156,7 +159,7 @@
                          ++k1;
                       }
                    }
-@@ -553,7 +_,7 @@
+@@ -520,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.set(k1, l1, i2);
                 FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
@@ -165,7 +168,7 @@
                    float f = (float)l1 + fluidstate.getHeight(this.level(), blockpos$mutableblockpos);
                    this.waterLevel = Math.max((double)f, this.waterLevel);
                    flag |= aabb.minY < (double)f;
-@@ -583,7 +_,7 @@
+@@ -550,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.set(k1, l1, i2);
                 FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
@@ -211,7 +214,7 @@
              this.fallDistance -= (float)p_38307_;
           }
  
-@@ -839,7 +_,7 @@
+@@ -784,7 +_,7 @@
     }
  
     protected boolean canAddPassenger(Entity p_38390_) {
@@ -220,7 +223,7 @@
     }
  
     protected int getMaxPassengers() {
-@@ -872,6 +_,16 @@
+@@ -817,6 +_,16 @@
  
     public boolean isUnderWater() {
        return this.status == Boat.Status.UNDER_WATER || this.status == Boat.Status.UNDER_FLOWING_WATER;

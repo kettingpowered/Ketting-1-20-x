@@ -8,7 +8,7 @@
  
  public class StemBlock extends BushBlock implements BonemealableBlock {
     public static final int MAX_AGE = 7;
-@@ -44,22 +_,28 @@
+@@ -65,22 +_,28 @@
     }
  
     public void randomTick(BlockState p_222538_, ServerLevel p_222539_, BlockPos p_222540_, RandomSource p_222541_) {
@@ -27,8 +27,14 @@
                 Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(p_222541_);
                 BlockPos blockpos = p_222540_.relative(direction);
                 BlockState blockstate = p_222539_.getBlockState(blockpos.below());
--               if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
--                  p_222539_.setBlockAndUpdate(blockpos, this.fruit.defaultBlockState());
+-                if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
+-                   Registry<Block> registry = p_222539_.registryAccess().registryOrThrow(Registries.BLOCK);
+-                   Optional<Block> optional = registry.getOptional(this.fruit);
++//Todo: Merge this correctly
++// Forge: TODO: Soil blockstate.canSustainPlant(p_222539_, blockpos.below(), Direction.UP, this.fruit)
++//                if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
++//                   Registry<Block> registry = p_222539_.registryAccess().registryOrThrow(Registries.BLOCK);
++//                   Optional<Block> optional = registry.getOptional(this.fruit);
 +               if (p_222539_.isEmptyBlock(blockpos) && (blockstate.canSustainPlant(p_222539_, blockpos.below(), Direction.UP, this.fruit) || blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
 +                  // CraftBukkit start
 +                  if (!CraftEventFactory.handleBlockGrowEvent(p_222539_, blockpos, this.fruit.defaultBlockState())) {
@@ -53,10 +59,10 @@
        if (i == 7) {
           blockstate.randomTick(p_222528_, p_222530_, p_222528_.random);
        }
-@@ -93,5 +_,11 @@
+@@ -115,5 +_,11 @@
  
-    public StemGrownBlock getFruit() {
-       return this.fruit;
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_57040_) {
+       p_57040_.add(AGE);
 +   }
 +
 +   //FORGE START

@@ -30,10 +30,10 @@
        if (d0 != 0.0D) {
           this.xPower = p_36821_ / d0 * 0.1D;
           this.yPower = p_36822_ / d0 * 0.1D;
-@@ -65,8 +_,14 @@
+@@ -76,8 +_,14 @@
           }
  
-          HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+          HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity, this.getClipType());
 -         if (hitresult.getType() != HitResult.Type.MISS) {
 -            this.onHit(hitresult);
 +         if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {

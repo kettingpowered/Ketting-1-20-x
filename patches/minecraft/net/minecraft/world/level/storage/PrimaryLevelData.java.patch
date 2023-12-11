@@ -1,42 +1,28 @@
 --- a/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
-@@ -17,16 +_,21 @@
- import net.minecraft.SharedConstants;
- import net.minecraft.Util;
- import net.minecraft.core.BlockPos;
-+import net.minecraft.core.Registry;
- import net.minecraft.core.RegistryAccess;
- import net.minecraft.core.UUIDUtil;
-+import net.minecraft.core.registries.Registries;
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.nbt.ListTag;
- import net.minecraft.nbt.NbtOps;
- import net.minecraft.nbt.NbtUtils;
- import net.minecraft.nbt.StringTag;
- import net.minecraft.nbt.Tag;
-+import net.minecraft.network.protocol.game.ClientboundChangeDifficultyPacket;
- import net.minecraft.resources.RegistryOps;
- import net.minecraft.server.MinecraftServer;
-+import net.minecraft.server.level.ServerLevel;
-+import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.util.datafix.DataFixTypes;
- import net.minecraft.world.Difficulty;
- import net.minecraft.world.level.GameRules;
 @@ -35,18 +_,23 @@
  import net.minecraft.world.level.LevelSettings;
  import net.minecraft.world.level.WorldDataConfiguration;
  import net.minecraft.world.level.border.WorldBorder;
-+import net.minecraft.world.level.dimension.LevelStem;
  import net.minecraft.world.level.dimension.end.EndDragonFight;
-+import net.minecraft.world.level.levelgen.WorldDimensions;
  import net.minecraft.world.level.levelgen.WorldGenSettings;
  import net.minecraft.world.level.levelgen.WorldOptions;
  import net.minecraft.world.level.timers.TimerCallbacks;
  import net.minecraft.world.level.timers.TimerQueue;
+ import org.slf4j.Logger;
++
++//Ketting
++import net.minecraft.core.Registry;
++import net.minecraft.core.registries.Registries;
++import net.minecraft.network.protocol.game.ClientboundChangeDifficultyPacket;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.server.level.ServerPlayer;
++import net.minecraft.world.level.dimension.LevelStem;
++import net.minecraft.world.level.levelgen.WorldDimensions;
 +import org.bukkit.Bukkit;
 +import org.bukkit.event.weather.ThunderChangeEvent;
 +import org.bukkit.event.weather.WeatherChangeEvent;
- import org.slf4j.Logger;
++//Ketting
  
  public class PrimaryLevelData implements ServerLevelData, WorldData {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -47,7 +33,7 @@
     private final WorldOptions worldOptions;
     private final PrimaryLevelData.SpecialWorldProperty specialWorldProperty;
     private final Lifecycle worldGenSettingsLifecycle;
-@@ -82,6 +_,21 @@
+@@ -77,6 +_,21 @@
     private boolean wasModded;
     private final Set<String> removedFeatureFlags;
     private final TimerQueue<MinecraftServer> scheduledEvents;
@@ -67,9 +53,9 @@
 +   }
 +   // CraftBukkit end
  
-    private PrimaryLevelData(@Nullable DataFixer p_277859_, int p_277672_, @Nullable CompoundTag p_277888_, boolean p_278109_, int p_277714_, int p_278088_, int p_278037_, float p_277542_, long p_277414_, long p_277635_, int p_277595_, int p_277794_, int p_278007_, boolean p_277943_, int p_277674_, boolean p_277644_, boolean p_277749_, boolean p_278004_, WorldBorder.Settings p_277729_, int p_277856_, int p_278051_, @Nullable UUID p_277341_, Set<String> p_277989_, Set<String> p_277399_, TimerQueue<MinecraftServer> p_277860_, @Nullable CompoundTag p_277936_, EndDragonFight.Data p_289764_, LevelSettings p_278064_, WorldOptions p_278072_, PrimaryLevelData.SpecialWorldProperty p_277548_, Lifecycle p_277915_) {
-       this.fixerUpper = p_277859_;
-@@ -127,7 +_,7 @@
+    private PrimaryLevelData(@Nullable CompoundTag p_277888_, boolean p_278109_, int p_277672_, int p_277714_, int p_278088_, float p_277542_, long p_277414_, long p_277635_, int p_278037_, int p_277595_, int p_277794_, boolean p_277943_, int p_278007_, boolean p_277644_, boolean p_277749_, boolean p_278004_, WorldBorder.Settings p_277729_, int p_277674_, int p_277856_, @Nullable UUID p_277341_, Set<String> p_277989_, Set<String> p_277399_, TimerQueue<MinecraftServer> p_277860_, @Nullable CompoundTag p_277936_, EndDragonFight.Data p_289764_, LevelSettings p_278064_, WorldOptions p_278072_, PrimaryLevelData.SpecialWorldProperty p_277548_, Lifecycle p_277915_) {
+       this.wasModded = p_278109_;
+@@ -120,7 +_,7 @@
           return p_78529_.asString().result().stream();
        }).collect(Collectors.toCollection(Sets::newLinkedHashSet)), p_78531_.get("removed_features").asStream().flatMap((p_277335_) -> {
           return p_277335_.asString().result().stream();
@@ -87,7 +73,7 @@
           p_78547_.put("WorldGenSettings", p_78574_);
        });
        p_78547_.putInt("GameType", this.settings.gameType().getId());
-@@ -203,6 +_,13 @@
+@@ -195,6 +_,13 @@
           p_78547_.putUUID("WanderingTraderId", this.wanderingTraderId);
        }
  
@@ -156,7 +142,7 @@
     }
  
     public boolean isDifficultyLocked() {
-@@ -484,6 +_,23 @@
+@@ -462,6 +_,23 @@
     public LevelSettings getLevelSettings() {
        return this.settings.copy();
     }

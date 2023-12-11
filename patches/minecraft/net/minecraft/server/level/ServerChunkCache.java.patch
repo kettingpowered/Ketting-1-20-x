@@ -1,17 +1,5 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -6,10 +_,7 @@
- import com.mojang.datafixers.util.Either;
- import java.io.File;
- import java.io.IOException;
--import java.util.Arrays;
--import java.util.Collections;
--import java.util.List;
--import java.util.Optional;
-+import java.util.*;
- import java.util.concurrent.CompletableFuture;
- import java.util.concurrent.Executor;
- import java.util.function.BooleanSupplier;
 @@ -50,15 +_,15 @@
  public class ServerChunkCache extends ChunkSource {
     private static final List<ChunkStatus> CHUNK_STATUSES = ChunkStatus.getStatusList();
@@ -83,7 +71,7 @@
           ChunkAccess chunkaccess1 = completablefuture.join().map((p_8406_) -> {
              return p_8406_;
           }, (p_8423_) -> {
-@@ -162,6 +_,7 @@
+@@ -160,6 +_,7 @@
           if (chunkholder == null) {
              return null;
           } else {
@@ -187,8 +175,8 @@
           }
  
           profilerfiller.popPush("spawnAndTick");
--         boolean flag2 = this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING);
-+         boolean flag2 = this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) && !level.players().isEmpty(); // CraftBukkit
+-         boolean flag1 = this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING);
++         boolean flag1 = this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) && !level.players().isEmpty(); // CraftBukkit
           Collections.shuffle(list);
  
           for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
@@ -197,8 +185,8 @@
 -            if (this.level.isNaturalSpawningAllowed(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos)) {
 +            if ((this.level.isNaturalSpawningAllowed(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos)) || this.distanceManager.shouldForceTicks(chunkpos.toLong())) {
                 levelchunk1.incrementInhabitedTime(j);
--               if (flag2 && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkpos)) {
-+               if (flag2 && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos, true)) { // Spigot
+-               if (flag1 && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkpos)) {
++               if (flag1 && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos, true)) { // Spigot
                    NaturalSpawner.spawnForChunk(this.level, levelchunk1, naturalspawner$spawnstate, this.spawnFriendlies, this.spawnEnemies, flag1);
                 }
  

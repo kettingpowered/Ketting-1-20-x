@@ -8,7 +8,7 @@
        JsonElement jsonelement = Util.getOrThrow(this.codec.encodeStart(JsonOps.INSTANCE, this.asData()), IllegalStateException::new);
  
        try {
-@@ -178,7 +_,9 @@
+@@ -177,7 +_,9 @@
           this.unregisterListeners(p_298135_);
           this.progressChanged.add(p_298135_);
           flag = true;
@@ -16,9 +16,9 @@
           if (!flag1 && advancementprogress.isDone()) {
 +            this.player.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.player.PlayerAdvancementDoneEvent(this.player.getBukkitEntity(), p_298135_.toBukkit())); // CraftBukkit
              p_298135_.value().rewards().grant(this.player);
-             p_298135_.value().display().ifPresent((p_296444_) -> {
+             p_298135_.value().display().ifPresent((p_308592_) -> {
                 if (p_296444_.shouldAnnounceChat() && this.player.level().getGameRules().getBoolean(GameRules.RULE_ANNOUNCE_ADVANCEMENTS)) {
-@@ -186,6 +_,7 @@
+@@ -185,6 +_,7 @@
                 }
  
              });
@@ -26,7 +26,7 @@
           }
        }
  
-@@ -204,6 +_,7 @@
+@@ -203,6 +_,7 @@
           this.registerListeners(p_297905_);
           this.progressChanged.add(p_297905_);
           flag = true;

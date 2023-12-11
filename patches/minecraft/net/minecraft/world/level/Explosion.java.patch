@@ -1,25 +1,21 @@
 --- a/net/minecraft/world/level/Explosion.java
 +++ b/net/minecraft/world/level/Explosion.java
-@@ -20,6 +_,8 @@
- import net.minecraft.world.damagesource.DamageSource;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.LivingEntity;
-+import net.minecraft.world.entity.boss.EnderDragonPart;
-+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
- import net.minecraft.world.entity.item.ItemEntity;
- import net.minecraft.world.entity.item.PrimedTnt;
- import net.minecraft.world.entity.player.Player;
-@@ -38,6 +_,10 @@
+
+@@ -38,5 +_,14 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
++
++//Ketting start
++import net.minecraft.world.entity.boss.EnderDragonPart;
++import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 +import org.bukkit.event.block.BlockExplodeEvent;
 +import org.bukkit.event.entity.EntityExplodeEvent;
++//Ketting end
  
  public class Explosion {
-    private static final ExplosionDamageCalculator EXPLOSION_DAMAGE_CALCULATOR = new ExplosionDamageCalculator();
 @@ -50,12 +_,14 @@
     private final double y;
     private final double z;
@@ -28,14 +24,14 @@
 +   public final Entity source;
     private final float radius;
     private final DamageSource damageSource;
-    private final ExplosionDamageCalculator damageCalculator;
+    private final SoundEvent explosionSound;
     private final ObjectArrayList<BlockPos> toBlow = new ObjectArrayList<>();
     private final Map<Player, Vec3> hitPlayers = Maps.newHashMap();
 +   private final Vec3 position;
 +   public boolean wasCanceled = false; // CraftBukkit - add field
  
-    public Explosion(Level p_46024_, @Nullable Entity p_46025_, double p_46026_, double p_46027_, double p_46028_, float p_46029_, List<BlockPos> p_46030_) {
-       this(p_46024_, p_46025_, p_46026_, p_46027_, p_46028_, p_46029_, false, Explosion.BlockInteraction.DESTROY_WITH_DECAY, p_46030_);
+    public static DamageSource getDefaultDamageSource(Level p_309890_, @Nullable Entity p_311046_) {
+       return p_309890_.damageSources().explosion(p_311046_, getIndirectSourceEntityInternal(p_311046_));
 @@ -73,7 +_,7 @@
     public Explosion(Level p_46051_, @Nullable Entity p_46052_, @Nullable DamageSource p_46053_, @Nullable ExplosionDamageCalculator p_46054_, double p_46055_, double p_46056_, double p_46057_, float p_46058_, boolean p_46059_, Explosion.BlockInteraction p_46060_) {
        this.level = p_46051_;
@@ -45,10 +41,10 @@
        this.x = p_46055_;
        this.y = p_46056_;
        this.z = p_46057_;
-@@ -81,6 +_,7 @@
-       this.blockInteraction = p_46060_;
-       this.damageSource = p_46053_ == null ? p_46051_.damageSources().explosion(this) : p_46053_;
-       this.damageCalculator = p_46054_ == null ? this.makeDamageCalculator(p_46052_) : p_46054_;
+@@ -90,6 +_,7 @@
+       this.smallExplosionParticles = p_312175_;
+       this.largeExplosionParticles = p_310459_;
+       this.explosionSound = p_311795_;
 +      this.position = new Vec3(this.x, this.y, this.z);
     }
  
@@ -65,7 +61,7 @@
        this.level.gameEvent(this.source, GameEvent.EXPLODE, new Vec3(this.x, this.y, this.z));
        Set<BlockPos> set = Sets.newHashSet();
        int i = 16;
-@@ -176,6 +_,7 @@
+@@ -193,6 +_,7 @@
        int j2 = Mth.floor(this.z - (double)f2 - 1.0D);
        int j1 = Mth.floor(this.z + (double)f2 + 1.0D);
        List<Entity> list = this.level.getEntities(this.source, new AABB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
@@ -227,7 +223,7 @@
        int i = p_46068_.size();
  
        for(int j = 0; j < i; ++j) {
-@@ -353,6 +_,15 @@
+@@ -345,6 +_,15 @@
  
     public List<BlockPos> getToBlow() {
        return this.toBlow;
@@ -242,4 +238,4 @@
 +      return this.source;
     }
  
-    public static enum BlockInteraction {
+    public Explosion.BlockInteraction getBlockInteraction() {
