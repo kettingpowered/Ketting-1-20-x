@@ -1,29 +1,17 @@
 --- a/net/minecraft/world/level/block/EndPortalBlock.java
 +++ b/net/minecraft/world/level/block/EndPortalBlock.java
-@@ -4,6 +_,7 @@
- import net.minecraft.core.particles.ParticleTypes;
- import net.minecraft.resources.ResourceKey;
- import net.minecraft.server.level.ServerLevel;
-+import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.util.RandomSource;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.item.ItemStack;
-@@ -13,11 +_,14 @@
- import net.minecraft.world.level.block.entity.TheEndPortalBlockEntity;
- import net.minecraft.world.level.block.state.BlockBehaviour;
- import net.minecraft.world.level.block.state.BlockState;
-+import net.minecraft.world.level.dimension.LevelStem;
- import net.minecraft.world.level.material.Fluid;
- import net.minecraft.world.phys.shapes.BooleanOp;
+@@ -20,6 +_,10 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import net.minecraft.world.level.dimension.LevelStem;
++import net.minecraft.server.level.ServerPlayer;
 +import org.bukkit.event.entity.EntityPortalEnterEvent;
 +import org.bukkit.event.player.PlayerTeleportEvent;
  
  public class EndPortalBlock extends BaseEntityBlock {
-    protected static final VoxelShape SHAPE = Block.box(0.0D, 6.0D, 0.0D, 16.0D, 12.0D, 16.0D);
-@@ -36,11 +_,21 @@
+    public static final MapCodec<EndPortalBlock> CODEC = simpleCodec(EndPortalBlock::new);
+@@ -43,11 +_,21 @@
  
     public void entityInside(BlockState p_53025_, Level p_53026_, BlockPos p_53027_, Entity p_53028_) {
        if (p_53026_ instanceof ServerLevel && p_53028_.canChangeDimensions() && Shapes.joinIsNotEmpty(Shapes.create(p_53028_.getBoundingBox().move((double)(-p_53027_.getX()), (double)(-p_53027_.getY()), (double)(-p_53027_.getZ()))), p_53025_.getShape(p_53026_, p_53027_), BooleanOp.AND)) {

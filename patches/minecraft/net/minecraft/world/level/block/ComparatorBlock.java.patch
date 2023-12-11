@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/level/block/ComparatorBlock.java
 +++ b/net/minecraft/world/level/block/ComparatorBlock.java
-@@ -26,6 +_,7 @@
+@@ -27,6 +_,7 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.ticks.TickPriority;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory; //Ketting
  
  public class ComparatorBlock extends DiodeBlock implements EntityBlock {
-    public static final EnumProperty<ComparatorMode> MODE = BlockStateProperties.MODE_COMPARATOR;
-@@ -143,8 +_,18 @@
+    public static final MapCodec<ComparatorBlock> CODEC = simpleCodec(ComparatorBlock::new);
+@@ -149,8 +_,18 @@
           boolean flag1 = this.shouldTurnOn(p_51908_, p_51909_, p_51910_);
           boolean flag = p_51910_.getValue(POWERED);
           if (flag && !flag1) {

@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/level/block/DetectorRailBlock.java
 +++ b/net/minecraft/world/level/block/DetectorRailBlock.java
-@@ -23,6 +_,7 @@
+@@ -24,6 +_,7 @@
  import net.minecraft.world.level.block.state.properties.Property;
  import net.minecraft.world.level.block.state.properties.RailShape;
  import net.minecraft.world.phys.AABB;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class DetectorRailBlock extends BaseRailBlock {
-    public static final EnumProperty<RailShape> SHAPE = BlockStateProperties.RAIL_SHAPE_STRAIGHT;
+    public static final MapCodec<DetectorRailBlock> CODEC = simpleCodec(DetectorRailBlock::new);
 @@ -37,6 +_,10 @@
  
     public DetectorRailBlock(BlockBehaviour.Properties p_52431_) {
@@ -19,7 +19,7 @@
        this.registerDefaultState(this.stateDefinition.any().setValue(POWERED, Boolean.valueOf(false)).setValue(SHAPE, RailShape.NORTH_SOUTH).setValue(WATERLOGGED, Boolean.valueOf(false)));
     }
  
-@@ -75,6 +_,17 @@
+@@ -81,6 +_,17 @@
              flag1 = true;
           }
  
