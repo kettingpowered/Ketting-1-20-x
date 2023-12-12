@@ -1,19 +1,5 @@
 --- a/net/minecraft/gametest/framework/GameTestServer.java
 +++ b/net/minecraft/gametest/framework/GameTestServer.java
-@@ -51,6 +_,13 @@
- import net.minecraft.world.level.storage.PrimaryLevelData;
- import org.slf4j.Logger;
- 
-+//Ketting start
-+import java.io.IOException;
-+import java.net.InetAddress;
-+import net.minecraft.commands.CommandSourceStack;
-+import org.bukkit.command.CommandSender;
-+//Ketting end
-+
- public class GameTestServer extends MinecraftServer {
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private static final int PROGRESS_REPORT_INTERVAL = 20;
 @@ -106,13 +_,30 @@
     public boolean initServer() {
        this.setPlayerList(new PlayerList(this, this.registries(), this.playerDataStorage, 1) {
@@ -26,8 +12,8 @@
 +         this.setPort(25565);
 +      }
 +      try {
-+         this.getConnection().startTcpServerListener(InetAddress.getLocalHost(), this.getPort());
-+      } catch (IOException ioexception) {
++         this.getConnection().startTcpServerListener(java.net.InetAddress.getLocalHost(), this.getPort());
++      } catch (java.io.IOException ioexception) {
 +         LOGGER.warn("**** FAILED TO BIND TO PORT!");
 +         LOGGER.warn("The exception was: {}", (Object)ioexception.toString());
 +         LOGGER.warn("Perhaps a server is already running on that port?");
@@ -46,29 +32,17 @@
     }
  
     public void tickServer(BooleanSupplier p_177619_) {
-@@ -214,16 +_,22 @@
- 
-    public boolean isCommandBlockEnabled() {
-       return true;
--   }
--
-    public boolean isPublished() {
-       return false;
-    }
--
+@@ -223,6 +_,13 @@
     public boolean shouldInformAdmins() {
        return false;
     }
- 
++
 +   // Ketting start
 +   @Override
-+   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++   public org.bukkit.command.CommandSender getBukkitSender(net.minecraft.commands.CommandSourceStack wrapper) {
 +      return null;
 +   }
 +   // Ketting end
-+
-+   public boolean isSingleplayerOwner(GameProfile p_177617_) {
-+      return false;
+ 
     public boolean isSingleplayerOwner(GameProfile p_177617_) {
        return false;
-    }

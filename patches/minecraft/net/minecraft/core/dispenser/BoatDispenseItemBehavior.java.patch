@@ -1,23 +1,6 @@
 --- a/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
-@@ -12,6 +_,12 @@
- import net.minecraft.world.level.block.DispenserBlock;
- import net.minecraft.world.phys.Vec3;
- 
-+//Ketting start
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
-+import org.bukkit.event.block.BlockDispenseEvent;
-+//Ketting end
-+
- public class BoatDispenseItemBehavior extends DefaultDispenseItemBehavior {
-    private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
-    private final Boat.Type type;
-@@ -42,17 +_,47 @@
-          if (!serverlevel.getBlockState(blockpos).isAir() || !serverlevel.getFluidState(blockpos.below()).is(FluidTags.WATER)) {
-             return this.defaultDispenseItemBehavior.dispense(p_123375_, p_123376_);
-          }
--
+@@ -46,13 +_,44 @@
           d4 = 0.0D;
        }
  
@@ -25,10 +8,10 @@
 +      // Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(level, d0, d1, d2) : new Boat(level, d0, d1, d2));
 +      // CraftBukkit start
 +      ItemStack itemstack1 = p_123376_.split(1);
-+      org.bukkit.block.Block block = CraftBlock.at(level, p_123375_.pos());
-+      CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
++      org.bukkit.block.Block block = org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(level, p_123375_.pos());
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(itemstack1);
 +
-+      BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d1, d2 + d4, d3));
++      org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d1, d2 + d4, d3));
 +      if (!DispenserBlock.eventFired) {
 +         level.getCraftServer().getPluginManager().callEvent(event);
 +      }
@@ -41,7 +24,7 @@
 +      if (!event.getItem().equals(craftItem)) {
 +         p_123376_.grow(1);
 +         // Chain to handler for new item
-+         ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++         ItemStack eventStack = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +         DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +         if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
 +            idispensebehavior.dispense(p_123375_, eventStack);

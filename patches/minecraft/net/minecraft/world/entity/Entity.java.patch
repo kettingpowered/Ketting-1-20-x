@@ -233,11 +233,7 @@
        }
  
        this.checkBelowWorld();
-@@ -512,22 +_,55 @@
- 
-    public int getPortalWaitTime() {
-       return 0;
--   }
+@@ -516,18 +_,52 @@
  
     public void lavaHurt() {
        if (!this.fireImmune()) {
@@ -534,7 +530,7 @@
     }
  
     public void moveRelative(float p_19921_, Vec3 p_19922_) {
-@@ -1346,16 +_,18 @@
+@@ -1346,14 +_,15 @@
        this.yRotO = this.getYRot();
        this.xRotO = this.getXRot();
     }
@@ -550,10 +546,7 @@
 +      if (valid) level.getChunk((int) Math.floor(this.getX()) >> 4, (int) Math.floor(this.getZ()) >> 4); // CraftBukkit
     }
  
-+   public void moveTo(Vec3 p_20220_) {
     public void moveTo(Vec3 p_20220_) {
-       this.moveTo(p_20220_.x, p_20220_.y, p_20220_.z);
-    }
 @@ -1539,6 +_,12 @@
        return false;
     }
@@ -714,11 +707,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Loading entity NBT");
           CrashReportCategory crashreportcategory = crashreport.addCategory("Entity being loaded");
-@@ -1798,15 +_,30 @@
-    @Nullable
-    public ItemEntity spawnAtLocation(ItemStack p_19985_, float p_19986_) {
-       if (p_19985_.isEmpty()) {
--         return null;
+@@ -1802,8 +_,23 @@
        } else if (this.level().isClientSide) {
           return null;
        } else {
@@ -742,10 +731,6 @@
           this.level().addFreshEntity(itementity);
           return itementity;
        }
-+      }
-    }
- 
-    public boolean isAlive() {
 @@ -1840,6 +_,7 @@
  
     public void rideTick() {
@@ -837,7 +822,7 @@
           if (this.passengers.size() == 1 && this.passengers.get(0) == p_20352_) {
              this.passengers = ImmutableList.of();
           } else {
-@@ -1972,19 +_,22 @@
+@@ -1972,16 +_,18 @@
                 return p_185980_ != p_20352_;
              }).collect(ImmutableList.toImmutableList());
           }
@@ -857,10 +842,6 @@
     protected boolean couldAcceptPassenger() {
        return true;
     }
-+   }
- 
-    public void lerpTo(double p_19896_, double p_19897_, double p_19898_, float p_19899_, float p_19900_, int p_19901_) {
-       this.setPos(p_19896_, p_19897_, p_19898_);
 @@ -2059,13 +_,20 @@
           ServerLevel serverlevel = (ServerLevel)this.level();
           if (this.isInsidePortal) {
@@ -904,7 +885,7 @@
        this.setSharedFlag(4, p_20283_);
     }
  
-@@ -2240,34 +_,49 @@
+@@ -2240,26 +_,29 @@
        return this.getTeam() != null ? this.getTeam().isAlliedTo(p_20032_) : false;
     }
  
@@ -938,9 +919,8 @@
 +      return maxAirTicks; // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
     }
  
-+   public int getAirSupply() {
     public int getAirSupply() {
-       return this.entityData.get(DATA_AIR_SUPPLY_ID);
+@@ -2267,7 +_,18 @@
     }
  
     public void setAirSupply(int p_20302_) {
@@ -960,11 +940,7 @@
     }
  
     public int getTicksFrozen() {
-@@ -2289,17 +_,47 @@
- 
-    public int getTicksRequiredToFreeze() {
-       return 140;
--   }
+@@ -2293,11 +_,41 @@
  
     public void thunderHit(ServerLevel p_19927_, LightningBolt p_19928_) {
        this.setRemainingFireTicks(this.remainingFireTicks + 1);
@@ -1009,10 +985,7 @@
 +      // CraftBukkit end
     }
  
-+   public void onAboveBubbleCol(boolean p_20313_) {
     public void onAboveBubbleCol(boolean p_20313_) {
-       Vec3 vec3 = this.getDeltaMovement();
-       double d0;
 @@ -2393,7 +_,7 @@
     }
  

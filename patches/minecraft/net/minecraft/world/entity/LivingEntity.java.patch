@@ -192,14 +192,10 @@
     public void remove(Entity.RemovalReason p_276115_) {
        super.remove(p_276115_);
        this.brain.clearMemories();
-@@ -701,12 +_,23 @@
-                this.activeEffects.put(mobeffectinstance.getEffect(), mobeffectinstance);
-             }
+@@ -703,10 +_,20 @@
           }
--      }
-+         }
-+      }
-+
+       }
+ 
 +      // CraftBukkit start
 +      if (p_21096_.contains("Bukkit.MaxHealth")) {
 +         Tag nbtbase = p_21096_.get("Bukkit.MaxHealth");
@@ -210,7 +206,7 @@
 +         }
 +      }
 +      // CraftBukkit end
- 
++
        if (p_21096_.contains("Health", 99)) {
           this.setHealth(p_21096_.getFloat("Health"));
        }

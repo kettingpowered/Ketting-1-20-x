@@ -1,28 +1,5 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
-@@ -134,6 +_,22 @@
- import net.minecraft.world.level.GameRules;
- import org.slf4j.Logger;
- 
-+//Ketting start
-+import com.google.common.base.Joiner;
-+import java.util.LinkedHashSet;
-+import com.mojang.brigadier.suggestion.SuggestionProvider;
-+import io.netty.buffer.Unpooled;
-+import io.netty.util.AttributeKey;
-+import net.minecraft.network.FriendlyByteBuf;
-+import net.minecraft.resources.ResourceLocation;
-+import net.minecraftforge.server.command.CommandHelper;
-+import com.mojang.brigadier.tree.LiteralCommandNode;
-+import org.bukkit.event.player.PlayerCommandSendEvent;
-+import org.bukkit.event.server.ServerCommandEvent;
-+import org.kettingpowered.ketting.common.utils.DispatcherRedirector;
-+import org.kettingpowered.ketting.common.utils.Wrapper;
-+//Ketting end
-+
- public class Commands {
-    private static final ThreadLocal<ExecutionContext<CommandSourceStack>> CURRENT_EXECUTION_CONTEXT = new ThreadLocal<>();
-    private static final Logger LOGGER = LogUtils.getLogger();
 @@ -143,8 +_,10 @@
     public static final int LEVEL_ADMINS = 3;
     public static final int LEVEL_OWNERS = 4;
@@ -73,12 +50,12 @@
 -   public void performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
 +   // CraftBukkit start
 +   public int dispatchServerCommand(CommandSourceStack p_230958_, String p_230959_) {
-+      Joiner joiner = Joiner.on(" ");
++      com.google.common.base.Joiner joiner = com.google.common.base.Joiner.on(" ");
 +      if (p_230959_.startsWith("/")) {
 +         p_230959_ = p_230959_.substring(1);
 +      }
 +
-+      ServerCommandEvent event = new ServerCommandEvent(p_230958_.getBukkitSender(), p_230959_);
++      org.bukkit.event.server.ServerCommandEvent event = new org.bukkit.event.server.ServerCommandEvent(p_230958_.getBukkitSender(), p_230959_);
 +      org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +      if (event.isCancelled()) {
 +         return 0;
@@ -162,11 +139,8 @@
              });
              if (i > 10) {
                 mutablecomponent.append(CommonComponents.ELLIPSIS);
-@@ -346,22 +_,66 @@
-       } else {
-          p_313031_.accept(executioncontext);
-       }
--
+@@ -349,16 +_,60 @@
+ 
     }
  
 +   //Ketting start - rewrite to add forge dispatcher support
@@ -182,7 +156,7 @@
 +      map.put(vanillaCommands.getDispatcher().getRoot(), vanillaRoot);
 +
 +      // FORGE: Use our own command node merging method to handle redirect nodes properly, see issue #7551
-+      CommandHelper.mergeCommandNode(vanillaCommands.getDispatcher().getRoot(), vanillaRoot, map, p_82096_.createCommandSourceStack(), ctx -> 0, suggest -> SuggestionProviders.safelySwap((SuggestionProvider<SharedSuggestionProvider>) (SuggestionProvider<?>) suggest));
++      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(vanillaCommands.getDispatcher().getRoot(), vanillaRoot, map, p_82096_.createCommandSourceStack(), ctx -> 0, suggest -> SuggestionProviders.safelySwap((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
 +
 +      // Now build the global commands in a second pass
        RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
@@ -190,14 +164,14 @@
 -      this.fillUsableCommands(this.dispatcher.getRoot(), rootcommandnode, p_82096_.createCommandSourceStack(), map);
 -      p_82096_.connection.send(new ClientboundCommandsPacket(rootcommandnode));
 +
-+      CommandHelper.mergeCommandNode(this.dispatcher.getRoot(), rootcommandnode, map, p_82096_.createCommandSourceStack(), ctx -> 0, suggest -> SuggestionProviders.safelySwap((SuggestionProvider<SharedSuggestionProvider>) (SuggestionProvider<?>) suggest));
++      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.dispatcher.getRoot(), rootcommandnode, map, p_82096_.createCommandSourceStack(), ctx -> 0, suggest -> SuggestionProviders.safelySwap((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
 +
-+      LinkedHashSet<String> set = new LinkedHashSet<>();
++      java.util.LinkedHashSet<String> set = new java.util.LinkedHashSet<>();
 +      for (CommandNode<SharedSuggestionProvider> child : rootcommandnode.getChildren()) {
 +         set.add(child.getName());
 +      }
 +
-+      PlayerCommandSendEvent event = new PlayerCommandSendEvent(p_82096_.getBukkitEntity(), new LinkedHashSet<>(set));
++      org.bukkit.event.player.PlayerCommandSendEvent event = new org.bukkit.event.player.PlayerCommandSendEvent(p_82096_.getBukkitEntity(), new java.util.LinkedHashSet<>(set));
 +      event.getPlayer().getServer().getPluginManager().callEvent(event);
 +
 +      // Remove labels that were removed during the event
@@ -211,7 +185,7 @@
 +      RootCommandNode<SharedSuggestionProvider> forgeRoot = new RootCommandNode<>();
 +      map.put(this.forgeDispatcher.getRoot(), forgeRoot);
 +
-+      CommandHelper.mergeCommandNode(this.forgeDispatcher.getRoot(), forgeRoot, map, p_82096_.createCommandSourceStack(), ctx -> 0, suggest -> SuggestionProviders.safelySwap((SuggestionProvider<SharedSuggestionProvider>) (SuggestionProvider<?>) suggest));
++      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.forgeDispatcher.getRoot(), forgeRoot, map, p_82096_.createCommandSourceStack(), ctx -> 0, suggest -> SuggestionProviders.safelySwap((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
 +
 +      //Add all the forge commands to the root node
 +      forgeRoot.getChildren().forEach(rootcommandnode::addChild);
@@ -229,21 +203,17 @@
           if (commandnode.canUse(p_82115_)) {
              ArgumentBuilder<SharedSuggestionProvider, ?> argumentbuilder = (ArgumentBuilder)commandnode.createBuilder();
              argumentbuilder.requires((p_82126_) -> {
-+            argumentbuilder.requires((p_82126_) -> {
-                return true;
-             });
-             if (argumentbuilder.getCommand() != null) {
 @@ -412,7 +_,44 @@
     }
  
     public CommandDispatcher<CommandSourceStack> getDispatcher() {
-+      if (DispatcherRedirector.needsRedirect())
++      if (org.kettingpowered.ketting.common.utils.DispatcherRedirector.needsRedirect())
 +         return getForgeDispatcher().unwrap();
        return this.dispatcher;
 +   }
 +
-+   public Wrapper<CommandDispatcher<CommandSourceStack>> getForgeDispatcher() {
-+      return Wrapper.wrap(this.forgeDispatcher);
++   public org.kettingpowered.ketting.common.utils.Wrapper<CommandDispatcher<CommandSourceStack>> getForgeDispatcher() {
++      return org.kettingpowered.ketting.common.utils.Wrapper.wrap(this.forgeDispatcher);
 +   }
 +
 +   //Ketting start - dispatcher correction
@@ -252,7 +222,7 @@
 +      this.forgeCommand = forgeCommand;
 +   }
 +
-+   public Wrapper<CommandDispatcher<CommandSourceStack>> getCorrectDispatcher(String cmd) {
++   public org.kettingpowered.ketting.common.utils.Wrapper<CommandDispatcher<CommandSourceStack>> getCorrectDispatcher(String cmd) {
 +      if (forgeCommand) return getForgeDispatcher();
 +
 +      String literal = cmd.split(" ")[0]; //the command root, ex. deop
@@ -266,15 +236,15 @@
 +              .getRoot()
 +              .getChildren()
 +              .stream()
-+              .filter(node -> node instanceof LiteralCommandNode)
-+              .filter(node -> ((LiteralCommandNode<?>) node).getLiteral().equals(search))
++              .filter(node -> node instanceof com.mojang.brigadier.tree.LiteralCommandNode)
++              .filter(node -> ((com.mojang.brigadier.tree.LiteralCommandNode<?>) node).getLiteral().equals(search))
 +              .findFirst()
 +              .orElse(null);
 +
 +      if (found != null)
 +         return getForgeDispatcher();
 +
-+      return Wrapper.wrap(getDispatcher()); //Call getDispatcher so we can still redirect if needed
++      return org.kettingpowered.ketting.common.utils.Wrapper.wrap(getDispatcher()); //Call getDispatcher so we can still redirect if needed
     }
  
     public static <S> void validateParseResults(ParseResults<S> p_311833_) throws CommandSyntaxException {
