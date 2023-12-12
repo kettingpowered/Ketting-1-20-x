@@ -801,11 +801,14 @@
        this.server.getCommands().sendCommands(p_11227_);
     }
  
-@@ -594,18 +_,19 @@
+@@ -594,21 +_,19 @@
  
     @Nullable
     public ServerPlayer getPlayerByName(String p_11256_) {
--      for(ServerPlayer serverplayer : this.players) {
+-      int i = this.players.size();
+-
+-      for(int j = 0; j < i; ++j) {
+-         ServerPlayer serverplayer = this.players.get(j);
 -         if (serverplayer.getGameProfile().getName().equalsIgnoreCase(p_11256_)) {
 -            return serverplayer;
 -         }
@@ -828,7 +831,7 @@
           if (serverplayer != p_11242_ && serverplayer.level().dimension() == p_11247_) {
              double d0 = p_11243_ - serverplayer.getX();
              double d1 = p_11244_ - serverplayer.getY();
-@@ -645,22 +_,34 @@
+@@ -648,24 +_,36 @@
     }
  
     public void sendLevelInfo(ServerPlayer p_11230_, ServerLevel p_11231_) {
@@ -850,6 +853,8 @@
 +         // CraftBukkit end
        }
  
+       p_11230_.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.LEVEL_CHUNKS_LOAD_START, 0.0F));
+       this.server.tickRateManager().updateJoiningPlayer(p_11230_);
     }
  
     public void sendAllPlayerInfo(ServerPlayer p_11293_) {
@@ -868,7 +873,7 @@
     }
  
     public int getPlayerCount() {
-@@ -713,11 +_,21 @@
+@@ -718,11 +_,21 @@
     }
  
     public void removeAll() {
@@ -895,7 +900,7 @@
  
     public void broadcastSystemMessage(Component p_240618_, boolean p_240644_) {
        this.broadcastSystemMessage(p_240618_, (p_215639_) -> {
-@@ -767,34 +_,46 @@
+@@ -772,34 +_,46 @@
        return p_251384_.hasSignature() && !p_251384_.hasExpiredServer(Instant.now());
     }
  
@@ -961,7 +966,7 @@
     }
  
     @Nullable
-@@ -839,10 +_,19 @@
+@@ -844,10 +_,19 @@
     }
  
     public void reloadResources() {

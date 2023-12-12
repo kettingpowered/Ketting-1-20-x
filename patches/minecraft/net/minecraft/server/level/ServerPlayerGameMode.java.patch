@@ -245,7 +245,7 @@
 +         blockstate = this.level.getBlockState(p_9281_); // CraftBukkit - update state from plugins
 +         if (blockstate.isAir()) return false; // CraftBukkit - A plugin set block to air without cancelling
           BlockEntity blockentity = this.level.getBlockEntity(p_9281_);
-          Block block = blockstate.getBlock();
+          Block block = blockstate1.getBlock();
           if (block instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks()) {
              this.level.sendBlockUpdated(p_9281_, blockstate1, blockstate1, 3);
              return false;
@@ -262,7 +262,6 @@
 +            // CraftBukkit end
 +            BlockState blockstate = blockstate1;
 +            boolean flag = /*this.level*/removeBlock(p_9281_, false); //Ketting
- 
              if (flag1) {
                 block.destroy(this.level, p_9281_, blockstate);
              }
