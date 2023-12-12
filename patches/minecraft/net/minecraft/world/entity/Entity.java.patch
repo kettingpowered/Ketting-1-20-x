@@ -1,12 +1,10 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -120,10 +_,62 @@
- import net.minecraft.world.scores.PlayerTeam;
- import net.minecraft.world.scores.ScoreHolder;
- import net.minecraft.world.scores.Team;
+@@ -123,7 +_,59 @@
  import org.joml.Vector3f;
  import org.slf4j.Logger;
-+
+ 
+-public abstract class Entity implements Nameable, EntityAccess, CommandSource, ScoreHolder {
 +//Ketting start
 +import net.minecraft.world.level.dimension.LevelStem;
 +import org.bukkit.Bukkit;
@@ -31,8 +29,7 @@
 +import org.bukkit.plugin.PluginManager;
 +import org.spigotmc.CustomTimingsHandler;
 +//Ketting start
- 
--public abstract class Entity implements Nameable, EntityAccess, CommandSource, ScoreHolder {
++
 +public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements Nameable, EntityAccess, CommandSource, ScoreHolder, net.minecraftforge.common.extensions.IForgeEntity {
 +
 +   // CraftBukkit start
@@ -75,7 +72,7 @@
 @@ -190,8 +_,10 @@
     public int tickCount;
     private int remainingFireTicks = -this.getFireImmuneTicks();
-    protected boolean wasTouchingWater;
+    public boolean wasTouchingWater;
 +   @Deprecated // Forge: Use forgeFluidTypeHeight instead
     protected Object2DoubleMap<TagKey<Fluid>> fluidHeight = new Object2DoubleArrayMap<>(2);
     protected boolean wasEyeInWater;
@@ -83,10 +80,7 @@
     private final Set<TagKey<Fluid>> fluidOnEyes = new HashSet<>();
     public int invulnerableTime;
     protected boolean firstTick = true;
-@@ -235,17 +_,51 @@
-    private boolean onGroundNoBlocks = false;
-    private float crystalSoundIntensity;
-    private int lastCrystalSoundPlayTick;
+@@ -238,14 +_,48 @@
     public boolean hasVisualFire;
     @Nullable
     private BlockState feetBlockState = null;
@@ -239,7 +233,11 @@
        }
  
        this.checkBelowWorld();
-@@ -515,15 +_,48 @@
+@@ -512,22 +_,55 @@
+ 
+    public int getPortalWaitTime() {
+       return 0;
+-   }
  
     public void lavaHurt() {
        if (!this.fireImmune()) {
@@ -289,6 +287,10 @@
        int i = p_20255_ * 20;
        if (this instanceof LivingEntity) {
           i = ProtectionEnchantment.getFireAfterDampener((LivingEntity)this, i);
++         i = ProtectionEnchantment.getFireAfterDampener((LivingEntity)this, i);
+       }
+ 
+       if (this.remainingFireTicks < i) {
 @@ -604,6 +_,7 @@
     }
  
@@ -297,14 +299,6 @@
        if (this.noPhysics) {
           this.setPos(this.getX() + p_19974_.x, this.getY() + p_19974_.y, this.getZ() + p_19974_.z);
        } else {
-@@ -652,6 +_,7 @@
-          this.setOnGroundWithKnownMovement(this.verticalCollisionBelow, vec3);
-          BlockPos blockpos = this.getOnPosLegacy();
-          BlockState blockstate = this.level().getBlockState(blockpos);
-+
-          this.checkFallDamage(vec3.y, this.onGround(), blockstate, blockpos);
-          if (this.isRemoved()) {
-             this.level().getProfiler().pop();
 @@ -666,6 +_,28 @@
                 block.updateEntityAfterFallOn(this.level(), this);
              }
@@ -540,7 +534,11 @@
     }
  
     public void moveRelative(float p_19921_, Vec3 p_19922_) {
-@@ -1349,10 +_,12 @@
+@@ -1346,16 +_,18 @@
+       this.yRotO = this.getYRot();
+       this.xRotO = this.getXRot();
+    }
+-
     public void absMoveTo(double p_20249_, double p_20250_, double p_20251_) {
        double d0 = Mth.clamp(p_20249_, -3.0E7D, 3.0E7D);
        double d1 = Mth.clamp(p_20251_, -3.0E7D, 3.0E7D);
@@ -552,7 +550,10 @@
 +      if (valid) level.getChunk((int) Math.floor(this.getX()) >> 4, (int) Math.floor(this.getZ()) >> 4); // CraftBukkit
     }
  
++   public void moveTo(Vec3 p_20220_) {
     public void moveTo(Vec3 p_20220_) {
+       this.moveTo(p_20220_.x, p_20220_.y, p_20220_.z);
+    }
 @@ -1539,6 +_,12 @@
        return false;
     }
@@ -713,7 +714,11 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Loading entity NBT");
           CrashReportCategory crashreportcategory = crashreport.addCategory("Entity being loaded");
-@@ -1801,8 +_,23 @@
+@@ -1798,15 +_,30 @@
+    @Nullable
+    public ItemEntity spawnAtLocation(ItemStack p_19985_, float p_19986_) {
+       if (p_19985_.isEmpty()) {
+-         return null;
        } else if (this.level().isClientSide) {
           return null;
        } else {
@@ -737,6 +742,10 @@
           this.level().addFreshEntity(itementity);
           return itementity;
        }
++      }
+    }
+ 
+    public boolean isAlive() {
 @@ -1840,6 +_,7 @@
  
     public void rideTick() {
@@ -828,7 +837,11 @@
           if (this.passengers.size() == 1 && this.passengers.get(0) == p_20352_) {
              this.passengers = ImmutableList.of();
           } else {
-@@ -1975,12 +_,15 @@
+@@ -1972,19 +_,22 @@
+                return p_185980_ != p_20352_;
+             }).collect(ImmutableList.toImmutableList());
+          }
+-
           p_20352_.boardingCooldown = 60;
           this.gameEvent(GameEvent.ENTITY_DISMOUNT, p_20352_);
        }
@@ -844,6 +857,10 @@
     protected boolean couldAcceptPassenger() {
        return true;
     }
++   }
+ 
+    public void lerpTo(double p_19896_, double p_19897_, double p_19898_, float p_19899_, float p_19900_, int p_19901_) {
+       this.setPos(p_19896_, p_19897_, p_19898_);
 @@ -2059,13 +_,20 @@
           ServerLevel serverlevel = (ServerLevel)this.level();
           if (this.isInsidePortal) {
@@ -887,7 +904,7 @@
        this.setSharedFlag(4, p_20283_);
     }
  
-@@ -2240,15 +_,19 @@
+@@ -2240,34 +_,49 @@
        return this.getTeam() != null ? this.getTeam().isAlliedTo(p_20032_) : false;
     }
  
@@ -910,7 +927,10 @@
        byte b0 = this.entityData.get(DATA_SHARED_FLAGS_ID);
        if (p_20117_) {
           this.entityData.set(DATA_SHARED_FLAGS_ID, (byte)(b0 | 1 << p_20116_));
-@@ -2258,7 +_,7 @@
+       } else {
+          this.entityData.set(DATA_SHARED_FLAGS_ID, (byte)(b0 & ~(1 << p_20116_)));
+       }
+-
     }
  
     public int getMaxAirSupply() {
@@ -918,8 +938,9 @@
 +      return maxAirTicks; // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
     }
  
++   public int getAirSupply() {
     public int getAirSupply() {
-@@ -2267,7 +_,18 @@
+       return this.entityData.get(DATA_AIR_SUPPLY_ID);
     }
  
     public void setAirSupply(int p_20302_) {
@@ -939,7 +960,11 @@
     }
  
     public int getTicksFrozen() {
-@@ -2292,11 +_,41 @@
+@@ -2289,17 +_,47 @@
+ 
+    public int getTicksRequiredToFreeze() {
+       return 140;
+-   }
  
     public void thunderHit(ServerLevel p_19927_, LightningBolt p_19928_) {
        this.setRemainingFireTicks(this.remainingFireTicks + 1);
@@ -984,7 +1009,10 @@
 +      // CraftBukkit end
     }
  
++   public void onAboveBubbleCol(boolean p_20313_) {
     public void onAboveBubbleCol(boolean p_20313_) {
+       Vec3 vec3 = this.getDeltaMovement();
+       double d0;
 @@ -2393,7 +_,7 @@
     }
  

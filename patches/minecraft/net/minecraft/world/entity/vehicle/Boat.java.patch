@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/net/minecraft/world/entity/vehicle/Boat.java
-@@ -50,9 +_,19 @@
- import net.minecraft.world.phys.shapes.BooleanOp;
- import net.minecraft.world.phys.shapes.Shapes;
+@@ -52,7 +_,17 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import org.joml.Vector3f;
-+
+ 
+-public class Boat extends VehicleEntity implements VariantHolder<Boat.Type> {
 +//Ketting start
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
@@ -15,8 +14,7 @@
 +import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 +import org.bukkit.event.vehicle.VehicleMoveEvent;
 +//Ketting end
- 
--public class Boat extends VehicleEntity implements VariantHolder<Boat.Type> {
++
 +public class Boat extends VehicleEntity implements net.minecraftforge.common.extensions.IForgeBoat {
     private static final EntityDataAccessor<Integer> DATA_ID_TYPE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_LEFT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);

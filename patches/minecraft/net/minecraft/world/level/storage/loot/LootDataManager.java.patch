@@ -1,15 +1,22 @@
 --- a/net/minecraft/world/level/storage/loot/LootDataManager.java
 +++ b/net/minecraft/world/level/storage/loot/LootDataManager.java
-@@ -21,3 +_,7 @@
- import net.minecraft.util.profiling.ProfilerFiller;
+@@ -22,6 +_,11 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
  import org.slf4j.Logger;
-+
+ 
 +//CraftBukkit start
 +import org.bukkit.craftbukkit.v1_20_R2.CraftLootTable;
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 +//CraftBukkit end
-@@ -84,6 +_,13 @@
++
+ public class LootDataManager implements PreparableReloadListener, LootDataResolver {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Gson GSON = (new GsonBuilder()).create();
+@@ -80,12 +_,19 @@
+       });
+       map.forEach((p_279387_, p_279087_) -> {
+          castAndValidate(validationcontext, p_279387_, p_279087_);
+-      });
        problemreporter$collector.get().forEach((p_279487_, p_279312_) -> {
           LOGGER.warn("Found loot table element validation problem in {}: {}", p_279487_, p_279312_);
        });
@@ -22,4 +29,7 @@
 +      // CraftBukkit end
        this.elements = map;
        this.typeKeys = builder1.build();
++   }
     }
+ 
+    private static <T> void castAndValidate(ValidationContext p_279270_, LootDataId<T> p_279249_, Object p_279342_) {

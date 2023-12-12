@@ -1,11 +1,9 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -177,10 +_,39 @@
- import net.minecraft.world.phys.shapes.BooleanOp;
- import net.minecraft.world.phys.shapes.Shapes;
+@@ -179,8 +_,37 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import org.slf4j.Logger;
-+
+ 
 +//Ketting start
 +import com.mojang.datafixers.util.Pair;
 +import java.util.concurrent.ExecutionException;
@@ -28,7 +26,7 @@
 +import org.bukkit.inventory.InventoryView;
 +import org.bukkit.inventory.SmithingInventory;
 +//Ketting end
- 
++
  public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl implements ServerGamePacketListener, ServerPlayerConnection, TickablePacketListener {
     static final Logger LOGGER = LogUtils.getLogger();
 +   /**
@@ -114,7 +112,7 @@
  
     }
  
-@@ -380,8 +_,35 @@
+@@ -380,7 +_,34 @@
              double d8 = d5 - this.vehicleFirstGoodZ;
              double d9 = entity.getDeltaMovement().lengthSqr();
              double d10 = d6 * d6 + d7 * d7 + d8 * d8;
@@ -150,7 +148,6 @@
                 LOGGER.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.getName().getString(), this.player.getName().getString(), d6, d7, d8);
                 this.send(new ClientboundMoveVehiclePacket(entity));
                 return;
-             }
 @@ -408,18 +_,90 @@
              d8 = d5 - entity.getZ();
              d10 = d6 * d6 + d7 * d7 + d8 * d8;
@@ -839,7 +836,9 @@
        if (isChatMessageIllegal(p_9841_.message())) {
           this.disconnect(Component.translatable("multiplayer.disconnect.illegal_characters"));
        } else {
-@@ -1158,6 +_,7 @@
+@@ -1156,8 +_,9 @@
+                }
+ 
                 CompletableFuture<FilteredText> completablefuture = this.filterTextPacket(playerchatmessage.signedContent());
 -               Component component = this.server.getChatDecorator().decorate(this.player, playerchatmessage.decoratedContent());
 +               Component component = net.minecraftforge.common.ForgeHooks.onServerChatSubmittedEvent(this.player, playerchatmessage.decoratedContent());

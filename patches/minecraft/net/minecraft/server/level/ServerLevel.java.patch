@@ -1,12 +1,9 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -156,7 +_,21 @@
- import net.minecraft.world.phys.shapes.BooleanOp;
- import net.minecraft.world.phys.shapes.Shapes;
- import net.minecraft.world.phys.shapes.VoxelShape;
+@@ -159,6 +_,20 @@
  import net.minecraft.world.ticks.LevelTicks;
  import org.slf4j.Logger;
-+
+ 
 +//Ketting start
 +import net.minecraft.world.level.biome.BiomeSource;
 +import net.minecraft.world.level.levelgen.FlatLevelSource;
@@ -20,9 +17,11 @@
 +import org.bukkit.event.world.TimeSkipEvent;
 +import org.kettingpowered.ketting.utils.DelegateWorldInfo;
 +//Ketting end
- 
++
  public class ServerLevel extends Level implements WorldGenLevel {
-@@ -171,6 +_,6 @@
+    public static final BlockPos END_SPAWN_POINT = new BlockPos(100, 50, 0);
+    public static final IntProvider RAIN_DELAY = UniformInt.of(12000, 180000);
+@@ -171,7 +_,7 @@
     final List<ServerPlayer> players = Lists.newArrayList();
     private final ServerChunkCache chunkSource;
     private final MinecraftServer server;
@@ -30,6 +29,7 @@
 +   public final PrimaryLevelData serverLevelData; // CraftBukkit - type
     final EntityTickList entityTickList = new EntityTickList();
     public final PersistentEntitySectionManager<Entity> entityManager;
+    private final GameEventDispatcher gameEventDispatcher;
 @@ -190,24 +_,120 @@
     private final List<CustomSpawner> customSpawners;
     @Nullable
@@ -210,7 +210,7 @@
        if (!this.isDebug() && flag) {
           long k = this.getGameTime();
           profilerfiller.push("blockTicks");
-@@ -298,37 +_,43 @@
+@@ -298,6 +_,7 @@
           this.fluidTicks.tick(k, 65536, this::tickFluid);
           profilerfiller.pop();
        }
@@ -218,10 +218,7 @@
  
        profilerfiller.popPush("raid");
        if (flag) {
-          this.raids.tick();
-       }
- 
-       profilerfiller.popPush("chunkSource");
+@@ -308,27 +_,32 @@
        this.getChunkSource().tick(p_8794_, true);
        profilerfiller.popPush("blockEvents");
        if (flag) {
@@ -256,14 +253,15 @@
                    p_308944_.discard();
                 } else if (!tickratemanager.isEntityFrozen(p_308944_)) {
                    profilerfiller.push("checkDespawn");
-@@ -345,12 +_,15 @@
+@@ -344,6 +_,7 @@
+                         p_308944_.stopRiding();
                       }
  
 +                     if (p_308944_.isRemoved() || p_308944_ instanceof net.minecraftforge.entity.PartEntity) return;
                       profilerfiller.push("tick");
                       this.guardEntityTick(this::tickNonPassenger, p_308944_);
                       profilerfiller.pop();
-                   }
+@@ -351,6 +_,8 @@
                 }
              }
           });
@@ -379,7 +377,7 @@
     }
  
     @VisibleForTesting
-    private void resetWeatherCycle() {
+    public void resetWeatherCycle() {
 -      this.serverLevelData.setRainTime(0);
 +      // CraftBukkit start
        this.serverLevelData.setRaining(false);

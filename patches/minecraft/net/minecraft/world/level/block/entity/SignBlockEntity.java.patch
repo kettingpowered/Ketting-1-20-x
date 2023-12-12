@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/level/block/entity/SignBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/SignBlockEntity.java
-@@ -29,14 +_,23 @@
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.phys.Vec2;
+@@ -31,12 +_,21 @@
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
-+
+ 
+-public class SignBlockEntity extends BlockEntity {
 +//Ketting Start
 +import java.util.Objects;
 +import net.minecraft.server.level.ServerPlayer;
@@ -14,8 +13,7 @@
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 +import org.bukkit.event.block.SignChangeEvent;
 +//Ketting end
- 
--public class SignBlockEntity extends BlockEntity {
++
 +public class SignBlockEntity extends BlockEntity implements CommandSource { // CraftBukkit - implements
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int MAX_TEXT_LINE_WIDTH = 90;
@@ -132,14 +130,15 @@
     }
  
     public boolean isWaxed() {
-@@ -275,5 +_,10 @@
-          p_277656_.setAllowedPlayerEditor((UUID)null);
-       }
+@@ -277,6 +_,11 @@
  
-+   }
-+
+    }
+ 
 +   @Override
 +   public net.minecraft.world.phys.AABB getRenderBoundingBox() {
 +      return new net.minecraft.world.phys.AABB(this.getBlockPos(), this.getBlockPos().offset(1, 1, 1));
++   }
++}
+    public SoundEvent getSignInteractionFailedSoundEvent() {
+       return SoundEvents.WAXED_SIGN_INTERACT_FAIL;
     }
- }

@@ -1,11 +1,9 @@
 --- a/net/minecraft/core/dispenser/DispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DispenseItemBehavior.java
-@@ -75,6 +_,19 @@
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.BlockHitResult;
+@@ -77,6 +_,19 @@
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
-+
+ 
 +//Ketting Start
 +import org.bukkit.Location;
 +import org.bukkit.TreeType;
@@ -18,8 +16,10 @@
 +import org.bukkit.event.block.BlockFertilizeEvent;
 +import org.bukkit.event.world.StructureGrowEvent;
 +//Ketting end
- 
++
  public interface DispenseItemBehavior {
+    Logger LOGGER = LogUtils.getLogger();
+    DispenseItemBehavior NOOP = (p_123400_, p_123401_) -> {
 @@ -180,6 +_,33 @@
              Direction direction = p_123523_.state().getValue(DispenserBlock.FACING);
              EntityType<?> entitytype = ((SpawnEggItem)p_123524_.getItem()).getType(p_123524_.getTag());

@@ -8,7 +8,7 @@
  
  public class StemBlock extends BushBlock implements BonemealableBlock {
     public static final MapCodec<StemBlock> CODEC = RecordCodecBuilder.mapCodec((p_311216_) -> {
-@@ -65,29 +_,39 @@
+@@ -65,32 +_,42 @@
     }
  
     public void randomTick(BlockState p_222538_, ServerLevel p_222539_, BlockPos p_222540_, RandomSource p_222541_) {
@@ -34,7 +34,6 @@
 -                     p_222539_.setBlockAndUpdate(blockpos, optional.get().defaultBlockState());
 -                     p_222539_.setBlockAndUpdate(p_222540_, optional1.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction));
 -                  }
--               }
 +//Ketting - Todo: Merge this correctly
 +// Forge: TODO: Soil blockstate.canSustainPlant(p_222539_, blockpos.below(), Direction.UP, this.fruit)
 +//               if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
@@ -52,13 +51,18 @@
 +//                     return;
 +//                  }
 +//                  // CraftBukkit end
-                   p_222539_.setBlockAndUpdate(p_222540_, this.fruit.getAttachedStem().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction));
++                  p_222539_.setBlockAndUpdate(p_222540_, this.fruit.getAttachedStem().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction));
                 }
              }
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_222539_, p_222540_, p_222538_);
           }
  
        }
+-   }
+-
+    public ItemStack getCloneItemStack(LevelReader p_312829_, BlockPos p_57027_, BlockState p_57028_) {
+       return new ItemStack(DataFixUtils.orElse(p_312829_.registryAccess().registryOrThrow(Registries.ITEM).getOptional(this.seed), this));
+    }
 @@ -105,8 +_,8 @@
  
     public void performBonemeal(ServerLevel p_222528_, RandomSource p_222529_, BlockPos p_222530_, BlockState p_222531_) {

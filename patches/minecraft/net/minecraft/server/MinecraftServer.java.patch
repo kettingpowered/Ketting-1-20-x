@@ -1,10 +1,9 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -158,6 +_,24 @@
- import net.minecraft.world.phys.Vec2;
+@@ -159,6 +_,24 @@
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
-+
+ 
 +//Ketting start
 +import jline.console.ConsoleReader;
 +import joptsimple.OptionSet;
@@ -19,12 +18,13 @@
 +import org.kettingpowered.ketting.core.injectprotect.InjectProtect;
 +import org.kettingpowered.ketting.internal.KettingConstants;
 +import org.kettingpowered.ketting.metrics.MetricManager;
- import org.slf4j.Logger;
++import org.slf4j.Logger;
 +import org.spongepowered.asm.mixin.throwables.MixinError;
 +//Ketting end
- 
++
  public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements ServerInfo, CommandSource, AutoCloseable {
     public static final Logger LOGGER = LogUtils.getLogger();
+    public static final String VANILLA_BRAND = "vanilla";
 @@ -249,11 +_,30 @@
     private final ServerTickRateManager tickRateManager;
     protected final WorldData worldData;
@@ -385,7 +385,7 @@
     }
  
     public String getLocalIp() {
-@@ -627,39 +_,63 @@
+@@ -627,16 +_,28 @@
  
     }
  
@@ -414,11 +414,7 @@
           while(this.running) {
              long i;
              if (!this.isPaused() && this.tickRateManager.isSprinting() && this.tickRateManager.checkShouldSprintThisTick()) {
-                i = 0L;
-                this.nextTickTimeNanos = Util.getNanos();
-                this.lastOverloadWarningNanos = this.nextTickTimeNanos;
-             } else {
-                i = this.tickRateManager.nanosecondsPerTick();
+@@ -648,18 +_,30 @@
                 long k = Util.getNanos() - this.nextTickTimeNanos;
                 if (k > OVERLOADED_THRESHOLD_NANOS + 20L * i && this.nextTickTimeNanos - this.lastOverloadWarningNanos >= OVERLOADED_WARNING_INTERVAL_NANOS + 100L * i) {
                    long j = k / i;
@@ -505,7 +501,7 @@
     }
  
     protected void waitUntilNextTick() {
-@@ -742,7 +_,19 @@
+@@ -742,6 +_,18 @@
        });
     }
  
@@ -521,11 +517,10 @@
 +      }
 +   }
 +
-    public TickTask wrapRunnable(Runnable p_129852_) {
+    protected TickTask wrapRunnable(Runnable p_129852_) {
        return new TickTask(this.tickCount, p_129852_);
     }
- 
-@@ -819,35 +_,55 @@
+@@ -819,23 +_,29 @@
     }
  
     public void tickServer(BooleanSupplier p_129871_) {
@@ -555,12 +550,7 @@
        }
  
        this.profiler.push("tallying");
-       long j = Util.getNanos() - i;
-       int k = this.tickCount % 100;
-       this.aggregatedTickTimesNanos -= this.tickTimesNanos[k];
-       this.aggregatedTickTimesNanos += j;
-       this.tickTimesNanos[k] = j;
-       this.smoothedTickTimeMillis = this.smoothedTickTimeMillis * 0.8F + (float)j / (float)TimeUtil.NANOSECONDS_PER_MILLISECOND * 0.19999999F;
+@@ -848,6 +_,20 @@
        long l = Util.getNanos();
        this.logTickTime(l - i);
        this.profiler.pop();

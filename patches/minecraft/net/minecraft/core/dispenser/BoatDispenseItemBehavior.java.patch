@@ -1,19 +1,23 @@
 --- a/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
-@@ -11,6 +_,12 @@
- import net.minecraft.world.item.ItemStack;
+@@ -12,6 +_,12 @@
  import net.minecraft.world.level.block.DispenserBlock;
  import net.minecraft.world.phys.Vec3;
-+
+ 
 +//Ketting start
 +import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 +import org.bukkit.event.block.BlockDispenseEvent;
 +//Ketting end
- 
++
  public class BoatDispenseItemBehavior extends DefaultDispenseItemBehavior {
     private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
-@@ -45,11 +_,40 @@
+    private final Boat.Type type;
+@@ -42,17 +_,47 @@
+          if (!serverlevel.getBlockState(blockpos).isAir() || !serverlevel.getFluidState(blockpos.below()).is(FluidTags.WATER)) {
+             return this.defaultDispenseItemBehavior.dispense(p_123375_, p_123376_);
+          }
+-
           d4 = 0.0D;
        }
  
@@ -56,5 +60,8 @@
 +      if (!serverlevel.addFreshEntity(boat)) p_123376_.grow(1); // CraftBukkit
 +      // p_123376_.shrink(1); // CraftBukkit - handled during event processing
        return p_123376_;
++   }
++
     }
  
+    protected void playSound(BlockSource p_123373_) {

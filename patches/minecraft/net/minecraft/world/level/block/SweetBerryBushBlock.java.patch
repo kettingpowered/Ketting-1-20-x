@@ -1,18 +1,18 @@
 --- a/net/minecraft/world/level/block/SweetBerryBushBlock.java
 +++ b/net/minecraft/world/level/block/SweetBerryBushBlock.java
-@@ -27,6 +_,12 @@
- import net.minecraft.world.phys.Vec3;
+@@ -28,6 +_,12 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+
+ 
 +import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 +import org.bukkit.event.player.PlayerHarvestBlockEvent;
 +import java.util.Collections;
- 
++
  public class SweetBerryBushBlock extends BushBlock implements BonemealableBlock {
     public static final MapCodec<SweetBerryBushBlock> CODEC = simpleCodec(SweetBerryBushBlock::new);
+    private static final float HURT_SPEED_THRESHOLD = 0.003F;
 @@ -63,10 +_,11 @@
  
     public void randomTick(BlockState p_222563_, ServerLevel p_222564_, BlockPos p_222565_, RandomSource p_222566_) {

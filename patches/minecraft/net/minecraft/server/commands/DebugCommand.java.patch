@@ -1,16 +1,16 @@
 --- a/net/minecraft/server/commands/DebugCommand.java
 +++ b/net/minecraft/server/commands/DebugCommand.java
-@@ -150,6 +_,13 @@
-       private final PrintWriter output;
+@@ -151,6 +_,13 @@
        private int lastIndent;
        private boolean waitingForResult;
-+
+ 
 +      //Ketting start
 +      @Override
 +      public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
 +         return new org.bukkit.craftbukkit.v1_20_R2.command.DebugCommandCommandSender(wrapper, Tracer.this);
 +      }
 +      //Ketting end
- 
++
        Tracer(PrintWriter p_180079_) {
           this.output = p_180079_;
+       }

@@ -1,7 +1,6 @@
 --- a/net/minecraft/world/level/block/DropperBlock.java
 +++ b/net/minecraft/world/level/block/DropperBlock.java
-@@ -17,11 +_,13 @@
- import net.minecraft.world.level.block.entity.HopperBlockEntity;
+@@ -18,11 +_,13 @@
  import net.minecraft.world.level.block.state.BlockBehaviour;
  import net.minecraft.world.level.block.state.BlockState;
  import org.slf4j.Logger;
@@ -15,6 +14,7 @@
 +   private static final DispenseItemBehavior DISPENSE_BEHAVIOUR = new DefaultDispenseItemBehavior(true); // CraftBukkit
  
     public MapCodec<DropperBlock> codec() {
+       return CODEC;
 @@ -40,8 +_,8 @@
        return new DropperBlockEntity(p_153179_, p_153180_);
     }

@@ -831,7 +831,7 @@
           if (serverplayer != p_11242_ && serverplayer.level().dimension() == p_11247_) {
              double d0 = p_11243_ - serverplayer.getX();
              double d1 = p_11244_ - serverplayer.getY();
-@@ -648,24 +_,36 @@
+@@ -648,14 +_,18 @@
     }
  
     public void sendLevelInfo(ServerPlayer p_11230_, ServerLevel p_11231_) {
@@ -854,8 +854,7 @@
        }
  
        p_11230_.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.LEVEL_CHUNKS_LOAD_START, 0.0F));
-       this.server.tickRateManager().updateJoiningPlayer(p_11230_);
-    }
+@@ -664,8 +_,16 @@
  
     public void sendAllPlayerInfo(ServerPlayer p_11293_) {
        p_11293_.inventoryMenu.sendAllDataToRemote();

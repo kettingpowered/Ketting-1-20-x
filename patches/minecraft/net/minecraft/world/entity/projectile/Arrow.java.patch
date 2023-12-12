@@ -29,7 +29,11 @@
        this.fixedColor = true;
        this.entityData.set(ID_EFFECT_COLOR, p_36883_);
     }
-@@ -180,12 +_,12 @@
+@@ -177,18 +_,18 @@
+    protected void doPostHurtEffects(LivingEntity p_36873_) {
+       super.doPostHurtEffects(p_36873_);
+       Entity entity = this.getEffectSource();
+-
        for(MobEffectInstance mobeffectinstance : this.potion.getEffects()) {
           p_36873_.addEffect(new MobEffectInstance(mobeffectinstance.getEffect(), Math.max(mobeffectinstance.mapDuration((p_268168_) -> {
              return p_268168_ / 8;
@@ -43,4 +47,7 @@
 +            p_36873_.addEffect(mobeffectinstance1, entity, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); // CraftBukkit
           }
        }
++
+ 
+    }
  

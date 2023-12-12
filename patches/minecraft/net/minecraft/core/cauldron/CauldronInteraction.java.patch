@@ -137,8 +137,11 @@
              p_175637_.playSound((Player)null, p_175638_, p_175644_, SoundSource.BLOCKS, 1.0F, 1.0F);
              p_175637_.gameEvent((Entity)null, GameEvent.FLUID_PICKUP, p_175638_);
           }
-@@ -257,11 +_,16 @@
+@@ -254,17 +_,22 @@
+       }
+    }
  
++
     static InteractionResult emptyBucket(Level p_175619_, BlockPos p_175620_, Player p_175621_, InteractionHand p_175622_, ItemStack p_175623_, BlockState p_175624_, SoundEvent p_175625_) {
        if (!p_175619_.isClientSide) {
 +         // CraftBukkit start
@@ -155,3 +158,7 @@
           p_175619_.playSound((Player)null, p_175620_, p_175625_, SoundSource.BLOCKS, 1.0F, 1.0F);
           p_175619_.gameEvent((Entity)null, GameEvent.FLUID_PLACE, p_175620_);
        }
+-
+       return InteractionResult.sidedSuccess(p_175619_.isClientSide);
+    }
+ 

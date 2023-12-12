@@ -1,11 +1,9 @@
 --- a/net/minecraft/world/entity/monster/Slime.java
 +++ b/net/minecraft/world/entity/monster/Slime.java
-@@ -42,6 +_,14 @@
- import net.minecraft.world.level.WorldGenLevel;
- import net.minecraft.world.level.levelgen.WorldgenRandom;
+@@ -44,6 +_,14 @@
  import net.minecraft.world.phys.Vec3;
  import org.joml.Vector3f;
-+
+ 
 +//Ketting start
 +import java.util.ArrayList;
 +import java.util.List;
@@ -13,8 +11,10 @@
 +import org.bukkit.event.entity.EntityTransformEvent;
 +import org.bukkit.event.entity.SlimeSplitEvent;
 +//Ketting end
- 
++
  public class Slime extends Mob implements Enemy {
+    private static final EntityDataAccessor<Integer> ID_SIZE = SynchedEntityData.defineId(Slime.class, EntityDataSerializers.INT);
+    public static final int MIN_SIZE = 1;
 @@ -130,6 +_,8 @@
        if (this.onGround() && !this.wasOnGround) {
           int i = this.getSize();

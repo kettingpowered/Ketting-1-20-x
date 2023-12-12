@@ -1,14 +1,10 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -68,12 +_,44 @@
- import net.minecraft.world.level.redstone.NeighborUpdater;
- import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
- import net.minecraft.world.level.storage.LevelData;
- import net.minecraft.world.level.storage.WritableLevelData;
- import net.minecraft.world.phys.AABB;
+@@ -73,7 +_,39 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.Scoreboard;
-+
+ 
+-public abstract class Level implements LevelAccessor, AutoCloseable {
 +//Ketting start
 +import java.util.HashMap;
 +import java.util.Map;
@@ -40,8 +36,7 @@
 +import org.bukkit.generator.BiomeProvider;
 +import org.kettingpowered.ketting.core.Ketting;
 +//Ketting end
- 
--public abstract class Level implements LevelAccessor, AutoCloseable {
++
 +public abstract class Level extends net.minecraftforge.common.capabilities.CapabilityProvider<Level> implements LevelAccessor, AutoCloseable, net.minecraftforge.common.extensions.IForgeLevel {
     public static final Codec<ResourceKey<Level>> RESOURCE_KEY_CODEC = ResourceKey.codec(Registries.DIMENSION);
     public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("overworld"));

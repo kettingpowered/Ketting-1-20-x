@@ -1,18 +1,19 @@
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -39,5 +_,12 @@
- import net.minecraft.world.entity.player.Player;
+@@ -40,6 +_,13 @@
  import org.apache.commons.lang3.Validate;
  import org.slf4j.Logger;
-+
+ 
 +//Ketting start
 +import net.minecraft.server.level.ServerPlayer;
 +import org.bukkit.craftbukkit.v1_20_R2.util.Waitable;
 +import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 +import org.bukkit.event.player.PlayerPreLoginEvent;
 +//Ketting end
- 
++
  public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener, TickablePacketListener {
+    private static final AtomicInteger UNIQUE_THREAD_ID = new AtomicInteger(0);
+    static final Logger LOGGER = LogUtils.getLogger();
 @@ -55,6 +_,7 @@
     @Nullable
     private GameProfile authenticatedProfile;
@@ -91,7 +92,7 @@
           public void run() {
              String s1 = Objects.requireNonNull(ServerLoginPacketListenerImpl.this.requestedUsername, "Player name not initialized");
  
-@@ -183,11 +_,16 @@
+@@ -183,8 +_,13 @@
                 ProfileResult profileresult = ServerLoginPacketListenerImpl.this.server.getSessionService().hasJoinedServer(s1, s, this.getAddress());
                 if (profileresult != null) {
                    GameProfile gameprofile = profileresult.profile();
@@ -107,15 +108,7 @@
                 } else if (ServerLoginPacketListenerImpl.this.server.isSingleplayer()) {
                    ServerLoginPacketListenerImpl.LOGGER.warn("Failed to verify username but will let them in anyway!");
                    ServerLoginPacketListenerImpl.this.startClientVerification(UUIDUtil.createOfflineProfile(s1));
-                } else {
-                   ServerLoginPacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.unverified_username"));
-                   ServerLoginPacketListenerImpl.LOGGER.error("Username '{}' tried to join with an invalid session", (Object)s1);
-@@ -195,11 +_,16 @@
-             } catch (AuthenticationUnavailableException authenticationunavailableexception) {
-                if (ServerLoginPacketListenerImpl.this.server.isSingleplayer()) {
-                   ServerLoginPacketListenerImpl.LOGGER.warn("Authentication servers are down but will let them in anyway!");
-                   ServerLoginPacketListenerImpl.this.startClientVerification(UUIDUtil.createOfflineProfile(s1));
-                } else {
+@@ -200,6 +_,11 @@
                    ServerLoginPacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.authservers_down"));
                    ServerLoginPacketListenerImpl.LOGGER.error("Couldn't verify username because servers are unavailable");
                 }
@@ -127,7 +120,7 @@
              }
  
           }
-@@ -214,17 +_,67 @@
+@@ -214,20 +_,70 @@
        thread.start();
     }
  
@@ -188,11 +181,14 @@
        serverconfigurationpacketlistenerimpl.startConfiguration();
        this.state = ServerLoginPacketListenerImpl.State.ACCEPTED;
     }
-+
+ 
 +   @Nullable
 +   public GameProfile getAuthenticatedProfile() {
 +       return this.authenticatedProfile;
 +   }
     public void fillListenerSpecificCrashDetails(CrashReportCategory p_310682_) {
++      p_310682_.setDetail("Login phase", () -> {
++         return this.state.toString();
        p_310682_.setDetail("Login phase", () -> {
           return this.state.toString();
+       });

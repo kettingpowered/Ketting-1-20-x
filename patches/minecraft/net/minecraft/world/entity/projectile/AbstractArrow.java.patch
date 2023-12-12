@@ -1,19 +1,19 @@
 --- a/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
-@@ -44,6 +_,12 @@
- import net.minecraft.world.phys.HitResult;
+@@ -45,6 +_,12 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+
+ 
 +//Ketting start
 +import net.minecraft.world.entity.item.ItemEntity;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.player.PlayerPickupArrowEvent;
 +//Ketting end
- 
++
  public abstract class AbstractArrow extends Projectile {
     private static final double ARROW_BASE_DAMAGE = 2.0D;
-@@ -54,20 +_,34 @@
+    private static final EntityDataAccessor<Byte> ID_FLAGS = SynchedEntityData.defineId(AbstractArrow.class, EntityDataSerializers.BYTE);
+@@ -54,13 +_,13 @@
     private static final int FLAG_CROSSBOW = 4;
     @Nullable
     private BlockState lastState;
@@ -30,7 +30,7 @@
     private SoundEvent soundEvent = this.getDefaultHitGroundSoundEvent();
     @Nullable
     private IntOpenHashSet piercingIgnoreEntityIds;
-    @Nullable
+@@ -68,6 +_,20 @@
     private List<Entity> piercedAndKilledEntities;
     private ItemStack pickupItemStack;
  

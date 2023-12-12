@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/level/Explosion.java
 +++ b/net/minecraft/world/level/Explosion.java
-@@ -36,5 +_,14 @@
- import net.minecraft.world.phys.AABB;
+@@ -37,6 +_,15 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
-+
+ 
 +//Ketting start
 +import net.minecraft.world.entity.boss.EnderDragonPart;
 +import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -13,9 +12,11 @@
 +import org.bukkit.event.block.BlockExplodeEvent;
 +import org.bukkit.event.entity.EntityExplodeEvent;
 +//Ketting end
- 
++
  public class Explosion {
-@@ -48,15 +_,17 @@
+    private static final ExplosionDamageCalculator EXPLOSION_DAMAGE_CALCULATOR = new ExplosionDamageCalculator();
+    private static final int MAX_DROPS_PER_COMBINED_STACK = 16;
+@@ -48,7 +_,7 @@
     private final double y;
     private final double z;
     @Nullable
@@ -24,8 +25,7 @@
     private final float radius;
     private final DamageSource damageSource;
     private final ExplosionDamageCalculator damageCalculator;
-    private final ParticleOptions smallExplosionParticles;
-    private final ParticleOptions largeExplosionParticles;
+@@ -57,6 +_,8 @@
     private final SoundEvent explosionSound;
     private final ObjectArrayList<BlockPos> toBlow = new ObjectArrayList<>();
     private final Map<Player, Vec3> hitPlayers = Maps.newHashMap();
@@ -71,7 +71,8 @@
        Vec3 vec3 = new Vec3(this.x, this.y, this.z);
  
        for(Entity entity : list) {
-@@ -209,6 +_,36 @@
+@@ -208,7 +_,37 @@
+                   d7 /= d12;
                    d9 /= d12;
                    if (this.damageCalculator.shouldDamageEntity(this, entity)) {
 -                     entity.hurt(this.damageSource, this.damageCalculator.getEntityDamageAmount(this, entity));

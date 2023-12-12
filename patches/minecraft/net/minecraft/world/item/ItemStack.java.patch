@@ -9,7 +9,8 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.pattern.BlockInWorld;
  import org.slf4j.Logger;
-+
+ 
+-public final class ItemStack {
 +//Ketting Start 
 +import net.minecraft.world.level.gameevent.GameEvent;
 +import net.minecraft.world.level.block.entity.BlockEntity;
@@ -36,8 +37,7 @@
 +import org.bukkit.event.world.StructureGrowEvent;
 +import org.kettingpowered.ketting.core.Ketting;
 +//Ketting end
- 
--public final class ItemStack {
++
 +public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements net.minecraftforge.common.extensions.IForgeItemStack {
     public static final Codec<ItemStack> CODEC = RecordCodecBuilder.create((p_309238_) -> {
        return p_309238_.group(BuiltInRegistries.ITEM.holderByNameCodec().fieldOf("id").forGetter(ItemStack::getItemHolder), Codec.INT.fieldOf("Count").forGetter(ItemStack::getCount), CompoundTag.CODEC.optionalFieldOf("tag").forGetter((p_281115_) -> {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
-@@ -139,5 +_,7 @@
+@@ -139,6 +_,8 @@
        WorldDimensions.Complete worlddimensions$complete = worldgensettings.dimensions().bake(p_311619_);
        Lifecycle lifecycle = worlddimensions$complete.lifecycle().add(p_313214_.allRegistriesLifecycle());
        PrimaryLevelData primaryleveldata = PrimaryLevelData.parse(dynamic, levelsettings, worlddimensions$complete.specialWorldProperty(), worldgensettings.options(), lifecycle);
@@ -8,6 +8,7 @@
 +
        return new LevelDataAndDimensions(primaryleveldata, worlddimensions$complete);
     }
+ 
 @@ -343,24 +_,46 @@
     }
  
@@ -91,14 +92,15 @@
        }
  
        private void checkLock() {
-@@ -483,5 +_,6 @@
+@@ -483,6 +_,7 @@
           CompoundTag compoundtag = p_78292_.createTag(p_78291_, p_78293_);
           CompoundTag compoundtag1 = new CompoundTag();
           compoundtag1.put("Data", compoundtag);
 +         net.minecraftforge.common.ForgeHooks.writeAdditionalLevelSaveData(p_78292_, compoundtag1);
           this.saveLevelData(compoundtag1);
        }
-@@ -503,6 +_,10 @@
+ 
+@@ -503,6 +_,22 @@
  
        public Optional<Path> getIconFile() {
           return !this.lock.isValid() ? Optional.empty() : Optional.of(this.levelDirectory.iconFile());
@@ -106,8 +108,7 @@
 +
 +      public Path getWorldDir() {
 +         return baseDir;
-       }
-
++      }
 +      public void readAdditionalLevelSaveData() {
 +         checkLock();
 +         LevelStorageSource.this.readLevelData(this.levelDirectory, (path, dataFixer) -> {
@@ -119,6 +120,6 @@
 +            }
 +            return ""; // Return non-null to prevent level.dat-old inject
 +         });
-+      }
-+
+       }
+ 
        public void deleteLevel() throws IOException {

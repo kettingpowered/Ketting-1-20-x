@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/level/block/piston/PistonBaseBlock.java
 +++ b/net/minecraft/world/level/block/piston/PistonBaseBlock.java
-@@ -38,6 +_,14 @@
- import net.minecraft.world.phys.shapes.CollisionContext;
+@@ -39,6 +_,14 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+
+ 
 +//Ketting start
 +import java.util.AbstractList;
 +import com.google.common.collect.ImmutableList;
@@ -12,9 +11,10 @@
 +import org.bukkit.event.block.BlockPistonExtendEvent;
 +import org.bukkit.event.block.BlockPistonRetractEvent;
 +//Ketting end
- 
++
  public class PistonBaseBlock extends DirectionalBlock {
     public static final MapCodec<PistonBaseBlock> CODEC = RecordCodecBuilder.mapCodec((p_310349_) -> {
+       return p_310349_.group(Codec.BOOL.fieldOf("sticky").forGetter((p_309381_) -> {
 @@ -138,6 +_,19 @@
              }
           }

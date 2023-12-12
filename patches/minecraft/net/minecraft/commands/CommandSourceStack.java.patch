@@ -9,7 +9,8 @@
     public static final SimpleCommandExceptionType ERROR_NOT_PLAYER = new SimpleCommandExceptionType(Component.translatable("permissions.requires.player"));
     public static final SimpleCommandExceptionType ERROR_NOT_ENTITY = new SimpleCommandExceptionType(Component.translatable("permissions.requires.entity"));
     public final CommandSource source;
-@@ -62,5 +_,7 @@
+@@ -61,6 +_,8 @@
+    private final Vec2 rotation;
     private final CommandSigningContext signingContext;
     private final TaskChainer chatMessageChainer;
 +   public volatile com.mojang.brigadier.tree.CommandNode currentCommand; // CraftBukkit
@@ -57,7 +58,7 @@
           this.server.sendSystemMessage(component);
        }
  
-@@ -346,5 +_,11 @@
+@@ -346,6 +_,12 @@
     public FeatureFlagSet enabledFeatures() {
        return this.level.enabledFeatures();
     }
@@ -69,3 +70,4 @@
 +   // CraftBukkit end
  
     public CommandDispatcher<CommandSourceStack> dispatcher() {
+       return this.getServer().getFunctions().getDispatcher();

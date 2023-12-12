@@ -1,9 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/StructureBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/StructureBlockEntity.java
-@@ -34,21 +_,21 @@
-    private static final int SCAN_CORNER_BLOCKS_RANGE = 5;
-    public static final int MAX_OFFSET_PER_AXIS = 48;
-    public static final int MAX_SIZE_PER_AXIS = 48;
+@@ -37,21 +_,22 @@
     public static final String AUTHOR_TAG = "author";
     @Nullable
     private ResourceLocation structureName;
@@ -34,4 +31,7 @@
 +   public long seed;
  
     public StructureBlockEntity(BlockPos p_155779_, BlockState p_155780_) {
++      super(BlockEntityType.STRUCTURE_BLOCK, p_155779_, p_155780_);
        super(BlockEntityType.STRUCTURE_BLOCK, p_155779_, p_155780_);
+       this.mode = p_155780_.getValue(StructureBlock.MODE);
+    }

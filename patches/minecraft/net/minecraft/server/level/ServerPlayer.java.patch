@@ -1,13 +1,10 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -149,11 +_,32 @@
- import net.minecraft.world.scores.PlayerTeam;
- import net.minecraft.world.scores.ScoreAccess;
- import net.minecraft.world.scores.ScoreHolder;
- import net.minecraft.world.scores.Team;
+@@ -153,7 +_,28 @@
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
  import org.slf4j.Logger;
-+
+ 
+-public class ServerPlayer extends Player {
 +//Ketting start
 +import java.util.concurrent.atomic.AtomicReference;
 +import net.minecraft.nbt.ListTag;
@@ -28,8 +25,7 @@
 +import org.bukkit.event.player.*;
 +import org.bukkit.inventory.MainHand;
 +//Ketting end
- 
--public class ServerPlayer extends Player {
++
 +public class ServerPlayer extends Player implements net.minecraftforge.common.extensions.IForgeServerPlayer {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
@@ -139,7 +135,7 @@
        if (p_9131_.contains("SpawnX", 99) && p_9131_.contains("SpawnY", 99) && p_9131_.contains("SpawnZ", 99)) {
           this.respawnPosition = new BlockPos(p_9131_.getInt("SpawnX"), p_9131_.getInt("SpawnY"), p_9131_.getInt("SpawnZ"));
           this.respawnForced = p_9131_.getBoolean("SpawnForced");
-@@ -357,9 +_,23 @@
+@@ -357,7 +_,21 @@
  
        Entity entity1 = this.getRootVehicle();
        Entity entity = this.getVehicle();
@@ -162,8 +158,6 @@
           CompoundTag compoundtag1 = new CompoundTag();
           CompoundTag compoundtag2 = new CompoundTag();
           entity1.save(compoundtag2);
-          compoundtag1.putUUID("Attach", entity.getUUID());
-          compoundtag1.put("Entity", compoundtag2);
 @@ -378,8 +_,36 @@
              p_9197_.put("SpawnDimension", p_248207_);
           });
@@ -317,15 +311,7 @@
           this.connection.send(new ClientboundPlayerCombatKillPacket(this.getId(), component), PacketSendListener.exceptionallySend(() -> {
              int i = 256;
              String s = component.getString(256);
-@@ -589,6 +_,7 @@
-             return new ClientboundPlayerCombatKillPacket(this.getId(), component2);
-          }));
-          Team team = this.getTeam();
-+
-          if (team != null && team.getDeathMessageVisibility() != Team.Visibility.ALWAYS) {
-             if (team.getDeathMessageVisibility() == Team.Visibility.HIDE_FOR_OTHER_TEAMS) {
-                this.server.getPlayerList().broadcastSystemToTeam(this, component);
-@@ -607,12 +_,22 @@
+@@ -607,11 +_,21 @@
           this.tellNeutralMobsThatIDied();
        }
  
@@ -350,7 +336,6 @@
        LivingEntity livingentity = this.getKillCredit();
        if (livingentity != null) {
           this.awardStat(Stats.ENTITY_KILLED_BY.get(livingentity.getType()));
-          livingentity.awardKillScore(this, this.deathScore, p_9035_);
 @@ -643,10 +_,13 @@
        if (p_9050_ != this) {
           super.awardKillScore(p_9050_, p_9051_, p_9052_);

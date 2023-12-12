@@ -11,7 +11,7 @@
  
  public class ThrownEnderpearl extends ThrowableItemProjectile {
     public ThrownEnderpearl(EntityType<? extends ThrownEnderpearl> p_37491_, Level p_37492_) {
-@@ -48,22 +_,39 @@
+@@ -48,26 +_,44 @@
           if (entity instanceof ServerPlayer) {
              ServerPlayer serverplayer = (ServerPlayer)entity;
              if (serverplayer.connection.isAcceptingMessages() && serverplayer.level() == this.level() && !serverplayer.isSleeping()) {
@@ -67,7 +67,15 @@
              }
           } else if (entity != null) {
              entity.teleportTo(this.getX(), this.getY(), this.getZ());
-@@ -87,12 +_,12 @@
++            entity.teleportTo(this.getX(), this.getY(), this.getZ());
+             entity.resetFallDistance();
+          }
+ 
+@@ -83,16 +_,16 @@
+       } else {
+          super.tick();
+       }
+-
     }
  
     @Nullable
@@ -82,4 +90,5 @@
 -      return super.changeDimension(p_37506_);
 +      return super.changeDimension(p_37506_, teleporter);
     }
++}
  }

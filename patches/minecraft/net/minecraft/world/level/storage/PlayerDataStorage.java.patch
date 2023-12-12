@@ -1,34 +1,27 @@
 --- a/net/minecraft/world/level/storage/PlayerDataStorage.java
 +++ b/net/minecraft/world/level/storage/PlayerDataStorage.java
-@@ -3,14 +_,21 @@
- import com.mojang.datafixers.DataFixer;
- import com.mojang.logging.LogUtils;
- import java.io.File;
- import java.nio.file.Files;
- import java.nio.file.Path;
- import javax.annotation.Nullable;
- import net.minecraft.Util;
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.nbt.NbtAccounter;
- import net.minecraft.nbt.NbtIo;
- import net.minecraft.nbt.NbtUtils;
- import net.minecraft.util.datafix.DataFixTypes;
+@@ -15,6 +_,13 @@
  import net.minecraft.world.entity.player.Player;
  import org.slf4j.Logger;
-+
+ 
 +//Ketting start
 +import java.io.FileInputStream;
 +import java.io.InputStream;
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 +import net.minecraft.server.level.ServerPlayer;
 +//Ketting start
-@@ -29,5 +_,6 @@
++
+ public class PlayerDataStorage {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private final File playerDir;
+@@ -27,6 +_,7 @@
+    }
+ 
     public void save(Player p_78434_) {
 +      if (org.spigotmc.SpigotConfig.disablePlayerDataSaving) return; // Spigot
        try {
           CompoundTag compoundtag = p_78434_.saveWithoutId(new CompoundTag());
           Path path = this.playerDir.toPath();
-          Path path1 = Files.createTempFile(path, p_78434_.getStringUUID() + "-", ".dat");
 @@ -35,6 +_,7 @@
           Path path2 = path.resolve(p_78434_.getStringUUID() + ".dat");
           Path path3 = path.resolve(p_78434_.getStringUUID() + ".dat_old");
@@ -37,7 +30,8 @@
        } catch (Exception exception) {
           LOGGER.warn("Failed to save player data for {}", (Object)p_78434_.getName().getString());
        }
-@@ -48,21 +_,67 @@
+@@ -47,22 +_,68 @@
+ 
        try {
           File file1 = new File(this.playerDir, p_78436_.getStringUUID() + ".dat");
 +         // Spigot Start
