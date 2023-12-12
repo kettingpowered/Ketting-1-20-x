@@ -60,43 +60,7 @@
     }
  
     protected Vec3 getRelativePortalPosition(Direction.Axis p_38132_, BlockUtil.FoundRectangle p_38133_) {
-@@ -204,6 +_,19 @@
-          if (this.isInvulnerableTo(p_38117_)) {
-             return false;
-          } else {
-+            // CraftBukkit start - fire VehicleDamageEvent
-+            Vehicle vehicle = (Vehicle) this.getBukkitEntity();
-+            org.bukkit.entity.Entity passenger = (p_38117_.getEntity() == null) ? null : p_38117_.getEntity().getBukkitEntity();
-+
-+            VehicleDamageEvent event = new VehicleDamageEvent(vehicle, passenger, p_38118_);
-+            this.level().getCraftServer().getPluginManager().callEvent(event);
-+
-+            if (event.isCancelled()) {
-+               return false;
-+            }
-+
-+            p_38118_ = (float) event.getDamage();
-+            // CraftBukkit end
-             this.setHurtDir(-this.getHurtDir());
-             this.setHurtTime(10);
-             this.markHurt();
-@@ -211,6 +_,15 @@
-             this.gameEvent(GameEvent.ENTITY_DAMAGE, p_38117_.getEntity());
-             boolean flag = p_38117_.getEntity() instanceof Player && ((Player)p_38117_.getEntity()).getAbilities().instabuild;
-             if (flag || this.getDamage() > 40.0F) {
-+               // CraftBukkit start
-+               VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, passenger);
-+               this.level().getCraftServer().getPluginManager().callEvent(destroyEvent);
-+
-+               if (destroyEvent.isCancelled()) {
-+                  this.setDamage(40); // Maximize damage so this doesn't get triggered again right away
-+                  return true;
-+               }
-+               // CraftBukkit end
-                this.ejectPassengers();
-                if (flag && !this.hasCustomName()) {
-                   this.discard();
-@@ -265,6 +_,14 @@
+@@ -230,6 +_,14 @@
     }
  
     public void tick() {
@@ -111,7 +75,7 @@
        if (this.getHurtTime() > 0) {
           this.setHurtTime(this.getHurtTime() - 1);
        }
-@@ -274,7 +_,7 @@
+@@ -239,7 +_,7 @@
        }
  
        this.checkBelowWorld();
@@ -120,7 +84,7 @@
        if (this.level().isClientSide) {
           if (this.lerpSteps > 0) {
              this.lerpPositionAndRotationStep(this.lerpSteps, this.lerpX, this.lerpY, this.lerpZ, this.lerpYRot, this.lerpXRot);
-@@ -300,9 +_,9 @@
+@@ -265,9 +_,9 @@
           BlockPos blockpos = new BlockPos(k, i, j);
           BlockState blockstate = this.level().getBlockState(blockpos);
           this.onRails = BaseRailBlock.isRail(blockstate);
@@ -197,7 +161,7 @@
                    entity.push(this);
                 }
              }
-@@ -357,23 +_,34 @@
+@@ -322,23 +_,34 @@
     }
  
     protected double getMaxSpeed() {
@@ -292,7 +256,7 @@
           Vec3 vec36 = this.getDeltaMovement();
           double d27 = vec36.horizontalDistance();
           if (d27 > 0.01D) {
-@@ -547,7 +_,7 @@
+@@ -512,7 +_,7 @@
     }
  
     protected void applyNaturalSlowdown() {
@@ -301,7 +265,7 @@
        Vec3 vec3 = this.getDeltaMovement();
        vec3 = vec3.multiply(d0, 0.0D, d0);
        if (this.isInWater()) {
-@@ -568,7 +_,7 @@
+@@ -533,7 +_,7 @@
  
        BlockState blockstate = this.level().getBlockState(new BlockPos(i, j, k));
        if (BaseRailBlock.isRail(blockstate)) {
@@ -398,7 +362,7 @@
     public ItemStack getPickResult() {
        Item item;
        switch (this.getMinecartType()) {
-@@ -858,4 +_,26 @@
+@@ -800,4 +_,26 @@
        HOPPER,
        COMMAND_BLOCK;
     }

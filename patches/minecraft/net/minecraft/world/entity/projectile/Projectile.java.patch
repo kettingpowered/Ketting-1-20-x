@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/net/minecraft/world/entity/projectile/Projectile.java
-@@ -22,6 +_,7 @@
+@@ -23,6 +_,7 @@
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
@@ -8,7 +8,7 @@
  
  public abstract class Projectile extends Entity implements TraceableEntity {
     @Nullable
-@@ -30,6 +_,9 @@
+@@ -31,6 +_,9 @@
     private Entity cachedOwner;
     private boolean leftOwner;
     private boolean hasBeenShot;
@@ -18,7 +18,7 @@
  
     protected Projectile(EntityType<? extends Projectile> p_37248_, Level p_37249_) {
        super(p_37248_, p_37249_);
-@@ -40,7 +_,7 @@
+@@ -41,7 +_,7 @@
           this.ownerUUID = p_37263_.getUUID();
           this.cachedOwner = p_37263_;
        }
@@ -27,7 +27,7 @@
     }
  
     @Nullable
-@@ -132,6 +_,16 @@
+@@ -147,6 +_,16 @@
        this.setDeltaMovement(this.getDeltaMovement().add(vec3.x, p_37252_.onGround() ? 0.0D : vec3.y, vec3.z));
     }
  
@@ -44,7 +44,7 @@
     protected void onHit(HitResult p_37260_) {
        HitResult.Type hitresult$type = p_37260_.getType();
        if (hitresult$type == HitResult.Type.ENTITY) {
-@@ -150,6 +_,11 @@
+@@ -165,6 +_,11 @@
     }
  
     protected void onHitBlock(BlockHitResult p_37258_) {

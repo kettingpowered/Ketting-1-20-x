@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/entity/projectile/Arrow.java
 +++ b/net/minecraft/world/entity/projectile/Arrow.java
-@@ -26,8 +_,8 @@
-    private static final int NO_EFFECT_COLOR = -1;
+@@ -27,8 +_,8 @@
     private static final EntityDataAccessor<Integer> ID_EFFECT_COLOR = SynchedEntityData.defineId(Arrow.class, EntityDataSerializers.INT);
     private static final byte EVENT_POTION_PUFF = 0;
+    private static final ItemStack DEFAULT_ARROW_STACK = new ItemStack(Items.ARROW);
 -   private Potion potion = Potions.EMPTY;
 -   private final Set<MobEffectInstance> effects = Sets.newHashSet();
 +   public Potion potion = Potions.EMPTY;
@@ -11,7 +11,7 @@
     private boolean fixedColor;
  
     public Arrow(EntityType<? extends Arrow> p_36858_, Level p_36859_) {
-@@ -71,7 +_,7 @@
+@@ -72,7 +_,7 @@
        return compoundtag != null && compoundtag.contains("CustomPotionColor", 99) ? compoundtag.getInt("CustomPotionColor") : -1;
     }
  
@@ -20,7 +20,7 @@
        this.fixedColor = false;
        if (this.potion == Potions.EMPTY && this.effects.isEmpty()) {
           this.entityData.set(ID_EFFECT_COLOR, -1);
-@@ -128,7 +_,7 @@
+@@ -129,7 +_,7 @@
        return this.entityData.get(ID_EFFECT_COLOR);
     }
  

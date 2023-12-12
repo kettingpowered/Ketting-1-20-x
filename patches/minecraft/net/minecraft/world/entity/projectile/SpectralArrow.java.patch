@@ -4,12 +4,12 @@
  import net.minecraft.world.level.Level;
  
  public class SpectralArrow extends AbstractArrow {
+    private static final ItemStack DEFAULT_ARROW_STACK = new ItemStack(Items.SPECTRAL_ARROW);
 -   private int duration = 200;
 +   public int duration = 200;
  
     public SpectralArrow(EntityType<? extends SpectralArrow> p_37411_, Level p_37412_) {
-       super(p_37411_, p_37412_);
-@@ -40,7 +_,7 @@
+@@ -37,7 +_,7 @@
     protected void doPostHurtEffects(LivingEntity p_37422_) {
        super.doPostHurtEffects(p_37422_);
        MobEffectInstance mobeffectinstance = new MobEffectInstance(MobEffects.GLOWING, this.duration, 0);

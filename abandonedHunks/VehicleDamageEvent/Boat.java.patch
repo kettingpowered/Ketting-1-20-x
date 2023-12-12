@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/entity/vehicle/Boat.java
++++ b/net/minecraft/world/entity/vehicle/Boat.java
+@@ -164,6 +_,18 @@
+       if (this.isInvulnerableTo(p_38319_)) {
+          return false;
+       } else if (!this.level().isClientSide && !this.isRemoved()) {
++         // CraftBukkit start
++         Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++         org.bukkit.entity.Entity attacker = (p_38319_.getEntity() == null) ? null : p_38319_.getEntity().getBukkitEntity();
++
++         VehicleDamageEvent event = new VehicleDamageEvent(vehicle, attacker, (double) p_38320_);
++         this.level().getCraftServer().getPluginManager().callEvent(event);
++
++         if (event.isCancelled()) {
++            return false;
++         }
++         // f = event.getDamage(); // TODO Why don't we do this?
++         // CraftBukkit end
+          this.setHurtDir(-this.getHurtDir());
+          this.setHurtTime(10);
+          this.setDamage(this.getDamage() + p_38320_ * 10.0F);
+@@ -171,6 +_,15 @@
+          this.gameEvent(GameEvent.ENTITY_DAMAGE, p_38319_.getEntity());
+          boolean flag = p_38319_.getEntity() instanceof Player && ((Player)p_38319_.getEntity()).getAbilities().instabuild;
+          if (flag || this.getDamage() > 40.0F) {
++            // CraftBukkit start
++            VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, attacker);
++            this.level().getCraftServer().getPluginManager().callEvent(destroyEvent);
++
++            if (destroyEvent.isCancelled()) {
++               this.setDamage(40F); // Maximize damage so this doesn't get triggered again right away
++               return true;
++            }
++            // CraftBukkit end
+             if (!flag && this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+                this.destroy(p_38319_);
+             }

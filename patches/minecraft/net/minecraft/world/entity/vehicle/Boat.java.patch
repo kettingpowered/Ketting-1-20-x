@@ -21,7 +21,7 @@
     private static final EntityDataAccessor<Integer> DATA_ID_TYPE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_LEFT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_RIGHT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
-@@ -82,7 +_,7 @@
+@@ -79,7 +_,7 @@
     private boolean inputDown;
     private double waterLevel;
     private float landFriction;
@@ -30,7 +30,7 @@
     private Boat.Status oldStatus;
     private double lastYd;
     private boolean isAboveBubbleColumn;
-@@ -91,6 +_,14 @@
+@@ -88,6 +_,14 @@
     private float bubbleAngle;
     private float bubbleAngleO;
  
@@ -45,42 +45,7 @@
     public Boat(EntityType<? extends Boat> p_38290_, Level p_38291_) {
        super(p_38290_, p_38291_);
        this.blocksBuilding = true;
-@@ -164,6 +_,18 @@
-       if (this.isInvulnerableTo(p_38319_)) {
-          return false;
-       } else if (!this.level().isClientSide && !this.isRemoved()) {
-+         // CraftBukkit start
-+         Vehicle vehicle = (Vehicle) this.getBukkitEntity();
-+         org.bukkit.entity.Entity attacker = (p_38319_.getEntity() == null) ? null : p_38319_.getEntity().getBukkitEntity();
-+
-+         VehicleDamageEvent event = new VehicleDamageEvent(vehicle, attacker, (double) p_38320_);
-+         this.level().getCraftServer().getPluginManager().callEvent(event);
-+
-+         if (event.isCancelled()) {
-+            return false;
-+         }
-+         // f = event.getDamage(); // TODO Why don't we do this?
-+         // CraftBukkit end
-          this.setHurtDir(-this.getHurtDir());
-          this.setHurtTime(10);
-          this.setDamage(this.getDamage() + p_38320_ * 10.0F);
-@@ -171,6 +_,15 @@
-          this.gameEvent(GameEvent.ENTITY_DAMAGE, p_38319_.getEntity());
-          boolean flag = p_38319_.getEntity() instanceof Player && ((Player)p_38319_.getEntity()).getAbilities().instabuild;
-          if (flag || this.getDamage() > 40.0F) {
-+            // CraftBukkit start
-+            VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, attacker);
-+            this.level().getCraftServer().getPluginManager().callEvent(destroyEvent);
-+
-+            if (destroyEvent.isCancelled()) {
-+               this.setDamage(40F); // Maximize damage so this doesn't get triggered again right away
-+               return true;
-+            }
-+            // CraftBukkit end
-             if (!flag && this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
-                this.destroy(p_38319_);
-             }
-@@ -208,9 +_,29 @@
+@@ -175,9 +_,29 @@
     public void push(Entity p_38373_) {
        if (p_38373_ instanceof Boat) {
           if (p_38373_.getBoundingBox().minY < this.getBoundingBox().maxY) {
@@ -110,7 +75,7 @@
           super.push(p_38373_);
        }
  
-@@ -293,6 +_,7 @@
+@@ -260,6 +_,7 @@
        return this.getDirection().getClockWise();
     }
  
@@ -118,7 +83,7 @@
     public void tick() {
        this.oldStatus = this.status;
        this.status = this.getStatus();
-@@ -332,6 +_,22 @@
+@@ -299,6 +_,22 @@
           this.setDeltaMovement(Vec3.ZERO);
        }
  
@@ -177,7 +142,7 @@
                    if (!fluidstate.isSource()) {
                       return Boat.Status.UNDER_FLOWING_WATER;
                    }
-@@ -769,21 +_,27 @@
+@@ -738,21 +_,27 @@
  
                 this.causeFallDamage(this.fallDistance, 1.0F, this.damageSources().fall());
                 if (!this.level().isClientSide && !this.isRemoved()) {

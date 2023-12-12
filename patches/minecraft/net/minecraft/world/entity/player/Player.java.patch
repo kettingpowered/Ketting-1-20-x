@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -84,12 +_,7 @@
+@@ -80,12 +_,7 @@
  import net.minecraft.world.inventory.ClickAction;
  import net.minecraft.world.inventory.InventoryMenu;
  import net.minecraft.world.inventory.PlayerEnderChestContainer;
@@ -14,7 +14,7 @@
  import net.minecraft.world.item.crafting.RecipeHolder;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.item.trading.MerchantOffers;
-@@ -112,9 +_,18 @@
+@@ -108,9 +_,18 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
@@ -34,7 +34,7 @@
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final int MAX_NAME_LENGTH = 16;
     public static final HumanoidArm DEFAULT_MAIN_HAND = HumanoidArm.RIGHT;
-@@ -138,10 +_,10 @@
+@@ -133,10 +_,10 @@
     protected static final EntityDataAccessor<CompoundTag> DATA_SHOULDER_RIGHT = SynchedEntityData.defineId(Player.class, EntityDataSerializers.COMPOUND_TAG);
     private long timeEntitySatOnShoulder;
     private final Inventory inventory = new Inventory(this);
@@ -47,7 +47,7 @@
     protected int jumpTriggerTime;
     public float oBob;
     public float bob;
-@@ -152,13 +_,13 @@
+@@ -147,13 +_,13 @@
     public double xCloak;
     public double yCloak;
     public double zCloak;
@@ -137,7 +137,7 @@
        if (this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.SWIMMING)) {
           Pose pose;
           if (this.isFallFlying()) {
-@@ -419,7 +_,7 @@
+@@ -418,7 +_,7 @@
        return SoundSource.PLAYERS;
     }
  
@@ -146,7 +146,7 @@
        return 20;
     }
  
-@@ -458,8 +_,14 @@
+@@ -457,8 +_,14 @@
     public void rideTick() {
        if (!this.level().isClientSide && this.wantsToStopRiding() && this.isPassenger()) {
           this.stopRiding();
@@ -160,10 +160,10 @@
 +      }
 +      {
 +         // CraftBukkit end
-          double d0 = this.getX();
-          double d1 = this.getY();
-          double d2 = this.getZ();
-@@ -483,7 +_,8 @@
+          super.rideTick();
+          this.oBob = this.bob;
+          this.bob = 0.0F;
+@@ -478,7 +_,8 @@
  
        if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION)) {
           if (this.getHealth() < this.getMaxHealth() && this.tickCount % 20 == 0) {
@@ -200,7 +200,7 @@
        if (p_36179_.isEmpty()) {
           return null;
        } else {
-@@ -658,11 +_,43 @@
+@@ -655,11 +_,43 @@
              itementity.setDeltaMovement((double)(-f3 * f2 * 0.3F) + Math.cos((double)f5) * (double)f6, (double)(-f8 * 0.3F + 0.1F + (this.random.nextFloat() - this.random.nextFloat()) * 0.1F), (double)(f4 * f2 * 0.3F) + Math.sin((double)f5) * (double)f6);
           }
  
@@ -266,7 +266,7 @@
        if (this.isInvulnerableTo(p_36154_)) {
           return false;
        } else if (this.abilities.invulnerable && !p_36154_.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-@@ -806,12 +_,12 @@
+@@ -801,12 +_,12 @@
              return false;
           } else {
              if (!this.level().isClientSide) {
@@ -281,7 +281,7 @@
                 }
  
                 if (this.level().getDifficulty() == Difficulty.EASY) {
-@@ -823,14 +_,20 @@
+@@ -818,14 +_,20 @@
                 }
              }
  
@@ -304,7 +304,7 @@
           this.disableShield(true);
        }
  
-@@ -841,13 +_,29 @@
+@@ -836,13 +_,29 @@
     }
  
     public boolean canHarmPlayer(Player p_36169_) {
@@ -340,7 +340,7 @@
     }
  
     protected void hurtArmor(DamageSource p_36251_, float p_36252_) {
-@@ -859,7 +_,7 @@
+@@ -854,7 +_,7 @@
     }
  
     protected void hurtCurrentlyUsedShield(float p_36383_) {
@@ -358,7 +358,7 @@
              });
              if (this.useItem.isEmpty()) {
                 if (interactionhand == InteractionHand.MAIN_HAND) {
-@@ -885,19 +_,27 @@
+@@ -880,19 +_,27 @@
        }
     }
  
@@ -388,7 +388,7 @@
              this.getCombatTracker().recordDamage(p_36312_, f1);
              this.setHealth(this.getHealth() - f1);
              if (f1 < 3.4028235E37F) {
-@@ -907,6 +_,8 @@
+@@ -902,6 +_,8 @@
              this.gameEvent(GameEvent.ENTITY_DAMAGE);
           }
        }
@@ -424,7 +424,7 @@
                       this.setItemInHand(p_36159_, ItemStack.EMPTY);
                    }
  
-@@ -993,7 +_,7 @@
+@@ -988,7 +_,7 @@
        this.boardingCooldown = 0;
     }
  
@@ -433,7 +433,7 @@
        return super.isImmobile() || this.isSleeping();
     }
  
-@@ -1001,6 +_,7 @@
+@@ -996,6 +_,7 @@
        return !this.abilities.flying;
     }
  
@@ -491,7 +491,7 @@
                 }
  
                 float f4 = 0.0F;
-@@ -1103,8 +_,15 @@
+@@ -1098,8 +_,15 @@
                 if (p_36347_ instanceof LivingEntity) {
                    f4 = ((LivingEntity)p_36347_).getHealth();
                    if (j > 0 && !p_36347_.isOnFire()) {
@@ -528,7 +528,7 @@
                          }
                       }
  
-@@ -1137,9 +_,26 @@
+@@ -1132,9 +_,26 @@
                    }
  
                    if (p_36347_ instanceof ServerPlayer && p_36347_.hurtMarked) {
@@ -576,7 +576,7 @@
                          this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
                       }
                    }
-@@ -1182,7 +_,14 @@
+@@ -1177,7 +_,14 @@
                       float f5 = f4 - ((LivingEntity)p_36347_).getHealth();
                       this.awardStat(Stats.DAMAGE_DEALT, Math.round(f5 * 10.0F));
                       if (j > 0) {
@@ -592,7 +592,7 @@
                       }
  
                       if (this.level() instanceof ServerLevel && f5 > 2.0F) {
-@@ -1194,14 +_,20 @@
+@@ -1186,14 +_,20 @@
                       }
                    }
  
@@ -623,7 +623,7 @@
           this.stopUsingItem();
           this.level().broadcastEntityEvent(this, (byte)30);
        }
-@@ -1273,12 +_,19 @@
+@@ -1268,12 +_,19 @@
     }
  
     public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_36203_) {
@@ -652,7 +652,7 @@
        } else {
           boolean flag = block.isPossibleToRespawnInThis(blockstate);
           BlockState blockstate1 = p_36131_.getBlockState(p_36132_.above());
-@@ -1360,9 +_,9 @@
+@@ -1355,9 +_,9 @@
        super.jumpFromGround();
        this.awardStat(Stats.JUMP);
        if (this.isSprinting()) {
@@ -664,9 +664,9 @@
        }
  
     }
-@@ -1386,7 +_,11 @@
+@@ -1378,7 +_,11 @@
           Vec3 vec31 = this.getDeltaMovement();
-          this.setDeltaMovement(vec31.x, d5 * 0.6D, vec31.z);
+          this.setDeltaMovement(vec31.x, d2 * 0.6D, vec31.z);
           this.resetFallDistance();
 -         this.setSharedFlag(7, false);
 +         // CraftBukkit start
@@ -677,47 +677,7 @@
        } else {
           super.travel(p_36359_);
        }
-@@ -1417,19 +_,19 @@
-             int i = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36380_ * p_36380_ + p_36381_ * p_36381_) * 100.0F);
-             if (i > 0) {
-                this.awardStat(Stats.SWIM_ONE_CM, i);
--               this.causeFoodExhaustion(0.01F * (float)i * 0.01F);
-+               this.causeFoodExhaustion(this.level().spigotConfig.swimMultiplier * (float)i * 0.01F, EntityExhaustionEvent.ExhaustionReason.SWIM); // CraftBukkit - EntityExhaustionEvent // Spigot
-             }
-          } else if (this.isEyeInFluid(FluidTags.WATER)) {
-             int j = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36380_ * p_36380_ + p_36381_ * p_36381_) * 100.0F);
-             if (j > 0) {
-                this.awardStat(Stats.WALK_UNDER_WATER_ONE_CM, j);
--               this.causeFoodExhaustion(0.01F * (float)j * 0.01F);
-+               this.causeFoodExhaustion(this.level().spigotConfig.swimMultiplier * (float)j * 0.01F, EntityExhaustionEvent.ExhaustionReason.WALK_UNDERWATER); // CraftBukkit - EntityExhaustionEvent // Spigot
-             }
-          } else if (this.isInWater()) {
-             int k = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36381_ * p_36381_) * 100.0F);
-             if (k > 0) {
-                this.awardStat(Stats.WALK_ON_WATER_ONE_CM, k);
--               this.causeFoodExhaustion(0.01F * (float)k * 0.01F);
-+               this.causeFoodExhaustion(this.level().spigotConfig.swimMultiplier * (float)k * 0.01F, EntityExhaustionEvent.ExhaustionReason.WALK_ON_WATER); // CraftBukkit - EntityExhaustionEvent // Spigot
-             }
-          } else if (this.onClimbable()) {
-             if (p_36380_ > 0.0D) {
-@@ -1440,13 +_,13 @@
-             if (l > 0) {
-                if (this.isSprinting()) {
-                   this.awardStat(Stats.SPRINT_ONE_CM, l);
--                  this.causeFoodExhaustion(0.1F * (float)l * 0.01F);
-+                  this.causeFoodExhaustion(this.level().spigotConfig.sprintMultiplier * (float)l * 0.01F, EntityExhaustionEvent.ExhaustionReason.SPRINT); // CraftBukkit - EntityExhaustionEvent // Spigot
-                } else if (this.isCrouching()) {
-                   this.awardStat(Stats.CROUCH_ONE_CM, l);
--                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F);
-+                  this.causeFoodExhaustion(this.level().spigotConfig.otherMultiplier * (float)l * 0.01F, EntityExhaustionEvent.ExhaustionReason.CROUCH); // CraftBukkit - EntityExhaustionEvent // Spigot
-                } else {
-                   this.awardStat(Stats.WALK_ONE_CM, l);
--                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F);
-+                  this.causeFoodExhaustion(this.level().spigotConfig.otherMultiplier * (float)l * 0.01F, EntityExhaustionEvent.ExhaustionReason.WALK); // CraftBukkit - EntityExhaustionEvent // Spigot
-                }
-             }
-          } else if (this.isFallFlying()) {
-@@ -1485,6 +_,7 @@
+@@ -1404,6 +_,7 @@
  
     public boolean causeFallDamage(float p_150093_, float p_150094_, DamageSource p_150095_) {
        if (this.abilities.mayfly) {
@@ -734,7 +694,7 @@
              this.startFallFlying();
              return true;
           }
-@@ -1508,12 +_,24 @@
+@@ -1427,12 +_,24 @@
     }
  
     public void startFallFlying() {
@@ -762,7 +722,7 @@
     }
  
     protected void doWaterSplashEffect() {
-@@ -1526,13 +_,13 @@
+@@ -1445,13 +_,13 @@
     protected void playStepSound(BlockPos p_282121_, BlockState p_282194_) {
        if (this.isInWater()) {
           this.waterSwimSound();
@@ -809,7 +769,7 @@
        this.experienceLevel += p_36276_;
        if (this.experienceLevel < 0) {
           this.experienceLevel = 0;
-@@ -1622,12 +_,21 @@
+@@ -1541,12 +_,21 @@
        }
     }
  
@@ -833,7 +793,7 @@
        }
     }
  
-@@ -1710,13 +_,12 @@
+@@ -1629,13 +_,12 @@
     public void setItemSlot(EquipmentSlot p_36161_, ItemStack p_36162_) {
        this.verifyEquippedItem(p_36162_);
        if (p_36161_ == EquipmentSlot.MAINHAND) {
@@ -850,7 +810,7 @@
     }
  
     public boolean addItem(ItemStack p_36357_) {
-@@ -1751,26 +_,31 @@
+@@ -1670,26 +_,31 @@
  
     protected void removeEntitiesOnShoulder() {
        if (this.timeEntitySatOnShoulder + 20L < this.level().getGameTime()) {
@@ -873,14 +833,14 @@
 -   private void respawnEntityOnShoulder(CompoundTag p_36371_) {
 +   private boolean respawnEntityOnShoulder(CompoundTag p_36371_) { // CraftBukkit void->boolean
        if (!this.level().isClientSide && !p_36371_.isEmpty()) {
--         EntityType.create(p_36371_, this.level()).ifPresent((p_296858_) -> {
-+         return EntityType.create(p_36371_, this.level()).map((p_296858_) -> { // CraftBukkit
-             if (p_296858_ instanceof TamableAnimal) {
-                ((TamableAnimal)p_296858_).setOwnerUUID(this.uuid);
+-         EntityType.create(p_36371_, this.level()).ifPresent((p_309218_) -> {
++         return EntityType.create(p_36371_, this.level()).map((p_309218_) -> { // CraftBukkit
+             if (p_309218_ instanceof TamableAnimal) {
+                ((TamableAnimal)p_309218_).setOwnerUUID(this.uuid);
              }
  
-             p_296858_.setPos(this.getX(), this.getY() + (double)0.7F, this.getZ());
--            ((ServerLevel)this.level()).addWithUUID(p_296858_);
+             p_309218_.setPos(this.getX(), this.getY() + (double)0.7F, this.getZ());
+-            ((ServerLevel)this.level()).addWithUUID(p_309218_);
 -         });
 +            return ((ServerLevel) this.level()).addWithUUID(p_296858_, CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY); // CraftBukkit
 +         }).orElse(true); // CraftBukkit
@@ -890,7 +850,7 @@
     }
  
     public abstract boolean isSpectator();
-@@ -1794,7 +_,11 @@
+@@ -1713,7 +_,11 @@
     }
  
     public Component getDisplayName() {
@@ -903,7 +863,7 @@
        return this.decorateDisplayNameComponent(mutablecomponent);
     }
  
-@@ -1867,7 +_,7 @@
+@@ -1786,7 +_,7 @@
        return this.entityData.get(DATA_SHOULDER_LEFT);
     }
  
@@ -912,7 +872,7 @@
        this.entityData.set(DATA_SHOULDER_LEFT, p_36363_);
     }
  
-@@ -1875,7 +_,7 @@
+@@ -1794,7 +_,7 @@
        return this.entityData.get(DATA_SHOULDER_RIGHT);
     }
  
@@ -921,7 +881,7 @@
        this.entityData.set(DATA_SHOULDER_RIGHT, p_36365_);
     }
  
-@@ -1927,24 +_,24 @@
+@@ -1846,24 +_,24 @@
           Predicate<ItemStack> predicate = ((ProjectileWeaponItem)p_36349_.getItem()).getSupportedHeldProjectiles();
           ItemStack itemstack = ProjectileWeaponItem.getHeldProjectile(this, predicate);
           if (!itemstack.isEmpty()) {

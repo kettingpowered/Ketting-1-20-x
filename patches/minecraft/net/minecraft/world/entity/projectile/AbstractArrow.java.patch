@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
-@@ -43,6 +_,8 @@
+@@ -44,6 +_,12 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -13,7 +13,7 @@
  
  public abstract class AbstractArrow extends Projectile {
     private static final double ARROW_BASE_DAMAGE = 2.0D;
-@@ -53,19 +_,33 @@
+@@ -54,20 +_,34 @@
     private static final int FLAG_CROSSBOW = 4;
     @Nullable
     private BlockState lastState;
@@ -102,7 +102,7 @@
           vec3 = this.getDeltaMovement();
           double d5 = vec3.x;
           double d6 = vec3.y;
-@@ -264,7 +_,7 @@
+@@ -271,7 +_,7 @@
  
     protected void tickDespawn() {
        ++this.life;
@@ -111,10 +111,10 @@
           this.discard();
        }
  
-@@ -322,7 +_,14 @@
-       boolean flag = entity.getType() == EntityType.ENDERMAN;
+@@ -330,7 +_,14 @@
        int k = entity.getRemainingFireTicks();
-       if (this.isOnFire() && !flag) {
+       boolean flag1 = entity.getType().is(EntityTypeTags.DEFLECTS_ARROWS);
+       if (this.isOnFire() && !flag && !flag1) {
 -         entity.setSecondsOnFire(5);
 +         // CraftBukkit start
 +         EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5);
@@ -136,7 +136,7 @@
     }
  
     public void addAdditionalSaveData(CompoundTag p_36772_) {
-@@ -475,7 +_,22 @@
+@@ -497,7 +_,22 @@
  
     public void playerTouch(Player p_36766_) {
        if (!this.level().isClientSide && (this.inGround || this.isNoPhysics()) && this.shakeTime <= 0) {
