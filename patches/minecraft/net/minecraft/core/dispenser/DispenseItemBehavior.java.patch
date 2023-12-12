@@ -1,46 +1,12 @@
 --- a/net/minecraft/core/dispenser/DispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DispenseItemBehavior.java
-@@ -37,34 +_,12 @@
- import net.minecraft.world.entity.projectile.ThrownExperienceBottle;
- import net.minecraft.world.entity.projectile.ThrownPotion;
- import net.minecraft.world.entity.vehicle.Boat;
--import net.minecraft.world.item.ArmorItem;
--import net.minecraft.world.item.BoneMealItem;
--import net.minecraft.world.item.DispensibleContainerItem;
--import net.minecraft.world.item.DyeColor;
--import net.minecraft.world.item.HoneycombItem;
--import net.minecraft.world.item.Item;
--import net.minecraft.world.item.ItemStack;
--import net.minecraft.world.item.Items;
--import net.minecraft.world.item.SpawnEggItem;
-+import net.minecraft.world.item.*;
- import net.minecraft.world.item.alchemy.PotionUtils;
- import net.minecraft.world.item.alchemy.Potions;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.LevelAccessor;
--import net.minecraft.world.level.block.BaseFireBlock;
--import net.minecraft.world.level.block.BeehiveBlock;
--import net.minecraft.world.level.block.Block;
--import net.minecraft.world.level.block.Blocks;
--import net.minecraft.world.level.block.BucketPickup;
--import net.minecraft.world.level.block.CampfireBlock;
--import net.minecraft.world.level.block.CandleBlock;
--import net.minecraft.world.level.block.CandleCakeBlock;
--import net.minecraft.world.level.block.CarvedPumpkinBlock;
--import net.minecraft.world.level.block.DispenserBlock;
--import net.minecraft.world.level.block.RespawnAnchorBlock;
--import net.minecraft.world.level.block.ShulkerBoxBlock;
--import net.minecraft.world.level.block.SkullBlock;
--import net.minecraft.world.level.block.TntBlock;
--import net.minecraft.world.level.block.WitherSkullBlock;
-+import net.minecraft.world.level.block.*;
- import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
- import net.minecraft.world.level.block.entity.BlockEntity;
- import net.minecraft.world.level.block.entity.SkullBlockEntity;
-@@ -75,6 +_,16 @@
+@@ -75,6 +_,19 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.Vec3;
+ import org.slf4j.Logger;
++
++//Ketting Start
 +import org.bukkit.Location;
 +import org.bukkit.TreeType;
 +import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
@@ -51,7 +17,7 @@
 +import org.bukkit.event.block.BlockDispenseEvent;
 +import org.bukkit.event.block.BlockFertilizeEvent;
 +import org.bukkit.event.world.StructureGrowEvent;
- import org.slf4j.Logger;
++//Ketting end
  
  public interface DispenseItemBehavior {
 @@ -180,6 +_,33 @@
@@ -180,7 +146,7 @@
                 return p_123530_;
              } else {
 @@ -241,7 +_,35 @@
-                return p_296334_.isAlive() && p_296334_.canWearArmor();
+                return p_308467_.isAlive() && p_308467_.canWearArmor();
              })) {
                 if (abstracthorse.isArmor(p_123536_) && !abstracthorse.isWearingArmor() && abstracthorse.isTamed()) {
 -                  abstracthorse.getSlot(401).set(p_123536_.split(1));
@@ -217,8 +183,8 @@
                    return p_123536_;
                 }
 @@ -277,8 +_,36 @@
-             for(AbstractChestedHorse abstractchestedhorse : p_123541_.level().getEntitiesOfClass(AbstractChestedHorse.class, new AABB(blockpos), (p_296335_) -> {
-                return p_296335_.isAlive() && !p_296335_.hasChest();
+             for(AbstractChestedHorse abstractchestedhorse : p_123541_.level().getEntitiesOfClass(AbstractChestedHorse.class, new AABB(blockpos), (p_308468_) -> {
+                return p_308468_.isAlive() && !p_308468_.hasChest();
              })) {
 -               if (abstractchestedhorse.isTamed() && abstractchestedhorse.getSlot(499).set(p_123542_)) {
 -                  p_123542_.shrink(1);
