@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/PlayerAdvancements.java
 +++ b/net/minecraft/server/PlayerAdvancements.java
-@@ -132,6 +_,7 @@
+@@ -131,6 +_,7 @@
     }
  
     public void save() {
@@ -17,7 +17,7 @@
 +            this.player.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.player.PlayerAdvancementDoneEvent(this.player.getBukkitEntity(), p_298135_.toBukkit())); // CraftBukkit
              p_298135_.value().rewards().grant(this.player);
              p_298135_.value().display().ifPresent((p_308592_) -> {
-                if (p_296444_.shouldAnnounceChat() && this.player.level().getGameRules().getBoolean(GameRules.RULE_ANNOUNCE_ADVANCEMENTS)) {
+                if (p_308592_.shouldAnnounceChat() && this.player.level().getGameRules().getBoolean(GameRules.RULE_ANNOUNCE_ADVANCEMENTS)) {
 @@ -185,6 +_,7 @@
                 }
  

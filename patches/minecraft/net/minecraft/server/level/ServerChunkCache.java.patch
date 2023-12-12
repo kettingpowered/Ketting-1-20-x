@@ -1,25 +1,6 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -50,15 +_,15 @@
- public class ServerChunkCache extends ChunkSource {
-    private static final List<ChunkStatus> CHUNK_STATUSES = ChunkStatus.getStatusList();
-    private final DistanceManager distanceManager;
--   public final ServerLevel level;
-+   final ServerLevel level;
-    final Thread mainThread;
-    final ThreadedLevelLightEngine lightEngine;
-    private final ServerChunkCache.MainThreadExecutor mainThreadProcessor;
-    public final ChunkMap chunkMap;
-    private final DimensionDataStorage dataStorage;
-    private long lastInhabitedUpdate;
--   private boolean spawnEnemies = true;
--   private boolean spawnFriendlies = true;
-+   public boolean spawnEnemies = true;
-+   public boolean spawnFriendlies = true;
-    private static final int CACHE_SIZE = 4;
-    private final long[] lastChunkPos = new long[4];
-    private final ChunkStatus[] lastChunkStatus = new ChunkStatus[4];
-@@ -67,6 +_,13 @@
+@@ -65,6 +_,13 @@
     @VisibleForDebug
     private NaturalSpawner.SpawnState lastSpawnState;
  
@@ -33,7 +14,7 @@
     public ServerChunkCache(ServerLevel p_214982_, LevelStorageSource.LevelStorageAccess p_214983_, DataFixer p_214984_, StructureTemplateManager p_214985_, Executor p_214986_, ChunkGenerator p_214987_, int p_214988_, int p_214989_, boolean p_214990_, ChunkProgressListener p_214991_, ChunkStatusUpdateListener p_214992_, Supplier<DimensionDataStorage> p_214993_) {
        this.level = p_214982_;
        this.mainThreadProcessor = new ServerChunkCache.MainThreadExecutor(p_214982_);
-@@ -81,6 +_,16 @@
+@@ -79,6 +_,16 @@
        this.clearCache();
     }
  
@@ -50,7 +31,7 @@
     public ThreadedLevelLightEngine getLightEngine() {
        return this.lightEngine;
     }
-@@ -120,15 +_,19 @@
+@@ -118,15 +_,19 @@
           for(int j = 0; j < 4; ++j) {
              if (i == this.lastChunkPos[j] && p_8362_ == this.lastChunkStatus[j]) {
                 ChunkAccess chunkaccess = this.lastChunk[j];
@@ -79,7 +60,7 @@
              Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either = chunkholder.getFutureIfPresent(ChunkStatus.FULL).getNow((Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>)null);
              if (either == null) {
                 return null;
-@@ -208,7 +_,16 @@
+@@ -206,7 +_,16 @@
        long i = chunkpos.toLong();
        int j = ChunkLevel.byStatus(p_8459_);
        ChunkHolder chunkholder = this.getVisibleChunkIfPresent(i);
@@ -97,7 +78,7 @@
           this.distanceManager.addTicket(TicketType.UNKNOWN, chunkpos, j, chunkpos);
           if (this.chunkAbsent(chunkholder, j)) {
              ProfilerFiller profilerfiller = this.level.getProfiler();
-@@ -226,7 +_,7 @@
+@@ -224,7 +_,7 @@
     }
  
     private boolean chunkAbsent(@Nullable ChunkHolder p_8417_, int p_8418_) {
@@ -106,7 +87,7 @@
     }
  
     public boolean hasChunk(int p_8429_, int p_8430_) {
-@@ -297,22 +_,46 @@
+@@ -295,23 +_,49 @@
     }
  
     public void close() throws IOException {
@@ -145,6 +126,9 @@
        this.level.getProfiler().popPush("chunks");
        if (p_201914_) {
           this.tickChunks();
++         this.level.timings.tracker.startTiming(); // Spigot
+          this.chunkMap.tick();
++         this.level.timings.tracker.stopTiming(); // Spigot
        }
  
 +      this.level.timings.doChunkUnload.startTiming(); // Spigot
@@ -154,60 +138,36 @@
        this.level.getProfiler().pop();
        this.clearCache();
     }
-@@ -327,12 +_,15 @@
-       } else {
-          LevelData leveldata = this.level.getLevelData();
-          ProfilerFiller profilerfiller = this.level.getProfiler();
-+
-          profilerfiller.push("pollingChunks");
-          int k = this.level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
--         boolean flag1 = leveldata.getGameTime() % 400L == 0L;
-+         boolean flag1 = level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) != 0L && leveldata.getGameTime() % level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) == 0L; // CraftBukkit
-+
-          profilerfiller.push("naturalSpawnCount");
-          int l = this.distanceManager.getNaturalSpawnChunkCount();
-          NaturalSpawner.SpawnState naturalspawner$spawnstate = NaturalSpawner.createState(l, this.level.getAllEntities(), this::getFullChunk, new LocalMobCapCalculator(this.chunkMap));
-+
-          this.lastSpawnState = naturalspawner$spawnstate;
-          profilerfiller.popPush("filteringLoadedChunks");
-          List<ServerChunkCache.ChunkAndHolder> list = Lists.newArrayListWithCapacity(l);
-@@ -345,20 +_,22 @@
-          }
+@@ -339,22 +_,24 @@
+             NaturalSpawner.SpawnState naturalspawner$spawnstate = NaturalSpawner.createState(l, this.level.getAllEntities(), this::getFullChunk, new LocalMobCapCalculator(this.chunkMap));
+             this.lastSpawnState = naturalspawner$spawnstate;
+             profilerfiller.popPush("spawnAndTick");
+-            boolean flag1 = this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING);
++            boolean flag1 = this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) && !level.players().isEmpty(); // CraftBukkit
+             Util.shuffle(list, this.level.random);
+             int k = this.level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
+-            boolean flag = this.level.getLevelData().getGameTime() % 400L == 0L;
++            boolean flag = level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) != 0L && leveldata.getGameTime() % level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) == 0L; // CraftBukkit
  
-          profilerfiller.popPush("spawnAndTick");
--         boolean flag1 = this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING);
-+         boolean flag1 = this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) && !level.players().isEmpty(); // CraftBukkit
-          Collections.shuffle(list);
+             for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
+                LevelChunk levelchunk1 = serverchunkcache$chunkandholder.chunk;
+                ChunkPos chunkpos = levelchunk1.getPos();
+-               if (this.level.isNaturalSpawningAllowed(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos)) {
++               if ((this.level.isNaturalSpawningAllowed(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos)) || this.distanceManager.shouldForceTicks(chunkpos.toLong())) {
+                   levelchunk1.incrementInhabitedTime(j);
+-                  if (flag1 && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkpos)) {
++                  if (flag1 && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos, true)) { // Spigot
+                      NaturalSpawner.spawnForChunk(this.level, levelchunk1, naturalspawner$spawnstate, this.spawnFriendlies, this.spawnEnemies, flag);
+                   }
  
-          for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
-             LevelChunk levelchunk1 = serverchunkcache$chunkandholder.chunk;
-             ChunkPos chunkpos = levelchunk1.getPos();
--            if (this.level.isNaturalSpawningAllowed(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos)) {
-+            if ((this.level.isNaturalSpawningAllowed(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos)) || this.distanceManager.shouldForceTicks(chunkpos.toLong())) {
-                levelchunk1.incrementInhabitedTime(j);
--               if (flag1 && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkpos)) {
-+               if (flag1 && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos, true)) { // Spigot
-                   NaturalSpawner.spawnForChunk(this.level, levelchunk1, naturalspawner$spawnstate, this.spawnFriendlies, this.spawnEnemies, flag1);
-                }
- 
-                if (this.level.shouldTickBlocksAt(chunkpos.toLong())) {
-+                  this.level.timings.doTickTiles.startTiming(); // Spigot
-                   this.level.tickChunk(levelchunk1, k);
-+                  this.level.timings.doTickTiles.stopTiming(); // Spigot
+                   if (this.level.shouldTickBlocksAt(chunkpos.toLong())) {
++                     this.level.timings.doTickTiles.startTiming(); // Spigot
+                      this.level.tickChunk(levelchunk1, k);
++                     this.level.timings.doTickTiles.stopTiming(); // Spigot
+                   }
                 }
              }
-          }
-@@ -374,7 +_,9 @@
-          });
-          profilerfiller.pop();
-          profilerfiller.pop();
-+         this.level.timings.tracker.startTiming(); // Spigot
-          this.chunkMap.tick();
-+         this.level.timings.tracker.stopTiming(); // Spigot
-       }
-    }
- 
-@@ -432,11 +_,18 @@
+@@ -428,11 +_,18 @@
     }
  
     public <T> void addRegionTicket(TicketType<T> p_8388_, ChunkPos p_8389_, int p_8390_, T p_8391_) {
@@ -228,7 +188,7 @@
     }
  
     public void updateChunkForced(ChunkPos p_8400_, boolean p_8401_) {
-@@ -534,13 +_,19 @@
+@@ -530,13 +_,19 @@
           super.doRunTask(p_8502_);
        }
  
