@@ -68,70 +68,7 @@
     public static final int HAND_SLOTS = 2;
     public static final int ARMOR_SLOTS = 4;
     public static final int EQUIPMENT_SLOT_OFFSET = 98;
-@@ -145,10 +_,10 @@
-    protected static final int LIVING_ENTITY_FLAG_OFF_HAND = 2;
-    protected static final int LIVING_ENTITY_FLAG_SPIN_ATTACK = 4;
-    protected static final EntityDataAccessor<Byte> DATA_LIVING_ENTITY_FLAGS = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BYTE);
--   private static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
-+   public static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Integer> DATA_EFFECT_COLOR_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> DATA_EFFECT_AMBIENCE_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
--   private static final EntityDataAccessor<Integer> DATA_ARROW_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
-+   public static final EntityDataAccessor<Integer> DATA_ARROW_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> DATA_STINGER_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Optional<BlockPos>> SLEEPING_POS_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
-    protected static final float DEFAULT_EYE_HEIGHT = 1.74F;
-@@ -156,8 +_,8 @@
-    public static final float EXTRA_RENDER_CULLING_SIZE_WITH_BIG_HAT = 0.5F;
-    private static final int MAX_HEAD_ROTATION_RELATIVE_TO_BODY = 50;
-    private final AttributeMap attributes;
--   private final CombatTracker combatTracker = new CombatTracker(this);
--   private final Map<MobEffect, MobEffectInstance> activeEffects = Maps.newHashMap();
-+   public CombatTracker combatTracker = new CombatTracker(this);
-+   public final Map<MobEffect, MobEffectInstance> activeEffects = Maps.newHashMap();
-    private final NonNullList<ItemStack> lastHandItemStacks = NonNullList.withSize(2, ItemStack.EMPTY);
-    private final NonNullList<ItemStack> lastArmorItemStacks = NonNullList.withSize(4, ItemStack.EMPTY);
-    public boolean swinging;
-@@ -173,7 +_,7 @@
-    public float attackAnim;
-    protected int attackStrengthTicker;
-    public final WalkAnimationState walkAnimation = new WalkAnimationState();
--   public final int invulnerableDuration = 20;
-+   public int invulnerableDuration = 20;
-    public final float timeOffs;
-    public final float rotA;
-    public float yBodyRot;
-@@ -181,7 +_,7 @@
-    public float yHeadRot;
-    public float yHeadRotO;
-    @Nullable
--   protected Player lastHurtByPlayer;
-+   public Player lastHurtByPlayer;
-    protected int lastHurtByPlayerTime;
-    protected boolean dead;
-    protected int noActionTime;
-@@ -191,7 +_,7 @@
-    protected float animStepO;
-    protected float rotOffs;
-    protected int deathScore;
--   protected float lastHurt;
-+   public float lastHurt;
-    protected boolean jumping;
-    public float xxa;
-    public float yya;
-@@ -204,9 +_,9 @@
-    protected double lerpXRot;
-    protected double lerpYHeadRot;
-    protected int lerpHeadSteps;
--   private boolean effectsDirty = true;
-+   public boolean effectsDirty = true;
-    @Nullable
--   private LivingEntity lastHurtByMob;
-+   public LivingEntity lastHurtByMob;
-    private int lastHurtByMobTimestamp;
-    private LivingEntity lastHurtMob;
-    private int lastHurtMobTimestamp;
-@@ -226,11 +_,33 @@
+@@ -225,11 +_,33 @@
     private float swimAmountO;
     protected Brain<?> brain;
     private boolean skipDropExperience;
@@ -231,7 +168,7 @@
           this.extinguishFire();
        }
  
-@@ -640,7 +_,7 @@
+@@ -639,7 +_,7 @@
        if (!flag && !ItemStack.isSameItemSameTags(p_238394_, p_238395_) && !this.firstTick) {
           Equipable equipable = Equipable.get(p_238395_);
           if (!this.level().isClientSide() && !this.isSpectator()) {
@@ -240,7 +177,7 @@
                 this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), equipable.getEquipSound(), this.getSoundSource(), 1.0F, 1.0F);
              }
  
-@@ -652,6 +_,14 @@
+@@ -651,6 +_,14 @@
        }
     }
  
@@ -331,7 +268,7 @@
                    iterator.remove();
                    this.onEffectRemoved(mobeffectinstance);
                 }
-@@ -760,6 +_,18 @@
+@@ -759,6 +_,18 @@
        } catch (ConcurrentModificationException concurrentmodificationexception) {
        }
  
@@ -371,7 +308,7 @@
        return d0;
     }
  
-@@ -871,7 +_,13 @@
+@@ -870,7 +_,13 @@
        this.entityData.set(DATA_EFFECT_COLOR_ID, 0);
     }
  
@@ -402,7 +339,7 @@
              iterator.remove();
           }
  
-@@ -908,18 +_,51 @@
+@@ -907,18 +_,51 @@
        return this.addEffect(p_21165_, (Entity)null);
     }
  
@@ -466,7 +403,7 @@
        if (this.getMobType() == MobType.UNDEAD) {
           MobEffect mobeffect = p_21197_.getEffect();
           if (mobeffect == MobEffects.REGENERATION || mobeffect == MobEffects.POISON) {
-@@ -955,13 +_,40 @@
+@@ -954,13 +_,40 @@
        return this.getMobType() == MobType.UNDEAD;
     }
  
@@ -509,7 +446,7 @@
        if (mobeffectinstance != null) {
           this.onEffectRemoved(mobeffectinstance);
           return true;
-@@ -1041,19 +_,58 @@
+@@ -1040,19 +_,58 @@
  
     }
  
@@ -583,7 +520,7 @@
           return false;
        } else if (p_21016_.is(DamageTypeTags.IS_FIRE) && this.hasEffect(MobEffects.FIRE_RESISTANCE)) {
           return false;
-@@ -1077,21 +_,26 @@
+@@ -1076,21 +_,26 @@
  
           this.noActionTime = 0;
           float f = p_21017_;
@@ -756,7 +693,7 @@
        if (!this.isRemoved() && !this.dead) {
           Entity entity = p_21014_.getEntity();
           LivingEntity livingentity = this.getKillCredit();
-@@ -1317,7 +_,7 @@
+@@ -1314,7 +_,7 @@
           }
  
           if (!this.level().isClientSide && this.hasCustomName()) {
@@ -910,7 +847,7 @@
        p_147241_ *= 1.0D - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
        if (!(p_147241_ <= 0.0D)) {
           this.hasImpulse = true;
-@@ -1474,6 +_,28 @@
+@@ -1471,6 +_,28 @@
        return p_21202_.getEatingSound();
     }
  
@@ -995,7 +932,7 @@
              this.playSound(soundtype.getFallSound(), soundtype.getVolume() * 0.5F, soundtype.getPitch() * 0.75F);
           }
  
-@@ -1568,7 +_,7 @@
+@@ -1565,7 +_,7 @@
  
     protected float getDamageAfterArmorAbsorb(DamageSource p_21162_, float p_21163_) {
        if (!p_21162_.is(DamageTypeTags.BYPASSES_ARMOR)) {
@@ -1004,7 +941,7 @@
           p_21163_ = CombatRules.getDamageAfterAbsorb(p_21163_, (float)this.getArmorValue(), (float)this.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
        }
  
-@@ -1579,7 +_,8 @@
+@@ -1576,7 +_,8 @@
        if (p_21193_.is(DamageTypeTags.BYPASSES_EFFECTS)) {
           return p_21194_;
        } else {
@@ -1231,7 +1168,7 @@
           if (f1 != 0.0F) {
              this.getCombatTracker().recordDamage(p_21240_, f1);
              this.setHealth(this.getHealth() - f1);
-@@ -1632,7 +_,7 @@
+@@ -1629,7 +_,7 @@
              this.gameEvent(GameEvent.ENTITY_DAMAGE);
           }
        }
@@ -1240,7 +1177,7 @@
  
     public CombatTracker getCombatTracker() {
        return this.combatTracker;
-@@ -1660,8 +_,18 @@
+@@ -1657,8 +_,18 @@
     }
  
     public final void setArrowCount(int p_21318_) {
@@ -1283,7 +1220,7 @@
     }
  
     protected void onBelowWorld() {
-@@ -1895,6 +_,27 @@
+@@ -1892,6 +_,27 @@
  
     public abstract ItemStack getItemBySlot(EquipmentSlot p_21127_);
  
@@ -1401,7 +1338,7 @@
        super.tick();
        this.updatingUsingItem();
        this.updateSwimAmount();
-@@ -2265,7 +_,7 @@
+@@ -2262,7 +_,7 @@
              }
           }
  
@@ -1410,7 +1347,7 @@
           if (this.tickCount % 20 == 0) {
              this.getCombatTracker().recheckStatus();
           }
-@@ -2276,7 +_,9 @@
+@@ -2273,7 +_,9 @@
        }
  
        if (!this.isRemoved()) {
@@ -1420,7 +1357,7 @@
        }
  
        double d1 = this.getX() - this.xo;
-@@ -2357,6 +_,11 @@
+@@ -2354,6 +_,11 @@
        }
  
        this.refreshDirtyAttributes();
@@ -1440,7 +1377,7 @@
              if (map == null) {
                 map = Maps.newEnumMap(EquipmentSlot.class);
              }
-@@ -2513,6 +_,7 @@
+@@ -2515,6 +_,7 @@
  
        this.setDeltaMovement(d0, d1, d2);
        this.level().getProfiler().push("ai");
@@ -1448,7 +1385,7 @@
        if (this.isImmobile()) {
           this.jumping = false;
           this.xxa = 0.0F;
-@@ -2522,11 +_,16 @@
+@@ -2524,11 +_,16 @@
           this.serverAiStep();
           this.level().getProfiler().pop();
        }
@@ -1485,7 +1422,7 @@
           }
        } else {
           this.noJumpDelay = 0;
-@@ -2562,6 +_,7 @@
+@@ -2564,6 +_,7 @@
           this.resetFallDistance();
        }
  
@@ -1493,7 +1430,7 @@
        label104: {
           LivingEntity livingentity = this.getControllingPassenger();
           if (livingentity instanceof Player player) {
-@@ -2573,6 +_,7 @@
+@@ -2575,6 +_,7 @@
  
           this.travel(vec31);
        }
@@ -1501,7 +1438,7 @@
  
        this.level().getProfiler().pop();
        this.level().getProfiler().push("freezing");
-@@ -2598,7 +_,9 @@
+@@ -2600,7 +_,9 @@
           this.checkAutoSpinAttack(aabb, this.getBoundingBox());
        }
  
@@ -1520,7 +1457,7 @@
           if (itemstack.is(Items.ELYTRA) && ElytraItem.isFlyEnabled(itemstack)) {
              flag = true;
              int i = this.fallFlyTicks + 1;
-@@ -2635,6 +_,7 @@
+@@ -2637,6 +_,7 @@
        }
  
        if (!this.level().isClientSide) {
@@ -1528,7 +1465,7 @@
           this.setSharedFlag(7, flag);
        }
  
-@@ -2802,12 +_,19 @@
+@@ -2804,12 +_,19 @@
     }
  
     public boolean isPickable() {
@@ -1672,7 +1609,7 @@
              return false;
           } else {
              return item.getUseDuration(this.useItem) - this.useItemRemaining >= 5;
-@@ -3070,6 +_,12 @@
+@@ -3072,6 +_,12 @@
     }
  
     public boolean randomTeleport(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_) {
@@ -1685,7 +1622,7 @@
        double d0 = this.getX();
        double d1 = this.getY();
        double d2 = this.getZ();
-@@ -3092,16 +_,41 @@
+@@ -3094,16 +_,41 @@
           }
  
           if (flag1) {
@@ -1730,8 +1667,8 @@
        } else {
           if (p_20988_) {
              level.broadcastEntityEvent(this, (byte)46);
-@@ -3111,7 +_,7 @@
-             ((PathfinderMob)this).getNavigation().stop();
+@@ -3114,7 +_,7 @@
+             pathfindermob.getNavigation().stop();
           }
  
 -         return true;

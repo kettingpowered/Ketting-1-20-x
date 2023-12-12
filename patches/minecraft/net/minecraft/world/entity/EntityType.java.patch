@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
-@@ -167,7 +_,7 @@
+@@ -169,7 +_,7 @@
     private static final float MAGIC_HORSE_WIDTH = 1.3964844F;
     private static final int DISPLAY_TRACKING_RANGE = 10;
     public static final EntityType<Allay> ALLAY = register("allay", EntityType.Builder.of(Allay::new, MobCategory.CREATURE).sized(0.35F, 0.6F).clientTrackingRange(8).updateInterval(2));
@@ -68,7 +68,7 @@
        Consumer<T> consumer;
        CompoundTag compoundtag;
        if (p_20594_ != null) {
-@@ -347,7 +_,7 @@
+@@ -351,7 +_,7 @@
           compoundtag = null;
        }
  
@@ -77,7 +77,7 @@
     }
  
     public static <T extends Entity> Consumer<T> createDefaultStackConfig(ServerLevel p_263583_, ItemStack p_263568_, @Nullable Player p_263575_) {
-@@ -368,20 +_,36 @@
+@@ -372,20 +_,36 @@
     public static <T extends Entity> Consumer<T> appendCustomEntityStackConfig(Consumer<T> p_263579_, ServerLevel p_263571_, ItemStack p_263582_, @Nullable Player p_263574_) {
        CompoundTag compoundtag = p_263582_.getTag();
        return compoundtag != null ? p_263579_.andThen((p_262558_) -> {

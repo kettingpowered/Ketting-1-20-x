@@ -77,7 +77,7 @@ jobs:
         with:
           path: |
            projects/
-          key: project-src-cache-${{ hashFiles('patches/**') }}
+          key: project-src-cache-${{ hashFiles('patches/**', 'src/main/resources/META-INF/accesstransformer.cfg') }}
           restore-keys: |
            project-src-cache-
       - name: Rename Branch, if Pull_Request

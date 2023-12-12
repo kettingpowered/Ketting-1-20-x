@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -28,25 +_,39 @@
+@@ -28,27 +_,41 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
@@ -25,6 +25,8 @@
     @Nullable
 -   private UUID thrower;
 +   public UUID thrower;
+    @Nullable
+    private Entity cachedThrower;
     @Nullable
 -   private UUID target;
 +   public UUID target;
@@ -100,7 +102,7 @@
              }
  
              this.setDeltaMovement(this.getDeltaMovement().multiply((double)f1, 0.98D, (double)f1));
-@@ -146,9 +_,11 @@
+@@ -161,9 +_,11 @@
              this.mergeWithNeighbours();
           }
  
@@ -115,7 +117,7 @@
  
           this.hasImpulse |= this.updateInWaterStateAndDoFluidPushing();
           if (!this.level().isClientSide) {
-@@ -158,12 +_,62 @@
+@@ -173,12 +_,62 @@
              }
           }
  
@@ -184,7 +186,7 @@
  
     protected BlockPos getBlockPosBelowThatAffectsMyMovement() {
        return this.getOnPos(0.999999F);
-@@ -181,7 +_,10 @@
+@@ -196,7 +_,10 @@
  
     private void mergeWithNeighbours() {
        if (this.isMergable()) {
@@ -196,7 +198,7 @@
              return p_186268_ != this && p_186268_.isMergable();
           })) {
              if (itementity.isMergable()) {
-@@ -204,7 +_,7 @@
+@@ -219,7 +_,7 @@
        ItemStack itemstack = this.getItem();
        ItemStack itemstack1 = p_32016_.getItem();
        if (Objects.equals(this.target, p_32016_.target) && areMergable(itemstack, itemstack1)) {
@@ -214,7 +216,7 @@
        } else {
           return !p_32028_.hasTag() || p_32028_.getTag().equals(p_32027_.getTag());
        }
-@@ -238,6 +_,11 @@
+@@ -253,6 +_,11 @@
     }
  
     private static void merge(ItemEntity p_32018_, ItemStack p_32019_, ItemEntity p_32020_, ItemStack p_32021_) {
@@ -226,7 +228,7 @@
        merge(p_32018_, p_32019_, p_32021_);
        p_32018_.pickupDelay = Math.max(p_32018_.pickupDelay, p_32020_.pickupDelay);
        p_32018_.age = Math.min(p_32018_.age, p_32020_.age);
-@@ -261,11 +_,16 @@
+@@ -276,11 +_,16 @@
        } else if (this.level().isClientSide) {
           return true;
        } else {

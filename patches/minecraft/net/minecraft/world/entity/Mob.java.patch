@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -71,6 +_,13 @@
+@@ -72,6 +_,13 @@
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.AABB;
@@ -14,34 +14,6 @@
  
  public abstract class Mob extends LivingEntity implements Targeting {
     private static final EntityDataAccessor<Byte> DATA_MOB_FLAGS_ID = SynchedEntityData.defineId(Mob.class, EntityDataSerializers.BYTE);
-@@ -95,21 +_,21 @@
-    protected JumpControl jumpControl;
-    private final BodyRotationControl bodyRotationControl;
-    protected PathNavigation navigation;
--   public final GoalSelector goalSelector;
--   public final GoalSelector targetSelector;
-+   public GoalSelector goalSelector;
-+   public GoalSelector targetSelector;
-    @Nullable
-    private LivingEntity target;
-    private final Sensing sensing;
-    private final NonNullList<ItemStack> handItems = NonNullList.withSize(2, ItemStack.EMPTY);
--   protected final float[] handDropChances = new float[2];
-+   public final float[] handDropChances = new float[2];
-    private final NonNullList<ItemStack> armorItems = NonNullList.withSize(4, ItemStack.EMPTY);
--   protected final float[] armorDropChances = new float[4];
-+   public final float[] armorDropChances = new float[4];
-    private boolean canPickUpLoot;
-    private boolean persistenceRequired;
-    private final Map<BlockPathTypes, Float> pathfindingMalus = Maps.newEnumMap(BlockPathTypes.class);
-    @Nullable
--   private ResourceLocation lootTable;
--   private long lootTableSeed;
-+   public ResourceLocation lootTable;
-+   public long lootTableSeed;
-    @Nullable
-    private Entity leashHolder;
-    private int delayedLeashHolderId;
 @@ -118,6 +_,11 @@
     private CompoundTag leashInfoTag;
     private BlockPos restrictCenter = BlockPos.ZERO;
@@ -54,7 +26,7 @@
  
     protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
        super(p_21368_, p_21369_);
-@@ -136,6 +_,12 @@
+@@ -137,6 +_,12 @@
  
     }
  
@@ -112,7 +84,7 @@
     }
  
     public boolean canAttackType(EntityType<?> p_21399_) {
-@@ -358,6 +_,12 @@
+@@ -359,6 +_,12 @@
        return null;
     }
  
@@ -189,7 +161,7 @@
           for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate((double)vec3i.getX(), (double)vec3i.getY(), (double)vec3i.getZ()))) {
              if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && !itementity.hasPickUpDelay() && this.wantsToPickUp(itementity.getItem())) {
                 this.pickUpItem(itementity);
-@@ -539,7 +_,7 @@
+@@ -540,7 +_,7 @@
  
     protected void pickUpItem(ItemEntity p_21471_) {
        ItemStack itemstack = p_21471_.getItem();
@@ -211,7 +183,7 @@
        EquipmentSlot equipmentslot = getEquipmentSlotForItem(p_255842_);
        ItemStack itemstack = this.getItemBySlot(equipmentslot);
        boolean flag = this.canReplaceCurrentItem(p_255842_, itemstack);
-@@ -561,10 +_,18 @@
+@@ -562,10 +_,18 @@
           flag = itemstack.isEmpty();
        }
  
@@ -279,7 +251,7 @@
        return p_21437_;
     }
  
-@@ -1080,6 +_,12 @@
+@@ -1081,6 +_,12 @@
        if (!this.isAlive()) {
           return InteractionResult.PASS;
        } else if (this.getLeashHolder() == p_21420_) {
@@ -292,7 +264,7 @@
           this.dropLeash(true, !p_21420_.getAbilities().instabuild);
           this.gameEvent(GameEvent.ENTITY_INTERACT, p_21420_);
           return InteractionResult.sidedSuccess(this.level().isClientSide);
-@@ -1103,6 +_,12 @@
+@@ -1104,6 +_,12 @@
     private InteractionResult checkAndHandleImportantInteractions(Player p_21500_, InteractionHand p_21501_) {
        ItemStack itemstack = p_21500_.getItemInHand(p_21501_);
        if (itemstack.is(Items.LEAD) && this.canBeLeashed(p_21500_)) {
@@ -305,7 +277,7 @@
           this.setLeashedTo(p_21500_, true);
           itemstack.shrink(1);
           return InteractionResult.sidedSuccess(this.level().isClientSide);
-@@ -1171,8 +_,15 @@
+@@ -1172,8 +_,15 @@
        return this.restrictRadius != -1.0F;
     }
  
@@ -321,7 +293,7 @@
        if (this.isRemoved()) {
           return (T)null;
        } else {
-@@ -1205,7 +_,12 @@
+@@ -1206,7 +_,12 @@
                 }
              }
  
@@ -335,7 +307,7 @@
              if (this.isPassenger()) {
                 Entity entity = this.getVehicle();
                 this.stopRiding();
-@@ -1225,6 +_,7 @@
+@@ -1226,6 +_,7 @@
  
        if (this.leashHolder != null) {
           if (!this.isAlive() || !this.leashHolder.isAlive()) {
@@ -343,7 +315,7 @@
              this.dropLeash(true, true);
           }
  
-@@ -1236,7 +_,9 @@
+@@ -1237,7 +_,9 @@
           this.leashHolder = null;
           this.leashInfoTag = null;
           if (!this.level().isClientSide && p_21457_) {
@@ -353,7 +325,7 @@
           }
  
           if (!this.level().isClientSide && p_21456_ && this.level() instanceof ServerLevel) {
-@@ -1284,6 +_,7 @@
+@@ -1285,6 +_,7 @@
     public boolean startRiding(Entity p_21396_, boolean p_21397_) {
        boolean flag = super.startRiding(p_21396_, p_21397_);
        if (flag && this.isLeashed()) {
@@ -361,7 +333,7 @@
           this.dropLeash(true, true);
        }
  
-@@ -1306,7 +_,9 @@
+@@ -1307,7 +_,9 @@
           }
  
           if (this.tickCount > 100) {
@@ -371,7 +343,7 @@
              this.leashInfoTag = null;
           }
        }
-@@ -1379,6 +_,14 @@
+@@ -1380,6 +_,14 @@
  
        int i = EnchantmentHelper.getFireAspect(this);
        if (i > 0) {
@@ -386,7 +358,7 @@
           p_21372_.setSecondsOnFire(i * 4);
        }
  
-@@ -1425,15 +_,25 @@
+@@ -1426,16 +_,26 @@
        return false;
     }
  
@@ -414,7 +386,7 @@
     public void removeFreeWill() {
        this.removeAllGoals((p_262562_) -> {
           return true;
-@@ -1447,6 +_,7 @@
+@@ -1449,6 +_,7 @@
  
     protected void removeAfterChangingDimensions() {
        super.removeAfterChangingDimensions();
@@ -422,7 +394,7 @@
        this.dropLeash(true, false);
        this.getAllSlots().forEach((p_278936_) -> {
           if (!p_278936_.isEmpty()) {
-@@ -1460,5 +_,40 @@
+@@ -1462,5 +_,40 @@
     public ItemStack getPickResult() {
        SpawnEggItem spawneggitem = SpawnEggItem.byId(this.getType());
        return spawneggitem == null ? null : new ItemStack(spawneggitem);
