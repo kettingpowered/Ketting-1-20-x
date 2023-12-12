@@ -1,25 +1,5 @@
 --- a/net/minecraft/client/multiplayer/ClientPacketListener.java
 +++ b/net/minecraft/client/multiplayer/ClientPacketListener.java
-@@ -70,18 +_,7 @@
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.network.Connection;
- import net.minecraft.network.TickablePacketListener;
--import net.minecraft.network.chat.ChatType;
--import net.minecraft.network.chat.Component;
--import net.minecraft.network.chat.LastSeenMessagesTracker;
--import net.minecraft.network.chat.LocalChatSession;
--import net.minecraft.network.chat.MessageSignature;
--import net.minecraft.network.chat.MessageSignatureCache;
--import net.minecraft.network.chat.PlayerChatMessage;
--import net.minecraft.network.chat.RemoteChatSession;
--import net.minecraft.network.chat.SignableCommand;
--import net.minecraft.network.chat.SignedMessageBody;
--import net.minecraft.network.chat.SignedMessageChain;
--import net.minecraft.network.chat.SignedMessageLink;
-+import net.minecraft.network.chat.*;
- import net.minecraft.network.protocol.Packet;
- import net.minecraft.network.protocol.PacketUtils;
- import net.minecraft.network.protocol.common.ClientboundUpdateTagsPacket;
 @@ -398,6 +_,7 @@
  
        this.minecraft.debugRenderer.clear();
@@ -28,15 +8,6 @@
        this.minecraft.player.setId(p_105030_.playerId());
        this.level.addEntity(this.minecraft.player);
        this.minecraft.player.input = new KeyboardInput(this.minecraft.options);
-@@ -764,7 +_,7 @@
- 
-    public void handleSystemChat(ClientboundSystemChatPacket p_233708_) {
-       PacketUtils.ensureRunningOnSameThread(p_233708_, this, this.minecraft);
--      this.minecraft.getChatListener().handleSystemMessage(p_233708_.content(), p_233708_.overlay());
-+      this.minecraft.getChatListener().handleSystemMessage(MutableComponent.Serializer.fromJsonLenient(p_233708_.content()), p_233708_.overlay());
-    }
- 
-    public void handlePlayerChat(ClientboundPlayerChatPacket p_233702_) {
 @@ -1043,7 +_,9 @@
           localplayer1.getAttributes().assignValues(localplayer.getAttributes());
        }
