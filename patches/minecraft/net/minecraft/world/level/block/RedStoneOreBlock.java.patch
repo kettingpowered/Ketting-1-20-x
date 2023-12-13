@@ -5,7 +5,7 @@
  import net.minecraft.world.phys.BlockHitResult;
  
 +//Ketting start
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
 +import javax.annotation.Nullable;
 +//Ketting end
@@ -28,7 +28,7 @@
 +         interact(p_154301_, p_154299_, p_154300_, p_154302_);
 +         // CraftBukkit start
 +         if (p_154302_ instanceof Player) {
-+            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent((Player) p_154302_, org.bukkit.event.block.Action.PHYSICAL, p_154300_, null, null, null);
++            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((Player) p_154302_, org.bukkit.event.block.Action.PHYSICAL, p_154300_, null, null, null);
 +            if (!event.isCancelled()) {
 +               interact(p_154299_.getBlockState(p_154300_), p_154299_, p_154300_, p_154302_); // add entity
 +            }

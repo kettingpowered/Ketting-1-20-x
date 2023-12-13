@@ -1,13 +1,6 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -5,21 +_,19 @@
- import com.google.common.collect.Sets;
- import com.mojang.authlib.GameProfile;
- import com.mojang.logging.LogUtils;
-+import com.mojang.serialization.DataResult;
- import com.mojang.serialization.Dynamic;
- import java.io.File;
- import java.net.SocketAddress;
+@@ -11,15 +_,12 @@
  import java.nio.file.Path;
  import java.text.SimpleDateFormat;
  import java.time.Instant;
@@ -26,14 +19,7 @@
  import net.minecraft.ChatFormatting;
  import net.minecraft.FileUtil;
  import net.minecraft.commands.CommandSourceStack;
-@@ -59,17 +_,20 @@
- import net.minecraft.network.protocol.game.ClientboundSoundPacket;
- import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
- import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
-+import net.minecraft.network.protocol.login.ServerLoginPacketListener;
- import net.minecraft.network.protocol.status.ServerStatus;
- import net.minecraft.resources.ResourceKey;
- import net.minecraft.server.MinecraftServer;
+@@ -65,11 +_,13 @@
  import net.minecraft.server.PlayerAdvancements;
  import net.minecraft.server.RegistryLayer;
  import net.minecraft.server.ServerScoreboard;
@@ -47,24 +33,16 @@
  import net.minecraft.sounds.SoundEvents;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.ServerStatsCounter;
-@@ -77,6 +_,7 @@
- import net.minecraft.tags.BlockTags;
- import net.minecraft.tags.TagNetworkSerialization;
- import net.minecraft.util.Mth;
-+import net.minecraft.world.effect.MobEffect;
- import net.minecraft.world.effect.MobEffectInstance;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
 @@ -96,6 +_,13 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
-+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
++import org.bukkit.craftbukkit.CraftServer;
++import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.util.CraftChatMessage;
++import org.bukkit.craftbukkit.util.CraftLocation;
 +import org.bukkit.event.player.*;
  import org.slf4j.Logger;
  
@@ -105,8 +83,8 @@
  
     public PlayerList(MinecraftServer p_203842_, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_) {
 +      this.cserver = p_203842_.server = new CraftServer((DedicatedServer) p_203842_, this);
-+      p_203842_.console = org.bukkit.craftbukkit.v1_20_R2.command.ColouredConsoleSender.getInstance();
-+      p_203842_.reader.addCompleter(new org.bukkit.craftbukkit.v1_20_R2.command.ConsoleCommandCompleter(p_203842_.server));
++      p_203842_.console = org.bukkit.craftbukkit.command.ColouredConsoleSender.getInstance();
++      p_203842_.reader.addCompleter(new org.bukkit.craftbukkit.command.ConsoleCommandCompleter(p_203842_.server));
 +      // CraftBukkit end
 +
        this.server = p_203842_;
@@ -207,7 +185,7 @@
 +      joinMessage = playerJoinEvent.getJoinMessage();
 +
 +      if (joinMessage != null && joinMessage.length() > 0) {
-+         for (Component line : org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage.fromString(joinMessage)) {
++         for (Component line : org.bukkit.craftbukkit.util.CraftChatMessage.fromString(joinMessage)) {
 +            server.getPlayerList().broadcastSystemMessage(line, false);
 +         }
 +      }

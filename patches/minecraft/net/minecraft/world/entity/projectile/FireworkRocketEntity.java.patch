@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class FireworkRocketEntity extends Projectile implements ItemSupplier {
 -   private static final EntityDataAccessor<ItemStack> DATA_ID_FIREWORKS_ITEM = SynchedEntityData.defineId(FireworkRocketEntity.class, EntityDataSerializers.ITEM_STACK);
@@ -33,7 +33,7 @@
 +
 +      if (!this.level().isClientSide && this.life > this.lifetime) {
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.explode();
 +         }
 +         // CraftBukkit end
@@ -62,7 +62,7 @@
 -      }
 -
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.explode();
 +         }
 +         // CraftBukkit end
@@ -84,7 +84,7 @@
        if (!this.level().isClientSide) {
 -         this.explode();
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.explode();
 +         }
 +         // CraftBukkit end
@@ -97,7 +97,7 @@
        if (!this.level().isClientSide() && this.hasExplosion()) {
 -         this.explode();
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.explode();
 +         }
 +         // CraftBukkit end

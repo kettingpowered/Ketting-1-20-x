@@ -25,7 +25,7 @@
     protected void pickUpItem(ItemEntity p_28514_) {
        ItemStack itemstack = p_28514_.getItem();
 -      if (this.canHoldItem(itemstack)) {
-+      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28514_, itemstack.getCount() - 1, !this.canHoldItem(itemstack)).isCancelled()) { // CraftBukkit - call EntityPickupItemEvent
++      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28514_, itemstack.getCount() - 1, !this.canHoldItem(itemstack)).isCancelled()) { // CraftBukkit - call EntityPickupItemEvent
 +         itemstack = p_28514_.getItem(); // CraftBukkit - update ItemStack from event
           int i = itemstack.getCount();
           if (i > 1) {
@@ -74,7 +74,7 @@
 +            fox.setAge(-24000);
 +            fox.moveTo(this.animal.getX(), this.animal.getY(), this.animal.getZ(), 0.0F, 0.0F);
 +            int experience = this.animal.getRandom().nextInt(7) + 1;
-+            org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityBreedEvent(fox, animal, partner, serverplayer, this.animal.breedItem, experience);
++            org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityBreedEvent(fox, animal, partner, serverplayer, this.animal.breedItem, experience);
 +            if (entityBreedEvent.isCancelled()) {
 +               return;
 +            }
@@ -119,7 +119,7 @@
 -         p_148929_.setValue(SweetBerryBushBlock.AGE, Integer.valueOf(1));
 +         p_148929_.setValue(SweetBerryBushBlock.AGE, 1);
 +         // CraftBukkit start - call EntityChangeBlockEvent
-+         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(Fox.this, this.blockPos, p_148929_.setValue(SweetBerryBushBlock.AGE, 1))) {
++         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(Fox.this, this.blockPos, p_148929_.setValue(SweetBerryBushBlock.AGE, 1))) {
 +            return;
 +         }
 +         // CraftBukkit end

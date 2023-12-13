@@ -4,8 +4,8 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftBlockInventoryHolder;
-+import org.bukkit.craftbukkit.v1_20_R2.util.DummyGeneratorAccess;
++import org.bukkit.craftbukkit.inventory.CraftBlockInventoryHolder;
++import org.bukkit.craftbukkit.util.DummyGeneratorAccess;
  
  public class ComposterBlock extends Block implements WorldlyContainerHolder {
     public static final MapCodec<ComposterBlock> CODEC = simpleCodec(ComposterBlock::new);
@@ -17,7 +17,7 @@
 +         // CraftBukkit start
 +         double rand = p_270284_.getRandom().nextDouble();
 +         BlockState blockstate = addItem(p_270919_, p_270087_, DummyGeneratorAccess.INSTANCE, p_270678_, p_270253_, rand);
-+         if (p_270087_ == blockstate || !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_270919_, p_270678_, blockstate)) {
++         if (p_270087_ == blockstate || !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(p_270919_, p_270678_, blockstate)) {
 +            return p_270087_;
 +         }
 +         blockstate = addItem(p_270919_, p_270087_, p_270284_, p_270678_, p_270253_, rand);
@@ -32,7 +32,7 @@
 +      // CraftBukkit start
 +      if (p_270467_ != null && !(p_270467_ instanceof Player)) {
 +         BlockState iblockdata1 = empty(p_270467_, p_51999_, DummyGeneratorAccess.INSTANCE, p_52001_);
-+         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_270467_, p_52001_, iblockdata1)) {
++         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(p_270467_, p_52001_, iblockdata1)) {
 +            return p_51999_;
 +         }
 +      }

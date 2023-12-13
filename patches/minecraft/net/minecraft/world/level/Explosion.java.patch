@@ -1,16 +1,13 @@
 --- a/net/minecraft/world/level/Explosion.java
 +++ b/net/minecraft/world/level/Explosion.java
-@@ -37,6 +_,15 @@
+@@ -37,6 +_,12 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  
 +//Ketting start
 +import net.minecraft.world.entity.boss.EnderDragonPart;
 +import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.block.BlockExplodeEvent;
-+import org.bukkit.event.entity.EntityExplodeEvent;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +//Ketting end
 +
  public class Explosion {
@@ -116,7 +113,7 @@
              if (this.random.nextInt(3) == 0 && this.level.getBlockState(blockpos1).isAir() && this.level.getBlockState(blockpos1.below()).isSolidRender(this.level, blockpos1.below())) {
 -               this.level.setBlockAndUpdate(blockpos1, BaseFireBlock.getState(this.level, blockpos1));
 +               // CraftBukkit start - Ignition by explosion
-+               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(this.level, blockpos1.getX(), blockpos1.getY(), blockpos1.getZ(), this).isCancelled()) {
++               if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(this.level, blockpos1.getX(), blockpos1.getY(), blockpos1.getZ(), this).isCancelled()) {
 +                  this.level.setBlockAndUpdate(blockpos1, BaseFireBlock.getState(this.level, blockpos1));
 +               }
 +               // CraftBukkit end

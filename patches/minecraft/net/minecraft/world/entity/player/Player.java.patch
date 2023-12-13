@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
+@@ -70,7 +_,6 @@
+ import net.minecraft.world.entity.ai.attributes.Attributes;
+ import net.minecraft.world.entity.animal.Parrot;
+ import net.minecraft.world.entity.animal.horse.AbstractHorse;
+-import net.minecraft.world.entity.boss.EnderDragonPart;
+ import net.minecraft.world.entity.decoration.ArmorStand;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.monster.warden.WardenSpawnTracker;
 @@ -80,12 +_,7 @@
  import net.minecraft.world.inventory.ClickAction;
  import net.minecraft.world.inventory.InventoryMenu;
@@ -14,13 +22,14 @@
  import net.minecraft.world.item.crafting.RecipeHolder;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.item.trading.MerchantOffers;
-@@ -108,9 +_,18 @@
+@@ -107,10 +_,18 @@
+ import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
- import net.minecraft.world.scores.Team;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftVector;
+-import net.minecraft.world.scores.Team;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.util.CraftVector;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.entity.EntityExhaustionEvent;
@@ -661,7 +670,7 @@
           this.resetFallDistance();
 -         this.setSharedFlag(7, false);
 +         // CraftBukkit start
-+         if (getSharedFlag(7) && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++         if (getSharedFlag(7) && !org.bukkit.craftbukkit.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +            this.setSharedFlag(7, false);
 +         }
 +         // CraftBukkit end
@@ -691,7 +700,7 @@
     public void startFallFlying() {
 -      this.setSharedFlag(7, true);
 +      // CraftBukkit start
-+      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
++      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
 +         this.setSharedFlag(7, true);
 +      } else {
 +         // SPIGOT-5542: must toggle like below
@@ -705,7 +714,7 @@
 -      this.setSharedFlag(7, true);
 -      this.setSharedFlag(7, false);
 +      // CraftBukkit start
-+      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +         this.setSharedFlag(7, true);
 +         this.setSharedFlag(7, false);
 +      }

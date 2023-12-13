@@ -1,12 +1,20 @@
 --- a/net/minecraft/world/item/MinecartItem.java
 +++ b/net/minecraft/world/item/MinecartItem.java
+@@ -8,7 +_,6 @@
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.tags.BlockTags;
+ import net.minecraft.world.InteractionResult;
+-import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.entity.vehicle.AbstractMinecart;
+ import net.minecraft.world.item.context.UseOnContext;
+ import net.minecraft.world.level.Level;
 @@ -19,6 +_,12 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
 +import org.bukkit.event.block.BlockDispenseEvent;
 +// CraftBukkit end
 +
@@ -79,7 +87,7 @@
              AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(serverlevel, (double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.0625D + d0, (double)blockpos.getZ() + 0.5D, this.type, itemstack, p_42943_.getPlayer());
 -            serverlevel.addFreshEntity(abstractminecart);
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPlaceEvent(p_42943_, abstractminecart).isCancelled()) {
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPlaceEvent(p_42943_, abstractminecart).isCancelled()) {
 +               return InteractionResult.FAIL;
 +            }
 +            // CraftBukkit end

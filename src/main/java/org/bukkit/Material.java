@@ -50,7 +50,9 @@ import org.bukkit.block.data.type.ChiseledBookshelf;
 import org.bukkit.block.data.type.Cocoa;
 import org.bukkit.block.data.type.CommandBlock;
 import org.bukkit.block.data.type.Comparator;
+import org.bukkit.block.data.type.CopperBulb;
 import org.bukkit.block.data.type.CoralWallFan;
+import org.bukkit.block.data.type.Crafter;
 import org.bukkit.block.data.type.DaylightDetector;
 import org.bukkit.block.data.type.DecoratedPot;
 import org.bukkit.block.data.type.Dispenser;
@@ -106,6 +108,7 @@ import org.bukkit.block.data.type.Switch;
 import org.bukkit.block.data.type.TNT;
 import org.bukkit.block.data.type.TechnicalPiston;
 import org.bukkit.block.data.type.TrapDoor;
+import org.bukkit.block.data.type.TrialSpawner;
 import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.block.data.type.TripwireHook;
 import org.bukkit.block.data.type.TurtleEgg;
@@ -139,6 +142,59 @@ public enum Material implements Keyed, Translatable {
     POLISHED_DEEPSLATE(31772),
     CALCITE(20311),
     TUFF(24364),
+    /**
+     * BlockData: {@link Slab}
+     */
+    @MinecraftExperimental
+    TUFF_SLAB(19305, Slab.class),
+    /**
+     * BlockData: {@link Stairs}
+     */
+    @MinecraftExperimental
+    TUFF_STAIRS(11268, Stairs.class),
+    /**
+     * BlockData: {@link Wall}
+     */
+    @MinecraftExperimental
+    TUFF_WALL(24395, Wall.class),
+    @MinecraftExperimental
+    CHISELED_TUFF(15831),
+    @MinecraftExperimental
+    POLISHED_TUFF(17801),
+    /**
+     * BlockData: {@link Slab}
+     */
+    @MinecraftExperimental
+    POLISHED_TUFF_SLAB(31096, Slab.class),
+    /**
+     * BlockData: {@link Stairs}
+     */
+    @MinecraftExperimental
+    POLISHED_TUFF_STAIRS(7964, Stairs.class),
+    /**
+     * BlockData: {@link Wall}
+     */
+    @MinecraftExperimental
+    POLISHED_TUFF_WALL(28886, Wall.class),
+    @MinecraftExperimental
+    TUFF_BRICKS(26276),
+    /**
+     * BlockData: {@link Slab}
+     */
+    @MinecraftExperimental
+    TUFF_BRICK_SLAB(11843, Slab.class),
+    /**
+     * BlockData: {@link Stairs}
+     */
+    @MinecraftExperimental
+    TUFF_BRICK_STAIRS(30753, Stairs.class),
+    /**
+     * BlockData: {@link Wall}
+     */
+    @MinecraftExperimental
+    TUFF_BRICK_WALL(11761, Wall.class),
+    @MinecraftExperimental
+    CHISELED_TUFF_BRICKS(8601),
     DRIPSTONE_BLOCK(26227),
     /**
      * BlockData: {@link Snowable}
@@ -250,6 +306,14 @@ public enum Material implements Keyed, Translatable {
     EXPOSED_COPPER(28488),
     WEATHERED_COPPER(19699),
     OXIDIZED_COPPER(19490),
+    @MinecraftExperimental
+    CHISELED_COPPER(12143),
+    @MinecraftExperimental
+    EXPOSED_CHISELED_COPPER(4570),
+    @MinecraftExperimental
+    WEATHERED_CHISELED_COPPER(30876),
+    @MinecraftExperimental
+    OXIDIZED_CHISELED_COPPER(27719),
     CUT_COPPER(32519),
     EXPOSED_CUT_COPPER(18000),
     WEATHERED_CUT_COPPER(21158),
@@ -290,6 +354,14 @@ public enum Material implements Keyed, Translatable {
     WAXED_EXPOSED_COPPER(27989),
     WAXED_WEATHERED_COPPER(5960),
     WAXED_OXIDIZED_COPPER(25626),
+    @MinecraftExperimental
+    WAXED_CHISELED_COPPER(7500),
+    @MinecraftExperimental
+    WAXED_EXPOSED_CHISELED_COPPER(30658),
+    @MinecraftExperimental
+    WAXED_WEATHERED_CHISELED_COPPER(5970),
+    @MinecraftExperimental
+    WAXED_OXIDIZED_CHISELED_COPPER(7735),
     WAXED_CUT_COPPER(11030),
     WAXED_EXPOSED_CUT_COPPER(30043),
     WAXED_WEATHERED_CUT_COPPER(13823),
@@ -551,7 +623,7 @@ public enum Material implements Keyed, Translatable {
     CHISELED_SANDSTONE(31763),
     CUT_SANDSTONE(6118),
     COBWEB(9469),
-    GRASS(6155),
+    SHORT_GRASS(6155),
     FERN(15794),
     AZALEA(29386),
     FLOWERING_AZALEA(28270),
@@ -770,7 +842,7 @@ public enum Material implements Keyed, Translatable {
     /**
      * BlockData: {@link DecoratedPot}
      */
-    DECORATED_POT(8720, 1, DecoratedPot.class),
+    DECORATED_POT(8720, DecoratedPot.class),
     MOSSY_COBBLESTONE(21900),
     OBSIDIAN(32723),
     TORCH(6063),
@@ -2027,6 +2099,46 @@ public enum Material implements Keyed, Translatable {
      */
     WARPED_DOOR(15062, Door.class),
     /**
+     * BlockData: {@link Door}
+     */
+    @MinecraftExperimental
+    COPPER_DOOR(26809, Door.class),
+    /**
+     * BlockData: {@link Door}
+     */
+    @MinecraftExperimental
+    EXPOSED_COPPER_DOOR(13236, Door.class),
+    /**
+     * BlockData: {@link Door}
+     */
+    @MinecraftExperimental
+    WEATHERED_COPPER_DOOR(10208, Door.class),
+    /**
+     * BlockData: {@link Door}
+     */
+    @MinecraftExperimental
+    OXIDIZED_COPPER_DOOR(5348, Door.class),
+    /**
+     * BlockData: {@link Door}
+     */
+    @MinecraftExperimental
+    WAXED_COPPER_DOOR(9954, Door.class),
+    /**
+     * BlockData: {@link Door}
+     */
+    @MinecraftExperimental
+    WAXED_EXPOSED_COPPER_DOOR(20748, Door.class),
+    /**
+     * BlockData: {@link Door}
+     */
+    @MinecraftExperimental
+    WAXED_WEATHERED_COPPER_DOOR(25073, Door.class),
+    /**
+     * BlockData: {@link Door}
+     */
+    @MinecraftExperimental
+    WAXED_OXIDIZED_COPPER_DOOR(23888, Door.class),
+    /**
      * BlockData: {@link TrapDoor}
      */
     IRON_TRAPDOOR(17095, TrapDoor.class),
@@ -2074,6 +2186,46 @@ public enum Material implements Keyed, Translatable {
      * BlockData: {@link TrapDoor}
      */
     WARPED_TRAPDOOR(7708, TrapDoor.class),
+    /**
+     * BlockData: {@link TrapDoor}
+     */
+    @MinecraftExperimental
+    COPPER_TRAPDOOR(12110, TrapDoor.class),
+    /**
+     * BlockData: {@link TrapDoor}
+     */
+    @MinecraftExperimental
+    EXPOSED_COPPER_TRAPDOOR(19219, TrapDoor.class),
+    /**
+     * BlockData: {@link TrapDoor}
+     */
+    @MinecraftExperimental
+    WEATHERED_COPPER_TRAPDOOR(28254, TrapDoor.class),
+    /**
+     * BlockData: {@link TrapDoor}
+     */
+    @MinecraftExperimental
+    OXIDIZED_COPPER_TRAPDOOR(26518, TrapDoor.class),
+    /**
+     * BlockData: {@link TrapDoor}
+     */
+    @MinecraftExperimental
+    WAXED_COPPER_TRAPDOOR(12626, TrapDoor.class),
+    /**
+     * BlockData: {@link TrapDoor}
+     */
+    @MinecraftExperimental
+    WAXED_EXPOSED_COPPER_TRAPDOOR(11010, TrapDoor.class),
+    /**
+     * BlockData: {@link TrapDoor}
+     */
+    @MinecraftExperimental
+    WAXED_WEATHERED_COPPER_TRAPDOOR(30709, TrapDoor.class),
+    /**
+     * BlockData: {@link TrapDoor}
+     */
+    @MinecraftExperimental
+    WAXED_OXIDIZED_COPPER_TRAPDOOR(21450, TrapDoor.class),
     /**
      * BlockData: {@link Gate}
      */
@@ -2474,6 +2626,11 @@ public enum Material implements Keyed, Translatable {
      */
     BLACK_BED(20490, 1, Bed.class),
     COOKIE(27431),
+    /**
+     * BlockData: {@link Crafter}
+     */
+    @MinecraftExperimental
+    CRAFTER(25243, Crafter.class),
     FILLED_MAP(23504),
     SHEARS(27971, 1, 238),
     MELON_SLICE(5347),
@@ -2511,6 +2668,8 @@ public enum Material implements Keyed, Translatable {
     BAT_SPAWN_EGG(14607),
     BEE_SPAWN_EGG(22924),
     BLAZE_SPAWN_EGG(4759),
+    @MinecraftExperimental
+    BREEZE_SPAWN_EGG(7580),
     CAT_SPAWN_EGG(29583),
     CAMEL_SPAWN_EGG(14760),
     CAVE_SPIDER_SPAWN_EGG(23341),
@@ -3001,6 +3160,93 @@ public enum Material implements Keyed, Translatable {
     SHELTER_POTTERY_SHERD(28390),
     SKULL_POTTERY_SHERD(16980),
     SNORT_POTTERY_SHERD(15921),
+    /**
+     * BlockData: {@link Waterlogged}
+     */
+    @MinecraftExperimental
+    COPPER_GRATE(16221, Waterlogged.class),
+    /**
+     * BlockData: {@link Waterlogged}
+     */
+    @MinecraftExperimental
+    EXPOSED_COPPER_GRATE(7783, Waterlogged.class),
+    /**
+     * BlockData: {@link Waterlogged}
+     */
+    @MinecraftExperimental
+    WEATHERED_COPPER_GRATE(24954, Waterlogged.class),
+    /**
+     * BlockData: {@link Waterlogged}
+     */
+    @MinecraftExperimental
+    OXIDIZED_COPPER_GRATE(14122, Waterlogged.class),
+    /**
+     * BlockData: {@link Waterlogged}
+     */
+    @MinecraftExperimental
+    WAXED_COPPER_GRATE(11230, Waterlogged.class),
+    /**
+     * BlockData: {@link Waterlogged}
+     */
+    @MinecraftExperimental
+    WAXED_EXPOSED_COPPER_GRATE(20520, Waterlogged.class),
+    /**
+     * BlockData: {@link Waterlogged}
+     */
+    @MinecraftExperimental
+    WAXED_WEATHERED_COPPER_GRATE(16533, Waterlogged.class),
+    /**
+     * BlockData: {@link Waterlogged}
+     */
+    @MinecraftExperimental
+    WAXED_OXIDIZED_COPPER_GRATE(32010, Waterlogged.class),
+    /**
+     * BlockData: {@link CopperBulb}
+     */
+    @MinecraftExperimental
+    COPPER_BULB(21370, CopperBulb.class),
+    /**
+     * BlockData: {@link CopperBulb}
+     */
+    @MinecraftExperimental
+    EXPOSED_COPPER_BULB(11944, CopperBulb.class),
+    /**
+     * BlockData: {@link CopperBulb}
+     */
+    @MinecraftExperimental
+    WEATHERED_COPPER_BULB(10800, CopperBulb.class),
+    /**
+     * BlockData: {@link CopperBulb}
+     */
+    @MinecraftExperimental
+    OXIDIZED_COPPER_BULB(22421, CopperBulb.class),
+    /**
+     * BlockData: {@link CopperBulb}
+     */
+    @MinecraftExperimental
+    WAXED_COPPER_BULB(23756, CopperBulb.class),
+    /**
+     * BlockData: {@link CopperBulb}
+     */
+    @MinecraftExperimental
+    WAXED_EXPOSED_COPPER_BULB(5530, CopperBulb.class),
+    /**
+     * BlockData: {@link CopperBulb}
+     */
+    @MinecraftExperimental
+    WAXED_WEATHERED_COPPER_BULB(13239, CopperBulb.class),
+    /**
+     * BlockData: {@link CopperBulb}
+     */
+    @MinecraftExperimental
+    WAXED_OXIDIZED_COPPER_BULB(26892, CopperBulb.class),
+    /**
+     * BlockData: {@link TrialSpawner}
+     */
+    @MinecraftExperimental
+    TRIAL_SPAWNER(19902, TrialSpawner.class),
+    @MinecraftExperimental
+    TRIAL_KEY(12725),
     /**
      * BlockData: {@link Levelled}
      */
@@ -4780,6 +5026,7 @@ public enum Material implements Keyed, Translatable {
             case CHEST:
             case CHIPPED_ANVIL:
             case CHISELED_BOOKSHELF:
+            case CHISELED_COPPER:
             case CHISELED_DEEPSLATE:
             case CHISELED_NETHER_BRICKS:
             case CHISELED_POLISHED_BLACKSTONE:
@@ -4787,6 +5034,8 @@ public enum Material implements Keyed, Translatable {
             case CHISELED_RED_SANDSTONE:
             case CHISELED_SANDSTONE:
             case CHISELED_STONE_BRICKS:
+            case CHISELED_TUFF:
+            case CHISELED_TUFF_BRICKS:
             case CHORUS_FLOWER:
             case CHORUS_PLANT:
             case CLAY:
@@ -4808,13 +5057,18 @@ public enum Material implements Keyed, Translatable {
             case COMPOSTER:
             case CONDUIT:
             case COPPER_BLOCK:
+            case COPPER_BULB:
+            case COPPER_DOOR:
+            case COPPER_GRATE:
             case COPPER_ORE:
+            case COPPER_TRAPDOOR:
             case CORNFLOWER:
             case CRACKED_DEEPSLATE_BRICKS:
             case CRACKED_DEEPSLATE_TILES:
             case CRACKED_NETHER_BRICKS:
             case CRACKED_POLISHED_BLACKSTONE_BRICKS:
             case CRACKED_STONE_BRICKS:
+            case CRAFTER:
             case CRAFTING_TABLE:
             case CREEPER_HEAD:
             case CREEPER_WALL_HEAD:
@@ -4949,7 +5203,12 @@ public enum Material implements Keyed, Translatable {
             case END_STONE_BRICK_SLAB:
             case END_STONE_BRICK_STAIRS:
             case END_STONE_BRICK_WALL:
+            case EXPOSED_CHISELED_COPPER:
             case EXPOSED_COPPER:
+            case EXPOSED_COPPER_BULB:
+            case EXPOSED_COPPER_DOOR:
+            case EXPOSED_COPPER_GRATE:
+            case EXPOSED_COPPER_TRAPDOOR:
             case EXPOSED_CUT_COPPER:
             case EXPOSED_CUT_COPPER_SLAB:
             case EXPOSED_CUT_COPPER_STAIRS:
@@ -4978,7 +5237,6 @@ public enum Material implements Keyed, Translatable {
             case GRANITE_SLAB:
             case GRANITE_STAIRS:
             case GRANITE_WALL:
-            case GRASS:
             case GRASS_BLOCK:
             case GRAVEL:
             case GRAY_BANNER:
@@ -5220,7 +5478,12 @@ public enum Material implements Keyed, Translatable {
             case ORANGE_WALL_BANNER:
             case ORANGE_WOOL:
             case OXEYE_DAISY:
+            case OXIDIZED_CHISELED_COPPER:
             case OXIDIZED_COPPER:
+            case OXIDIZED_COPPER_BULB:
+            case OXIDIZED_COPPER_DOOR:
+            case OXIDIZED_COPPER_GRATE:
+            case OXIDIZED_COPPER_TRAPDOOR:
             case OXIDIZED_CUT_COPPER:
             case OXIDIZED_CUT_COPPER_SLAB:
             case OXIDIZED_CUT_COPPER_STAIRS:
@@ -5279,6 +5542,10 @@ public enum Material implements Keyed, Translatable {
             case POLISHED_GRANITE:
             case POLISHED_GRANITE_SLAB:
             case POLISHED_GRANITE_STAIRS:
+            case POLISHED_TUFF:
+            case POLISHED_TUFF_SLAB:
+            case POLISHED_TUFF_STAIRS:
+            case POLISHED_TUFF_WALL:
             case POPPY:
             case POTATOES:
             case POTTED_ACACIA_SAPLING:
@@ -5406,6 +5673,7 @@ public enum Material implements Keyed, Translatable {
             case SEAGRASS:
             case SEA_LANTERN:
             case SEA_PICKLE:
+            case SHORT_GRASS:
             case SHROOMLIGHT:
             case SHULKER_BOX:
             case SKELETON_SKULL:
@@ -5506,6 +5774,7 @@ public enum Material implements Keyed, Translatable {
             case TORCHFLOWER:
             case TORCHFLOWER_CROP:
             case TRAPPED_CHEST:
+            case TRIAL_SPAWNER:
             case TRIPWIRE:
             case TRIPWIRE_HOOK:
             case TUBE_CORAL:
@@ -5513,6 +5782,13 @@ public enum Material implements Keyed, Translatable {
             case TUBE_CORAL_FAN:
             case TUBE_CORAL_WALL_FAN:
             case TUFF:
+            case TUFF_BRICKS:
+            case TUFF_BRICK_SLAB:
+            case TUFF_BRICK_STAIRS:
+            case TUFF_BRICK_WALL:
+            case TUFF_SLAB:
+            case TUFF_STAIRS:
+            case TUFF_WALL:
             case TURTLE_EGG:
             case TWISTING_VINES:
             case TWISTING_VINES_PLANT:
@@ -5541,23 +5817,48 @@ public enum Material implements Keyed, Translatable {
             case WARPED_WART_BLOCK:
             case WATER:
             case WATER_CAULDRON:
+            case WAXED_CHISELED_COPPER:
             case WAXED_COPPER_BLOCK:
+            case WAXED_COPPER_BULB:
+            case WAXED_COPPER_DOOR:
+            case WAXED_COPPER_GRATE:
+            case WAXED_COPPER_TRAPDOOR:
             case WAXED_CUT_COPPER:
             case WAXED_CUT_COPPER_SLAB:
             case WAXED_CUT_COPPER_STAIRS:
+            case WAXED_EXPOSED_CHISELED_COPPER:
             case WAXED_EXPOSED_COPPER:
+            case WAXED_EXPOSED_COPPER_BULB:
+            case WAXED_EXPOSED_COPPER_DOOR:
+            case WAXED_EXPOSED_COPPER_GRATE:
+            case WAXED_EXPOSED_COPPER_TRAPDOOR:
             case WAXED_EXPOSED_CUT_COPPER:
             case WAXED_EXPOSED_CUT_COPPER_SLAB:
             case WAXED_EXPOSED_CUT_COPPER_STAIRS:
+            case WAXED_OXIDIZED_CHISELED_COPPER:
             case WAXED_OXIDIZED_COPPER:
+            case WAXED_OXIDIZED_COPPER_BULB:
+            case WAXED_OXIDIZED_COPPER_DOOR:
+            case WAXED_OXIDIZED_COPPER_GRATE:
+            case WAXED_OXIDIZED_COPPER_TRAPDOOR:
             case WAXED_OXIDIZED_CUT_COPPER:
             case WAXED_OXIDIZED_CUT_COPPER_SLAB:
             case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
+            case WAXED_WEATHERED_CHISELED_COPPER:
             case WAXED_WEATHERED_COPPER:
+            case WAXED_WEATHERED_COPPER_BULB:
+            case WAXED_WEATHERED_COPPER_DOOR:
+            case WAXED_WEATHERED_COPPER_GRATE:
+            case WAXED_WEATHERED_COPPER_TRAPDOOR:
             case WAXED_WEATHERED_CUT_COPPER:
             case WAXED_WEATHERED_CUT_COPPER_SLAB:
             case WAXED_WEATHERED_CUT_COPPER_STAIRS:
+            case WEATHERED_CHISELED_COPPER:
             case WEATHERED_COPPER:
+            case WEATHERED_COPPER_BULB:
+            case WEATHERED_COPPER_DOOR:
+            case WEATHERED_COPPER_GRATE:
+            case WEATHERED_COPPER_TRAPDOOR:
             case WEATHERED_CUT_COPPER:
             case WEATHERED_CUT_COPPER_SLAB:
             case WEATHERED_CUT_COPPER_STAIRS:
@@ -5969,6 +6270,7 @@ public enum Material implements Keyed, Translatable {
             case CHEST:
             case CHIPPED_ANVIL:
             case CHISELED_BOOKSHELF:
+            case CHISELED_COPPER:
             case CHISELED_DEEPSLATE:
             case CHISELED_NETHER_BRICKS:
             case CHISELED_POLISHED_BLACKSTONE:
@@ -5976,6 +6278,8 @@ public enum Material implements Keyed, Translatable {
             case CHISELED_RED_SANDSTONE:
             case CHISELED_SANDSTONE:
             case CHISELED_STONE_BRICKS:
+            case CHISELED_TUFF:
+            case CHISELED_TUFF_BRICKS:
             case CLAY:
             case COAL_BLOCK:
             case COAL_ORE:
@@ -5992,12 +6296,17 @@ public enum Material implements Keyed, Translatable {
             case COMPOSTER:
             case CONDUIT:
             case COPPER_BLOCK:
+            case COPPER_BULB:
+            case COPPER_DOOR:
+            case COPPER_GRATE:
             case COPPER_ORE:
+            case COPPER_TRAPDOOR:
             case CRACKED_DEEPSLATE_BRICKS:
             case CRACKED_DEEPSLATE_TILES:
             case CRACKED_NETHER_BRICKS:
             case CRACKED_POLISHED_BLACKSTONE_BRICKS:
             case CRACKED_STONE_BRICKS:
+            case CRAFTER:
             case CRAFTING_TABLE:
             case CRIMSON_DOOR:
             case CRIMSON_FENCE:
@@ -6115,7 +6424,12 @@ public enum Material implements Keyed, Translatable {
             case END_STONE_BRICK_SLAB:
             case END_STONE_BRICK_STAIRS:
             case END_STONE_BRICK_WALL:
+            case EXPOSED_CHISELED_COPPER:
             case EXPOSED_COPPER:
+            case EXPOSED_COPPER_BULB:
+            case EXPOSED_COPPER_DOOR:
+            case EXPOSED_COPPER_GRATE:
+            case EXPOSED_COPPER_TRAPDOOR:
             case EXPOSED_CUT_COPPER:
             case EXPOSED_CUT_COPPER_SLAB:
             case EXPOSED_CUT_COPPER_STAIRS:
@@ -6335,7 +6649,12 @@ public enum Material implements Keyed, Translatable {
             case ORANGE_TERRACOTTA:
             case ORANGE_WALL_BANNER:
             case ORANGE_WOOL:
+            case OXIDIZED_CHISELED_COPPER:
             case OXIDIZED_COPPER:
+            case OXIDIZED_COPPER_BULB:
+            case OXIDIZED_COPPER_DOOR:
+            case OXIDIZED_COPPER_GRATE:
+            case OXIDIZED_COPPER_TRAPDOOR:
             case OXIDIZED_CUT_COPPER:
             case OXIDIZED_CUT_COPPER_SLAB:
             case OXIDIZED_CUT_COPPER_STAIRS:
@@ -6382,6 +6701,10 @@ public enum Material implements Keyed, Translatable {
             case POLISHED_GRANITE:
             case POLISHED_GRANITE_SLAB:
             case POLISHED_GRANITE_STAIRS:
+            case POLISHED_TUFF:
+            case POLISHED_TUFF_SLAB:
+            case POLISHED_TUFF_STAIRS:
+            case POLISHED_TUFF_WALL:
             case POWDER_SNOW_CAULDRON:
             case PRISMARINE:
             case PRISMARINE_BRICKS:
@@ -6535,8 +6858,16 @@ public enum Material implements Keyed, Translatable {
             case TINTED_GLASS:
             case TNT:
             case TRAPPED_CHEST:
+            case TRIAL_SPAWNER:
             case TUBE_CORAL_BLOCK:
             case TUFF:
+            case TUFF_BRICKS:
+            case TUFF_BRICK_SLAB:
+            case TUFF_BRICK_STAIRS:
+            case TUFF_BRICK_WALL:
+            case TUFF_SLAB:
+            case TUFF_STAIRS:
+            case TUFF_WALL:
             case TURTLE_EGG:
             case VERDANT_FROGLIGHT:
             case WARPED_DOOR:
@@ -6556,23 +6887,48 @@ public enum Material implements Keyed, Translatable {
             case WARPED_WALL_SIGN:
             case WARPED_WART_BLOCK:
             case WATER_CAULDRON:
+            case WAXED_CHISELED_COPPER:
             case WAXED_COPPER_BLOCK:
+            case WAXED_COPPER_BULB:
+            case WAXED_COPPER_DOOR:
+            case WAXED_COPPER_GRATE:
+            case WAXED_COPPER_TRAPDOOR:
             case WAXED_CUT_COPPER:
             case WAXED_CUT_COPPER_SLAB:
             case WAXED_CUT_COPPER_STAIRS:
+            case WAXED_EXPOSED_CHISELED_COPPER:
             case WAXED_EXPOSED_COPPER:
+            case WAXED_EXPOSED_COPPER_BULB:
+            case WAXED_EXPOSED_COPPER_DOOR:
+            case WAXED_EXPOSED_COPPER_GRATE:
+            case WAXED_EXPOSED_COPPER_TRAPDOOR:
             case WAXED_EXPOSED_CUT_COPPER:
             case WAXED_EXPOSED_CUT_COPPER_SLAB:
             case WAXED_EXPOSED_CUT_COPPER_STAIRS:
+            case WAXED_OXIDIZED_CHISELED_COPPER:
             case WAXED_OXIDIZED_COPPER:
+            case WAXED_OXIDIZED_COPPER_BULB:
+            case WAXED_OXIDIZED_COPPER_DOOR:
+            case WAXED_OXIDIZED_COPPER_GRATE:
+            case WAXED_OXIDIZED_COPPER_TRAPDOOR:
             case WAXED_OXIDIZED_CUT_COPPER:
             case WAXED_OXIDIZED_CUT_COPPER_SLAB:
             case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
+            case WAXED_WEATHERED_CHISELED_COPPER:
             case WAXED_WEATHERED_COPPER:
+            case WAXED_WEATHERED_COPPER_BULB:
+            case WAXED_WEATHERED_COPPER_DOOR:
+            case WAXED_WEATHERED_COPPER_GRATE:
+            case WAXED_WEATHERED_COPPER_TRAPDOOR:
             case WAXED_WEATHERED_CUT_COPPER:
             case WAXED_WEATHERED_CUT_COPPER_SLAB:
             case WAXED_WEATHERED_CUT_COPPER_STAIRS:
+            case WEATHERED_CHISELED_COPPER:
             case WEATHERED_COPPER:
+            case WEATHERED_COPPER_BULB:
+            case WEATHERED_COPPER_DOOR:
+            case WEATHERED_COPPER_GRATE:
+            case WEATHERED_COPPER_TRAPDOOR:
             case WEATHERED_CUT_COPPER:
             case WEATHERED_CUT_COPPER_SLAB:
             case WEATHERED_CUT_COPPER_STAIRS:
@@ -6881,7 +7237,6 @@ public enum Material implements Keyed, Translatable {
             case FERN:
             case FIRE:
             case FLOWER_POT:
-            case GRASS:
             case GRAY_CARPET:
             case GREEN_CARPET:
             case JUNGLE_BUTTON:
@@ -6945,6 +7300,7 @@ public enum Material implements Keyed, Translatable {
             case RED_TULIP:
             case REPEATER:
             case ROSE_BUSH:
+            case SHORT_GRASS:
             case SKELETON_SKULL:
             case SKELETON_WALL_SKULL:
             case SNOW:
@@ -7154,7 +7510,6 @@ public enum Material implements Keyed, Translatable {
             case FLETCHING_TABLE:
             case FLOWERING_AZALEA_LEAVES:
             case GLOW_LICHEN:
-            case GRASS:
             case GRAY_BANNER:
             case GRAY_BED:
             case GRAY_CARPET:
@@ -7263,6 +7618,7 @@ public enum Material implements Keyed, Translatable {
             case RED_WALL_BANNER:
             case RED_WOOL:
             case ROSE_BUSH:
+            case SHORT_GRASS:
             case SMITHING_TABLE:
             case SOUL_CAMPFIRE:
             case SPRUCE_DOOR:
@@ -7458,7 +7814,6 @@ public enum Material implements Keyed, Translatable {
             case FLOWERING_AZALEA:
             case FLOWERING_AZALEA_LEAVES:
             case GLOW_LICHEN:
-            case GRASS:
             case GRAY_CARPET:
             case GRAY_WOOL:
             case GREEN_CARPET:
@@ -7520,6 +7875,7 @@ public enum Material implements Keyed, Translatable {
             case RED_WOOL:
             case ROSE_BUSH:
             case SCAFFOLDING:
+            case SHORT_GRASS:
             case SMALL_DRIPLEAF:
             case SPORE_BLOSSOM:
             case SPRUCE_FENCE:
@@ -8010,6 +8366,7 @@ public enum Material implements Keyed, Translatable {
             case CHERRY_PLANKS:
             case CHERRY_WOOD:
             case CHISELED_BOOKSHELF:
+            case CHISELED_COPPER:
             case CHISELED_DEEPSLATE:
             case CHISELED_NETHER_BRICKS:
             case CHISELED_POLISHED_BLACKSTONE:
@@ -8017,6 +8374,8 @@ public enum Material implements Keyed, Translatable {
             case CHISELED_RED_SANDSTONE:
             case CHISELED_SANDSTONE:
             case CHISELED_STONE_BRICKS:
+            case CHISELED_TUFF:
+            case CHISELED_TUFF_BRICKS:
             case CLAY:
             case COAL_BLOCK:
             case COAL_ORE:
@@ -8031,6 +8390,7 @@ public enum Material implements Keyed, Translatable {
             case CRACKED_NETHER_BRICKS:
             case CRACKED_POLISHED_BLACKSTONE_BRICKS:
             case CRACKED_STONE_BRICKS:
+            case CRAFTER:
             case CRAFTING_TABLE:
             case CRIMSON_HYPHAE:
             case CRIMSON_NYLIUM:
@@ -8078,6 +8438,7 @@ public enum Material implements Keyed, Translatable {
             case EMERALD_ORE:
             case END_STONE:
             case END_STONE_BRICKS:
+            case EXPOSED_CHISELED_COPPER:
             case EXPOSED_COPPER:
             case EXPOSED_CUT_COPPER:
             case FIRE_CORAL_BLOCK:
@@ -8179,6 +8540,7 @@ public enum Material implements Keyed, Translatable {
             case ORANGE_SHULKER_BOX:
             case ORANGE_TERRACOTTA:
             case ORANGE_WOOL:
+            case OXIDIZED_CHISELED_COPPER:
             case OXIDIZED_COPPER:
             case OXIDIZED_CUT_COPPER:
             case PACKED_ICE:
@@ -8198,6 +8560,7 @@ public enum Material implements Keyed, Translatable {
             case POLISHED_DEEPSLATE:
             case POLISHED_DIORITE:
             case POLISHED_GRANITE:
+            case POLISHED_TUFF:
             case PRISMARINE:
             case PRISMARINE_BRICKS:
             case PUMPKIN:
@@ -8281,22 +8644,29 @@ public enum Material implements Keyed, Translatable {
             case SUSPICIOUS_SAND:
             case TARGET:
             case TERRACOTTA:
+            case TRIAL_SPAWNER:
             case TUBE_CORAL_BLOCK:
             case TUFF:
+            case TUFF_BRICKS:
             case VERDANT_FROGLIGHT:
             case WARPED_HYPHAE:
             case WARPED_NYLIUM:
             case WARPED_PLANKS:
             case WARPED_STEM:
             case WARPED_WART_BLOCK:
+            case WAXED_CHISELED_COPPER:
             case WAXED_COPPER_BLOCK:
             case WAXED_CUT_COPPER:
+            case WAXED_EXPOSED_CHISELED_COPPER:
             case WAXED_EXPOSED_COPPER:
             case WAXED_EXPOSED_CUT_COPPER:
+            case WAXED_OXIDIZED_CHISELED_COPPER:
             case WAXED_OXIDIZED_COPPER:
             case WAXED_OXIDIZED_CUT_COPPER:
+            case WAXED_WEATHERED_CHISELED_COPPER:
             case WAXED_WEATHERED_COPPER:
             case WAXED_WEATHERED_CUT_COPPER:
+            case WEATHERED_CHISELED_COPPER:
             case WEATHERED_COPPER:
             case WEATHERED_CUT_COPPER:
             case WET_SPONGE:
@@ -8704,20 +9074,16 @@ public enum Material implements Keyed, Translatable {
             case ACACIA_FENCE_GATE:
             case ACACIA_HANGING_SIGN:
             case ACACIA_SIGN:
-            case ACACIA_STAIRS:
             case ACACIA_TRAPDOOR:
             case ACACIA_WALL_HANGING_SIGN:
             case ACACIA_WALL_SIGN:
-            case ANDESITE_STAIRS:
             case ANVIL:
             case BAMBOO_BUTTON:
             case BAMBOO_DOOR:
             case BAMBOO_FENCE:
             case BAMBOO_FENCE_GATE:
             case BAMBOO_HANGING_SIGN:
-            case BAMBOO_MOSAIC_STAIRS:
             case BAMBOO_SIGN:
-            case BAMBOO_STAIRS:
             case BAMBOO_TRAPDOOR:
             case BAMBOO_WALL_HANGING_SIGN:
             case BAMBOO_WALL_SIGN:
@@ -8732,11 +9098,9 @@ public enum Material implements Keyed, Translatable {
             case BIRCH_FENCE_GATE:
             case BIRCH_HANGING_SIGN:
             case BIRCH_SIGN:
-            case BIRCH_STAIRS:
             case BIRCH_TRAPDOOR:
             case BIRCH_WALL_HANGING_SIGN:
             case BIRCH_WALL_SIGN:
-            case BLACKSTONE_STAIRS:
             case BLACK_BED:
             case BLACK_CANDLE:
             case BLACK_CANDLE_CAKE:
@@ -8747,7 +9111,6 @@ public enum Material implements Keyed, Translatable {
             case BLUE_CANDLE_CAKE:
             case BLUE_SHULKER_BOX:
             case BREWING_STAND:
-            case BRICK_STAIRS:
             case BROWN_BED:
             case BROWN_CANDLE:
             case BROWN_CANDLE_CAKE:
@@ -8767,18 +9130,18 @@ public enum Material implements Keyed, Translatable {
             case CHERRY_FENCE_GATE:
             case CHERRY_HANGING_SIGN:
             case CHERRY_SIGN:
-            case CHERRY_STAIRS:
             case CHERRY_TRAPDOOR:
             case CHERRY_WALL_HANGING_SIGN:
             case CHERRY_WALL_SIGN:
             case CHEST:
             case CHIPPED_ANVIL:
             case CHISELED_BOOKSHELF:
-            case COBBLED_DEEPSLATE_STAIRS:
-            case COBBLESTONE_STAIRS:
             case COMMAND_BLOCK:
             case COMPARATOR:
             case COMPOSTER:
+            case COPPER_DOOR:
+            case COPPER_TRAPDOOR:
+            case CRAFTER:
             case CRAFTING_TABLE:
             case CRIMSON_BUTTON:
             case CRIMSON_DOOR:
@@ -8786,11 +9149,9 @@ public enum Material implements Keyed, Translatable {
             case CRIMSON_FENCE_GATE:
             case CRIMSON_HANGING_SIGN:
             case CRIMSON_SIGN:
-            case CRIMSON_STAIRS:
             case CRIMSON_TRAPDOOR:
             case CRIMSON_WALL_HANGING_SIGN:
             case CRIMSON_WALL_SIGN:
-            case CUT_COPPER_STAIRS:
             case CYAN_BED:
             case CYAN_CANDLE:
             case CYAN_CANDLE_CAKE:
@@ -8802,27 +9163,22 @@ public enum Material implements Keyed, Translatable {
             case DARK_OAK_FENCE_GATE:
             case DARK_OAK_HANGING_SIGN:
             case DARK_OAK_SIGN:
-            case DARK_OAK_STAIRS:
             case DARK_OAK_TRAPDOOR:
             case DARK_OAK_WALL_HANGING_SIGN:
             case DARK_OAK_WALL_SIGN:
-            case DARK_PRISMARINE_STAIRS:
             case DAYLIGHT_DETECTOR:
-            case DEEPSLATE_BRICK_STAIRS:
+            case DECORATED_POT:
             case DEEPSLATE_REDSTONE_ORE:
-            case DEEPSLATE_TILE_STAIRS:
-            case DIORITE_STAIRS:
             case DISPENSER:
             case DRAGON_EGG:
             case DROPPER:
             case ENCHANTING_TABLE:
             case ENDER_CHEST:
-            case END_STONE_BRICK_STAIRS:
-            case EXPOSED_CUT_COPPER_STAIRS:
+            case EXPOSED_COPPER_DOOR:
+            case EXPOSED_COPPER_TRAPDOOR:
             case FLETCHING_TABLE:
             case FLOWER_POT:
             case FURNACE:
-            case GRANITE_STAIRS:
             case GRAY_BED:
             case GRAY_CANDLE:
             case GRAY_CANDLE_CAKE:
@@ -8843,7 +9199,6 @@ public enum Material implements Keyed, Translatable {
             case JUNGLE_FENCE_GATE:
             case JUNGLE_HANGING_SIGN:
             case JUNGLE_SIGN:
-            case JUNGLE_STAIRS:
             case JUNGLE_TRAPDOOR:
             case JUNGLE_WALL_HANGING_SIGN:
             case JUNGLE_WALL_SIGN:
@@ -8874,16 +9229,11 @@ public enum Material implements Keyed, Translatable {
             case MANGROVE_FENCE_GATE:
             case MANGROVE_HANGING_SIGN:
             case MANGROVE_SIGN:
-            case MANGROVE_STAIRS:
             case MANGROVE_TRAPDOOR:
             case MANGROVE_WALL_HANGING_SIGN:
             case MANGROVE_WALL_SIGN:
-            case MOSSY_COBBLESTONE_STAIRS:
-            case MOSSY_STONE_BRICK_STAIRS:
             case MOVING_PISTON:
-            case MUD_BRICK_STAIRS:
             case NETHER_BRICK_FENCE:
-            case NETHER_BRICK_STAIRS:
             case NOTE_BLOCK:
             case OAK_BUTTON:
             case OAK_DOOR:
@@ -8891,7 +9241,6 @@ public enum Material implements Keyed, Translatable {
             case OAK_FENCE_GATE:
             case OAK_HANGING_SIGN:
             case OAK_SIGN:
-            case OAK_STAIRS:
             case OAK_TRAPDOOR:
             case OAK_WALL_HANGING_SIGN:
             case OAK_WALL_SIGN:
@@ -8899,18 +9248,13 @@ public enum Material implements Keyed, Translatable {
             case ORANGE_CANDLE:
             case ORANGE_CANDLE_CAKE:
             case ORANGE_SHULKER_BOX:
-            case OXIDIZED_CUT_COPPER_STAIRS:
+            case OXIDIZED_COPPER_DOOR:
+            case OXIDIZED_COPPER_TRAPDOOR:
             case PINK_BED:
             case PINK_CANDLE:
             case PINK_CANDLE_CAKE:
             case PINK_SHULKER_BOX:
-            case POLISHED_ANDESITE_STAIRS:
-            case POLISHED_BLACKSTONE_BRICK_STAIRS:
             case POLISHED_BLACKSTONE_BUTTON:
-            case POLISHED_BLACKSTONE_STAIRS:
-            case POLISHED_DEEPSLATE_STAIRS:
-            case POLISHED_DIORITE_STAIRS:
-            case POLISHED_GRANITE_STAIRS:
             case POTTED_ACACIA_SAPLING:
             case POTTED_ALLIUM:
             case POTTED_AZALEA_BUSH:
@@ -8946,33 +9290,23 @@ public enum Material implements Keyed, Translatable {
             case POTTED_WHITE_TULIP:
             case POTTED_WITHER_ROSE:
             case POWDER_SNOW_CAULDRON:
-            case PRISMARINE_BRICK_STAIRS:
-            case PRISMARINE_STAIRS:
             case PUMPKIN:
             case PURPLE_BED:
             case PURPLE_CANDLE:
             case PURPLE_CANDLE_CAKE:
             case PURPLE_SHULKER_BOX:
-            case PURPUR_STAIRS:
-            case QUARTZ_STAIRS:
             case REDSTONE_ORE:
             case REDSTONE_WIRE:
             case RED_BED:
             case RED_CANDLE:
             case RED_CANDLE_CAKE:
-            case RED_NETHER_BRICK_STAIRS:
-            case RED_SANDSTONE_STAIRS:
             case RED_SHULKER_BOX:
             case REPEATER:
             case REPEATING_COMMAND_BLOCK:
             case RESPAWN_ANCHOR:
-            case SANDSTONE_STAIRS:
             case SHULKER_BOX:
             case SMITHING_TABLE:
             case SMOKER:
-            case SMOOTH_QUARTZ_STAIRS:
-            case SMOOTH_RED_SANDSTONE_STAIRS:
-            case SMOOTH_SANDSTONE_STAIRS:
             case SOUL_CAMPFIRE:
             case SPRUCE_BUTTON:
             case SPRUCE_DOOR:
@@ -8980,14 +9314,11 @@ public enum Material implements Keyed, Translatable {
             case SPRUCE_FENCE_GATE:
             case SPRUCE_HANGING_SIGN:
             case SPRUCE_SIGN:
-            case SPRUCE_STAIRS:
             case SPRUCE_TRAPDOOR:
             case SPRUCE_WALL_HANGING_SIGN:
             case SPRUCE_WALL_SIGN:
             case STONECUTTER:
-            case STONE_BRICK_STAIRS:
             case STONE_BUTTON:
-            case STONE_STAIRS:
             case STRUCTURE_BLOCK:
             case SWEET_BERRY_BUSH:
             case TNT:
@@ -8998,16 +9329,20 @@ public enum Material implements Keyed, Translatable {
             case WARPED_FENCE_GATE:
             case WARPED_HANGING_SIGN:
             case WARPED_SIGN:
-            case WARPED_STAIRS:
             case WARPED_TRAPDOOR:
             case WARPED_WALL_HANGING_SIGN:
             case WARPED_WALL_SIGN:
             case WATER_CAULDRON:
-            case WAXED_CUT_COPPER_STAIRS:
-            case WAXED_EXPOSED_CUT_COPPER_STAIRS:
-            case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
-            case WAXED_WEATHERED_CUT_COPPER_STAIRS:
-            case WEATHERED_CUT_COPPER_STAIRS:
+            case WAXED_COPPER_DOOR:
+            case WAXED_COPPER_TRAPDOOR:
+            case WAXED_EXPOSED_COPPER_DOOR:
+            case WAXED_EXPOSED_COPPER_TRAPDOOR:
+            case WAXED_OXIDIZED_COPPER_DOOR:
+            case WAXED_OXIDIZED_COPPER_TRAPDOOR:
+            case WAXED_WEATHERED_COPPER_DOOR:
+            case WAXED_WEATHERED_COPPER_TRAPDOOR:
+            case WEATHERED_COPPER_DOOR:
+            case WEATHERED_COPPER_TRAPDOOR:
             case WHITE_BED:
             case WHITE_CANDLE:
             case WHITE_CANDLE_CAKE:
@@ -9481,8 +9816,11 @@ public enum Material implements Keyed, Translatable {
             case CHISELED_BOOKSHELF:
             case CHISELED_POLISHED_BLACKSTONE:
             case CHISELED_STONE_BRICKS:
+            case CHISELED_TUFF:
+            case CHISELED_TUFF_BRICKS:
             case CRACKED_POLISHED_BLACKSTONE_BRICKS:
             case CRACKED_STONE_BRICKS:
+            case CRAFTER:
             case DARK_PRISMARINE:
             case DARK_PRISMARINE_SLAB:
             case DARK_PRISMARINE_STAIRS:
@@ -9529,6 +9867,10 @@ public enum Material implements Keyed, Translatable {
             case POLISHED_GRANITE:
             case POLISHED_GRANITE_SLAB:
             case POLISHED_GRANITE_STAIRS:
+            case POLISHED_TUFF:
+            case POLISHED_TUFF_SLAB:
+            case POLISHED_TUFF_STAIRS:
+            case POLISHED_TUFF_WALL:
             case PRISMARINE:
             case PRISMARINE_BRICKS:
             case PRISMARINE_BRICK_SLAB:
@@ -9549,6 +9891,13 @@ public enum Material implements Keyed, Translatable {
             case STONE_STAIRS:
             case TUBE_CORAL_BLOCK:
             case TUFF:
+            case TUFF_BRICKS:
+            case TUFF_BRICK_SLAB:
+            case TUFF_BRICK_STAIRS:
+            case TUFF_BRICK_WALL:
+            case TUFF_SLAB:
+            case TUFF_STAIRS:
+            case TUFF_WALL:
                 return 1.5F;
             case BLACK_CONCRETE:
             case BLUE_CONCRETE:
@@ -9764,10 +10113,15 @@ public enum Material implements Keyed, Translatable {
             case BIRCH_TRAPDOOR:
             case CHERRY_DOOR:
             case CHERRY_TRAPDOOR:
+            case CHISELED_COPPER:
             case COAL_ORE:
             case CONDUIT:
             case COPPER_BLOCK:
+            case COPPER_BULB:
+            case COPPER_DOOR:
+            case COPPER_GRATE:
             case COPPER_ORE:
+            case COPPER_TRAPDOOR:
             case CRIMSON_DOOR:
             case CRIMSON_TRAPDOOR:
             case CUT_COPPER:
@@ -9784,7 +10138,12 @@ public enum Material implements Keyed, Translatable {
             case END_STONE_BRICK_SLAB:
             case END_STONE_BRICK_STAIRS:
             case END_STONE_BRICK_WALL:
+            case EXPOSED_CHISELED_COPPER:
             case EXPOSED_COPPER:
+            case EXPOSED_COPPER_BULB:
+            case EXPOSED_COPPER_DOOR:
+            case EXPOSED_COPPER_GRATE:
+            case EXPOSED_COPPER_TRAPDOOR:
             case EXPOSED_CUT_COPPER:
             case EXPOSED_CUT_COPPER_SLAB:
             case EXPOSED_CUT_COPPER_STAIRS:
@@ -9804,7 +10163,12 @@ public enum Material implements Keyed, Translatable {
             case OAK_DOOR:
             case OAK_TRAPDOOR:
             case OBSERVER:
+            case OXIDIZED_CHISELED_COPPER:
             case OXIDIZED_COPPER:
+            case OXIDIZED_COPPER_BULB:
+            case OXIDIZED_COPPER_DOOR:
+            case OXIDIZED_COPPER_GRATE:
+            case OXIDIZED_COPPER_TRAPDOOR:
             case OXIDIZED_CUT_COPPER:
             case OXIDIZED_CUT_COPPER_SLAB:
             case OXIDIZED_CUT_COPPER_STAIRS:
@@ -9815,23 +10179,48 @@ public enum Material implements Keyed, Translatable {
             case SPRUCE_TRAPDOOR:
             case WARPED_DOOR:
             case WARPED_TRAPDOOR:
+            case WAXED_CHISELED_COPPER:
             case WAXED_COPPER_BLOCK:
+            case WAXED_COPPER_BULB:
+            case WAXED_COPPER_DOOR:
+            case WAXED_COPPER_GRATE:
+            case WAXED_COPPER_TRAPDOOR:
             case WAXED_CUT_COPPER:
             case WAXED_CUT_COPPER_SLAB:
             case WAXED_CUT_COPPER_STAIRS:
+            case WAXED_EXPOSED_CHISELED_COPPER:
             case WAXED_EXPOSED_COPPER:
+            case WAXED_EXPOSED_COPPER_BULB:
+            case WAXED_EXPOSED_COPPER_DOOR:
+            case WAXED_EXPOSED_COPPER_GRATE:
+            case WAXED_EXPOSED_COPPER_TRAPDOOR:
             case WAXED_EXPOSED_CUT_COPPER:
             case WAXED_EXPOSED_CUT_COPPER_SLAB:
             case WAXED_EXPOSED_CUT_COPPER_STAIRS:
+            case WAXED_OXIDIZED_CHISELED_COPPER:
             case WAXED_OXIDIZED_COPPER:
+            case WAXED_OXIDIZED_COPPER_BULB:
+            case WAXED_OXIDIZED_COPPER_DOOR:
+            case WAXED_OXIDIZED_COPPER_GRATE:
+            case WAXED_OXIDIZED_COPPER_TRAPDOOR:
             case WAXED_OXIDIZED_CUT_COPPER:
             case WAXED_OXIDIZED_CUT_COPPER_SLAB:
             case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
+            case WAXED_WEATHERED_CHISELED_COPPER:
             case WAXED_WEATHERED_COPPER:
+            case WAXED_WEATHERED_COPPER_BULB:
+            case WAXED_WEATHERED_COPPER_DOOR:
+            case WAXED_WEATHERED_COPPER_GRATE:
+            case WAXED_WEATHERED_COPPER_TRAPDOOR:
             case WAXED_WEATHERED_CUT_COPPER:
             case WAXED_WEATHERED_CUT_COPPER_SLAB:
             case WAXED_WEATHERED_CUT_COPPER_STAIRS:
+            case WEATHERED_CHISELED_COPPER:
             case WEATHERED_COPPER:
+            case WEATHERED_COPPER_BULB:
+            case WEATHERED_COPPER_DOOR:
+            case WEATHERED_COPPER_GRATE:
+            case WEATHERED_COPPER_TRAPDOOR:
             case WEATHERED_CUT_COPPER:
             case WEATHERED_CUT_COPPER_SLAB:
             case WEATHERED_CUT_COPPER_STAIRS:
@@ -9903,6 +10292,7 @@ public enum Material implements Keyed, Translatable {
             case NETHERITE_BLOCK:
             case OBSIDIAN:
             case RESPAWN_ANCHOR:
+            case TRIAL_SPAWNER:
                 return 50.0F;
             case REINFORCED_DEEPSLATE:
                 return 55.0F;
@@ -10545,6 +10935,7 @@ public enum Material implements Keyed, Translatable {
             case WARPED_TRAPDOOR:
                 return 3.0F;
             case BLAST_FURNACE:
+            case CRAFTER:
             case DISPENSER:
             case DROPPER:
             case FURNACE:
@@ -10599,10 +10990,13 @@ public enum Material implements Keyed, Translatable {
             case BRICK_WALL:
             case BUBBLE_CORAL_BLOCK:
             case CHAIN:
+            case CHISELED_COPPER:
             case CHISELED_DEEPSLATE:
             case CHISELED_NETHER_BRICKS:
             case CHISELED_POLISHED_BLACKSTONE:
             case CHISELED_STONE_BRICKS:
+            case CHISELED_TUFF:
+            case CHISELED_TUFF_BRICKS:
             case COAL_BLOCK:
             case COBBLED_DEEPSLATE:
             case COBBLED_DEEPSLATE_SLAB:
@@ -10613,6 +11007,10 @@ public enum Material implements Keyed, Translatable {
             case COBBLESTONE_STAIRS:
             case COBBLESTONE_WALL:
             case COPPER_BLOCK:
+            case COPPER_BULB:
+            case COPPER_DOOR:
+            case COPPER_GRATE:
+            case COPPER_TRAPDOOR:
             case CRACKED_DEEPSLATE_BRICKS:
             case CRACKED_DEEPSLATE_TILES:
             case CRACKED_NETHER_BRICKS:
@@ -10646,7 +11044,12 @@ public enum Material implements Keyed, Translatable {
             case DIORITE_STAIRS:
             case DIORITE_WALL:
             case EMERALD_BLOCK:
+            case EXPOSED_CHISELED_COPPER:
             case EXPOSED_COPPER:
+            case EXPOSED_COPPER_BULB:
+            case EXPOSED_COPPER_DOOR:
+            case EXPOSED_COPPER_GRATE:
+            case EXPOSED_COPPER_TRAPDOOR:
             case EXPOSED_CUT_COPPER:
             case EXPOSED_CUT_COPPER_SLAB:
             case EXPOSED_CUT_COPPER_STAIRS:
@@ -10676,7 +11079,12 @@ public enum Material implements Keyed, Translatable {
             case NETHER_BRICK_SLAB:
             case NETHER_BRICK_STAIRS:
             case NETHER_BRICK_WALL:
+            case OXIDIZED_CHISELED_COPPER:
             case OXIDIZED_COPPER:
+            case OXIDIZED_COPPER_BULB:
+            case OXIDIZED_COPPER_DOOR:
+            case OXIDIZED_COPPER_GRATE:
+            case OXIDIZED_COPPER_TRAPDOOR:
             case OXIDIZED_CUT_COPPER:
             case OXIDIZED_CUT_COPPER_SLAB:
             case OXIDIZED_CUT_COPPER_STAIRS:
@@ -10702,6 +11110,10 @@ public enum Material implements Keyed, Translatable {
             case POLISHED_GRANITE:
             case POLISHED_GRANITE_SLAB:
             case POLISHED_GRANITE_STAIRS:
+            case POLISHED_TUFF:
+            case POLISHED_TUFF_SLAB:
+            case POLISHED_TUFF_STAIRS:
+            case POLISHED_TUFF_WALL:
             case PRISMARINE:
             case PRISMARINE_BRICKS:
             case PRISMARINE_BRICK_SLAB:
@@ -10744,23 +11156,55 @@ public enum Material implements Keyed, Translatable {
             case STONE_STAIRS:
             case TUBE_CORAL_BLOCK:
             case TUFF:
+            case TUFF_BRICKS:
+            case TUFF_BRICK_SLAB:
+            case TUFF_BRICK_STAIRS:
+            case TUFF_BRICK_WALL:
+            case TUFF_SLAB:
+            case TUFF_STAIRS:
+            case TUFF_WALL:
+            case WAXED_CHISELED_COPPER:
             case WAXED_COPPER_BLOCK:
+            case WAXED_COPPER_BULB:
+            case WAXED_COPPER_DOOR:
+            case WAXED_COPPER_GRATE:
+            case WAXED_COPPER_TRAPDOOR:
             case WAXED_CUT_COPPER:
             case WAXED_CUT_COPPER_SLAB:
             case WAXED_CUT_COPPER_STAIRS:
+            case WAXED_EXPOSED_CHISELED_COPPER:
             case WAXED_EXPOSED_COPPER:
+            case WAXED_EXPOSED_COPPER_BULB:
+            case WAXED_EXPOSED_COPPER_DOOR:
+            case WAXED_EXPOSED_COPPER_GRATE:
+            case WAXED_EXPOSED_COPPER_TRAPDOOR:
             case WAXED_EXPOSED_CUT_COPPER:
             case WAXED_EXPOSED_CUT_COPPER_SLAB:
             case WAXED_EXPOSED_CUT_COPPER_STAIRS:
+            case WAXED_OXIDIZED_CHISELED_COPPER:
             case WAXED_OXIDIZED_COPPER:
+            case WAXED_OXIDIZED_COPPER_BULB:
+            case WAXED_OXIDIZED_COPPER_DOOR:
+            case WAXED_OXIDIZED_COPPER_GRATE:
+            case WAXED_OXIDIZED_COPPER_TRAPDOOR:
             case WAXED_OXIDIZED_CUT_COPPER:
             case WAXED_OXIDIZED_CUT_COPPER_SLAB:
             case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
+            case WAXED_WEATHERED_CHISELED_COPPER:
             case WAXED_WEATHERED_COPPER:
+            case WAXED_WEATHERED_COPPER_BULB:
+            case WAXED_WEATHERED_COPPER_DOOR:
+            case WAXED_WEATHERED_COPPER_GRATE:
+            case WAXED_WEATHERED_COPPER_TRAPDOOR:
             case WAXED_WEATHERED_CUT_COPPER:
             case WAXED_WEATHERED_CUT_COPPER_SLAB:
             case WAXED_WEATHERED_CUT_COPPER_STAIRS:
+            case WEATHERED_CHISELED_COPPER:
             case WEATHERED_COPPER:
+            case WEATHERED_COPPER_BULB:
+            case WEATHERED_COPPER_DOOR:
+            case WEATHERED_COPPER_GRATE:
+            case WEATHERED_COPPER_TRAPDOOR:
             case WEATHERED_CUT_COPPER:
             case WEATHERED_CUT_COPPER_SLAB:
             case WEATHERED_CUT_COPPER_STAIRS:
@@ -10772,6 +11216,8 @@ public enum Material implements Keyed, Translatable {
             case END_STONE_BRICK_STAIRS:
             case END_STONE_BRICK_WALL:
                 return 9.0F;
+            case TRIAL_SPAWNER:
+                return 50.0F;
             case LAVA:
             case WATER:
                 return 100.0F;

@@ -4,7 +4,7 @@
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.BlockHitResult;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.block.TNTPrimeEvent;
  
  public class TntBlock extends Block {
@@ -80,7 +80,7 @@
           if (p_57432_.isOnFire() && p_57432_.mayInteract(p_57429_, blockpos)) {
 -            explode(p_57429_, blockpos, entity instanceof LivingEntity ? (LivingEntity)entity : null);
 +            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_57432_, blockpos, Blocks.AIR.defaultBlockState()) || !CraftEventFactory.callTNTPrimeEvent(p_57429_, blockpos, TNTPrimeEvent.PrimeCause.PROJECTILE, p_57432_, null)) {
++            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(p_57432_, blockpos, Blocks.AIR.defaultBlockState()) || !CraftEventFactory.callTNTPrimeEvent(p_57429_, blockpos, TNTPrimeEvent.PrimeCause.PROJECTILE, p_57432_, null)) {
 +               return;
 +            }
 +            // CraftBukkit end

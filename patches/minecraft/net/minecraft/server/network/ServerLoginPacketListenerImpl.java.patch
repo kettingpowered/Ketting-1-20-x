@@ -1,12 +1,15 @@
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -40,6 +_,13 @@
+@@ -38,8 +_,16 @@
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.world.entity.player.Player;
  import org.apache.commons.lang3.Validate;
++import org.bukkit.craftbukkit.CraftServer;
  import org.slf4j.Logger;
  
 +//Ketting start
 +import net.minecraft.server.level.ServerPlayer;
-+import org.bukkit.craftbukkit.v1_20_R2.util.Waitable;
++import org.bukkit.craftbukkit.util.Waitable;
 +import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 +import org.bukkit.event.player.PlayerPreLoginEvent;
 +//Ketting end
@@ -131,7 +134,7 @@
 +         String playerName = gameprofile.getName();
 +         java.net.InetAddress address = ((java.net.InetSocketAddress) connection.getRemoteAddress()).getAddress();
 +         java.util.UUID uniqueId = gameprofile.getId();
-+         final org.bukkit.craftbukkit.v1_20_R2.CraftServer server = ServerLoginPacketListenerImpl.this.server.server;
++         final CraftServer server = ServerLoginPacketListenerImpl.this.server.server;
 +
 +         AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
 +         server.getPluginManager().callEvent(asyncEvent);

@@ -145,7 +145,7 @@
 +         ItemStack itemstack = this.getPickupItem();
 +         if (this.pickup == AbstractArrow.Pickup.ALLOWED && !itemstack.isEmpty() && p_36766_.getInventory().canHold(itemstack) > 0) {
 +            ItemEntity item = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), itemstack);
-+            PlayerPickupArrowEvent event = new PlayerPickupArrowEvent((org.bukkit.entity.Player) p_36766_.getBukkitEntity(), new org.bukkit.craftbukkit.v1_20_R2.entity.CraftItem(this.level().getCraftServer(), item), (org.bukkit.entity.AbstractArrow) this.getBukkitEntity());
++            PlayerPickupArrowEvent event = new PlayerPickupArrowEvent((org.bukkit.entity.Player) p_36766_.getBukkitEntity(), new org.bukkit.craftbukkit.entity.CraftItem(this.level().getCraftServer(), item), (org.bukkit.entity.AbstractArrow) this.getBukkitEntity());
 +            // event.setCancelled(!entityhuman.canPickUpLoot); TODO
 +            this.level().getCraftServer().getPluginManager().callEvent(event);
 +

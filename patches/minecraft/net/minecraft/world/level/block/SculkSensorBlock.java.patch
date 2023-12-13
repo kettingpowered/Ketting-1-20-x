@@ -4,7 +4,7 @@
  import net.minecraft.world.level.pathfinder.PathComputationType;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class SculkSensorBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
@@ -16,7 +16,7 @@
 +         // CraftBukkit start
 +         org.bukkit.event.Cancellable cancellable;
 +         if (p_222135_ instanceof Player) {
-+            cancellable = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent((Player) p_222135_, org.bukkit.event.block.Action.PHYSICAL, p_222133_, null, null, null);
++            cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((Player) p_222135_, org.bukkit.event.block.Action.PHYSICAL, p_222133_, null, null, null);
 +         } else {
 +            cancellable = new org.bukkit.event.entity.EntityInteractEvent(p_222135_.getBukkitEntity(), p_222132_.getWorld().getBlockAt(p_222133_.getX(), p_222133_.getY(), p_222133_.getZ()));
 +            p_222132_.getCraftServer().getPluginManager().callEvent((org.bukkit.event.entity.EntityInteractEvent) cancellable);

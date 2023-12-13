@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
-@@ -26,6 +_,7 @@
- import net.minecraft.world.level.block.FireBlock;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.gameevent.GameEvent;
-+import org.bukkit.block.Beehive;
- 
- public class BeehiveBlockEntity extends BlockEntity {
-    public static final String TAG_FLOWER_POS = "FlowerPos";
 @@ -41,7 +_,8 @@
     public static final int MIN_OCCUPATION_TICKS_NECTARLESS = 600;
     private final List<BeehiveBlockEntity.BeeData> stored = Lists.newArrayList();
@@ -61,7 +53,7 @@
 +      if (this.stored.size() < this.maxBees) { // CraftBukkit
 +         // CraftBukkit start
 +         if (this.level != null) {
-+            org.bukkit.event.entity.EntityEnterBlockEvent event = new org.bukkit.event.entity.EntityEnterBlockEvent(p_58745_.getBukkitEntity(), org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(level, getBlockPos()));
++            org.bukkit.event.entity.EntityEnterBlockEvent event = new org.bukkit.event.entity.EntityEnterBlockEvent(p_58745_.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(level, getBlockPos()));
 +            org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +            if (event.isCancelled()) {
 +               if (p_58745_ instanceof Bee) {

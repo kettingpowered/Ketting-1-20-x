@@ -11,8 +11,8 @@
 +import net.minecraft.world.item.crafting.*;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryCrafting;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
  
  public class CraftingMenu extends RecipeBookMenu<CraftingContainer> {
     public static final int RESULT_SLOT = 0;
@@ -49,7 +49,7 @@
                 }
              }
           }
-+         itemstack = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.map(RecipeHolder::toBukkitRecipe).orElse(null) instanceof RepairItemRecipe); // CraftBukkit
++         itemstack = org.bukkit.craftbukkit.event.CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.map(RecipeHolder::toBukkitRecipe).orElse(null) instanceof RepairItemRecipe); // CraftBukkit
  
           p_150551_.setItem(0, itemstack);
           p_150547_.setRemoteSlot(0, itemstack);

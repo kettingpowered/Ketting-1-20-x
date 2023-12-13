@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
+@@ -143,7 +_,6 @@
+ import net.minecraft.world.level.border.WorldBorder;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.level.portal.PortalInfo;
+-import net.minecraft.world.level.storage.LevelData;
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.scores.PlayerTeam;
 @@ -153,7 +_,28 @@
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
  import org.slf4j.Logger;
@@ -15,13 +23,13 @@
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.WeatherType;
-+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
-+import org.bukkit.craftbukkit.v1_20_R2.CraftWorldBorder;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftPortalEvent;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftDimensionUtil;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
++import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.craftbukkit.CraftWorldBorder;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftPortalEvent;
++import org.bukkit.craftbukkit.util.CraftDimensionUtil;
++import org.bukkit.craftbukkit.util.CraftLocation;
 +import org.bukkit.event.player.*;
 +import org.bukkit.inventory.MainHand;
 +//Ketting end
@@ -305,7 +313,7 @@
 +         if (deathMessage.equals(deathmessage)) {
 +            component = this.getCombatTracker().getDeathMessage();
 +         } else {
-+            component = org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage.fromStringOrNull(deathMessage);
++            component = org.bukkit.craftbukkit.util.CraftChatMessage.fromStringOrNull(deathMessage);
 +         }
 +
           this.connection.send(new ClientboundPlayerCombatKillPacket(this.getId(), component), PacketSendListener.exceptionallySend(() -> {
@@ -546,7 +554,7 @@
  
     private void createEndPlatform(ServerLevel p_9007_, BlockPos p_9008_) {
        BlockPos.MutableBlockPos blockpos$mutableblockpos = p_9008_.mutable();
-+      org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator(p_9007_); // CraftBukkit
++      org.bukkit.craftbukkit.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.util.BlockStateListPopulator(p_9007_); // CraftBukkit
  
        for(int i = -2; i <= 2; ++i) {
           for(int j = -2; j <= 2; ++j) {
@@ -676,7 +684,7 @@
 +         bedResult = Either.right(Unit.INSTANCE);
 +      }
 +
-+      bedResult = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerBedEnterEvent(this, p_9115_, bedResult);
++      bedResult = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerBedEnterEvent(this, p_9115_, bedResult);
 +      if (bedResult.left().isPresent()) {
 +         return bedResult;
 +      }

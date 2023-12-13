@@ -1,13 +1,21 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
+@@ -63,7 +_,6 @@
+ import net.minecraft.world.item.SpawnEggItem;
+ import net.minecraft.world.item.SwordItem;
+ import net.minecraft.world.item.enchantment.EnchantmentHelper;
+-import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.LevelReader;
 @@ -73,6 +_,13 @@
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.AABB;
  
 +//Ketting start
 +import net.minecraft.server.level.ServerPlayer;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.*;
 +//Ketting end
 +
@@ -204,7 +212,7 @@
 +      // CraftBukkit start
 +      boolean canPickup = flag && this.canHoldItem(p_255842_);
 +      if (entity != null) {
-+         canPickup = !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPickupItemEvent(this, entity, 0, !canPickup).isCancelled();
++         canPickup = !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(this, entity, 0, !canPickup).isCancelled();
 +      }
 +      if (canPickup) {
 +         // CraftBukkit end
