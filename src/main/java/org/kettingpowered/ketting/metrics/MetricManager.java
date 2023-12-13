@@ -1,75 +1,61 @@
 package org.kettingpowered.ketting.metrics;
 
-import org.kettingpowered.ketting.core.Ketting;
+import net.minecraft.server.dedicated.DedicatedServer;
+import org.bukkit.Bukkit;
 import org.kettingpowered.ketting.internal.KettingConstants;
-import org.kettingpowered.ketting.metrics.config.MetricsConfig;
-import org.kettingpowered.ketting.utils.JsonObjectBuilder;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class MetricManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetricManager.class);
-    private static final File configFile = new File("plugins/bstats/config.yml");
-
-    private static MetricsBase metrics;
+    private static Metrics metrics;
+    private static File configFile;
     private static MetricsConfig config;
 
-    public static void init() {
-        if (true) return; //Wait until we actually are a registered server implementation
+    public static void init(DedicatedServer server) {
+        if (configFile == null) {
+            File pluginsDir = (File) server.options.valueOf("plugins");
+            configFile = new File(pluginsDir, "bstats" + File.separator + "config.yml");
+        }
 
         reload();
 
-        if (config != null) {
-            metrics = new MetricsBase(
-                    KettingConstants.NAME.toLowerCase(),
-                    config.getServerUUID(),
-                    20462,
-                    config.isEnabled(),
-                    MetricManager::getPlatformData,
-                    MetricManager::getServiceData,
-                    null,
-                    () -> config.isEnabled(),
-                    (error, thr) -> LOGGER.warn("{}", error, thr),
-                    info -> LOGGER.info("{}", info),
-                    config.isLogErrorsEnabled(),
-                    config.isLogSentDataEnabled(),
-                    true
-            );
+        if (config != null && config.isEnabled()) {
+            metrics = new Metrics(KettingConstants.NAME.toLowerCase(), config.getServerUUID(), config.isLogErrorsEnabled());
+            addCharts();
         }
     }
 
-    private static void getPlatformData(JsonObjectBuilder data) {
-        if (config == null)
-            return;
-
-        data.appendField("serverUUID", config.getServerUUID());
-        data.appendField("osName", System.getProperty("os.name"));
-        data.appendField("osArch", System.getProperty("os.arch"));
-        data.appendField("osVersion", System.getProperty("os.version"));
-        data.appendField("coreCount", Runtime.getRuntime().availableProcessors());
-    }
-
-    private static void getServiceData(JsonObjectBuilder builder) {
-        if (config == null)
-            return;
-
-        builder.appendField("version", KettingConstants.BUKKIT_VERSION);
+    private static void addCharts() {
+        metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
+        metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", () -> {
+            String version = Bukkit.getVersion();
+            version = version.substring(version.indexOf("MC: ") + 4, version.length() - 1);
+            return version;
+        }));
+        metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ?  "online": "offline"));
+        metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
+            Map<String, Map<String, Integer>> map = new HashMap<>();
+            Map<String, Integer> entry = new HashMap<>();
+            entry.put(System.getProperty("java.version"), 1);
+            map.put(System.getProperty("java.vendor"), entry);
+            return map;
+        }));
     }
 
     public static void reload() {
         try {
             config = new MetricsConfig(configFile, true);
-        } catch (IOException e) {
-            LOGGER.error("Failed to load metrics config", e);
-        }
-    }
 
-    public static void shutdown() {
-        if (metrics != null)
-            metrics.shutdown();
+            // Opted out after a reload -> disable
+            if (metrics != null && !config.isEnabled())
+                metrics.disable();
+        } catch (IOException e) {
+            LoggerFactory.getLogger(MetricManager.class).error("Failed to load metrics config", e);
+        }
     }
 }

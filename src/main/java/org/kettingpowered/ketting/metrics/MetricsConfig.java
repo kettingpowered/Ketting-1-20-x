@@ -1,4 +1,4 @@
-package org.kettingpowered.ketting.metrics.config;
+package org.kettingpowered.ketting.metrics;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -26,8 +26,6 @@ public class MetricsConfig {
     private String serverUUID;
     private boolean enabled;
     private boolean logErrors;
-    private boolean logSentData;
-    private boolean logResponseStatusText;
 
     private boolean didExistBefore = true;
 
@@ -48,14 +46,6 @@ public class MetricsConfig {
 
     public boolean isLogErrorsEnabled() {
         return logErrors;
-    }
-
-    public boolean isLogSentDataEnabled() {
-        return logSentData;
-    }
-
-    public boolean isLogResponseStatusTextEnabled() {
-        return logResponseStatusText;
     }
 
     /**
@@ -96,8 +86,6 @@ public class MetricsConfig {
         configContent.add("enabled=" + defaultEnabled);
         configContent.add("server-uuid=" + UUID.randomUUID().toString());
         configContent.add("log-errors=false");
-        configContent.add("log-sent-data=false");
-        configContent.add("log-response-status-text=false");
         writeFile(file, configContent);
     }
 
@@ -113,8 +101,6 @@ public class MetricsConfig {
         enabled = getConfigValue("enabled", lines).map("true"::equals).orElse(true);
         serverUUID = getConfigValue("server-uuid", lines).orElse(null);
         logErrors = getConfigValue("log-errors", lines).map("true"::equals).orElse(false);
-        logSentData =  getConfigValue("log-sent-data", lines).map("true"::equals).orElse(false);
-        logResponseStatusText =  getConfigValue("log-response-status-text", lines).map("true"::equals).orElse(false);
     }
 
     /**
