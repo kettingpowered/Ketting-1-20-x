@@ -9,18 +9,11 @@
  import java.util.List;
  import java.util.Map;
  import java.util.UUID;
-@@ -20,12 +_,14 @@
- import net.minecraft.network.syncher.SynchedEntityData;
- import net.minecraft.server.level.ServerLevel;
- import net.minecraft.util.Mth;
-+import net.minecraft.world.effect.MobEffect;
- import net.minecraft.world.effect.MobEffectInstance;
- import net.minecraft.world.item.alchemy.Potion;
- import net.minecraft.world.item.alchemy.PotionUtils;
+@@ -26,6 +_,7 @@
  import net.minecraft.world.item.alchemy.Potions;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.material.PushReaction;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.entity.CraftLivingEntity;
  import org.slf4j.Logger;
  
  public class AreaEffectCloud extends Entity implements TraceableEntity {
@@ -98,7 +91,7 @@
 +                     }
 +                  }
 +
-+                  org.bukkit.event.entity.AreaEffectCloudApplyEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callAreaEffectCloudApplyEvent(this, entities);
++                  org.bukkit.event.entity.AreaEffectCloudApplyEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callAreaEffectCloudApplyEvent(this, entities);
 +                  if (!event.isCancelled()) {
 +                     for (org.bukkit.entity.LivingEntity entity : event.getAffectedEntities()) {
 +                        if (entity instanceof CraftLivingEntity) {

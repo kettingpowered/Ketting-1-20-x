@@ -19,7 +19,7 @@
  import net.minecraft.world.entity.AreaEffectCloud;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityType;
-@@ -23,12 +_,16 @@
+@@ -23,12 +_,15 @@
  import net.minecraft.world.item.alchemy.Potions;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.AbstractCandleBlock;
@@ -30,9 +30,8 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityPotionEffectEvent;
++import org.bukkit.craftbukkit.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class ThrownPotion extends ThrowableItemProjectile implements ItemSupplier {
     public static final double SPLASH_RANGE = 4.0D;
@@ -157,7 +156,7 @@
  
 -      this.level().addFreshEntity(areaeffectcloud);
 +      // CraftBukkit start
-+      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callLingeringPotionSplashEvent(this, position, areaeffectcloud);
++      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callLingeringPotionSplashEvent(this, position, areaeffectcloud);
 +      if (!(event.isCancelled() || areaeffectcloud.isRemoved())) {
 +         this.level().addFreshEntity(areaeffectcloud);
 +      } else {

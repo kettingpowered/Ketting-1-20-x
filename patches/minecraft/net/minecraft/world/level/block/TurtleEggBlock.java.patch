@@ -1,16 +1,24 @@
 --- a/net/minecraft/world/level/block/TurtleEggBlock.java
 +++ b/net/minecraft/world/level/block/TurtleEggBlock.java
-@@ -28,6 +_,9 @@
+@@ -18,7 +_,6 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.context.BlockPlaceContext;
+ import net.minecraft.world.level.BlockGetter;
+-import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.entity.BlockEntity;
+ import net.minecraft.world.level.block.state.BlockBehaviour;
+@@ -29,6 +_,9 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class TurtleEggBlock extends Block {
-    public static final int MAX_HATCH_LEVEL = 2;
-@@ -62,6 +_,19 @@
+    public static final MapCodec<TurtleEggBlock> CODEC = simpleCodec(TurtleEggBlock::new);
+@@ -68,6 +_,19 @@
     private void destroyEgg(Level p_154851_, BlockState p_154852_, BlockPos p_154853_, Entity p_154854_, int p_154855_) {
        if (this.canDestroyEgg(p_154851_, p_154854_)) {
           if (!p_154851_.isClientSide && p_154851_.random.nextInt(p_154855_) == 0 && p_154852_.is(Blocks.TURTLE_EGG)) {
@@ -30,7 +38,7 @@
              this.decreaseEggs(p_154851_, p_154853_, p_154852_);
           }
  
-@@ -85,11 +_,21 @@
+@@ -91,11 +_,21 @@
        if (this.shouldUpdateHatchLevel(p_222645_) && onSand(p_222645_, p_222646_)) {
           int i = p_222644_.getValue(HATCH);
           if (i < 2) {
@@ -54,7 +62,7 @@
              p_222645_.removeBlock(p_222646_, false);
              p_222645_.gameEvent(GameEvent.BLOCK_DESTROY, p_222646_, GameEvent.Context.of(p_222644_));
  
-@@ -100,7 +_,7 @@
+@@ -106,7 +_,7 @@
                    turtle.setAge(-24000);
                    turtle.setHomePos(p_222646_);
                    turtle.moveTo((double)p_222646_.getX() + 0.3D + (double)j * 0.2D, (double)p_222646_.getY(), (double)p_222646_.getZ() + 0.3D, 0.0F, 0.0F);
@@ -63,7 +71,7 @@
                 }
              }
           }
-@@ -160,7 +_,7 @@
+@@ -166,7 +_,7 @@
           if (!(p_57769_ instanceof LivingEntity)) {
              return false;
           } else {

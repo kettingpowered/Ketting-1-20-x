@@ -4,7 +4,7 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTargetEvent;
 +import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
  
@@ -27,7 +27,7 @@
 +      boolean cancelled = false;
 +      if (this.followingPlayer != prevTarget) {
 +         EntityTargetLivingEntityEvent event = CraftEventFactory.callEntityTargetLivingEvent(this, followingPlayer, (followingPlayer != null) ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.FORGOT_TARGET);
-+         LivingEntity target = (event.getTarget() == null) ? null : ((org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) event.getTarget()).getHandle();
++         LivingEntity target = (event.getTarget() == null) ? null : ((org.bukkit.craftbukkit.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +         cancelled = event.isCancelled();
 +
 +         if (cancelled) {
@@ -79,8 +79,8 @@
        Map.Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.getRandomItemWith(Enchantments.MENDING, p_147093_, ItemStack::isDamaged);
        if (entry != null) {
           ItemStack itemstack = entry.getValue();
--         int i = Math.min(this.xpToDurability(this.value), itemstack.getDamageValue());
-+         int i = Math.min((int) (this.value * itemstack.getXpRepairRatio()), itemstack.getDamageValue());
+-         int i = Math.min(this.xpToDurability(p_147094_), itemstack.getDamageValue());
++         int i = Math.min((int) (p_147094_ * itemstack.getXpRepairRatio()), itemstack.getDamageValue());
 +         // CraftBukkit start
 +         org.bukkit.event.player.PlayerItemMendEvent event = CraftEventFactory.callPlayerItemMendEvent(p_147093_, this, itemstack, entry.getKey(), i);
 +         i = event.getRepairAmount();

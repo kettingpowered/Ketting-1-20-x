@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.util.PathConverter;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.fusesource.jansi.AnsiConsole;
 
 public class Main {
@@ -213,7 +212,7 @@ public class Main {
                     Date buildDate = new Date(Integer.parseInt(Main.class.getPackage().getImplementationVendor()) * 1000L);
 
                     Calendar deadline = Calendar.getInstance();
-                    deadline.add(Calendar.DAY_OF_YEAR, -21);
+                    deadline.add(Calendar.DAY_OF_YEAR, -3);
                     if (buildDate.before(deadline.getTime())) {
                         System.err.println("*** Error, this build is outdated ***");
                         System.err.println("*** Please download a new build as per instructions from https://www.spigotmc.org/go/outdated-spigot ***");

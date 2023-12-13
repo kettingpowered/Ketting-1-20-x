@@ -1,17 +1,19 @@
 --- a/net/minecraft/world/level/block/RedStoneOreBlock.java
 +++ b/net/minecraft/world/level/block/RedStoneOreBlock.java
-@@ -20,6 +_,10 @@
- import net.minecraft.world.level.block.state.StateDefinition;
+@@ -22,6 +_,12 @@
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.phys.BlockHitResult;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityInteractEvent;
-+
-+import javax.annotation.Nullable;
  
++//Ketting start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityInteractEvent;
++import javax.annotation.Nullable;
++//Ketting end
++
  public class RedStoneOreBlock extends Block {
+    public static final MapCodec<RedStoneOreBlock> CODEC = simpleCodec(RedStoneOreBlock::new);
     public static final BooleanProperty LIT = RedstoneTorchBlock.LIT;
-@@ -30,13 +_,27 @@
+@@ -36,13 +_,27 @@
     }
  
     public void attack(BlockState p_55467_, Level p_55468_, BlockPos p_55469_, Player p_55470_) {
@@ -26,7 +28,7 @@
 +         interact(p_154301_, p_154299_, p_154300_, p_154302_);
 +         // CraftBukkit start
 +         if (p_154302_ instanceof Player) {
-+            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent((Player) p_154302_, org.bukkit.event.block.Action.PHYSICAL, p_154300_, null, null, null);
++            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((Player) p_154302_, org.bukkit.event.block.Action.PHYSICAL, p_154300_, null, null, null);
 +            if (!event.isCancelled()) {
 +               interact(p_154299_.getBlockState(p_154300_), p_154299_, p_154300_, p_154302_); // add entity
 +            }
@@ -41,7 +43,7 @@
        }
  
        super.stepOn(p_154299_, p_154300_, p_154301_, p_154302_);
-@@ -46,16 +_,30 @@
+@@ -52,16 +_,30 @@
        if (p_55473_.isClientSide) {
           spawnParticles(p_55473_, p_55474_);
        } else {
@@ -73,7 +75,7 @@
           p_55494_.setBlock(p_55495_, p_55493_.setValue(LIT, Boolean.valueOf(true)), 3);
        }
  
-@@ -67,6 +_,11 @@
+@@ -73,6 +_,11 @@
  
     public void randomTick(BlockState p_221918_, ServerLevel p_221919_, BlockPos p_221920_, RandomSource p_221921_) {
        if (p_221918_.getValue(LIT)) {
@@ -85,7 +87,7 @@
           p_221919_.setBlock(p_221920_, p_221918_.setValue(LIT, Boolean.valueOf(false)), 3);
        }
  
-@@ -74,11 +_,25 @@
+@@ -80,11 +_,25 @@
  
     public void spawnAfterBreak(BlockState p_221907_, ServerLevel p_221908_, BlockPos p_221909_, ItemStack p_221910_, boolean p_221911_) {
        super.spawnAfterBreak(p_221907_, p_221908_, p_221909_, p_221910_, p_221911_);

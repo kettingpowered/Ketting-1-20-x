@@ -11,12 +11,12 @@
  import javax.annotation.Nullable;
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.core.BlockPos;
-@@ -9,21 +_,33 @@
+@@ -9,21 +_,30 @@
  import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
  import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
  import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
+-import net.minecraft.server.network.ServerGamePacketListenerImpl;
 +import net.minecraft.server.MinecraftServer;
- import net.minecraft.server.network.ServerGamePacketListenerImpl;
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.InteractionResult;
  import net.minecraft.world.InteractionResultHolder;
@@ -25,7 +25,6 @@
 +import net.minecraft.world.item.DoubleHighBlockItem;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.context.UseOnContext;
-+import net.minecraft.world.item.enchantment.Enchantments;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
 -import net.minecraft.world.level.block.Block;
@@ -35,10 +34,10 @@
  import net.minecraft.world.level.block.state.BlockState;
 +import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
  import net.minecraft.world.phys.BlockHitResult;
- import net.minecraft.world.phys.Vec3;
+-import net.minecraft.world.phys.Vec3;
 +import org.bukkit.GameMode;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.Event;
 +import org.bukkit.event.block.Action;
 +import org.bukkit.event.block.BlockBreakEvent;
@@ -229,40 +228,41 @@
 +   private org.bukkit.block.Block destroyBlock$bblock;
 +   private Optional<BlockBreakEvent> destroyBlock$event;
     public boolean destroyBlock(BlockPos p_9281_) {
-       BlockState blockstate = this.level.getBlockState(p_9281_);
--      if (!this.player.getMainHandItem().getItem().canAttackBlock(blockstate, this.level, p_9281_, this.player)) {
+       BlockState blockstate1 = this.level.getBlockState(p_9281_);
+-      if (!this.player.getMainHandItem().getItem().canAttackBlock(blockstate1, this.level, p_9281_, this.player)) {
 +      // CraftBukkit start - fire BlockBreakEvent
 +      destroyBlock$bblock = CraftBlock.at(level, p_9281_);
-+      destroyBlock$event = callBukkitBlockBreakEvent(p_9281_, blockstate, destroyBlock$bblock);
++      destroyBlock$event = callBukkitBlockBreakEvent(p_9281_, blockstate1, destroyBlock$bblock);
 +
 +      if (destroyBlock$event.isEmpty()) {
 +         return false;
 +      }
 +
-+      if (false && !this.player.getMainHandItem().getItem().canAttackBlock(blockstate, this.level, p_9281_, this.player)) { // CraftBukkit - false
++      if (false && !this.player.getMainHandItem().getItem().canAttackBlock(blockstate1, this.level, p_9281_, this.player)) { // CraftBukkit - false
           return false;
        } else {
-+         blockstate = this.level.getBlockState(p_9281_); // CraftBukkit - update state from plugins
-+         if (blockstate.isAir()) return false; // CraftBukkit - A plugin set block to air without cancelling
++         blockstate1 = this.level.getBlockState(p_9281_); // CraftBukkit - update state from plugins
++         if (blockstate1.isAir()) return false; // CraftBukkit - A plugin set block to air without cancelling
           BlockEntity blockentity = this.level.getBlockEntity(p_9281_);
-          Block block = blockstate.getBlock();
+          Block block = blockstate1.getBlock();
           if (block instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks()) {
-             this.level.sendBlockUpdated(p_9281_, blockstate, blockstate, 3);
+             this.level.sendBlockUpdated(p_9281_, blockstate1, blockstate1, 3);
              return false;
 +         } else if (player.getMainHandItem().onBlockStartBreak(p_9281_, player)) {
 +            return false;
           } else if (this.player.blockActionRestricted(this.level, p_9281_, this.gameModeForPlayer)) {
              return false;
           } else {
--            block.playerWillDestroy(this.level, p_9281_, blockstate, this.player);
--            boolean flag = this.level.removeBlock(p_9281_, false);
+-            BlockState blockstate = block.playerWillDestroy(this.level, p_9281_, blockstate1, this.player);
+-            boolean flag1 = this.level.removeBlock(p_9281_, false);
+-            if (flag1) {
 +            // CraftBukkit start
 +            org.bukkit.block.BlockState state = destroyBlock$bblock.getState();
 +            level.captureDrops = new ArrayList<>();
 +            // CraftBukkit end
++            BlockState blockstate = blockstate1;
 +            boolean flag = /*this.level*/removeBlock(p_9281_, false); //Ketting
-+
-             if (flag) {
++            if (flag) {
                 block.destroy(this.level, p_9281_, blockstate);
              }
  
@@ -272,15 +272,15 @@
              } else {
                 ItemStack itemstack = this.player.getMainHandItem();
                 ItemStack itemstack1 = itemstack.copy();
--               boolean flag1 = this.player.hasCorrectToolForDrops(blockstate);
+-               boolean flag = this.player.hasCorrectToolForDrops(blockstate);
 +               boolean flag1 = blockstate.canHarvestBlock(this.level, p_9281_, this.player); // previously player.hasCorrectToolForDrops(blockstate)
 +
                 itemstack.mineBlock(this.level, blockstate, p_9281_, this.player);
--               if (flag && flag1) {
+-               if (flag1 && flag) {
 +               if (itemstack.isEmpty() && !itemstack1.isEmpty())
 +                  net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.player, itemstack1, InteractionHand.MAIN_HAND);
 +
-+               if (flag && flag1 && destroyBlock$event.get().isDropItems()) { // CraftBukkit - Check if block should drop items
++               if (flag1 && flag && destroyBlock$event.get().isDropItems()) { // CraftBukkit - Check if block should drop items
                    block.playerDestroy(this.level, this.player, p_9281_, blockstate, blockentity, itemstack1);
                 }
  
@@ -292,13 +292,13 @@
 +            }
 +            // CraftBukkit start
 +            if (destroyBlock$event.get().isDropItems()) {
-+               org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockDropItemEvent(destroyBlock$bblock, state, this.player, level.captureDrops);
++               org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockDropItemEvent(destroyBlock$bblock, state, this.player, level.captureDrops);
 +            }
 +            level.captureDrops = null;
 +
 +            // Drop event experience
 +            if (flag && !destroyBlock$event.isEmpty()) {
-+               blockstate.getBlock().popExperience(this.level, p_9281_, destroyBlock$event.get().getExpToDrop());
++               blockstate1.getBlock().popExperience(this.level, p_9281_, destroyBlock$event.get().getExpToDrop());
 +            }
 +
 +            return true;

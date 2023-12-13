@@ -19,7 +19,7 @@
           this.usePlayerItem(p_29021_, p_29022_, itemstack);
           if (!this.level().isClientSide) {
 -            if (this.random.nextInt(3) == 0) {
-+            if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29021_) && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTameEvent(this, p_29021_).isCancelled()) { // CraftBukkit - added event call and isCancelled check
++            if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29021_) && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTameEvent(this, p_29021_).isCancelled()) { // CraftBukkit - added event call and isCancelled check
                 this.setTrusting(true);
                 this.spawnTrustingParticles(true);
                 this.level().broadcastEntityEvent(this, (byte)41);

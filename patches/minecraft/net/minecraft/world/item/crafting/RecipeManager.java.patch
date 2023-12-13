@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -34,30 +_,52 @@
+@@ -21,6 +_,7 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.Util;
+ import net.minecraft.core.NonNullList;
++import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.packs.resources.ResourceManager;
+ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+@@ -31,30 +_,52 @@
  import net.minecraft.world.level.Level;
  import org.slf4j.Logger;
  
@@ -58,7 +66,7 @@
              builder.put(resourcelocation, recipeholder);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
              LOGGER.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
-@@ -65,20 +_,38 @@
+@@ -62,20 +_,38 @@
        }
  
        this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (p_44033_) -> {
@@ -100,7 +108,7 @@
     }
  
     public <C extends Container, T extends Recipe<C>> Optional<Pair<ResourceLocation, RecipeHolder<T>>> getRecipeFor(RecipeType<T> p_220249_, C p_220250_, Level p_220251_, @Nullable ResourceLocation p_220252_) {
-@@ -110,7 +_,7 @@
+@@ -107,7 +_,7 @@
     }
  
     private <C extends Container, T extends Recipe<C>> Map<ResourceLocation, RecipeHolder<T>> byType(RecipeType<T> p_44055_) {
@@ -109,7 +117,7 @@
     }
  
     public <C extends Container, T extends Recipe<C>> NonNullList<ItemStack> getRemainingItemsFor(RecipeType<T> p_44070_, C p_44071_, Level p_44072_) {
-@@ -155,11 +_,11 @@
+@@ -148,11 +_,11 @@
  
     public void replaceRecipes(Iterable<RecipeHolder<?>> p_44025_) {
        this.hasErrors = false;
@@ -123,7 +131,7 @@
           });
           ResourceLocation resourcelocation = p_296915_.id();
           RecipeHolder<?> recipeholder = map1.put(resourcelocation, p_296915_);
-@@ -169,8 +_,28 @@
+@@ -162,8 +_,28 @@
           }
        });
        this.recipes = ImmutableMap.copyOf(map);

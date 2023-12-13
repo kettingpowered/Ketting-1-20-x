@@ -1,32 +1,19 @@
 --- a/net/minecraft/world/level/block/entity/SignBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/SignBlockEntity.java
-@@ -3,6 +_,7 @@
- import com.mojang.brigadier.exceptions.CommandSyntaxException;
- import com.mojang.logging.LogUtils;
- import java.util.List;
-+import java.util.Objects;
- import java.util.UUID;
- import java.util.function.UnaryOperator;
- import javax.annotation.Nullable;
-@@ -17,6 +_,7 @@
- import net.minecraft.network.chat.Style;
- import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
- import net.minecraft.server.level.ServerLevel;
-+import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.server.network.FilteredText;
- import net.minecraft.util.Mth;
- import net.minecraft.world.entity.Entity;
-@@ -27,14 +_,18 @@
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.phys.Vec2;
+@@ -31,12 +_,21 @@
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.block.sign.Side;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
-+import org.bukkit.event.block.SignChangeEvent;
  import org.slf4j.Logger;
  
 -public class SignBlockEntity extends BlockEntity {
++//Ketting Start
++import java.util.Objects;
++import net.minecraft.server.level.ServerPlayer;
++import org.bukkit.block.sign.Side;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.util.CraftChatMessage;
++import org.bukkit.event.block.SignChangeEvent;
++//Ketting end
++
 +public class SignBlockEntity extends BlockEntity implements CommandSource { // CraftBukkit - implements
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int MAX_TEXT_LINE_WIDTH = 90;
@@ -37,7 +24,7 @@
     private SignText frontText = this.createDefaultSignText();
     private SignText backText = this.createDefaultSignText();
     private boolean isWaxed;
-@@ -142,12 +_,13 @@
+@@ -140,12 +_,13 @@
     public void updateSignText(Player p_278048_, boolean p_278103_, List<FilteredText> p_277990_) {
        if (!this.isWaxed() && p_278048_.getUUID().equals(this.getPlayerWhoMayEdit()) && this.level != null) {
           this.updateText((p_277776_) -> {
@@ -52,7 +39,7 @@
        }
     }
  
-@@ -156,7 +_,8 @@
+@@ -154,7 +_,8 @@
        return this.setText(p_277877_.apply(signtext), p_277426_);
     }
  
@@ -62,7 +49,7 @@
        for(int i = 0; i < p_277744_.size(); ++i) {
           FilteredText filteredtext = p_277744_.get(i);
           Style style = p_277359_.getMessage(i, p_277396_.isTextFilteringEnabled()).getStyle();
-@@ -167,6 +_,29 @@
+@@ -165,6 +_,29 @@
           }
        }
  
@@ -81,7 +68,7 @@
 +         return originalText;
 +      }
 +
-+      Component[] components = org.bukkit.craftbukkit.v1_20_R2.block.CraftSign.sanitizeLines(event.getLines());
++      Component[] components = org.bukkit.craftbukkit.block.CraftSign.sanitizeLines(event.getLines());
 +      for (int i = 0; i < components.length; i++) {
 +         if (!Objects.equals(lines[i], event.getLine(i))) {
 +            p_277359_ = p_277359_.setMessage(i, components[i]);
@@ -92,7 +79,7 @@
        return p_277359_;
     }
  
-@@ -213,10 +_,37 @@
+@@ -211,10 +_,37 @@
        return flag;
     }
  
@@ -106,7 +93,7 @@
 +
 +   @Override
 +   public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return wrapper.getEntity() != null ? wrapper.getEntity().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_20_R2.command.CraftBlockCommandSender(wrapper, this);
++      return wrapper.getEntity() != null ? wrapper.getEntity().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.command.CraftBlockCommandSender(wrapper, this);
 +   }
 +
 +   @Override
@@ -134,7 +121,7 @@
     }
  
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
-@@ -242,7 +_,7 @@
+@@ -240,7 +_,7 @@
  
     private void markUpdated() {
        this.setChanged();
@@ -143,14 +130,17 @@
     }
  
     public boolean isWaxed() {
-@@ -277,5 +_,10 @@
-          p_277656_.setAllowedPlayerEditor((UUID)null);
+@@ -276,6 +_,13 @@
        }
  
-+   }
+    }
 +
++   // Someone start - who added this? - Ketting
 +   @Override
 +   public net.minecraft.world.phys.AABB getRenderBoundingBox() {
 +      return new net.minecraft.world.phys.AABB(this.getBlockPos(), this.getBlockPos().offset(1, 1, 1));
-    }
- }
++   }
++   // Someone end - who added this? - Ketting
+ 
+    public SoundEvent getSignInteractionFailedSoundEvent() {
+       return SoundEvents.WAXED_SIGN_INTERACT_FAIL;

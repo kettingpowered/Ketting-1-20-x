@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SculkVeinBlock.java
 +++ b/net/minecraft/world/level/block/SculkVeinBlock.java
-@@ -84,14 +_,14 @@
+@@ -90,14 +_,14 @@
     }
  
     public int attemptUseCharge(SculkSpreader.ChargeCursor p_222369_, LevelAccessor p_222370_, BlockPos p_222371_, RandomSource p_222372_, SculkSpreader p_222373_, boolean p_222374_) {
@@ -17,12 +17,12 @@
        BlockState blockstate = p_222377_.getBlockState(p_222378_);
        TagKey<Block> tagkey = p_222376_.replaceableBlocks();
  
-@@ -102,6 +_,11 @@
+@@ -108,6 +_,11 @@
              if (blockstate1.is(tagkey)) {
                 BlockState blockstate2 = Blocks.SCULK.defaultBlockState();
                 p_222377_.setBlock(blockpos, blockstate2, 3);
 +               // CraftBukkit start - Call BlockSpreadEvent
-+               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_222377_, sourceBlock, blockpos, blockstate2, 3)) {
++               if (!org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_222377_, sourceBlock, blockpos, blockstate2, 3)) {
 +                  return false;
 +               }
 +               // CraftBukkit end

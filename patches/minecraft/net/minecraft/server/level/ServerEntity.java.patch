@@ -37,8 +37,8 @@
        if (!list.equals(this.lastPassengers)) {
 -         this.broadcast.accept(new ClientboundSetPassengersPacket(this.entity));
 +         this.broadcastAndSend(new ClientboundSetPassengersPacket(this.entity)); // CraftBukkit
-          removedPassengers(list, this.lastPassengers).forEach((p_296578_) -> {
-             if (p_296578_ instanceof ServerPlayer serverplayer1) {
+          removedPassengers(list, this.lastPassengers).forEach((p_308940_) -> {
+             if (p_308940_ instanceof ServerPlayer serverplayer1) {
                 serverplayer1.connection.teleport(serverplayer1.getX(), serverplayer1.getY(), serverplayer1.getZ(), serverplayer1.getYRot(), serverplayer1.getXRot());
 @@ -93,15 +_,20 @@
  

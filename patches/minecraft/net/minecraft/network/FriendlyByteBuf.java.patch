@@ -1,19 +1,17 @@
 --- a/net/minecraft/network/FriendlyByteBuf.java
 +++ b/net/minecraft/network/FriendlyByteBuf.java
-@@ -75,10 +_,11 @@
- import net.minecraft.world.level.Level;
- import net.minecraft.world.phys.BlockHitResult;
+@@ -79,8 +_,9 @@
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
  import org.joml.Quaternionf;
  import org.joml.Vector3f;
++import org.bukkit.craftbukkit.inventory.CraftItemStack; //Ketting
  
 -public class FriendlyByteBuf extends ByteBuf {
 +public class FriendlyByteBuf extends ByteBuf implements net.minecraftforge.common.extensions.IForgeFriendlyByteBuf {
     public static final int DEFAULT_NBT_QUOTA = 2097152;
     private final ByteBuf source;
     public static final short MAX_STRING_LENGTH = Short.MAX_VALUE;
-@@ -551,7 +_,7 @@
+@@ -552,7 +_,7 @@
        try {
           NbtIo.writeAnyTag(p_300580_, new ByteBufOutputStream(this));
           return this;
@@ -22,7 +20,7 @@
           throw new EncoderException(ioexception);
        }
     }
-@@ -577,7 +_,16 @@
+@@ -578,7 +_,16 @@
     }
  
     public FriendlyByteBuf writeItem(ItemStack p_130056_) {
@@ -40,7 +38,7 @@
           this.writeBoolean(false);
        } else {
           this.writeBoolean(true);
-@@ -585,8 +_,12 @@
+@@ -586,8 +_,12 @@
           this.writeId(BuiltInRegistries.ITEM, item);
           this.writeByte(p_130056_.getCount());
           CompoundTag compoundtag = null;
@@ -55,7 +53,7 @@
           }
  
           this.writeNbt(compoundtag);
-@@ -602,7 +_,12 @@
+@@ -603,7 +_,12 @@
           Item item = this.readById(BuiltInRegistries.ITEM);
           int i = this.readByte();
           ItemStack itemstack = new ItemStack(item, i);

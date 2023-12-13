@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-@@ -1,6 +_,7 @@
- package net.minecraft.world.level.block.entity;
- 
- import java.util.List;
-+import java.util.Optional;
- import java.util.function.BooleanSupplier;
- import java.util.stream.Collectors;
- import java.util.stream.IntStream;
 @@ -10,10 +_,7 @@
  import net.minecraft.core.NonNullList;
  import net.minecraft.nbt.CompoundTag;
@@ -25,10 +17,10 @@
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.inventory.HopperInventorySearchEvent;
 +import org.bukkit.event.inventory.InventoryMoveItemEvent;
@@ -153,7 +145,7 @@
 +       org.bukkit.inventory.Inventory destinationInventory;
 +       // Have to special case large chests as they work oddly
 +       if (iinventory1 instanceof ChestBlock.DoubleInventory) {
-+           destinationInventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryDoubleChest((ChestBlock.DoubleInventory) iinventory1);
++           destinationInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((ChestBlock.DoubleInventory) iinventory1);
 +       } else if (iinventory1.getOwner() != null) {
 +           destinationInventory = iinventory1.getOwner().getInventory();
 +       } else {
@@ -208,7 +200,7 @@
 +         org.bukkit.inventory.Inventory sourceInventory;
 +         // Have to special case large chests as they work oddly
 +         if (p_59356_ instanceof ChestBlock.DoubleInventory) {
-+             sourceInventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryDoubleChest((ChestBlock.DoubleInventory) p_59356_);
++             sourceInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((ChestBlock.DoubleInventory) p_59356_);
 +         } else if (p_59356_.getOwner() != null) {
 +             sourceInventory = p_59356_.getOwner().getInventory();
 +         } else {

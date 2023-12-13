@@ -10,8 +10,8 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.util.CraftLocation;
 +import org.bukkit.event.player.PlayerTeleportEvent;
  import org.slf4j.Logger;
  
@@ -48,7 +48,7 @@
 +
 +            // CraftBukkit start - Fire PlayerTeleportEvent
 +            if (entity instanceof ServerPlayer) {
-+               org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer player = (CraftPlayer) entity.getBukkitEntity();
++               org.bukkit.craftbukkit.entity.CraftPlayer player = (CraftPlayer) entity.getBukkitEntity();
 +               org.bukkit.Location location = CraftLocation.toBukkit(blockpos1, p_155829_.getWorld()).add(0.5D, 0.5D, 0.5D);
 +               location.setPitch(player.getLocation().getPitch());
 +               location.setYaw(player.getLocation().getYaw());

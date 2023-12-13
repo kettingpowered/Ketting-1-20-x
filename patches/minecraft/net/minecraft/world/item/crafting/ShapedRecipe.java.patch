@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipe.java
-@@ -17,7 +_,28 @@
+@@ -10,7 +_,28 @@
+ import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
- import org.apache.commons.lang3.NotImplementedException;
  
 -public class ShapedRecipe implements CraftingRecipe {
 +// CraftBukkit start
 +import org.bukkit.NamespacedKey;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftShapedRecipe;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.inventory.CraftShapedRecipe;
 +import org.bukkit.inventory.RecipeChoice;
 +// CraftBukkit end
 +
@@ -27,11 +27,11 @@
 +      if (MAX_HEIGHT < height) MAX_HEIGHT = height;
 +   }
 +
-    final int width;
-    final int height;
-    final NonNullList<Ingredient> recipeItems;
-@@ -40,6 +_,68 @@
-       this(p_250221_, p_250716_, p_251480_, p_251980_, p_252150_, p_248581_, true);
+    final ShapedRecipePattern pattern;
+    final ItemStack result;
+    final String group;
+@@ -29,6 +_,68 @@
+       this(p_272759_, p_273506_, p_310709_, p_272852_, true);
     }
  
 +   // CraftBukkit start
@@ -42,9 +42,9 @@
 +      recipe.setGroup(this.group);
 +      recipe.setCategory(CraftRecipe.getCategory(this.category()));
 +
-+      switch (this.height) {
++      switch (this.pattern.height()) {
 +         case 1:
-+            switch (this.width) {
++            switch (this.pattern.width()) {
 +               case 1:
 +                  recipe.shape("a");
 +                  break;
@@ -57,7 +57,7 @@
 +            }
 +            break;
 +         case 2:
-+            switch (this.width) {
++            switch (this.pattern.width()) {
 +               case 1:
 +                  recipe.shape("a","b");
 +                  break;
@@ -70,7 +70,7 @@
 +            }
 +            break;
 +         case 3:
-+            switch (this.width) {
++            switch (this.pattern.width()) {
 +               case 1:
 +                  recipe.shape("a","b","c");
 +                  break;
@@ -84,7 +84,7 @@
 +            break;
 +      }
 +      char c = 'a';
-+      for (Ingredient list : this.recipeItems) {
++      for (Ingredient list : this.pattern.ingredients()) {
 +         RecipeChoice choice = CraftRecipe.toBukkit(list);
 +         if (choice != null) {
 +            recipe.setIngredient(c, choice);
@@ -99,8 +99,8 @@
     public RecipeSerializer<?> getSerializer() {
        return RecipeSerializer.SHAPED_RECIPE;
     }
-@@ -115,10 +_,20 @@
-       return this.width;
+@@ -37,10 +_,20 @@
+       return this.group;
     }
  
 +   @Override
@@ -108,8 +108,8 @@
 +      return getWidth();
 +   }
 +
-    public int getHeight() {
-       return this.height;
+    public CraftingBookCategory category() {
+       return this.category;
     }
  
 +   @Override
@@ -117,10 +117,10 @@
 +      return getHeight();
 +   }
 +
-    @VisibleForTesting
-    static String[] shrink(List<String> p_299210_) {
-       int i = Integer.MAX_VALUE;
-@@ -160,7 +_,7 @@
+    public ItemStack getResultItem(RegistryAccess p_266881_) {
+       return this.result;
+    }
+@@ -78,7 +_,7 @@
        return nonnulllist.isEmpty() || nonnulllist.stream().filter((p_151277_) -> {
           return !p_151277_.isEmpty();
        }).anyMatch((p_151273_) -> {
@@ -128,28 +128,4 @@
 +         return net.minecraftforge.common.ForgeHooks.hasNoElements(p_151273_);
        });
     }
- 
-@@ -182,9 +_,9 @@
- 
-    public static class Serializer implements RecipeSerializer<ShapedRecipe> {
-       static final Codec<List<String>> PATTERN_CODEC = Codec.STRING.listOf().flatXmap((p_297814_) -> {
--         if (p_297814_.size() > 3) {
-+         if (p_297814_.size() > MAX_HEIGHT) {
-             return DataResult.error(() -> {
--               return "Invalid pattern: too many rows, 3 is maximum";
-+               return "Invalid pattern: too many rows, " + MAX_HEIGHT + " is maximum";
-             });
-          } else if (p_297814_.isEmpty()) {
-             return DataResult.error(() -> {
-@@ -194,9 +_,9 @@
-             int i = p_297814_.get(0).length();
- 
-             for(String s : p_297814_) {
--               if (s.length() > 3) {
-+               if (s.length() > MAX_WIDTH) {
-                   return DataResult.error(() -> {
--                     return "Invalid pattern: too many columns, 3 is maximum";
-+                     return "Invalid pattern: too many columns, " + MAX_WIDTH  + " is maximum";
-                   });
-                }
  

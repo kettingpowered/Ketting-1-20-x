@@ -1,11 +1,17 @@
 --- a/net/minecraft/world/entity/decoration/ArmorStand.java
 +++ b/net/minecraft/world/entity/decoration/ArmorStand.java
-@@ -41,6 +_,9 @@
+@@ -35,12 +_,14 @@
+ import net.minecraft.world.level.Explosion;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LightLayer;
+-import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.material.PushReaction;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.CraftEquipmentSlot;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
 +import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
  
  public class ArmorStand extends LivingEntity {
@@ -52,14 +58,6 @@
     private boolean hasPhysics() {
        return !this.isMarker() && !this.isNoGravity();
     }
-@@ -150,7 +_,6 @@
-          case ARMOR:
-             this.onEquipItem(p_31584_, this.armorItems.set(p_31584_.getIndex(), p_31585_), p_31585_);
-       }
--
-    }
- 
-    public boolean canTakeItem(ItemStack p_31638_) {
 @@ -351,32 +_,60 @@
           return false;
        } else if (itemstack.isEmpty() && (this.disabledSlots & 1 << p_31590_.getFilterFlag() + 16) != 0) {
@@ -118,7 +116,7 @@
        if (!this.level().isClientSide && !this.isRemoved()) {
           if (p_31579_.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31579_, p_31580_)) {
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31579_, p_31580_)) {
 +               return false;
 +            }
 +            // CraftBukkit end
@@ -127,7 +125,7 @@
 -         } else if (!this.isInvulnerableTo(p_31579_) && !this.invisible && !this.isMarker()) {
 +         } else if (!this.isInvulnerableTo(p_31579_) && (true || !this.invisible) && !this.isMarker()) { // CraftBukkit
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31579_, p_31580_, true, this.invisible)) {
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31579_, p_31580_, true, this.invisible)) {
 +               return false;
 +            }
 +            // CraftBukkit end
@@ -137,7 +135,7 @@
                 return false;
              } else if (p_31579_.is(DamageTypeTags.IGNITES_ARMOR_STANDS)) {
                 if (this.isOnFire()) {
-@@ -425,7 +_,7 @@
+@@ -417,7 +_,7 @@
                       } else {
                          this.brokenByPlayer(p_31579_);
                          this.showBreakingParticles();
@@ -146,12 +144,12 @@
                       }
  
                       return true;
-@@ -488,18 +_,18 @@
+@@ -480,18 +_,18 @@
           itemstack.setHoverName(this.getCustomName());
        }
  
 -      Block.popResource(this.level(), this.blockPosition(), itemstack);
-+      drops.add(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
++      drops.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
        this.brokenByAnything(p_31647_);
     }
  
@@ -164,16 +162,16 @@
           ItemStack itemstack = this.handItems.get(i);
           if (!itemstack.isEmpty()) {
 -            Block.popResource(this.level(), this.blockPosition().above(), itemstack);
-+            drops.add(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
++            drops.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
              this.handItems.set(i, ItemStack.EMPTY);
           }
        }
-@@ -507,11 +_,11 @@
+@@ -499,11 +_,11 @@
        for(int j = 0; j < this.armorItems.size(); ++j) {
           ItemStack itemstack1 = this.armorItems.get(j);
           if (!itemstack1.isEmpty()) {
 -            Block.popResource(this.level(), this.blockPosition().above(), itemstack1);
-+            drops.add(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asBukkitCopy(itemstack1)); // CraftBukkit - add to drops
++            drops.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(itemstack1)); // CraftBukkit - add to drops
              this.armorItems.set(j, ItemStack.EMPTY);
           }
        }
@@ -182,7 +180,7 @@
     }
  
     private void playBrokenSound() {
-@@ -591,7 +_,15 @@
+@@ -583,7 +_,15 @@
        return this.isSmall();
     }
  
@@ -194,11 +192,11 @@
 +   // CraftBukkit end
 +
     public void kill() {
-+      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityDeathEvent(this, drops); // CraftBukkit - call event
++      org.bukkit.craftbukkit.event.CraftEventFactory.callEntityDeathEvent(this, drops); // CraftBukkit - call event
        this.remove(Entity.RemovalReason.KILLED);
        this.gameEvent(GameEvent.ENTITY_DIE);
     }
-@@ -608,7 +_,7 @@
+@@ -600,7 +_,7 @@
        return this.isMarker();
     }
  
@@ -207,7 +205,7 @@
        this.entityData.set(DATA_CLIENT_FLAGS, this.setBit(this.entityData.get(DATA_CLIENT_FLAGS), 1, p_31604_));
     }
  
-@@ -632,7 +_,7 @@
+@@ -624,7 +_,7 @@
        return (this.entityData.get(DATA_CLIENT_FLAGS) & 8) != 0;
     }
  

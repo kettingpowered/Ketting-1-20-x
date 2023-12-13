@@ -1,77 +1,72 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -18,14 +_,7 @@
- import java.io.Writer;
- import java.nio.file.Files;
+@@ -20,6 +_,8 @@
  import java.nio.file.Path;
--import java.util.ArrayList;
--import java.util.Comparator;
--import java.util.List;
--import java.util.Locale;
--import java.util.Objects;
--import java.util.Optional;
--import java.util.Set;
--import java.util.UUID;
-+import java.util.*;
- import java.util.concurrent.Executor;
- import java.util.function.BooleanSupplier;
- import java.util.function.Function;
-@@ -114,6 +_,7 @@
- import net.minecraft.world.level.StructureManager;
- import net.minecraft.world.level.WorldGenLevel;
- import net.minecraft.world.level.biome.Biome;
-+import net.minecraft.world.level.biome.BiomeSource;
- import net.minecraft.world.level.block.Block;
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.block.SnowLayerBlock;
-@@ -136,7 +_,9 @@
- import net.minecraft.world.level.gameevent.DynamicGameEventListener;
- import net.minecraft.world.level.gameevent.GameEvent;
- import net.minecraft.world.level.gameevent.GameEventDispatcher;
-+import net.minecraft.world.level.levelgen.FlatLevelSource;
- import net.minecraft.world.level.levelgen.Heightmap;
-+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
- import net.minecraft.world.level.levelgen.structure.BoundingBox;
- import net.minecraft.world.level.levelgen.structure.Structure;
- import net.minecraft.world.level.levelgen.structure.StructureCheck;
-@@ -146,15 +_,21 @@
+ import java.util.ArrayList;
+ import java.util.Comparator;
++import java.util.ConcurrentModificationException;
++import java.util.Iterator;
+ import java.util.List;
+ import java.util.Locale;
+ import java.util.Objects;
+@@ -52,7 +_,6 @@
+ import net.minecraft.network.protocol.game.ClientboundDamageEventPacket;
+ import net.minecraft.network.protocol.game.ClientboundEntityEventPacket;
+ import net.minecraft.network.protocol.game.ClientboundExplodePacket;
+-import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+ import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
+ import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
+ import net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket;
+@@ -96,7 +_,6 @@
+ import net.minecraft.world.entity.animal.Animal;
+ import net.minecraft.world.entity.animal.WaterAnimal;
+ import net.minecraft.world.entity.animal.horse.SkeletonHorse;
+-import net.minecraft.world.entity.boss.EnderDragonPart;
+ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+ import net.minecraft.world.entity.npc.Npc;
+ import net.minecraft.world.entity.player.Player;
+@@ -148,8 +_,10 @@
  import net.minecraft.world.level.portal.PortalForcer;
  import net.minecraft.world.level.saveddata.maps.MapIndex;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
--import net.minecraft.world.level.storage.DimensionDataStorage;
--import net.minecraft.world.level.storage.LevelStorageSource;
--import net.minecraft.world.level.storage.ServerLevelData;
-+import net.minecraft.world.level.storage.*;
++import net.minecraft.world.level.storage.DerivedLevelData;
+ import net.minecraft.world.level.storage.DimensionDataStorage;
+ import net.minecraft.world.level.storage.LevelStorageSource;
++import net.minecraft.world.level.storage.PrimaryLevelData;
+ import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
- import net.minecraft.world.phys.shapes.BooleanOp;
- import net.minecraft.world.phys.shapes.Shapes;
- import net.minecraft.world.phys.shapes.VoxelShape;
+@@ -159,6 +_,20 @@
  import net.minecraft.world.ticks.LevelTicks;
+ import org.slf4j.Logger;
+ 
++//Ketting start
++import net.minecraft.world.level.biome.BiomeSource;
++import net.minecraft.world.level.levelgen.FlatLevelSource;
++import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 +import org.bukkit.WeatherType;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R2.generator.CustomWorldChunkManager;
-+import org.bukkit.craftbukkit.v1_20_R2.util.WorldUUID;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.generator.CustomWorldChunkManager;
++import org.bukkit.craftbukkit.util.WorldUUID;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.weather.LightningStrikeEvent;
 +import org.bukkit.event.world.TimeSkipEvent;
 +import org.kettingpowered.ketting.utils.DelegateWorldInfo;
- import org.slf4j.Logger;
- 
++//Ketting end
++
  public class ServerLevel extends Level implements WorldGenLevel {
-@@ -169,9 +_,9 @@
+    public static final BlockPos END_SPAWN_POINT = new BlockPos(100, 50, 0);
+    public static final IntProvider RAIN_DELAY = UniformInt.of(12000, 180000);
+@@ -171,7 +_,7 @@
     final List<ServerPlayer> players = Lists.newArrayList();
     private final ServerChunkCache chunkSource;
     private final MinecraftServer server;
--   private final ServerLevelData serverLevelData;
+-   public final ServerLevelData serverLevelData;
 +   public final PrimaryLevelData serverLevelData; // CraftBukkit - type
     final EntityTickList entityTickList = new EntityTickList();
--   private final PersistentEntitySectionManager<Entity> entityManager;
-+   public final PersistentEntitySectionManager<Entity> entityManager;
+    public final PersistentEntitySectionManager<Entity> entityManager;
     private final GameEventDispatcher gameEventDispatcher;
-    public boolean noSave;
-    private final SleepStatus sleepStatus;
-@@ -188,24 +_,121 @@
+@@ -190,24 +_,120 @@
     private final List<CustomSpawner> customSpawners;
     @Nullable
     private EndDragonFight dragonFight;
@@ -125,7 +120,7 @@
 +      }
 +
 +      if (gen != null) {
-+         chunkgenerator = new org.bukkit.craftbukkit.v1_20_R2.generator.CustomChunkGenerator(this, chunkgenerator, gen);
++         chunkgenerator = new org.bukkit.craftbukkit.generator.CustomChunkGenerator(this, chunkgenerator, gen);
 +      }
 +      // CraftBukkit end
 +      boolean flag = p_214999_.forceSynchronousWrites();
@@ -190,14 +185,13 @@
        boolean flag = p_214999_.forceSynchronousWrites();
        DataFixer datafixer = p_214999_.getFixerUpper();
        EntityPersistentStorage<Entity> entitypersistentstorage = new EntityStorage(this, p_215001_.getDimensionPath(p_215003_).resolve("entities"), datafixer, flag, p_214999_);
-+
        this.entityManager = new PersistentEntitySectionManager<>(Entity.class, new ServerLevel.EntityCallbacks(), entitypersistentstorage);
 -      this.chunkSource = new ServerChunkCache(this, p_215001_, datafixer, p_214999_.getStructureManager(), p_215000_, chunkgenerator, p_214999_.getPlayerList().getViewDistance(), p_214999_.getPlayerList().getSimulationDistance(), flag, p_215005_, this.entityManager::updateChunkStatus, () -> {
 +      this.chunkSource = new ServerChunkCache(this, p_215001_, datafixer, p_214999_.getStructureManager(), p_215000_, chunkgenerator, this.spigotConfig.viewDistance, this.spigotConfig.simulationDistance, flag, p_215005_, this.entityManager::updateChunkStatus, () -> { // Spigot
           return p_214999_.overworld().getDataStorage();
        });
        this.chunkSource.getGeneratorState().ensureStructuresGenerated();
-@@ -220,9 +_,9 @@
+@@ -222,9 +_,9 @@
  
        long i = p_214999_.getWorldData().worldGenOptions().seed();
        this.structureCheck = new StructureCheck(this.chunkSource.chunkScanner(), this.registryAccess(), p_214999_.getStructureManager(), p_215003_, chunkgenerator, this.chunkSource.randomState(), this, chunkgenerator.getBiomeSource(), i, datafixer);
@@ -209,7 +203,7 @@
        } else {
           this.dragonFight = null;
        }
-@@ -232,6 +_,7 @@
+@@ -234,6 +_,7 @@
        this.randomSequences = Objects.requireNonNullElseGet(p_288977_, () -> {
           return this.getDataStorage().computeIfAbsent(RandomSequences.factory(i), "random_sequences");
        });
@@ -217,9 +211,9 @@
     }
  
     /** @deprecated */
-@@ -265,13 +_,23 @@
-       profilerfiller.popPush("weather");
-       this.advanceWeatherCycle();
+@@ -272,13 +_,23 @@
+       }
+ 
        int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
 +      long j;
 +
@@ -244,40 +238,43 @@
           if (this.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) && this.isRaining()) {
              this.resetWeatherCycle();
           }
-@@ -280,6 +_,7 @@
-       this.updateSkyBrightness();
-       this.tickTime();
+@@ -290,6 +_,7 @@
+       }
+ 
        profilerfiller.popPush("tickPending");
 +      timings.doTickPending.startTiming(); // Spigot
-       if (!this.isDebug()) {
+       if (!this.isDebug() && flag) {
           long k = this.getGameTime();
           profilerfiller.push("blockTicks");
-@@ -288,31 +_,37 @@
+@@ -298,6 +_,7 @@
           this.fluidTicks.tick(k, 65536, this::tickFluid);
           profilerfiller.pop();
        }
 +      timings.doTickPending.stopTiming(); // Spigot
  
        profilerfiller.popPush("raid");
-       this.raids.tick();
-       profilerfiller.popPush("chunkSource");
+       if (flag) {
+@@ -308,27 +_,32 @@
        this.getChunkSource().tick(p_8794_, true);
        profilerfiller.popPush("blockEvents");
-+      timings.doSounds.startTiming(); // Spigot
-       this.runBlockEvents();
-+      timings.doSounds.stopTiming(); // Spigot
+       if (flag) {
++         timings.doSounds.startTiming(); // Spigot
+          this.runBlockEvents();
++         timings.doSounds.stopTiming(); // Spigot
+       }
+ 
        this.handlingTick = false;
        profilerfiller.pop();
--      boolean flag = !this.players.isEmpty() || !this.getForcedChunks().isEmpty();
-+      boolean flag = true || !this.players.isEmpty() || net.minecraftforge.common.world.ForgeChunkManager.hasForcedChunks(this); //Forge: Replace vanilla's has forced chunk check with forge's that checks both the vanilla and forge added ones // CraftBukkit - this prevents entity cleanup, other issues on servers with no players
-       if (flag) {
+-      boolean flag1 = !this.players.isEmpty() || !this.getForcedChunks().isEmpty();
++      boolean flag1 = true || !this.players.isEmpty() || net.minecraftforge.common.world.ForgeChunkManager.hasForcedChunks(this); //Forge: Replace vanilla's has forced chunk check with forge's that checks both the vanilla and forge added ones // CraftBukkit - this prevents entity cleanup, other issues on servers with no players
+       if (flag1) {
           this.resetEmptyTime();
        }
  
-       if (flag || this.emptyTime++ < 300) {
+       if (flag1 || this.emptyTime++ < 300) {
           profilerfiller.push("entities");
 +         timings.tickEntities.startTiming(); // Spigot
-          if (this.dragonFight != null) {
+          if (this.dragonFight != null && flag) {
              profilerfiller.push("dragonFight");
              this.dragonFight.tick();
              profilerfiller.pop();
@@ -285,23 +282,22 @@
  
 +         org.spigotmc.ActivationRange.activateEntities(this); // Spigot
 +         timings.entityTick.startTiming(); // Spigot
-          this.entityTickList.forEach((p_184065_) -> {
-             if (!p_184065_.isRemoved()) {
--               if (this.shouldDiscardEntity(p_184065_)) {
-+               if (false && this.shouldDiscardEntity(p_184065_)) { // CraftBukkit - We prevent spawning in general, so this butchering is not needed
-                   p_184065_.discard();
-                } else {
+          this.entityTickList.forEach((p_308944_) -> {
+             if (!p_308944_.isRemoved()) {
+-               if (this.shouldDiscardEntity(p_308944_)) {
++               if (false && this.shouldDiscardEntity(p_308944_)) { // CraftBukkit - We prevent spawning in general, so this butchering is not needed
+                   p_308944_.discard();
+                } else if (!tickratemanager.isEntityFrozen(p_308944_)) {
                    profilerfiller.push("checkDespawn");
-@@ -329,12 +_,16 @@
+@@ -344,6 +_,7 @@
+                         p_308944_.stopRiding();
                       }
  
++                     if (p_308944_.isRemoved() || p_308944_ instanceof net.minecraftforge.entity.PartEntity) return;
                       profilerfiller.push("tick");
--                     this.guardEntityTick(this::tickNonPassenger, p_184065_);
-+                     if (!p_184065_.isRemoved() && !(p_184065_ instanceof net.minecraftforge.entity.PartEntity)) {
-+                        this.guardEntityTick(this::tickNonPassenger, p_184065_);
-+                     }
+                      this.guardEntityTick(this::tickNonPassenger, p_308944_);
                       profilerfiller.pop();
-                   }
+@@ -351,6 +_,8 @@
                 }
              }
           });
@@ -310,7 +306,7 @@
           profilerfiller.pop();
           this.tickBlockEntities();
        }
-@@ -393,7 +_,7 @@
+@@ -409,7 +_,7 @@
        int j = chunkpos.getMinBlockZ();
        ProfilerFiller profilerfiller = this.getProfiler();
        profilerfiller.push("thunder");
@@ -319,7 +315,7 @@
           BlockPos blockpos = this.findLightningTargetAround(this.getBlockRandomPos(i, 0, j, 15));
           if (this.isRainingAt(blockpos)) {
              DifficultyInstance difficultyinstance = this.getCurrentDifficultyAt(blockpos);
-@@ -404,7 +_,7 @@
+@@ -420,7 +_,7 @@
                    skeletonhorse.setTrap(true);
                    skeletonhorse.setAge(0);
                    skeletonhorse.setPos((double)blockpos.getX(), (double)blockpos.getY(), (double)blockpos.getZ());
@@ -328,7 +324,7 @@
                 }
              }
  
-@@ -412,7 +_,7 @@
+@@ -428,7 +_,7 @@
              if (lightningbolt != null) {
                 lightningbolt.moveTo(Vec3.atBottomCenterOf(blockpos));
                 lightningbolt.setVisualOnly(flag1);
@@ -337,30 +333,30 @@
              }
           }
        }
-@@ -461,8 +_,9 @@
+@@ -478,8 +_,9 @@
        BlockPos blockpos = this.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, p_300602_);
        BlockPos blockpos1 = blockpos.below();
        Biome biome = this.getBiome(blockpos).value();
 +      if (this.isAreaLoaded(blockpos1, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
        if (biome.shouldFreeze(this, blockpos1)) {
 -         this.setBlockAndUpdate(blockpos1, Blocks.ICE.defaultBlockState());
-+         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.ICE.defaultBlockState(), null); // CraftBukkit
++         org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.ICE.defaultBlockState(), null); // CraftBukkit
        }
  
-       if (p_298297_) {
-@@ -475,9 +_,10 @@
+       if (this.isRaining()) {
+@@ -492,9 +_,10 @@
                    BlockState blockstate1 = blockstate.setValue(SnowLayerBlock.LAYERS, Integer.valueOf(j + 1));
                    Block.pushEntitiesUp(blockstate, blockstate1, this, blockpos);
                    this.setBlockAndUpdate(blockpos, blockstate1);
-+                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos, blockstate1, null); // CraftBukkit
++                  org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(this, blockpos, blockstate1, null); // CraftBukkit
                 }
              } else {
 -               this.setBlockAndUpdate(blockpos, Blocks.SNOW.defaultBlockState());
-+               org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos, Blocks.SNOW.defaultBlockState(), null); // CraftBukkit
++               org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(this, blockpos, Blocks.SNOW.defaultBlockState(), null); // CraftBukkit
              }
           }
  
-@@ -625,6 +_,7 @@
+@@ -642,6 +_,7 @@
           this.rainLevel = Mth.clamp(this.rainLevel, 0.0F, 1.0F);
        }
  
@@ -368,7 +364,7 @@
        if (this.oRainLevel != this.rainLevel) {
           this.server.getPlayerList().broadcastAll(new ClientboundGameEventPacket(ClientboundGameEventPacket.RAIN_LEVEL_CHANGE, this.rainLevel), this.dimension());
        }
-@@ -633,24 +_,60 @@
+@@ -650,25 +_,61 @@
           this.server.getPlayerList().broadcastAll(new ClientboundGameEventPacket(ClientboundGameEventPacket.THUNDER_LEVEL_CHANGE, this.thunderLevel), this.dimension());
        }
  
@@ -416,7 +412,8 @@
  
     }
  
-    private void resetWeatherCycle() {
+    @VisibleForTesting
+    public void resetWeatherCycle() {
 -      this.serverLevelData.setRainTime(0);
 +      // CraftBukkit start
        this.serverLevelData.setRaining(false);
@@ -438,7 +435,7 @@
     }
  
     public void resetEmptyTime() {
-@@ -674,6 +_,14 @@
+@@ -692,6 +_,14 @@
     }
  
     public void tickNonPassenger(Entity p_8648_) {
@@ -453,7 +450,7 @@
        p_8648_.setOldPosAndRot();
        ProfilerFiller profilerfiller = this.getProfiler();
        ++p_8648_.tickCount;
-@@ -682,11 +_,13 @@
+@@ -700,11 +_,13 @@
        });
        profilerfiller.incrementCounter("tickNonPassenger");
        p_8648_.tick();
@@ -467,7 +464,7 @@
  
     }
  
-@@ -700,7 +_,9 @@
+@@ -718,7 +_,9 @@
                 return BuiltInRegistries.ENTITY_TYPE.getKey(p_8664_.getType()).toString();
              });
              profilerfiller.incrementCounter("tickPassenger");
@@ -477,7 +474,7 @@
              profilerfiller.pop();
  
              for(Entity entity : p_8664_.getPassengers()) {
-@@ -720,6 +_,7 @@
+@@ -738,6 +_,7 @@
     public void save(@Nullable ProgressListener p_8644_, boolean p_8645_, boolean p_8646_) {
        ServerChunkCache serverchunkcache = this.getChunkSource();
        if (!p_8646_) {
@@ -485,7 +482,7 @@
           if (p_8644_ != null) {
              p_8644_.progressStartNoAbort(Component.translatable("menu.savingLevel"));
           }
-@@ -736,12 +_,20 @@
+@@ -754,12 +_,20 @@
              this.entityManager.autoSave();
           }
  
@@ -507,7 +504,7 @@
        }
  
        this.getChunkSource().getDataStorage().save();
-@@ -800,15 +_,37 @@
+@@ -818,15 +_,37 @@
     }
  
     public boolean addFreshEntity(Entity p_8837_) {
@@ -548,7 +545,7 @@
     }
  
     public void addDuringCommandTeleport(ServerPlayer p_8623_) {
-@@ -828,6 +_,7 @@
+@@ -846,6 +_,7 @@
     }
  
     private void addPlayer(ServerPlayer p_8854_) {
@@ -556,7 +553,7 @@
        Entity entity = this.getEntities().get(p_8854_.getUUID());
        if (entity != null) {
           LOGGER.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.getUUID());
-@@ -835,28 +_,56 @@
+@@ -853,28 +_,56 @@
           this.removePlayerImmediately((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -618,7 +615,7 @@
        p_8713_.clearAllBlockEntities();
        p_8713_.unregisterTickContainerFromLevel(this);
     }
-@@ -865,12 +_,41 @@
+@@ -883,12 +_,41 @@
        p_143262_.remove(p_143263_);
     }
  
@@ -660,7 +657,7 @@
              if (d0 * d0 + d1 * d1 + d2 * d2 < 1024.0D) {
                 serverplayer.connection.send(new ClientboundBlockDestructionPacket(p_8612_, p_8613_, p_8614_));
              }
-@@ -880,10 +_,22 @@
+@@ -898,10 +_,22 @@
     }
  
     public void playSeededSound(@Nullable Player p_263330_, double p_263393_, double p_263369_, double p_263354_, Holder<SoundEvent> p_263412_, SoundSource p_263338_, float p_263352_, float p_263390_, long p_263403_) {
@@ -683,7 +680,7 @@
        this.server.getPlayerList().broadcast(p_263545_, p_263544_.getX(), p_263544_.getY(), p_263544_.getZ(), (double)p_263491_.value().getRange(p_263530_), this.dimension(), new ClientboundSoundEntityPacket(p_263491_, p_263542_, p_263544_, p_263530_, p_263520_, p_263490_));
     }
  
-@@ -905,6 +_,7 @@
+@@ -923,6 +_,7 @@
     }
  
     public void gameEvent(GameEvent p_215041_, Vec3 p_215042_, GameEvent.Context p_215043_) {
@@ -691,7 +688,7 @@
        this.gameEventDispatcher.post(p_215041_, p_215042_, p_215043_);
     }
  
-@@ -917,11 +_,26 @@
+@@ -935,11 +_,26 @@
        this.getChunkSource().blockChanged(p_8755_);
        VoxelShape voxelshape1 = p_8756_.getCollisionShape(this, p_8755_);
        VoxelShape voxelshape = p_8757_.getCollisionShape(this, p_8755_);
@@ -719,7 +716,7 @@
              if (pathnavigation.shouldRecomputePath(p_8755_)) {
                 list.add(pathnavigation);
              }
-@@ -941,10 +_,15 @@
+@@ -959,10 +_,15 @@
     }
  
     public void updateNeighborsAt(BlockPos p_215045_, Block p_215046_) {
@@ -735,10 +732,10 @@
        this.neighborUpdater.updateNeighborsAtExceptFromFacing(p_215052_, p_215053_, p_215054_);
     }
  
-@@ -970,6 +_,12 @@
+@@ -988,6 +_,12 @@
  
-    public Explosion explode(@Nullable Entity p_256039_, @Nullable DamageSource p_255778_, @Nullable ExplosionDamageCalculator p_256002_, double p_256067_, double p_256370_, double p_256153_, float p_256045_, boolean p_255686_, Level.ExplosionInteraction p_255827_) {
-       Explosion explosion = this.explode(p_256039_, p_255778_, p_256002_, p_256067_, p_256370_, p_256153_, p_256045_, p_255686_, p_255827_, false);
+    public Explosion explode(@Nullable Entity p_256039_, @Nullable DamageSource p_255778_, @Nullable ExplosionDamageCalculator p_256002_, double p_256067_, double p_256370_, double p_256153_, float p_256045_, boolean p_255686_, Level.ExplosionInteraction p_255827_, ParticleOptions p_310962_, ParticleOptions p_310322_, SoundEvent p_309795_) {
+       Explosion explosion = this.explode(p_256039_, p_255778_, p_256002_, p_256067_, p_256370_, p_256153_, p_256045_, p_255686_, p_255827_, false, p_310962_, p_310322_, p_309795_);
 +      // CraftBukkit start
 +      if (explosion.wasCanceled) {
 +         return explosion;
@@ -748,7 +745,7 @@
        if (!explosion.interactsWithBlocks()) {
           explosion.clearToBlow();
        }
-@@ -1031,12 +_,20 @@
+@@ -1049,12 +_,20 @@
     }
  
     public <T extends ParticleOptions> int sendParticles(T p_8768_, double p_8769_, double p_8770_, double p_8771_, int p_8772_, double p_8773_, double p_8774_, double p_8775_, double p_8776_) {
@@ -770,7 +767,7 @@
              ++i;
           }
        }
-@@ -1083,7 +_,7 @@
+@@ -1101,7 +_,7 @@
  
     @Nullable
     public BlockPos findNearestMapStructure(TagKey<Structure> p_215012_, BlockPos p_215013_, int p_215014_, boolean p_215015_) {
@@ -779,7 +776,7 @@
           return null;
        } else {
           Optional<HolderSet.Named<Structure>> optional = this.registryAccess().registryOrThrow(Registries.STRUCTURE).getTag(p_215012_);
-@@ -1119,6 +_,7 @@
+@@ -1141,6 +_,7 @@
     }
  
     public void setMapData(String p_143305_, MapItemSavedData p_143306_) {
@@ -787,7 +784,7 @@
        this.getServer().overworld().getDataStorage().set(p_143305_, p_143306_);
     }
  
-@@ -1309,6 +_,11 @@
+@@ -1331,6 +_,11 @@
  
     public void blockUpdated(BlockPos p_8743_, Block p_8744_) {
        if (!this.isDebug()) {
@@ -799,7 +796,7 @@
           this.updateNeighborsAt(p_8743_, p_8744_);
        }
  
-@@ -1327,11 +_,11 @@
+@@ -1349,11 +_,11 @@
     }
  
     public boolean isFlat() {
@@ -813,7 +810,7 @@
     }
  
     @Nullable
-@@ -1368,19 +_,42 @@
+@@ -1390,19 +_,42 @@
     }
  
     public static void makeObsidianPlatform(ServerLevel p_8618_) {
@@ -835,7 +832,7 @@
 -      });
 +
 +      // CraftBukkit start
-+      org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator(p_8618_);
++      org.bukkit.craftbukkit.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.util.BlockStateListPopulator(p_8618_);
 +      BlockPos.betweenClosed(i - 2, j + 1, k - 2, i + 2, j + 3, k + 2).forEach((blockposition1) -> {
 +         blockList.setBlock(blockposition1, Blocks.AIR.defaultBlockState(), 3);
 +      });
@@ -862,7 +859,15 @@
        return this.entityManager.getEntityGetter();
     }
  
-@@ -1460,6 +_,7 @@
+@@ -1475,6 +_,7 @@
+ 
+    final class EntityCallbacks implements LevelCallback<Entity> {
+       public void onCreated(Entity p_143355_) {
++         p_143355_.inWorld = true; // CraftBukkit - Mark entity as in world
+       }
+ 
+       public void onDestroyed(Entity p_143359_) {
+@@ -1490,6 +_,7 @@
        }
  
        public void onTrackingStart(Entity p_143371_) {
@@ -870,7 +875,7 @@
           ServerLevel.this.getChunkSource().addEntity(p_143371_);
           if (p_143371_ instanceof ServerPlayer serverplayer) {
              ServerLevel.this.players.add(serverplayer);
-@@ -1475,16 +_,48 @@
+@@ -1505,16 +_,48 @@
              ServerLevel.this.navigatingMobs.add(mob);
           }
  
@@ -921,7 +926,7 @@
           ServerLevel.this.getChunkSource().removeEntity(p_143375_);
           if (p_143375_ instanceof ServerPlayer serverplayer) {
              ServerLevel.this.players.remove(serverplayer);
-@@ -1500,17 +_,34 @@
+@@ -1530,17 +_,34 @@
              ServerLevel.this.navigatingMobs.remove(mob);
           }
  

@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/inventory/CrafterMenu.java
++++ b/net/minecraft/world/inventory/CrafterMenu.java
+@@ -8,7 +_,26 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.CrafterBlock;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftInventoryCrafter;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++// CraftBukkit end
++
+ public class CrafterMenu extends AbstractContainerMenu implements ContainerListener {
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++
++   @Override
++   public CraftInventoryView getBukkitView() {
++       if (bukkitEntity != null) {
++           return bukkitEntity;
++       }
++
++       CraftInventoryCrafter inventory = new CraftInventoryCrafter(this.container, this.resultContainer);
++       bukkitEntity = new CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
++       return bukkitEntity;
++   }
++   // CraftBukkit end
+    protected static final int SLOT_COUNT = 9;
+    private static final int INV_SLOT_START = 9;
+    private static final int INV_SLOT_END = 36;
+@@ -110,6 +_,7 @@
+    }
+ 
+    public boolean stillValid(Player p_309546_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return this.container.stillValid(p_309546_);
+    }
+ 

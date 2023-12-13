@@ -1,11 +1,10 @@
 --- a/net/minecraft/server/players/OldUsersConverter.java
 +++ b/net/minecraft/server/players/OldUsersConverter.java
-@@ -20,6 +_,8 @@
+@@ -20,6 +_,7 @@
  import java.util.UUID;
  import javax.annotation.Nullable;
  import net.minecraft.core.UUIDUtil;
-+import net.minecraft.nbt.CompoundTag;
-+import net.minecraft.nbt.NbtIo;
++import net.minecraft.nbt.NbtAccounter;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.dedicated.DedicatedServer;
  import net.minecraft.util.StringUtil;
@@ -18,7 +17,7 @@
           p_11087_.getProfileRepository().findProfilesByNames(astring, p_11089_);
        } else {
           for(String s : astring) {
-@@ -72,7 +_,7 @@
+@@ -70,7 +_,7 @@
              try {
                 userbanlist.load();
              } catch (IOException ioexception1) {
@@ -27,7 +26,7 @@
              }
           }
  
-@@ -125,7 +_,7 @@
+@@ -123,7 +_,7 @@
              try {
                 ipbanlist.load();
              } catch (IOException ioexception1) {
@@ -36,7 +35,7 @@
              }
           }
  
-@@ -161,7 +_,7 @@
+@@ -159,7 +_,7 @@
              try {
                 serveroplist.load();
              } catch (IOException ioexception1) {
@@ -45,7 +44,7 @@
              }
           }
  
-@@ -203,7 +_,7 @@
+@@ -201,7 +_,7 @@
              try {
                 userwhitelist.load();
              } catch (IOException ioexception1) {
@@ -54,29 +53,29 @@
              }
           }
  
-@@ -310,6 +_,31 @@
+@@ -308,6 +_,31 @@
                 private void movePlayerFile(File p_11168_, String p_11169_, String p_11170_) {
                    File file5 = new File(file1, p_11169_ + ".dat");
                    File file6 = new File(p_11168_, p_11170_ + ".dat");
 +
 +                  // CraftBukkit start - Use old file name to seed lastKnownName
-+                  CompoundTag root = null;
++                  net.minecraft.nbt.CompoundTag root = null;
 +
 +                  try {
-+                     root = NbtIo.readCompressed(new java.io.FileInputStream(file5));
++                     root = net.minecraft.nbt.NbtIo.readCompressed(new java.io.FileInputStream(file5), NbtAccounter.unlimitedHeap());
 +                  } catch (Exception exception) {
 +                     exception.printStackTrace();
 +                  }
 +
 +                  if (root != null) {
 +                     if (!root.contains("bukkit")) {
-+                        root.put("bukkit", new CompoundTag());
++                        root.put("bukkit", new net.minecraft.nbt.CompoundTag());
 +                     }
-+                     CompoundTag data = root.getCompound("bukkit");
++                     net.minecraft.nbt.CompoundTag data = root.getCompound("bukkit");
 +                     data.putString("lastKnownName", p_11169_);
 +
 +                     try {
-+                        NbtIo.writeCompressed(root, new java.io.FileOutputStream(file2));
++                        net.minecraft.nbt.NbtIo.writeCompressed(root, new java.io.FileOutputStream(file2));
 +                     } catch (Exception exception) {
 +                        exception.printStackTrace();
 +                     }

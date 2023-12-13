@@ -1,17 +1,17 @@
 --- a/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
 +++ b/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
-@@ -14,6 +_,10 @@
+@@ -17,6 +_,10 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.player.PlayerTeleportEvent;
  
  public class ThrownEnderpearl extends ThrowableItemProjectile {
     public ThrownEnderpearl(EntityType<? extends ThrownEnderpearl> p_37491_, Level p_37492_) {
-@@ -45,22 +_,39 @@
+@@ -48,26 +_,44 @@
           if (entity instanceof ServerPlayer) {
              ServerPlayer serverplayer = (ServerPlayer)entity;
              if (serverplayer.connection.isAcceptingMessages() && serverplayer.level() == this.level() && !serverplayer.isSleeping()) {
@@ -23,7 +23,7 @@
 +               net.minecraftforge.event.entity.EntityTeleportEvent.EnderPearl event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayer, this.getX(), this.getY(), this.getZ(), this, 5.0F, p_37504_);
 +               if (!event.isCanceled()) { // Don't indent to lower patch size
 +                  // CraftBukkit start - Fire PlayerTeleportEvent
-+                  org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer player = serverplayer.getBukkitEntity();
++                  org.bukkit.craftbukkit.entity.CraftPlayer player = serverplayer.getBukkitEntity();
 +                  org.bukkit.Location location = getBukkitEntity().getLocation();
 +                  location.setPitch(player.getLocation().getPitch());
 +                  location.setYaw(player.getLocation().getYaw());
@@ -61,12 +61,21 @@
 -
 -               entity.resetFallDistance();
 -               entity.hurt(this.damageSources().fall(), 5.0F);
+                this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_TELEPORT, SoundSource.PLAYERS);
 +                  // CraftBukkit end
 +               } //Forge: End
              }
           } else if (entity != null) {
              entity.teleportTo(this.getX(), this.getY(), this.getZ());
-@@ -83,12 +_,12 @@
++            entity.teleportTo(this.getX(), this.getY(), this.getZ());
+             entity.resetFallDistance();
+          }
+ 
+@@ -83,16 +_,15 @@
+       } else {
+          super.tick();
+       }
+-
     }
  
     @Nullable

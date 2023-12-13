@@ -26,7 +26,7 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.dimension.end.EndDragonFight;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -47,8 +_,14 @@
+@@ -47,8 +_,13 @@
  import net.minecraft.world.level.pathfinder.BinaryHeap;
  import net.minecraft.world.level.pathfinder.Node;
  import net.minecraft.world.level.pathfinder.Path;
@@ -34,8 +34,7 @@
 +import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.event.block.BlockEvent;
++import org.bukkit.craftbukkit.block.CraftBlock;
 +import org.bukkit.event.entity.EntityExplodeEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
  import org.joml.Vector3f;
@@ -63,7 +62,7 @@
        this.noCulling = true;
        this.phaseManager = new EnderDragonPhaseManager(this);
 +      this.setId(ENTITY_COUNTER.getAndAdd(this.subEntities.length + 1) + 1); // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
-+      this.explosionSource = new Explosion(p_31097_, this, null, null, Double.NaN, Double.NaN, Double.NaN, Float.NaN, true, Explosion.BlockInteraction.DESTROY); // CraftBukkit
++      this.explosionSource = new Explosion(p_31097_, this, null, null, Double.NaN, Double.NaN, Double.NaN, Float.NaN, true, Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE); // CraftBukkit
 +   }
 +
 +   @Override

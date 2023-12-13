@@ -1,59 +1,13 @@
 --- a/net/minecraft/core/dispenser/DispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DispenseItemBehavior.java
-@@ -37,34 +_,12 @@
- import net.minecraft.world.entity.projectile.ThrownExperienceBottle;
- import net.minecraft.world.entity.projectile.ThrownPotion;
- import net.minecraft.world.entity.vehicle.Boat;
--import net.minecraft.world.item.ArmorItem;
--import net.minecraft.world.item.BoneMealItem;
--import net.minecraft.world.item.DispensibleContainerItem;
--import net.minecraft.world.item.DyeColor;
--import net.minecraft.world.item.HoneycombItem;
--import net.minecraft.world.item.Item;
--import net.minecraft.world.item.ItemStack;
--import net.minecraft.world.item.Items;
--import net.minecraft.world.item.SpawnEggItem;
-+import net.minecraft.world.item.*;
+@@ -49,7 +_,6 @@
  import net.minecraft.world.item.alchemy.PotionUtils;
  import net.minecraft.world.item.alchemy.Potions;
  import net.minecraft.world.level.Level;
- import net.minecraft.world.level.LevelAccessor;
--import net.minecraft.world.level.block.BaseFireBlock;
--import net.minecraft.world.level.block.BeehiveBlock;
--import net.minecraft.world.level.block.Block;
--import net.minecraft.world.level.block.Blocks;
--import net.minecraft.world.level.block.BucketPickup;
--import net.minecraft.world.level.block.CampfireBlock;
--import net.minecraft.world.level.block.CandleBlock;
--import net.minecraft.world.level.block.CandleCakeBlock;
--import net.minecraft.world.level.block.CarvedPumpkinBlock;
--import net.minecraft.world.level.block.DispenserBlock;
--import net.minecraft.world.level.block.RespawnAnchorBlock;
--import net.minecraft.world.level.block.ShulkerBoxBlock;
--import net.minecraft.world.level.block.SkullBlock;
--import net.minecraft.world.level.block.TntBlock;
--import net.minecraft.world.level.block.WitherSkullBlock;
-+import net.minecraft.world.level.block.*;
- import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
- import net.minecraft.world.level.block.entity.BlockEntity;
- import net.minecraft.world.level.block.entity.SkullBlockEntity;
-@@ -75,6 +_,16 @@
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.BlockHitResult;
- import net.minecraft.world.phys.Vec3;
-+import org.bukkit.Location;
-+import org.bukkit.TreeType;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
-+import org.bukkit.craftbukkit.v1_20_R2.util.DummyGeneratorAccess;
-+import org.bukkit.event.block.BlockDispenseArmorEvent;
-+import org.bukkit.event.block.BlockDispenseEvent;
-+import org.bukkit.event.block.BlockFertilizeEvent;
-+import org.bukkit.event.world.StructureGrowEvent;
- import org.slf4j.Logger;
- 
- public interface DispenseItemBehavior {
+-import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.block.BaseFireBlock;
+ import net.minecraft.world.level.block.BeehiveBlock;
+ import net.minecraft.world.level.block.Block;
 @@ -180,6 +_,33 @@
              Direction direction = p_123523_.state().getValue(DispenserBlock.FACING);
              EntityType<?> entitytype = ((SpawnEggItem)p_123524_.getItem()).getType(p_123524_.getTag());
@@ -61,10 +15,10 @@
 +            // CraftBukkit start
 +            ServerLevel level = p_123523_.level();
 +            ItemStack itemstack = p_123524_.split(1);
-+            org.bukkit.block.Block block = CraftBlock.at(level, p_123523_.pos());
-+            CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
++            org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(level, p_123523_.pos());
++            org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack);
 +
-+            BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
++            org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
 +            if (!DispenserBlock.eventFired) {
 +               level.getCraftServer().getPluginManager().callEvent(event);
 +            }
@@ -77,7 +31,7 @@
 +            if (!event.getItem().equals(craftItem)) {
 +               p_123524_.grow(1);
 +               // Chain to handler for new item
-+               ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++               ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +               DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +               if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
 +                  idispensebehavior.dispense(p_123523_, eventStack);
@@ -98,17 +52,17 @@
              p_123523_.level().gameEvent((Entity)null, GameEvent.ENTITY_PLACE, p_123523_.pos());
              return p_123524_;
           }
-@@ -202,12 +_,41 @@
+@@ -202,12 +_,40 @@
              Direction direction = p_123461_.state().getValue(DispenserBlock.FACING);
              BlockPos blockpos = p_123461_.pos().relative(direction);
              ServerLevel serverlevel = p_123461_.level();
 +
 +            // CraftBukkit start
 +            ItemStack itemstack = p_123462_.split(1);
-+            org.bukkit.block.Block block = CraftBlock.at(serverlevel, p_123461_.pos());
-+            CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
++            org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(serverlevel, p_123461_.pos());
++            org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack);
 +
-+            BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
++            org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
 +            if (!DispenserBlock.eventFired) {
 +               serverlevel.getCraftServer().getPluginManager().callEvent(event);
 +            }
@@ -121,7 +75,7 @@
 +            if (!event.getItem().equals(craftItem)) {
 +               p_123462_.grow(1);
 +               // Chain to handler for new item
-+               ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++               ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +               DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +               if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
 +                  idispensebehavior.dispense(p_123461_, eventStack);
@@ -134,7 +88,6 @@
                 p_296333_.setYRot(direction.toYRot());
              }, serverlevel, p_123462_, (Player)null);
              ArmorStand armorstand = EntityType.ARMOR_STAND.spawn(serverlevel, p_123462_.getTag(), consumer, blockpos, MobSpawnType.DISPENSER, false, false);
-+
              if (armorstand != null) {
 -               p_123462_.shrink(1);
 +               // p_123462_.shrink(1); // CraftBukkit - Handled during event processing
@@ -148,10 +101,10 @@
 +               // CraftBukkit start
 +               ItemStack itemstack = p_123530_.split(1);
 +               Level level = p_123529_.level();
-+               org.bukkit.block.Block block = CraftBlock.at(level, p_123529_.pos());
-+               CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
++               org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(level, p_123529_.pos());
++               org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack);
 +
-+               BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) list.get(0).getBukkitEntity());
++               org.bukkit.event.block.BlockDispenseArmorEvent event = new org.bukkit.event.block.BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.entity.CraftLivingEntity) list.get(0).getBukkitEntity());
 +               if (!DispenserBlock.eventFired) {
 +                  level.getCraftServer().getPluginManager().callEvent(event);
 +               }
@@ -164,7 +117,7 @@
 +               if (!event.getItem().equals(craftItem)) {
 +                  p_123530_.grow(1);
 +                  // Chain to handler for new item
-+                  ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++                  ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +                  DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +                  if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != ArmorItem.DISPENSE_ITEM_BEHAVIOR) {
 +                     idispensebehavior.dispense(p_123529_, eventStack);
@@ -180,17 +133,17 @@
                 return p_123530_;
              } else {
 @@ -241,7 +_,35 @@
-                return p_296334_.isAlive() && p_296334_.canWearArmor();
+                return p_308467_.isAlive() && p_308467_.canWearArmor();
              })) {
                 if (abstracthorse.isArmor(p_123536_) && !abstracthorse.isWearingArmor() && abstracthorse.isTamed()) {
 -                  abstracthorse.getSlot(401).set(p_123536_.split(1));
 +                  // CraftBukkit start
 +                  ItemStack itemstack = p_123536_.split(1);
 +                  Level level = p_123535_.level();
-+                  org.bukkit.block.Block block = CraftBlock.at(level, p_123535_.pos());
-+                  CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
++                  org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(level, p_123535_.pos());
++                  org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack);
 +
-+                  BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) abstracthorse.getBukkitEntity());
++                  org.bukkit.event.block.BlockDispenseArmorEvent event = new org.bukkit.event.block.BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.entity.CraftLivingEntity) abstracthorse.getBukkitEntity());
 +                  if (!DispenserBlock.eventFired) {
 +                     level.getCraftServer().getPluginManager().callEvent(event);
 +                  }
@@ -203,7 +156,7 @@
 +                  if (!event.getItem().equals(craftItem)) {
 +                     p_123536_.grow(1);
 +                     // Chain to handler for new item
-+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++                     ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +                     DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +                     if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != ArmorItem.DISPENSE_ITEM_BEHAVIOR) {
 +                        idispensebehavior.dispense(p_123535_, eventStack);
@@ -211,14 +164,14 @@
 +                     }
 +                  }
 +
-+                  abstracthorse.getSlot(401).set(CraftItemStack.asNMSCopy(event.getItem()));
++                  abstracthorse.getSlot(401).set(org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem()));
 +                  // CraftBukkit end
                    this.setSuccess(true);
                    return p_123536_;
                 }
 @@ -277,8 +_,36 @@
-             for(AbstractChestedHorse abstractchestedhorse : p_123541_.level().getEntitiesOfClass(AbstractChestedHorse.class, new AABB(blockpos), (p_296335_) -> {
-                return p_296335_.isAlive() && !p_296335_.hasChest();
+             for(AbstractChestedHorse abstractchestedhorse : p_123541_.level().getEntitiesOfClass(AbstractChestedHorse.class, new AABB(blockpos), (p_308468_) -> {
+                return p_308468_.isAlive() && !p_308468_.hasChest();
              })) {
 -               if (abstractchestedhorse.isTamed() && abstractchestedhorse.getSlot(499).set(p_123542_)) {
 -                  p_123542_.shrink(1);
@@ -226,10 +179,10 @@
 +               if (abstractchestedhorse.isTamed()) {
 +                  ItemStack itemstack = p_123542_.split(1);
 +                  Level level = p_123541_.level();
-+                  org.bukkit.block.Block block = CraftBlock.at(level, p_123541_.pos());
-+                  CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
++                  org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(level, p_123541_.pos());
++                  org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack);
 +
-+                  BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) abstractchestedhorse.getBukkitEntity());
++                  org.bukkit.event.block.BlockDispenseArmorEvent event = new org.bukkit.event.block.BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.entity.CraftLivingEntity) abstractchestedhorse.getBukkitEntity());
 +                  if (!DispenserBlock.eventFired) {
 +                     level.getCraftServer().getPluginManager().callEvent(event);
 +                  }
@@ -240,7 +193,7 @@
 +
 +                  if (!event.getItem().equals(craftItem)) {
 +                     // Chain to handler for new item
-+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++                     ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +                     DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +                     if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != ArmorItem.DISPENSE_ITEM_BEHAVIOR) {
 +                        idispensebehavior.dispense(p_123541_, eventStack);
@@ -248,24 +201,24 @@
 +                     }
 +                  }
 +
-+                  abstractchestedhorse.getSlot(499).set(CraftItemStack.asNMSCopy(event.getItem()));
++                  abstractchestedhorse.getSlot(499).set(org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem()));
 +                  // CraftBukkit end
 +
 +                  // p_123542_.shrink(1); // CraftBukkit - handled above
                    this.setSuccess(true);
                    return p_123542_;
                 }
-@@ -290,11 +_,41 @@
+@@ -290,11 +_,40 @@
        DispenserBlock.registerBehavior(Items.FIREWORK_ROCKET, new DefaultDispenseItemBehavior() {
           public ItemStack execute(BlockSource p_123547_, ItemStack p_123548_) {
              Direction direction = p_123547_.state().getValue(DispenserBlock.FACING);
 +            // CraftBukkit start
 +            ServerLevel worldserver = p_123547_.level();
 +            ItemStack itemstack = p_123548_.split(1);
-+            org.bukkit.block.Block block = CraftBlock.at(worldserver, p_123547_.pos());
-+            CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
++            org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(worldserver, p_123547_.pos());
++            org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack);
 +
-+            BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(direction.getStepX(), direction.getStepY(), direction.getStepZ()));
++            org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(direction.getStepX(), direction.getStepY(), direction.getStepZ()));
 +            if (!DispenserBlock.eventFired) {
 +               worldserver.getCraftServer().getPluginManager().callEvent(event);
 +            }
@@ -278,7 +231,7 @@
 +            if (!event.getItem().equals(craftItem)) {
 +               p_123548_.grow(1);
 +               // Chain to handler for new item
-+               ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++               ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +               DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +               if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
 +                  idispensebehavior.dispense(p_123547_, eventStack);
@@ -286,10 +239,9 @@
 +               }
 +            }
 +
-+            itemstack = CraftItemStack.asNMSCopy(event.getItem());
++            itemstack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
              Vec3 vec3 = DispenseItemBehavior.getEntityPokingOutOfBlockPos(p_123547_, EntityType.FIREWORK_ROCKET, direction);
              FireworkRocketEntity fireworkrocketentity = new FireworkRocketEntity(p_123547_.level(), p_123548_, vec3.x(), vec3.y(), vec3.z(), true);
-+
              fireworkrocketentity.shoot((double)direction.getStepX(), (double)direction.getStepY(), (double)direction.getStepZ(), 0.5F, 1.0F);
              p_123547_.level().addFreshEntity(fireworkrocketentity);
 -            p_123548_.shrink(1);
@@ -310,10 +262,10 @@
 +
 +            // CraftBukkit start
 +            ItemStack itemstack = p_123557_.split(1);
-+            org.bukkit.block.Block block = CraftBlock.at(level, p_123556_.pos());
-+            CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
++            org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(level, p_123556_.pos());
++            org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack);
 +
-+            BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d3, d4, d5));
++            org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d3, d4, d5));
 +            if (!DispenserBlock.eventFired) {
 +               level.getCraftServer().getPluginManager().callEvent(event);
 +            }
@@ -326,7 +278,7 @@
 +            if (!event.getItem().equals(craftItem)) {
 +               p_123557_.grow(1);
 +               // Chain to handler for new item
-+               ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++               ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +               DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +               if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
 +                  idispensebehavior.dispense(p_123556_, eventStack);
@@ -336,7 +288,7 @@
 +
 +            SmallFireball smallfireball = new SmallFireball(level, d0, d1, d2, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
 +            smallfireball.setItem(itemstack);
-+            smallfireball.projectileSource = new org.bukkit.craftbukkit.v1_20_R2.projectiles.CraftBlockProjectileSource(p_123556_.blockEntity());
++            smallfireball.projectileSource = new org.bukkit.craftbukkit.projectiles.CraftBlockProjectileSource(p_123556_.blockEntity());
 +
 +            level.addFreshEntity(smallfireball);
 +            // p_123557_.shrink(1); // Handled during event processing
@@ -354,11 +306,11 @@
 +            int y = blockpos.getY();
 +            int z = blockpos.getZ();
 +            BlockState iblockdata = level.getBlockState(blockpos);
-+            if (iblockdata.isAir() || iblockdata.canBeReplaced() || (dispensiblecontaineritem instanceof BucketItem && iblockdata.getBlock() instanceof LiquidBlockContainer && ((LiquidBlockContainer) iblockdata.getBlock()).canPlaceLiquid((Player) null, level, blockpos, iblockdata, ((BucketItem) dispensiblecontaineritem).getContent()))) { //Ketting
-+               org.bukkit.block.Block block = CraftBlock.at(level, p_123561_.pos());
-+               CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123562_);
++            if (iblockdata.isAir() || iblockdata.canBeReplaced() || (dispensiblecontaineritem instanceof net.minecraft.world.item.BucketItem && iblockdata.getBlock() instanceof net.minecraft.world.level.block.LiquidBlockContainer && ((net.minecraft.world.level.block.LiquidBlockContainer) iblockdata.getBlock()).canPlaceLiquid((Player) null, level, blockpos, iblockdata, ((net.minecraft.world.item.BucketItem) dispensiblecontaineritem).getContent()))) { //Ketting
++               org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(level, p_123561_.pos());
++               org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(p_123562_);
 +
-+               BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(x, y, z));
++               org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(x, y, z));
 +               if (!DispenserBlock.eventFired) {
 +                  level.getCraftServer().getPluginManager().callEvent(event);
 +               }
@@ -369,7 +321,7 @@
 +
 +               if (!event.getItem().equals(craftItem)) {
 +                  // Chain to handler for new item
-+                  ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++                  ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +                  DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +                  if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
 +                     idispensebehavior.dispense(p_123561_, eventStack);
@@ -377,7 +329,7 @@
 +                  }
 +               }
 +
-+               dispensiblecontaineritem = (DispensibleContainerItem) CraftItemStack.asNMSCopy(event.getItem()).getItem();
++               dispensiblecontaineritem = (DispensibleContainerItem) org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem()).getItem();
 +            }
 +            // CraftBukkit end
 +
@@ -398,7 +350,7 @@
              } else {
                 return this.defaultDispenseItemBehavior.dispense(p_123561_, p_123562_);
              }
-@@ -372,17 +_,46 @@
+@@ -372,17 +_,45 @@
           private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
  
           public ItemStack execute(BlockSource p_123566_, ItemStack p_123567_) {
@@ -408,10 +360,9 @@
 -            BlockState blockstate = levelaccessor.getBlockState(blockpos);
 +            BlockState blockstate = level.getBlockState(blockpos);
              Block block = blockstate.getBlock();
-+
              if (block instanceof BucketPickup bucketpickup) {
 -               ItemStack itemstack = bucketpickup.pickupBlock((Player)null, levelaccessor, blockpos, blockstate);
-+               ItemStack itemstack = bucketpickup.pickupBlock((Player)null, DummyGeneratorAccess.INSTANCE, blockpos, blockstate); // CraftBukkit
++               ItemStack itemstack = bucketpickup.pickupBlock((Player)null, org.bukkit.craftbukkit.util.DummyGeneratorAccess.INSTANCE, blockpos, blockstate); // CraftBukkit
 +
                 if (itemstack.isEmpty()) {
                    return super.execute(p_123566_, p_123567_);
@@ -421,10 +372,10 @@
                    Item item = itemstack.getItem();
 +
 +                  // CraftBukkit start
-+                  org.bukkit.block.Block bukkitBlock = CraftBlock.at(level, p_123566_.pos());
-+                  CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123567_);
++                  org.bukkit.block.Block bukkitBlock = org.bukkit.craftbukkit.block.CraftBlock.at(level, p_123566_.pos());
++                  org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(p_123567_);
 +
-+                  BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.getX(), blockpos.getY(), blockpos.getZ()));
++                  org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.getX(), blockpos.getY(), blockpos.getZ()));
 +                  if (!DispenserBlock.eventFired) {
 +                     level.getCraftServer().getPluginManager().callEvent(event);
 +                  }
@@ -435,7 +386,7 @@
 +
 +                  if (!event.getItem().equals(craftItem)) {
 +                     // Chain to handler for new item
-+                     ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++                     ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +                     DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +                     if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
 +                        idispensebehavior.dispense(p_123566_, eventStack);
@@ -449,16 +400,16 @@
                    p_123567_.shrink(1);
                    if (p_123567_.isEmpty()) {
                       return new ItemStack(item);
-@@ -402,17 +_,54 @@
+@@ -402,17 +_,53 @@
        DispenserBlock.registerBehavior(Items.FLINT_AND_STEEL, new OptionalDispenseItemBehavior() {
           protected ItemStack execute(BlockSource p_123412_, ItemStack p_123413_) {
              Level level = p_123412_.level();
 +
 +            // CraftBukkit start
-+            org.bukkit.block.Block bukkitBlock = CraftBlock.at(level, p_123412_.pos());
-+            CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123413_);
++            org.bukkit.block.Block bukkitBlock = org.bukkit.craftbukkit.block.CraftBlock.at(level, p_123412_.pos());
++            org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(p_123413_);
 +
-+            BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
++            org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
 +            if (!DispenserBlock.eventFired) {
 +               level.getCraftServer().getPluginManager().callEvent(event);
 +            }
@@ -469,7 +420,7 @@
 +
 +            if (!event.getItem().equals(craftItem)) {
 +               // Chain to handler for new item
-+               ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++               ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +               DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +               if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
 +                  idispensebehavior.dispense(p_123412_, eventStack);
@@ -482,12 +433,11 @@
              Direction direction = p_123412_.state().getValue(DispenserBlock.FACING);
              BlockPos blockpos = p_123412_.pos().relative(direction);
              BlockState blockstate = level.getBlockState(blockpos);
-+
              if (BaseFireBlock.canBePlacedAt(level, blockpos, direction)) {
 -               level.setBlockAndUpdate(blockpos, BaseFireBlock.getState(level, blockpos));
 -               level.gameEvent((Entity)null, GameEvent.BLOCK_PLACE, blockpos);
 +               // CraftBukkit start - Ignition by dispensing flint and steel
-+               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(level, blockpos, p_123412_.pos()).isCancelled()) {
++               if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(level, blockpos, p_123412_.pos()).isCancelled()) {
 +                  level.setBlockAndUpdate(blockpos, BaseFireBlock.getState(level, blockpos));
 +                  level.gameEvent((Entity)null, GameEvent.BLOCK_PLACE, blockpos);
 +               }
@@ -499,7 +449,7 @@
 +               if (blockstate.isFlammable(level, blockpos, p_123412_.state().getValue(DispenserBlock.FACING).getOpposite())) {
 +                  if (blockstate.getBlock() instanceof TntBlock) {
 +                     // CraftBukkit - TNTPrimeEvent
-+                     if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callTNTPrimeEvent(level, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.DISPENSER, null, p_123412_.pos())) {
++                     if (org.bukkit.craftbukkit.event.CraftEventFactory.callTNTPrimeEvent(level, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.DISPENSER, null, p_123412_.pos())) {
 +                        blockstate.onCaughtFire(level, blockpos, p_123412_.state().getValue(DispenserBlock.FACING).getOpposite(), null);
 +                        level.removeBlock(blockpos, false);
 +                     }
@@ -514,10 +464,10 @@
              Level level = p_123416_.level();
              BlockPos blockpos = p_123416_.pos().relative(p_123416_.state().getValue(DispenserBlock.FACING));
 +            // CraftBukkit start
-+            org.bukkit.block.Block block = CraftBlock.at(level, p_123416_.pos());
-+            CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123417_);
++            org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(level, p_123416_.pos());
++            org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(p_123417_);
 +
-+            BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
++            org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
 +            if (!DispenserBlock.eventFired) {
 +               level.getCraftServer().getPluginManager().callEvent(event);
 +            }
@@ -528,7 +478,7 @@
 +
 +            if (!event.getItem().equals(craftItem)) {
 +               // Chain to handler for new item
-+               ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++               ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +               DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +               if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
 +                  idispensebehavior.dispense(p_123416_, eventStack);
@@ -547,18 +497,18 @@
 +            // CraftBukkit start
 +            level.captureTreeGeneration = false;
 +            if (level.capturedBlockStates.size() > 0) {
-+               TreeType treeType = SaplingBlock.treeType;
-+               SaplingBlock.treeType = null;
-+               Location location = CraftLocation.toBukkit(blockpos, level.getWorld());
++               org.bukkit.TreeType treeType = net.minecraft.world.level.block.SaplingBlock.treeType;
++               net.minecraft.world.level.block.SaplingBlock.treeType = null;
++               org.bukkit.Location location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(blockpos, level.getWorld());
 +               List<org.bukkit.block.BlockState> blocks = new java.util.ArrayList<>(level.capturedBlockStates.values());
 +               level.capturedBlockStates.clear();
-+               StructureGrowEvent structureEvent = null;
++               org.bukkit.event.world.StructureGrowEvent structureEvent = null;
 +               if (treeType != null) {
-+                  structureEvent = new StructureGrowEvent(location, treeType, false, null, blocks);
++                  structureEvent = new org.bukkit.event.world.StructureGrowEvent(location, treeType, false, null, blocks);
 +                  org.bukkit.Bukkit.getPluginManager().callEvent(structureEvent);
 +               }
 +
-+               BlockFertilizeEvent fertilizeEvent = new BlockFertilizeEvent(location.getBlock(), null, blocks);
++               org.bukkit.event.block.BlockFertilizeEvent fertilizeEvent = new org.bukkit.event.block.BlockFertilizeEvent(location.getBlock(), null, blocks);
 +               fertilizeEvent.setCancelled(structureEvent != null && structureEvent.isCancelled());
 +               org.bukkit.Bukkit.getPluginManager().callEvent(fertilizeEvent);
 +
@@ -581,10 +531,10 @@
 +            // PrimedTnt primedtnt = new PrimedTnt(level, (double)blockpos.getX() + 0.5D, (double)blockpos.getY(), (double)blockpos.getZ() + 0.5D, (LivingEntity)null);
 +
 +            ItemStack itemstack1 = p_123426_.split(1);
-+            org.bukkit.block.Block block = CraftBlock.at(level, p_123425_.pos());
-+            CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
++            org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(level, p_123425_.pos());
++            org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack1);
 +
-+            BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector((double) blockpos.getX() + 0.5D, (double) blockpos.getY(), (double) blockpos.getZ() + 0.5D));
++            org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector((double) blockpos.getX() + 0.5D, (double) blockpos.getY(), (double) blockpos.getZ() + 0.5D));
 +            if (!DispenserBlock.eventFired) {
 +               level.getCraftServer().getPluginManager().callEvent(event);
 +            }
@@ -597,7 +547,7 @@
 +            if (!event.getItem().equals(craftItem)) {
 +               p_123426_.grow(1);
 +               // Chain to handler for new item
-+               ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++               ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +               DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +               if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
 +                  idispensebehavior.dispense(p_123425_, eventStack);
@@ -622,10 +572,10 @@
              BlockPos blockpos = p_123433_.pos().relative(direction);
 +
 +            // CraftBukkit start
-+            org.bukkit.block.Block bukkitBlock = CraftBlock.at(level, p_123433_.pos());
-+            CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123434_);
++            org.bukkit.block.Block bukkitBlock = org.bukkit.craftbukkit.block.CraftBlock.at(level, p_123433_.pos());
++            org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(p_123434_);
 +
-+            BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.getX(), blockpos.getY(), blockpos.getZ()));
++            org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.getX(), blockpos.getY(), blockpos.getZ()));
 +            if (!DispenserBlock.eventFired) {
 +               level.getCraftServer().getPluginManager().callEvent(event);
 +            }
@@ -636,7 +586,7 @@
 +
 +            if (!event.getItem().equals(craftItem)) {
 +               // Chain to handler for new item
-+               ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++               ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +               DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +               if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
 +                  idispensebehavior.dispense(p_123433_, eventStack);
@@ -654,10 +604,10 @@
              CarvedPumpkinBlock carvedpumpkinblock = (CarvedPumpkinBlock)Blocks.CARVED_PUMPKIN;
 +
 +            // CraftBukkit start
-+            org.bukkit.block.Block bukkitBlock = CraftBlock.at(level, p_123437_.pos());
-+            CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123438_);
++            org.bukkit.block.Block bukkitBlock = org.bukkit.craftbukkit.block.CraftBlock.at(level, p_123437_.pos());
++            org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(p_123438_);
 +
-+            BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.getX(), blockpos.getY(), blockpos.getZ()));
++            org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.getX(), blockpos.getY(), blockpos.getZ()));
 +            if (!DispenserBlock.eventFired) {
 +               level.getCraftServer().getPluginManager().callEvent(event);
 +            }
@@ -668,7 +618,7 @@
 +
 +            if (!event.getItem().equals(craftItem)) {
 +               // Chain to handler for new item
-+               ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++               ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +               DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +               if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
 +                  idispensebehavior.dispense(p_123437_, eventStack);
@@ -686,10 +636,10 @@
              BlockState blockstate = serverlevel.getBlockState(blockpos);
 +
 +            // CraftBukkit start
-+            org.bukkit.block.Block bukkitBlock = CraftBlock.at(serverlevel, p_123444_.pos());
-+            CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123445_);
++            org.bukkit.block.Block bukkitBlock = org.bukkit.craftbukkit.block.CraftBlock.at(serverlevel, p_123444_.pos());
++            org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(p_123445_);
 +
-+            BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.getX(), blockpos.getY(), blockpos.getZ()));
++            org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.getX(), blockpos.getY(), blockpos.getZ()));
 +            if (!DispenserBlock.eventFired) {
 +               serverlevel.getCraftServer().getPluginManager().callEvent(event);
 +            }
@@ -700,7 +650,7 @@
 +
 +            if (!event.getItem().equals(craftItem)) {
 +               // Chain to handler for new item
-+               ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++               ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +               DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +               if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
 +                  idispensebehavior.dispense(p_123444_, eventStack);

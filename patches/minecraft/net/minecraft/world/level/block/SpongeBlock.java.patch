@@ -1,20 +1,20 @@
 --- a/net/minecraft/world/level/block/SpongeBlock.java
 +++ b/net/minecraft/world/level/block/SpongeBlock.java
-@@ -10,7 +_,13 @@
- import net.minecraft.world.level.block.entity.BlockEntity;
- import net.minecraft.world.level.block.state.BlockBehaviour;
+@@ -13,6 +_,13 @@
  import net.minecraft.world.level.block.state.BlockState;
-+import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.level.material.FluidState;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState;
-+import org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator;
-+import org.bukkit.event.block.SpongeAbsorbEvent;
-+
-+import java.util.List;
  
++//Ketting Start
++import org.bukkit.craftbukkit.block.CraftBlockState;
++import org.bukkit.craftbukkit.util.BlockStateListPopulator;
++import org.bukkit.event.block.SpongeAbsorbEvent;
++import java.util.List;
++//Ketting end
++
  public class SpongeBlock extends Block {
+    public static final MapCodec<SpongeBlock> CODEC = simpleCodec(SpongeBlock::new);
     public static final int MAX_DEPTH = 6;
-@@ -41,43 +_,83 @@
+@@ -47,43 +_,83 @@
     }
  
     private boolean removeWaterBreadthFirstSearch(Level p_56808_, BlockPos p_56809_) {

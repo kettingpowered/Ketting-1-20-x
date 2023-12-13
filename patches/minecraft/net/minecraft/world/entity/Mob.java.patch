@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -22,6 +_,7 @@
- import net.minecraft.network.syncher.SynchedEntityData;
- import net.minecraft.resources.ResourceLocation;
- import net.minecraft.server.level.ServerLevel;
-+import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.sounds.SoundEvent;
- import net.minecraft.tags.TagKey;
- import net.minecraft.util.Mth;
-@@ -62,7 +_,6 @@
+@@ -63,7 +_,6 @@
  import net.minecraft.world.item.SpawnEggItem;
  import net.minecraft.world.item.SwordItem;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -16,45 +8,21 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.LevelReader;
-@@ -71,6 +_,9 @@
- import net.minecraft.world.level.material.Fluid;
+@@ -73,6 +_,13 @@
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.AABB;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.*;
  
++//Ketting start
++import net.minecraft.server.level.ServerPlayer;
++import org.bukkit.craftbukkit.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.*;
++//Ketting end
++
  public abstract class Mob extends LivingEntity implements Targeting {
     private static final EntityDataAccessor<Byte> DATA_MOB_FLAGS_ID = SynchedEntityData.defineId(Mob.class, EntityDataSerializers.BYTE);
-@@ -95,21 +_,21 @@
-    protected JumpControl jumpControl;
-    private final BodyRotationControl bodyRotationControl;
-    protected PathNavigation navigation;
--   public final GoalSelector goalSelector;
--   public final GoalSelector targetSelector;
-+   public GoalSelector goalSelector;
-+   public GoalSelector targetSelector;
-    @Nullable
-    private LivingEntity target;
-    private final Sensing sensing;
-    private final NonNullList<ItemStack> handItems = NonNullList.withSize(2, ItemStack.EMPTY);
--   protected final float[] handDropChances = new float[2];
-+   public final float[] handDropChances = new float[2];
-    private final NonNullList<ItemStack> armorItems = NonNullList.withSize(4, ItemStack.EMPTY);
--   protected final float[] armorDropChances = new float[4];
-+   public final float[] armorDropChances = new float[4];
-    private boolean canPickUpLoot;
-    private boolean persistenceRequired;
-    private final Map<BlockPathTypes, Float> pathfindingMalus = Maps.newEnumMap(BlockPathTypes.class);
-    @Nullable
--   private ResourceLocation lootTable;
--   private long lootTableSeed;
-+   public ResourceLocation lootTable;
-+   public long lootTableSeed;
-    @Nullable
-    private Entity leashHolder;
-    private int delayedLeashHolderId;
-@@ -117,6 +_,11 @@
+    private static final int MOB_FLAG_NO_AI = 1;
+@@ -118,6 +_,11 @@
     private CompoundTag leashInfoTag;
     private BlockPos restrictCenter = BlockPos.ZERO;
     private float restrictRadius = -1.0F;
@@ -66,7 +34,7 @@
  
     protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
        super(p_21368_, p_21369_);
-@@ -136,6 +_,12 @@
+@@ -137,6 +_,12 @@
  
     }
  
@@ -79,7 +47,7 @@
     protected void registerGoals() {
     }
  
-@@ -231,7 +_,43 @@
+@@ -232,7 +_,43 @@
     }
  
     public void setTarget(@Nullable LivingEntity p_21544_) {
@@ -124,7 +92,7 @@
     }
  
     public boolean canAttackType(EntityType<?> p_21399_) {
-@@ -358,6 +_,12 @@
+@@ -359,6 +_,12 @@
        return null;
     }
  
@@ -137,7 +105,16 @@
     public void addAdditionalSaveData(CompoundTag p_21484_) {
        super.addAdditionalSaveData(p_21484_);
        p_21484_.putBoolean("CanPickUpLoot", this.canPickUpLoot());
-@@ -429,15 +_,29 @@
+@@ -401,7 +_,7 @@
+       }
+ 
+       p_21484_.put("HandDropChances", listtag3);
+-      if (this.leashHolder != null) {
++      if (this.leashHolder != null && !this.leashHolder.pluginRemoved) { // CraftBukkit - SPIGOT-7487: Don't save (and possible drop) leash, when the holder was removed by a plugin
+          CompoundTag compoundtag2 = new CompoundTag();
+          if (this.leashHolder instanceof LivingEntity) {
+             UUID uuid = this.leashHolder.getUUID();
+@@ -430,15 +_,29 @@
           p_21484_.putBoolean("NoAI", this.isNoAi());
        }
  
@@ -169,7 +146,7 @@
        if (p_21450_.contains("ArmorItems", 9)) {
           ListTag listtag = p_21450_.getList("ArmorItems", 10);
  
-@@ -481,6 +_,20 @@
+@@ -482,6 +_,20 @@
        }
  
        this.setNoAi(p_21450_.getBoolean("NoAI"));
@@ -190,7 +167,7 @@
     }
  
     protected void dropFromLootTable(DamageSource p_21389_, boolean p_21390_) {
-@@ -520,9 +_,9 @@
+@@ -521,9 +_,9 @@
     public void aiStep() {
        super.aiStep();
        this.level().getProfiler().push("looting");
@@ -201,7 +178,7 @@
           for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate((double)vec3i.getX(), (double)vec3i.getY(), (double)vec3i.getZ()))) {
              if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && !itementity.hasPickUpDelay() && this.wantsToPickUp(itementity.getItem())) {
                 this.pickUpItem(itementity);
-@@ -539,7 +_,7 @@
+@@ -540,7 +_,7 @@
  
     protected void pickUpItem(ItemEntity p_21471_) {
        ItemStack itemstack = p_21471_.getItem();
@@ -210,7 +187,11 @@
        if (!itemstack1.isEmpty()) {
           this.onItemPickup(p_21471_);
           this.take(p_21471_, itemstack1.getCount());
-@@ -552,6 +_,12 @@
+@@ -549,10 +_,15 @@
+             p_21471_.discard();
+          }
+       }
+-
     }
  
     public ItemStack equipItemIfPossible(ItemStack p_255842_) {
@@ -223,7 +204,7 @@
        EquipmentSlot equipmentslot = getEquipmentSlotForItem(p_255842_);
        ItemStack itemstack = this.getItemBySlot(equipmentslot);
        boolean flag = this.canReplaceCurrentItem(p_255842_, itemstack);
-@@ -561,10 +_,18 @@
+@@ -562,10 +_,18 @@
           flag = itemstack.isEmpty();
        }
  
@@ -231,7 +212,7 @@
 +      // CraftBukkit start
 +      boolean canPickup = flag && this.canHoldItem(p_255842_);
 +      if (entity != null) {
-+         canPickup = !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPickupItemEvent(this, entity, 0, !canPickup).isCancelled();
++         canPickup = !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(this, entity, 0, !canPickup).isCancelled();
 +      }
 +      if (canPickup) {
 +         // CraftBukkit end
@@ -243,7 +224,7 @@
           }
  
           if (equipmentslot.isArmor() && p_255842_.getCount() > 1) {
-@@ -698,6 +_,14 @@
+@@ -699,6 +_,14 @@
           this.discard();
        } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
           Entity entity = this.level().getNearestPlayer(this, -1.0D);
@@ -258,7 +239,7 @@
           if (entity != null) {
              double d0 = entity.distanceToSqr(this);
              int i = this.getType().getCategory().getDespawnDistance();
-@@ -722,6 +_,7 @@
+@@ -723,6 +_,7 @@
  
     protected final void serverAiStep() {
        ++this.noActionTime;
@@ -266,7 +247,7 @@
        this.level().getProfiler().push("sensing");
        this.sensing.tick();
        this.level().getProfiler().pop();
-@@ -1031,6 +_,16 @@
+@@ -1032,6 +_,16 @@
  
     }
  
@@ -283,7 +264,7 @@
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_21434_, DifficultyInstance p_21435_, MobSpawnType p_21436_, @Nullable SpawnGroupData p_21437_, @Nullable CompoundTag p_21438_) {
        RandomSource randomsource = p_21434_.getRandom();
-@@ -1041,6 +_,7 @@
+@@ -1042,6 +_,7 @@
           this.setLeftHanded(false);
        }
  
@@ -291,7 +272,7 @@
        return p_21437_;
     }
  
-@@ -1080,6 +_,12 @@
+@@ -1081,6 +_,12 @@
        if (!this.isAlive()) {
           return InteractionResult.PASS;
        } else if (this.getLeashHolder() == p_21420_) {
@@ -304,7 +285,7 @@
           this.dropLeash(true, !p_21420_.getAbilities().instabuild);
           this.gameEvent(GameEvent.ENTITY_INTERACT, p_21420_);
           return InteractionResult.sidedSuccess(this.level().isClientSide);
-@@ -1103,6 +_,12 @@
+@@ -1104,6 +_,12 @@
     private InteractionResult checkAndHandleImportantInteractions(Player p_21500_, InteractionHand p_21501_) {
        ItemStack itemstack = p_21500_.getItemInHand(p_21501_);
        if (itemstack.is(Items.LEAD) && this.canBeLeashed(p_21500_)) {
@@ -317,7 +298,7 @@
           this.setLeashedTo(p_21500_, true);
           itemstack.shrink(1);
           return InteractionResult.sidedSuccess(this.level().isClientSide);
-@@ -1171,8 +_,15 @@
+@@ -1172,8 +_,15 @@
        return this.restrictRadius != -1.0F;
     }
  
@@ -333,7 +314,7 @@
        if (this.isRemoved()) {
           return (T)null;
        } else {
-@@ -1205,7 +_,12 @@
+@@ -1206,7 +_,12 @@
                 }
              }
  
@@ -347,15 +328,17 @@
              if (this.isPassenger()) {
                 Entity entity = this.getVehicle();
                 this.stopRiding();
-@@ -1225,6 +_,7 @@
+@@ -1226,7 +_,8 @@
  
        if (this.leashHolder != null) {
           if (!this.isAlive() || !this.leashHolder.isAlive()) {
+-            this.dropLeash(true, true);
 +            this.level().getCraftServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), (!this.isAlive()) ? EntityUnleashEvent.UnleashReason.PLAYER_UNLEASH : EntityUnleashEvent.UnleashReason.HOLDER_GONE)); // CraftBukkit
-             this.dropLeash(true, true);
++            this.dropLeash(true, !this.leashHolder.pluginRemoved);// CraftBukkit - SPIGOT-7487: Don't drop leash, when the holder was removed by a plugin
           }
  
-@@ -1236,7 +_,9 @@
+       }
+@@ -1237,7 +_,9 @@
           this.leashHolder = null;
           this.leashInfoTag = null;
           if (!this.level().isClientSide && p_21457_) {
@@ -365,7 +348,7 @@
           }
  
           if (!this.level().isClientSide && p_21456_ && this.level() instanceof ServerLevel) {
-@@ -1284,6 +_,7 @@
+@@ -1285,6 +_,7 @@
     public boolean startRiding(Entity p_21396_, boolean p_21397_) {
        boolean flag = super.startRiding(p_21396_, p_21397_);
        if (flag && this.isLeashed()) {
@@ -373,7 +356,7 @@
           this.dropLeash(true, true);
        }
  
-@@ -1306,7 +_,9 @@
+@@ -1307,7 +_,9 @@
           }
  
           if (this.tickCount > 100) {
@@ -383,7 +366,7 @@
              this.leashInfoTag = null;
           }
        }
-@@ -1379,6 +_,14 @@
+@@ -1380,6 +_,14 @@
  
        int i = EnchantmentHelper.getFireAspect(this);
        if (i > 0) {
@@ -398,7 +381,7 @@
           p_21372_.setSecondsOnFire(i * 4);
        }
  
-@@ -1425,15 +_,25 @@
+@@ -1426,15 +_,25 @@
        return false;
     }
  
@@ -422,10 +405,10 @@
 +      this.jumpInLiquidInternal(() -> super.jumpInFluid(type));
 +   }
 +
+    @VisibleForTesting
     public void removeFreeWill() {
        this.removeAllGoals((p_262562_) -> {
-          return true;
-@@ -1447,6 +_,7 @@
+@@ -1449,6 +_,7 @@
  
     protected void removeAfterChangingDimensions() {
        super.removeAfterChangingDimensions();
@@ -433,7 +416,7 @@
        this.dropLeash(true, false);
        this.getAllSlots().forEach((p_278936_) -> {
           if (!p_278936_.isEmpty()) {
-@@ -1460,5 +_,40 @@
+@@ -1462,5 +_,40 @@
     public ItemStack getPickResult() {
        SpawnEggItem spawneggitem = SpawnEggItem.byId(this.getType());
        return spawneggitem == null ? null : new ItemStack(spawneggitem);

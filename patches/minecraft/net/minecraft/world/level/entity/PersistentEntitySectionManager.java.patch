@@ -1,13 +1,14 @@
 --- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
 +++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
-@@ -26,13 +_,15 @@
- import net.minecraft.util.VisibleForDebug;
- import net.minecraft.world.entity.Entity;
+@@ -28,11 +_,16 @@
  import net.minecraft.world.level.ChunkPos;
-+import net.minecraft.world.level.chunk.storage.EntityStorage;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  import org.slf4j.Logger;
  
++//Ketting Start
++import net.minecraft.world.level.chunk.storage.EntityStorage;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++//Ketting end 
++
  public class PersistentEntitySectionManager<T extends EntityAccess> implements AutoCloseable {
     static final Logger LOGGER = LogUtils.getLogger();
     final Set<UUID> knownUuids = Sets.newHashSet();
@@ -144,7 +145,7 @@
        this.permanentStorage.close();
     }
  
-@@ -349,11 +_,13 @@
+@@ -354,11 +_,13 @@
  
     class Callback implements EntityInLevelCallback {
        private final T entity;
@@ -158,7 +159,7 @@
           this.currentSectionKey = p_157615_;
           this.currentSection = p_157616_;
        }
-@@ -370,9 +_,11 @@
+@@ -375,9 +_,11 @@
              PersistentEntitySectionManager.this.removeSectionIfEmpty(this.currentSectionKey, this.currentSection);
              EntitySection<T> entitysection = PersistentEntitySectionManager.this.sectionStorage.getOrCreateSection(i);
              entitysection.add(this.entity);

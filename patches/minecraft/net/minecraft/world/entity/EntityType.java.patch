@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
-@@ -167,7 +_,7 @@
+@@ -169,7 +_,7 @@
     private static final float MAGIC_HORSE_WIDTH = 1.3964844F;
     private static final int DISPLAY_TRACKING_RANGE = 10;
     public static final EntityType<Allay> ALLAY = register("allay", EntityType.Builder.of(Allay::new, MobCategory.CREATURE).sized(0.35F, 0.6F).clientTrackingRange(8).updateInterval(2));
@@ -9,7 +9,7 @@
     public static final EntityType<ArmorStand> ARMOR_STAND = register("armor_stand", EntityType.Builder.<ArmorStand>of(ArmorStand::new, MobCategory.MISC).sized(0.5F, 1.975F).clientTrackingRange(10));
     public static final EntityType<Arrow> ARROW = register("arrow", EntityType.Builder.<Arrow>of(Arrow::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20));
     public static final EntityType<Axolotl> AXOLOTL = register("axolotl", EntityType.Builder.of(Axolotl::new, MobCategory.AXOLOTLS).sized(0.75F, 0.42F).clientTrackingRange(10));
-@@ -308,6 +_,11 @@
+@@ -312,6 +_,11 @@
     private final EntityDimensions dimensions;
     private final FeatureFlagSet requiredFeatures;
  
@@ -21,7 +21,7 @@
     private static <T extends Entity> EntityType<T> register(String p_20635_, EntityType.Builder<T> p_20636_) {
        return Registry.register(BuiltInRegistries.ENTITY_TYPE, p_20635_, p_20636_.build(p_20635_));
     }
-@@ -321,21 +_,34 @@
+@@ -325,21 +_,34 @@
     }
  
     public EntityType(EntityType.EntityFactory<T> p_273268_, MobCategory p_272918_, boolean p_273417_, boolean p_273389_, boolean p_273556_, boolean p_272654_, ImmutableSet<Block> p_273631_, EntityDimensions p_272946_, int p_272895_, int p_273451_, FeatureFlagSet p_273518_) {
@@ -68,7 +68,7 @@
        Consumer<T> consumer;
        CompoundTag compoundtag;
        if (p_20594_ != null) {
-@@ -347,7 +_,7 @@
+@@ -351,7 +_,7 @@
           compoundtag = null;
        }
  
@@ -77,7 +77,7 @@
     }
  
     public static <T extends Entity> Consumer<T> createDefaultStackConfig(ServerLevel p_263583_, ItemStack p_263568_, @Nullable Player p_263575_) {
-@@ -368,20 +_,36 @@
+@@ -372,20 +_,36 @@
     public static <T extends Entity> Consumer<T> appendCustomEntityStackConfig(Consumer<T> p_263579_, ServerLevel p_263571_, ItemStack p_263582_, @Nullable Player p_263574_) {
        CompoundTag compoundtag = p_263582_.getTag();
        return compoundtag != null ? p_263579_.andThen((p_262558_) -> {
@@ -121,7 +121,7 @@
        }
  
        return t;
-@@ -601,14 +_,23 @@
+@@ -605,14 +_,23 @@
     }
  
     public int clientTrackingRange() {
@@ -145,7 +145,7 @@
        return this != PLAYER && this != LLAMA_SPIT && this != WITHER && this != BAT && this != ITEM_FRAME && this != GLOW_ITEM_FRAME && this != LEASH_KNOT && this != PAINTING && this != END_CRYSTAL && this != EVOKER_FANGS;
     }
  
-@@ -635,6 +_,12 @@
+@@ -639,6 +_,12 @@
        return this.builtInRegistryHolder;
     }
  
@@ -158,7 +158,7 @@
     public static class Builder<T extends Entity> {
        private final EntityType.EntityFactory<T> factory;
        private final MobCategory category;
-@@ -648,6 +_,11 @@
+@@ -652,6 +_,11 @@
        private EntityDimensions dimensions = EntityDimensions.scalable(0.6F, 1.8F);
        private FeatureFlagSet requiredFeatures = FeatureFlags.VANILLA_SET;
  
@@ -170,7 +170,7 @@
        private Builder(EntityType.EntityFactory<T> p_20696_, MobCategory p_20697_) {
           this.factory = p_20696_;
           this.category = p_20697_;
-@@ -709,12 +_,36 @@
+@@ -713,12 +_,36 @@
           return this;
        }
  

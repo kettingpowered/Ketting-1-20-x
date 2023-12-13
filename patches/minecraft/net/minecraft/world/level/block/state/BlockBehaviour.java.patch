@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -102,6 +_,17 @@
+@@ -107,6 +_,17 @@
        this.dynamicShape = p_60452_.dynamicShape;
        this.requiredFeatures = p_60452_.requiredFeatures;
        this.properties = p_60452_;
@@ -17,8 +17,8 @@
 +      }
     }
  
-    /** @deprecated */
-@@ -145,12 +_,14 @@
+    public BlockBehaviour.Properties properties() {
+@@ -166,12 +_,14 @@
     /** @deprecated */
     @Deprecated
     public void onPlace(BlockState p_60566_, Level p_60567_, BlockPos p_60568_, BlockState p_60569_, boolean p_60570_) {
@@ -34,7 +34,38 @@
           p_60516_.removeBlockEntity(p_60517_);
        }
  
-@@ -355,14 +_,15 @@
+@@ -183,12 +_,16 @@
+       if (!p_310712_.isAir() && p_312709_.getBlockInteraction() != Explosion.BlockInteraction.TRIGGER_BLOCK) {
+          Block block = p_310712_.getBlock();
+          boolean flag = p_312709_.getIndirectSourceEntity() instanceof Player;
+-         if (block.dropFromExplosion(p_312709_) && p_311693_ instanceof ServerLevel) {
++         if (p_310712_.canDropFromExplosion(p_311693_, p_311490_, p_312709_) && p_311693_ instanceof ServerLevel) {
++
+             ServerLevel serverlevel = (ServerLevel)p_311693_;
+             BlockEntity blockentity = p_310712_.hasBlockEntity() ? p_311693_.getBlockEntity(p_311490_) : null;
+             LootParams.Builder lootparams$builder = (new LootParams.Builder(serverlevel)).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(p_311490_)).withParameter(LootContextParams.TOOL, ItemStack.EMPTY).withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockentity).withOptionalParameter(LootContextParams.THIS_ENTITY, p_312709_.getDirectSourceEntity());
+-            if (p_312709_.getBlockInteraction() == Explosion.BlockInteraction.DESTROY_WITH_DECAY) {
+-               lootparams$builder.withParameter(LootContextParams.EXPLOSION_RADIUS, p_312709_.radius());
++            // CraftBukkit start - add yield
++            if (p_312709_.yield < 1.0F) {
++               lootparams$builder.withParameter(LootContextParams.EXPLOSION_RADIUS, 1.0F / p_312709_.yield);
++               // CraftBukkit end
++
+             }
+ 
+             p_310712_.spawnAfterBreak(serverlevel, p_311490_, ItemStack.EMPTY, flag);
+@@ -196,9 +_,7 @@
+                p_311277_.accept(p_309419_, p_311490_);
+             });
+          }
+-
+-         p_311693_.setBlock(p_311490_, Blocks.AIR.defaultBlockState(), 3);
+-         block.wasExploded(p_311693_, p_311490_, p_312709_);
++         p_310712_.onBlockExploded(p_311693_, p_311490_, p_312709_);
+       }
+    }
+ 
+@@ -400,14 +_,15 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
@@ -52,7 +83,7 @@
     }
  
     /** @deprecated */
-@@ -389,8 +_,7 @@
+@@ -434,8 +_,7 @@
  
     public final ResourceLocation getLootTable() {
        if (this.drops == null) {
@@ -62,7 +93,7 @@
        }
  
        return this.drops;
-@@ -413,6 +_,14 @@
+@@ -458,6 +_,14 @@
        return this.properties.destroyTime;
     }
  
@@ -77,7 +108,7 @@
     public abstract static class BlockStateBase extends StateHolder<Block, BlockState> {
        private final int lightEmission;
        private final boolean useShapeForLightOcclusion;
-@@ -548,12 +_,14 @@
+@@ -593,12 +_,14 @@
           return this.useShapeForLightOcclusion;
        }
  
@@ -93,7 +124,7 @@
        }
  
        public boolean ignitedByLava() {
-@@ -567,9 +_,11 @@
+@@ -612,9 +_,11 @@
        }
  
        public MapColor getMapColor(BlockGetter p_285002_, BlockPos p_285293_) {
@@ -106,7 +137,7 @@
        public BlockState rotate(Rotation p_60718_) {
           return this.getBlock().rotate(this.asState(), p_60718_);
        }
-@@ -623,6 +_,8 @@
+@@ -668,6 +_,8 @@
        }
  
        public PushReaction getPistonPushReaction() {
@@ -115,7 +146,7 @@
           return this.pushReaction;
        }
  
-@@ -976,8 +_,9 @@
+@@ -1032,8 +_,9 @@
        boolean spawnTerrainParticles = true;
        NoteBlockInstrument instrument = NoteBlockInstrument.HARP;
        boolean replaceable;
@@ -126,7 +157,7 @@
        };
        BlockBehaviour.StatePredicate isRedstoneConductor = (p_284888_, p_284889_, p_284890_) -> {
           return p_284888_.isCollisionShapeFullBlock(p_284889_, p_284890_);
-@@ -1115,9 +_,15 @@
+@@ -1187,9 +_,15 @@
           return this;
        }
  

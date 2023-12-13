@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/level/block/TrapDoorBlock.java
 +++ b/net/minecraft/world/level/block/TrapDoorBlock.java
-@@ -26,6 +_,7 @@
+@@ -31,6 +_,7 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class TrapDoorBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
-    public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
-@@ -102,12 +_,25 @@
+    public static final MapCodec<TrapDoorBlock> CODEC = RecordCodecBuilder.mapCodec((p_309899_) -> {
+@@ -128,12 +_,25 @@
        if (!p_57548_.isClientSide) {
           boolean flag = p_57548_.hasNeighborSignal(p_57549_);
           if (flag != p_57547_.getValue(POWERED)) {
@@ -36,7 +36,7 @@
              if (p_57547_.getValue(WATERLOGGED)) {
                 p_57548_.scheduleTick(p_57549_, Fluids.WATER, Fluids.WATER.getTickDelay(p_57548_));
              }
-@@ -148,4 +_,17 @@
+@@ -174,6 +_,19 @@
  
        return super.updateShape(p_57554_, p_57555_, p_57556_, p_57557_, p_57558_, p_57559_);
     }
@@ -53,4 +53,6 @@
 +   }
 +   //Forge End
 +
- }
+ 
+    protected BlockSetType getType() {
+       return this.type;

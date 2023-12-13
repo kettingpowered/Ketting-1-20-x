@@ -1,24 +1,25 @@
 --- a/net/minecraft/world/level/block/SaplingBlock.java
 +++ b/net/minecraft/world/level/block/SaplingBlock.java
-@@ -14,12 +_,17 @@
+@@ -16,6 +_,10 @@
  import net.minecraft.world.level.block.state.properties.IntegerProperty;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
 +import org.bukkit.Location;
 +import org.bukkit.TreeType;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
++import org.bukkit.craftbukkit.util.CraftLocation;
 +import org.bukkit.event.world.StructureGrowEvent;
  
  public class SaplingBlock extends BushBlock implements BonemealableBlock {
-    public static final IntegerProperty STAGE = BlockStateProperties.STAGE;
+    public static final MapCodec<SaplingBlock> CODEC = RecordCodecBuilder.mapCodec((p_312128_) -> {
+@@ -27,6 +_,7 @@
     protected static final float AABB_OFFSET = 6.0F;
     protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
-    private final AbstractTreeGrower treeGrower;
+    protected final TreeGrower treeGrower;
 +   public static TreeType treeType; // CraftBukkit
  
-    public SaplingBlock(AbstractTreeGrower p_55978_, BlockBehaviour.Properties p_55979_) {
-       super(p_55979_);
-@@ -32,7 +_,8 @@
+    public MapCodec<? extends SaplingBlock> codec() {
+       return CODEC;
+@@ -43,7 +_,8 @@
     }
  
     public void randomTick(BlockState p_222011_, ServerLevel p_222012_, BlockPos p_222013_, RandomSource p_222014_) {
@@ -28,7 +29,7 @@
           this.advanceTree(p_222012_, p_222013_, p_222011_, p_222014_);
        }
  
-@@ -42,6 +_,32 @@
+@@ -53,6 +_,32 @@
        if (p_222003_.getValue(STAGE) == 0) {
           p_222001_.setBlock(p_222002_, p_222003_.cycle(STAGE), 4);
        } else {

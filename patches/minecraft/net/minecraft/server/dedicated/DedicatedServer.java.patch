@@ -15,7 +15,7 @@
  import java.nio.file.Files;
  import java.nio.file.Path;
  import java.util.Collections;
-@@ -19,18 +_,12 @@
+@@ -19,18 +_,11 @@
  import java.util.Optional;
  import java.util.function.BooleanSupplier;
  import javax.annotation.Nullable;
@@ -25,7 +25,6 @@
 -import net.minecraft.SystemReport;
 -import net.minecraft.Util;
 +
-+import joptsimple.OptionSet;
 +import net.minecraft.*;
  import net.minecraft.commands.CommandSourceStack;
  import net.minecraft.core.BlockPos;
@@ -49,7 +48,7 @@
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.io.IoBuilder;
 +import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.v1_20_R2.SpigotTimings;
++import org.bukkit.craftbukkit.SpigotTimings;
 +import org.bukkit.event.server.RemoteServerCommandEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
 +import org.kettingpowered.ketting.adapters.BetterServerGUI_1_20_2_Adapter;
@@ -146,7 +145,7 @@
 +      for (java.util.logging.Handler handler : global.getHandlers()) {
 +         global.removeHandler(handler);
 +      }
-+      global.addHandler(new org.bukkit.craftbukkit.v1_20_R2.util.ForwardLogHandler());
++      global.addHandler(new org.bukkit.craftbukkit.util.ForwardLogHandler());
 +
 +      final org.apache.logging.log4j.core.Logger logger = ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger());
 +      for (org.apache.logging.log4j.core.Appender appender : logger.getAppenders().values()) {
@@ -164,15 +163,7 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
        thread.start();
-@@ -102,6 +_,7 @@
- 
-       LOGGER.info("Loading properties");
-       DedicatedServerProperties dedicatedserverproperties = this.settings.getProperties();
-+
-       if (this.isSingleplayer()) {
-          this.setLocalIp("127.0.0.1");
-       } else {
-@@ -109,15 +_,24 @@
+@@ -109,13 +_,21 @@
           this.setPreventProxyConnections(dedicatedserverproperties.preventProxyConnections);
           this.setLocalIp(dedicatedserverproperties.serverIp);
        }
@@ -194,10 +185,7 @@
 +      // this.worldData.setGameType(dedicatedserverproperties.gamemode); // CraftBukkit - moved to world loading
        LOGGER.info("Default game type: {}", (Object)dedicatedserverproperties.gamemode);
        InetAddress inetaddress = null;
-+
        if (!this.getLocalIp().isEmpty()) {
-          inetaddress = InetAddress.getByName(this.getLocalIp());
-       }
 @@ -138,9 +_,23 @@
           return false;
        }
@@ -238,7 +226,7 @@
           long j = Util.getNanos() - i;
           String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
           LOGGER.info("Done ({})! For help, type \"help\"", (Object)s);
-+         this.nextTickTime = Util.getMillis(); //Forge: Update server time to prevent watchdog/spaming during long load.
++         this.nextTickTimeNanos = Util.getNanos(); //Forge: Update server time to prevent watchdog/spaming during long load.
           if (dedicatedserverproperties.announcePlayerAchievements != null) {
              this.getGameRules().getRule(GameRules.RULE_ANNOUNCE_ADVANCEMENTS).set(dedicatedserverproperties.announcePlayerAchievements, this);
           }

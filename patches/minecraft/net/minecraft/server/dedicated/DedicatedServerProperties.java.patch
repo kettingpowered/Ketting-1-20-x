@@ -1,15 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServerProperties.java
 +++ b/net/minecraft/server/dedicated/DedicatedServerProperties.java
-@@ -17,6 +_,8 @@
- import java.util.regex.Pattern;
- import java.util.stream.Collectors;
- import javax.annotation.Nullable;
-+
-+import joptsimple.OptionSet;
- import net.minecraft.core.Holder;
- import net.minecraft.core.Registry;
- import net.minecraft.core.RegistryAccess;
-@@ -46,6 +_,7 @@
+@@ -45,6 +_,7 @@
     static final Logger LOGGER = LogUtils.getLogger();
     private static final Pattern SHA1 = Pattern.compile("^[a-fA-F0-9]{40}$");
     private static final Splitter COMMA_SPLITTER = Splitter.on(',').trimResults();
@@ -17,33 +8,33 @@
     public final boolean onlineMode = this.get("online-mode", true);
     public final boolean preventProxyConnections = this.get("prevent-proxy-connections", false);
     public final String serverIp = this.get("server-ip", "");
-@@ -104,8 +_,10 @@
+@@ -103,8 +_,10 @@
     private final DedicatedServerProperties.WorldDimensionData worldDimensionData;
     public final WorldOptions worldOptions;
  
 -   public DedicatedServerProperties(Properties p_180926_) {
 -      super(p_180926_);
 +   // CraftBukkit start
-+   public DedicatedServerProperties(Properties properties, OptionSet optionset) {
++   public DedicatedServerProperties(Properties properties, joptsimple.OptionSet optionset) {
 +      super(properties, optionset);
 +      // CraftBukkit end
        String s = this.get("level-seed", "");
        boolean flag = this.get("generate-structures", true);
        long i = WorldOptions.parseSeed(s).orElse(WorldOptions.randomSeed());
-@@ -119,12 +_,14 @@
+@@ -118,12 +_,14 @@
        this.initialDataPackConfiguration = getDatapackConfig(this.get("initial-enabled-packs", String.join(",", WorldDataConfiguration.DEFAULT.dataPacks().getEnabled())), this.get("initial-disabled-packs", String.join(",", WorldDataConfiguration.DEFAULT.dataPacks().getDisabled())));
     }
  
 -   public static DedicatedServerProperties fromFile(Path p_180930_) {
 -      return new DedicatedServerProperties(loadFromFile(p_180930_));
 +   // CraftBukkit start
-+   public static DedicatedServerProperties fromFile(Path p_180930_, OptionSet optionset) {
++   public static DedicatedServerProperties fromFile(Path p_180930_, joptsimple.OptionSet optionset) {
 +      return new DedicatedServerProperties(loadFromFile(p_180930_), optionset);
     }
  
 -   protected DedicatedServerProperties reload(RegistryAccess p_139761_, Properties p_139762_) {
 -      return new DedicatedServerProperties(p_139762_);
-+   protected DedicatedServerProperties reload(RegistryAccess p_139761_, Properties p_139762_, OptionSet optionset) {
++   protected DedicatedServerProperties reload(RegistryAccess p_139761_, Properties p_139762_, joptsimple.OptionSet optionset) {
 +      return new DedicatedServerProperties(properties, optionset);
 +      // CraftBukkit end
     }

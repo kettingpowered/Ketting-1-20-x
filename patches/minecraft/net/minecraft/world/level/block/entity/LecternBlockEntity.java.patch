@@ -8,8 +8,8 @@
 -public class LecternBlockEntity extends BlockEntity implements Clearable, MenuProvider {
 +import org.bukkit.Location;
 +import org.bukkit.block.Lectern;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.util.CraftLocation;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.inventory.InventoryHolder;
 +
@@ -121,7 +121,7 @@
 +
 +   @Override
 +   public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return wrapper.getEntity() != null ? wrapper.getEntity().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_20_R2.command.CraftBlockCommandSender(wrapper, this);
++      return wrapper.getEntity() != null ? wrapper.getEntity().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.command.CraftBlockCommandSender(wrapper, this);
 +   }
 +
 +   @Override

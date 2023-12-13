@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
  import org.joml.Vector3f;
  
@@ -88,7 +88,7 @@
           flag = true;
        }
  
-@@ -555,7 +_,7 @@
+@@ -552,7 +_,7 @@
        super.aiStep();
        if (!this.level().isClientSide && this.isAlive()) {
           if (this.random.nextInt(900) == 0 && this.deathTime == 0) {
@@ -97,7 +97,7 @@
           }
  
           if (this.canEatGrass()) {
-@@ -787,6 +_,7 @@
+@@ -784,6 +_,7 @@
        this.setDeltaMovement(vec3.x, d1, vec3.z);
        this.setIsJumping(true);
        this.hasImpulse = true;
@@ -105,7 +105,7 @@
        if (p_275435_.z > 0.0D) {
           float f = Mth.sin(this.getYRot() * ((float)Math.PI / 180F));
           float f1 = Mth.cos(this.getYRot() * ((float)Math.PI / 180F));
-@@ -809,6 +_,8 @@
+@@ -806,6 +_,8 @@
           p_30589_.putUUID("Owner", this.getOwnerUUID());
        }
  
@@ -114,7 +114,7 @@
        if (!this.inventory.getItem(0).isEmpty()) {
           p_30589_.put("SaddleItem", this.inventory.getItem(0).save(new CompoundTag()));
        }
-@@ -833,6 +_,12 @@
+@@ -830,6 +_,12 @@
           this.setOwnerUUID(uuid);
        }
  
@@ -127,7 +127,7 @@
        if (p_30565_.contains("SaddleItem", 10)) {
           ItemStack itemstack = ItemStack.of(p_30565_.getCompound("SaddleItem"));
           if (itemstack.is(Items.SADDLE)) {
-@@ -925,6 +_,17 @@
+@@ -922,6 +_,17 @@
     }
  
     public void handleStartJump(int p_30574_) {
@@ -145,7 +145,7 @@
        this.allowStandSliding = true;
        this.standIfPossible();
        this.playJumpSound();
-@@ -1109,6 +_,25 @@
+@@ -1106,6 +_,25 @@
  
        this.randomizeAttributes(p_30555_.getRandom());
        return super.finalizeSpawn(p_30555_, p_30556_, p_30557_, p_30558_, p_30559_);
