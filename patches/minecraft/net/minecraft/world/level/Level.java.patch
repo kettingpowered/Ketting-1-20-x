@@ -381,7 +381,7 @@
        if (this.isOutsideBuildHeight(p_46732_)) {
           return Blocks.VOID_AIR.defaultBlockState();
        } else {
-@@ -408,39 +_,88 @@
+@@ -408,39 +_,87 @@
        (this.tickingBlockEntities ? this.pendingBlockEntityTickers : this.blockEntityTickers).add(p_151526_);
     }
  
@@ -412,17 +412,15 @@
        }
  
 -      Iterator<TickingBlockEntity> iterator = this.blockEntityTickers.iterator();
-       boolean flag = this.tickRateManager().runsNormally();
--
--      while(iterator.hasNext()) {
--         TickingBlockEntity tickingblockentity = iterator.next();
 +      timings.tileEntityPending.stopTiming(); // Spigot
 +
 +      timings.tileEntityTick.startTiming(); // Spigot
-+
 +      // Spigot start
 +      // Iterator<TickingBlockEntity> iterator = this.blockEntityTickers.iterator();
-+
+       boolean flag = this.tickRateManager().runsNormally();
+ 
+-      while(iterator.hasNext()) {
+-         TickingBlockEntity tickingblockentity = iterator.next();
 +      int tilesThisCycle = 0;
 +      for (tileLimiter.initTick();
 +           tilesThisCycle < blockEntityTickers.size() && (tilesThisCycle % 10 != 0 || tileLimiter.shouldContinue());

@@ -441,7 +441,7 @@
     }
  
     public String getLocalIp() {
-@@ -627,18 +_,31 @@
+@@ -627,16 +_,28 @@
  
     }
  
@@ -466,14 +466,11 @@
  
 +         // Spigot start
 +         Arrays.fill( recentTps, 20 );
-+         long curTime, tickSection = Util.getMillis(), tickCount = 1;
++         long tickSection = Util.getMillis(), tickCount = 1;
           while(this.running) {
              long i;
-+            curTime = Util.getMillis(); //Spigot
              if (!this.isPaused() && this.tickRateManager.isSprinting() && this.tickRateManager.checkShouldSprintThisTick()) {
-                i = 0L;
-                this.nextTickTimeNanos = Util.getNanos();
-@@ -648,18 +_,30 @@
+@@ -648,18 +_,32 @@
                 long k = Util.getNanos() - this.nextTickTimeNanos;
                 if (k > OVERLOADED_THRESHOLD_NANOS + 20L * i && this.nextTickTimeNanos - this.lastOverloadWarningNanos >= OVERLOADED_WARNING_INTERVAL_NANOS + 100L * i) {
                    long j = k / i;
@@ -484,13 +481,15 @@
                 }
              }
  
++            // Spigot start
 +            if ( tickCount++ % SAMPLE_INTERVAL == 0 )
 +            {
-+               double currentTps = 1E3 / ( curTime - tickSection ) * SAMPLE_INTERVAL;
-+               recentTps[0] = calcTps( recentTps[0], 0.92, currentTps ); // 1/exp(5sec/1min)
-+               recentTps[1] = calcTps( recentTps[1], 0.9835, currentTps ); // 1/exp(5sec/5min)
-+               recentTps[2] = calcTps( recentTps[2], 0.9945, currentTps ); // 1/exp(5sec/15min)
-+               tickSection = curTime;
++                long curTime = Util.getMillis();
++                double currentTps = 1E3 / ( curTime - tickSection ) * SAMPLE_INTERVAL;
++                recentTps[0] = calcTps( recentTps[0], 0.92, currentTps ); // 1/exp(5sec/1min)
++                recentTps[1] = calcTps( recentTps[1], 0.9835, currentTps ); // 1/exp(5sec/5min)
++                recentTps[2] = calcTps( recentTps[2], 0.9945, currentTps ); // 1/exp(5sec/15min)
++                tickSection = curTime;
 +            }
 +            // Spigot end
 +

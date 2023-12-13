@@ -50,7 +50,7 @@
 +               @Override
 +               public void run() {
 +                  try {
-+                     new LoginHandler().fireEvents(UUIDUtil.createOfflineProfile(ServerLoginPacketListenerImpl.this.requestedUsername));
++                     new LoginHandler().fireEvents(ServerLoginPacketListenerImpl.this.createOfflineProfile(ServerLoginPacketListenerImpl.this.requestedUsername)); // Spigot
 +                  } catch (Exception ex) {
 +                     disconnect("Failed to verify username!");
 +                     server.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + ServerLoginPacketListenerImpl.this.requestedUsername, ex);
@@ -95,7 +95,7 @@
           public void run() {
              String s1 = Objects.requireNonNull(ServerLoginPacketListenerImpl.this.requestedUsername, "Player name not initialized");
  
-@@ -183,8 +_,13 @@
+@@ -183,11 +_,16 @@
                 ProfileResult profileresult = ServerLoginPacketListenerImpl.this.server.getSessionService().hasJoinedServer(s1, s, this.getAddress());
                 if (profileresult != null) {
                    GameProfile gameprofile = profileresult.profile();
@@ -110,8 +110,18 @@
 +                  new LoginHandler().fireEvents(gameprofile);
                 } else if (ServerLoginPacketListenerImpl.this.server.isSingleplayer()) {
                    ServerLoginPacketListenerImpl.LOGGER.warn("Failed to verify username but will let them in anyway!");
-                   ServerLoginPacketListenerImpl.this.startClientVerification(UUIDUtil.createOfflineProfile(s1));
-@@ -200,6 +_,11 @@
+-                  ServerLoginPacketListenerImpl.this.startClientVerification(UUIDUtil.createOfflineProfile(s1));
++                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfile(s1)); // Spigot
+                } else {
+                   ServerLoginPacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.unverified_username"));
+                   ServerLoginPacketListenerImpl.LOGGER.error("Username '{}' tried to join with an invalid session", (Object)s1);
+@@ -195,11 +_,16 @@
+             } catch (AuthenticationUnavailableException authenticationunavailableexception) {
+                if (ServerLoginPacketListenerImpl.this.server.isSingleplayer()) {
+                   ServerLoginPacketListenerImpl.LOGGER.warn("Authentication servers are down but will let them in anyway!");
+-                  ServerLoginPacketListenerImpl.this.startClientVerification(UUIDUtil.createOfflineProfile(s1));
++                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfile(s1)); // Spigot
+                } else {
                    ServerLoginPacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.authservers_down"));
                    ServerLoginPacketListenerImpl.LOGGER.error("Couldn't verify username because servers are unavailable");
                 }
@@ -123,7 +133,7 @@
              }
  
           }
-@@ -214,20 +_,72 @@
+@@ -214,24 +_,102 @@
        thread.start();
     }
  
@@ -191,9 +201,40 @@
 +   }
 +
     public void fillListenerSpecificCrashDetails(CrashReportCategory p_310682_) {
-+      p_310682_.setDetail("Login phase", () -> {
-+         return this.state.toString();
-+      });
        p_310682_.setDetail("Login phase", () -> {
           return this.state.toString();
        });
+-   }
++      p_310682_.setDetail("Login phase", () -> {
++         return this.state.toString();
++      });
++   }
++
++   // Spigot start
++   protected GameProfile createOfflineProfile(String s) {
++       java.util.UUID uuid;
++       if ( connection.spoofedUUID != null )
++       {
++           uuid = connection.spoofedUUID;
++       } else
++       {
++           uuid = UUIDUtil.createOfflinePlayerUUID( s );
++       }
++
++       GameProfile gameProfile = new GameProfile( uuid, s );
++
++       if (connection.spoofedProfile != null)
++       {
++           for ( com.mojang.authlib.properties.Property property : connection.spoofedProfile )
++           {
++               if ( !ServerHandshakePacketListenerImpl.PROP_PATTERN.matcher( property.name()).matches() ) continue;
++               gameProfile.getProperties().put( property.name(), property );
++           }
++       }
++
++       return gameProfile;
++   }
++   // Spigot end
+ 
+    static enum State {
+       HELLO,
