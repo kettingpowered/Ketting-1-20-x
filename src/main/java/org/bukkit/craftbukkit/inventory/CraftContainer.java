@@ -162,7 +162,7 @@ public class CraftContainer extends AbstractContainerMenu {
             case MERCHANT:
                 throw new IllegalArgumentException("Can't open a " + inventory.getType() + " inventory!");
             case CRAFTER:
-                return Containers.CRAFTER_3x3;
+                return MenuType.CRAFTER_3x3;
             default:
                 // TODO: If it reaches the default case, should we throw an error?
                 return MenuType.GENERIC_9x3;

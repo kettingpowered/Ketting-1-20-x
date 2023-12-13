@@ -8,6 +8,15 @@
        this.minecraft.player.setId(p_105030_.playerId());
        this.level.addEntity(this.minecraft.player);
        this.minecraft.player.input = new KeyboardInput(this.minecraft.options);
+@@ -794,7 +_,7 @@
+ 
+    public void handleSystemChat(ClientboundSystemChatPacket p_233708_) {
+       PacketUtils.ensureRunningOnSameThread(p_233708_, this, this.minecraft);
+-      this.minecraft.getChatListener().handleSystemMessage(p_233708_.content(), p_233708_.overlay());
++      this.minecraft.getChatListener().handleSystemMessage(Component.literal(p_233708_.content()), p_233708_.overlay());
+    }
+ 
+    public void handlePlayerChat(ClientboundPlayerChatPacket p_233702_) {
 @@ -1043,7 +_,9 @@
           localplayer1.getAttributes().assignValues(localplayer.getAttributes());
        }

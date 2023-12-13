@@ -232,17 +232,17 @@
 -      if (!this.player.getMainHandItem().getItem().canAttackBlock(blockstate1, this.level, p_9281_, this.player)) {
 +      // CraftBukkit start - fire BlockBreakEvent
 +      destroyBlock$bblock = CraftBlock.at(level, p_9281_);
-+      destroyBlock$event = callBukkitBlockBreakEvent(p_9281_, blockstate, destroyBlock$bblock);
++      destroyBlock$event = callBukkitBlockBreakEvent(p_9281_, blockstate1, destroyBlock$bblock);
 +
 +      if (destroyBlock$event.isEmpty()) {
 +         return false;
 +      }
 +
-+      if (false && !this.player.getMainHandItem().getItem().canAttackBlock(blockstate, this.level, p_9281_, this.player)) { // CraftBukkit - false
++      if (false && !this.player.getMainHandItem().getItem().canAttackBlock(blockstate1, this.level, p_9281_, this.player)) { // CraftBukkit - false
           return false;
        } else {
-+         blockstate = this.level.getBlockState(p_9281_); // CraftBukkit - update state from plugins
-+         if (blockstate.isAir()) return false; // CraftBukkit - A plugin set block to air without cancelling
++         blockstate1 = this.level.getBlockState(p_9281_); // CraftBukkit - update state from plugins
++         if (blockstate1.isAir()) return false; // CraftBukkit - A plugin set block to air without cancelling
           BlockEntity blockentity = this.level.getBlockEntity(p_9281_);
           Block block = blockstate1.getBlock();
           if (block instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks()) {
@@ -255,13 +255,14 @@
           } else {
 -            BlockState blockstate = block.playerWillDestroy(this.level, p_9281_, blockstate1, this.player);
 -            boolean flag1 = this.level.removeBlock(p_9281_, false);
+-            if (flag1) {
 +            // CraftBukkit start
 +            org.bukkit.block.BlockState state = destroyBlock$bblock.getState();
 +            level.captureDrops = new ArrayList<>();
 +            // CraftBukkit end
 +            BlockState blockstate = blockstate1;
 +            boolean flag = /*this.level*/removeBlock(p_9281_, false); //Ketting
-             if (flag1) {
++            if (flag) {
                 block.destroy(this.level, p_9281_, blockstate);
              }
  
@@ -272,7 +273,7 @@
                 ItemStack itemstack = this.player.getMainHandItem();
                 ItemStack itemstack1 = itemstack.copy();
 -               boolean flag = this.player.hasCorrectToolForDrops(blockstate);
-+               boolean flag = blockstate.canHarvestBlock(this.level, p_9281_, this.player); // previously player.hasCorrectToolForDrops(blockstate)
++               boolean flag1 = blockstate.canHarvestBlock(this.level, p_9281_, this.player); // previously player.hasCorrectToolForDrops(blockstate)
 +
                 itemstack.mineBlock(this.level, blockstate, p_9281_, this.player);
 -               if (flag1 && flag) {

@@ -127,13 +127,17 @@
 +            else if (event.getException() != null)
 +               com.google.common.base.Throwables.throwIfUnchecked(event.getException());
 +            return 1;
-+         }
-+         ContextChain<CommandSourceStack> contextchain = finishParsing(event.getParseResults(), p_242841_, commandsourcestack);
-+            return this.getCorrectDispatcher(p_242841_).unwrap().execute(event.getParseResults());
++         }          
++         System.err.println("Ketting Please verify the call to getCorrectDispatcher in Commands.performCommand again");
++         //return this.getCorrectDispatcher(p_242841_).unwrap().execute(event.getParseResults());
           if (contextchain != null) {
              executeCommandInContext(commandsourcestack, (p_308343_) -> {
                 ExecutionContext.queueInitialCommandExecution(p_308343_, p_242841_, contextchain, commandsourcestack, CommandResultCallback.EMPTY);
-@@ -297,7 +_,7 @@
+@@ -294,10 +_,11 @@
+          commandsourcestack.getServer().getProfiler().pop();
+       }
+ 
++      return 0; //Ketting return type fix
     }
  
     @Nullable
