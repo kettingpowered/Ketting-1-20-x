@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
-import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.shorts.ShortArraySet;
 import it.unimi.dsi.fastutil.shorts.ShortSet;
 import java.io.ByteArrayOutputStream;
@@ -35,14 +34,11 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.SectionPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.PlayerChatMessage;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
-import net.minecraft.network.protocol.common.ClientboundResourcePackPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ClientboundClearTitlesPacket;
 import net.minecraft.network.protocol.game.ClientboundCustomChatCompletionsPacket;
@@ -137,7 +133,6 @@ import org.bukkit.craftbukkit.v1_20_R2.advancement.CraftAdvancement;
 import org.bukkit.craftbukkit.v1_20_R2.advancement.CraftAdvancementProgress;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockEntityState;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState;
-import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockStates;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftSign;
 import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_20_R2.conversations.ConversationTracker;
@@ -201,6 +196,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return getHandle().getGameProfile();
     }
 
+    @Override
+    public void remove() {
+        // Will lead to an inconsistent player state if we remove the player as any other entity.
+        throw new UnsupportedOperationException(String.format("Cannot remove player %s, use Player#kickPlayer(String) instead.", getName()));
+    }
     @Override
     public boolean isOp() {
         return server.getHandle().isOp(getProfile());

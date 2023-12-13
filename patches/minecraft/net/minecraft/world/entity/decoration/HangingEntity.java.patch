@@ -198,3 +198,16 @@
           this.kill();
           this.dropItem((Entity)null);
        }
+@@ -178,10 +_,12 @@
+    }
+ 
+    public void addAdditionalSaveData(CompoundTag p_31736_) {
++      if (super.addAdditionalSaveData_includeAll) {// CraftBukkit - selectively save tile position
+       BlockPos blockpos = this.getPos();
+       p_31736_.putInt("TileX", blockpos.getX());
+       p_31736_.putInt("TileY", blockpos.getY());
+       p_31736_.putInt("TileZ", blockpos.getZ());
++      }//Craftbukkit
+    }
+ 
+    public void readAdditionalSaveData(CompoundTag p_31730_) {

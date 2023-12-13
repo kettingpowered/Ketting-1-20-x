@@ -38,7 +38,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ChunkHolder;
-import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.Ticket;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.server.level.ServerLevel;
@@ -822,6 +821,11 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     @Override
     public void addEntityToWorld(net.minecraft.world.entity.Entity entity, SpawnReason reason) {
         getHandle().addFreshEntity(entity, reason);
+    }
+
+    @Override
+    public void addEntityWithPassengers(net.minecraft.world.entity.Entity entity, SpawnReason reason) {
+        getHandle().tryAddFreshEntityWithPassengers(entity, reason);
     }
 
     @Override

@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/ai/behavior/GoToWantedItem.java
 +++ b/net/minecraft/world/entity/ai/behavior/GoToWantedItem.java
+@@ -8,6 +_,7 @@
+ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+ import net.minecraft.world.entity.ai.memory.WalkTarget;
+ import net.minecraft.world.entity.item.ItemEntity;
++import org.bukkit.craftbukkit.entity.CraftEntity;
+ 
+ public class GoToWantedItem {
+    public static BehaviorControl<LivingEntity> create(float p_260027_, boolean p_259769_, int p_259671_) {
 @@ -23,7 +_,22 @@
              return (p_258380_, p_258381_, p_258382_) -> {
                 ItemEntity itementity = p_258371_.get(p_258389_);
@@ -15,7 +23,7 @@
 +                        p_258389_.erase();
 +                     }
 +
-+                     itementity = (ItemEntity) ((org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity) event.getTarget()).getHandle();
++                     itementity = (ItemEntity) ((CraftEntity) event.getTarget()).getHandle();
 +                  }
 +                  // CraftBukkit end
                    WalkTarget walktarget = new WalkTarget(new EntityTracker(itementity, false), p_260346_, 0);

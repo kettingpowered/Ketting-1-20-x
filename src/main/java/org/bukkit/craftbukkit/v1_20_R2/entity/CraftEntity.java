@@ -15,12 +15,18 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.network.ServerPlayerConnection;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.AreaEffectCloud;
+import net.minecraft.world.entity.Display;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.GlowSquid;
+import net.minecraft.world.entity.Interaction;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Marker;
 import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.animal.allay.Allay;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
-import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.animal.frog.Frog;
 import net.minecraft.world.entity.animal.frog.Tadpole;
 import net.minecraft.world.entity.animal.goat.Goat;
@@ -55,6 +61,7 @@ import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftSpawnCategory;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftVector;
+import org.bukkit.entity.EntitySnapshot;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;
@@ -531,7 +538,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     @Override
     public boolean isValid() {
-        return entity.isAlive() && entity.valid && entity.isChunkLoaded();
+        return entity.isAlive() && entity.valid && entity.isChunkLoaded() && isInWorld();
     }
 
     @Override
@@ -1002,6 +1009,42 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     @Override
     public SpawnCategory getSpawnCategory() {
         return CraftSpawnCategory.toBukkit(getHandle().getType().getCategory());
+    }
+
+    @Override
+    public boolean isInWorld() {
+        return getHandle().inWorld;
+    }
+
+    @Override
+    public EntitySnapshot createSnapshot() {
+        return CraftEntitySnapshot.create(this);
+    }
+
+    @Override
+    public org.bukkit.entity.Entity copy() {
+        Entity copy = copy(getHandle().level());
+        Preconditions.checkArgument(copy != null, "Error creating new entity.");
+
+        return copy.getBukkitEntity();
+    }
+
+    @Override
+    public org.bukkit.entity.Entity copy(Location location) {
+        Preconditions.checkArgument(location.getWorld() != null, "Location has no world");
+
+        Entity copy = copy(((CraftWorld) location.getWorld()).getHandle());
+        Preconditions.checkArgument(copy != null, "Error creating new entity.");
+
+        copy.setPos(location.getX(), location.getY(), location.getZ());
+        return location.getWorld().addEntity(copy.getBukkitEntity());
+    }
+
+    private Entity copy(net.minecraft.world.level.Level level) {
+        CompoundTag compoundTag = new CompoundTag();
+        getHandle().saveAsPassenger(compoundTag, false);
+
+        return net.minecraft.world.entity.EntityType.loadEntityRecursive(compoundTag, level, java.util.function.Function.identity());
     }
 
     public void storeBukkitValues(CompoundTag c) {

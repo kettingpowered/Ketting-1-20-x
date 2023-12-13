@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
+@@ -88,7 +_,6 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.Blocks;
+-import net.minecraft.world.level.block.FenceGateBlock;
+ import net.minecraft.world.level.block.HoneyBlock;
+ import net.minecraft.world.level.block.Mirror;
+ import net.minecraft.world.level.block.RenderShape;
 @@ -123,7 +_,59 @@
  import org.joml.Vector3f;
  import org.slf4j.Logger;
@@ -13,7 +21,7 @@
 +import org.bukkit.block.BlockFace;
 +import org.bukkit.command.CommandSender;
 +import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
++import org.bukkit.craftbukkit.entity.CraftEntity;
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftPortalEvent;
@@ -80,7 +88,7 @@
     private final Set<TagKey<Fluid>> fluidOnEyes = new HashSet<>();
     public int invulnerableTime;
     protected boolean firstTick = true;
-@@ -238,14 +_,48 @@
+@@ -238,14 +_,49 @@
     public boolean hasVisualFire;
     @Nullable
     private BlockState feetBlockState = null;
@@ -88,6 +96,7 @@
 +   public boolean persist = true;
 +   public boolean visibleByDefault = true;
 +   public boolean valid;
++   public boolean inWorld = false;
 +   public boolean generation;
 +   public int maxAirTicks = getDefaultMaxAirSupply(); // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
 +   public org.bukkit.projectiles.ProjectileSource projectileSource; // For projectiles only
@@ -560,16 +569,63 @@
     public void awardKillScore(Entity p_19953_, int p_19954_, DamageSource p_19955_) {
        if (p_19953_ instanceof ServerPlayer) {
           CriteriaTriggers.ENTITY_KILLED_PLAYER.trigger((ServerPlayer)p_19953_, this, p_19955_);
-@@ -1569,7 +_,7 @@
+@@ -1564,16 +_,31 @@
+       return p_19883_ < d0 * d0;
+    }
+ 
++   // Ketting start
++   private boolean saveAsPassenger_includeAll;
++   public void prepareSaveAsPassenger(boolean includeAll){
++      this.saveAsPassenger_includeAll = includeAll;
++   }
++   public boolean saveAsPassenger(CompoundTag p_20087_, boolean includeAll){
++      prepareSaveAsPassenger(includeAll);
++      return saveAsPassenger(p_20087_);
++   }
++   //Ketting end
++
+    public boolean saveAsPassenger(CompoundTag p_20087_) {
+       if (this.removalReason != null && !this.removalReason.shouldSave()) {
++         this.saveWithoutId_includeAll = true; //Ketting reset flag
           return false;
        } else {
           String s = this.getEncodeId();
 -         if (s == null) {
 +         if (!this.persist || s == null) { // CraftBukkit - persist flag
++            this.saveWithoutId_includeAll = true; //Ketting reset flag
              return false;
           } else {
              p_20087_.putString("id", s);
-@@ -1593,6 +_,18 @@
++            this.prepareSaveWithoutId(saveAsPassenger_includeAll); // Ketting/CraftBukkit - pass on includeAll
+             this.saveWithoutId(p_20087_);
++            this.saveWithoutId_includeAll = true; //Ketting reset flag
+             return true;
+          }
+       }
+@@ -1582,17 +_,40 @@
+    public boolean save(CompoundTag p_20224_) {
+       return this.isPassenger() ? false : this.saveAsPassenger(p_20224_);
+    }
+-
++   // Ketting start
++   private boolean saveWithoutId_includeAll;
++   public void prepareSaveWithoutId(boolean includeAll){
++      this.saveWithoutId_includeAll = includeAll;
++   }
++   public CompoundTag saveWithoutId(CompoundTag p_20241_, boolean includeAll){
++      prepareSaveWithoutId(includeAll);
++      return saveWithoutId(p_20241_);
++   }
++   //Ketting end
+    public CompoundTag saveWithoutId(CompoundTag p_20241_) {
+       try {
++         if (saveWithoutId_includeAll){ //CraftBukkit - selectively save position
+          if (this.vehicle != null) {
+             p_20241_.put("Pos", this.newDoubleList(this.vehicle.getX(), this.getY(), this.vehicle.getZ()));
+          } else {
+             p_20241_.put("Pos", this.newDoubleList(this.getX(), this.getY(), this.getZ()));
+          }
++         } //CraftBukkit
  
           Vec3 vec3 = this.getDeltaMovement();
           p_20241_.put("Motion", this.newDoubleList(vec3.x, vec3.y, vec3.z));
@@ -588,14 +644,17 @@
           p_20241_.put("Rotation", this.newFloatList(this.getYRot(), this.getXRot()));
           p_20241_.putFloat("FallDistance", this.fallDistance);
           p_20241_.putShort("Fire", (short)this.remainingFireTicks);
-@@ -1601,6 +_,26 @@
+@@ -1600,7 +_,29 @@
+          p_20241_.putBoolean("OnGround", this.onGround());
           p_20241_.putBoolean("Invulnerable", this.invulnerable);
           p_20241_.putInt("PortalCooldown", this.portalCooldown);
++         if (saveWithoutId_includeAll) { // CraftBukkit - selectively save uuid and world
           p_20241_.putUUID("UUID", this.getUUID());
 +         // CraftBukkit start
 +         // PAIL: Check above UUID reads 1.8 properly, ie: UUIDMost / UUIDLeast
 +         p_20241_.putLong("WorldUUIDLeast", this.level.getWorld().getUID().getLeastSignificantBits());
 +         p_20241_.putLong("WorldUUIDMost", this.level.getWorld().getUID().getMostSignificantBits());
++         } //CraftBukkit
 +         p_20241_.putInt("Bukkit.updateLevel", CURRENT_LEVEL);
 +         if (!this.persist) {
 +            p_20241_.putBoolean("Bukkit.persist", this.persist);
@@ -624,7 +683,7 @@
           if (!this.tags.isEmpty()) {
              ListTag listtag = new ListTag();
  
-@@ -1641,6 +_,10 @@
+@@ -1641,12 +_,19 @@
              p_20241_.put("Tags", listtag);
           }
  
@@ -632,13 +691,23 @@
 +         if (caps != null) p_20241_.put("ForgeCaps", caps);
 +         if (persistentData != null) p_20241_.put("ForgeData", persistentData.copy());
 +
++         this.prepareAddAdditionalSaveData(saveWithoutId_includeAll); // Ketting - make CB patch more mixin friendly - CraftBukkit - selectively save uuid and world
           this.addAdditionalSaveData(p_20241_);
++         this.resetAddAdditionalSaveData_includeAll(); //Ketting reset
           if (this.isVehicle()) {
              ListTag listtag1 = new ListTag();
-@@ -1657,6 +_,11 @@
+ 
+             for(Entity entity : this.getPassengers()) {
+                CompoundTag compoundtag = new CompoundTag();
++               entity.prepareSaveAsPassenger(saveWithoutId_includeAll);  // Ketting - make CB patch more mixin friendly - CraftBukkit - selectively save uuid and world
+                if (entity.saveAsPassenger(compoundtag)) {
+                   listtag1.add(compoundtag);
+                }
+@@ -1657,8 +_,15 @@
              }
           }
  
++         saveWithoutId_includeAll = true; //Ketting reset value to default
 +         // CraftBukkit start - stores eventually existing bukkit values
 +         if (this.bukkitEntity != null) {
 +            this.bukkitEntity.storeBukkitValues(p_20241_);
@@ -646,7 +715,10 @@
 +         // CraftBukkit end
           return p_20241_;
        } catch (Throwable throwable) {
++         saveWithoutId_includeAll = true; //Ketting reset value to default
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Saving entity NBT");
+          CrashReportCategory crashreportcategory = crashreport.addCategory("Entity being saved");
+          this.fillCrashReportCategory(crashreportcategory);
 @@ -1716,6 +_,9 @@
                 this.setGlowingTag(p_20259_.getBoolean("Glowing"));
                 this.setTicksFrozen(p_20259_.getInt("TicksFrozen"));
@@ -707,6 +779,27 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Loading entity NBT");
           CrashReportCategory crashreportcategory = crashreport.addCategory("Entity being loaded");
+@@ -1758,6 +_,20 @@
+ 
+    protected abstract void readAdditionalSaveData(CompoundTag p_20052_);
+ 
++   //Ketting start
++   protected boolean addAdditionalSaveData_includeAll = true;
++   protected void prepareAddAdditionalSaveData(boolean includeAll){
++      this.addAdditionalSaveData_includeAll = includeAll;
++   }
++   protected void resetAddAdditionalSaveData_includeAll(){
++      this.addAdditionalSaveData_includeAll = true;
++   }
++   protected void addAdditionalSaveData(CompoundTag p_20139_, boolean includeAll){
++      prepareAddAdditionalSaveData(includeAll);
++      addAdditionalSaveData(p_20139_);
++      resetAddAdditionalSaveData_includeAll();
++   }
++   //Ketting end
+    protected abstract void addAdditionalSaveData(CompoundTag p_20139_);
+ 
+    protected ListTag newDoubleList(double... p_20064_) {
 @@ -1802,8 +_,23 @@
        } else if (this.level().isClientSide) {
           return null;
@@ -995,7 +1088,7 @@
     }
  
     public boolean is(Entity p_20356_) {
-@@ -2449,32 +_,82 @@
+@@ -2449,32 +_,86 @@
  
     @Nullable
     public Entity changeDimension(ServerLevel p_20118_) {
@@ -1064,10 +1157,14 @@
 +                  entity.restoreFrom(this);
 +                  entity.moveTo(portalinfo.pos.x, portalinfo.pos.y, portalinfo.pos.z, portalinfo.yRot, entity.getXRot());
 +                  entity.setDeltaMovement(portalinfo.speed);
-+                  finalLevel.addDuringTeleport(entity);
-+                  if (spawnPortal && finalLevel.getTypeKey() == LevelStem.END) { // CraftBukkit
-+                     ServerLevel.makeObsidianPlatform(finalLevel, this); // CraftBukkit
++                  // CraftBukkit start - Don't spawn the new entity if the current entity isn't spawned
++                  if (this.inWorld) {
++                     finalLevel.addDuringTeleport(entity);
++                     if (spawnPortal && finalLevel.getTypeKey() == LevelStem.END) { // CraftBukkit
++                        ServerLevel.makeObsidianPlatform(finalLevel, this); // CraftBukkit
++                     }
 +                  }
++                  // CraftBukkit end
 +
 +                  // CraftBukkit start - Forward the CraftEntity to the new entity
 +                  this.getBukkitEntity().setHandle(entity);
@@ -1206,6 +1303,19 @@
     public boolean teleportTo(ServerLevel p_265257_, double p_265407_, double p_265727_, double p_265410_, Set<RelativeMovement> p_265083_, float p_265573_, float p_265094_) {
        float f = Mth.clamp(p_265094_, -90.0F, 90.0F);
        if (p_265257_ == this.level()) {
+@@ -2661,7 +_,11 @@
+          entity.moveTo(p_265407_, p_265727_, p_265410_, p_265573_, f);
+          entity.setYHeadRot(p_265573_);
+          this.setRemoved(Entity.RemovalReason.CHANGED_DIMENSION);
+-         p_265257_.addDuringTeleport(entity);
++         // CraftBukkit start - Don't spawn the new entity if the current entity isn't spawned
++         if (inWorld) {
++            p_265257_.addDuringTeleport(entity);
++         }
++         // CraftBukkit end
+       }
+ 
+       return true;
 @@ -2759,7 +_,26 @@
     }
  
