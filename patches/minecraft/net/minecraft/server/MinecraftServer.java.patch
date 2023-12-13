@@ -1,6 +1,30 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -157,6 +_,8 @@
+@@ -11,6 +_,7 @@
+ import com.mojang.authlib.minecraft.MinecraftSessionService;
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.logging.LogUtils;
++import com.mojang.serialization.Dynamic;
+ import it.unimi.dsi.fastutil.longs.LongIterator;
+ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+ import java.awt.image.BufferedImage;
+@@ -62,6 +_,8 @@
+ import net.minecraft.core.registries.Registries;
+ import net.minecraft.data.worldgen.features.MiscOverworldFeatures;
+ import net.minecraft.gametest.framework.GameTestTicker;
++import net.minecraft.nbt.NbtException;
++import net.minecraft.nbt.ReportedNbtException;
+ import net.minecraft.network.chat.ChatDecorator;
+ import net.minecraft.network.chat.ChatType;
+ import net.minecraft.network.chat.Component;
+@@ -151,12 +_,15 @@
+ import net.minecraft.world.level.storage.LevelData;
+ import net.minecraft.world.level.storage.LevelResource;
+ import net.minecraft.world.level.storage.LevelStorageSource;
++import net.minecraft.world.level.storage.LevelSummary;
+ import net.minecraft.world.level.storage.PlayerDataStorage;
+ import net.minecraft.world.level.storage.ServerLevelData;
+ import net.minecraft.world.level.storage.WorldData;
  import net.minecraft.world.level.storage.loot.LootDataManager;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
@@ -9,6 +33,15 @@
  import org.slf4j.Logger;
  
  public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements ServerInfo, CommandSource, AutoCloseable {
+@@ -164,7 +_,7 @@
+    public static final String VANILLA_BRAND = "vanilla";
+    private static final float AVERAGE_TICK_TIME_SMOOTHING = 0.8F;
+    private static final int TICK_STATS_SPAN = 100;
+-   private static final long OVERLOADED_THRESHOLD_NANOS = 20L * TimeUtil.NANOSECONDS_PER_SECOND / 20L;
++   private static final long OVERLOADED_THRESHOLD_NANOS = 30L * TimeUtil.NANOSECONDS_PER_SECOND / 20L; //CraftBukkit
+    private static final int OVERLOADED_TICKS_THRESHOLD = 20;
+    private static final long OVERLOADED_WARNING_INTERVAL_NANOS = 10L * TimeUtil.NANOSECONDS_PER_SECOND;
+    private static final int OVERLOADED_TICKS_WARNING_INTERVAL = 100;
 @@ -249,11 +_,30 @@
     private final ServerTickRateManager tickRateManager;
     protected final WorldData worldData;
@@ -144,7 +177,7 @@
        if (!serverleveldata.isInitialized()) {
           try {
              setInitialSpawn(serverlevel, serverleveldata, worldoptions.generateBonusChest(), flag);
-@@ -379,9 +_,49 @@
+@@ -379,9 +_,87 @@
           if (resourcekey != LevelStem.OVERWORLD) {
              ResourceKey<Level> resourcekey1 = ResourceKey.create(Registries.DIMENSION, resourcekey.location());
              DerivedLevelData derivedleveldata = new DerivedLevelData(this.worldData, serverleveldata);
@@ -171,6 +204,44 @@
 +
 +            String worldType = (dimension == -999) ? resourcekey.location().getNamespace() + "_" + resourcekey.location().getPath() : org.bukkit.World.Environment.getEnvironment(dimension).toString().toLowerCase();
 +            String name = loadLevel$worldName + "_" + worldType;
++
++            Dynamic<?> dynamic;
++            if (this.storageSource.hasWorldData()) {
++                LevelSummary worldinfo;
++
++                try {
++                    dynamic = this.storageSource.getDataTag();
++                    worldinfo = this.storageSource.getSummary(dynamic);
++                } catch (NbtException | ReportedNbtException | IOException ioexception) {
++                    LevelStorageSource.LevelDirectory convertable_b = this.storageSource.getLevelDirectory();
++
++                    MinecraftServer.LOGGER.warn("Failed to load world data from {}", convertable_b.dataFile(), ioexception);
++                    MinecraftServer.LOGGER.info("Attempting to use fallback");
++
++                    try {
++                        dynamic = this.storageSource.getDataTagFallback();
++                        worldinfo = this.storageSource.getSummary(dynamic);
++                    } catch (NbtException | ReportedNbtException | IOException ioexception1) {
++                        MinecraftServer.LOGGER.error("Failed to load world data from {}", convertable_b.oldDataFile(), ioexception1);
++                        MinecraftServer.LOGGER.error("Failed to load world data from {} and {}. World files may be corrupted. Shutting down.", convertable_b.dataFile(), convertable_b.oldDataFile());
++                        return;
++                    }
++
++                   this.storageSource.restoreLevelDataFromOld();
++                }
++
++                if (worldinfo.requiresManualConversion()) {
++                    MinecraftServer.LOGGER.info("This world must be opened in an older version (like 1.6.4) to be safely converted");
++                    return;
++                }
++
++                if (!worldinfo.isCompatible()) {
++                    MinecraftServer.LOGGER.info("This world was created by an incompatible version.");
++                    return;
++                }
++            } else {
++                dynamic = null;
++            }
 +
 +            org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(name);
 +            org.bukkit.generator.BiomeProvider biomeProvider = this.server.getBiomeProvider(name);
@@ -219,7 +290,7 @@
           int i = serverchunkcache.getGenerator().getSpawnHeight(p_177897_);
           if (i < p_177897_.getMinBuildHeight()) {
              BlockPos blockpos = chunkpos.getWorldPosition();
-@@ -448,8 +_,23 @@
+@@ -448,22 +_,41 @@
        serverleveldata.setGameType(GameType.SPECTATOR);
     }
  
@@ -243,24 +314,31 @@
        LOGGER.info("Preparing start region for dimension {}", (Object)serverlevel.dimension().location());
        BlockPos blockpos = serverlevel.getSharedSpawnPos();
        p_129941_.updateSpawnPos(new ChunkPos(blockpos));
-@@ -457,13 +_,11 @@
+       ServerChunkCache serverchunkcache = serverlevel.getChunkSource();
        this.nextTickTimeNanos = Util.getNanos();
-       serverchunkcache.addRegionTicket(TicketType.START, new ChunkPos(blockpos), 11, Unit.INSTANCE);
+-      serverchunkcache.addRegionTicket(TicketType.START, new ChunkPos(blockpos), 11, Unit.INSTANCE);
++      // CraftBukkit start
++      if (worldserver.getWorld().getKeepSpawnInMemory()) {
++         serverchunkcache.addRegionTicket(TicketType.START, new ChunkPos(blockpos), 11, Unit.INSTANCE);
  
 -      while(serverchunkcache.getTickingGenerated() != 441) {
 -         this.nextTickTimeNanos = Util.getNanos() + PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
 -         this.waitUntilNextTick();
-+      while (serverchunkcache.getTickingGenerated() < 441) {
-+         this.executeModerately();
++         while (serverchunkcache.getTickingGenerated() != 441) {
++            // this.nextTickTimeNanos = SystemUtils.getNanos() + MinecraftServer.PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
++            this.executeModerately();
++         }
        }
  
 -      this.nextTickTimeNanos = Util.getNanos() + PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
 -      this.waitUntilNextTick();
++      // this.nextTickTimeNanos = SystemUtils.getNanos() + MinecraftServer.PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
 +      this.executeModerately();
++      // CraftBukkit end
  
        for(ServerLevel serverlevel1 : this.levels.values()) {
           ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.getDataStorage().get(ForcedChunksSavedData.factory(), "chunks");
-@@ -475,13 +_,19 @@
+@@ -475,13 +_,22 @@
                 ChunkPos chunkpos = new ChunkPos(i);
                 serverlevel1.getChunkSource().updateChunkForced(chunkpos, true);
              }
@@ -275,7 +353,10 @@
  
 -      this.nextTickTimeNanos = Util.getNanos() + PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
 -      this.waitUntilNextTick();
++      // CraftBukkit start
++      // this.nextTickTimeNanos = Utils.getNanos() + MinecraftServer.PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
 +      this.executeModerately();
++      // CraftBukkit end
        p_129941_.stop();
        this.updateMobSpawningFlags();
 +      this.forceTicks = false; // CraftBukkit
@@ -396,7 +477,7 @@
                 long k = Util.getNanos() - this.nextTickTimeNanos;
                 if (k > OVERLOADED_THRESHOLD_NANOS + 20L * i && this.nextTickTimeNanos - this.lastOverloadWarningNanos >= OVERLOADED_WARNING_INTERVAL_NANOS + 100L * i) {
                    long j = k / i;
-+                  if (server.getWarnOnOverload()) // Likely from CB - Ketting
++                  if (server.getWarnOnOverload()) // CraftBukkit
                    LOGGER.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", k / TimeUtil.NANOSECONDS_PER_MILLISECOND, j);
                    this.nextTickTimeNanos += j * i;
                    this.lastOverloadWarningNanos = this.nextTickTimeNanos;
@@ -494,7 +575,7 @@
     protected TickTask wrapRunnable(Runnable p_129852_) {
        return new TickTask(this.tickCount, p_129852_);
     }
-@@ -819,23 +_,29 @@
+@@ -819,23 +_,31 @@
     }
  
     public void tickServer(BooleanSupplier p_129871_) {
@@ -511,8 +592,11 @@
        }
  
        --this.ticksUntilAutosave;
-       if (this.ticksUntilAutosave <= 0) {
-+      //if (autosavePeriod > 0 && this.tickCount % autosavePeriod == 0) { // CraftBukkit
+-      if (this.ticksUntilAutosave <= 0) {
++      // CraftBukkit start
++      if (this.autosavePeriod > 0 && this.ticksUntilAutosave <= 0) {
++         this.ticksUntilAutosave = this.autosavePeriod;
++         // CraftBukkit end
 +         SpigotTimings.worldSaveTimer.startTiming(); // Spigot
           this.ticksUntilAutosave = this.computeNextAutosaveInterval();
           LOGGER.debug("Autosave started");

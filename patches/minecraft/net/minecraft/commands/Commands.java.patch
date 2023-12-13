@@ -38,7 +38,7 @@
     }
  
     public static <S> ParseResults<S> mapSource(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
-@@ -254,19 +_,84 @@
+@@ -254,19 +_,87 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }
  
@@ -49,7 +49,7 @@
 -
 -   public void performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
 +   // CraftBukkit start
-+   public int dispatchServerCommand(CommandSourceStack p_230958_, String p_230959_) {
++   public void dispatchServerCommand(CommandSourceStack p_230958_, String p_230959_) {
 +      com.google.common.base.Joiner joiner = com.google.common.base.Joiner.on(" ");
 +      if (p_230959_.startsWith("/")) {
 +         p_230959_ = p_230959_.substring(1);
@@ -58,7 +58,7 @@
 +      org.bukkit.event.server.ServerCommandEvent event = new org.bukkit.event.server.ServerCommandEvent(p_230958_.getBukkitSender(), p_230959_);
 +      org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +      if (event.isCancelled()) {
-+         return 0;
++         return;
 +      }
 +      p_230959_ = event.getCommand();
 +
@@ -77,7 +77,7 @@
 +              || cmd.equalsIgnoreCase("deop") || cmd.equalsIgnoreCase("ban") || cmd.equalsIgnoreCase("ban-ip")
 +              || cmd.equalsIgnoreCase("pardon") || cmd.equalsIgnoreCase("pardon-ip") || cmd.equalsIgnoreCase("reload")) {
 +         setForgeCommand(false);
-+         return 0;
++         return;
 +      }
 +
 +      // Handle vanilla commands;
@@ -86,22 +86,24 @@
 +      }
 +
 +      String newCommand = joiner.join(args);
++      //Ketting start
 +      try {
-+         return this.performPrefixedCommand(p_230958_, newCommand, newCommand);
++         this.performPrefixedCommand(p_230958_, newCommand, newCommand);
 +      } finally {
 +         setForgeCommand(false);
 +      }
++      //Ketting start
 +   }
 +   // CraftBukkit end
 +
-+   public int performPrefixedCommand(CommandSourceStack commandlistenerwrapper, String s) {
++   public void performPrefixedCommand(CommandSourceStack commandlistenerwrapper, String s) {
 +      // CraftBukkit start
-+      return this.performPrefixedCommand(commandlistenerwrapper, s, s);
++      this.performPrefixedCommand(commandlistenerwrapper, s, s);
 +   }
 +
-+   public int performPrefixedCommand(CommandSourceStack commandlistenerwrapper, String s, String label) {
++   public void performPrefixedCommand(CommandSourceStack commandlistenerwrapper, String s, String label) {
 +      s = s.startsWith("/") ? s.substring(1) : s;
-+      return this.performCommand(this.getCorrectDispatcher(s).unwrap().parse(s, commandlistenerwrapper), s, label);
++      this.performCommand(this.getCorrectDispatcher(s).unwrap().parse(s, commandlistenerwrapper), s, label);
 +      // CraftBukkit end
 +   }
 +
@@ -115,6 +117,7 @@
           return "/" + p_242841_;
        });
 -      ContextChain<CommandSourceStack> contextchain = finishParsing(p_242844_, p_242841_, commandsourcestack);
++      ContextChain<CommandSourceStack> contextchain = finishParsing(p_242844_, p_242841_, commandsourcestack, label); //CraftBukkit
  
        try {
 +         var event = new net.minecraftforge.event.CommandEvent(p_242844_);
@@ -130,12 +133,21 @@
           if (contextchain != null) {
              executeCommandInContext(commandsourcestack, (p_308343_) -> {
                 ExecutionContext.queueInitialCommandExecution(p_308343_, p_242841_, contextchain, commandsourcestack, CommandResultCallback.EMPTY);
+@@ -297,7 +_,7 @@
+    }
+ 
+    @Nullable
+-   private static ContextChain<CommandSourceStack> finishParsing(ParseResults<CommandSourceStack> p_311671_, String p_312044_, CommandSourceStack p_310074_) {
++   private static ContextChain<CommandSourceStack> finishParsing(ParseResults<CommandSourceStack> p_311671_, String p_312044_, CommandSourceStack p_310074_, String label) { //CraftBukkit
+       try {
+          validateParseResults(p_311671_);
+          return ContextChain.tryFlatten(p_311671_.getContext().build(p_312044_)).orElseThrow(() -> {
 @@ -308,7 +_,7 @@
           if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
              int i = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
              MutableComponent mutablecomponent = Component.empty().withStyle(ChatFormatting.GRAY).withStyle((p_82134_) -> {
 -               return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + p_312044_));
-+                  return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + label)); // CraftBukkit
++                  return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, label)); // CraftBukkit
              });
              if (i > 10) {
                 mutablecomponent.append(CommonComponents.ELLIPSIS);

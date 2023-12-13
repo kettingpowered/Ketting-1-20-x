@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -22,6 +_,7 @@
+ import java.util.concurrent.CompletableFuture;
+ import java.util.function.BiFunction;
+ import java.util.function.Consumer;
++import java.util.function.Function;
+ import java.util.function.UnaryOperator;
+ import java.util.stream.Collectors;
+ import java.util.stream.Stream;
 @@ -177,10 +_,40 @@
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
@@ -839,11 +847,13 @@
        if (isChatMessageIllegal(p_9841_.message())) {
           this.disconnect(Component.translatable("multiplayer.disconnect.illegal_characters"));
        } else {
-@@ -1156,8 +_,9 @@
+@@ -1155,9 +_,10 @@
+                   return;
                 }
  
-                CompletableFuture<FilteredText> completablefuture = this.filterTextPacket(playerchatmessage.signedContent());
+-               CompletableFuture<FilteredText> completablefuture = this.filterTextPacket(playerchatmessage.signedContent());
 -               Component component = this.server.getChatDecorator().decorate(this.player, playerchatmessage.decoratedContent());
++               CompletableFuture<FilteredText> completablefuture = this.filterTextPacket(playerchatmessage.signedContent()).thenApplyAsync(Function.identity(), this.server.chatExecutor); // CraftBukkit - async chat
 +               Component component = net.minecraftforge.common.ForgeHooks.onServerChatSubmittedEvent(this.player, playerchatmessage.decoratedContent());
                 this.chatMessageChain.append(completablefuture, (p_296589_) -> {
 +                  if (component == null) return;

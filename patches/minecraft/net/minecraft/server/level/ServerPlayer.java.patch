@@ -8,8 +8,11 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
-@@ -153,7 +_,28 @@
+@@ -151,9 +_,31 @@
+ import net.minecraft.world.scores.ScoreHolder;
+ import net.minecraft.world.scores.Team;
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
++import org.bukkit.event.entity.EntityExhaustionEvent;
  import org.slf4j.Logger;
  
 -public class ServerPlayer extends Player {
@@ -340,7 +343,7 @@
 +      // CraftBukkit end
 +
 +      // CraftBukkit - Get our scores instead
-+      this.level().getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.DEATH_COUNT, this, ScoreAccess::increment);
++      this.level().getCraftServer().getScoreboardManager().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this, ScoreAccess::increment);
        LivingEntity livingentity = this.getKillCredit();
        if (livingentity != null) {
           this.awardStat(Stats.ENTITY_KILLED_BY.get(livingentity.getType()));
@@ -351,12 +354,12 @@
 -         this.getScoreboard().forAllObjectives(ObjectiveCriteria.KILL_COUNT_ALL, this, ScoreAccess::increment);
 +
 +         // CraftBukkit - Get our scores instead
-+         this.level().getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.KILL_COUNT_ALL, this, ScoreAccess::increment);
++         this.level().getCraftServer().getScoreboardManager().forAllObjectives(ObjectiveCriteria.KILL_COUNT_ALL, this, ScoreAccess::increment);
           if (p_9050_ instanceof Player) {
              this.awardStat(Stats.PLAYER_KILLS);
 -            this.getScoreboard().forAllObjectives(ObjectiveCriteria.KILL_COUNT_PLAYERS, this, ScoreAccess::increment);
 +            // CraftBukkit - Get our scores instead
-+            this.level().getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.KILL_COUNT_PLAYERS, this, ScoreAccess::increment);
++            this.level().getCraftServer().getScoreboardManager().forAllObjectives(ObjectiveCriteria.KILL_COUNT_PLAYERS, this, ScoreAccess::increment);
           } else {
              this.awardStat(Stats.MOB_KILLS);
           }
@@ -366,7 +369,7 @@
           if (i >= 0 && i < p_9127_.length) {
 -            this.getScoreboard().forAllObjectives(p_9127_[i], p_312242_, ScoreAccess::increment);
 +            // CraftBukkit - Get our scores instead
-+            this.level().getCraftServer().getScoreboardManager().getScoreboardScores(p_9127_[i], p_312242_, ScoreAccess::increment);
++            this.level().getCraftServer().getScoreboardManager().forAllObjectives(p_9127_[i], p_312242_, ScoreAccess::increment);
           }
        }
  
@@ -880,12 +883,52 @@
           this.setShiftKeyDown(p_8984_);
        }
  
+@@ -1054,19 +_,19 @@
+             int i = Math.round((float)Math.sqrt(p_310268_ * p_310268_ + p_310728_ * p_310728_ + p_313145_ * p_313145_) * 100.0F);
+             if (i > 0) {
+                this.awardStat(Stats.SWIM_ONE_CM, i);
+-               this.causeFoodExhaustion(0.01F * (float)i * 0.01F);
++               this.causeFoodExhaustion(0.01F * (float)i * 0.01F, EntityExhaustionEvent.ExhaustionReason.SWIM); // CraftBukkit - EntityExhaustionEvent
+             }
+          } else if (this.isEyeInFluid(FluidTags.WATER)) {
+             int j = Math.round((float)Math.sqrt(p_310268_ * p_310268_ + p_310728_ * p_310728_ + p_313145_ * p_313145_) * 100.0F);
+             if (j > 0) {
+                this.awardStat(Stats.WALK_UNDER_WATER_ONE_CM, j);
+-               this.causeFoodExhaustion(0.01F * (float)j * 0.01F);
++               this.causeFoodExhaustion(0.01F * (float)j * 0.01F, EntityExhaustionEvent.ExhaustionReason.WALK_UNDERWATER); // CraftBukkit - EntityExhaustionEvent
+             }
+          } else if (this.isInWater()) {
+             int k = Math.round((float)Math.sqrt(p_310268_ * p_310268_ + p_313145_ * p_313145_) * 100.0F);
+             if (k > 0) {
+                this.awardStat(Stats.WALK_ON_WATER_ONE_CM, k);
+-               this.causeFoodExhaustion(0.01F * (float)k * 0.01F);
++               this.causeFoodExhaustion(0.01F * (float)k * 0.01F, EntityExhaustionEvent.ExhaustionReason.WALK_ON_WATER); // CraftBukkit - EntityExhaustionEvent
+             }
+          } else if (this.onClimbable()) {
+             if (p_310728_ > 0.0D) {
+@@ -1077,13 +_,13 @@
+             if (l > 0) {
+                if (this.isSprinting()) {
+                   this.awardStat(Stats.SPRINT_ONE_CM, l);
+-                  this.causeFoodExhaustion(0.1F * (float)l * 0.01F);
++                  this.causeFoodExhaustion(0.1F * (float)l * 0.01F, EntityExhaustionEvent.ExhaustionReason.SPRINT); // CraftBukkit - EntityExhaustionEvent
+                } else if (this.isCrouching()) {
+                   this.awardStat(Stats.CROUCH_ONE_CM, l);
+-                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F);
++                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F, EntityExhaustionEvent.ExhaustionReason.CROUCH); // CraftBukkit - EntityExhaustionEvent
+                } else {
+                   this.awardStat(Stats.WALK_ONE_CM, l);
+-                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F);
++                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F, EntityExhaustionEvent.ExhaustionReason.WALK); // CraftBukkit - EntityExhaustionEvent
+                }
+             }
+          } else if (this.isFallFlying()) {
 @@ -1124,14 +_,14 @@
  
     public void awardStat(Stat<?> p_9026_, int p_9027_) {
        this.stats.increment(this, p_9026_, p_9027_);
 -      this.getScoreboard().forAllObjectives(p_9026_, this, (p_308946_) -> {
-+      this.level().getCraftServer().getScoreboardManager().getScoreboardScores(p_9026_, this, (p_308946_) -> { // CraftBukkit - Get our scores instead
++      this.level().getCraftServer().getScoreboardManager().forAllObjectives(p_9026_, this, (p_308946_) -> { // CraftBukkit - Get our scores instead
           p_308946_.add(p_9027_);
        });
     }
@@ -893,7 +936,7 @@
     public void resetStat(Stat<?> p_9024_) {
        this.stats.setValue(this, p_9024_, 0);
 -      this.getScoreboard().forAllObjectives(p_9024_, this, ScoreAccess::reset);
-+      this.level().getCraftServer().getScoreboardManager().getScoreboardScores(p_9024_, this, ScoreAccess::reset); // CraftBukkit - Get our scores instead
++      this.level().getCraftServer().getScoreboardManager().forAllObjectives(p_9024_, this, ScoreAccess::reset); // CraftBukkit - Get our scores instead
     }
  
     public int awardRecipes(Collection<RecipeHolder<?>> p_9129_) {

@@ -1,5 +1,99 @@
 --- a/net/minecraft/server/ServerScoreboard.java
 +++ b/net/minecraft/server/ServerScoreboard.java
+@@ -36,7 +_,7 @@
+    protected void onScoreChanged(ScoreHolder p_311591_, Objective p_310366_, Score p_136206_) {
+       super.onScoreChanged(p_311591_, p_310366_, p_136206_);
+       if (this.trackedObjectives.contains(p_310366_)) {
+-         this.server.getPlayerList().broadcastAll(new ClientboundSetScorePacket(p_311591_.getScoreboardName(), p_310366_.getName(), p_136206_.value(), p_136206_.display(), p_136206_.numberFormat()));
++         this.broadcastAll(new ClientboundSetScorePacket(p_311591_.getScoreboardName(), p_310366_.getName(), p_136206_.value(), p_136206_.display(), p_136206_.numberFormat())); //CraftBukkit
+       }
+ 
+       this.setDirty();
+@@ -49,14 +_,14 @@
+ 
+    public void onPlayerRemoved(ScoreHolder p_310662_) {
+       super.onPlayerRemoved(p_310662_);
+-      this.server.getPlayerList().broadcastAll(new ClientboundResetScorePacket(p_310662_.getScoreboardName(), (String)null));
++      this.server.getPlayerList().broadcastAll(new ClientboundResetScorePacket(p_310662_.getScoreboardName(), (String)null)); //CraftBukkit
+       this.setDirty();
+    }
+ 
+    public void onPlayerScoreRemoved(ScoreHolder p_310122_, Objective p_136213_) {
+       super.onPlayerScoreRemoved(p_310122_, p_136213_);
+       if (this.trackedObjectives.contains(p_136213_)) {
+-         this.server.getPlayerList().broadcastAll(new ClientboundResetScorePacket(p_310122_.getScoreboardName(), p_136213_.getName()));
++         this.broadcastAll(new ClientboundResetScorePacket(p_310122_.getScoreboardName(), p_136213_.getName())); //CraftBukkit
+       }
+ 
+       this.setDirty();
+@@ -67,7 +_,7 @@
+       super.setDisplayObjective(p_297629_, p_136200_);
+       if (objective != p_136200_ && objective != null) {
+          if (this.getObjectiveDisplaySlotCount(objective) > 0) {
+-            this.server.getPlayerList().broadcastAll(new ClientboundSetDisplayObjectivePacket(p_297629_, p_136200_));
++            this.broadcastAll(new ClientboundSetDisplayObjectivePacket(p_297629_, p_136200_)); //CraftBukkit
+          } else {
+             this.stopTrackingObjective(objective);
+          }
+@@ -75,7 +_,7 @@
+ 
+       if (p_136200_ != null) {
+          if (this.trackedObjectives.contains(p_136200_)) {
+-            this.server.getPlayerList().broadcastAll(new ClientboundSetDisplayObjectivePacket(p_297629_, p_136200_));
++            this.broadcastAll(new ClientboundSetDisplayObjectivePacket(p_297629_, p_136200_)); //CraftBukkit
+          } else {
+             this.startTrackingObjective(p_136200_);
+          }
+@@ -86,7 +_,7 @@
+ 
+    public boolean addPlayerToTeam(String p_136215_, PlayerTeam p_136216_) {
+       if (super.addPlayerToTeam(p_136215_, p_136216_)) {
+-         this.server.getPlayerList().broadcastAll(ClientboundSetPlayerTeamPacket.createPlayerPacket(p_136216_, p_136215_, ClientboundSetPlayerTeamPacket.Action.ADD));
++         this.broadcastAll(ClientboundSetPlayerTeamPacket.createPlayerPacket(p_136216_, p_136215_, ClientboundSetPlayerTeamPacket.Action.ADD)); //CraftBukkit
+          this.setDirty();
+          return true;
+       } else {
+@@ -96,7 +_,7 @@
+ 
+    public void removePlayerFromTeam(String p_136223_, PlayerTeam p_136224_) {
+       super.removePlayerFromTeam(p_136223_, p_136224_);
+-      this.server.getPlayerList().broadcastAll(ClientboundSetPlayerTeamPacket.createPlayerPacket(p_136224_, p_136223_, ClientboundSetPlayerTeamPacket.Action.REMOVE));
++      this.broadcastAll(ClientboundSetPlayerTeamPacket.createPlayerPacket(p_136224_, p_136223_, ClientboundSetPlayerTeamPacket.Action.REMOVE)); //CraftBukkit
+       this.setDirty();
+    }
+ 
+@@ -108,7 +_,7 @@
+    public void onObjectiveChanged(Objective p_136219_) {
+       super.onObjectiveChanged(p_136219_);
+       if (this.trackedObjectives.contains(p_136219_)) {
+-         this.server.getPlayerList().broadcastAll(new ClientboundSetObjectivePacket(p_136219_, 2));
++         this.broadcastAll(new ClientboundSetObjectivePacket(p_136219_, 2)); //CraftBukkit
+       }
+ 
+       this.setDirty();
+@@ -125,19 +_,19 @@
+ 
+    public void onTeamAdded(PlayerTeam p_136204_) {
+       super.onTeamAdded(p_136204_);
+-      this.server.getPlayerList().broadcastAll(ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(p_136204_, true));
++      this.broadcastAll(ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(p_136204_, true)); //CraftBukkit
+       this.setDirty();
+    }
+ 
+    public void onTeamChanged(PlayerTeam p_136221_) {
+       super.onTeamChanged(p_136221_);
+-      this.server.getPlayerList().broadcastAll(ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(p_136221_, false));
++      this.broadcastAll(ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(p_136221_, false)); //CraftBukkit
+       this.setDirty();
+    }
+ 
+    public void onTeamRemoved(PlayerTeam p_136228_) {
+       super.onTeamRemoved(p_136228_);
+-      this.server.getPlayerList().broadcastAll(ClientboundSetPlayerTeamPacket.createRemovePacket(p_136228_));
++      this.broadcastAll(ClientboundSetPlayerTeamPacket.createRemovePacket(p_136228_)); //CraftBukkit
+       this.setDirty();
+    }
+ 
 @@ -173,6 +_,7 @@
        List<Packet<?>> list = this.getStartTrackingPackets(p_136232_);
  
