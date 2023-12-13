@@ -249,13 +249,13 @@
 +            this.dediLanPinger.start();
 +         }
 +
-+         MetricManager.init(); //Ketting
++         MetricManager.init(this); //Ketting
 +
 +         return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
        }
     }
  
-@@ -251,9 +_,18 @@
+@@ -251,9 +_,16 @@
           this.textFilterClient.close();
        }
  
@@ -268,8 +268,6 @@
 +      if (this.betterGui != null) {
 +         this.betterGui.close();
 +      }
-+
-+      MetricManager.shutdown(); //Ketting
 +      //Ketting end
  
        if (this.rconThread != null) {
