@@ -258,7 +258,7 @@
     private void updateScoreForCriteria(ObjectiveCriteria p_9105_, int p_9106_) {
 -      this.getScoreboard().forAllObjectives(p_9105_, this, (p_308949_) -> {
 +      // CraftBukkit - Use our scores instead
-+      this.level().getCraftServer().getScoreboardManager().getScoreboardScores(p_9105_, this.getScoreboardName(), (p_9178_) -> {
++      this.level().getCraftServer().getScoreboardManager().getScoreboardScores(p_9105_, this, (p_308949_) -> {
           p_308949_.set(p_9106_);
        });
     }
@@ -283,7 +283,7 @@
 +         this.dropAllDeathLoot(p_9035_);
 +      }
 +
-+      List<org.bukkit.inventory.ItemStack> capturedDrops = new ArrayList<>(this.drops);
++      List<org.bukkit.inventory.ItemStack> capturedDrops = new java.util.ArrayList<>(this.drops);
 +      this.drops.clear();
 +
 +      Component defaultMessage = this.getCombatTracker().getDeathMessage();
@@ -332,7 +332,7 @@
 +      // CraftBukkit end
 +
 +      // CraftBukkit - Get our scores instead
-+      this.level().getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.DEATH_COUNT, this.getScoreboardName(), Score::increment);
++      this.level().getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.DEATH_COUNT, this, ScoreAccess::increment);
        LivingEntity livingentity = this.getKillCredit();
        if (livingentity != null) {
           this.awardStat(Stats.ENTITY_KILLED_BY.get(livingentity.getType()));
@@ -343,12 +343,12 @@
 -         this.getScoreboard().forAllObjectives(ObjectiveCriteria.KILL_COUNT_ALL, this, ScoreAccess::increment);
 +
 +         // CraftBukkit - Get our scores instead
-+         this.level().getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.KILL_COUNT_ALL, s, Score::increment);
++         this.level().getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.KILL_COUNT_ALL, this, ScoreAccess::increment);
           if (p_9050_ instanceof Player) {
              this.awardStat(Stats.PLAYER_KILLS);
 -            this.getScoreboard().forAllObjectives(ObjectiveCriteria.KILL_COUNT_PLAYERS, this, ScoreAccess::increment);
 +            // CraftBukkit - Get our scores instead
-+            this.level().getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.KILL_COUNT_PLAYERS, s, Score::increment);
++            this.level().getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.KILL_COUNT_PLAYERS, this, ScoreAccess::increment);
           } else {
              this.awardStat(Stats.MOB_KILLS);
           }
@@ -358,7 +358,7 @@
           if (i >= 0 && i < p_9127_.length) {
 -            this.getScoreboard().forAllObjectives(p_9127_[i], p_312242_, ScoreAccess::increment);
 +            // CraftBukkit - Get our scores instead
-+            this.level().getCraftServer().getScoreboardManager().getScoreboardScores(p_9127_[i], p_9125_, Score::increment);
++            this.level().getCraftServer().getScoreboardManager().getScoreboardScores(p_9127_[i], p_312242_, ScoreAccess::increment);
           }
        }
  
@@ -877,7 +877,7 @@
     public void awardStat(Stat<?> p_9026_, int p_9027_) {
        this.stats.increment(this, p_9026_, p_9027_);
 -      this.getScoreboard().forAllObjectives(p_9026_, this, (p_308946_) -> {
-+      this.level().getCraftServer().getScoreboardManager().getScoreboardScores(p_9026_, this.getScoreboardName(), (p_8996_) -> { // CraftBukkit - Get our scores instead
++      this.level().getCraftServer().getScoreboardManager().getScoreboardScores(p_9026_, this, (p_308946_) -> { // CraftBukkit - Get our scores instead
           p_308946_.add(p_9027_);
        });
     }
@@ -885,7 +885,7 @@
     public void resetStat(Stat<?> p_9024_) {
        this.stats.setValue(this, p_9024_, 0);
 -      this.getScoreboard().forAllObjectives(p_9024_, this, ScoreAccess::reset);
-+      this.level().getCraftServer().getScoreboardManager().getScoreboardScores(p_9024_, this.getScoreboardName(), Score::reset); // CraftBukkit - Get our scores instead
++      this.level().getCraftServer().getScoreboardManager().getScoreboardScores(p_9024_, this, ScoreAccess::reset); // CraftBukkit - Get our scores instead
     }
  
     public int awardRecipes(Collection<RecipeHolder<?>> p_9129_) {

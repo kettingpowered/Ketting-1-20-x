@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
-@@ -46,13 +_,44 @@
+@@ -46,12 +_,41 @@
           d4 = 0.0D;
        }
  
@@ -8,12 +8,12 @@
 +      // Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(level, d0, d1, d2) : new Boat(level, d0, d1, d2));
 +      // CraftBukkit start
 +      ItemStack itemstack1 = p_123376_.split(1);
-+      org.bukkit.block.Block block = org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(level, p_123375_.pos());
++      org.bukkit.block.Block block = org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(serverlevel, p_123375_.pos());
 +      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(itemstack1);
 +
 +      org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d1, d2 + d4, d3));
 +      if (!DispenserBlock.eventFired) {
-+         level.getCraftServer().getPluginManager().callEvent(event);
++         serverlevel.getCraftServer().getPluginManager().callEvent(event);
 +      }
 +
 +      if (event.isCancelled()) {
@@ -43,8 +43,5 @@
 +      if (!serverlevel.addFreshEntity(boat)) p_123376_.grow(1); // CraftBukkit
 +      // p_123376_.shrink(1); // CraftBukkit - handled during event processing
        return p_123376_;
-+   }
-+
     }
  
-    protected void playSound(BlockSource p_123373_) {

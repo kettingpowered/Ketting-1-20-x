@@ -81,12 +81,12 @@
     }
  
 +   // CraftBukkit start
-+   public CompoundTag getPlayerData(String s) {
++   public CompoundTag getPlayerData(String s, NbtAccounter accounter) {
 +      try {
 +         File file1 = new File(this.playerDir, s + ".dat");
 +
 +         if (file1.exists()) {
-+            return NbtIo.readCompressed((InputStream) (new FileInputStream(file1)));
++            return NbtIo.readCompressed((InputStream) (new FileInputStream(file1)), accounter);
 +         }
 +      } catch (Exception exception) {
 +         LOGGER.warn("Failed to load player data for " + s);

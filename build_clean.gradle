@@ -1,6 +1,6 @@
 plugins {
     id 'java-library'
-    id 'org.cadixdev.licenser'
+//    id 'org.cadixdev.licenser' //Ketting - how about no.
     id 'net.minecraftforge.gradle.patcher'
 }
 
@@ -53,6 +53,7 @@ patcher {
 }
 
 tasks.withType(JavaCompile).configureEach {
+	dependsOn 'extractMapped' //Ketting - fix `./gradlew setup build`
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
     options.warnings = false // Shutup deprecated for removal warnings
 }

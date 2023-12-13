@@ -11,6 +11,18 @@
     private boolean fixedColor;
  
     public Arrow(EntityType<? extends Arrow> p_36858_, Level p_36859_) {
+@@ -42,6 +_,11 @@
+    public Arrow(Level p_36861_, LivingEntity p_310439_, ItemStack p_310691_) {
+       super(EntityType.ARROW, p_310439_, p_36861_, p_310691_);
+    }
++   //Ketting start
++   public Arrow(Level p_36861_, LivingEntity p_310439_) {
++      super(EntityType.ARROW, p_310439_, p_36861_, DEFAULT_ARROW_STACK);
++   }
++   //Ketting end
+ 
+    public void setEffectsFromItem(ItemStack p_36879_) {
+       if (p_36879_.is(Items.TIPPED_ARROW)) {
 @@ -72,7 +_,7 @@
        return compoundtag != null && compoundtag.contains("CustomPotionColor", 99) ? compoundtag.getInt("CustomPotionColor") : -1;
     }

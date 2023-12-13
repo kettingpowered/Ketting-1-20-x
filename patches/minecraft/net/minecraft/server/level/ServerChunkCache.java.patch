@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
+@@ -8,6 +_,7 @@
+ import java.io.IOException;
+ import java.util.Arrays;
+ import java.util.List;
++import java.util.Objects;
+ import java.util.Optional;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.Executor;
 @@ -65,6 +_,13 @@
     @VisibleForDebug
     private NaturalSpawner.SpawnState lastSpawnState;
@@ -147,7 +155,7 @@
              Util.shuffle(list, this.level.random);
              int k = this.level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
 -            boolean flag = this.level.getLevelData().getGameTime() % 400L == 0L;
-+            boolean flag = level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) != 0L && leveldata.getGameTime() % level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) == 0L; // CraftBukkit
++            boolean flag = level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) != 0L && level.levelData.getGameTime() % level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) == 0L; // CraftBukkit
  
              for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
                 LevelChunk levelchunk1 = serverchunkcache$chunkandholder.chunk;

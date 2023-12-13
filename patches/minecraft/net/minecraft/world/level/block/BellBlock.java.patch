@@ -13,22 +13,3 @@
           ((BellBlockEntity)blockentity).onHit(p_152192_);
           p_152190_.playSound((Player)null, p_152191_, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2.0F, 1.0F);
           p_152190_.gameEvent(p_152189_, GameEvent.BLOCK_CHANGE, p_152191_);
-@@ -264,6 +_,18 @@
-    public boolean isPathfindable(BlockState p_49717_, BlockGetter p_49718_, BlockPos p_49719_, PathComputationType p_49720_) {
-       return false;
-    }
-+
-+   // CraftBukkit start - fix MC-253819
-+   @Override
-+   public BlockState rotate(BlockState blockstate, Rotation rotation) {
-+      return blockstate.setValue(FACING, rotation.rotate(blockstate.getValue(FACING)));
-+   }
-+
-+   @Override
-+   public BlockState mirror(BlockState blockstate, Mirror mirror) {
-+      return blockstate.rotate(mirror.getRotation(blockstate.getValue(FACING)));
-+   }
-+   // CraftBukkit end
- 
-    public BlockState rotate(BlockState p_311584_, Rotation p_311968_) {
-       return p_311584_.setValue(FACING, p_311968_.rotate(p_311584_.getValue(FACING)));

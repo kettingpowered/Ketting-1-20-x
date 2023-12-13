@@ -95,7 +95,7 @@
 +                           double d7part;
 +                           if (list.contains(subEntity) && (d7part = Math.sqrt(subEntity.distanceToSqr(vec3)) / f2) <= 1.0D) {
 +                              double d13part = (1.0D - d7part) * getSeenPercent(vec3, subEntity);
-+                              subEntity.hurt(this.getDamageSource(), (float) ((int) ((d13part * d13part + d13part) / 2.0D * 7.0D * (double) f2 + 1.0D)));
++                              subEntity.hurt(this.damageSource, (float) ((int) ((d13part * d13part + d13part) / 2.0D * 7.0D * (double) f2 + 1.0D)));
 +                           }
 +                        }
 +                     } else {
@@ -127,7 +127,7 @@
     }
  
     private static void addOrAppendStack(List<Pair<ItemStack, BlockPos>> p_311090_, ItemStack p_311817_, BlockPos p_309821_) {
-+     if (p_46069_.isEmpty()) return; // CraftBukkit - SPIGOT-5425
++     if (p_311817_.isEmpty()) return; // CraftBukkit - SPIGOT-5425
 +
        for(int i = 0; i < p_311090_.size(); ++i) {
           Pair<ItemStack, BlockPos> pair = p_311090_.get(i);
