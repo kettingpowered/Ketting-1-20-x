@@ -13,7 +13,7 @@
  public abstract class AbstractArrow extends Projectile {
     private static final double ARROW_BASE_DAMAGE = 2.0D;
     private static final EntityDataAccessor<Byte> ID_FLAGS = SynchedEntityData.defineId(AbstractArrow.class, EntityDataSerializers.BYTE);
-@@ -54,13 +_,13 @@
+@@ -54,19 +_,33 @@
     private static final int FLAG_CROSSBOW = 4;
     @Nullable
     private BlockState lastState;
@@ -30,10 +30,11 @@
     private SoundEvent soundEvent = this.getDefaultHitGroundSoundEvent();
     @Nullable
     private IntOpenHashSet piercingIgnoreEntityIds;
-@@ -68,6 +_,20 @@
+    @Nullable
     private List<Entity> piercedAndKilledEntities;
-    private ItemStack pickupItemStack;
- 
+-   private ItemStack pickupItemStack;
++   public ItemStack pickupItemStack;
++
 +   private final IntOpenHashSet ignoredEntities = new IntOpenHashSet();
 +
 +   // Spigot Start
@@ -47,10 +48,9 @@
 +      super.inactiveTick();
 +   }
 +   // Spigot End
-+
+ 
     protected AbstractArrow(EntityType<? extends AbstractArrow> p_36717_, Level p_36719_, ItemStack p_312639_) {
        super(p_36717_, p_36719_);
-       this.pickupItemStack = p_312639_.copy();
 @@ -157,7 +_,7 @@
           --this.shakeTime;
        }

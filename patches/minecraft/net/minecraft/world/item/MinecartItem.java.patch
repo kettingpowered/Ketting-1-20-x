@@ -40,12 +40,12 @@
 +         // CraftBukkit start
 +         // AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(level, d0, d1 + d3, d2, ((MinecartItem)p_42950_.getItem()).type);
 +         ItemStack itemstack1 = p_42950_.split(1);
-+         org.bukkit.block.Block block2 = CraftBlock.at(level, p_42949_.pos());
++         org.bukkit.block.Block block2 = CraftBlock.at(serverlevel, p_42949_.pos());
 +         CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 +
 +         BlockDispenseEvent event = new BlockDispenseEvent(block2, craftItem.clone(), new org.bukkit.util.Vector(d0, d1 + d3, d2));
 +         if (!DispenserBlock.eventFired) {
-+            level.getCraftServer().getPluginManager().callEvent(event);
++            serverlevel.getCraftServer().getPluginManager().callEvent(event);
 +         }
 +
 +         if (event.isCancelled()) {
@@ -65,9 +65,9 @@
 +         }
 +
 +         itemstack1 = CraftItemStack.asNMSCopy(event.getItem());
-+         AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(level, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), ((MinecartItem) itemstack1.getItem()).type);
++         AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(serverlevel, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), ((MinecartItem) itemstack1.getItem()).type);
 +
-+         if (!level.addFreshEntity(abstractminecart)) p_42950_.grow(1);
++         if (!serverlevel.addFreshEntity(abstractminecart)) p_42950_.grow(1);
 +         // itemstack.shrink(1); // CraftBukkit - handled during event processing
 +         // CraftBukkit end
           return p_42950_;
