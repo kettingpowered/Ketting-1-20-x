@@ -34,7 +34,7 @@
 +
 +      // TODO: An event factory call for methods like this
 +      CraftBlockState blockState = CraftBlockStates.getBlockState(p_52063_.getLevel(), blockpos);
-+      blockState.setData(this.concrete);
++      blockState.setData(this.concrete.defaultBlockState());
 +
 +      BlockFormEvent event = new BlockFormEvent(blockState.getBlock(), blockState);
 +      p_52063_.getLevel().getServer().server.getPluginManager().callEvent(event);
@@ -84,7 +84,7 @@
 +            return this.concrete.defaultBlockState();
 +         }
 +         CraftBlockState blockState = CraftBlockStates.getBlockState(p_52077_, p_52078_);
-+         blockState.setData(this.concrete);
++         blockState.setData(this.concrete.defaultBlockState());
 +
 +         BlockFormEvent event = new BlockFormEvent(blockState.getBlock(), blockState);
 +         ((Level) p_52077_).getCraftServer().getPluginManager().callEvent(event);

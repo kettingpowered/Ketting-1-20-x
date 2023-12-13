@@ -183,6 +183,7 @@ import org.bukkit.entity.Villager;
 import org.bukkit.entity.Vindicator;
 import org.bukkit.entity.WanderingTrader;
 import org.bukkit.entity.Warden;
+import org.bukkit.entity.WindCharge;
 import org.bukkit.entity.Witch;
 import org.bukkit.entity.Wither;
 import org.bukkit.entity.WitherSkeleton;
@@ -662,6 +663,8 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
                     entity = net.minecraft.world.entity.EntityType.WITHER_SKULL.create(world);
                 } else if (DragonFireball.class.isAssignableFrom(clazz)) {
                     entity = net.minecraft.world.entity.EntityType.DRAGON_FIREBALL.create(world);
+                } else if (WindCharge.class.isAssignableFrom(clazz)) {
+                    entity = EntityTypes.WIND_CHARGE.create(world);
                 } else {
                     entity = net.minecraft.world.entity.EntityType.FIREBALL.create(world);
                 }
@@ -898,6 +901,8 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
                 entity = net.minecraft.world.entity.EntityType.WARDEN.create(world);
             } else if (Sniffer.class.isAssignableFrom(clazz)) {
                 entity = net.minecraft.world.entity.EntityType.SNIFFER.create(world);
+            } else if (Breeze.class.isAssignableFrom(clazz)) {
+                entity = EntityTypes.BREEZE.create(world);
             }
 
             if (entity != null) {

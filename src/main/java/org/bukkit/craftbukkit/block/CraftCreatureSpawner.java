@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.InclusiveRange;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.SimpleWeightedRandomList;
+import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.world.level.SpawnData;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import org.bukkit.World;
@@ -56,7 +57,7 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
 
     @Override
     public EntitySnapshot getSpawnedEntity() {
-        MobSpawnerData spawnData = this.getSnapshot().getSpawner().nextSpawnData;
+        SpawnData spawnData = this.getSnapshot().getSpawner().nextSpawnData;
         if (spawnData == null) {
             return null;
         }
@@ -66,19 +67,19 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
 
     @Override
     public void setSpawnedEntity(EntitySnapshot snapshot) {
-        NBTTagCompound compoundTag = ((CraftEntitySnapshot) snapshot).getData();
+        CompoundTag compoundTag = ((CraftEntitySnapshot) snapshot).getData();
 
         this.getSnapshot().getSpawner().spawnPotentials = SimpleWeightedRandomList.empty();
-        this.getSnapshot().getSpawner().nextSpawnData = new MobSpawnerData(compoundTag, Optional.empty());
+        this.getSnapshot().getSpawner().nextSpawnData = new SpawnData(compoundTag, Optional.empty());
     }
 
     @Override
     public void addPotentialSpawn(EntitySnapshot snapshot, int weight, SpawnRule spawnRule) {
-        NBTTagCompound compoundTag = ((CraftEntitySnapshot) snapshot).getData();
+        CompoundTag compoundTag = ((CraftEntitySnapshot) snapshot).getData();
 
-        SimpleWeightedRandomList.a<MobSpawnerData> builder = SimpleWeightedRandomList.builder(); // PAIL rename Builder
+        SimpleWeightedRandomList.a<SpawnData> builder = SimpleWeightedRandomList.builder(); // PAIL rename Builder
         this.getSnapshot().getSpawner().spawnPotentials.unwrap().forEach(entry -> builder.add(entry.getData(), entry.getWeight().asInt()));
-        builder.add(new MobSpawnerData(compoundTag, Optional.ofNullable(toMinecraftRule(spawnRule))), weight);
+        builder.add(new SpawnData(compoundTag, Optional.ofNullable(toMinecraftRule(spawnRule))), weight);
         this.getSnapshot().getSpawner().spawnPotentials = builder.build();
     }
 
@@ -89,10 +90,10 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
 
     @Override
     public void setPotentialSpawns(Collection<SpawnerEntry> entries) {
-        SimpleWeightedRandomList.a<MobSpawnerData> builder = SimpleWeightedRandomList.builder();
+        SimpleWeightedRandomList.a<SpawnData> builder = SimpleWeightedRandomList.builder();
         for (SpawnerEntry spawnerEntry : entries) {
-            NBTTagCompound compoundTag = ((CraftEntitySnapshot) spawnerEntry.getSnapshot()).getData();
-            builder.add(new MobSpawnerData(compoundTag, Optional.ofNullable(toMinecraftRule(spawnerEntry.getSpawnRule()))), spawnerEntry.getSpawnWeight());
+            CompoundTag compoundTag = ((CraftEntitySnapshot) spawnerEntry.getSnapshot()).getData();
+            builder.add(new SpawnData(compoundTag, Optional.ofNullable(toMinecraftRule(spawnerEntry.getSpawnRule()))), spawnerEntry.getSpawnWeight());
         }
         this.getSnapshot().getSpawner().spawnPotentials = builder.build();
     }
@@ -101,7 +102,7 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
     public List<SpawnerEntry> getPotentialSpawns() {
         List<SpawnerEntry> entries = new ArrayList<>();
 
-        for (b<MobSpawnerData> entry : this.getSnapshot().getSpawner().spawnPotentials.unwrap()) { // PAIL rename Wrapper
+        for (WeightedEntry.Wrapper<SpawnData> entry : this.getSnapshot().getSpawner().spawnPotentials.unwrap()) { // PAIL rename Wrapper
             CraftEntitySnapshot snapshot = CraftEntitySnapshot.create(entry.getData().getEntityToSpawn());
 
             if (snapshot != null) {
@@ -112,14 +113,14 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
         return entries;
     }
 
-    private MobSpawnerData.a toMinecraftRule(SpawnRule rule) { // PAIL rename CustomSpawnRules
+    private SpawnData.CustomSpawnRules toMinecraftRule(SpawnRule rule) { // PAIL rename CustomSpawnRules
         if (rule == null) {
             return null;
         }
-        return new MobSpawnerData.a(new InclusiveRange<>(rule.getMinBlockLight(), rule.getMaxBlockLight()), new InclusiveRange<>(rule.getMinSkyLight(), rule.getMaxSkyLight()));
+        return new SpawnData.CustomSpawnRules(new InclusiveRange<>(rule.getMinBlockLight(), rule.getMaxBlockLight()), new InclusiveRange<>(rule.getMinSkyLight(), rule.getMaxSkyLight()));
     }
 
-    private SpawnRule fromMinecraftRule(MobSpawnerData.a rule) {
+    private SpawnRule fromMinecraftRule(SpawnData.CustomSpawnRules rule) {
        InclusiveRange<Integer> blockLight = rule.blockLightLimit();
        InclusiveRange<Integer> skyLight = rule.skyLightLimit();
 

@@ -5,9 +5,9 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftCrafter extends CraftBlockData implements Crafter {
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean CRAFTING = getBoolean("crafting");
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean TRIGGERED = getBoolean("triggered");
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> ORIENTATION = getEnum("orientation");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty CRAFTING = getBoolean("crafting");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty TRIGGERED = getBoolean("triggered");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> ORIENTATION = getEnum("orientation");
 
     @Override
     public boolean isCrafting() {

@@ -89,8 +89,7 @@ public final class CraftChatMessage {
                         hex.append(c);
 
                         if (hex.length() == 7) {
-                            TextColor.parseColor(hex.toString()).get().left()
-                                    .ifPresent(textColor -> modifier = RESET.withColor(textColor));
+                            modifier = RESET.withColor(TextColor.parseColor(hex.toString()).result().get());
                             hex = null;
                         }
                     } else if (format.isFormat() && format != ChatFormatting.RESET) {

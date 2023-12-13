@@ -1,10 +1,12 @@
 package org.bukkit.craftbukkit.inventory;
 
+import com.google.common.collect.Maps;
 import java.util.Map;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -47,15 +49,8 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
     public void addToCraftingManager() {
         String[] shape = this.getShape();
         Map<Character, org.bukkit.inventory.RecipeChoice> ingred = this.getChoiceMap();
-        int width = shape[0].length();
-        NonNullList<Ingredient> data = NonNullList.withSize(shape.length * width, Ingredient.EMPTY);
+        Map<Character, Ingredient> data = Maps.transformValues(ingred, (bukkit) -> toNMS(bukkit, false));
 
-        for (int i = 0; i < shape.length; i++) {
-            String row = shape[i];
-            for (int j = 0; j < row.length(); j++) {
-                data.set(i * width + j, toNMS(ingred.get(row.charAt(j)), false));
-            }
-        }
-        MinecraftServer.getServer().getRecipeManager().addRecipe(new RecipeHolder<>(CraftNamespacedKey.toMinecraft(this.getKey()), new net.minecraft.world.item.crafting.ShapedRecipe(this.getGroup(), CraftRecipe.getCategory(this.getCategory()), width, shape.length, data, CraftItemStack.asNMSCopy(this.getResult()))));
+        MinecraftServer.getServer().getRecipeManager().addRecipe(new RecipeHolder<>(CraftNamespacedKey.toMinecraft(this.getKey()), new net.minecraft.world.item.crafting.ShapedRecipe(this.getGroup(), CraftRecipe.getCategory(this.getCategory()), ShapedRecipePattern.of(data, shape), CraftItemStack.asNMSCopy(this.getResult()))));
     }
 }

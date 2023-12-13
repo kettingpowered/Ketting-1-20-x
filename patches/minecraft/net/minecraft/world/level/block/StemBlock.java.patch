@@ -1,29 +1,24 @@
 --- a/net/minecraft/world/level/block/StemBlock.java
 +++ b/net/minecraft/world/level/block/StemBlock.java
-@@ -3,14 +_,11 @@
+@@ -3,7 +_,6 @@
  import com.mojang.datafixers.DataFixUtils;
  import com.mojang.serialization.MapCodec;
  import com.mojang.serialization.codecs.RecordCodecBuilder;
 -import java.util.Optional;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
--import net.minecraft.core.Registry;
- import net.minecraft.core.registries.Registries;
- import net.minecraft.resources.ResourceKey;
- import net.minecraft.server.level.ServerLevel;
--import net.minecraft.tags.BlockTags;
- import net.minecraft.util.Mth;
- import net.minecraft.util.RandomSource;
- import net.minecraft.world.item.Item;
-@@ -25,6 +_,7 @@
+ import net.minecraft.core.Registry;
+@@ -25,6 +_,9 @@
  import net.minecraft.world.level.block.state.properties.IntegerProperty;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
++
++import java.util.Optional;
  
  public class StemBlock extends BushBlock implements BonemealableBlock {
     public static final MapCodec<StemBlock> CODEC = RecordCodecBuilder.mapCodec((p_311216_) -> {
-@@ -65,32 +_,42 @@
+@@ -65,32 +_,39 @@
     }
  
     public void randomTick(BlockState p_222538_, ServerLevel p_222539_, BlockPos p_222540_, RandomSource p_222541_) {
@@ -41,33 +36,22 @@
                 Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(p_222541_);
                 BlockPos blockpos = p_222540_.relative(direction);
                 BlockState blockstate = p_222539_.getBlockState(blockpos.below());
--               if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
--                  Registry<Block> registry = p_222539_.registryAccess().registryOrThrow(Registries.BLOCK);
--                  Optional<Block> optional = registry.getOptional(this.fruit);
--                  Optional<Block> optional1 = registry.getOptional(this.attachedStem);
--                  if (optional.isPresent() && optional1.isPresent()) {
--                     p_222539_.setBlockAndUpdate(blockpos, optional.get().defaultBlockState());
--                     p_222539_.setBlockAndUpdate(p_222540_, optional1.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction));
--                  }
-+//Ketting - Todo: Merge this correctly
 +// Forge: TODO: Soil blockstate.canSustainPlant(p_222539_, blockpos.below(), Direction.UP, this.fruit)
-+//               if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
-+//                  Registry<Block> registry = p_222539_.registryAccess().registryOrThrow(Registries.BLOCK);
-+//                  Optional<Block> optional = registry.getOptional(this.fruit);
-+//                  Optional<Block> optional1 = registry.getOptional(this.attachedStem);
-+//                  if (optional.isPresent() && optional1.isPresent()) {
-+//                     p_222539_.setBlockAndUpdate(blockpos, optional.get().defaultBlockState());
-+//                     p_222539_.setBlockAndUpdate(p_222540_, optional1.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction));
-+//                  }
-+//               }
-+//               if (p_222539_.isEmptyBlock(blockpos) && (blockstate.canSustainPlant(p_222539_, blockpos.below(), Direction.UP, this.fruit) || blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
-+//                  // CraftBukkit start
-+//                  if (!CraftEventFactory.handleBlockGrowEvent(p_222539_, blockpos, this.fruit.defaultBlockState())) {
-+//                     return;
-+//                  }
-+//                  // CraftBukkit end
-+                  p_222539_.setBlockAndUpdate(p_222540_, this.fruit.getAttachedStem().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction));
+                if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
+                   Registry<Block> registry = p_222539_.registryAccess().registryOrThrow(Registries.BLOCK);
+                   Optional<Block> optional = registry.getOptional(this.fruit);
+                   Optional<Block> optional1 = registry.getOptional(this.attachedStem);
+                   if (optional.isPresent() && optional1.isPresent()) {
+                      p_222539_.setBlockAndUpdate(blockpos, optional.get().defaultBlockState());
++                     // CraftBukkit start
++                     if (!CraftEventFactory.handleBlockGrowEvent(p_222539_, blockpos, optional.get().defaultBlockState())) {
++                        return;
++                     }
++                     // CraftBukkit end
+                      p_222539_.setBlockAndUpdate(p_222540_, optional1.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction));
+                   }
                 }
++               }
              }
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_222539_, p_222540_, p_222538_);
           }

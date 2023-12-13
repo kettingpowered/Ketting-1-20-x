@@ -219,6 +219,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                     }
                     else if (entity instanceof net.minecraft.world.entity.monster.Zoglin) { return new CraftZoglin(server, (net.minecraft.world.entity.monster.Zoglin) entity); }
                     else if (entity instanceof Warden) { return new CraftWarden(server, (Warden) entity); }
+                    else if (entity instanceof Breeze) { return new CraftBreeze(server, (Breeze) entity); }
 
                     else  { return new CraftMonster(server, (net.minecraft.world.entity.monster.Monster) entity); }
                 }
@@ -287,6 +288,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             else if (entity instanceof net.minecraft.world.entity.projectile.LargeFireball) { return new CraftLargeFireball(server, (net.minecraft.world.entity.projectile.LargeFireball) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.WitherSkull) { return new CraftWitherSkull(server, (net.minecraft.world.entity.projectile.WitherSkull) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.DragonFireball) { return new CraftDragonFireball(server, (net.minecraft.world.entity.projectile.DragonFireball) entity); }
+            else if (entity instanceof WindCharge) { return new CraftWindCharge(server, (WindCharge) entity); }
             else { return new CraftFireball(server, (net.minecraft.world.entity.projectile.AbstractHurtingProjectile) entity); }
         }
         else if (entity instanceof net.minecraft.world.entity.projectile.EyeOfEnder) { return new CraftEnderSignal(server, (net.minecraft.world.entity.projectile.EyeOfEnder) entity); }

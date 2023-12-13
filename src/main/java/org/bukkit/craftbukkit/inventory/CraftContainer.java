@@ -24,6 +24,7 @@ import net.minecraft.world.inventory.SmokerMenu;
 import net.minecraft.world.inventory.StonecutterMenu;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.CrafterMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.bukkit.entity.HumanEntity;
@@ -160,6 +161,8 @@ public class CraftContainer extends AbstractContainerMenu {
             case CRAFTING:
             case MERCHANT:
                 throw new IllegalArgumentException("Can't open a " + inventory.getType() + " inventory!");
+            case CRAFTER:
+                return Containers.CRAFTER_3x3;
             default:
                 // TODO: If it reaches the default case, should we throw an error?
                 return MenuType.GENERIC_9x3;
@@ -233,6 +236,9 @@ public class CraftContainer extends AbstractContainerMenu {
             case SMITHING:
             case SMITHING_NEW:
                 setupSmithing(top, bottom); // SPIGOT-6783 - manually set up slots so we can use the delegated inventory and not the automatically created one
+                break;
+            case CRAFTER:
+                delegate = new CrafterMenu(windowId, bottom);
                 break;
         }
 

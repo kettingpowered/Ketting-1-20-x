@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.inventory.util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.CrafterBlockEntity;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
@@ -133,6 +134,14 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         @Override
         public Container getTileEntity() {
             return new SmokerBlockEntity(BlockPos.ZERO, Blocks.SMOKER.defaultBlockState());
+        }
+    }
+
+    public static class Crafter extends CraftTileInventoryConverter {
+
+        @Override
+        public IInventory getTileEntity() {
+            return new CrafterBlockEntity(BlockPosition.ZERO, Blocks.CRAFTER.defaultBlockState());
         }
     }
 }
