@@ -140,8 +140,8 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
     public static class Crafter extends CraftTileInventoryConverter {
 
         @Override
-        public IInventory getTileEntity() {
-            return new CrafterBlockEntity(BlockPosition.ZERO, Blocks.CRAFTER.defaultBlockState());
+        public Container getTileEntity() {
+            return new CrafterBlockEntity(BlockPos.ZERO, Blocks.CRAFTER.defaultBlockState());
         }
     }
 }

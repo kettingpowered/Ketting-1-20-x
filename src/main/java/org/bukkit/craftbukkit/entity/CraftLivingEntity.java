@@ -457,7 +457,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             } else if (DragonFireball.class.isAssignableFrom(projectile)) {
                 launch = new net.minecraft.world.entity.projectile.DragonFireball(world, getHandle(), direction.getX(), direction.getY(), direction.getZ());
             } else if (WindCharge.class.isAssignableFrom(projectile)) {
-                launch = EntityTypes.WIND_CHARGE.create(world);
+                launch = EntityType.WIND_CHARGE.create(world);
                 ((net.minecraft.world.entity.projectile.WindCharge) launch).setOwner(getHandle());
                 ((net.minecraft.world.entity.projectile.WindCharge) launch).setDirection(direction.getX(), direction.getY(), direction.getZ());
             } else {

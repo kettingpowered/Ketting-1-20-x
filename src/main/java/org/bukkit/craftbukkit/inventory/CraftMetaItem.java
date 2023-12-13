@@ -33,7 +33,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NBTReadLimiter;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
@@ -584,7 +584,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             Object forgeCaps = map.get("forgeCaps");
             try {
                 ByteArrayInputStream buf = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64(forgeCaps.toString()));
-                this.forgeCaps = NbtIo.readCompressed(buf);
+                this.forgeCaps = NbtIo.readCompressed(buf, NbtAccounter.unlimitedHeap());
             } catch (IOException e) {
                 LogManager.getLogger(getClass()).error("Reading forge caps", e);
             }
