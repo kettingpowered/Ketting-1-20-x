@@ -21,7 +21,7 @@
 +import org.bukkit.block.BlockFace;
 +import org.bukkit.command.CommandSender;
 +import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
-+import org.bukkit.craftbukkit.entity.CraftEntity;
++import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftPortalEvent;
@@ -88,7 +88,7 @@
     private final Set<TagKey<Fluid>> fluidOnEyes = new HashSet<>();
     public int invulnerableTime;
     protected boolean firstTick = true;
-@@ -238,14 +_,49 @@
+@@ -238,14 +_,52 @@
     public boolean hasVisualFire;
     @Nullable
     private BlockState feetBlockState = null;
@@ -103,6 +103,9 @@
 +   public boolean lastDamageCancelled; // SPIGOT-5339, SPIGOT-6252, SPIGOT-6777: Keep track if the event was canceled
 +   public boolean persistentInvisibility = false;
 +   public BlockPos lastLavaContact;
++   // Marks an entity, that it was removed by a plugin via Entity#remove
++   // Main use case currently is for SPIGOT-7487, preventing dropping of leash when leash is removed
++   public boolean pluginRemoved = false;
 +   public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.getEntityTimings(this); // Spigot
 +   // Spigot start
 +   public final org.spigotmc.ActivationRange.ActivationType activationType = org.spigotmc.ActivationRange.initializeEntityActivationType(this);

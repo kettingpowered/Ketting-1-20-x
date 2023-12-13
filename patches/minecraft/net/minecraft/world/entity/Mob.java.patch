@@ -97,6 +97,15 @@
     public void addAdditionalSaveData(CompoundTag p_21484_) {
        super.addAdditionalSaveData(p_21484_);
        p_21484_.putBoolean("CanPickUpLoot", this.canPickUpLoot());
+@@ -401,7 +_,7 @@
+       }
+ 
+       p_21484_.put("HandDropChances", listtag3);
+-      if (this.leashHolder != null) {
++      if (this.leashHolder != null && !this.leashHolder.pluginRemoved) { // CraftBukkit - SPIGOT-7487: Don't save (and possible drop) leash, when the holder was removed by a plugin
+          CompoundTag compoundtag2 = new CompoundTag();
+          if (this.leashHolder instanceof LivingEntity) {
+             UUID uuid = this.leashHolder.getUUID();
 @@ -430,15 +_,29 @@
           p_21484_.putBoolean("NoAI", this.isNoAi());
        }
@@ -311,14 +320,16 @@
              if (this.isPassenger()) {
                 Entity entity = this.getVehicle();
                 this.stopRiding();
-@@ -1226,6 +_,7 @@
+@@ -1226,7 +_,8 @@
  
        if (this.leashHolder != null) {
           if (!this.isAlive() || !this.leashHolder.isAlive()) {
+-            this.dropLeash(true, true);
 +            this.level().getCraftServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), (!this.isAlive()) ? EntityUnleashEvent.UnleashReason.PLAYER_UNLEASH : EntityUnleashEvent.UnleashReason.HOLDER_GONE)); // CraftBukkit
-             this.dropLeash(true, true);
++            this.dropLeash(true, !this.leashHolder.pluginRemoved);// CraftBukkit - SPIGOT-7487: Don't drop leash, when the holder was removed by a plugin
           }
  
+       }
 @@ -1237,7 +_,9 @@
           this.leashHolder = null;
           this.leashInfoTag = null;
