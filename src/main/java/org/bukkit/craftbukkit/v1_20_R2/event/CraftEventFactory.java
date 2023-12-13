@@ -678,15 +678,13 @@ public class CraftEventFactory {
                 return true;
             }
             event = CraftEventFactory.callLightningStrikeEvent((LightningStrike) entity.getBukkitEntity(), cause);
-        // Spigot start
-        } else if (entity instanceof net.minecraft.world.entity.ExperienceOrb) {
-            net.minecraft.world.entity.ExperienceOrb xp = (net.minecraft.world.entity.ExperienceOrb) entity;
+        // Spigot start - SPIGOT-7523: Merge after spawn event and only merge if the event was not cancelled (gets checked above)
+        } else if (entity instanceof net.minecraft.world.entity.ExperienceOrb xp) {
             double radius = world.spigotConfig.expMerge;
             if (radius > 0) {
                 List<Entity> entities = world.getEntities(entity, entity.getBoundingBox().inflate(radius, radius, radius));
                 for (Entity e : entities) {
-                    if (e instanceof net.minecraft.world.entity.ExperienceOrb) {
-                        net.minecraft.world.entity.ExperienceOrb loopItem = (net.minecraft.world.entity.ExperienceOrb) e;
+                    if (e instanceof net.minecraft.world.entity.ExperienceOrb loopItem) {
                         if (!loopItem.isRemoved()) {
                             xp.value += loopItem.value;
                             loopItem.discard();
