@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
-@@ -26,7 +_,6 @@
- import net.minecraft.nbt.NbtUtils;
- import net.minecraft.util.RandomSource;
- import net.minecraft.world.Clearable;
--import net.minecraft.world.RandomizableContainer;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
- import net.minecraft.world.entity.Mob;
 @@ -52,6 +_,11 @@
  import net.minecraft.world.phys.shapes.BitSetDiscreteVoxelShape;
  import net.minecraft.world.phys.shapes.DiscreteVoxelShape;
@@ -102,7 +94,7 @@
                          BlockEntity blockentity1 = p_230329_.getBlockEntity(blockpos);
                          if (blockentity1 != null) {
 -                           if (blockentity1 instanceof RandomizableContainer) {
-+                           if (wrappedAccess == p_230329_ && blockentity1 instanceof RandomizableContainerBlockEntity) { // CraftBukkit - only process if don't have a transformer access (originalAccess == worldaccess)
++                           if (structureTransformer == null && blockentity1 instanceof RandomizableContainer) { // CraftBukkit - only process if don't have a transformer access (originalAccess == worldaccess)
                                structuretemplate$structureblockinfo.nbt.putLong("LootTableSeed", p_230333_.nextLong());
                             }
  

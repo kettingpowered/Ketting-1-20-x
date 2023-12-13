@@ -1,14 +1,15 @@
 --- a/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
-@@ -21,14 +_,54 @@
- import net.minecraft.world.level.gameevent.GameEvent;
+@@ -22,13 +_,55 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.ticks.ContainerSingleItem;
+ 
++import java.util.Collections;
 +import java.util.List; 
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
- 
++
  public class JukeboxBlockEntity extends BlockEntity implements Clearable, ContainerSingleItem {
     private static final int SONG_END_PADDING = 20;
     private ItemStack item = ItemStack.EMPTY;
@@ -26,7 +27,7 @@
 +
 +   @Override
 +   public List<ItemStack> getContents() {
-+      return this.items;
++      return Collections.singletonList(this.item);
 +   }
 +
 +   @Override

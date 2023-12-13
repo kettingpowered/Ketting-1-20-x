@@ -34,7 +34,7 @@
           p_60516_.removeBlockEntity(p_60517_);
        }
  
-@@ -183,7 +_,8 @@
+@@ -183,12 +_,16 @@
        if (!p_310712_.isAir() && p_312709_.getBlockInteraction() != Explosion.BlockInteraction.TRIGGER_BLOCK) {
           Block block = p_310712_.getBlock();
           boolean flag = p_312709_.getIndirectSourceEntity() instanceof Player;
@@ -44,6 +44,16 @@
              ServerLevel serverlevel = (ServerLevel)p_311693_;
              BlockEntity blockentity = p_310712_.hasBlockEntity() ? p_311693_.getBlockEntity(p_311490_) : null;
              LootParams.Builder lootparams$builder = (new LootParams.Builder(serverlevel)).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(p_311490_)).withParameter(LootContextParams.TOOL, ItemStack.EMPTY).withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockentity).withOptionalParameter(LootContextParams.THIS_ENTITY, p_312709_.getDirectSourceEntity());
+-            if (p_312709_.getBlockInteraction() == Explosion.BlockInteraction.DESTROY_WITH_DECAY) {
+-               lootparams$builder.withParameter(LootContextParams.EXPLOSION_RADIUS, p_312709_.radius());
++            // CraftBukkit start - add yield
++            if (p_312709_.yield < 1.0F) {
++               lootparams$builder.withParameter(LootContextParams.EXPLOSION_RADIUS, 1.0F / p_312709_.yield);
++               // CraftBukkit end
++
+             }
+ 
+             p_310712_.spawnAfterBreak(serverlevel, p_311490_, ItemStack.EMPTY, flag);
 @@ -196,9 +_,7 @@
                 p_311277_.accept(p_309419_, p_311490_);
              });

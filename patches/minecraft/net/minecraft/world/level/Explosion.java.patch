@@ -1,13 +1,24 @@
 --- a/net/minecraft/world/level/Explosion.java
 +++ b/net/minecraft/world/level/Explosion.java
-@@ -37,6 +_,12 @@
+@@ -30,6 +_,7 @@
+ import net.minecraft.world.item.enchantment.ProtectionEnchantment;
+ import net.minecraft.world.level.block.BaseFireBlock;
+ import net.minecraft.world.level.block.Block;
++import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.level.material.FluidState;
+@@ -37,6 +_,15 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  
 +//Ketting start
 +import net.minecraft.world.entity.boss.EnderDragonPart;
 +import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
++import org.bukkit.Location;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.block.BlockExplodeEvent;
++import org.bukkit.event.entity.EntityExplodeEvent;
 +//Ketting end
 +
  public class Explosion {
@@ -22,12 +33,15 @@
     private final float radius;
     private final DamageSource damageSource;
     private final ExplosionDamageCalculator damageCalculator;
-@@ -57,6 +_,8 @@
+@@ -57,6 +_,11 @@
     private final SoundEvent explosionSound;
     private final ObjectArrayList<BlockPos> toBlow = new ObjectArrayList<>();
     private final Map<Player, Vec3> hitPlayers = Maps.newHashMap();
 +   private final Vec3 position;
-+   public boolean wasCanceled = false; // CraftBukkit - add field
++   // CraftBukkit - add field
++   public boolean wasCanceled = false;
++   public float yield;
++   // CraftBukkit end
  
     public static DamageSource getDefaultDamageSource(Level p_309890_, @Nullable Entity p_311046_) {
        return p_309890_.damageSources().explosion(p_311046_, getIndirectSourceEntityInternal(p_311046_));
@@ -40,11 +54,12 @@
        this.x = p_46055_;
        this.y = p_46056_;
        this.z = p_46057_;
-@@ -90,6 +_,7 @@
+@@ -90,6 +_,8 @@
        this.smallExplosionParticles = p_312175_;
        this.largeExplosionParticles = p_310459_;
        this.explosionSound = p_311795_;
 +      this.position = new Vec3(this.x, this.y, this.z);
++      this.yield = this.blockInteraction == Explosion.BlockInteraction.DESTROY_WITH_DECAY ? 1.0F / this.radius : 1.0F; // CraftBukkit
     }
  
     private ExplosionDamageCalculator makeDamageCalculator(@Nullable Entity p_46063_) {
@@ -107,6 +122,69 @@
                    }
  
                    double d13 = (1.0D - d11) * (double)getSeenPercent(vec3, entity);
+@@ -260,7 +_,62 @@
+          List<Pair<ItemStack, BlockPos>> list = new ArrayList<>();
+          Util.shuffle(this.toBlow, this.level.random);
+ 
++         // CraftBukkit start
++         org.bukkit.World bworld = this.level.getWorld();
++         org.bukkit.entity.Entity explode = this.source == null ? null : this.source.getBukkitEntity();
++         Location location = new Location(bworld, this.x, this.y, this.z);
++
++         List<org.bukkit.block.Block> blockList = new ObjectArrayList<>();
++         for (int i1 = this.toBlow.size() - 1; i1 >= 0; i1--) {
++             BlockPos cpos = this.toBlow.get(i1);
++             org.bukkit.block.Block bblock = bworld.getBlockAt(cpos.getX(), cpos.getY(), cpos.getZ());
++             if (!bblock.getType().isAir()) {
++                 blockList.add(bblock);
++             }
++         }
++
++         List<org.bukkit.block.Block> bukkitBlocks;
++
++         if (explode != null) {
++             EntityExplodeEvent event = new EntityExplodeEvent(explode, location, blockList, this.yield);
++             this.level.getCraftServer().getPluginManager().callEvent(event);
++             this.wasCanceled = event.isCancelled();
++             bukkitBlocks = event.blockList();
++             this.yield = event.getYield();
++         } else {
++             BlockExplodeEvent event = new BlockExplodeEvent(location.getBlock(), blockList, this.yield);
++             this.level.getCraftServer().getPluginManager().callEvent(event);
++             this.wasCanceled = event.isCancelled();
++             bukkitBlocks = event.blockList();
++             this.yield = event.getYield();
++         }
++
++         this.toBlow.clear();
++
++         for (org.bukkit.block.Block bblock : bukkitBlocks) {
++             BlockPos coords = new BlockPos(bblock.getX(), bblock.getY(), bblock.getZ());
++             toBlow.add(coords);
++         }
++
++         if (this.wasCanceled) {
++             return;
++         }
++         // CraftBukkit end
++
+          for(BlockPos blockpos : this.toBlow) {
++            // CraftBukkit start - TNTPrimeEvent
++            BlockState iblockdata = this.level.getBlockState(blockpos);
++            Block block = iblockdata.getBlock();
++            if (block instanceof net.minecraft.world.level.block.TntBlock) {
++                Entity sourceEntity = source == null ? null : source;
++               BlockPos sourceBlock = sourceEntity == null ? BlockPos.containing(this.x, this.y, this.z) : null;
++                if (!CraftEventFactory.callTNTPrimeEvent(this.level, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.EXPLOSION, sourceEntity, sourceBlock)) {
++                    this.level.sendBlockUpdated(blockpos, Blocks.AIR.defaultBlockState(), iblockdata, 3); // Update the block on the client
++                    continue;
++                }
++            }
++            // CraftBukkit end
++
+             this.level.getBlockState(blockpos).onExplosionHit(this.level, blockpos, this, (p_309264_, p_309265_) -> {
+                addOrAppendStack(list, p_309264_, p_309265_);
+             });
 @@ -276,7 +_,11 @@
        if (this.fire) {
           for(BlockPos blockpos1 : this.toBlow) {

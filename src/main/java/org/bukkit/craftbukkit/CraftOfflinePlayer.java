@@ -199,7 +199,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     }
 
     private CompoundTag getData() {
-        return storage.getPlayerData(getUniqueId().toString(), NbtAccounter.unlimitedHeap());
+        return storage.getPlayerData(getUniqueId().toString());
     }
 
     private CompoundTag getBukkitData() {
