@@ -1,21 +1,14 @@
 --- a/net/minecraft/world/entity/npc/ClientSideMerchant.java
 +++ b/net/minecraft/world/entity/npc/ClientSideMerchant.java
-@@ -8,6 +_,6 @@
- import net.minecraft.world.item.trading.Merchant;
- import net.minecraft.world.item.trading.MerchantOffer;
- import net.minecraft.world.item.trading.MerchantOffers;
- 
- public class ClientSideMerchant implements Merchant {
-    private final Player source;
-@@ -42,6 +_,11 @@
- 
-    public boolean isClientSide() {
+@@ -44,6 +_,11 @@
        return this.source.level().isClientSide;
-+   }
-+
+    }
+ 
 +   @Override
 +   public org.bukkit.craftbukkit.inventory.CraftMerchant getCraftMerchant() {
 +      return null;
-    }
- 
++   }
++
     public int getVillagerXp() {
+       return this.xp;
+    }
