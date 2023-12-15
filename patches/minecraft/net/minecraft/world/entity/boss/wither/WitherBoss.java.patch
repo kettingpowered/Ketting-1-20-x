@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/boss/wither/WitherBoss.java
 +++ b/net/minecraft/world/entity/boss/wither/WitherBoss.java
-@@ -68,7 +_,7 @@
-    private final int[] nextHeadUpdate = new int[2];
-    private final int[] idleHeadUpdates = new int[2];
-    private int destroyBlocksTick;
--   private final ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS)).setDarkenScreen(true);
-+   public final ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS)).setDarkenScreen(true);
-    private static final Predicate<LivingEntity> LIVING_ENTITY_SELECTOR = (p_31504_) -> {
-       return p_31504_.getMobType() != MobType.UNDEAD && p_31504_.attackable();
-    };
 @@ -219,15 +_,40 @@
           int k1 = this.getInvulnerableTicks() - 1;
           this.bossEvent.setProgress(1.0F - (float)k1 / 220.0F);

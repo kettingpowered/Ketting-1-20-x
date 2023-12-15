@@ -400,7 +400,7 @@
           this.unRide();
           this.serverLevel().removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
           if (!this.wonGame) {
-@@ -735,86 +_,162 @@
+@@ -735,71 +_,138 @@
  
           return this;
        } else {
@@ -566,11 +566,8 @@
           }
  
           return optional1;
-       }
-    }
- 
--   private void triggerDimensionChangeTriggers(ServerLevel p_9210_) {
-+   public void triggerDimensionChangeTriggers(ServerLevel p_9210_) {
+@@ -809,12 +_,21 @@
+    public void triggerDimensionChangeTriggers(ServerLevel p_9210_) {
        ResourceKey<Level> resourcekey = p_9210_.dimension();
        ResourceKey<Level> resourcekey1 = this.level().dimension();
 -      CriteriaTriggers.CHANGED_DIMENSION.trigger(this, resourcekey, resourcekey1);

@@ -1,23 +1,5 @@
 --- a/net/minecraft/world/entity/decoration/HangingEntity.java
 +++ b/net/minecraft/world/entity/decoration/HangingEntity.java
-@@ -32,7 +_,7 @@
-       return p_31734_ instanceof HangingEntity;
-    };
-    private int checkInterval;
--   protected BlockPos pos;
-+   public BlockPos pos;
-    protected Direction direction = Direction.SOUTH;
- 
-    protected HangingEntity(EntityType<? extends HangingEntity> p_31703_, Level p_31704_) {
-@@ -47,7 +_,7 @@
-    protected void defineSynchedData() {
-    }
- 
--   protected void setDirection(Direction p_31728_) {
-+   public void setDirection(Direction p_31728_) {
-       Validate.notNull(p_31728_);
-       Validate.isTrue(p_31728_.getAxis().isHorizontal());
-       this.direction = p_31728_;
 @@ -58,36 +_,47 @@
  
     protected void recalculateBoundingBox() {

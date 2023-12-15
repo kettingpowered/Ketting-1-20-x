@@ -1,29 +1,14 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -59,11 +_,12 @@
+@@ -59,6 +_,7 @@
     public static final int NUM_DATA_VALUES = 4;
     public static final int BURN_TIME_STANDARD = 200;
     public static final int BURN_COOL_SPEED = 2;
 +   private final RecipeType<? extends AbstractCookingRecipe> recipeType;
     protected NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
--   int litTime;
-+   public int litTime;
+    public int litTime;
     int litDuration;
--   int cookingProgress;
--   int cookingTotalTime;
-+   public int cookingProgress;
-+   public int cookingTotalTime;
-    protected final ContainerData dataAccess = new ContainerData() {
-       public int get(int p_58431_) {
-          switch (p_58431_) {
-@@ -101,14 +_,17 @@
-          return 4;
-       }
-    };
--   private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
-+   public final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
-    private final RecipeManager.CachedCheck<Container, ? extends AbstractCookingRecipe> quickCheck;
- 
+@@ -107,8 +_,11 @@
     protected AbstractFurnaceBlockEntity(BlockEntityType<?> p_154991_, BlockPos p_154992_, BlockState p_154993_, RecipeType<? extends AbstractCookingRecipe> p_154994_) {
        super(p_154991_, p_154992_, p_154993_);
        this.quickCheck = RecipeManager.createCheck((RecipeType)p_154994_);

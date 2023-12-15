@@ -48,15 +48,15 @@
        if (!this.level().isClientSide() && this.isAlive()) {
           double d0 = this.getX() + (this.random.nextDouble() - 0.5D) * 64.0D;
           double d1 = this.getY() + (double)(this.random.nextInt(64) - 32);
-@@ -262,7 +_,7 @@
-       }
+@@ -272,7 +_,7 @@
+       return this.teleport(d1, d2, d3);
     }
  
--   boolean teleportTowards(Entity p_32501_) {
-+   public boolean teleportTowards(Entity p_32501_) {
-       Vec3 vec3 = new Vec3(this.getX() - p_32501_.getX(), this.getY(0.5D) - p_32501_.getEyeY(), this.getZ() - p_32501_.getZ());
-       vec3 = vec3.normalize();
-       double d0 = 16.0D;
+-   public boolean teleport(double p_32544_, double p_32545_, double p_32546_) {
++   private boolean teleport(double p_32544_, double p_32545_, double p_32546_) {
+       BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(p_32544_, p_32545_, p_32546_);
+ 
+       while(blockpos$mutableblockpos.getY() > this.level().getMinBuildHeight() && !this.level().getBlockState(blockpos$mutableblockpos).blocksMotion()) {
 @@ -283,8 +_,10 @@
        boolean flag = blockstate.blocksMotion();
        boolean flag1 = blockstate.getFluidState().is(FluidTags.WATER);

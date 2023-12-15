@@ -23,22 +23,6 @@
     protected int jumpTriggerTime;
     public float oBob;
     public float bob;
-@@ -147,13 +_,13 @@
-    public double xCloak;
-    public double yCloak;
-    public double zCloak;
--   private int sleepCounter;
-+   public int sleepCounter;
-    protected boolean wasUnderwater;
-    private final Abilities abilities = new Abilities();
-    public int experienceLevel;
-    public int totalExperience;
-    public float experienceProgress;
--   protected int enchantmentSeed;
-+   public int enchantmentSeed;
-    protected final float defaultFlySpeed = 0.02F;
-    private int lastLevelUpTime;
-    private final GameProfile gameProfile;
 @@ -164,6 +_,19 @@
     @Nullable
     public FishingHook fishing;
@@ -824,24 +808,6 @@
 +      mutablecomponent = mutablecomponent.append(PlayerTeam.formatNameForTeam(this.getTeam(), this.displayname));
 +      mutablecomponent = suffixes.stream().reduce(mutablecomponent, MutableComponent::append);
        return this.decorateDisplayNameComponent(mutablecomponent);
-    }
- 
-@@ -1786,7 +_,7 @@
-       return this.entityData.get(DATA_SHOULDER_LEFT);
-    }
- 
--   protected void setShoulderEntityLeft(CompoundTag p_36363_) {
-+   public void setShoulderEntityLeft(CompoundTag p_36363_) {
-       this.entityData.set(DATA_SHOULDER_LEFT, p_36363_);
-    }
- 
-@@ -1794,7 +_,7 @@
-       return this.entityData.get(DATA_SHOULDER_RIGHT);
-    }
- 
--   protected void setShoulderEntityRight(CompoundTag p_36365_) {
-+   public void setShoulderEntityRight(CompoundTag p_36365_) {
-       this.entityData.set(DATA_SHOULDER_RIGHT, p_36365_);
     }
  
 @@ -1846,24 +_,24 @@

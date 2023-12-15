@@ -1,22 +1,8 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -34,21 +_,28 @@
-    private static final int LIFETIME = 6000;
-    private static final int INFINITE_PICKUP_DELAY = 32767;
-    private static final int INFINITE_LIFETIME = -32768;
--   private int age;
--   private int pickupDelay;
-+   public int age;
-+   public int pickupDelay;
-    private int health = 5;
+@@ -44,11 +_,18 @@
     @Nullable
--   private UUID thrower;
-+   public UUID thrower;
-    @Nullable
-    private Entity cachedThrower;
-    @Nullable
--   private UUID target;
-+   public UUID target;
+    public UUID target;
     public final float bobOffs;
 +   private int lastTick = net.minecraft.server.MinecraftServer.currentTick - 1; // CraftBukkit
 +   /**

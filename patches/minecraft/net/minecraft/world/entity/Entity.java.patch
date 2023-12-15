@@ -1,13 +1,10 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -123,7 +_,37 @@
+@@ -123,7 +_,34 @@
  import org.joml.Vector3f;
  import org.slf4j.Logger;
  
 -public abstract class Entity implements Nameable, EntityAccess, CommandSource, ScoreHolder {
-+//Ketting start
-+//Ketting start
-+
 +public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements Nameable, EntityAccess, CommandSource, ScoreHolder, net.minecraftforge.common.extensions.IForgeEntity {
 +
 +   // CraftBukkit start
@@ -47,12 +44,7 @@
     private final EntityType<?> type;
     private int id = ENTITY_COUNTER.incrementAndGet();
     public boolean blocksBuilding;
-@@ -186,12 +_,14 @@
-    public double zOld;
-    private float maxUpStep;
-    public boolean noPhysics;
--   protected final RandomSource random = RandomSource.create();
-+   public final RandomSource random = RandomSource.create();
+@@ -190,8 +_,10 @@
     public int tickCount;
     private int remainingFireTicks = -this.getFireImmuneTicks();
     public boolean wasTouchingWater;
@@ -943,7 +935,7 @@
        this.setSharedFlag(4, p_20283_);
     }
  
-@@ -2240,15 +_,19 @@
+@@ -2240,8 +_,12 @@
        return this.getTeam() != null ? this.getTeam().isAlliedTo(p_20032_) : false;
     }
  
@@ -956,16 +948,7 @@
 +      // CraftBukkit - end
     }
  
--   protected boolean getSharedFlag(int p_20292_) {
-+   public boolean getSharedFlag(int p_20292_) {
-       return (this.entityData.get(DATA_SHARED_FLAGS_ID) & 1 << p_20292_) != 0;
-    }
- 
--   protected void setSharedFlag(int p_20116_, boolean p_20117_) {
-+   public void setSharedFlag(int p_20116_, boolean p_20117_) {
-       byte b0 = this.entityData.get(DATA_SHARED_FLAGS_ID);
-       if (p_20117_) {
-          this.entityData.set(DATA_SHARED_FLAGS_ID, (byte)(b0 | 1 << p_20116_));
+    public boolean getSharedFlag(int p_20292_) {
 @@ -2259,7 +_,7 @@
     }
  

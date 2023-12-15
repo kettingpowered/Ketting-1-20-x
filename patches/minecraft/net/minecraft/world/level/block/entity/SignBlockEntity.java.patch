@@ -1,23 +1,14 @@
 --- a/net/minecraft/world/level/block/entity/SignBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/SignBlockEntity.java
-@@ -31,12 +_,15 @@
+@@ -31,7 +_,7 @@
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
  
 -public class SignBlockEntity extends BlockEntity {
-+//Ketting Start
-+//Ketting end
-+
 +public class SignBlockEntity extends BlockEntity implements CommandSource { // CraftBukkit - implements
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int MAX_TEXT_LINE_WIDTH = 90;
     private static final int TEXT_LINE_HEIGHT = 10;
-    @Nullable
--   private UUID playerWhoMayEdit;
-+   public UUID playerWhoMayEdit;
-    private SignText frontText = this.createDefaultSignText();
-    private SignText backText = this.createDefaultSignText();
-    private boolean isWaxed;
 @@ -140,12 +_,13 @@
     public void updateSignText(Player p_278048_, boolean p_278103_, List<FilteredText> p_277990_) {
        if (!this.isWaxed() && p_278048_.getUUID().equals(this.getPlayerWhoMayEdit()) && this.level != null) {

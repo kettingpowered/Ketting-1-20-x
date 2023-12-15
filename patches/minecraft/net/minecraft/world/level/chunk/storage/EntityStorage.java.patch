@@ -1,18 +1,5 @@
 --- a/net/minecraft/world/level/chunk/storage/EntityStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/EntityStorage.java
-@@ -29,10 +_,10 @@
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private static final String ENTITIES_TAG = "Entities";
-    private static final String POSITION_TAG = "Position";
--   private final ServerLevel level;
-+   public final ServerLevel level;
-    private final IOWorker worker;
-    private final LongSet emptyChunks = new LongOpenHashSet();
--   private final ProcessorMailbox<Runnable> entityDeserializerQueue;
-+   public final ProcessorMailbox<Runnable> entityDeserializerQueue;
-    protected final DataFixer fixerUpper;
- 
-    public EntityStorage(ServerLevel p_196924_, Path p_196925_, DataFixer p_196926_, boolean p_196927_, Executor p_196928_) {
 @@ -89,8 +_,12 @@
           ListTag listtag = new ListTag();
           p_156559_.getEntities().forEach((p_156567_) -> {

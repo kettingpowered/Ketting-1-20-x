@@ -1,11 +1,8 @@
 --- a/net/minecraft/world/entity/Interaction.java
 +++ b/net/minecraft/world/entity/Interaction.java
-@@ -33,9 +_,9 @@
-    private static final String TAG_INTERACTION = "interaction";
-    private static final String TAG_RESPONSE = "response";
+@@ -35,7 +_,7 @@
     @Nullable
--   private Interaction.PlayerAction attack;
-+   public Interaction.PlayerAction attack;
+    public Interaction.PlayerAction attack;
     @Nullable
 -   private Interaction.PlayerAction interaction;
 +   public Interaction.PlayerAction interaction;
@@ -31,46 +28,3 @@
           }
  
           return !this.getResponse();
-@@ -154,27 +_,27 @@
-       return this.interaction != null ? this.level().getPlayerByUUID(this.interaction.player()) : null;
-    }
- 
--   private void setWidth(float p_273385_) {
-+   public void setWidth(float p_273385_) {
-       this.entityData.set(DATA_WIDTH_ID, p_273385_);
-    }
- 
--   private float getWidth() {
-+   public float getWidth() {
-       return this.entityData.get(DATA_WIDTH_ID);
-    }
- 
--   private void setHeight(float p_273733_) {
-+   public void setHeight(float p_273733_) {
-       this.entityData.set(DATA_HEIGHT_ID, p_273733_);
-    }
- 
--   private float getHeight() {
-+   public float getHeight() {
-       return this.entityData.get(DATA_HEIGHT_ID);
-    }
- 
--   private void setResponse(boolean p_273657_) {
-+   public void setResponse(boolean p_273657_) {
-       this.entityData.set(DATA_RESPONSE_ID, p_273657_);
-    }
- 
--   private boolean getResponse() {
-+   public boolean getResponse() {
-       return this.entityData.get(DATA_RESPONSE_ID);
-    }
- 
-@@ -190,7 +_,7 @@
-       return this.getDimensions().makeBoundingBox(this.position());
-    }
- 
--   static record PlayerAction(UUID player, long timestamp) {
-+   public static record PlayerAction(UUID player, long timestamp) {
-       public static final Codec<Interaction.PlayerAction> CODEC = RecordCodecBuilder.create((p_273237_) -> {
-          return p_273237_.group(UUIDUtil.CODEC.fieldOf("player").forGetter(Interaction.PlayerAction::player), Codec.LONG.fieldOf("timestamp").forGetter(Interaction.PlayerAction::timestamp)).apply(p_273237_, Interaction.PlayerAction::new);
-       });
