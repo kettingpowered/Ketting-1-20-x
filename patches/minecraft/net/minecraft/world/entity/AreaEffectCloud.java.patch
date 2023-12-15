@@ -1,19 +1,17 @@
 --- a/net/minecraft/world/entity/AreaEffectCloud.java
 +++ b/net/minecraft/world/entity/AreaEffectCloud.java
-@@ -5,6 +_,8 @@
+@@ -5,6 +_,7 @@
  import com.mojang.brigadier.StringReader;
  import com.mojang.brigadier.exceptions.CommandSyntaxException;
  import com.mojang.logging.LogUtils;
 +
-+import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
  import java.util.UUID;
-@@ -26,6 +_,7 @@
+@@ -26,6 +_,6 @@
  import net.minecraft.world.item.alchemy.Potions;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.material.PushReaction;
-+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
  import org.slf4j.Logger;
  
  public class AreaEffectCloud extends Entity implements TraceableEntity {
@@ -94,11 +92,11 @@
 +                  org.bukkit.event.entity.AreaEffectCloudApplyEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callAreaEffectCloudApplyEvent(this, entities);
 +                  if (!event.isCancelled()) {
 +                     for (org.bukkit.entity.LivingEntity entity : event.getAffectedEntities()) {
-+                        if (entity instanceof CraftLivingEntity) {
-+                           LivingEntity entityliving = ((CraftLivingEntity) entity).getHandle();
++                        if (entity instanceof org.bukkit.craftbukkit.entity.CraftLivingEntity) {
++                           LivingEntity entityliving = ((org.bukkit.craftbukkit.entity.CraftLivingEntity) entity).getHandle();
 +                           // CraftBukkit end
 +                           this.victims.put(entityliving, this.tickCount + this.reapplicationDelay);
-+                           Iterator iterator2 = list.iterator();
++                           java.util.Iterator iterator2 = list.iterator();
 +
 +                           while (iterator2.hasNext()) {
 +                              MobEffectInstance mobeffect1 = (MobEffectInstance) iterator2.next();

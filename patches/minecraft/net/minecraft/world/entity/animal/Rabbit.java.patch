@@ -1,18 +1,17 @@
 --- a/net/minecraft/world/entity/animal/Rabbit.java
 +++ b/net/minecraft/world/entity/animal/Rabbit.java
-@@ -53,7 +_,6 @@
+@@ -53,7 +_,7 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.Items;
  import net.minecraft.world.item.crafting.Ingredient;
--import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.LevelReader;
-@@ -66,6 +_,7 @@
+@@ -66,6 +_,6 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.pathfinder.Path;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class Rabbit extends Animal implements VariantHolder<Rabbit.Variant> {
     public static final double STROLL_SPEED_MOD = 0.6D;
@@ -38,7 +37,7 @@
                 int i = blockstate.getValue(CarrotBlock.AGE);
                 if (i == 0) {
 +                  // CraftBukkit start
-+                  if (!CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, blockpos, Blocks.AIR.defaultBlockState())) {
++                  if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, blockpos, Blocks.AIR.defaultBlockState())) {
 +                     return;
 +                  }
 +                  // CraftBukkit end
@@ -46,7 +45,7 @@
                    level.destroyBlock(blockpos, true, this.rabbit);
                 } else {
 +                  // CraftBukkit start
-+                  if (!CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, blockpos, blockstate.setValue(CarrotBlock.AGE, i - 1))) {
++                  if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, blockpos, blockstate.setValue(CarrotBlock.AGE, i - 1))) {
 +                     return;
 +                  }
 +                  // CraftBukkit end

@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/level/block/NetherPortalBlock.java
 +++ b/net/minecraft/world/level/block/NetherPortalBlock.java
-@@ -25,6 +_,7 @@
+@@ -25,6 +_,6 @@
  import net.minecraft.world.level.portal.PortalShape;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.event.entity.EntityPortalEnterEvent;
  
  public class NetherPortalBlock extends Block {
     public static final MapCodec<NetherPortalBlock> CODEC = simpleCodec(NetherPortalBlock::new);
@@ -31,7 +30,7 @@
     public void entityInside(BlockState p_54915_, Level p_54916_, BlockPos p_54917_, Entity p_54918_) {
        if (p_54918_.canChangeDimensions()) {
 +         // CraftBukkit start - Entity in portal
-+         EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_54918_.getBukkitEntity(), new org.bukkit.Location(p_54916_.getWorld(), p_54917_.getX(), p_54917_.getY(), p_54917_.getZ()));
++         org.bukkit.event.entity.EntityPortalEnterEvent event = new org.bukkit.event.entity.EntityPortalEnterEvent(p_54918_.getBukkitEntity(), new org.bukkit.Location(p_54916_.getWorld(), p_54917_.getX(), p_54917_.getY(), p_54917_.getZ()));
 +         p_54916_.getCraftServer().getPluginManager().callEvent(event);
 +         // CraftBukkit end
           p_54918_.handleInsidePortal(p_54917_);

@@ -1,24 +1,22 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -21,6 +_,7 @@
+@@ -21,6 +_,6 @@
  import javax.annotation.Nullable;
  import net.minecraft.Util;
  import net.minecraft.core.NonNullList;
-+import net.minecraft.core.registries.BuiltInRegistries;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.packs.resources.ResourceManager;
  import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-@@ -31,30 +_,52 @@
+@@ -31,30 +_,51 @@
  import net.minecraft.world.level.Level;
  import org.slf4j.Logger;
  
-+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap; // CraftBukkit
 +
  public class RecipeManager extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
     private static final Logger LOGGER = LogUtils.getLogger();
 -   private Map<RecipeType<?>, Map<ResourceLocation, RecipeHolder<?>>> recipes = ImmutableMap.of();
-+   public Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, RecipeHolder<?>>> recipes = ImmutableMap.of(); // CraftBukkit
++   public Map<RecipeType<?>, it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<ResourceLocation, RecipeHolder<?>>> recipes = ImmutableMap.of(); // CraftBukkit
     private Map<ResourceLocation, RecipeHolder<?>> byName = ImmutableMap.of();
     private boolean hasErrors;
 +   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
@@ -38,9 +36,9 @@
        this.hasErrors = false;
 -      Map<RecipeType<?>, ImmutableMap.Builder<ResourceLocation, RecipeHolder<?>>> map = Maps.newHashMap();
 +      // CraftBukkit start - SPIGOT-5667 make sure all types are populated and mutable
-+      Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, RecipeHolder<?>>> map = Maps.newHashMap();
-+      for (RecipeType<?> recipeType : BuiltInRegistries.RECIPE_TYPE) {
-+         map.put(recipeType, new Object2ObjectLinkedOpenHashMap<>());
++      Map<RecipeType<?>, it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<ResourceLocation, RecipeHolder<?>>> map = Maps.newHashMap();
++      for (RecipeType<?> recipeType : net.minecraft.core.registries.BuiltInRegistries.RECIPE_TYPE) {
++         map.put(recipeType, new it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<>());
 +      }
 +      // CraftBukkit end
        ImmutableMap.Builder<ResourceLocation, RecipeHolder<?>> builder = ImmutableMap.builder();
@@ -60,7 +58,7 @@
 -            }).put(resourcelocation, recipeholder);
 +            // CraftBukkit start
 +            (map.computeIfAbsent(recipeholder.value().getType(), (recipes) -> {
-+               return new Object2ObjectLinkedOpenHashMap<>();
++               return new it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<>();
 +               // CraftBukkit end
 +            })).put(resourcelocation, recipeholder);
              builder.put(resourcelocation, recipeholder);
@@ -81,7 +79,7 @@
 +   // CraftBukkit start
 +   public void addRecipe(RecipeHolder<?> irecipe) {
 +      org.spigotmc.AsyncCatcher.catchOp("Recipe Add"); // Spigot
-+      Object2ObjectLinkedOpenHashMap<ResourceLocation, RecipeHolder<?>> map = this.recipes.get(irecipe.value().getType()); // CraftBukkit
++      it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<ResourceLocation, RecipeHolder<?>> map = this.recipes.get(irecipe.value().getType()); // CraftBukkit
 +
 +      if (byName.containsKey(irecipe.id()) || map.containsKey(irecipe.id())) {
 +         throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.id());
@@ -113,7 +111,7 @@
  
     private <C extends Container, T extends Recipe<C>> Map<ResourceLocation, RecipeHolder<T>> byType(RecipeType<T> p_44055_) {
 -      return (Map<ResourceLocation, RecipeHolder<T>>)(Map)this.recipes.getOrDefault(p_44055_, Collections.emptyMap());
-+      return (Map) this.recipes.getOrDefault(p_44055_, new Object2ObjectLinkedOpenHashMap<>()); // CraftBukkit
++      return (Map) this.recipes.getOrDefault(p_44055_, new it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<>()); // CraftBukkit
     }
  
     public <C extends Container, T extends Recipe<C>> NonNullList<ItemStack> getRemainingItemsFor(RecipeType<T> p_44070_, C p_44071_, Level p_44072_) {
@@ -122,12 +120,12 @@
     public void replaceRecipes(Iterable<RecipeHolder<?>> p_44025_) {
        this.hasErrors = false;
 -      Map<RecipeType<?>, Map<ResourceLocation, RecipeHolder<?>>> map = Maps.newHashMap();
-+      Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, RecipeHolder<?>>> map = Maps.newHashMap(); // CraftBukkit
++      Map<RecipeType<?>, it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<ResourceLocation, RecipeHolder<?>>> map = Maps.newHashMap(); // CraftBukkit
        ImmutableMap.Builder<ResourceLocation, RecipeHolder<?>> builder = ImmutableMap.builder();
        p_44025_.forEach((p_296915_) -> {
           Map<ResourceLocation, RecipeHolder<?>> map1 = map.computeIfAbsent(p_296915_.value().getType(), (p_220272_) -> {
 -            return Maps.newHashMap();
-+            return new Object2ObjectLinkedOpenHashMap<>(); // CraftBukkit
++            return new it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<>(); // CraftBukkit
           });
           ResourceLocation resourcelocation = p_296915_.id();
           RecipeHolder<?> recipeholder = map1.put(resourcelocation, p_296915_);
@@ -142,7 +140,7 @@
 +
 +   // CraftBukkit start
 +   public boolean removeRecipe(ResourceLocation resourceLocation) {
-+      for (Object2ObjectLinkedOpenHashMap<ResourceLocation, RecipeHolder<?>> recipes : recipes.values()) {
++      for (it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<ResourceLocation, RecipeHolder<?>> recipes : recipes.values()) {
 +         recipes.remove(resourceLocation);
 +      }
 +
@@ -152,8 +150,8 @@
 +   public void clearRecipes() {
 +      this.recipes = Maps.newHashMap();
 +
-+      for (RecipeType<?> recipeType : BuiltInRegistries.RECIPE_TYPE) {
-+         this.recipes.put(recipeType, new Object2ObjectLinkedOpenHashMap<>());
++      for (RecipeType<?> recipeType : net.minecraft.core.registries.BuiltInRegistries.RECIPE_TYPE) {
++         this.recipes.put(recipeType, new it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<>());
 +      }
 +
 +      this.byName = Maps.newHashMap();

@@ -1,26 +1,24 @@
 --- a/net/minecraft/world/inventory/CrafterMenu.java
 +++ b/net/minecraft/world/inventory/CrafterMenu.java
-@@ -8,7 +_,26 @@
+@@ -8,7 +_,24 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.CrafterBlock;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.inventory.CraftInventoryCrafter;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 +// CraftBukkit end
 +
  public class CrafterMenu extends AbstractContainerMenu implements ContainerListener {
 +   // CraftBukkit start
-+   private CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.inventory.CraftInventoryView bukkitEntity = null;
 +
 +   @Override
-+   public CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.inventory.CraftInventoryView getBukkitView() {
 +       if (bukkitEntity != null) {
 +           return bukkitEntity;
 +       }
 +
-+       CraftInventoryCrafter inventory = new CraftInventoryCrafter(this.container, this.resultContainer);
-+       bukkitEntity = new CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
++       org.bukkit.craftbukkit.inventory.CraftInventoryCrafter inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryCrafter(this.container, this.resultContainer);
++       bukkitEntity = new org.bukkit.craftbukkit.inventory.CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
 +       return bukkitEntity;
 +   }
 +   // CraftBukkit end

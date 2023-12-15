@@ -1,34 +1,25 @@
 --- a/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/net/minecraft/world/entity/monster/piglin/Piglin.java
-@@ -2,14 +_,23 @@
+@@ -2,14 +_,15 @@
  
  import com.google.common.collect.ImmutableList;
  import com.mojang.serialization.Dynamic;
 +
-+import java.util.HashSet;
  import java.util.List;
-+import java.util.Set;
  import java.util.UUID;
-+import java.util.stream.Collectors;
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
-+import net.minecraft.core.registries.BuiltInRegistries;
  import net.minecraft.nbt.CompoundTag;
-+import net.minecraft.nbt.ListTag;
-+import net.minecraft.nbt.StringTag;
-+import net.minecraft.nbt.Tag;
  import net.minecraft.network.syncher.EntityDataAccessor;
  import net.minecraft.network.syncher.EntityDataSerializers;
  import net.minecraft.network.syncher.SynchedEntityData;
-+import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundEvents;
-@@ -44,6 +_,7 @@
+@@ -44,6 +_,6 @@
  import net.minecraft.world.entity.npc.InventoryCarrier;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.entity.projectile.Projectile;
-+import net.minecraft.world.item.Item;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.Items;
  import net.minecraft.world.item.ProjectileWeaponItem;
@@ -43,8 +34,8 @@
     protected static final ImmutableList<SensorType<? extends Sensor<? super Piglin>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS, SensorType.HURT_BY, SensorType.PIGLIN_SPECIFIC_SENSOR);
     protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.LOOK_TARGET, MemoryModuleType.DOORS_TO_CLOSE, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ADULT_PIGLINS, MemoryModuleType.NEARBY_ADULT_PIGLINS, MemoryModuleType.NEAREST_VISIBLE_WANTED_ITEM, MemoryModuleType.ITEM_PICKUP_COOLDOWN_TICKS, MemoryModuleType.HURT_BY, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.INTERACTION_TARGET, MemoryModuleType.PATH, MemoryModuleType.ANGRY_AT, MemoryModuleType.UNIVERSAL_ANGER, MemoryModuleType.AVOID_TARGET, MemoryModuleType.ADMIRING_ITEM, MemoryModuleType.TIME_TRYING_TO_REACH_ADMIRE_ITEM, MemoryModuleType.ADMIRING_DISABLED, MemoryModuleType.DISABLE_WALK_TO_ADMIRE_ITEM, MemoryModuleType.CELEBRATE_LOCATION, MemoryModuleType.DANCING, MemoryModuleType.HUNTED_RECENTLY, MemoryModuleType.NEAREST_VISIBLE_BABY_HOGLIN, MemoryModuleType.NEAREST_VISIBLE_NEMESIS, MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED, MemoryModuleType.RIDE_TARGET, MemoryModuleType.VISIBLE_ADULT_PIGLIN_COUNT, MemoryModuleType.VISIBLE_ADULT_HOGLIN_COUNT, MemoryModuleType.NEAREST_VISIBLE_HUNTABLE_HOGLIN, MemoryModuleType.NEAREST_TARGETABLE_PLAYER_NOT_WEARING_GOLD, MemoryModuleType.NEAREST_PLAYER_HOLDING_WANTED_ITEM, MemoryModuleType.ATE_RECENTLY, MemoryModuleType.NEAREST_REPELLENT);
 +   // CraftBukkit start - Custom bartering and interest list
-+   public Set<Item> allowedBarterItems = new HashSet<>();
-+   public Set<Item> interestItems = new HashSet<>();
++   public java.util.Set<net.minecraft.world.item.Item> allowedBarterItems = new java.util.HashSet<>();
++   public java.util.Set<net.minecraft.world.item.Item> interestItems = new java.util.HashSet<>();
 +   // CraftBukkit end
  
     public Piglin(EntityType<? extends AbstractPiglin> p_34683_, Level p_34684_) {
@@ -54,11 +45,11 @@
  
        this.writeInventoryToTag(p_34751_);
 +      // CraftBukkit start
-+      ListTag barterList = new ListTag();
-+      allowedBarterItems.stream().map(BuiltInRegistries.ITEM::getKey).map(ResourceLocation::toString).map(StringTag::valueOf).forEach(barterList::add);
++      net.minecraft.nbt.ListTag barterList = new net.minecraft.nbt.ListTag();
++      allowedBarterItems.stream().map(net.minecraft.core.registries.BuiltInRegistries.ITEM::getKey).map(net.minecraft.resources.ResourceLocation::toString).map(net.minecraft.nbt.StringTag::valueOf).forEach(barterList::add);
 +      p_34751_.put("Bukkit.BarterList", barterList);
-+      ListTag interestList = new ListTag();
-+      interestItems.stream().map(BuiltInRegistries.ITEM::getKey).map(ResourceLocation::toString).map(StringTag::valueOf).forEach(interestList::add);
++      net.minecraft.nbt.ListTag interestList = new net.minecraft.nbt.ListTag();
++      interestItems.stream().map(net.minecraft.core.registries.BuiltInRegistries.ITEM::getKey).map(net.minecraft.resources.ResourceLocation::toString).map(net.minecraft.nbt.StringTag::valueOf).forEach(interestList::add);
 +      p_34751_.put("Bukkit.InterestList", interestList);
 +      // CraftBukkit end
     }
@@ -69,8 +60,8 @@
        this.setCannotHunt(p_34725_.getBoolean("CannotHunt"));
        this.readInventoryFromTag(p_34725_);
 +      // CraftBukkit start
-+      this.allowedBarterItems = p_34725_.getList("Bukkit.BarterList", 8).stream().map(Tag::getAsString).map(ResourceLocation::tryParse).map(BuiltInRegistries.ITEM::get).collect(Collectors.toCollection(HashSet::new));
-+      this.interestItems = p_34725_.getList("Bukkit.InterestList", 8).stream().map(Tag::getAsString).map(ResourceLocation::tryParse).map(BuiltInRegistries.ITEM::get).collect(Collectors.toCollection(HashSet::new));
++      this.allowedBarterItems = p_34725_.getList("Bukkit.BarterList", 8).stream().map(net.minecraft.nbt.Tag::getAsString).map(net.minecraft.resources.ResourceLocation::tryParse).map(net.minecraft.core.registries.BuiltInRegistries.ITEM::get).collect(java.util.stream.Collectors.toCollection(java.util.HashSet::new));
++      this.interestItems = p_34725_.getList("Bukkit.InterestList", 8).stream().map(net.minecraft.nbt.Tag::getAsString).map(net.minecraft.resources.ResourceLocation::tryParse).map(net.minecraft.core.registries.BuiltInRegistries.ITEM::get).collect(java.util.stream.Collectors.toCollection(java.util.HashSet::new));
 +      // CraftBukkit end
     }
  

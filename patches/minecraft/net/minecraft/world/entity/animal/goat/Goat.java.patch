@@ -1,12 +1,9 @@
 --- a/net/minecraft/world/entity/animal/goat/Goat.java
 +++ b/net/minecraft/world/entity/animal/goat/Goat.java
-@@ -52,6 +_,9 @@
+@@ -52,6 +_,6 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
-+import org.bukkit.event.player.PlayerBucketFillEvent;
  import org.joml.Vector3f;
  
  public class Goat extends Animal {
@@ -26,7 +23,7 @@
        ItemStack itemstack = p_149379_.getItemInHand(p_149380_);
        if (itemstack.is(Items.BUCKET) && !this.isBaby()) {
 +         // CraftBukkit start - Got milk?
-+         PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) p_149379_.level(), p_149379_, this.blockPosition(), this.blockPosition(), null, itemstack, Items.MILK_BUCKET, p_149380_);
++         org.bukkit.event.player.PlayerBucketFillEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) p_149379_.level(), p_149379_, this.blockPosition(), this.blockPosition(), null, itemstack, Items.MILK_BUCKET, p_149380_);
 +
 +         if (event.isCancelled()) {
 +            return InteractionResult.PASS;
@@ -34,7 +31,7 @@
 +         // CraftBukkit end
           p_149379_.playSound(this.getMilkingSound(), 1.0F, 1.0F);
 -         ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, p_149379_, Items.MILK_BUCKET.getDefaultInstance());
-+         ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, p_149379_, CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
++         ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, p_149379_, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
           p_149379_.setItemInHand(p_149380_, itemstack1);
           return InteractionResult.sidedSuccess(this.level().isClientSide);
        } else {

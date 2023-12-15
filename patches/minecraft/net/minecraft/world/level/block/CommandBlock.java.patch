@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/level/block/CommandBlock.java
 +++ b/net/minecraft/world/level/block/CommandBlock.java
-@@ -28,6 +_,7 @@
+@@ -28,6 +_,6 @@
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.level.block.state.properties.DirectionProperty;
  import net.minecraft.world.phys.BlockHitResult;
-+import org.bukkit.event.block.BlockRedstoneEvent;
  import org.slf4j.Logger;
  
  public class CommandBlock extends BaseEntityBlock implements GameMasterBlock {
@@ -17,7 +16,7 @@
 +            int old = flag1 ? 15 : 0;
 +            int current = flag ? 15 : 0;
 +
-+            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bukkitBlock, old, current);
++            org.bukkit.event.block.BlockRedstoneEvent eventRedstone = new org.bukkit.event.block.BlockRedstoneEvent(bukkitBlock, old, current);
 +            p_51839_.getCraftServer().getPluginManager().callEvent(eventRedstone);
 +            flag = eventRedstone.getNewCurrent() > 0;
 +            // CraftBukkit end

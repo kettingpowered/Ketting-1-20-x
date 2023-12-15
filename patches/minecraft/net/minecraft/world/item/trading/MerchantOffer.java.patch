@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/item/trading/MerchantOffer.java
 +++ b/net/minecraft/world/item/trading/MerchantOffer.java
-@@ -5,17 +_,34 @@
+@@ -5,17 +_,33 @@
  import net.minecraft.util.Mth;
  import net.minecraft.world.item.ItemStack;
  
-+import org.bukkit.craftbukkit.inventory.CraftMerchantRecipe; // CraftBukkit
  public class MerchantOffer {
 -   private final ItemStack baseCostA;
 -   private final ItemStack costB;
@@ -27,17 +26,17 @@
 +   public float priceMultiplier;
 +   public int xp = 1;
 +   // CraftBukkit start
-+   private CraftMerchantRecipe bukkitHandle;
++   private org.bukkit.craftbukkit.inventory.CraftMerchantRecipe bukkitHandle;
 +
-+   public CraftMerchantRecipe asBukkit() {
-+      return (bukkitHandle == null) ? bukkitHandle = new CraftMerchantRecipe(this) : bukkitHandle;
++   public org.bukkit.craftbukkit.inventory.CraftMerchantRecipe asBukkit() {
++      return (bukkitHandle == null) ? bukkitHandle = new org.bukkit.craftbukkit.inventory.CraftMerchantRecipe(this) : bukkitHandle;
 +   }
 +
-+   public MerchantOffer(ItemStack itemstack, ItemStack itemstack1, ItemStack itemstack2, int uses, int maxUses, int experience, float priceMultiplier, CraftMerchantRecipe bukkit) {
++   public MerchantOffer(ItemStack itemstack, ItemStack itemstack1, ItemStack itemstack2, int uses, int maxUses, int experience, float priceMultiplier, org.bukkit.craftbukkit.inventory.CraftMerchantRecipe bukkit) {
 +      this(itemstack, itemstack1, itemstack2, uses, maxUses, experience, priceMultiplier, 0, bukkit);
 +   }
 +
-+   public MerchantOffer(ItemStack itemstack, ItemStack itemstack1, ItemStack itemstack2, int uses, int maxUses, int experience, float priceMultiplier, int demand, CraftMerchantRecipe bukkit) {
++   public MerchantOffer(ItemStack itemstack, ItemStack itemstack1, ItemStack itemstack2, int uses, int maxUses, int experience, float priceMultiplier, int demand, org.bukkit.craftbukkit.inventory.CraftMerchantRecipe bukkit) {
 +      this(itemstack, itemstack1, itemstack2, uses, maxUses, experience, priceMultiplier, demand);
 +      this.bukkitHandle = bukkit;
 +   }

@@ -1,11 +1,9 @@
 --- a/net/minecraft/world/level/block/entity/ConduitBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ConduitBlockEntity.java
-@@ -25,6 +_,8 @@
+@@ -25,6 +_,6 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.block.CraftBlock;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class ConduitBlockEntity extends BlockEntity {
     private static final int BLOCK_REFRESH_RATE = 2;
@@ -38,11 +36,11 @@
 -         p_155409_.playSound((Player)null, p_155413_.destroyTarget.getX(), p_155413_.destroyTarget.getY(), p_155413_.destroyTarget.getZ(), SoundEvents.CONDUIT_ATTACK_TARGET, SoundSource.BLOCKS, 1.0F, 1.0F);
 -         p_155413_.destroyTarget.hurt(p_155409_.damageSources().magic(), 4.0F);
 +         // CraftBukkit start
-+         CraftEventFactory.blockDamage = CraftBlock.at(p_155409_, p_155410_);
++         org.bukkit.craftbukkit.event.CraftEventFactory.blockDamage = org.bukkit.craftbukkit.block.CraftBlock.at(p_155409_, p_155410_);
 +         if (p_155413_.destroyTarget.hurt(p_155409_.damageSources().magic(), 4.0F)) {
 +            p_155409_.playSound((Player) null, p_155413_.destroyTarget.getX(), p_155413_.destroyTarget.getY(), p_155413_.destroyTarget.getZ(), SoundEvents.CONDUIT_ATTACK_TARGET, SoundSource.BLOCKS, 1.0F, 1.0F);
 +         }
-+         CraftEventFactory.blockDamage = null;
++         org.bukkit.craftbukkit.event.CraftEventFactory.blockDamage = null;
 +         // CraftBukkit end
        }
  

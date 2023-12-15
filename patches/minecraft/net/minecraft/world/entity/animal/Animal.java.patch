@@ -1,12 +1,9 @@
 --- a/net/minecraft/world/entity/animal/Animal.java
 +++ b/net/minecraft/world/entity/animal/Animal.java
-@@ -29,12 +_,16 @@
+@@ -29,12 +_,13 @@
  import net.minecraft.world.level.LevelReader;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityBreedEvent;
-+import org.bukkit.event.entity.EntityEnterLoveModeEvent;
  
  public abstract class Animal extends AgeableMob {
     protected static final int PARENT_AGE_AFTER_BREEDING = 6000;
@@ -41,7 +38,7 @@
     public void setInLove(@Nullable Player p_27596_) {
 -      this.inLove = 600;
 +      // CraftBukkit start
-+      EntityEnterLoveModeEvent entityEnterLoveModeEvent = CraftEventFactory.callEntityEnterLoveModeEvent(p_27596_, this, 600);
++      org.bukkit.event.entity.EntityEnterLoveModeEvent entityEnterLoveModeEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityEnterLoveModeEvent(p_27596_, this, 600);
 +      if (entityEnterLoveModeEvent.isCancelled()) {
 +         return;
 +      }
@@ -79,7 +76,7 @@
 +            return Optional.ofNullable(p_27565_.getLoveCause());
 +         }).orElse(null);
 +         int experience = this.getRandom().nextInt(7) + 1;
-+         EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityBreedEvent(ageablemob, this, p_27565_, breeder, this.breedItem, experience);
++         org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityBreedEvent(ageablemob, this, p_27565_, breeder, this.breedItem, experience);
 +         if (entityBreedEvent.isCancelled()) {
 +            return;
 +         }

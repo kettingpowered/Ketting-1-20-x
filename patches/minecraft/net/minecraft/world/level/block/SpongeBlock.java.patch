@@ -1,14 +1,10 @@
 --- a/net/minecraft/world/level/block/SpongeBlock.java
 +++ b/net/minecraft/world/level/block/SpongeBlock.java
-@@ -13,6 +_,13 @@
+@@ -13,6 +_,9 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.material.FluidState;
  
 +//Ketting Start
-+import org.bukkit.craftbukkit.block.CraftBlockState;
-+import org.bukkit.craftbukkit.util.BlockStateListPopulator;
-+import org.bukkit.event.block.SpongeAbsorbEvent;
-+import java.util.List;
 +//Ketting end
 +
  public class SpongeBlock extends Block {
@@ -20,7 +16,7 @@
     private boolean removeWaterBreadthFirstSearch(Level p_56808_, BlockPos p_56809_) {
 -      return BlockPos.breadthFirstTraversal(p_56809_, 6, 65, (p_277519_, p_277492_) -> {
 +      BlockState spongeState = p_56808_.getBlockState(p_56809_);
-+      BlockStateListPopulator blockList = new BlockStateListPopulator(p_56808_); // CraftBukkit - Use BlockStateListPopulator
++      org.bukkit.craftbukkit.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.util.BlockStateListPopulator(p_56808_); // CraftBukkit - Use BlockStateListPopulator
 +      BlockPos.breadthFirstTraversal(p_56809_, 6, 65, (blockposition1, consumer) -> {
           for(Direction direction : ALL_DIRECTIONS) {
 -            p_277492_.accept(p_277519_.relative(direction));
@@ -73,18 +69,18 @@
 -      }) > 1;
 +      });
 +      // CraftBukkit start
-+      List<CraftBlockState> blocks = blockList.getList(); // Is a clone
++      java.util.List<org.bukkit.craftbukkit.block.CraftBlockState> blocks = blockList.getList(); // Is a clone
 +      if (!blocks.isEmpty()) {
 +         final org.bukkit.block.Block bblock = p_56808_.getWorld().getBlockAt(p_56809_.getX(), p_56809_.getY(), p_56809_.getZ());
 +
-+         SpongeAbsorbEvent event = new SpongeAbsorbEvent(bblock, (List<org.bukkit.block.BlockState>) (List) blocks);
++         org.bukkit.event.block.SpongeAbsorbEvent event = new org.bukkit.event.block.SpongeAbsorbEvent(bblock, (java.util.List<org.bukkit.block.BlockState>) (java.util.List) blocks);
 +         p_56808_.getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (event.isCancelled()) {
 +            return false;
 +         }
 +
-+         for (CraftBlockState block : blocks) {
++         for (org.bukkit.craftbukkit.block.CraftBlockState block : blocks) {
 +            BlockPos blockposition1 = block.getPosition();
 +            BlockState iblockdata = p_56808_.getBlockState(blockposition1);
 +            FluidState fluid = p_56808_.getFluidState(blockposition1);

@@ -1,49 +1,38 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -11,15 +_,12 @@
+@@ -11,15 +_,16 @@
  import java.nio.file.Path;
  import java.text.SimpleDateFormat;
  import java.time.Instant;
--import java.util.EnumSet;
--import java.util.List;
--import java.util.Map;
--import java.util.Optional;
--import java.util.Set;
--import java.util.UUID;
-+import java.util.*;
+ import java.util.EnumSet;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Optional;
+ import java.util.Set;
+ import java.util.UUID;
  import java.util.function.Function;
  import java.util.function.Predicate;
-+import java.util.stream.Collectors;
  import javax.annotation.Nullable;
 +
  import net.minecraft.ChatFormatting;
  import net.minecraft.FileUtil;
  import net.minecraft.commands.CommandSourceStack;
-@@ -65,11 +_,13 @@
+@@ -65,11 +_,11 @@
  import net.minecraft.server.PlayerAdvancements;
  import net.minecraft.server.RegistryLayer;
  import net.minecraft.server.ServerScoreboard;
-+import net.minecraft.server.dedicated.DedicatedServer;
  import net.minecraft.server.level.ClientInformation;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.server.network.CommonListenerCookie;
  import net.minecraft.server.network.ServerGamePacketListenerImpl;
-+import net.minecraft.server.network.ServerLoginPacketListenerImpl;
  import net.minecraft.sounds.SoundEvents;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.ServerStatsCounter;
-@@ -96,6 +_,13 @@
+@@ -96,6 +_,6 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.CraftServer;
-+import org.bukkit.craftbukkit.CraftWorld;
-+import org.bukkit.craftbukkit.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.util.CraftChatMessage;
-+import org.bukkit.craftbukkit.util.CraftLocation;
-+import org.bukkit.event.player.*;
  import org.slf4j.Logger;
  
  public abstract class PlayerList {
@@ -52,7 +41,7 @@
     private static final SimpleDateFormat BAN_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
     private final MinecraftServer server;
 -   private final List<ServerPlayer> players = Lists.newArrayList();
-+   public final List<ServerPlayer> players = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
++   public final List<ServerPlayer> players = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - java.util.ArrayList -> CopyOnWriteArrayList: java.util.Iterator safety
     private final Map<UUID, ServerPlayer> playersByUUID = Maps.newHashMap();
     private final UserBanList bans = new UserBanList(USERBANLIST_FILE);
     private final IpBanList ipBans = new IpBanList(IPBANLIST_FILE);
@@ -78,11 +67,11 @@
 +   private final List<ServerPlayer> playersView = java.util.Collections.unmodifiableList(players);
 +
 +   // CraftBukkit start
-+   private CraftServer cserver;
++   private org.bukkit.craftbukkit.CraftServer cserver;
 +   private final Map<String, ServerPlayer> playersByName = new java.util.HashMap<>();
  
     public PlayerList(MinecraftServer p_203842_, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_) {
-+      this.cserver = p_203842_.server = new CraftServer((DedicatedServer) p_203842_, this);
++      this.cserver = p_203842_.server = new org.bukkit.craftbukkit.CraftServer((net.minecraft.server.dedicated.DedicatedServer) p_203842_, this);
 +      p_203842_.console = org.bukkit.craftbukkit.command.ColouredConsoleSender.getInstance();
 +      p_203842_.reader.addCompleter(new org.bukkit.craftbukkit.command.ConsoleCommandCompleter(p_203842_.server));
 +      // CraftBukkit end
@@ -117,8 +106,8 @@
 +      org.spigotmc.event.player.PlayerSpawnLocationEvent ev = new org.spigotmc.event.player.PlayerSpawnLocationEvent(spawnPlayer, spawnPlayer.getLocation());
 +      cserver.getPluginManager().callEvent(ev);
 +
-+      Location loc = ev.getSpawnLocation();
-+      serverlevel1 = ((CraftWorld) loc.getWorld()).getHandle();
++      org.bukkit.Location loc = ev.getSpawnLocation();
++      serverlevel1 = ((org.bukkit.craftbukkit.CraftWorld) loc.getWorld()).getHandle();
 +
 +      p_11263_.spawnIn(serverlevel1);
 +      p_11263_.gameMode.setLevel((ServerLevel) p_11263_.level());
@@ -153,7 +142,7 @@
 -      this.broadcastSystemMessage(mutablecomponent.withStyle(ChatFormatting.YELLOW), false);
 +      // CraftBukkit start
 +      mutablecomponent.withStyle(ChatFormatting.YELLOW);
-+      String joinMessage = CraftChatMessage.fromComponent(mutablecomponent);
++      String joinMessage = org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(mutablecomponent);
 +
        servergamepacketlistenerimpl.teleport(p_11263_.getX(), p_11263_.getY(), p_11263_.getZ(), p_11263_.getYRot(), p_11263_.getXRot());
        ServerStatus serverstatus = this.server.getStatus();
@@ -170,12 +159,12 @@
 +      // this.broadcastAll(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(p_11263_))); // CraftBukkit - replaced with loop below
 +
 +      // CraftBukkit start
-+      CraftPlayer bukkitPlayer = p_11263_.getBukkitEntity();
++      org.bukkit.craftbukkit.entity.CraftPlayer bukkitPlayer = p_11263_.getBukkitEntity();
 +
 +      // Ensure that player inventory is populated with its viewer
 +      p_11263_.containerMenu.transferTo(p_11263_.containerMenu, bukkitPlayer);
 +
-+      PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(bukkitPlayer, joinMessage);
++      org.bukkit.event.player.PlayerJoinEvent playerJoinEvent = new org.bukkit.event.player.PlayerJoinEvent(bukkitPlayer, joinMessage);
 +      cserver.getPluginManager().callEvent(playerJoinEvent);
 +
 +      if (!p_11263_.connection.isAcceptingMessages()) {
@@ -322,7 +311,7 @@
 +         p_11287_.closeContainer();
 +      }
 +
-+      PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(p_11287_.getBukkitEntity(), p_11287_.kickLeaveMessage != null ? p_11287_.kickLeaveMessage : "\u00A7e" + p_11287_.getScoreboardName() + " left the game");
++      org.bukkit.event.player.PlayerQuitEvent playerQuitEvent = new org.bukkit.event.player.PlayerQuitEvent(p_11287_.getBukkitEntity(), p_11287_.kickLeaveMessage != null ? p_11287_.kickLeaveMessage : "\u00A7e" + p_11287_.getScoreboardName() + " left the game");
 +      cserver.getPluginManager().callEvent(playerQuitEvent);
 +      p_11287_.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
 +
@@ -392,7 +381,7 @@
 -         }
 -
 -         return mutablecomponent;
-+   public ServerPlayer canPlayerLogin(ServerLoginPacketListenerImpl loginlistener, GameProfile gameprofile) {
++   public ServerPlayer canPlayerLogin(net.minecraft.server.network.ServerLoginPacketListenerImpl loginlistener, GameProfile gameprofile) {
 +      MutableComponent mutablecomponent;
 +
 +      // Moved from pprocessLogin
@@ -419,7 +408,7 @@
 +
 +      ServerPlayer player = new ServerPlayer(this.server, this.server.overworld(), gameprofile, ClientInformation.createDefault());
 +      org.bukkit.entity.Player bukkitPlayer = player.getBukkitEntity();
-+      PlayerLoginEvent event = new PlayerLoginEvent(bukkitPlayer, loginlistener.connection.hostname, ((java.net.InetSocketAddress) socketaddress).getAddress(), ((java.net.InetSocketAddress) loginlistener.connection.channel.remoteAddress()).getAddress());
++      org.bukkit.event.player.PlayerLoginEvent event = new org.bukkit.event.player.PlayerLoginEvent(bukkitPlayer, loginlistener.connection.hostname, ((java.net.InetSocketAddress) socketaddress).getAddress(), ((java.net.InetSocketAddress) loginlistener.connection.channel.remoteAddress()).getAddress());
 +
 +      if (getBans().isBanned(gameprofile) && !getBans().get(gameprofile).hasExpired()) {
 +         UserBanListEntry gameprofilebanentry = this.bans.get(gameprofile);
@@ -430,10 +419,10 @@
 +         }
 +
 +         // return chatmessage;
-+         event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(mutablecomponent));
++         event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_BANNED, org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(mutablecomponent));
 +      } else if (!this.isWhiteListed(gameprofile)) {
 +         mutablecomponent = Component.translatable("multiplayer.disconnect.not_whitelisted");
-+         event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, org.spigotmc.SpigotConfig.whitelistMessage); // Spigot
++         event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_WHITELIST, org.spigotmc.SpigotConfig.whitelistMessage); // Spigot
 +      } else if (getIpBans().isBanned(socketaddress) && !getIpBans().get(socketaddress).hasExpired()) {
 +         IpBanListEntry ipbanentry = this.ipBans.get(socketaddress);
 +
@@ -443,7 +432,7 @@
 +         }
 +
 +         // return chatmessage;
-+         event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(mutablecomponent));
++         event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_BANNED, org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(mutablecomponent));
        } else {
 -         return this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(p_11258_) ? Component.translatable("multiplayer.disconnect.server_full") : null;
 -      }
@@ -456,12 +445,12 @@
 -   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) {
 +         // return this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameprofile) ? IChatBaseComponent.translatable("multiplayer.disconnect.server_full") : null;
 +         if (this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameprofile)) {
-+            event.disallow(PlayerLoginEvent.Result.KICK_FULL, org.spigotmc.SpigotConfig.serverFullMessage); // Spigot
++            event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL, org.spigotmc.SpigotConfig.serverFullMessage); // Spigot
 +         }
 +      }
 +
 +      cserver.getPluginManager().callEvent(event);
-+      if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
++      if (event.getResult() != org.bukkit.event.player.PlayerLoginEvent.Result.ALLOWED) {
 +         loginlistener.disconnect(event.getKickMessage());
 +         return null;
 +      }
@@ -498,11 +487,11 @@
 +      // CraftBukkit end
 +   }
 +
-+   public ServerPlayer respawn(ServerPlayer p_11237_, boolean p_11238_, PlayerRespawnEvent.RespawnReason reason) {
++   public ServerPlayer respawn(ServerPlayer p_11237_, boolean p_11238_, org.bukkit.event.player.PlayerRespawnEvent.RespawnReason reason) {
 +      return this.respawn(p_11237_, this.server.getLevel(p_11237_.getRespawnDimension()), p_11238_, null, true, reason);
 +   }
 +
-+   public ServerPlayer respawn(ServerPlayer player, ServerLevel level, boolean flag, Location location, boolean avoidSuffocation, PlayerRespawnEvent.RespawnReason reason) {
++   public ServerPlayer respawn(ServerPlayer player, ServerLevel level, boolean flag, org.bukkit.Location location, boolean avoidSuffocation, org.bukkit.event.player.PlayerRespawnEvent.RespawnReason reason) {
 +      player.stopRiding(); // CraftBukkit
 +      this.players.remove(player);
 +      this.playersByName.remove(player.getScoreboardName().toLowerCase(java.util.Locale.ROOT)); // Spigot
@@ -593,21 +582,21 @@
 +               // entityplayer1.setRespawnPosition(worldserver1.dimension(), blockposition, f, flag1, false); // CraftBukkit - not required, just copies old location into reused entity
 +               flag2 = !flag && flag3;
 +               isBedSpawn = true;
-+               location = CraftLocation.toBukkit(vec3d, worldserver1.getWorld(), f1, 0.0F);
++               location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(vec3d, worldserver1.getWorld(), f1, 0.0F);
 +            } else if (blockpos != null) {
 +               serverplayer.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.NO_RESPAWN_BLOCK_AVAILABLE, 0.0F));
-+               serverplayer.setRespawnPosition(null, null, 0f, false, false, PlayerSpawnChangeEvent.Cause.RESET); // CraftBukkit - SPIGOT-5988: Clear respawn location when obstructed
++               serverplayer.setRespawnPosition(null, null, 0f, false, false, org.bukkit.event.player.PlayerSpawnChangeEvent.Cause.RESET); // CraftBukkit - SPIGOT-5988: Clear respawn location when obstructed
 +            }
 +         }
 +
 +         if (location == null) {
 +            worldserver1 = this.server.overworld();
 +            blockpos = serverplayer.getSpawnPoint(worldserver1);
-+            location = CraftLocation.toBukkit(blockpos, worldserver1.getWorld()).add(0.5F, 0.1F, 0.5F);
++            location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(blockpos, worldserver1.getWorld()).add(0.5F, 0.1F, 0.5F);
 +         }
 +
 +         org.bukkit.entity.Player respawnPlayer = serverplayer.getBukkitEntity();
-+         PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn && !flag2, flag2, reason);
++         org.bukkit.event.player.PlayerRespawnEvent respawnEvent = new org.bukkit.event.player.PlayerRespawnEvent(respawnPlayer, location, isBedSpawn && !flag2, flag2, reason);
 +         cserver.getPluginManager().callEvent(respawnEvent);
 +         // Spigot Start
 +         if (player.connection.isDisconnected()) {
@@ -620,7 +609,7 @@
 +      } else {
 +         location.setWorld(level.getWorld());
        }
-+      ServerLevel serverlevel1 = ((CraftWorld) location.getWorld()).getHandle();
++      ServerLevel serverlevel1 = ((org.bukkit.craftbukkit.CraftWorld) location.getWorld()).getHandle();
 +      serverplayer.spawnIn(serverlevel1);
 +      serverplayer.unsetRemoved();
 +      serverplayer.setShiftKeyDown(false);
@@ -640,7 +629,7 @@
 -      serverplayer.connection.teleport(serverplayer.getX(), serverplayer.getY(), serverplayer.getZ(), serverplayer.getYRot(), serverplayer.getXRot());
 +      serverplayer.connection.send(new ClientboundSetChunkCacheRadiusPacket(serverlevel1.spigotConfig.viewDistance)); // Spigot
 +      serverplayer.connection.send(new ClientboundSetSimulationDistancePacket(serverlevel1.spigotConfig.simulationDistance)); // Spigot
-+      serverplayer.connection.teleport(CraftLocation.toBukkit(serverplayer.position(), serverlevel2.getWorld(), serverplayer.getYRot(), serverplayer.getXRot())); // CraftBukkit
++      serverplayer.connection.teleport(org.bukkit.craftbukkit.util.CraftLocation.toBukkit(serverplayer.position(), serverlevel2.getWorld(), serverplayer.getYRot(), serverplayer.getXRot())); // CraftBukkit
        serverplayer.connection.send(new ClientboundSetDefaultSpawnPositionPacket(serverlevel1.getSharedSpawnPos(), serverlevel1.getSharedSpawnAngle()));
        serverplayer.connection.send(new ClientboundChangeDifficultyPacket(leveldata.getDifficulty(), leveldata.isDifficultyLocked()));
        serverplayer.connection.send(new ClientboundSetExperiencePacket(serverplayer.experienceProgress, serverplayer.totalExperience, serverplayer.experienceLevel));
@@ -670,11 +659,11 @@
 +      }
 +
 +      // Fire advancement trigger
-+      serverplayer.triggerDimensionChangeTriggers(((CraftWorld) fromWorld).getHandle());
++      serverplayer.triggerDimensionChangeTriggers(((org.bukkit.craftbukkit.CraftWorld) fromWorld).getHandle());
 +
 +      // Don't fire on respawn
 +      if (fromWorld != location.getWorld()) {
-+         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(serverplayer.getBukkitEntity(), fromWorld);
++         org.bukkit.event.player.PlayerChangedWorldEvent event = new org.bukkit.event.player.PlayerChangedWorldEvent(serverplayer.getBukkitEntity(), fromWorld);
 +         server.server.getPluginManager().callEvent(event);
 +      }
 +
@@ -700,7 +689,7 @@
 +               public boolean test(ServerPlayer input) {
 +                  return target.getBukkitEntity().canSee(input.getBukkitEntity());
 +               }
-+            }).collect(Collectors.toList())));
++            }).collect(java.util.stream.Collectors.toList())));
 +         }
 +         // CraftBukkit end
           this.sendAllPlayerInfoIn = 0;

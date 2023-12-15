@@ -1,19 +1,14 @@
 --- a/net/minecraft/world/item/StandingAndWallBlockItem.java
 +++ b/net/minecraft/world/item/StandingAndWallBlockItem.java
-@@ -4,11 +_,16 @@
+@@ -4,11 +_,11 @@
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
-+import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.world.item.context.BlockPlaceContext;
-+import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelReader;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.shapes.CollisionContext;
-+import org.bukkit.craftbukkit.block.CraftBlock;
-+import org.bukkit.craftbukkit.block.data.CraftBlockData;
-+import org.bukkit.event.block.BlockCanBuildEvent;
  
  public class StandingAndWallBlockItem extends BlockItem {
     protected final Block wallBlock;
@@ -22,7 +17,7 @@
        BlockState blockstate = this.wallBlock.getStateForPlacement(p_43255_);
        BlockState blockstate1 = null;
 -      LevelReader levelreader = p_43255_.getLevel();
-+      Level levelreader = p_43255_.getLevel();
++      net.minecraft.world.level.Level levelreader = p_43255_.getLevel();
        BlockPos blockpos = p_43255_.getClickedPos();
  
        for(Direction direction : p_43255_.getNearestLookingDirections()) {
@@ -34,9 +29,9 @@
 +      // CraftBukkit start
 +      if (blockstate1 != null) {
 +         boolean defaultReturn = levelreader.isUnobstructed(blockstate1, blockpos, CollisionContext.empty());
-+         org.bukkit.entity.Player player = (p_43255_.getPlayer() instanceof ServerPlayer) ? (org.bukkit.entity.Player) p_43255_.getPlayer().getBukkitEntity() : null;
++         org.bukkit.entity.Player player = (p_43255_.getPlayer() instanceof net.minecraft.server.level.ServerPlayer) ? (org.bukkit.entity.Player) p_43255_.getPlayer().getBukkitEntity() : null;
 +
-+         BlockCanBuildEvent event = new BlockCanBuildEvent(CraftBlock.at(levelreader, blockpos), player, CraftBlockData.fromData(blockstate1), defaultReturn);
++         org.bukkit.event.block.BlockCanBuildEvent event = new org.bukkit.event.block.BlockCanBuildEvent(org.bukkit.craftbukkit.block.CraftBlock.at(levelreader, blockpos), player, org.bukkit.craftbukkit.block.data.CraftBlockData.fromData(blockstate1), defaultReturn);
 +         p_43255_.getLevel().getCraftServer().getPluginManager().callEvent(event);
 +
 +         return (event.isBuildable()) ? blockstate1 : null;

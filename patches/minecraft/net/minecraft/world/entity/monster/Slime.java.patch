@@ -1,15 +1,10 @@
 --- a/net/minecraft/world/entity/monster/Slime.java
 +++ b/net/minecraft/world/entity/monster/Slime.java
-@@ -44,6 +_,14 @@
+@@ -44,6 +_,9 @@
  import net.minecraft.world.phys.Vec3;
  import org.joml.Vector3f;
  
 +//Ketting start
-+import java.util.ArrayList;
-+import java.util.List;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityTransformEvent;
-+import org.bukkit.event.entity.SlimeSplitEvent;
 +//Ketting end
 +
  public class Slime extends Mob implements Enemy {
@@ -29,7 +24,7 @@
           int k = 2 + this.random.nextInt(3);
  
 +         // CraftBukkit start
-+         SlimeSplitEvent event = new SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), k);
++         org.bukkit.event.entity.SlimeSplitEvent event = new org.bukkit.event.entity.SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), k);
 +         this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (!event.isCancelled() && event.getCount() > 0) {
@@ -38,7 +33,7 @@
 +            super.remove(p_149847_);
 +            return;
 +         }
-+         List<LivingEntity> slimes = new ArrayList<>(j);
++         java.util.List<LivingEntity> slimes = new java.util.ArrayList<>(j);
 +         // CraftBukkit end
 +
           for(int l = 0; l < k; ++l) {
@@ -54,7 +49,7 @@
           }
 +
 +         // CraftBukkit start
-+         if (CraftEventFactory.callEntityTransformEvent(this, slimes, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
++         if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTransformEvent(this, slimes, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
 +            super.remove(p_149847_);
 +            return;
 +         }

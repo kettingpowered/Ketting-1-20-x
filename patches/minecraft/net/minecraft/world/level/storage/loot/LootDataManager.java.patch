@@ -1,12 +1,10 @@
 --- a/net/minecraft/world/level/storage/loot/LootDataManager.java
 +++ b/net/minecraft/world/level/storage/loot/LootDataManager.java
-@@ -22,6 +_,11 @@
+@@ -22,6 +_,9 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
  import org.slf4j.Logger;
  
 +//CraftBukkit start
-+import org.bukkit.craftbukkit.CraftLootTable;
-+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 +//CraftBukkit end
 +
  public class LootDataManager implements PreparableReloadListener, LootDataResolver {
@@ -19,7 +17,7 @@
 +      // CraftBukkit start
 +      map.forEach((key, lootTable) -> {
 +         if (object instanceof LootTable table) {
-+            table.craftLootTable = new CraftLootTable(CraftNamespacedKey.fromMinecraft(key.location()), table);
++            table.craftLootTable = new org.bukkit.craftbukkit.CraftLootTable(org.bukkit.craftbukkit.util.CraftNamespacedKey.fromMinecraft(key.location()), table);
 +         }
 +      });
 +      // CraftBukkit end

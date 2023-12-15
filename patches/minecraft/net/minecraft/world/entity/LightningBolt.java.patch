@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/entity/LightningBolt.java
 +++ b/net/minecraft/world/entity/LightningBolt.java
-@@ -24,6 +_,7 @@
+@@ -24,6 +_,6 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class LightningBolt extends Entity {
     private static final int START_LIFE = 2;
@@ -67,7 +66,7 @@
 -            this.level().setBlockAndUpdate(blockpos, blockstate);
 -            ++this.blocksSetOnFire;
 +            // CraftBukkit start - add "!visualOnly"
-+            if (!visualOnly && !CraftEventFactory.callBlockIgniteEvent(this.level(), blockpos, this).isCancelled()) {
++            if (!visualOnly && !org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(this.level(), blockpos, this).isCancelled()) {
 +               this.level().setBlockAndUpdate(blockpos, blockstate);
 +               ++this.blocksSetOnFire;
 +            }
@@ -81,7 +80,7 @@
 -               this.level().setBlockAndUpdate(blockpos1, blockstate);
 -               ++this.blocksSetOnFire;
 +               // CraftBukkit start - add "!visualOnly"
-+               if (!visualOnly && !CraftEventFactory.callBlockIgniteEvent(this.level(), blockpos1, this).isCancelled()) {
++               if (!visualOnly && !org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(this.level(), blockpos1, this).isCancelled()) {
 +                  this.level().setBlockAndUpdate(blockpos1, blockstate);
 +                  ++this.blocksSetOnFire;
 +               }

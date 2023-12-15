@@ -1,18 +1,17 @@
 --- a/net/minecraft/world/entity/monster/Ravager.java
 +++ b/net/minecraft/world/entity/monster/Ravager.java
-@@ -29,7 +_,6 @@
+@@ -29,7 +_,7 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.entity.raid.Raider;
  import net.minecraft.world.entity.vehicle.Boat;
--import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelReader;
  import net.minecraft.world.level.block.Block;
-@@ -39,6 +_,7 @@
+@@ -39,6 +_,6 @@
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
  import org.joml.Vector3f;
  
  public class Ravager extends Raider {
@@ -30,7 +29,7 @@
                 Block block = blockstate.getBlock();
                 if (block instanceof LeavesBlock) {
 +                  // CraftBukkit start
-+                  if (!CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
++                  if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
 +                     continue;
 +                  }
 +                  // CraftBukkit end

@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/entity/projectile/SmallFireball.java
 +++ b/net/minecraft/world/entity/projectile/SmallFireball.java
-@@ -12,6 +_,7 @@
+@@ -12,6 +_,6 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
-+import org.bukkit.event.entity.EntityCombustByEntityEvent;
  
  public class SmallFireball extends Fireball {
     public SmallFireball(EntityType<? extends SmallFireball> p_37364_, Level p_37365_) {
@@ -26,7 +25,7 @@
           int i = entity.getRemainingFireTicks();
 -         entity.setSecondsOnFire(5);
 +         // CraftBukkit start - Entity damage by entity event + combust event
-+         EntityCombustByEntityEvent event = new EntityCombustByEntityEvent((org.bukkit.entity.Projectile) this.getBukkitEntity(), entity.getBukkitEntity(), 5);
++         org.bukkit.event.entity.EntityCombustByEntityEvent event = new org.bukkit.event.entity.EntityCombustByEntityEvent((org.bukkit.entity.Projectile) this.getBukkitEntity(), entity.getBukkitEntity(), 5);
 +         entity.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (!event.isCancelled()) {

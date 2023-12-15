@@ -1,10 +1,9 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -8,6 +_,7 @@
+@@ -8,6 +_,6 @@
  import java.io.IOException;
  import java.util.Arrays;
  import java.util.List;
-+import java.util.Objects;
  import java.util.Optional;
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.Executor;
@@ -54,7 +53,7 @@
 +         level.timings.syncChunkLoadTimer.startTiming(); // Spigot
           CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> completablefuture = this.getChunkFutureMainThread(p_8360_, p_8361_, p_8362_, p_8363_);
 +
-+         Objects.requireNonNull(completablefuture);
++         java.util.Objects.requireNonNull(completablefuture);
           this.mainThreadProcessor.managedBlock(completablefuture::isDone);
 +         level.timings.syncChunkLoadTimer.stopTiming(); // Spigot
           ChunkAccess chunkaccess1 = completablefuture.join().map((p_8406_) -> {

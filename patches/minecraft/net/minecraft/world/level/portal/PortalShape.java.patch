@@ -1,12 +1,10 @@
 --- a/net/minecraft/world/level/portal/PortalShape.java
 +++ b/net/minecraft/world/level/portal/PortalShape.java
-@@ -22,13 +_,18 @@
+@@ -22,13 +_,16 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
 +//Ketting Start
-+import org.bukkit.craftbukkit.event.CraftPortalEvent;
-+import org.bukkit.event.world.PortalCreateEvent;
 +//Ketting end
 +
  public class PortalShape {
@@ -87,7 +85,7 @@
 +         blocks.setBlock(blockposition, blockstate, 18);
 +      });
 +
-+      PortalCreateEvent event = new PortalCreateEvent((java.util.List<org.bukkit.block.BlockState>) (java.util.List) blocks.getList(), bworld, null, PortalCreateEvent.CreateReason.FIRE);
++      org.bukkit.event.world.PortalCreateEvent event = new org.bukkit.event.world.PortalCreateEvent((java.util.List<org.bukkit.block.BlockState>) (java.util.List) blocks.getList(), bworld, null, org.bukkit.event.world.PortalCreateEvent.CreateReason.FIRE);
 +      this.level.getMinecraftWorld().getServer().server.getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) {
@@ -106,7 +104,7 @@
     }
  
 -   public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_) {
-+   public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_, CraftPortalEvent portalEventInfo) { // CraftBukkit
++   public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_, org.bukkit.craftbukkit.event.CraftPortalEvent portalEventInfo) { // CraftBukkit
        BlockPos blockpos = p_259931_.minCorner;
        BlockState blockstate = p_259301_.getBlockState(blockpos);
        Direction.Axis direction$axis = blockstate.getOptionalValue(BlockStateProperties.HORIZONTAL_AXIS).orElse(Direction.Axis.X);

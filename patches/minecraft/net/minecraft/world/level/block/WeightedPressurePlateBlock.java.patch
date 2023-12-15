@@ -1,11 +1,9 @@
 --- a/net/minecraft/world/level/block/WeightedPressurePlateBlock.java
 +++ b/net/minecraft/world/level/block/WeightedPressurePlateBlock.java
-@@ -13,6 +_,8 @@
+@@ -13,6 +_,6 @@
  import net.minecraft.world.level.block.state.properties.BlockSetType;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.block.state.properties.IntegerProperty;
-+import org.bukkit.event.entity.EntityInteractEvent;
-+import net.minecraft.world.entity.player.Player;
  
  public class WeightedPressurePlateBlock extends BasePressurePlateBlock {
     public static final MapCodec<WeightedPressurePlateBlock> CODEC = RecordCodecBuilder.mapCodec((p_312418_) -> {
@@ -20,11 +18,11 @@
 +      for (Entity entity : getEntities(p_58213_, WeightedPressurePlateBlock.TOUCH_AABB.move(p_58214_), Entity.class)) {
 +         org.bukkit.event.Cancellable cancellable;
 +
-+         if (entity instanceof Player) {
-+            cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((Player) entity, org.bukkit.event.block.Action.PHYSICAL, p_58214_, null, null, null);
++         if (entity instanceof net.minecraft.world.entity.player.Player) {
++            cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((net.minecraft.world.entity.player.Player) entity, org.bukkit.event.block.Action.PHYSICAL, p_58214_, null, null, null);
 +         } else {
-+            cancellable = new EntityInteractEvent(entity.getBukkitEntity(), p_58213_.getWorld().getBlockAt(p_58214_.getX(), p_58214_.getY(), p_58214_.getZ()));
-+            p_58213_.getCraftServer().getPluginManager().callEvent((EntityInteractEvent) cancellable);
++            cancellable = new org.bukkit.event.entity.EntityInteractEvent(entity.getBukkitEntity(), p_58213_.getWorld().getBlockAt(p_58214_.getX(), p_58214_.getY(), p_58214_.getZ()));
++            p_58213_.getCraftServer().getPluginManager().callEvent((org.bukkit.event.entity.EntityInteractEvent) cancellable);
 +         }
 +
 +         // We only want to block turning the plate on if all events are cancelled

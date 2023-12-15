@@ -1,15 +1,10 @@
 --- a/net/minecraft/world/CompoundContainer.java
 +++ b/net/minecraft/world/CompoundContainer.java
-@@ -2,10 +_,58 @@
+@@ -2,10 +_,53 @@
  
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-+import org.bukkit.entity.HumanEntity;
 +
-+import java.util.ArrayList;
-+import java.util.List;
  
  public class CompoundContainer implements Container {
 -   private final Container container1;
@@ -18,29 +13,29 @@
 +   public final Container container2;
 +
 +   // CraftBukkit start - add fields and methods
-+   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++   public java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
 +
-+   public List<ItemStack> getContents() {
-+      List<ItemStack> result = new ArrayList<ItemStack>(this.getContainerSize());
++   public java.util.List<ItemStack> getContents() {
++      java.util.List<ItemStack> result = new java.util.ArrayList<ItemStack>(this.getContainerSize());
 +      for (int i = 0; i < this.getContainerSize(); i++) {
 +         result.add(this.getItem(i));
 +      }
 +      return result;
 +   }
 +
-+   public void onOpen(CraftHumanEntity who) {
++   public void onOpen(org.bukkit.craftbukkit.entity.CraftHumanEntity who) {
 +      this.container1.onOpen(who);
 +      this.container2.onOpen(who);
 +      transaction.add(who);
 +   }
 +
-+   public void onClose(CraftHumanEntity who) {
++   public void onClose(org.bukkit.craftbukkit.entity.CraftHumanEntity who) {
 +      this.container1.onClose(who);
 +      this.container2.onClose(who);
 +      transaction.remove(who);
 +   }
 +
-+   public List<HumanEntity> getViewers() {
++   public java.util.List<org.bukkit.entity.HumanEntity> getViewers() {
 +      return transaction;
 +   }
 +
@@ -54,7 +49,7 @@
 +   }
 +
 +   @Override
-+   public Location getLocation() {
++   public org.bukkit.Location getLocation() {
 +      return container1.getLocation(); // TODO: right?
 +   }
 +   // CraftBukkit end

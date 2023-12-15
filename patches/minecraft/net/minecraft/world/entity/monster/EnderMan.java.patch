@@ -1,19 +1,17 @@
 --- a/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/net/minecraft/world/entity/monster/EnderMan.java
-@@ -56,7 +_,6 @@
+@@ -56,7 +_,7 @@
  import net.minecraft.world.item.alchemy.Potions;
  import net.minecraft.world.item.enchantment.Enchantments;
  import net.minecraft.world.level.ClipContext;
--import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.Blocks;
-@@ -68,6 +_,8 @@
+@@ -68,6 +_,6 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityTargetEvent;
  import org.joml.Vector3f;
  
  public class EnderMan extends Monster implements NeutralMob {
@@ -25,11 +23,11 @@
     public void setTarget(@Nullable LivingEntity p_32537_) {
 -      super.setTarget(p_32537_);
 +      // CraftBukkit start - fire event
-+      setTarget(p_32537_, EntityTargetEvent.TargetReason.UNKNOWN, true);
++      setTarget(p_32537_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN, true);
 +   }
 +
 +   @Override
-+   public boolean setTarget(LivingEntity p_32537_, EntityTargetEvent.TargetReason reason, boolean fireEvent) {
++   public boolean setTarget(LivingEntity p_32537_, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent) {
 +      if (!super.setTarget(p_32537_, reason, fireEvent)) {
 +         return false;
 +      }
@@ -104,7 +102,7 @@
 -               level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this.enderman, blockstate2));
 -               this.enderman.setCarriedBlock((BlockState)null);
 +            if (this.canPlaceBlock(level, blockpos, blockstate2, blockstate, blockstate1, blockpos1) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(enderman, net.minecraftforge.common.util.BlockSnapshot.create(level.dimension(), level, blockpos1), net.minecraft.core.Direction.UP)) {
-+               if (CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, blockstate2)) { // CraftBukkit - Place event
++               if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, blockstate2)) { // CraftBukkit - Place event
 +                  level.setBlock(blockpos, blockstate2, 3);
 +                  level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this.enderman, blockstate2));
 +                  this.enderman.setCarriedBlock((BlockState) null);
@@ -136,7 +134,7 @@
 -            level.removeBlock(blockpos, false);
 -            level.gameEvent(GameEvent.BLOCK_DESTROY, blockpos, GameEvent.Context.of(this.enderman, blockstate));
 -            this.enderman.setCarriedBlock(blockstate.getBlock().defaultBlockState());
-+            if (CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, Blocks.AIR.defaultBlockState())) { // CraftBukkit - Place event
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, Blocks.AIR.defaultBlockState())) { // CraftBukkit - Place event
 +               level.removeBlock(blockpos, false);
 +               level.gameEvent(GameEvent.BLOCK_DESTROY, blockpos, GameEvent.Context.of(this.enderman, blockstate));
 +               this.enderman.setCarriedBlock(blockstate.getBlock().defaultBlockState());

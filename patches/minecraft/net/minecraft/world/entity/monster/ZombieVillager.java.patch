@@ -1,19 +1,16 @@
 --- a/net/minecraft/world/entity/monster/ZombieVillager.java
 +++ b/net/minecraft/world/entity/monster/ZombieVillager.java
-@@ -14,6 +_,7 @@
+@@ -14,6 +_,6 @@
  import net.minecraft.network.syncher.EntityDataAccessor;
  import net.minecraft.network.syncher.EntityDataSerializers;
  import net.minecraft.network.syncher.SynchedEntityData;
-+import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
-@@ -46,25 +_,28 @@
+@@ -46,25 +_,26 @@
  import net.minecraft.world.level.block.BedBlock;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
-+import org.bukkit.event.entity.EntityTransformEvent;
  import org.joml.Vector3f;
  import org.slf4j.Logger;
  
@@ -36,7 +33,7 @@
     @Nullable
     private CompoundTag tradeOffers;
     private int villagerXp;
-+   private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
++   private int lastTick = net.minecraft.server.MinecraftServer.currentTick; // CraftBukkit - add field
  
     public ZombieVillager(EntityType<? extends ZombieVillager> p_34368_, Level p_34369_) {
        super(p_34368_, p_34369_);
@@ -45,7 +42,7 @@
        if (!this.level().isClientSide && this.isAlive() && this.isConverting()) {
           int i = this.getConversionProgress();
 +         // CraftBukkit start - Use wall time instead of ticks for villager conversion
-+         int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++         int elapsedTicks = net.minecraft.server.MinecraftServer.currentTick - this.lastTick;
 +         i *= elapsedTicks;
 +         // CraftBukkit end
           this.villagerConversionTime -= i;
@@ -56,7 +53,7 @@
        }
  
        super.tick();
-+      this.lastTick = MinecraftServer.currentTick; // CraftBukkit
++      this.lastTick = net.minecraft.server.MinecraftServer.currentTick; // CraftBukkit
     }
  
     public InteractionResult mobInteract(Player p_34394_, InteractionHand p_34395_) {
@@ -84,7 +81,7 @@
     private void finishConversion(ServerLevel p_34399_) {
 -      Villager villager = this.convertTo(EntityType.VILLAGER, false);
 +      // CraftBukkit start
-+      Villager villager = (Villager) this.convertTo(EntityType.VILLAGER, false, EntityTransformEvent.TransformReason.CURED, CreatureSpawnEvent.SpawnReason.CURED);
++      Villager villager = (Villager) this.convertTo(EntityType.VILLAGER, false, org.bukkit.event.entity.EntityTransformEvent.TransformReason.CURED, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CURED);
 +      if (villager == null) {
 +         ((org.bukkit.entity.ZombieVillager) getBukkitEntity()).setConversionTime(-1); // SPIGOT-5208: End conversion to stop event spam
 +         return;

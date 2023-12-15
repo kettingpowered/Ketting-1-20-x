@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/level/block/PoweredRailBlock.java
 +++ b/net/minecraft/world/level/block/PoweredRailBlock.java
-@@ -11,18 +_,29 @@
+@@ -11,18 +_,28 @@
  import net.minecraft.world.level.block.state.properties.EnumProperty;
  import net.minecraft.world.level.block.state.properties.Property;
  import net.minecraft.world.level.block.state.properties.RailShape;
-+import org.bukkit.craftbukkit.event.CraftEventFactory; //Ketting
  
  public class PoweredRailBlock extends BaseRailBlock {
     public static final MapCodec<PoweredRailBlock> CODEC = simpleCodec(PoweredRailBlock::new);
@@ -65,7 +64,7 @@
 -         p_55233_.setBlock(p_55234_, p_55232_.setValue(POWERED, Boolean.valueOf(flag1)), 3);
 +         // CraftBukkit start
 +         int power = flag ? 15 : 0;
-+         int newPower = CraftEventFactory.callRedstoneChange(p_55233_, p_55234_, power, 15 - power).getNewCurrent();
++         int newPower = org.bukkit.craftbukkit.event.CraftEventFactory.callRedstoneChange(p_55233_, p_55234_, power, 15 - power).getNewCurrent();
 +         if (newPower == power) {
 +            return;
 +         }

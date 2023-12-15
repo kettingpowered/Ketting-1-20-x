@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/level/block/CarvedPumpkinBlock.java
 +++ b/net/minecraft/world/level/block/CarvedPumpkinBlock.java
-@@ -22,6 +_,7 @@
+@@ -22,6 +_,6 @@
  import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
  import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
  import net.minecraft.world.level.block.state.properties.DirectionProperty;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
  
  public class CarvedPumpkinBlock extends HorizontalDirectionalBlock {
     public static final MapCodec<CarvedPumpkinBlock> CODEC = simpleCodec(CarvedPumpkinBlock::new);
@@ -18,7 +17,7 @@
 -      p_249110_.addFreshEntity(p_251251_);
 -
 +      // CraftBukkit start
-+      if (!p_249110_.addFreshEntity(p_251251_, CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM)) {
++      if (!p_249110_.addFreshEntity(p_251251_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM)) {
 +         return;
 +      }
 +      clearPatternBlocks(p_249110_, p_251293_); // CraftBukkit - from above

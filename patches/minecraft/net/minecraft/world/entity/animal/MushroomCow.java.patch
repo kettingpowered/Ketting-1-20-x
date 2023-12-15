@@ -1,28 +1,23 @@
 --- a/net/minecraft/world/entity/animal/MushroomCow.java
 +++ b/net/minecraft/world/entity/animal/MushroomCow.java
-@@ -1,5 +_,6 @@
+@@ -1,5 +_,5 @@
  package net.minecraft.world.entity.animal;
  
-+import java.util.Collections;
  import java.util.List;
  import java.util.Optional;
  import java.util.UUID;
-@@ -26,7 +_,6 @@
+@@ -26,7 +_,7 @@
  import net.minecraft.world.entity.LightningBolt;
  import net.minecraft.world.entity.MobSpawnType;
  import net.minecraft.world.entity.Shearable;
--import net.minecraft.world.entity.VariantHolder;
+ import net.minecraft.world.entity.VariantHolder;
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
-@@ -40,8 +_,12 @@
+@@ -40,8 +_,8 @@
  import net.minecraft.world.level.block.SuspiciousEffectHolder;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
-+import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityDropItemEvent;
-+import org.bukkit.event.entity.EntityTransformEvent;
  
 -public class MushroomCow extends Cow implements Shearable, VariantHolder<MushroomCow.MushroomType> {
 +public class MushroomCow extends Cow implements Shearable, net.minecraftforge.common.IForgeShearable {
@@ -52,8 +47,8 @@
 +      for (ItemStack itemStack : shearInternal(p_28924_)) {
 +         // CraftBukkit start
 +         ItemEntity itemEntity = new ItemEntity(this.level(), this.getX(), this.getY(1.0D), this.getZ(), itemStack);
-+         EntityDropItemEvent event = new EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) itemEntity.getBukkitEntity());
-+         Bukkit.getPluginManager().callEvent(event);
++         org.bukkit.event.entity.EntityDropItemEvent event = new org.bukkit.event.entity.EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) itemEntity.getBukkitEntity());
++         org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            continue;
 +         }
@@ -80,8 +75,8 @@
 -            this.level().addFreshEntity(cow);
 -
 +            // CraftBukkit start
-+            if (CraftEventFactory.callEntityTransformEvent(this, cow, EntityTransformEvent.TransformReason.SHEARED).isCancelled()) {
-+               return Collections.emptyList();
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTransformEvent(this, cow, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SHEARED).isCancelled()) {
++               return java.util.Collections.emptyList();
 +            }
 +            this.level().addFreshEntity(cow, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SHEARED);
 +

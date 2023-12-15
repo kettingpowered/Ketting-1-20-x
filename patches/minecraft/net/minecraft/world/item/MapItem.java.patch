@@ -1,12 +1,10 @@
 --- a/net/minecraft/world/item/MapItem.java
 +++ b/net/minecraft/world/item/MapItem.java
-@@ -33,6 +_,11 @@
+@@ -33,6 +_,9 @@
  import net.minecraft.world.level.material.MapColor;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
  
 +// CraftBukkit start
-+import org.bukkit.Bukkit;
-+import org.bukkit.event.server.MapInitializeEvent;
 +// CraftBukkit end
 +
  public class MapItem extends ComplexItem {
@@ -45,8 +43,8 @@
        int i = p_151121_.getFreeMapId();
        p_151121_.setMapData(makeKey(i), mapitemsaveddata);
 +      // CraftBukkit start
-+      MapInitializeEvent event = new MapInitializeEvent(mapitemsaveddata.mapView);
-+      Bukkit.getServer().getPluginManager().callEvent(event);
++      org.bukkit.event.server.MapInitializeEvent event = new org.bukkit.event.server.MapInitializeEvent(mapitemsaveddata.mapView);
++      org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
 +      // CraftBukkit end
        return i;
     }
@@ -56,8 +54,8 @@
           int i = p_42858_.getFreeMapId();
           p_42858_.setMapData(makeKey(i), mapitemsaveddata.scaled(p_42859_));
 +         // CraftBukkit start
-+         MapInitializeEvent event = new MapInitializeEvent(mapitemsaveddata.mapView);
-+         Bukkit.getServer().getPluginManager().callEvent(event);
++         org.bukkit.event.server.MapInitializeEvent event = new org.bukkit.event.server.MapInitializeEvent(mapitemsaveddata.mapView);
++         org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
 +         // CraftBukkit end
           storeMapData(p_42857_, i);
        }

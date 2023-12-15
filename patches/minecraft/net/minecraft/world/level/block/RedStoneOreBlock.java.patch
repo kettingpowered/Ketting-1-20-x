@@ -1,13 +1,10 @@
 --- a/net/minecraft/world/level/block/RedStoneOreBlock.java
 +++ b/net/minecraft/world/level/block/RedStoneOreBlock.java
-@@ -22,6 +_,12 @@
+@@ -22,6 +_,9 @@
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.phys.BlockHitResult;
  
 +//Ketting start
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityInteractEvent;
-+import javax.annotation.Nullable;
 +//Ketting end
 +
  public class RedStoneOreBlock extends Block {
@@ -33,7 +30,7 @@
 +               interact(p_154299_.getBlockState(p_154300_), p_154299_, p_154300_, p_154302_); // add entity
 +            }
 +         } else {
-+            EntityInteractEvent event = new EntityInteractEvent(p_154302_.getBukkitEntity(), p_154299_.getWorld().getBlockAt(p_154300_.getX(), p_154300_.getY(), p_154300_.getZ()));
++            org.bukkit.event.entity.EntityInteractEvent event = new org.bukkit.event.entity.EntityInteractEvent(p_154302_.getBukkitEntity(), p_154299_.getWorld().getBlockAt(p_154300_.getX(), p_154300_.getY(), p_154300_.getZ()));
 +            p_154299_.getCraftServer().getPluginManager().callEvent(event);
 +            if (!event.isCancelled()) {
 +               interact(p_154299_.getBlockState(p_154300_), p_154299_, p_154300_, p_154302_); // add entity
@@ -57,7 +54,7 @@
  
 +   //Ketting start - mixin inject
 +   private static Entity interact$entity = null;
-+   private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_, @Nullable Entity entity) { // CraftBukkit - add Entity
++   private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_, @javax.annotation.Nullable Entity entity) { // CraftBukkit - add Entity
 +      interact$entity = entity;
 +      interact(p_55493_, p_55494_, p_55495_);
 +      interact$entity = null;
@@ -68,7 +65,7 @@
        spawnParticles(p_55494_, p_55495_);
        if (!p_55493_.getValue(LIT)) {
 +         // CraftBukkit start
-+         if (interact$entity != null && !CraftEventFactory.callEntityChangeBlockEvent(interact$entity, p_55495_, p_55493_.setValue(RedStoneOreBlock.LIT, true))) {
++         if (interact$entity != null && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(interact$entity, p_55495_, p_55493_.setValue(RedStoneOreBlock.LIT, true))) {
 +            return;
 +         }
 +         // CraftBukkit end
@@ -80,7 +77,7 @@
     public void randomTick(BlockState p_221918_, ServerLevel p_221919_, BlockPos p_221920_, RandomSource p_221921_) {
        if (p_221918_.getValue(LIT)) {
 +         // CraftBukkit start
-+         if (CraftEventFactory.callBlockFadeEvent(p_221919_, p_221920_, p_221918_.setValue(RedStoneOreBlock.LIT, false)).isCancelled()) {
++         if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(p_221919_, p_221920_, p_221918_.setValue(RedStoneOreBlock.LIT, false)).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end

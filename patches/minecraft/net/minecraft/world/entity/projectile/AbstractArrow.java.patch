@@ -1,13 +1,10 @@
 --- a/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
-@@ -45,6 +_,12 @@
+@@ -45,6 +_,9 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
 +//Ketting start
-+import net.minecraft.world.entity.item.ItemEntity;
-+import org.bukkit.event.entity.EntityCombustByEntityEvent;
-+import org.bukkit.event.player.PlayerPickupArrowEvent;
 +//Ketting end
 +
  public abstract class AbstractArrow extends Projectile {
@@ -117,7 +114,7 @@
        if (this.isOnFire() && !flag && !flag1) {
 -         entity.setSecondsOnFire(5);
 +         // CraftBukkit start
-+         EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5);
++         org.bukkit.event.entity.EntityCombustByEntityEvent combustEvent = new org.bukkit.event.entity.EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5);
 +         org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
 +         if (!combustEvent.isCancelled()) {
 +            entity.setSecondsOnFire(combustEvent.getDuration(), false);
@@ -144,8 +141,8 @@
 +         // CraftBukkit start
 +         ItemStack itemstack = this.getPickupItem();
 +         if (this.pickup == AbstractArrow.Pickup.ALLOWED && !itemstack.isEmpty() && p_36766_.getInventory().canHold(itemstack) > 0) {
-+            ItemEntity item = new ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), itemstack);
-+            PlayerPickupArrowEvent event = new PlayerPickupArrowEvent((org.bukkit.entity.Player) p_36766_.getBukkitEntity(), new org.bukkit.craftbukkit.entity.CraftItem(this.level().getCraftServer(), item), (org.bukkit.entity.AbstractArrow) this.getBukkitEntity());
++            net.minecraft.world.entity.item.ItemEntity item = new net.minecraft.world.entity.item.ItemEntity(this.level(), this.getX(), this.getY(), this.getZ(), itemstack);
++            org.bukkit.event.player.PlayerPickupArrowEvent event = new org.bukkit.event.player.PlayerPickupArrowEvent((org.bukkit.entity.Player) p_36766_.getBukkitEntity(), new org.bukkit.craftbukkit.entity.CraftItem(this.level().getCraftServer(), item), (org.bukkit.entity.AbstractArrow) this.getBukkitEntity());
 +            // event.setCancelled(!entityhuman.canPickUpLoot); TODO
 +            this.level().getCraftServer().getPluginManager().callEvent(event);
 +

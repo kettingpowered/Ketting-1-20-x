@@ -1,11 +1,9 @@
 --- a/net/minecraft/world/level/block/PressurePlateBlock.java
 +++ b/net/minecraft/world/level/block/PressurePlateBlock.java
-@@ -12,6 +_,8 @@
+@@ -12,6 +_,6 @@
  import net.minecraft.world.level.block.state.properties.BlockSetType;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
-+import org.bukkit.event.entity.EntityInteractEvent;
-+import net.minecraft.world.entity.player.Player;
  
  public class PressurePlateBlock extends BasePressurePlateBlock {
     public static final MapCodec<PressurePlateBlock> CODEC = RecordCodecBuilder.mapCodec((p_310452_) -> {
@@ -40,11 +38,11 @@
 +            org.bukkit.plugin.PluginManager manager = p_55264_.getCraftServer().getPluginManager();
 +            org.bukkit.event.Cancellable cancellable;
 +
-+            if (entity instanceof Player) {
-+               cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((Player) entity, org.bukkit.event.block.Action.PHYSICAL, p_55265_, null, null, null);
++            if (entity instanceof net.minecraft.world.entity.player.Player) {
++               cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((net.minecraft.world.entity.player.Player) entity, org.bukkit.event.block.Action.PHYSICAL, p_55265_, null, null, null);
 +            } else {
-+               cancellable = new EntityInteractEvent(entity.getBukkitEntity(), bworld.getBlockAt(p_55265_.getX(), p_55265_.getY(), p_55265_.getZ()));
-+               manager.callEvent((EntityInteractEvent) cancellable);
++               cancellable = new org.bukkit.event.entity.EntityInteractEvent(entity.getBukkitEntity(), bworld.getBlockAt(p_55265_.getX(), p_55265_.getY(), p_55265_.getZ()));
++               manager.callEvent((org.bukkit.event.entity.EntityInteractEvent) cancellable);
 +            }
 +
 +            // We only want to block turning the plate on if all events are cancelled

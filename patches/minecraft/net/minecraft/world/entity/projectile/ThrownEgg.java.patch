@@ -1,22 +1,17 @@
 --- a/net/minecraft/world/entity/projectile/ThrownEgg.java
 +++ b/net/minecraft/world/entity/projectile/ThrownEgg.java
-@@ -2,14 +_,18 @@
+@@ -2,14 +_,14 @@
  
  import net.minecraft.core.particles.ItemParticleOption;
  import net.minecraft.core.particles.ParticleTypes;
-+import net.minecraft.server.level.ServerPlayer;
-+import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.LivingEntity;
--import net.minecraft.world.entity.animal.Chicken;
+ import net.minecraft.world.entity.animal.Chicken;
  import net.minecraft.world.item.Item;
  import net.minecraft.world.item.Items;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
-+import org.bukkit.entity.Ageable;
-+import org.bukkit.entity.Player;
-+import org.bukkit.event.player.PlayerEggThrowEvent;
  
  public class ThrownEgg extends ThrowableItemProjectile {
     public ThrownEgg(EntityType<? extends ThrownEgg> p_37473_, Level p_37474_) {
@@ -37,12 +32,12 @@
 +            // CraftBukkit start
 +            org.bukkit.entity.EntityType hatchingType = org.bukkit.entity.EntityType.CHICKEN;
 +
-+            Entity shooter = this.getOwner();
++            net.minecraft.world.entity.Entity shooter = this.getOwner();
 +            if (!hatching) {
 +               i = 0;
 +            }
-+            if (shooter instanceof ServerPlayer) {
-+               PlayerEggThrowEvent event = new PlayerEggThrowEvent((Player) shooter.getBukkitEntity(), (org.bukkit.entity.Egg) this.getBukkitEntity(), hatching, (byte) i, hatchingType);
++            if (shooter instanceof net.minecraft.server.level.ServerPlayer) {
++               org.bukkit.event.player.PlayerEggThrowEvent event = new org.bukkit.event.player.PlayerEggThrowEvent((org.bukkit.entity.Player) shooter.getBukkitEntity(), (org.bukkit.entity.Egg) this.getBukkitEntity(), hatching, (byte) i, hatchingType);
 +               this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +               i = event.getNumHatches();
@@ -61,11 +56,11 @@
 -                  chicken.setAge(-24000);
 -                  chicken.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
 -                  this.level().addFreshEntity(chicken);
-+               Entity entitychicken = this.level().getWorld().makeEntity(new org.bukkit.Location(this.level().getWorld(), this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F), hatchingType.getEntityClass()); // CraftBukkit
++               net.minecraft.world.entity.Entity entitychicken = this.level().getWorld().makeEntity(new org.bukkit.Location(this.level().getWorld(), this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F), hatchingType.getEntityClass()); // CraftBukkit
 +               if (entitychicken != null) {
 +                  // CraftBukkit start
-+                  if (entitychicken.getBukkitEntity() instanceof Ageable) {
-+                     ((Ageable) entitychicken.getBukkitEntity()).setBaby();
++                  if (entitychicken.getBukkitEntity() instanceof org.bukkit.entity.Ageable) {
++                     ((org.bukkit.entity.Ageable) entitychicken.getBukkitEntity()).setBaby();
 +                  }
 +                  this.level().addFreshEntity(entitychicken, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG);
 +                  // CraftBukkit end

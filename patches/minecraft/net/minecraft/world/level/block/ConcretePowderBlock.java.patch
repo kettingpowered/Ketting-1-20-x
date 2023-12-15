@@ -1,13 +1,9 @@
 --- a/net/minecraft/world/level/block/ConcretePowderBlock.java
 +++ b/net/minecraft/world/level/block/ConcretePowderBlock.java
-@@ -13,6 +_,10 @@
+@@ -13,6 +_,6 @@
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.block.state.BlockBehaviour;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.craftbukkit.block.CraftBlockState;
-+import org.bukkit.craftbukkit.block.CraftBlockStates;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.block.BlockFormEvent;
  
  public class ConcretePowderBlock extends FallingBlock {
     public static final MapCodec<ConcretePowderBlock> CODEC = RecordCodecBuilder.mapCodec((p_312823_) -> {
@@ -18,7 +14,7 @@
 -      if (shouldSolidify(p_52068_, p_52069_, p_52071_)) {
 -         p_52068_.setBlock(p_52069_, this.concrete.defaultBlockState(), 3);
 +      if (shouldSolidify(p_52068_, p_52069_, p_52070_, p_52071_.getFluidState())) { // Forge: Use block of falling entity instead of block at replaced position, and check if shouldSolidify with the FluidState of the replaced block
-+         CraftEventFactory.handleBlockFormEvent(p_52068_, p_52069_, this.concrete.defaultBlockState(), 3); // CraftBukkit
++         org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(p_52068_, p_52069_, this.concrete.defaultBlockState(), 3); // CraftBukkit
        }
  
     }
@@ -33,10 +29,10 @@
 +      }
 +
 +      // TODO: An event factory call for methods like this
-+      CraftBlockState blockState = CraftBlockStates.getBlockState(p_52063_.getLevel(), blockpos);
++      org.bukkit.craftbukkit.block.CraftBlockState blockState = org.bukkit.craftbukkit.block.CraftBlockStates.getBlockState(p_52063_.getLevel(), blockpos);
 +      blockState.setData(this.concrete.defaultBlockState());
 +
-+      BlockFormEvent event = new BlockFormEvent(blockState.getBlock(), blockState);
++      org.bukkit.event.block.BlockFormEvent event = new org.bukkit.event.block.BlockFormEvent(blockState.getBlock(), blockState);
 +      p_52063_.getLevel().getServer().server.getPluginManager().callEvent(event);
 +
 +      if (!event.isCancelled()) {
@@ -83,10 +79,10 @@
 +         if (!(p_52077_ instanceof Level)) {
 +            return this.concrete.defaultBlockState();
 +         }
-+         CraftBlockState blockState = CraftBlockStates.getBlockState(p_52077_, p_52078_);
++         org.bukkit.craftbukkit.block.CraftBlockState blockState = org.bukkit.craftbukkit.block.CraftBlockStates.getBlockState(p_52077_, p_52078_);
 +         blockState.setData(this.concrete.defaultBlockState());
 +
-+         BlockFormEvent event = new BlockFormEvent(blockState.getBlock(), blockState);
++         org.bukkit.event.block.BlockFormEvent event = new org.bukkit.event.block.BlockFormEvent(blockState.getBlock(), blockState);
 +         ((Level) p_52077_).getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (!event.isCancelled()) {

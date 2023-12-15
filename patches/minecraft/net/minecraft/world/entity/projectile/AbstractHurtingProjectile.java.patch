@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
 +++ b/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
-@@ -16,11 +_,14 @@
+@@ -16,11 +_,13 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public abstract class AbstractHurtingProjectile extends Projectile {
     public double xPower;
@@ -41,7 +40,7 @@
 +
 +            // CraftBukkit start - Fire ProjectileHitEvent
 +            if (this.isRemoved()) {
-+               CraftEventFactory.callProjectileHitEvent(this, hitresult);
++               org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this, hitresult);
 +            }
 +            // CraftBukkit end
           }
@@ -52,7 +51,7 @@
           if (entity != null) {
              if (!this.level().isClientSide) {
 +               // CraftBukkit start
-+               if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_36839_, p_36840_, false)) {
++               if (org.bukkit.craftbukkit.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_36839_, p_36840_, false)) {
 +                  return false;
 +               }
 +               // CraftBukkit end

@@ -1,40 +1,31 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -70,7 +_,6 @@
+@@ -70,7 +_,7 @@
  import net.minecraft.world.entity.ai.attributes.Attributes;
  import net.minecraft.world.entity.animal.Parrot;
  import net.minecraft.world.entity.animal.horse.AbstractHorse;
--import net.minecraft.world.entity.boss.EnderDragonPart;
+ import net.minecraft.world.entity.boss.EnderDragonPart;
  import net.minecraft.world.entity.decoration.ArmorStand;
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.monster.warden.WardenSpawnTracker;
-@@ -80,12 +_,7 @@
+@@ -80,12 +_,12 @@
  import net.minecraft.world.inventory.ClickAction;
  import net.minecraft.world.inventory.InventoryMenu;
  import net.minecraft.world.inventory.PlayerEnderChestContainer;
--import net.minecraft.world.item.ElytraItem;
--import net.minecraft.world.item.ItemCooldowns;
--import net.minecraft.world.item.ItemStack;
--import net.minecraft.world.item.Items;
--import net.minecraft.world.item.ProjectileWeaponItem;
--import net.minecraft.world.item.SwordItem;
-+import net.minecraft.world.item.*;
+ import net.minecraft.world.item.ElytraItem;
+ import net.minecraft.world.item.ItemCooldowns;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.item.ProjectileWeaponItem;
+ import net.minecraft.world.item.SwordItem;
  import net.minecraft.world.item.crafting.RecipeHolder;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.item.trading.MerchantOffers;
-@@ -107,10 +_,18 @@
+@@ -107,10 +_,11 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
--import net.minecraft.world.scores.Team;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.util.CraftVector;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
-+import org.bukkit.event.entity.EntityCombustByEntityEvent;
-+import org.bukkit.event.entity.EntityExhaustionEvent;
-+import org.bukkit.event.player.PlayerDropItemEvent;
-+import org.bukkit.event.player.PlayerVelocityEvent;
+ import net.minecraft.world.scores.Team;
  import org.slf4j.Logger;
  
 -public abstract class Player extends LivingEntity {
@@ -85,8 +76,8 @@
 +   public int oldLevel = -1;
 +
 +   @Override
-+   public CraftHumanEntity getBukkitEntity() {
-+      return (CraftHumanEntity) super.getBukkitEntity();
++   public org.bukkit.craftbukkit.entity.CraftHumanEntity getBukkitEntity() {
++      return (org.bukkit.craftbukkit.entity.CraftHumanEntity) super.getBukkitEntity();
 +   }
 +   // CraftBukkit end
  
@@ -211,7 +202,7 @@
 +         org.bukkit.entity.Player player = (org.bukkit.entity.Player) this.getBukkitEntity();
 +         org.bukkit.entity.Item drop = (org.bukkit.entity.Item) itementity.getBukkitEntity();
 +
-+         PlayerDropItemEvent event = new PlayerDropItemEvent(player, drop);
++         org.bukkit.event.player.PlayerDropItemEvent event = new org.bukkit.event.player.PlayerDropItemEvent(player, drop);
 +         this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (event.isCancelled()) {
@@ -384,7 +375,7 @@
  
           if (f1 != 0.0F) {
 -            this.causeFoodExhaustion(p_36312_.getFoodExhaustion());
-+            this.causeFoodExhaustion(p_36312_.getFoodExhaustion(), EntityExhaustionEvent.ExhaustionReason.DAMAGED); // CraftBukkit - EntityExhaustionEvent
++            this.causeFoodExhaustion(p_36312_.getFoodExhaustion(), org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.DAMAGED); // CraftBukkit - EntityExhaustionEvent
              this.getCombatTracker().recordDamage(p_36312_, f1);
              this.setHealth(this.getHealth() - f1);
              if (f1 < 3.4028235E37F) {
@@ -498,7 +489,7 @@
 -                     flag4 = true;
 -                     p_36347_.setSecondsOnFire(1);
 +                     // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
-+                     EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_36347_.getBukkitEntity(), 1);
++                     org.bukkit.event.entity.EntityCombustByEntityEvent combustEvent = new org.bukkit.event.entity.EntityCombustByEntityEvent(this.getBukkitEntity(), p_36347_.getBukkitEntity(), 1);
 +                     org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
 +
 +                     if (!combustEvent.isCancelled()) {
@@ -538,9 +529,9 @@
 +                     // CraftBukkit start - Add Velocity Event
 +                     boolean cancelled = false;
 +                     org.bukkit.entity.Player player = (org.bukkit.entity.Player) p_36347_.getBukkitEntity();
-+                     org.bukkit.util.Vector velocity = CraftVector.toBukkit(vec3);
++                     org.bukkit.util.Vector velocity = org.bukkit.craftbukkit.util.CraftVector.toBukkit(vec3);
 +
-+                     PlayerVelocityEvent event = new PlayerVelocityEvent(player, velocity.clone());
++                     org.bukkit.event.player.PlayerVelocityEvent event = new org.bukkit.event.player.PlayerVelocityEvent(player, velocity.clone());
 +                     this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +                     if (event.isCancelled()) {
@@ -582,7 +573,7 @@
                       if (j > 0) {
 -                        p_36347_.setSecondsOnFire(j * 4);
 +                        // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
-+                        EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), j * 4);
++                        org.bukkit.event.entity.EntityCombustByEntityEvent combustEvent = new org.bukkit.event.entity.EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), j * 4);
 +                        org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
 +
 +                        if (!combustEvent.isCancelled()) {
@@ -597,7 +588,7 @@
                    }
  
 -                  this.causeFoodExhaustion(0.1F);
-+                  this.causeFoodExhaustion(this.level().spigotConfig.combatExhaustion, EntityExhaustionEvent.ExhaustionReason.ATTACK); // CraftBukkit - EntityExhaustionEvent // Spigot - Change to use configurable value
++                  this.causeFoodExhaustion(this.level().spigotConfig.combatExhaustion, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.ATTACK); // CraftBukkit - org.bukkit.event.entity.EntityExhaustionEvent // Spigot - Change to use configurable value
                 } else {
                    this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_ATTACK_NODAMAGE, this.getSoundSource(), 1.0F, 1.0F);
                    if (flag4) {
@@ -657,10 +648,10 @@
        this.awardStat(Stats.JUMP);
        if (this.isSprinting()) {
 -         this.causeFoodExhaustion(0.2F);
-+         this.causeFoodExhaustion(this.level().spigotConfig.jumpSprintExhaustion, EntityExhaustionEvent.ExhaustionReason.JUMP_SPRINT); // CraftBukkit - EntityExhaustionEvent // Spigot - Change to use configurable value
++         this.causeFoodExhaustion(this.level().spigotConfig.jumpSprintExhaustion, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.JUMP_SPRINT); // CraftBukkit - org.bukkit.event.entity.EntityExhaustionEvent // Spigot - Change to use configurable value
        } else {
 -         this.causeFoodExhaustion(0.05F);
-+         this.causeFoodExhaustion(this.level().spigotConfig.jumpWalkExhaustion, EntityExhaustionEvent.ExhaustionReason.JUMP); // CraftBukkit - EntityExhaustionEvent // Spigot - Change to use configurable value
++         this.causeFoodExhaustion(this.level().spigotConfig.jumpWalkExhaustion, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.JUMP); // CraftBukkit - org.bukkit.event.entity.EntityExhaustionEvent // Spigot - Change to use configurable value
        }
  
     }
@@ -775,15 +766,15 @@
  
 +   // CraftBukkit start
     public void causeFoodExhaustion(float p_36400_) {
-+      this.causeFoodExhaustion(p_36400_, EntityExhaustionEvent.ExhaustionReason.UNKNOWN);
++      this.causeFoodExhaustion(p_36400_, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.UNKNOWN);
 +   }
 +
-+   public void causeFoodExhaustion(float p_36400_, EntityExhaustionEvent.ExhaustionReason reason) {
++   public void causeFoodExhaustion(float p_36400_, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason reason) {
        if (!this.abilities.invulnerable) {
           if (!this.level().isClientSide) {
 -            this.foodData.addExhaustion(p_36400_);
 +            // CraftBukkit start
-+            EntityExhaustionEvent event = CraftEventFactory.callPlayerExhaustionEvent(this, reason, p_36400_);
++            org.bukkit.event.entity.EntityExhaustionEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerExhaustionEvent(this, reason, p_36400_);
 +            if (!event.isCancelled()) {
 +               this.foodData.addExhaustion(event.getExhaustion());
 +            }
@@ -842,7 +833,7 @@
              p_309218_.setPos(this.getX(), this.getY() + (double)0.7F, this.getZ());
 -            ((ServerLevel)this.level()).addWithUUID(p_309218_);
 -         });
-+            return ((ServerLevel) this.level()).addWithUUID(p_309218_, CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY); // CraftBukkit
++            return ((ServerLevel) this.level()).addWithUUID(p_309218_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY); // CraftBukkit
 +         }).orElse(true); // CraftBukkit
        }
  

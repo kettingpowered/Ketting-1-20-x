@@ -1,21 +1,12 @@
 --- a/net/minecraft/world/level/block/entity/LecternBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/LecternBlockEntity.java
-@@ -24,13 +_,69 @@
+@@ -24,13 +_,60 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
 -
 -public class LecternBlockEntity extends BlockEntity implements Clearable, MenuProvider {
-+import org.bukkit.Location;
-+import org.bukkit.block.Lectern;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.util.CraftLocation;
-+import org.bukkit.entity.HumanEntity;
-+import org.bukkit.inventory.InventoryHolder;
 +
-+import java.util.ArrayList;
-+import java.util.Arrays;
-+import java.util.List;
 +
 +public class LecternBlockEntity extends BlockEntity implements Clearable, MenuProvider, CommandSource { // CraftBukkit - CommandSource
     public static final int DATA_PAGE = 0;
@@ -27,26 +18,26 @@
 +   public final Container bookAccess = new LecternInventory();
 +   public class LecternInventory implements Container {
 +
-+      public List<HumanEntity> transaction = new ArrayList<>();
++      public java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<>();
 +      private int maxStack = 1;
 +
 +      @Override
-+      public List<ItemStack> getContents() {
-+         return Arrays.asList(book);
++      public java.util.List<ItemStack> getContents() {
++         return java.util.Arrays.asList(book);
 +      }
 +
 +      @Override
-+      public void onOpen(CraftHumanEntity who) {
++      public void onOpen(org.bukkit.craftbukkit.entity.CraftHumanEntity who) {
 +         transaction.add(who);
 +      }
 +
 +      @Override
-+      public void onClose(CraftHumanEntity who) {
++      public void onClose(org.bukkit.craftbukkit.entity.CraftHumanEntity who) {
 +         transaction.remove(who);
 +      }
 +
 +      @Override
-+      public List<HumanEntity> getViewers() {
++      public java.util.List<org.bukkit.entity.HumanEntity> getViewers() {
 +         return transaction;
 +      }
 +
@@ -56,14 +47,14 @@
 +      }
 +
 +      @Override
-+      public Location getLocation() {
++      public org.bukkit.Location getLocation() {
 +         if (level == null) return null;
-+         return CraftLocation.toBukkit(worldPosition, level.getWorld());
++         return org.bukkit.craftbukkit.util.CraftLocation.toBukkit(worldPosition, level.getWorld());
 +      }
 +
 +      @Override
-+      public InventoryHolder getOwner() {
-+         return (Lectern) LecternBlockEntity.this.getOwner();
++      public org.bukkit.inventory.InventoryHolder getOwner() {
++         return (org.bukkit.block.Lectern) LecternBlockEntity.this.getOwner();
 +      }
 +
 +      public LecternBlockEntity getLectern() {

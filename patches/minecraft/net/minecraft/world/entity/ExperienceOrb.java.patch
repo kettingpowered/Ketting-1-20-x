@@ -1,12 +1,9 @@
 --- a/net/minecraft/world/entity/ExperienceOrb.java
 +++ b/net/minecraft/world/entity/ExperienceOrb.java
-@@ -19,6 +_,9 @@
+@@ -19,6 +_,6 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityTargetEvent;
-+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
  
  public class ExperienceOrb extends Entity {
     private static final int LIFETIME = 6000;
@@ -26,7 +23,7 @@
 +      // CraftBukkit start
 +      boolean cancelled = false;
 +      if (this.followingPlayer != prevTarget) {
-+         EntityTargetLivingEntityEvent event = CraftEventFactory.callEntityTargetLivingEvent(this, followingPlayer, (followingPlayer != null) ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.FORGOT_TARGET);
++         org.bukkit.event.entity.EntityTargetLivingEntityEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetLivingEvent(this, followingPlayer, (followingPlayer != null) ? org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER : org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET);
 +         LivingEntity target = (event.getTarget() == null) ? null : ((org.bukkit.craftbukkit.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +         cancelled = event.isCancelled();
 +
@@ -71,7 +68,7 @@
 +
              if (i > 0) {
 -               p_20792_.giveExperiencePoints(i);
-+               p_20792_.giveExperiencePoints(CraftEventFactory.callPlayerExpChangeEvent(p_20792_, i).getAmount()); // CraftBukkit - this.value -> event.getAmount()
++               p_20792_.giveExperiencePoints(org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerExpChangeEvent(p_20792_, i).getAmount()); // CraftBukkit - this.value -> event.getAmount()
              }
  
              --this.count;
@@ -82,7 +79,7 @@
 -         int i = Math.min(this.xpToDurability(p_147094_), itemstack.getDamageValue());
 +         int i = Math.min((int) (p_147094_ * itemstack.getXpRepairRatio()), itemstack.getDamageValue());
 +         // CraftBukkit start
-+         org.bukkit.event.player.PlayerItemMendEvent event = CraftEventFactory.callPlayerItemMendEvent(p_147093_, this, itemstack, entry.getKey(), i);
++         org.bukkit.event.player.PlayerItemMendEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerItemMendEvent(p_147093_, this, itemstack, entry.getKey(), i);
 +         i = event.getRepairAmount();
 +         if (event.isCancelled()) {
 +            return p_147094_;

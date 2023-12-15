@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/level/block/WitherSkullBlock.java
 +++ b/net/minecraft/world/level/block/WitherSkullBlock.java
-@@ -22,6 +_,7 @@
+@@ -22,6 +_,6 @@
  import net.minecraft.world.level.block.state.pattern.BlockPattern;
  import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
  import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
  
  public class WitherSkullBlock extends SkullBlock {
     public static final MapCodec<WitherSkullBlock> CODEC = simpleCodec(WitherSkullBlock::new);
@@ -28,7 +27,7 @@
                    witherboss.makeInvulnerable();
 -
 +                  // CraftBukkit start
-+                  if (!p_58256_.addFreshEntity(witherboss, CreatureSpawnEvent.SpawnReason.BUILD_WITHER)) {
++                  if (!p_58256_.addFreshEntity(witherboss, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BUILD_WITHER)) {
 +                     return;
 +                  }
 +                  CarvedPumpkinBlock.clearPatternBlocks(p_58256_, blockpattern$blockpatternmatch); // CraftBukkit - from above

@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/level/block/ComparatorBlock.java
 +++ b/net/minecraft/world/level/block/ComparatorBlock.java
-@@ -27,6 +_,7 @@
+@@ -27,6 +_,6 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.ticks.TickPriority;
-+import org.bukkit.craftbukkit.event.CraftEventFactory; //Ketting
  
  public class ComparatorBlock extends DiodeBlock implements EntityBlock {
     public static final MapCodec<ComparatorBlock> CODEC = simpleCodec(ComparatorBlock::new);
@@ -13,14 +12,14 @@
           boolean flag = p_51910_.getValue(POWERED);
           if (flag && !flag1) {
 +            // CraftBukkit start
-+            if (CraftEventFactory.callRedstoneChange(p_51908_, p_51909_, 15, 0).getNewCurrent() != 0) {
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callRedstoneChange(p_51908_, p_51909_, 15, 0).getNewCurrent() != 0) {
 +               return;
 +            }
 +            // CraftBukkit end
              p_51908_.setBlock(p_51909_, p_51910_.setValue(POWERED, Boolean.valueOf(false)), 2);
           } else if (!flag && flag1) {
 +            // CraftBukkit start
-+            if (CraftEventFactory.callRedstoneChange(p_51908_, p_51909_, 0, 15).getNewCurrent() != 15) {
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callRedstoneChange(p_51908_, p_51909_, 0, 15).getNewCurrent() != 15) {
 +               return;
 +            }
 +            // CraftBukkit end

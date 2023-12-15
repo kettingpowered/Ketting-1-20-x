@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/item/ShearsItem.java
 +++ b/net/minecraft/world/item/ShearsItem.java
-@@ -17,6 +_,7 @@
+@@ -17,6 +_,6 @@
  import net.minecraft.world.level.block.GrowingPlantHeadBlock;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class ShearsItem extends Item {
     public ShearsItem(Item.Properties p_43074_) {
@@ -21,7 +20,7 @@
 +         BlockPos pos = BlockPos.containing(entity.position());
 +         if (target.isShearable(stack, entity.level(), pos)) {
 +            //Ketting start - fire shear event
-+            if (!CraftEventFactory.handlePlayerShearEntityEvent(playerIn, entity, stack, hand)) {
++            if (!org.bukkit.craftbukkit.event.CraftEventFactory.handlePlayerShearEntityEvent(playerIn, entity, stack, hand)) {
 +               return InteractionResult.PASS;
 +            }
 +            //Ketting end
