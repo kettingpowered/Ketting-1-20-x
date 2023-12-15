@@ -1,17 +1,5 @@
 --- a/net/minecraft/world/level/storage/loot/LootDataManager.java
 +++ b/net/minecraft/world/level/storage/loot/LootDataManager.java
-@@ -22,6 +_,11 @@
- import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
- import org.slf4j.Logger;
- 
-+//CraftBukkit start
-+import org.bukkit.craftbukkit.CraftLootTable;
-+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
-+//CraftBukkit end
-+
- public class LootDataManager implements PreparableReloadListener, LootDataResolver {
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private static final Gson GSON = (new GsonBuilder()).create();
 @@ -84,6 +_,13 @@
        problemreporter$collector.get().forEach((p_279487_, p_279312_) -> {
           LOGGER.warn("Found loot table element validation problem in {}: {}", p_279487_, p_279312_);
@@ -19,7 +7,7 @@
 +      // CraftBukkit start
 +      map.forEach((key, lootTable) -> {
 +         if (object instanceof LootTable table) {
-+            table.craftLootTable = new CraftLootTable(CraftNamespacedKey.fromMinecraft(key.location()), table);
++            table.craftLootTable = new org.bukkit.craftbukkit.CraftLootTable(org.bukkit.craftbukkit.util.CraftNamespacedKey.fromMinecraft(key.location()), table);
 +         }
 +      });
 +      // CraftBukkit end

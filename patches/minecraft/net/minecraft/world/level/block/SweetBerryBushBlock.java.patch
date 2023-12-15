@@ -1,18 +1,5 @@
 --- a/net/minecraft/world/level/block/SweetBerryBushBlock.java
 +++ b/net/minecraft/world/level/block/SweetBerryBushBlock.java
-@@ -28,6 +_,12 @@
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.VoxelShape;
- 
-+import org.bukkit.craftbukkit.block.CraftBlock;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
-+import org.bukkit.event.player.PlayerHarvestBlockEvent;
-+import java.util.Collections;
-+
- public class SweetBerryBushBlock extends BushBlock implements BonemealableBlock {
-    public static final MapCodec<SweetBerryBushBlock> CODEC = simpleCodec(SweetBerryBushBlock::new);
-    private static final float HURT_SPEED_THRESHOLD = 0.003F;
 @@ -63,10 +_,11 @@
  
     public void randomTick(BlockState p_222563_, ServerLevel p_222564_, BlockPos p_222565_, RandomSource p_222566_) {
@@ -21,7 +8,7 @@
 +      if (i < 3 && p_222564_.getRawBrightness(p_222565_.above(), 0) >= 9 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222564_, p_222565_, p_222563_, p_222566_.nextFloat() < (p_222564_.spigotConfig.sweetBerryModifier / (100.0f * 5)))) { // Spigot - SPIGOT-7159: Better modifier resolution
           BlockState blockstate = p_222563_.setValue(AGE, Integer.valueOf(i + 1));
 -         p_222564_.setBlock(p_222565_, blockstate, 2);
-+         if (!CraftEventFactory.handleBlockGrowEvent(p_222564_, p_222565_, blockstate, 2)) return; // CraftBukkit
++         if (!org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(p_222564_, p_222565_, blockstate, 2)) return; // CraftBukkit
           p_222564_.gameEvent(GameEvent.BLOCK_CHANGE, p_222565_, GameEvent.Context.of(blockstate));
 +         net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_222564_, p_222565_, p_222563_);
        }
@@ -31,9 +18,9 @@
              double d0 = Math.abs(p_57273_.getX() - p_57273_.xOld);
              double d1 = Math.abs(p_57273_.getZ() - p_57273_.zOld);
              if (d0 >= (double)0.003F || d1 >= (double)0.003F) {
-+               CraftEventFactory.blockDamage = CraftBlock.at(p_57271_, p_57272_); // CraftBukkit
++               org.bukkit.craftbukkit.event.CraftEventFactory.blockDamage = org.bukkit.craftbukkit.block.CraftBlock.at(p_57271_, p_57272_); // CraftBukkit
                 p_57273_.hurt(p_57271_.damageSources().sweetBerryBush(), 1.0F);
-+               CraftEventFactory.blockDamage = null; // CraftBukkit
++               org.bukkit.craftbukkit.event.CraftEventFactory.blockDamage = null; // CraftBukkit
              }
           }
  
@@ -43,12 +30,12 @@
           int j = 1 + p_57276_.random.nextInt(2);
 -         popResource(p_57276_, p_57277_, new ItemStack(Items.SWEET_BERRIES, j + (flag ? 1 : 0)));
 +         // CraftBukkit start
-+         PlayerHarvestBlockEvent event = CraftEventFactory.callPlayerHarvestBlockEvent(p_57276_, p_57277_, p_57278_, p_57279_, Collections.singletonList(new ItemStack(Items.SWEET_BERRIES, j + (flag ? 1 : 0))));
++         org.bukkit.event.player.PlayerHarvestBlockEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerHarvestBlockEvent(p_57276_, p_57277_, p_57278_, p_57279_, java.util.Collections.singletonList(new ItemStack(Items.SWEET_BERRIES, j + (flag ? 1 : 0))));
 +         if (event.isCancelled()) {
 +            return InteractionResult.SUCCESS; // We need to return a success either way, because making it PASS or FAIL will result in a bug where cancelling while harvesting w/ block in hand places block
 +         }
 +         for (org.bukkit.inventory.ItemStack itemStack : event.getItemsHarvested()) {
-+            popResource(p_57276_, p_57277_, CraftItemStack.asNMSCopy(itemStack));
++            popResource(p_57276_, p_57277_, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(itemStack));
 +         }
 +         // CraftBukkit end
           p_57276_.playSound((Player)null, p_57277_, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + p_57276_.random.nextFloat() * 0.4F);

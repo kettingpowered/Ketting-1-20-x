@@ -1,64 +1,5 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -4,13 +_,11 @@
- import com.mojang.authlib.GameProfile;
- import com.mojang.datafixers.DataFixer;
- import com.mojang.logging.LogUtils;
--import java.io.BufferedReader;
-+
- import java.io.IOException;
--import java.io.InputStreamReader;
- import java.io.Writer;
- import java.net.InetAddress;
- import java.net.Proxy;
--import java.nio.charset.StandardCharsets;
- import java.nio.file.Files;
- import java.nio.file.Path;
- import java.util.Collections;
-@@ -19,18 +_,11 @@
- import java.util.Optional;
- import java.util.function.BooleanSupplier;
- import javax.annotation.Nullable;
--import net.minecraft.DefaultUncaughtExceptionHandler;
--import net.minecraft.DefaultUncaughtExceptionHandlerWithName;
--import net.minecraft.SharedConstants;
--import net.minecraft.SystemReport;
--import net.minecraft.Util;
-+
-+import net.minecraft.*;
- import net.minecraft.commands.CommandSourceStack;
- import net.minecraft.core.BlockPos;
--import net.minecraft.server.ConsoleInput;
--import net.minecraft.server.MinecraftServer;
--import net.minecraft.server.ServerInterface;
--import net.minecraft.server.Services;
--import net.minecraft.server.WorldStem;
-+import net.minecraft.server.*;
- import net.minecraft.server.gui.MinecraftServerGui;
- import net.minecraft.server.level.ServerLevel;
- import net.minecraft.server.level.ServerPlayer;
-@@ -50,7 +_,21 @@
- import net.minecraft.world.level.GameType;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.block.entity.SkullBlockEntity;
-+import net.minecraft.world.level.border.WorldBorder;
-+import net.minecraft.world.level.levelgen.WorldOptions;
- import net.minecraft.world.level.storage.LevelStorageSource;
-+import net.minecraft.world.level.storage.PrimaryLevelData;
-+import org.apache.logging.log4j.LogManager;
-+import org.apache.logging.log4j.io.IoBuilder;
-+import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.SpigotTimings;
-+import org.bukkit.event.server.RemoteServerCommandEvent;
-+import org.bukkit.event.server.ServerCommandEvent;
-+import org.kettingpowered.ketting.adapters.BetterServerGUI_1_20_2_Adapter;
-+import org.kettingpowered.ketting.command.commands.KettingCommands;
-+import org.kettingpowered.ketting.common.betterservergui.BetterServerGUI;
-+import org.kettingpowered.ketting.inject.ForgeInject;
-+import org.kettingpowered.ketting.metrics.MetricManager;
- import org.slf4j.Logger;
- 
- public class DedicatedServer extends MinecraftServer implements ServerInterface {
 @@ -60,31 +_,68 @@
     public final List<ConsoleInput> consoleInput = Collections.synchronizedList(Lists.newArrayList());
     @Nullable
@@ -72,7 +13,7 @@
     @Nullable
     private MinecraftServerGui gui;
     @Nullable
-+   public BetterServerGUI betterGui; //Ketting
++   public org.kettingpowered.ketting.common.betterservergui.BetterServerGUI betterGui; //Ketting
 +   @Nullable
     private final TextFilterClient textFilterClient;
 +   @Nullable
@@ -147,7 +88,7 @@
 +      }
 +      global.addHandler(new org.bukkit.craftbukkit.util.ForwardLogHandler());
 +
-+      final org.apache.logging.log4j.core.Logger logger = ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger());
++      final org.apache.logging.log4j.core.Logger logger = ((org.apache.logging.log4j.core.Logger) org.apache.logging.log4j.LogManager.getRootLogger());
 +      for (org.apache.logging.log4j.core.Appender appender : logger.getAppenders().values()) {
 +         if (appender instanceof org.apache.logging.log4j.core.appender.ConsoleAppender) {
 +            logger.removeAppender(appender);
@@ -156,8 +97,8 @@
 +
 +      // new org.bukkit.craftbukkit.v1_20_R2.util.TerminalConsoleWriterThread(System.out, this.reader).start(); //Ketting - disable for now
 +
-+      System.setOut(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.INFO).buildPrintStream());
-+      System.setErr(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.WARN).buildPrintStream());
++      System.setOut(org.apache.logging.log4j.io.IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.INFO).buildPrintStream());
++      System.setErr(org.apache.logging.log4j.io.IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.WARN).buildPrintStream());
 +      // CraftBukkit end
 +
        thread.setDaemon(true);
@@ -173,8 +114,8 @@
 +      org.spigotmc.SpigotConfig.registerCommands();
 +      // Spigot end
 +
-+      ForgeInject.doInjectingMagic(); //Ketting
-+      KettingCommands.registerCommands(this); //Ketting
++      org.kettingpowered.ketting.inject.ForgeInject.doInjectingMagic(); //Ketting
++      org.kettingpowered.ketting.command.commands.KettingCommands.registerCommands(this); //Ketting
  
        this.setPvpAllowed(dedicatedserverproperties.pvp);
        this.setFlightAllowed(dedicatedserverproperties.allowFlight);
@@ -249,7 +190,7 @@
 +            this.dediLanPinger.start();
 +         }
 +
-+         MetricManager.init(this); //Ketting
++         org.kettingpowered.ketting.metrics.MetricManager.init(this); //Ketting
 +
 +         return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
        }
@@ -287,13 +228,13 @@
     }
  
     public void handleConsoleInputs() {
-+      SpigotTimings.serverCommandTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.serverCommandTimer.startTiming(); // Spigot
        while(!this.consoleInput.isEmpty()) {
           ConsoleInput consoleinput = this.consoleInput.remove(0);
 -         this.getCommands().performPrefixedCommand(consoleinput.source, consoleinput.msg);
 +
 +         // CraftBukkit start - ServerCommand for preprocessing
-+         ServerCommandEvent event = new ServerCommandEvent(console, consoleinput.msg);
++         org.bukkit.event.server.ServerCommandEvent event = new org.bukkit.event.server.ServerCommandEvent(console, consoleinput.msg);
 +         server.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) continue;
 +         consoleinput = new ConsoleInput(event.getCommand(), consoleinput.source);
@@ -303,7 +244,7 @@
 +         // CraftBukkit end
        }
  
-+      SpigotTimings.serverCommandTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.serverCommandTimer.stopTiming(); // Spigot
     }
  
     public boolean isDedicatedServer() {
@@ -319,8 +260,8 @@
 -
 +      */
 +      if (this.betterGui == null) {
-+         final BetterServerGUI_1_20_2_Adapter adapter = new BetterServerGUI_1_20_2_Adapter(this);
-+         this.betterGui = new BetterServerGUI.Builder()
++         final org.kettingpowered.ketting.adapters.BetterServerGUI_1_20_2_Adapter adapter = new org.kettingpowered.ketting.adapters.BetterServerGUI_1_20_2_Adapter(this);
++         this.betterGui = new org.kettingpowered.ketting.common.betterservergui.BetterServerGUI.Builder()
 +                 .setAdapter(adapter)
 +                 .build();
 +         adapter.startAppender(this.betterGui);
@@ -378,7 +319,7 @@
        this.executeBlocking(() -> {
 -         this.getCommands().performPrefixedCommand(this.rconConsoleSource.createCommandSourceStack(), p_139644_);
 +         CommandSourceStack wrapper = rconConsoleSource.createCommandSourceStack();
-+         RemoteServerCommandEvent event = new RemoteServerCommandEvent(rconConsoleSource.getBukkitSender(wrapper), s);
++         org.bukkit.event.server.RemoteServerCommandEvent event = new org.bukkit.event.server.RemoteServerCommandEvent(rconConsoleSource.getBukkitSender(wrapper), s);
 +         server.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return;
@@ -416,18 +357,18 @@
 +   }
 +
 +   @Override
-+   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++   public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
 +      return console;
 +   }
 +
-+   public void initWorld(ServerLevel worldserver, PrimaryLevelData iworlddataserver, PrimaryLevelData saveData, WorldOptions worldoptions) {
++   public void initWorld(ServerLevel worldserver, net.minecraft.world.level.storage.PrimaryLevelData iworlddataserver, net.minecraft.world.level.storage.PrimaryLevelData saveData, net.minecraft.world.level.levelgen.WorldOptions worldoptions) {
 +      boolean flag = saveData.isDebugWorld();
 +      // CraftBukkit start
 +      if (worldserver.generator != null) {
 +         worldserver.getWorld().getPopulators().addAll(worldserver.generator.getDefaultPopulators(worldserver.getWorld()));
 +      }
-+      WorldBorder worldborder = worldserver.getWorldBorder();
-+      worldborder.applySettings(iworlddataserver.getWorldBorder()); // CraftBukkit - move up so that WorldBorder is set during WorldInitEvent
++      net.minecraft.world.level.border.WorldBorder worldborder = worldserver.getWorldBorder();
++      worldborder.applySettings(iworlddataserver.getWorldBorder()); // CraftBukkit - move up so that net.minecraft.world.level.border.WorldBorder is set during WorldInitEvent
 +      this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(worldserver.getWorld())); // CraftBukkit - SPIGOT-5569: Call WorldInitEvent before any chunks are generated
 +
 +      if (!iworlddataserver.isInitialized()) {
@@ -438,7 +379,7 @@
 +               this.setupDebugLevel(this.worldData);
 +            }
 +         } catch (Throwable throwable) {
-+            CrashReport crashreport = CrashReport.forThrowable(throwable, "Exception initializing level");
++            net.minecraft.CrashReport crashreport = net.minecraft.CrashReport.forThrowable(throwable, "Exception initializing level");
 +
 +            try {
 +               worldserver.fillReportDetails(crashreport);
@@ -446,7 +387,7 @@
 +               ;
 +            }
 +
-+            throw new ReportedException(crashreport);
++            throw new net.minecraft.ReportedException(crashreport);
 +         }
 +
 +         iworlddataserver.setInitialized(true);

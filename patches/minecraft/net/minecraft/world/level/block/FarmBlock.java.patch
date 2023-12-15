@@ -1,30 +1,5 @@
 --- a/net/minecraft/world/level/block/FarmBlock.java
 +++ b/net/minecraft/world/level/block/FarmBlock.java
-@@ -5,15 +_,11 @@
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
- import net.minecraft.server.level.ServerLevel;
--import net.minecraft.tags.BlockTags;
--import net.minecraft.tags.FluidTags;
- import net.minecraft.util.RandomSource;
- import net.minecraft.world.entity.Entity;
--import net.minecraft.world.entity.LivingEntity;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.context.BlockPlaceContext;
- import net.minecraft.world.level.BlockGetter;
--import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.LevelAccessor;
- import net.minecraft.world.level.LevelReader;
-@@ -27,6 +_,8 @@
- import net.minecraft.world.level.pathfinder.PathComputationType;
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityInteractEvent;
- 
- public class FarmBlock extends Block {
-    public static final MapCodec<FarmBlock> CODEC = simpleCodec(FarmBlock::new);
 @@ -80,41 +_,68 @@
        if (!isNearWater(p_221140_, p_221141_) && !p_221140_.isRainingAt(p_221141_.above())) {
           if (i > 0) {
@@ -47,17 +22,17 @@
 +         // CraftBukkit start - Interact soil
 +         org.bukkit.event.Cancellable cancellable;
 +         if (p_153230_ instanceof Player) {
-+            cancellable = CraftEventFactory.callPlayerInteractEvent((Player) p_153230_, org.bukkit.event.block.Action.PHYSICAL, p_153229_, null, null, null);
++            cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((Player) p_153230_, org.bukkit.event.block.Action.PHYSICAL, p_153229_, null, null, null);
 +         } else {
-+            cancellable = new EntityInteractEvent(p_153230_.getBukkitEntity(), p_153227_.getWorld().getBlockAt(p_153229_.getX(), p_153229_.getY(), p_153229_.getZ()));
-+            p_153227_.getCraftServer().getPluginManager().callEvent((EntityInteractEvent) cancellable);
++            cancellable = new org.bukkit.event.entity.EntityInteractEvent(p_153230_.getBukkitEntity(), p_153227_.getWorld().getBlockAt(p_153229_.getX(), p_153229_.getY(), p_153229_.getZ()));
++            p_153227_.getCraftServer().getPluginManager().callEvent((org.bukkit.event.entity.EntityInteractEvent) cancellable);
 +         }
 +
 +         if (cancellable.isCancelled()) {
 +            return;
 +         }
 +
-+         if (!CraftEventFactory.callEntityChangeBlockEvent(p_153230_, p_153229_, Blocks.DIRT.defaultBlockState())) {
++         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(p_153230_, p_153229_, Blocks.DIRT.defaultBlockState())) {
 +            return;
 +         }
 +         // CraftBukkit end
@@ -70,7 +45,7 @@
  
     public static void turnToDirt(@Nullable Entity p_270981_, BlockState p_270402_, Level p_270568_, BlockPos p_270551_) {
 +      // CraftBukkit start
-+      if (CraftEventFactory.callBlockFadeEvent(p_270568_, p_270551_, Blocks.DIRT.defaultBlockState()).isCancelled()) {
++      if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(p_270568_, p_270551_, Blocks.DIRT.defaultBlockState()).isCancelled()) {
 +         return;
 +      }
 +      // CraftBukkit end

@@ -1,24 +1,14 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/phases/EnderDragonPhaseManager.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/phases/EnderDragonPhaseManager.java
-@@ -3,6 +_,8 @@
- import com.mojang.logging.LogUtils;
- import javax.annotation.Nullable;
- import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-+import org.bukkit.craftbukkit.entity.CraftEnderDragon;
-+import org.bukkit.event.entity.EnderDragonChangePhaseEvent;
- import org.slf4j.Logger;
- 
- public class EnderDragonPhaseManager {
-@@ -22,6 +_,24 @@
-          if (this.currentPhase != null) {
+@@ -23,6 +_,24 @@
              this.currentPhase.end();
           }
-+
+ 
 +         // CraftBukkit start - Call EnderDragonChangePhaseEvent
-+         EnderDragonChangePhaseEvent event = new EnderDragonChangePhaseEvent(
-+                 (CraftEnderDragon) this.dragon.getBukkitEntity(),
-+                 (this.currentPhase == null) ? null : CraftEnderDragon.getBukkitPhase(this.currentPhase.getPhase()),
-+                 CraftEnderDragon.getBukkitPhase(p_31417_)
++         org.bukkit.event.entity.EnderDragonChangePhaseEvent event = new org.bukkit.event.entity.EnderDragonChangePhaseEvent(
++                 (org.bukkit.craftbukkit.entity.CraftEnderDragon) this.dragon.getBukkitEntity(),
++                 (this.currentPhase == null) ? null : org.bukkit.craftbukkit.entity.CraftEnderDragon.getBukkitPhase(this.currentPhase.getPhase()),
++                 org.bukkit.craftbukkit.entity.CraftEnderDragon.getBukkitPhase(p_31417_)
 +         );
 +         this.dragon.level().getCraftServer().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
@@ -26,11 +16,12 @@
 +         }
 +
 +         //Ketting start - check for modded phases
-+         EnderDragonPhase<?> newPhase = CraftEnderDragon.getMinecraftPhase(event.getNewPhase());
++         EnderDragonPhase<?> newPhase = org.bukkit.craftbukkit.entity.CraftEnderDragon.getMinecraftPhase(event.getNewPhase());
 +         if (newPhase != null)
 +            p_31417_ = newPhase;
 +         //Ketting end
 +         // CraftBukkit end
- 
++
           this.currentPhase = this.getPhase(p_31417_);
           if (!this.dragon.level().isClientSide) {
+             this.dragon.getEntityData().set(EnderDragon.DATA_PHASE, p_31417_.getId());

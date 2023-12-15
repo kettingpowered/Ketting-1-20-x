@@ -1,28 +1,8 @@
 --- a/net/minecraft/server/level/ChunkHolder.java
 +++ b/net/minecraft/server/level/ChunkHolder.java
-@@ -21,6 +_,7 @@
- import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
- import net.minecraft.network.protocol.game.ClientboundLightUpdatePacket;
- import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket;
-+import net.minecraft.server.MinecraftServer;
- import net.minecraft.util.DebugBuffer;
- import net.minecraft.world.level.ChunkPos;
- import net.minecraft.world.level.Level;
-@@ -51,7 +_,7 @@
-    private CompletableFuture<ChunkAccess> chunkToSave = CompletableFuture.completedFuture((ChunkAccess)null);
-    @Nullable
-    private final DebugBuffer<ChunkHolder.ChunkSaveDebug> chunkToSaveHistory = null;
--   private int oldTicketLevel;
-+   public int oldTicketLevel;
-    private int ticketLevel;
-    private int queueLevel;
-    final ChunkPos pos;
-@@ -61,8 +_,9 @@
-    private final BitSet skyChangedLightSectionFilter = new BitSet();
-    private final LevelLightEngine lightEngine;
+@@ -63,6 +_,7 @@
     private final ChunkHolder.LevelChangeListener onLevelChange;
--   private final ChunkHolder.PlayerProvider playerProvider;
-+   public final ChunkHolder.PlayerProvider playerProvider;
+    public final ChunkHolder.PlayerProvider playerProvider;
     private boolean wasAccessibleSinceLastSave;
 +   LevelChunk currentlyLoading; // Forge: Used to bypass future chain when loading chunks.
     private CompletableFuture<Void> pendingFullStateConfirmation = CompletableFuture.completedFuture((Void)null);
@@ -91,7 +71,7 @@
 +            }
 +         }).exceptionally((throwable) -> {
 +            // ensure exceptions are printed, by default this is not the case
-+            MinecraftServer.LOGGER.error("Failed to schedule unload callback for chunk " + ChunkHolder.this.pos, throwable);
++            net.minecraft.server.MinecraftServer.LOGGER.error("Failed to schedule unload callback for chunk " + ChunkHolder.this.pos, throwable);
 +            return null;
 +         });
 +
@@ -119,7 +99,7 @@
 +            }
 +         }).exceptionally((throwable) -> {
 +            // ensure exceptions are printed, by default this is not the case
-+            MinecraftServer.LOGGER.error("Failed to schedule load callback for chunk " + ChunkHolder.this.pos, throwable);
++            net.minecraft.server.MinecraftServer.LOGGER.error("Failed to schedule load callback for chunk " + ChunkHolder.this.pos, throwable);
 +            return null;
 +         });
 +

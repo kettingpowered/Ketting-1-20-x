@@ -1,33 +1,11 @@
 --- a/net/minecraft/world/entity/monster/Creeper.java
 +++ b/net/minecraft/world/entity/monster/Creeper.java
-@@ -40,15 +_,18 @@
- import net.minecraft.world.item.Items;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.gameevent.GameEvent;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
-+import org.bukkit.event.entity.ExplosionPrimeEvent;
- 
- public class Creeper extends Monster implements PowerableMob {
-    private static final EntityDataAccessor<Integer> DATA_SWELL_DIR = SynchedEntityData.defineId(Creeper.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> DATA_IS_POWERED = SynchedEntityData.defineId(Creeper.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> DATA_IS_IGNITED = SynchedEntityData.defineId(Creeper.class, EntityDataSerializers.BOOLEAN);
-    private int oldSwell;
--   private int swell;
--   private int maxSwell = 30;
--   private int explosionRadius = 3;
-+   public int swell;
-+   public int maxSwell = 30;
-+   public int explosionRadius = 3;
-    private int droppedSkulls;
- 
-    public Creeper(EntityType<? extends Creeper> p_32278_, Level p_32279_) {
 @@ -196,9 +_,20 @@
  
     public void thunderHit(ServerLevel p_32286_, LightningBolt p_32287_) {
        super.thunderHit(p_32286_, p_32287_);
 +      // CraftBukkit start
-+      if (CraftEventFactory.callCreeperPowerEvent(this, p_32287_, org.bukkit.event.entity.CreeperPowerEvent.PowerCause.LIGHTNING).isCancelled()) {
++      if (org.bukkit.craftbukkit.event.CraftEventFactory.callCreeperPowerEvent(this, p_32287_, org.bukkit.event.entity.CreeperPowerEvent.PowerCause.LIGHTNING).isCancelled()) {
 +         return;
 +      }
 +      // CraftBukkit end
@@ -43,12 +21,8 @@
     protected InteractionResult mobInteract(Player p_32301_, InteractionHand p_32302_) {
        ItemStack itemstack = p_32301_.getItemInHand(p_32302_);
        if (itemstack.is(ItemTags.CREEPER_IGNITERS)) {
-@@ -221,13 +_,22 @@
-       }
-    }
- 
--   private void explodeCreeper() {
-+   public void explodeCreeper() {
+@@ -224,10 +_,19 @@
+    public void explodeCreeper() {
        if (!this.level().isClientSide) {
           float f = this.isPowered() ? 2.0F : 1.0F;
 -         this.dead = true;
@@ -56,7 +30,7 @@
 -         this.discard();
 -         this.spawnLingeringCloud();
 +         // CraftBukkit start
-+         ExplosionPrimeEvent event = CraftEventFactory.callExplosionPrimeEvent(this, this.explosionRadius * f, false);
++         org.bukkit.event.entity.ExplosionPrimeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callExplosionPrimeEvent(this, this.explosionRadius * f, false);
 +         if (!event.isCancelled()) {
 +            // CraftBukkit end
 +            this.dead = true;
@@ -84,7 +58,7 @@
           }
  
 -         this.level().addFreshEntity(areaeffectcloud);
-+         this.level().addFreshEntity(areaeffectcloud, CreatureSpawnEvent.SpawnReason.EXPLOSION); // CraftBukkit
++         this.level().addFreshEntity(areaeffectcloud, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EXPLOSION); // CraftBukkit
        }
  
     }

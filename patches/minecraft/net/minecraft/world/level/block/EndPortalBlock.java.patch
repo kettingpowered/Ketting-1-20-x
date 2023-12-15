@@ -1,33 +1,22 @@
 --- a/net/minecraft/world/level/block/EndPortalBlock.java
 +++ b/net/minecraft/world/level/block/EndPortalBlock.java
-@@ -20,6 +_,10 @@
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.Shapes;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import net.minecraft.world.level.dimension.LevelStem;
-+import net.minecraft.server.level.ServerPlayer;
-+import org.bukkit.event.entity.EntityPortalEnterEvent;
-+import org.bukkit.event.player.PlayerTeleportEvent;
- 
- public class EndPortalBlock extends BaseEntityBlock {
-    public static final MapCodec<EndPortalBlock> CODEC = simpleCodec(EndPortalBlock::new);
 @@ -43,11 +_,21 @@
  
     public void entityInside(BlockState p_53025_, Level p_53026_, BlockPos p_53027_, Entity p_53028_) {
        if (p_53026_ instanceof ServerLevel && p_53028_.canChangeDimensions() && Shapes.joinIsNotEmpty(Shapes.create(p_53028_.getBoundingBox().move((double)(-p_53027_.getX()), (double)(-p_53027_.getY()), (double)(-p_53027_.getZ()))), p_53025_.getShape(p_53026_, p_53027_), BooleanOp.AND)) {
 -         ResourceKey<Level> resourcekey = p_53026_.dimension() == Level.END ? Level.OVERWORLD : Level.END;
-+         ResourceKey<Level> resourcekey = p_53026_.getTypeKey() == LevelStem.END ? Level.OVERWORLD : Level.END; // CraftBukkit - SPIGOT-6152: send back to main overworld in custom ends
++         ResourceKey<Level> resourcekey = p_53026_.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.END ? Level.OVERWORLD : Level.END; // CraftBukkit - SPIGOT-6152: send back to main overworld in custom ends
           ServerLevel serverlevel = ((ServerLevel)p_53026_).getServer().getLevel(resourcekey);
           if (serverlevel == null) {
 +            // return; // CraftBukkit - always fire event in case plugins wish to change it
 +         }
 +
 +         // CraftBukkit start - Entity in portal
-+         EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_53028_.getBukkitEntity(), new org.bukkit.Location(p_53026_.getWorld(), p_53028_.getX(), p_53028_.getY(), p_53028_.getZ()));
++         org.bukkit.event.entity.EntityPortalEnterEvent event = new org.bukkit.event.entity.EntityPortalEnterEvent(p_53028_.getBukkitEntity(), new org.bukkit.Location(p_53026_.getWorld(), p_53028_.getX(), p_53028_.getY(), p_53028_.getZ()));
 +         p_53026_.getCraftServer().getPluginManager().callEvent(event);
 +
-+         if (p_53028_ instanceof ServerPlayer) {
-+            ((ServerPlayer) p_53028_).changeDimension(serverlevel, PlayerTeleportEvent.TeleportCause.END_PORTAL);
++         if (p_53028_ instanceof net.minecraft.server.level.ServerPlayer) {
++            ((net.minecraft.server.level.ServerPlayer) p_53028_).changeDimension(serverlevel, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.END_PORTAL);
              return;
           }
 +         // CraftBukkit end

@@ -1,13 +1,5 @@
 --- a/net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen.java
-@@ -46,6 +_,7 @@
- import net.minecraft.world.item.TooltipFlag;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.inventory.InventoryView;
- 
- @OnlyIn(Dist.CLIENT)
- public class CreativeModeInventoryScreen extends EffectRenderingInventoryScreen<CreativeModeInventoryScreen.ItemPickerMenu> {
 @@ -79,6 +_,8 @@
     private boolean hasClickedOutside;
     private final Set<TagKey<Item>> visibleTags = new HashSet<>();
@@ -277,7 +269,7 @@
  
 +      //Ketting start - Bogus client implementation, because it will never get called anyways
 +      @Override
-+      public InventoryView getBukkitView() {
++      public org.bukkit.inventory.InventoryView getBukkitView() {
 +         return null;
 +      }
 +      //Ketting end

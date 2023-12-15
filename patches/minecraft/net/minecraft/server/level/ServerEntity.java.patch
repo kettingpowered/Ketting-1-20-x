@@ -1,31 +1,14 @@
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
-@@ -26,6 +_,7 @@
- import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
- import net.minecraft.network.protocol.game.VecDeltaCodec;
- import net.minecraft.network.syncher.SynchedEntityData;
-+import net.minecraft.server.network.ServerPlayerConnection;
- import net.minecraft.util.Mth;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EquipmentSlot;
-@@ -38,6 +_,8 @@
- import net.minecraft.world.item.MapItem;
- import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
- import net.minecraft.world.phys.Vec3;
-+import org.bukkit.entity.Player;
-+import org.bukkit.event.player.PlayerVelocityEvent;
- import org.slf4j.Logger;
- 
- public class ServerEntity {
 @@ -63,8 +_,12 @@
     private boolean wasOnGround;
     @Nullable
     private List<SynchedEntityData.DataValue<?>> trackedDataValues;
 +   // CraftBukkit start
-+   private final Set<ServerPlayerConnection> trackedPlayers;
++   private final Set<net.minecraft.server.network.ServerPlayerConnection> trackedPlayers;
  
 -   public ServerEntity(ServerLevel p_8528_, Entity p_8529_, int p_8530_, boolean p_8531_, Consumer<Packet<?>> p_8532_) {
-+   public ServerEntity(ServerLevel p_8528_, Entity p_8529_, int p_8530_, boolean p_8531_, Consumer<Packet<?>> p_8532_, Set<ServerPlayerConnection> trackedPlayers) {
++   public ServerEntity(ServerLevel p_8528_, Entity p_8529_, int p_8530_, boolean p_8531_, Consumer<Packet<?>> p_8532_, Set<net.minecraft.server.network.ServerPlayerConnection> trackedPlayers) {
 +      this.trackedPlayers = trackedPlayers;
 +      // CraftBukkit end
        this.level = p_8528_;
@@ -40,7 +23,7 @@
           removedPassengers(list, this.lastPassengers).forEach((p_308940_) -> {
              if (p_308940_ instanceof ServerPlayer serverplayer1) {
                 serverplayer1.connection.teleport(serverplayer1.getX(), serverplayer1.getY(), serverplayer1.getZ(), serverplayer1.getYRot(), serverplayer1.getXRot());
-@@ -93,15 +_,20 @@
+@@ -93,13 +_,17 @@
  
        Entity $$11 = this.entity;
        if ($$11 instanceof ItemFrame itemframe) {
@@ -56,15 +39,12 @@
 +
                 if (mapitemsaveddata != null) {
 -                  for(ServerPlayer serverplayer : this.level.players()) {
-+                  for (ServerPlayerConnection connection : this.trackedPlayers) { // CraftBukkit
++                  for (net.minecraft.server.network.ServerPlayerConnection connection : this.trackedPlayers) { // CraftBukkit
 +                     ServerPlayer serverplayer = connection.getPlayer(); // CraftBukkit
 +
                       mapitemsaveddata.tickCarriedBy(serverplayer, itemstack);
                       Packet<?> packet = mapitemsaveddata.getUpdatePacket(integer, serverplayer);
-+
                       if (packet != null) {
-                         serverplayer.connection.send(packet);
-                      }
 @@ -203,7 +_,27 @@
  
        ++this.tickCount;
@@ -74,10 +54,10 @@
 +         boolean cancelled = false;
 +
 +         if (this.entity instanceof ServerPlayer) {
-+            Player player = (Player) this.entity.getBukkitEntity();
++            org.bukkit.entity.Player player = (org.bukkit.entity.Player) this.entity.getBukkitEntity();
 +            org.bukkit.util.Vector velocity = player.getVelocity();
 +
-+            PlayerVelocityEvent event = new PlayerVelocityEvent(player, velocity.clone());
++            org.bukkit.event.player.PlayerVelocityEvent event = new org.bukkit.event.player.PlayerVelocityEvent(player, velocity.clone());
 +            this.entity.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (event.isCancelled()) {

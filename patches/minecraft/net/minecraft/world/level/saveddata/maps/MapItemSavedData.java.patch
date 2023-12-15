@@ -1,63 +1,13 @@
 --- a/net/minecraft/world/level/saveddata/maps/MapItemSavedData.java
 +++ b/net/minecraft/world/level/saveddata/maps/MapItemSavedData.java
-@@ -4,10 +_,8 @@
- import com.google.common.collect.Maps;
- import com.mojang.logging.LogUtils;
- import com.mojang.serialization.Dynamic;
--import java.util.Collection;
--import java.util.Iterator;
--import java.util.List;
--import java.util.Map;
-+
-+import java.util.*;
- import javax.annotation.Nullable;
- import net.minecraft.core.BlockPos;
- import net.minecraft.nbt.CompoundTag;
-@@ -28,6 +_,11 @@
- import net.minecraft.world.level.LevelAccessor;
- import net.minecraft.world.level.dimension.DimensionType;
- import net.minecraft.world.level.saveddata.SavedData;
-+import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.CraftServer;
-+import org.bukkit.craftbukkit.CraftWorld;
-+import org.bukkit.craftbukkit.map.CraftMapView;
-+import org.bukkit.craftbukkit.util.CraftChatMessage;
- import org.slf4j.Logger;
- 
- public class MapItemSavedData extends SavedData {
-@@ -36,21 +_,28 @@
-    private static final int HALF_MAP_SIZE = 64;
-    public static final int MAX_SCALE = 4;
-    public static final int TRACKED_DECORATION_LIMIT = 256;
--   public final int centerX;
--   public final int centerZ;
--   public final ResourceKey<Level> dimension;
--   private final boolean trackingPosition;
--   private final boolean unlimitedTracking;
--   public final byte scale;
-+   public int centerX;
-+   public int centerZ;
-+   public ResourceKey<Level> dimension;
-+   public boolean trackingPosition;
-+   public boolean unlimitedTracking;
-+   public byte scale;
-    public byte[] colors = new byte[16384];
--   public final boolean locked;
--   private final List<MapItemSavedData.HoldingPlayer> carriedBy = Lists.newArrayList();
--   private final Map<Player, MapItemSavedData.HoldingPlayer> carriedByPlayers = Maps.newHashMap();
-+   public boolean locked;
-+   public final List<MapItemSavedData.HoldingPlayer> carriedBy = Lists.newArrayList();
-+   public final Map<Player, MapItemSavedData.HoldingPlayer> carriedByPlayers = Maps.newHashMap();
-    private final Map<String, MapBanner> bannerMarkers = Maps.newHashMap();
--   final Map<String, MapDecoration> decorations = Maps.newLinkedHashMap();
-+   public final Map<String, MapDecoration> decorations = Maps.newLinkedHashMap();
+@@ -51,6 +_,13 @@
     private final Map<String, MapFrame> frameMarkers = Maps.newHashMap();
     private int trackedDecorationCount;
  
 +   // CraftBukkit start
-+   public final CraftMapView mapView;
-+   private CraftServer server;
-+   public UUID uniqueId = null;
++   public final org.bukkit.craftbukkit.map.CraftMapView mapView;
++   private org.bukkit.craftbukkit.CraftServer server;
++   public java.util.UUID uniqueId = null;
 +   public String id;
 +   // CraftBukkit end
 +
@@ -69,8 +19,8 @@
        this.locked = p_164773_;
        this.setDirty();
 +      // CraftBukkit start
-+      mapView = new CraftMapView(this);
-+      server = (CraftServer) org.bukkit.Bukkit.getServer();
++      mapView = new org.bukkit.craftbukkit.map.CraftMapView(this);
++      server = (org.bukkit.craftbukkit.CraftServer) org.bukkit.Bukkit.getServer();
 +      // CraftBukkit end
     }
  
@@ -87,9 +37,9 @@
 +         long most = p_164808_.getLong("UUIDMost");
 +
 +         if (least != 0L && most != 0L) {
-+            UUID uniqueId = new UUID(most, least);
++            java.util.UUID uniqueId = new java.util.UUID(most, least);
 +
-+            CraftWorld world = (CraftWorld) Bukkit.getWorld(uniqueId);
++            org.bukkit.craftbukkit.CraftWorld world = (org.bukkit.craftbukkit.CraftWorld) org.bukkit.Bukkit.getWorld(uniqueId);
 +            // Check if the stored world details are correct.
 +            if (world == null) {
 +                    /* All Maps which do not have their valid world loaded are set to a dimension which hopefully won't be reached.
@@ -112,7 +62,7 @@
 +      if (true) {
 +         if (this.uniqueId == null) {
 +            for (org.bukkit.World world : server.getWorlds()) {
-+               CraftWorld cWorld = (CraftWorld) world;
++               org.bukkit.craftbukkit.CraftWorld cWorld = (org.bukkit.craftbukkit.CraftWorld) world;
 +               if (cWorld.getHandle().dimension() == this.dimension) {
 +                  this.uniqueId = cWorld.getUID();
 +                  break;
@@ -130,15 +80,6 @@
        p_77956_.putInt("xCenter", this.centerX);
        p_77956_.putInt("zCenter", this.centerZ);
        p_77956_.putByte("scale", this.scale);
-@@ -315,7 +_,7 @@
-       return mapitemsaveddata$holdingplayer == null ? null : mapitemsaveddata$holdingplayer.nextUpdatePacket(p_164797_);
-    }
- 
--   private void setColorsDirty(int p_164790_, int p_164791_) {
-+   public void setColorsDirty(int p_164790_, int p_164791_) {
-       this.setDirty();
- 
-       for(MapItemSavedData.HoldingPlayer mapitemsaveddata$holdingplayer : this.carriedBy) {
 @@ -455,7 +_,7 @@
           this.player = p_77970_;
        }
@@ -181,7 +122,7 @@
 +
 +            for (org.bukkit.map.MapCursor cursor : render.cursors) {
 +               if (cursor.isVisible()) {
-+                  icons.add(new MapDecoration(MapDecoration.Type.byIcon(cursor.getRawType()), cursor.getX(), cursor.getY(), cursor.getDirection(), CraftChatMessage.fromStringOrNull(cursor.getCaption())));
++                  icons.add(new MapDecoration(MapDecoration.Type.byIcon(cursor.getRawType()), cursor.getX(), cursor.getY(), cursor.getDirection(), org.bukkit.craftbukkit.util.CraftChatMessage.fromStringOrNull(cursor.getCaption())));
 +               }
 +            }
 +            collection = icons;

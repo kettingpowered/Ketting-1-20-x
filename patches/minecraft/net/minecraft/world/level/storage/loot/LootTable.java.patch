@@ -1,16 +1,5 @@
 --- a/net/minecraft/world/level/storage/loot/LootTable.java
 +++ b/net/minecraft/world/level/storage/loot/LootTable.java
-@@ -24,6 +_,10 @@
- import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
- import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
- import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-+import org.bukkit.craftbukkit.CraftLootTable;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
-+import org.bukkit.event.world.LootGenerateEvent;
- import org.slf4j.Logger;
- 
- public class LootTable {
 @@ -35,7 +_,7 @@
           return p_297013_.paramSet;
        }), ExtraCodecs.strictOptionalField(ResourceLocation.CODEC, "random_sequence").forGetter((p_297014_) -> {
@@ -24,7 +13,7 @@
     private final List<LootPool> pools;
     private final List<LootItemFunction> functions;
     private final BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
-+   public CraftLootTable craftLootTable; // CraftBukkit
++   public org.bukkit.craftbukkit.CraftLootTable craftLootTable; // CraftBukkit
  
     LootTable(LootContextParamSet p_287716_, Optional<ResourceLocation> p_298628_, List<LootPool> p_298771_, List<LootItemFunction> p_301234_) {
        this.paramSet = p_287716_;
@@ -90,11 +79,11 @@
        ObjectArrayList<ItemStack> objectarraylist = this.getRandomItems(lootcontext);
        RandomSource randomsource = lootcontext.getRandom();
 +      // CraftBukkit start
-+      LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(p_287662_, this, lootcontext, objectarraylist, plugin);
++      org.bukkit.event.world.LootGenerateEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callLootGenerateEvent(p_287662_, this, lootcontext, objectarraylist, plugin);
 +      if (event.isCancelled()) {
 +         return;
 +      }
-+      objectarraylist = event.getLoot().stream().map(CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
++      objectarraylist = event.getLoot().stream().map(org.bukkit.craftbukkit.inventory.CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
 +      // CraftBukkit end
        List<Integer> list = this.getAvailableSlots(p_287662_, randomsource);
        this.shuffleAndSplitItems(objectarraylist, list.size(), randomsource);

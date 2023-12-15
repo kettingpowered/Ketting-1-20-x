@@ -1,25 +1,5 @@
 --- a/net/minecraft/world/entity/animal/Fox.java
 +++ b/net/minecraft/world/entity/animal/Fox.java
-@@ -103,8 +_,8 @@
-    private static final int FLAG_SLEEPING = 32;
-    private static final int FLAG_FACEPLANTED = 64;
-    private static final int FLAG_DEFENDING = 128;
--   private static final EntityDataAccessor<Optional<UUID>> DATA_TRUSTED_ID_0 = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.OPTIONAL_UUID);
--   private static final EntityDataAccessor<Optional<UUID>> DATA_TRUSTED_ID_1 = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.OPTIONAL_UUID);
-+   public static final EntityDataAccessor<Optional<UUID>> DATA_TRUSTED_ID_0 = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.OPTIONAL_UUID);
-+   public static final EntityDataAccessor<Optional<UUID>> DATA_TRUSTED_ID_1 = SynchedEntityData.defineId(Fox.class, EntityDataSerializers.OPTIONAL_UUID);
-    static final Predicate<ItemEntity> ALLOWED_ITEMS = (p_309166_) -> {
-       return !p_309166_.hasPickUpDelay() && p_309166_.isAlive();
-    };
-@@ -433,7 +_,7 @@
-       return this.getFlag(32);
-    }
- 
--   void setSleeping(boolean p_28627_) {
-+   public void setSleeping(boolean p_28627_) {
-       this.setFlag(32, p_28627_);
-    }
- 
 @@ -482,7 +_,8 @@
  
     protected void pickUpItem(ItemEntity p_28514_) {

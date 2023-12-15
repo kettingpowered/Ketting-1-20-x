@@ -1,54 +1,16 @@
 --- a/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
-@@ -32,12 +_,13 @@
- import net.minecraft.world.inventory.ContainerData;
- import net.minecraft.world.inventory.ContainerLevelAccess;
- import net.minecraft.world.level.Level;
--import net.minecraft.world.level.block.BeaconBeamBlock;
- import net.minecraft.world.level.block.Block;
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.levelgen.Heightmap;
- import net.minecraft.world.phys.AABB;
-+import org.bukkit.craftbukkit.potion.CraftPotionUtil;
-+import org.bukkit.potion.PotionEffect;
- 
- public class BeaconBlockEntity extends BlockEntity implements MenuProvider, Nameable {
-    private static final int MAX_LEVELS = 4;
-@@ -53,15 +_,15 @@
-    private static final String TAG_SECONDARY = "secondary_effect";
-    List<BeaconBlockEntity.BeaconBeamSection> beamSections = Lists.newArrayList();
-    private List<BeaconBlockEntity.BeaconBeamSection> checkingBeamSections = Lists.newArrayList();
--   int levels;
-+   public int levels;
-    private int lastCheckY;
-    @Nullable
--   MobEffect primaryPower;
--   @Nullable
--   MobEffect secondaryPower;
--   @Nullable
--   private Component name;
--   private LockCode lockKey = LockCode.NO_LOCK;
-+   public MobEffect primaryPower;
-+   @Nullable
-+   public MobEffect secondaryPower;
-+   @Nullable
-+   public Component name;
-+   public LockCode lockKey = LockCode.NO_LOCK;
-    private final ContainerData dataAccess = new ContainerData() {
-       public int get(int p_58711_) {
-          int i;
 @@ -105,6 +_,15 @@
        }
     };
  
 +   // CraftBukkit start - add fields and methods
-+   public PotionEffect getPrimaryEffect() {
-+      return (this.primaryPower != null) ? CraftPotionUtil.toBukkit(new MobEffectInstance(this.primaryPower, getLevel(this.levels), getAmplification(levels, primaryPower, secondaryPower), true, true)) : null;
++   public org.bukkit.potion.PotionEffect getPrimaryEffect() {
++      return (this.primaryPower != null) ? org.bukkit.craftbukkit.potion.CraftPotionUtil.toBukkit(new MobEffectInstance(this.primaryPower, getLevel(this.levels), getAmplification(levels, primaryPower, secondaryPower), true, true)) : null;
 +   }
 +
-+   public PotionEffect getSecondaryEffect() {
-+      return (hasSecondaryEffect(levels, primaryPower, secondaryPower)) ? CraftPotionUtil.toBukkit(new MobEffectInstance(this.secondaryPower, getLevel(this.levels), getAmplification(levels, primaryPower, secondaryPower), true, true)) : null;
++   public org.bukkit.potion.PotionEffect getSecondaryEffect() {
++      return (hasSecondaryEffect(levels, primaryPower, secondaryPower)) ? org.bukkit.craftbukkit.potion.CraftPotionUtil.toBukkit(new MobEffectInstance(this.secondaryPower, getLevel(this.levels), getAmplification(levels, primaryPower, secondaryPower), true, true)) : null;
 +   }
 +   // CraftBukkit end
     @Nullable

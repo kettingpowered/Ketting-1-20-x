@@ -1,15 +1,5 @@
 --- a/net/minecraft/world/entity/animal/Wolf.java
 +++ b/net/minecraft/world/entity/animal/Wolf.java
-@@ -68,6 +_,9 @@
- import net.minecraft.world.level.gameevent.GameEvent;
- import net.minecraft.world.level.pathfinder.BlockPathTypes;
- import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityRegainHealthEvent;
-+import org.bukkit.event.entity.EntityTargetEvent;
- import org.joml.Vector3f;
- 
- public class Wolf extends TamableAnimal implements NeutralMob {
 @@ -284,15 +_,19 @@
           return false;
        } else {
@@ -47,7 +37,7 @@
           return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
        } else if (this.isTame()) {
           if (this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
-+            this.heal((float) item.getFoodProperties().getNutrition(), EntityRegainHealthEvent.RegainReason.EATING); // CraftBukkit
++            this.heal((float) item.getFoodProperties().getNutrition(), org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.EATING); // CraftBukkit
              if (!p_30412_.getAbilities().instabuild) {
                 itemstack.shrink(1);
              }
@@ -62,7 +52,7 @@
                 this.jumping = false;
                 this.navigation.stop();
 -               this.setTarget((LivingEntity)null);
-+               this.setTarget((LivingEntity)null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit - reason
++               this.setTarget((LivingEntity)null, org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit - reason
                 return InteractionResult.SUCCESS;
              } else {
                 return interactionresult;
@@ -72,11 +62,11 @@
  
 -         if (this.random.nextInt(3) == 0) {
 +         // CraftBukkit - added event call and isCancelled check.
-+         if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_) && !CraftEventFactory.callEntityTameEvent(this, p_30412_).isCancelled()) {
++         if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_) && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTameEvent(this, p_30412_).isCancelled()) {
              this.tame(p_30412_);
              this.navigation.stop();
 -            this.setTarget((LivingEntity)null);
-+            this.setTarget((LivingEntity) null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit - reason
++            this.setTarget((LivingEntity) null, org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit - reason
              this.setOrderedToSit(true);
              this.level().broadcastEntityEvent(this, (byte)7);
           } else {

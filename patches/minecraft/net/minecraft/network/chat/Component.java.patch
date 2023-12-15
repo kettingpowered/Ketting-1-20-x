@@ -1,19 +1,15 @@
 --- a/net/minecraft/network/chat/Component.java
 +++ b/net/minecraft/network/chat/Component.java
-@@ -33,8 +_,22 @@
- import net.minecraft.resources.ResourceLocation;
+@@ -34,7 +_,19 @@
  import net.minecraft.util.FormattedCharSequence;
  import net.minecraft.world.level.ChunkPos;
--
+ 
 -public interface Component extends Message, FormattedText {
-+import com.google.common.collect.Streams;
-+import java.util.stream.Stream;
-+
 +public interface Component extends Message, FormattedText, Iterable<Component> {
 +
 +   // CraftBukkit start
-+   default Stream<Component> stream() {
-+      return Streams.concat(new Stream[]{Stream.of(this), this.getSiblings().stream().flatMap(Component::stream)});
++   default java.util.stream.Stream<Component> stream() {
++      return com.google.common.collect.Streams.concat(new java.util.stream.Stream[]{java.util.stream.Stream.of(this), this.getSiblings().stream().flatMap(Component::stream)});
 +   }
 +
 +   @Override

@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/level/block/BasePressurePlateBlock.java
 +++ b/net/minecraft/world/level/block/BasePressurePlateBlock.java
-@@ -21,6 +_,7 @@
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.event.block.BlockRedstoneEvent;
- 
- public abstract class BasePressurePlateBlock extends Block {
-    protected static final VoxelShape PRESSED_AABB = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 0.5D, 15.0D);
-@@ -78,8 +_,21 @@
+@@ -78,6 +_,18 @@
        int i = this.getSignalStrength(p_152145_, p_152146_);
        boolean flag = p_152148_ > 0;
        boolean flag1 = i > 0;
@@ -17,7 +9,7 @@
 +      org.bukkit.plugin.PluginManager manager = p_152145_.getCraftServer().getPluginManager();
 +
 +      if (flag != flag1) {
-+         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bworld.getBlockAt(p_152146_.getX(), p_152146_.getY(), p_152146_.getZ()), p_152148_, i);
++         org.bukkit.event.block.BlockRedstoneEvent eventRedstone = new org.bukkit.event.block.BlockRedstoneEvent(bworld.getBlockAt(p_152146_.getX(), p_152146_.getY(), p_152146_.getZ()), p_152148_, i);
 +         manager.callEvent(eventRedstone);
 +
 +         flag1 = eventRedstone.getNewCurrent() > 0;
@@ -26,10 +18,7 @@
 +      // CraftBukkit end
        if (p_152148_ != i) {
           BlockState blockstate = this.setSignalForState(p_152147_, i);
-+
           p_152145_.setBlock(p_152146_, blockstate, 2);
-          this.updateNeighbours(p_152145_, p_152146_);
-          p_152145_.setBlocksDirty(p_152146_, p_152147_, blockstate);
 @@ -127,9 +_,15 @@
     }
  

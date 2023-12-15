@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/CropBlock.java
 +++ b/net/minecraft/world/level/block/CropBlock.java
-@@ -21,6 +_,7 @@
- import net.minecraft.world.level.block.state.properties.IntegerProperty;
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.event.CraftEventFactory; //Ketting
- 
- public class CropBlock extends BushBlock implements BonemealableBlock {
-    public static final MapCodec<CropBlock> CODEC = simpleCodec(CropBlock::new);
 @@ -70,12 +_,28 @@
     }
  
@@ -34,7 +26,7 @@
 +
 +            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221051_, p_221052_, p_221050_, p_221053_.nextFloat() < (modifier / (100.0f * (Math.floor((25.0F / f) + 1)))))) {
 +               // Spigot end
-+               CraftEventFactory.handleBlockGrowEvent(p_221051_, p_221052_, this.getStateForAge(i + 1), 2); // CraftBukkit
++               org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(p_221051_, p_221052_, this.getStateForAge(i + 1), 2); // CraftBukkit
 +               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221051_, p_221052_, p_221050_);
              }
           }
@@ -44,7 +36,7 @@
        }
  
 -      p_52264_.setBlock(p_52265_, this.getStateForAge(i), 2);
-+      CraftEventFactory.handleBlockGrowEvent(p_52264_, p_52265_, this.getStateForAge(i), 2); // CraftBukkit
++      org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(p_52264_, p_52265_, this.getStateForAge(i), 2); // CraftBukkit
     }
  
     protected int getBonemealAgeIncrease(Level p_52262_) {
@@ -65,7 +57,7 @@
  
     public void entityInside(BlockState p_52277_, Level p_52278_, BlockPos p_52279_, Entity p_52280_) {
 -      if (p_52280_ instanceof Ravager && p_52278_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-+      if (p_52280_ instanceof Ravager && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_52278_, p_52280_) && CraftEventFactory.callEntityChangeBlockEvent(p_52280_, p_52279_, Blocks.AIR.defaultBlockState(), !p_52278_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) { // CraftBukkit
++      if (p_52280_ instanceof Ravager && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_52278_, p_52280_) && org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(p_52280_, p_52279_, Blocks.AIR.defaultBlockState(), !p_52278_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) { // CraftBukkit
           p_52278_.destroyBlock(p_52279_, true, p_52280_);
        }
  

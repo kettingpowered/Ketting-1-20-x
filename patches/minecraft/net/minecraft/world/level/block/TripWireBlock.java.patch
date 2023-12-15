@@ -1,21 +1,5 @@
 --- a/net/minecraft/world/level/block/TripWireBlock.java
 +++ b/net/minecraft/world/level/block/TripWireBlock.java
-@@ -11,7 +_,6 @@
- import net.minecraft.util.RandomSource;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.player.Player;
--import net.minecraft.world.item.Items;
- import net.minecraft.world.item.context.BlockPlaceContext;
- import net.minecraft.world.level.BlockGetter;
- import net.minecraft.world.level.Level;
-@@ -24,6 +_,7 @@
- import net.minecraft.world.level.gameevent.GameEvent;
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.event.entity.EntityInteractEvent;
- 
- public class TripWireBlock extends Block {
-    public static final MapCodec<TripWireBlock> CODEC = RecordCodecBuilder.mapCodec((p_312765_) -> {
 @@ -81,7 +_,7 @@
     }
  
@@ -45,8 +29,8 @@
 +               if (object instanceof Player) {
 +                  cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((Player) object, org.bukkit.event.block.Action.PHYSICAL, p_57609_, null, null, null);
 +               } else if (object instanceof Entity) {
-+                  cancellable = new EntityInteractEvent(((Entity) object).getBukkitEntity(), block);
-+                  manager.callEvent((EntityInteractEvent) cancellable);
++                  cancellable = new org.bukkit.event.entity.EntityInteractEvent(((Entity) object).getBukkitEntity(), block);
++                  manager.callEvent((org.bukkit.event.entity.EntityInteractEvent) cancellable);
 +               } else {
 +                  continue;
 +               }

@@ -1,12 +1,6 @@
 --- a/net/minecraft/world/level/block/DropperBlock.java
 +++ b/net/minecraft/world/level/block/DropperBlock.java
-@@ -18,11 +_,13 @@
- import net.minecraft.world.level.block.state.BlockBehaviour;
- import net.minecraft.world.level.block.state.BlockState;
- import org.slf4j.Logger;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
-+import org.bukkit.event.inventory.InventoryMoveItemEvent;
- 
+@@ -22,7 +_,7 @@
  public class DropperBlock extends DispenserBlock {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final MapCodec<DropperBlock> CODEC = simpleCodec(DropperBlock::new);
@@ -41,7 +35,7 @@
 -                  itemstack1 = HopperBlockEntity.addItem(dispenserblockentity, container, itemstack.copy().split(1), direction.getOpposite());
 -                  if (itemstack1.isEmpty()) {
 +                  // CraftBukkit start - Fire event when pushing items into other inventories
-+                  CraftItemStack oitemstack = CraftItemStack.asCraftMirror(itemstack.copy().split(1));
++                  org.bukkit.craftbukkit.inventory.CraftItemStack oitemstack = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack.copy().split(1));
 +
 +                  org.bukkit.inventory.Inventory destinationInventory;
 +                  // Have to special case large chests as they work oddly
@@ -51,12 +45,12 @@
 +                     destinationInventory = container.getOwner().getInventory();
 +                  }
 +
-+                  InventoryMoveItemEvent event = new InventoryMoveItemEvent(dispenserblockentity.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
++                  org.bukkit.event.inventory.InventoryMoveItemEvent event = new org.bukkit.event.inventory.InventoryMoveItemEvent(dispenserblockentity.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
 +                  p_52944_.getCraftServer().getPluginManager().callEvent(event);
 +                  if (event.isCancelled()) {
 +                     return;
 +                  }
-+                  itemstack1 = HopperBlockEntity.addItem(dispenserblockentity, container, CraftItemStack.asNMSCopy(event.getItem()), direction.getOpposite());
++                  itemstack1 = HopperBlockEntity.addItem(dispenserblockentity, container, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem()), direction.getOpposite());
 +                  if (event.getItem().equals(oitemstack) && itemstack1.isEmpty()) {
 +                     // CraftBukkit end
                       itemstack1 = itemstack.copy();

@@ -1,20 +1,11 @@
 --- a/net/minecraft/world/inventory/DispenserMenu.java
 +++ b/net/minecraft/world/inventory/DispenserMenu.java
-@@ -5,6 +_,8 @@
- import net.minecraft.world.entity.player.Inventory;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.ItemStack;
-+import org.bukkit.craftbukkit.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
- 
- public class DispenserMenu extends AbstractContainerMenu {
-    private static final int SLOT_COUNT = 9;
 @@ -13,6 +_,10 @@
     private static final int USE_ROW_SLOT_START = 36;
     private static final int USE_ROW_SLOT_END = 45;
     private final Container dispenser;
 +   // CraftBukkit start
-+   private CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.inventory.CraftInventoryView bukkitEntity = null;
 +   private Inventory player;
 +   // CraftBukkit end
  
@@ -46,13 +37,13 @@
 +
 +   // CraftBukkit start
 +   @Override
-+   public CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      CraftInventory inventory = new CraftInventory(this.dispenser);
-+      bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++      org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventory(this.dispenser);
++      bukkitEntity = new org.bukkit.craftbukkit.inventory.CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

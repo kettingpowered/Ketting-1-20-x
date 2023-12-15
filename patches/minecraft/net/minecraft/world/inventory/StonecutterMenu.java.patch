@@ -1,15 +1,5 @@
 --- a/net/minecraft/world/inventory/StonecutterMenu.java
 +++ b/net/minecraft/world/inventory/StonecutterMenu.java
-@@ -15,6 +_,9 @@
- import net.minecraft.world.item.crafting.StonecutterRecipe;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.block.Blocks;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryStonecutter;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
- 
- public class StonecutterMenu extends AbstractContainerMenu {
-    public static final int INPUT_SLOT = 0;
 @@ -33,14 +_,23 @@
     final Slot resultSlot;
     Runnable slotUpdateListener = () -> {
@@ -22,19 +12,19 @@
 +   public final Container container;
 +   final ResultContainer resultContainer;
 +   // CraftBukkit start
-+   private CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.inventory.CraftInventoryView bukkitEntity = null;
 +   private org.bukkit.entity.Player player;
 +
 +   @Override
-+   public CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
        }
 -   };
 -   final ResultContainer resultContainer = new ResultContainer();
 +
-+      CraftInventoryStonecutter inventory = new CraftInventoryStonecutter(this.container, this.resultContainer);
-+      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++      org.bukkit.craftbukkit.inventory.CraftInventoryStonecutter inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryStonecutter(this.container, this.resultContainer);
++      bukkitEntity = new org.bukkit.craftbukkit.inventory.CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
@@ -54,7 +44,7 @@
 +
 +         // CraftBukkit start
 +         @Override
-+         public Location getLocation() {
++         public org.bukkit.Location getLocation() {
 +            return p_40299_.getLocation();
 +         }
 +         // CraftBukkit end

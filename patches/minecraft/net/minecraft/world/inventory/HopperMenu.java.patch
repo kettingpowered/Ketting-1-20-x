@@ -1,27 +1,21 @@
 --- a/net/minecraft/world/inventory/HopperMenu.java
 +++ b/net/minecraft/world/inventory/HopperMenu.java
-@@ -5,10 +_,27 @@
- import net.minecraft.world.entity.player.Inventory;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.ItemStack;
-+import org.bukkit.craftbukkit.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
- 
+@@ -9,6 +_,21 @@
  public class HopperMenu extends AbstractContainerMenu {
     public static final int CONTAINER_SIZE = 5;
     private final Container hopper;
 +   // CraftBukkit start
-+   private CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.inventory.CraftInventoryView bukkitEntity = null;
 +   private Inventory player;
 +
 +   @Override
-+   public CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      CraftInventory inventory = new CraftInventory(this.hopper);
-+      bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++      org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventory(this.hopper);
++      bukkitEntity = new org.bukkit.craftbukkit.inventory.CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

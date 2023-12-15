@@ -1,35 +1,12 @@
 --- a/net/minecraft/world/level/chunk/storage/ChunkStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/ChunkStorage.java
-@@ -6,16 +_,22 @@
- import java.nio.file.Path;
- import java.util.Optional;
- import java.util.concurrent.CompletableFuture;
-+import java.util.concurrent.ExecutionException;
- import java.util.function.Supplier;
- import javax.annotation.Nullable;
- import net.minecraft.SharedConstants;
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.nbt.NbtUtils;
- import net.minecraft.resources.ResourceKey;
-+import net.minecraft.server.level.ServerChunkCache;
-+import net.minecraft.server.level.ServerLevel;
- import net.minecraft.util.datafix.DataFixTypes;
- import net.minecraft.world.level.ChunkPos;
- import net.minecraft.world.level.Level;
-+import net.minecraft.world.level.LevelAccessor;
- import net.minecraft.world.level.chunk.ChunkGenerator;
-+import net.minecraft.world.level.chunk.ChunkStatus;
-+import net.minecraft.world.level.dimension.LevelStem;
- import net.minecraft.world.level.levelgen.structure.LegacyStructureDataHandler;
- import net.minecraft.world.level.storage.DimensionDataStorage;
- 
 @@ -35,8 +_,53 @@
        return this.worker.isOldChunkAround(p_223452_, p_223453_);
     }
  
 -   public CompoundTag upgradeChunkTag(ResourceKey<Level> p_188289_, Supplier<DimensionDataStorage> p_188290_, CompoundTag p_188291_, Optional<ResourceKey<Codec<? extends ChunkGenerator>>> p_188292_) {
 +   // CraftBukkit start
-+   private boolean check(ServerChunkCache cps, int x, int z) {
++   private boolean check(net.minecraft.server.level.ServerChunkCache cps, int x, int z) {
 +      ChunkPos pos = new ChunkPos(x, z);
 +      if (cps != null) {
 +         com.google.common.base.Preconditions.checkState(org.bukkit.Bukkit.isPrimaryThread(), "primary thread");
@@ -41,7 +18,7 @@
 +      CompoundTag nbt;
 +      try {
 +         nbt = read(pos).get().orElse(null);
-+      } catch (InterruptedException | ExecutionException ex) {
++      } catch (InterruptedException | java.util.concurrent.ExecutionException ex) {
 +         throw new RuntimeException(ex);
 +      }
 +      if (nbt != null) {
@@ -50,8 +27,8 @@
 +            return true;
 +         }
 +
-+         ChunkStatus status = ChunkStatus.byName(level.getString("Status"));
-+         if (status != null && status.isOrAfter(ChunkStatus.FEATURES)) {
++         net.minecraft.world.level.chunk.ChunkStatus status = net.minecraft.world.level.chunk.ChunkStatus.byName(level.getString("Status"));
++         if (status != null && status.isOrAfter(net.minecraft.world.level.chunk.ChunkStatus.FEATURES)) {
 +            return true;
 +         }
 +      }
@@ -59,7 +36,7 @@
 +      return false;
 +   }
 +
-+   public CompoundTag upgradeChunkTag(ResourceKey<LevelStem> p_188289_, Supplier<DimensionDataStorage> p_188290_, CompoundTag p_188291_, Optional<ResourceKey<Codec<? extends ChunkGenerator>>> p_188292_, ChunkPos pos, @Nullable LevelAccessor generatoraccess) {
++   public CompoundTag upgradeChunkTag(ResourceKey<net.minecraft.world.level.dimension.LevelStem> p_188289_, Supplier<DimensionDataStorage> p_188290_, CompoundTag p_188291_, Optional<ResourceKey<Codec<? extends ChunkGenerator>>> p_188292_, ChunkPos pos, @Nullable net.minecraft.world.level.LevelAccessor generatoraccess) {
 +      // CraftBukkit end
        int i = getVersion(p_188291_);
 +
@@ -67,7 +44,7 @@
 +      if (i < 1466) {
 +         CompoundTag level = p_188291_.getCompound("Level");
 +         if (level.getBoolean("TerrainPopulated") && !level.getBoolean("LightPopulated")) {
-+            ServerChunkCache cps = (generatoraccess == null) ? null : ((ServerLevel) generatoraccess).getChunkSource();
++            net.minecraft.server.level.ServerChunkCache cps = (generatoraccess == null) ? null : ((net.minecraft.server.level.ServerLevel) generatoraccess).getChunkSource();
 +            if (check(cps, pos.x - 1, pos.z) && check(cps, pos.x - 1, pos.z - 1) && check(cps, pos.x, pos.z - 1)) {
 +               level.putBoolean("LightPopulated", true);
 +            }
@@ -84,7 +61,7 @@
  
 +      // Spigot start - SPIGOT-6806: Quick and dirty way to prevent below zero generation in old chunks, by setting the status to heightmap instead of empty
 +      boolean stopBelowZero = false;
-+      boolean belowZeroGenerationInExistingChunks = (generatoraccess != null) ? ((ServerLevel) generatoraccess).spigotConfig.belowZeroGenerationInExistingChunks : org.spigotmc.SpigotConfig.belowZeroGenerationInExistingChunks;
++      boolean belowZeroGenerationInExistingChunks = (generatoraccess != null) ? ((net.minecraft.server.level.ServerLevel) generatoraccess).spigotConfig.belowZeroGenerationInExistingChunks : org.spigotmc.SpigotConfig.belowZeroGenerationInExistingChunks;
 +
 +      if (i <= 2730 && !belowZeroGenerationInExistingChunks) {
 +         stopBelowZero = "full".equals(p_188291_.getCompound("Level").getString("Status"));
@@ -99,7 +76,7 @@
  
 +      // Spigot start
 +      if (stopBelowZero) {
-+         p_188291_.putString("Status", net.minecraft.core.registries.BuiltInRegistries.CHUNK_STATUS.getKey(ChunkStatus.SPAWN).toString());
++         p_188291_.putString("Status", net.minecraft.core.registries.BuiltInRegistries.CHUNK_STATUS.getKey(net.minecraft.world.level.chunk.ChunkStatus.SPAWN).toString());
 +      }
 +      // Spigot end
 +
@@ -108,7 +85,7 @@
     }
  
 -   private LegacyStructureDataHandler getLegacyStructureHandler(ResourceKey<Level> p_223449_, Supplier<DimensionDataStorage> p_223450_) {
-+   private LegacyStructureDataHandler getLegacyStructureHandler(ResourceKey<LevelStem> p_223449_, Supplier<DimensionDataStorage> p_223450_) { // CraftBukkit
++   private LegacyStructureDataHandler getLegacyStructureHandler(ResourceKey<net.minecraft.world.level.dimension.LevelStem> p_223449_, Supplier<DimensionDataStorage> p_223450_) { // CraftBukkit
        LegacyStructureDataHandler legacystructuredatahandler = this.legacyStructureHandler;
        if (legacystructuredatahandler == null) {
           synchronized(this) {
@@ -117,7 +94,7 @@
     }
  
 -   public static void injectDatafixingContext(CompoundTag p_196919_, ResourceKey<Level> p_196920_, Optional<ResourceKey<Codec<? extends ChunkGenerator>>> p_196921_) {
-+   public static void injectDatafixingContext(CompoundTag p_196919_, ResourceKey<LevelStem> p_196920_, Optional<ResourceKey<Codec<? extends ChunkGenerator>>> p_196921_) { // CraftBukkit
++   public static void injectDatafixingContext(CompoundTag p_196919_, ResourceKey<net.minecraft.world.level.dimension.LevelStem> p_196920_, Optional<ResourceKey<Codec<? extends ChunkGenerator>>> p_196921_) { // CraftBukkit
        CompoundTag compoundtag = new CompoundTag();
        compoundtag.putString("dimension", p_196920_.location().toString());
        p_196921_.ifPresent((p_196917_) -> {

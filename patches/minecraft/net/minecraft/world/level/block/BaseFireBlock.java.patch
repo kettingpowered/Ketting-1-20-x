@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/BaseFireBlock.java
 +++ b/net/minecraft/world/level/block/BaseFireBlock.java
-@@ -15,6 +_,7 @@
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.block.state.BlockBehaviour;
- import net.minecraft.world.level.block.state.BlockState;
-+import net.minecraft.world.level.dimension.LevelStem;
- import net.minecraft.world.level.portal.PortalShape;
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.VoxelShape;
 @@ -115,7 +_,14 @@
        if (!p_49263_.fireImmune()) {
           p_49263_.setRemainingFireTicks(p_49263_.getRemainingFireTicks() + 1);
@@ -45,7 +37,7 @@
  
     private static boolean inPortalDimension(Level p_49249_) {
 -      return p_49249_.dimension() == Level.OVERWORLD || p_49249_.dimension() == Level.NETHER;
-+      return p_49249_.getTypeKey() == LevelStem.OVERWORLD || p_49249_.getTypeKey() == LevelStem.NETHER; // CraftBukkit - getTypeKey()
++      return p_49249_.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.OVERWORLD || p_49249_.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.NETHER; // CraftBukkit - getTypeKey()
     }
  
     protected void spawnDestroyParticles(Level p_152139_, Player p_152140_, BlockPos p_152141_, BlockState p_152142_) {

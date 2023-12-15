@@ -1,21 +1,10 @@
 --- a/net/minecraft/world/level/block/SaplingBlock.java
 +++ b/net/minecraft/world/level/block/SaplingBlock.java
-@@ -16,6 +_,10 @@
- import net.minecraft.world.level.block.state.properties.IntegerProperty;
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.Location;
-+import org.bukkit.TreeType;
-+import org.bukkit.craftbukkit.util.CraftLocation;
-+import org.bukkit.event.world.StructureGrowEvent;
- 
- public class SaplingBlock extends BushBlock implements BonemealableBlock {
-    public static final MapCodec<SaplingBlock> CODEC = RecordCodecBuilder.mapCodec((p_312128_) -> {
 @@ -27,6 +_,7 @@
     protected static final float AABB_OFFSET = 6.0F;
     protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
     protected final TreeGrower treeGrower;
-+   public static TreeType treeType; // CraftBukkit
++   public static org.bukkit.TreeType treeType; // CraftBukkit
  
     public MapCodec<? extends SaplingBlock> codec() {
        return CODEC;
@@ -41,14 +30,14 @@
 +            this.treeGrower.growTree(p_222001_, p_222001_.getChunkSource().getGenerator(), p_222002_, p_222003_, p_222004_);
 +            p_222001_.captureTreeGeneration = false;
 +            if (p_222001_.capturedBlockStates.size() > 0) {
-+               TreeType treeType = SaplingBlock.treeType;
++               org.bukkit.TreeType treeType = SaplingBlock.treeType;
 +               SaplingBlock.treeType = null;
-+               Location location = CraftLocation.toBukkit(p_222002_, p_222001_.getWorld());
++               org.bukkit.Location location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(p_222002_, p_222001_.getWorld());
 +               java.util.List<org.bukkit.block.BlockState> blocks = new java.util.ArrayList<>(p_222001_.capturedBlockStates.values());
 +               p_222001_.capturedBlockStates.clear();
-+               StructureGrowEvent event = null;
++               org.bukkit.event.world.StructureGrowEvent event = null;
 +               if (treeType != null) {
-+                  event = new StructureGrowEvent(location, treeType, false, null, blocks);
++                  event = new org.bukkit.event.world.StructureGrowEvent(location, treeType, false, null, blocks);
 +                  org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +               }
 +               if (event == null || !event.isCancelled()) {

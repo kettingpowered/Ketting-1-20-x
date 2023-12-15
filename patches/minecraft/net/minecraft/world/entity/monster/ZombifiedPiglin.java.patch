@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/monster/ZombifiedPiglin.java
 +++ b/net/minecraft/world/entity/monster/ZombifiedPiglin.java
-@@ -40,6 +_,7 @@
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.pathfinder.BlockPathTypes;
- import net.minecraft.world.phys.AABB;
-+import org.bukkit.event.entity.EntityTargetEvent;
- import org.joml.Vector3f;
- 
- public class ZombifiedPiglin extends Zombie implements NeutralMob {
 @@ -142,7 +_,7 @@
        }).filter((p_296830_) -> {
           return !p_296830_.isAlliedTo(this.getTarget());
@@ -22,7 +14,7 @@
     }
  
 -   public void setTarget(@Nullable LivingEntity p_34478_) {
-+   public boolean setTarget(@Nullable LivingEntity p_34478_, EntityTargetEvent.TargetReason reason, boolean fireEvent) { // CraftBukkit - signature
++   public boolean setTarget(@Nullable LivingEntity p_34478_, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent) { // CraftBukkit - signature
        if (this.getTarget() == null && p_34478_ != null) {
           this.playFirstAngerSoundIn = FIRST_ANGER_SOUND_DELAY.sample(this.random);
           this.ticksUntilNextAlert = ALERT_INTERVAL.sample(this.random);

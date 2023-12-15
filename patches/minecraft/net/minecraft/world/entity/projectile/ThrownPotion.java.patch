@@ -1,40 +1,5 @@
 --- a/net/minecraft/world/entity/projectile/ThrownPotion.java
 +++ b/net/minecraft/world/entity/projectile/ThrownPotion.java
-@@ -1,14 +_,18 @@
- package net.minecraft.world.entity.projectile;
- 
-+import java.util.HashMap;
- import java.util.List;
-+import java.util.Map;
- import java.util.function.Predicate;
- import javax.annotation.Nullable;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
- import net.minecraft.nbt.CompoundTag;
-+import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.tags.BlockTags;
- import net.minecraft.world.effect.MobEffect;
- import net.minecraft.world.effect.MobEffectInstance;
-+import net.minecraft.world.effect.MobEffects;
- import net.minecraft.world.entity.AreaEffectCloud;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
-@@ -23,12 +_,15 @@
- import net.minecraft.world.item.alchemy.Potions;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.block.AbstractCandleBlock;
-+import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.block.CampfireBlock;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.BlockHitResult;
- import net.minecraft.world.phys.EntityHitResult;
- import net.minecraft.world.phys.HitResult;
-+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
- 
- public class ThrownPotion extends ThrowableItemProjectile implements ItemSupplier {
-    public static final double SPLASH_RANGE = 4.0D;
 @@ -88,11 +_,11 @@
           boolean flag = potion == Potions.WATER && list.isEmpty();
           if (flag) {
@@ -58,7 +23,7 @@
 +   private void applySplash(List<MobEffectInstance> p_37548_, @Nullable Entity p_37549_, HitResult position) { // CraftBukkit - Pass MovingObjectPosition
        AABB aabb = this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
        List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class, aabb);
-+      Map<org.bukkit.entity.LivingEntity, Double> affected = new HashMap<org.bukkit.entity.LivingEntity, Double>(); // CraftBukkit
++      java.util.Map<org.bukkit.entity.LivingEntity, Double> affected = new java.util.HashMap<org.bukkit.entity.LivingEntity, Double>(); // CraftBukkit
        if (!list.isEmpty()) {
           Entity entity = this.getEffectSource();
  
@@ -104,24 +69,24 @@
 +      }
 +
 +
-+      org.bukkit.event.entity.PotionSplashEvent event = CraftEventFactory.callPotionSplashEvent(this, position, affected);
++      org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPotionSplashEvent(this, position, affected);
 +      if (!event.isCancelled() && p_37548_ != null && !p_37548_.isEmpty()) { // do not process effects if there are no effects to process
 +         Entity entity1 = this.getEffectSource();
 +         for (org.bukkit.entity.LivingEntity victim : event.getAffectedEntities()) {
-+            if (!(victim instanceof CraftLivingEntity)) {
++            if (!(victim instanceof org.bukkit.craftbukkit.entity.CraftLivingEntity)) {
 +               continue;
 +            }
 +
-+            LivingEntity livingentity = ((CraftLivingEntity) victim).getHandle();
++            LivingEntity livingentity = ((org.bukkit.craftbukkit.entity.CraftLivingEntity) victim).getHandle();
 +            double intensity = event.getIntensity(victim);
 +            // CraftBukkit end
 +
 +            for (MobEffectInstance effectinstance : p_37548_) {
 +               MobEffect mobeffectlist = effectinstance.getEffect();
 +               // CraftBukkit start - Abide by PVP settings - for players only!
-+               if (!this.level().pvpMode && this.getOwner() instanceof ServerPlayer && livingentity instanceof ServerPlayer && livingentity != this.getOwner()) {
-+                  if (mobeffectlist == MobEffects.MOVEMENT_SLOWDOWN || mobeffectlist == MobEffects.DIG_SLOWDOWN || mobeffectlist == MobEffects.HARM || mobeffectlist == MobEffects.BLINDNESS
-+                          || mobeffectlist == MobEffects.HUNGER || mobeffectlist == MobEffects.WEAKNESS || mobeffectlist == MobEffects.POISON) {
++               if (!this.level().pvpMode && this.getOwner() instanceof net.minecraft.server.level.ServerPlayer && livingentity instanceof net.minecraft.server.level.ServerPlayer && livingentity != this.getOwner()) {
++                  if (mobeffectlist == net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN || mobeffectlist == net.minecraft.world.effect.MobEffects.DIG_SLOWDOWN || mobeffectlist == net.minecraft.world.effect.MobEffects.HARM || mobeffectlist == net.minecraft.world.effect.MobEffects.BLINDNESS
++                          || mobeffectlist == net.minecraft.world.effect.MobEffects.HUNGER || mobeffectlist == net.minecraft.world.effect.MobEffects.WEAKNESS || mobeffectlist == net.minecraft.world.effect.MobEffects.POISON) {
 +                     continue;
 +                  }
 +               }
@@ -172,14 +137,14 @@
        if (blockstate.is(BlockTags.FIRE)) {
 -         this.level().destroyBlock(p_150193_, false, this);
 +         // CraftBukkit start
-+         if (CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, Blocks.AIR.defaultBlockState())) {
++         if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
 +            this.level().destroyBlock(p_150193_, false, this);
 +         }
 +         // CraftBukkit end
        } else if (AbstractCandleBlock.isLit(blockstate)) {
 -         AbstractCandleBlock.extinguish((Player)null, blockstate, this.level(), p_150193_);
 +         // CraftBukkit start
-+         if (CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, blockstate.setValue(AbstractCandleBlock.LIT, false))) {
++         if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, blockstate.setValue(AbstractCandleBlock.LIT, false))) {
 +            AbstractCandleBlock.extinguish((Player) null, blockstate, this.level(), p_150193_);
 +         }
 +         // CraftBukkit end
@@ -188,7 +153,7 @@
 -         CampfireBlock.dowse(this.getOwner(), this.level(), p_150193_, blockstate);
 -         this.level().setBlockAndUpdate(p_150193_, blockstate.setValue(CampfireBlock.LIT, Boolean.valueOf(false)));
 +         // CraftBukkit start
-+         if (CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, blockstate.setValue(CampfireBlock.LIT, false))) {
++         if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, blockstate.setValue(CampfireBlock.LIT, false))) {
 +            this.level().levelEvent((Player) null, 1009, p_150193_, 0);
 +            CampfireBlock.dowse(this.getOwner(), this.level(), p_150193_, blockstate);
 +            this.level().setBlockAndUpdate(p_150193_, (BlockState) blockstate.setValue(CampfireBlock.LIT, false));

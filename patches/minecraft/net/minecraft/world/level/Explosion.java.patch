@@ -1,38 +1,5 @@
 --- a/net/minecraft/world/level/Explosion.java
 +++ b/net/minecraft/world/level/Explosion.java
-@@ -30,6 +_,7 @@
- import net.minecraft.world.item.enchantment.ProtectionEnchantment;
- import net.minecraft.world.level.block.BaseFireBlock;
- import net.minecraft.world.level.block.Block;
-+import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.gameevent.GameEvent;
- import net.minecraft.world.level.material.FluidState;
-@@ -37,6 +_,15 @@
- import net.minecraft.world.phys.HitResult;
- import net.minecraft.world.phys.Vec3;
- 
-+//Ketting start
-+import net.minecraft.world.entity.boss.EnderDragonPart;
-+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.block.BlockExplodeEvent;
-+import org.bukkit.event.entity.EntityExplodeEvent;
-+//Ketting end
-+
- public class Explosion {
-    private static final ExplosionDamageCalculator EXPLOSION_DAMAGE_CALCULATOR = new ExplosionDamageCalculator();
-    private static final int MAX_DROPS_PER_COMBINED_STACK = 16;
-@@ -48,7 +_,7 @@
-    private final double y;
-    private final double z;
-    @Nullable
--   private final Entity source;
-+   public final Entity source;
-    private final float radius;
-    private final DamageSource damageSource;
-    private final ExplosionDamageCalculator damageCalculator;
 @@ -57,6 +_,11 @@
     private final SoundEvent explosionSound;
     private final ObjectArrayList<BlockPos> toBlow = new ObjectArrayList<>();
@@ -95,15 +62,15 @@
 +                     // - Damaging ComplexEntityPart while forward the damage to EntityEnderDragon
 +                     // - Damaging EntityEnderDragon does nothing
 +                     // - EntityEnderDragon hitbock always covers the other parts and is therefore always present
-+                     if (entity instanceof EnderDragonPart) {
++                     if (entity instanceof net.minecraft.world.entity.boss.EnderDragonPart) {
 +                        continue;
 +                     }
 +
-+                     CraftEventFactory.entityDamage = source;
++                     org.bukkit.craftbukkit.event.CraftEventFactory.entityDamage = source;
 +                     entity.lastDamageCancelled = false;
 +
-+                     if (entity instanceof EnderDragon dragon) {
-+                        for (EnderDragonPart subEntity : dragon.subEntities) {
++                     if (entity instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon dragon) {
++                        for (net.minecraft.world.entity.boss.EnderDragonPart subEntity : dragon.subEntities) {
 +                           double d7part;
 +                           if (list.contains(subEntity) && (d7part = Math.sqrt(subEntity.distanceToSqr(vec3)) / f2) <= 1.0D) {
 +                              double d13part = (1.0D - d7part) * getSeenPercent(vec3, subEntity);
@@ -114,7 +81,7 @@
 +                        entity.hurt(this.damageSource, this.damageCalculator.getEntityDamageAmount(this, entity));
 +                     }
 +
-+                     CraftEventFactory.entityDamage = null;
++                     org.bukkit.craftbukkit.event.CraftEventFactory.entityDamage = null;
 +                     if (entity.lastDamageCancelled) { // SPIGOT-5339, SPIGOT-6252, SPIGOT-6777: Skip entity if damage event was cancelled
 +                        continue;
 +                     }
@@ -129,7 +96,7 @@
 +         // CraftBukkit start
 +         org.bukkit.World bworld = this.level.getWorld();
 +         org.bukkit.entity.Entity explode = this.source == null ? null : this.source.getBukkitEntity();
-+         Location location = new Location(bworld, this.x, this.y, this.z);
++         org.bukkit.Location location = new org.bukkit.Location(bworld, this.x, this.y, this.z);
 +
 +         List<org.bukkit.block.Block> blockList = new ObjectArrayList<>();
 +         for (int i1 = this.toBlow.size() - 1; i1 >= 0; i1--) {
@@ -143,13 +110,13 @@
 +         List<org.bukkit.block.Block> bukkitBlocks;
 +
 +         if (explode != null) {
-+             EntityExplodeEvent event = new EntityExplodeEvent(explode, location, blockList, this.yield);
++             org.bukkit.event.entity.EntityExplodeEvent event = new org.bukkit.event.entity.EntityExplodeEvent(explode, location, blockList, this.yield);
 +             this.level.getCraftServer().getPluginManager().callEvent(event);
 +             this.wasCanceled = event.isCancelled();
 +             bukkitBlocks = event.blockList();
 +             this.yield = event.getYield();
 +         } else {
-+             BlockExplodeEvent event = new BlockExplodeEvent(location.getBlock(), blockList, this.yield);
++             org.bukkit.event.block.BlockExplodeEvent event = new org.bukkit.event.block.BlockExplodeEvent(location.getBlock(), blockList, this.yield);
 +             this.level.getCraftServer().getPluginManager().callEvent(event);
 +             this.wasCanceled = event.isCancelled();
 +             bukkitBlocks = event.blockList();
@@ -175,8 +142,8 @@
 +            if (block instanceof net.minecraft.world.level.block.TntBlock) {
 +                Entity sourceEntity = source == null ? null : source;
 +               BlockPos sourceBlock = sourceEntity == null ? BlockPos.containing(this.x, this.y, this.z) : null;
-+                if (!CraftEventFactory.callTNTPrimeEvent(this.level, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.EXPLOSION, sourceEntity, sourceBlock)) {
-+                    this.level.sendBlockUpdated(blockpos, Blocks.AIR.defaultBlockState(), iblockdata, 3); // Update the block on the client
++                if (!org.bukkit.craftbukkit.event.CraftEventFactory.callTNTPrimeEvent(this.level, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.EXPLOSION, sourceEntity, sourceBlock)) {
++                    this.level.sendBlockUpdated(blockpos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), iblockdata, 3); // Update the block on the client
 +                    continue;
 +                }
 +            }

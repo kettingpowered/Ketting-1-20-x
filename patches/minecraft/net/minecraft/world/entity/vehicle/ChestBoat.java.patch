@@ -1,18 +1,5 @@
 --- a/net/minecraft/world/entity/vehicle/ChestBoat.java
 +++ b/net/minecraft/world/entity/vehicle/ChestBoat.java
-@@ -22,6 +_,12 @@
- import net.minecraft.world.item.Items;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.gameevent.GameEvent;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-+import org.bukkit.entity.HumanEntity;
-+import org.bukkit.inventory.InventoryHolder;
-+
-+import java.util.List;
- 
- public class ChestBoat extends Boat implements HasCustomInventoryScreen, ContainerEntity {
-    private static final int CONTAINER_SIZE = 27;
 @@ -204,7 +_,76 @@
        this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
     }
@@ -44,33 +31,33 @@
     }
 +
 +   // CraftBukkit start
-+   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++   public java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
 +   private int maxStack = MAX_STACK;
 +
 +   @Override
-+   public List<ItemStack> getContents() {
++   public java.util.List<ItemStack> getContents() {
 +      return this.itemStacks;
 +   }
 +
 +   @Override
-+   public void onOpen(CraftHumanEntity who) {
++   public void onOpen(org.bukkit.craftbukkit.entity.CraftHumanEntity who) {
 +      transaction.add(who);
 +   }
 +
 +   @Override
-+   public void onClose(CraftHumanEntity who) {
++   public void onClose(org.bukkit.craftbukkit.entity.CraftHumanEntity who) {
 +      transaction.remove(who);
 +   }
 +
 +   @Override
-+   public List<HumanEntity> getViewers() {
++   public java.util.List<org.bukkit.entity.HumanEntity> getViewers() {
 +      return transaction;
 +   }
 +
 +   @Override
-+   public InventoryHolder getOwner() {
++   public org.bukkit.inventory.InventoryHolder getOwner() {
 +      org.bukkit.entity.Entity entity = getBukkitEntity();
-+      if (entity instanceof InventoryHolder) return (InventoryHolder) entity;
++      if (entity instanceof org.bukkit.inventory.InventoryHolder) return (org.bukkit.inventory.InventoryHolder) entity;
 +      return null;
 +   }
 +
@@ -85,7 +72,7 @@
 +   }
 +
 +   @Override
-+   public Location getLocation() {
++   public org.bukkit.Location getLocation() {
 +      return getBukkitEntity().getLocation();
 +   }
 +   // CraftBukkit end

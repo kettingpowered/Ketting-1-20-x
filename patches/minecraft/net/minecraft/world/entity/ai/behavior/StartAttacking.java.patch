@@ -1,21 +1,5 @@
 --- a/net/minecraft/world/entity/ai/behavior/StartAttacking.java
 +++ b/net/minecraft/world/entity/ai/behavior/StartAttacking.java
-@@ -3,10 +_,15 @@
- import java.util.Optional;
- import java.util.function.Function;
- import java.util.function.Predicate;
-+
-+import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.world.entity.LivingEntity;
- import net.minecraft.world.entity.Mob;
- import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
- import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityTargetEvent;
- 
- public class StartAttacking {
-    public static <E extends Mob> BehaviorControl<E> create(Function<E, Optional<? extends LivingEntity>> p_259868_) {
 @@ -30,7 +_,22 @@
                       if (!p_258774_.canAttack(livingentity)) {
                          return false;
@@ -26,7 +10,7 @@
 +                           return false;
 +
 +                        // CraftBukkit start
-+                        EntityTargetEvent event = CraftEventFactory.callEntityTargetLivingEvent(p_258774_, changeTargetEvent.getNewTarget(), (changeTargetEvent.getNewTarget() instanceof ServerPlayer) ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.CLOSEST_ENTITY); //Ketting - forge compat
++                        org.bukkit.event.entity.EntityTargetEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetLivingEvent(p_258774_, changeTargetEvent.getNewTarget(), (changeTargetEvent.getNewTarget() instanceof net.minecraft.server.level.ServerPlayer) ? org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER : org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_ENTITY); //Ketting - forge compat
 +                        if (event.isCancelled()) {
 +                           return false;
 +                        }
@@ -34,7 +18,7 @@
 +                           p_258779_.erase();
 +                           return true;
 +                        }
-+                        livingentity = ((CraftLivingEntity) event.getTarget()).getHandle();
++                        livingentity = ((org.bukkit.craftbukkit.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +                        // CraftBukkit end
 +                        p_258778_.set(livingentity); //Ketting
                          p_258779_.erase();

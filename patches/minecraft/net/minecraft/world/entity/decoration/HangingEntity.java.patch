@@ -1,41 +1,5 @@
 --- a/net/minecraft/world/entity/decoration/HangingEntity.java
 +++ b/net/minecraft/world/entity/decoration/HangingEntity.java
-@@ -7,6 +_,7 @@
- import net.minecraft.core.Direction;
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.server.level.ServerLevel;
-+import net.minecraft.tags.DamageTypeTags;
- import net.minecraft.util.Mth;
- import net.minecraft.world.damagesource.DamageSource;
- import net.minecraft.world.entity.Entity;
-@@ -24,6 +_,9 @@
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.Vec3;
- import org.apache.commons.lang3.Validate;
-+import org.bukkit.entity.Hanging;
-+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-+import org.bukkit.event.hanging.HangingBreakEvent;
- import org.slf4j.Logger;
- 
- public abstract class HangingEntity extends Entity {
-@@ -32,7 +_,7 @@
-       return p_31734_ instanceof HangingEntity;
-    };
-    private int checkInterval;
--   protected BlockPos pos;
-+   public BlockPos pos;
-    protected Direction direction = Direction.SOUTH;
- 
-    protected HangingEntity(EntityType<? extends HangingEntity> p_31703_, Level p_31704_) {
-@@ -47,7 +_,7 @@
-    protected void defineSynchedData() {
-    }
- 
--   protected void setDirection(Direction p_31728_) {
-+   public void setDirection(Direction p_31728_) {
-       Validate.notNull(p_31728_);
-       Validate.isTrue(p_31728_.getAxis().isHorizontal());
-       this.direction = p_31728_;
 @@ -58,36 +_,47 @@
  
     protected void recalculateBoundingBox() {
@@ -120,16 +84,16 @@
              if (!this.isRemoved() && !this.survives()) {
 +               // CraftBukkit start - fire break events
 +               BlockState material = this.level().getBlockState(this.blockPosition());
-+               HangingBreakEvent.RemoveCause cause;
++               org.bukkit.event.hanging.HangingBreakEvent.RemoveCause cause;
 +
 +               if (!material.isAir()) {
 +                  // TODO: This feels insufficient to catch 100% of suffocation cases
-+                  cause = HangingBreakEvent.RemoveCause.OBSTRUCTION;
++                  cause = org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.OBSTRUCTION;
 +               } else {
-+                  cause = HangingBreakEvent.RemoveCause.PHYSICS;
++                  cause = org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.PHYSICS;
 +               }
 +
-+               HangingBreakEvent event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), cause);
++               org.bukkit.event.hanging.HangingBreakEvent event = new org.bukkit.event.hanging.HangingBreakEvent((org.bukkit.entity.Hanging) this.getBukkitEntity(), cause);
 +               this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +               if (this.isRemoved() || event.isCancelled()) {
@@ -154,11 +118,11 @@
           if (!this.isRemoved() && !this.level().isClientSide) {
 +            // CraftBukkit start - fire break events
 +            Entity damager = (p_31715_.isIndirect()) ? p_31715_.getEntity() : p_31715_.getDirectEntity();
-+            HangingBreakEvent event;
++            org.bukkit.event.hanging.HangingBreakEvent event;
 +            if (damager != null) {
-+               event = new HangingBreakByEntityEvent((Hanging) this.getBukkitEntity(), damager.getBukkitEntity(), p_31715_.is(DamageTypeTags.IS_EXPLOSION) ? HangingBreakEvent.RemoveCause.EXPLOSION : HangingBreakEvent.RemoveCause.ENTITY);
++               event = new org.bukkit.event.hanging.HangingBreakByEntityEvent((org.bukkit.entity.Hanging) this.getBukkitEntity(), damager.getBukkitEntity(), p_31715_.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION) ? org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.EXPLOSION : org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.ENTITY);
 +            } else {
-+               event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), p_31715_.is(DamageTypeTags.IS_EXPLOSION) ? HangingBreakEvent.RemoveCause.EXPLOSION : HangingBreakEvent.RemoveCause.DEFAULT);
++               event = new org.bukkit.event.hanging.HangingBreakEvent((org.bukkit.entity.Hanging) this.getBukkitEntity(), p_31715_.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION) ? org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.EXPLOSION : org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.DEFAULT);
 +            }
 +
 +            this.level().getCraftServer().getPluginManager().callEvent(event);
@@ -179,7 +143,7 @@
 +
 +         // CraftBukkit start - fire break events
 +         // TODO - Does this need its own cause? Seems to only be triggered by pistons
-+         HangingBreakEvent event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), HangingBreakEvent.RemoveCause.PHYSICS);
++         org.bukkit.event.hanging.HangingBreakEvent event = new org.bukkit.event.hanging.HangingBreakEvent((org.bukkit.entity.Hanging) this.getBukkitEntity(), org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.PHYSICS);
 +         this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (this.isRemoved() || event.isCancelled()) {

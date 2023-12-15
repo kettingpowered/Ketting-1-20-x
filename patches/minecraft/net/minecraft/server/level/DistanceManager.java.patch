@@ -1,22 +1,5 @@
 --- a/net/minecraft/server/level/DistanceManager.java
 +++ b/net/minecraft/server/level/DistanceManager.java
-@@ -24,6 +_,7 @@
- import java.io.IOException;
- import java.nio.charset.StandardCharsets;
- import java.util.Iterator;
-+import java.util.Objects;
- import java.util.Set;
- import java.util.concurrent.CompletableFuture;
- import java.util.concurrent.Executor;
-@@ -40,7 +_,7 @@
-    static final int PLAYER_TICKET_LEVEL = ChunkLevel.byStatus(FullChunkStatus.ENTITY_TICKING);
-    private static final int INITIAL_TICKET_LIST_CAPACITY = 4;
-    final Long2ObjectMap<ObjectSet<ServerPlayer>> playersPerChunk = new Long2ObjectOpenHashMap<>();
--   final Long2ObjectOpenHashMap<SortedArraySet<Ticket<?>>> tickets = new Long2ObjectOpenHashMap<>();
-+   public final Long2ObjectOpenHashMap<SortedArraySet<Ticket<?>>> tickets = new Long2ObjectOpenHashMap<>();
-    private final DistanceManager.ChunkTicketTracker ticketTracker = new DistanceManager.ChunkTicketTracker();
-    private final DistanceManager.FixedPlayerDistanceChunkTracker naturalSpawnChunkCounter = new DistanceManager.FixedPlayerDistanceChunkTracker(8);
-    private final TickingTracker tickingTicketsTracker = new TickingTracker();
 @@ -54,7 +_,10 @@
     private long ticketTickCounter;
     private int simulationDistance = 10;
@@ -24,7 +7,7 @@
 +   private final Long2ObjectOpenHashMap<SortedArraySet<Ticket<?>>> forcedTickets = new Long2ObjectOpenHashMap<>();
 +
     protected DistanceManager(Executor p_140774_, Executor p_140775_) {
-+      Objects.requireNonNull(p_140775_);
++      java.util.Objects.requireNonNull(p_140775_);
        ProcessorHandle<Runnable> processorhandle = ProcessorHandle.of("player ticket throttler", p_140775_::execute);
        ChunkTaskPriorityQueueSorter chunktaskpriorityqueuesorter = new ChunkTaskPriorityQueueSorter(ImmutableList.of(processorhandle), p_140774_, 4);
        this.ticketThrottler = chunktaskpriorityqueuesorter;

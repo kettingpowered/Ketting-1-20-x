@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/DragonEggBlock.java
 +++ b/net/minecraft/world/level/block/DragonEggBlock.java
-@@ -16,6 +_,7 @@
- import net.minecraft.world.phys.BlockHitResult;
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.event.block.BlockFromToEvent;
- 
- public class DragonEggBlock extends FallingBlock {
-    public static final MapCodec<DragonEggBlock> CODEC = simpleCodec(DragonEggBlock::new);
 @@ -48,6 +_,18 @@
        for(int i = 0; i < 1000; ++i) {
           BlockPos blockpos = p_52938_.offset(p_52937_.random.nextInt(16) - p_52937_.random.nextInt(16), p_52937_.random.nextInt(8) - p_52937_.random.nextInt(8), p_52937_.random.nextInt(16) - p_52937_.random.nextInt(16));
@@ -15,7 +7,7 @@
 +            // CraftBukkit start
 +            org.bukkit.block.Block from = p_52937_.getWorld().getBlockAt(p_52938_.getX(), p_52938_.getY(), p_52938_.getZ());
 +            org.bukkit.block.Block to = p_52937_.getWorld().getBlockAt(blockpos.getX(), blockpos.getY(), blockpos.getZ());
-+            BlockFromToEvent event = new BlockFromToEvent(from, to);
++            org.bukkit.event.block.BlockFromToEvent event = new org.bukkit.event.block.BlockFromToEvent(from, to);
 +            org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +
 +            if (event.isCancelled()) {

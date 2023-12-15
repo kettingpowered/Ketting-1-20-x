@@ -1,19 +1,11 @@
 --- a/net/minecraft/world/entity/ai/goal/target/TargetGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/target/TargetGoal.java
-@@ -9,6 +_,7 @@
- import net.minecraft.world.level.pathfinder.Node;
- import net.minecraft.world.level.pathfinder.Path;
- import net.minecraft.world.scores.Team;
-+import org.bukkit.event.entity.EntityTargetEvent;
- 
- public abstract class TargetGoal extends Goal {
-    private static final int EMPTY_REACH_CACHE = 0;
 @@ -62,7 +_,7 @@
                    }
                 }
  
 -               this.mob.setTarget(livingentity);
-+               this.mob.setTarget(livingentity, EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true); // CraftBukkit
++               this.mob.setTarget(livingentity, org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true); // CraftBukkit
                 return true;
              }
           }
@@ -22,7 +14,7 @@
  
     public void stop() {
 -      this.mob.setTarget((LivingEntity)null);
-+      this.mob.setTarget((LivingEntity)null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit
++      this.mob.setTarget((LivingEntity)null, org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit
        this.targetMob = null;
     }
  

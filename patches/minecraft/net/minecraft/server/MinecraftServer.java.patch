@@ -1,38 +1,5 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -11,6 +_,7 @@
- import com.mojang.authlib.minecraft.MinecraftSessionService;
- import com.mojang.datafixers.DataFixer;
- import com.mojang.logging.LogUtils;
-+import com.mojang.serialization.Dynamic;
- import it.unimi.dsi.fastutil.longs.LongIterator;
- import it.unimi.dsi.fastutil.objects.ObjectArrayList;
- import java.awt.image.BufferedImage;
-@@ -62,6 +_,8 @@
- import net.minecraft.core.registries.Registries;
- import net.minecraft.data.worldgen.features.MiscOverworldFeatures;
- import net.minecraft.gametest.framework.GameTestTicker;
-+import net.minecraft.nbt.NbtException;
-+import net.minecraft.nbt.ReportedNbtException;
- import net.minecraft.network.chat.ChatDecorator;
- import net.minecraft.network.chat.ChatType;
- import net.minecraft.network.chat.Component;
-@@ -151,12 +_,15 @@
- import net.minecraft.world.level.storage.LevelData;
- import net.minecraft.world.level.storage.LevelResource;
- import net.minecraft.world.level.storage.LevelStorageSource;
-+import net.minecraft.world.level.storage.LevelSummary;
- import net.minecraft.world.level.storage.PlayerDataStorage;
- import net.minecraft.world.level.storage.ServerLevelData;
- import net.minecraft.world.level.storage.WorldData;
- import net.minecraft.world.level.storage.loot.LootDataManager;
- import net.minecraft.world.phys.Vec2;
- import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.CraftServer;
-+import org.bukkit.craftbukkit.SpigotTimings;
- import org.slf4j.Logger;
- 
- public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements ServerInfo, CommandSource, AutoCloseable {
 @@ -164,7 +_,7 @@
     public static final String VANILLA_BRAND = "vanilla";
     private static final float AVERAGE_TICK_TIME_SMOOTHING = 0.8F;
@@ -48,7 +15,7 @@
     private volatile boolean isSaving;
 +   // CraftBukkit start
 +   public WorldLoader.DataLoadContext worldLoader; //Ketting - not final
-+   public CraftServer server;
++   public org.bukkit.craftbukkit.CraftServer server;
 +   public joptsimple.OptionSet options;
 +   public org.bukkit.command.ConsoleCommandSender console;
 +   public jline.console.ConsoleReader reader;
@@ -205,14 +172,14 @@
 +            String worldType = (dimension == -999) ? resourcekey.location().getNamespace() + "_" + resourcekey.location().getPath() : org.bukkit.World.Environment.getEnvironment(dimension).toString().toLowerCase();
 +            String name = loadLevel$worldName + "_" + worldType;
 +
-+            Dynamic<?> dynamic;
++            com.mojang.serialization.Dynamic<?> dynamic;
 +            if (this.storageSource.hasWorldData()) {
-+                LevelSummary worldinfo;
++                net.minecraft.world.level.storage.LevelSummary worldinfo;
 +
 +                try {
 +                    dynamic = this.storageSource.getDataTag();
 +                    worldinfo = this.storageSource.getSummary(dynamic);
-+                } catch (NbtException | ReportedNbtException | IOException ioexception) {
++                } catch (net.minecraft.nbt.NbtException | net.minecraft.nbt.ReportedNbtException | IOException ioexception) {
 +                    LevelStorageSource.LevelDirectory convertable_b = this.storageSource.getLevelDirectory();
 +
 +                    MinecraftServer.LOGGER.warn("Failed to load world data from {}", convertable_b.dataFile(), ioexception);
@@ -221,7 +188,7 @@
 +                    try {
 +                        dynamic = this.storageSource.getDataTagFallback();
 +                        worldinfo = this.storageSource.getSummary(dynamic);
-+                    } catch (NbtException | ReportedNbtException | IOException ioexception1) {
++                    } catch (net.minecraft.nbt.NbtException | net.minecraft.nbt.ReportedNbtException | IOException ioexception1) {
 +                        MinecraftServer.LOGGER.error("Failed to load world data from {}", convertable_b.oldDataFile(), ioexception1);
 +                        MinecraftServer.LOGGER.error("Failed to load world data from {} and {}. World files may be corrupted. Shutting down.", convertable_b.dataFile(), convertable_b.oldDataFile());
 +                        return;
@@ -578,7 +545,7 @@
     }
  
     public void tickServer(BooleanSupplier p_129871_) {
-+      SpigotTimings.serverTickTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.serverTickTimer.startTiming(); // Spigot
        long i = Util.getNanos();
 +      net.minecraftforge.event.ForgeEventFactory.onPreServerTick(p_129871_, this);
        ++this.tickCount;
@@ -596,14 +563,14 @@
 +      if (this.autosavePeriod > 0 && this.ticksUntilAutosave <= 0) {
 +         this.ticksUntilAutosave = this.autosavePeriod;
 +         // CraftBukkit end
-+         SpigotTimings.worldSaveTimer.startTiming(); // Spigot
++         org.bukkit.craftbukkit.SpigotTimings.worldSaveTimer.startTiming(); // Spigot
           this.ticksUntilAutosave = this.computeNextAutosaveInterval();
           LOGGER.debug("Autosave started");
           this.profiler.push("save");
           this.saveEverything(true, false, false);
           this.profiler.pop();
           LOGGER.debug("Autosave finished");
-+         SpigotTimings.worldSaveTimer.stopTiming(); // Spigot
++         org.bukkit.craftbukkit.SpigotTimings.worldSaveTimer.stopTiming(); // Spigot
        }
  
        this.profiler.push("tallying");
@@ -613,7 +580,7 @@
        this.profiler.pop();
 +      net.minecraftforge.event.ForgeEventFactory.onPostServerTick(p_129871_, this);
 +      org.spigotmc.WatchdogThread.tick(); // Spigot
-+      SpigotTimings.serverTickTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.serverTickTimer.stopTiming(); // Spigot
 +      org.spigotmc.CustomTimingsHandler.tick(); // Spigot
 +   }
 +
@@ -641,25 +608,25 @@
        this.getPlayerList().getPlayers().forEach((p_296434_) -> {
           p_296434_.connection.suspendFlushing();
        });
-+      SpigotTimings.schedulerTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.schedulerTimer.startTiming(); // Spigot
 +      this.server.getScheduler().mainThreadHeartbeat(this.tickCount); // CraftBukkit
-+      SpigotTimings.schedulerTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.schedulerTimer.stopTiming(); // Spigot
        this.profiler.push("commandFunctions");
-+      SpigotTimings.commandFunctionsTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.commandFunctionsTimer.startTiming(); // Spigot
        this.getFunctions().tick();
-+      SpigotTimings.commandFunctionsTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.commandFunctionsTimer.stopTiming(); // Spigot
        this.profiler.popPush("levels");
  
 -      for(ServerLevel serverlevel : this.getAllLevels()) {
 +      // CraftBukkit start
 +      // Run tasks that are waiting on processing
-+      SpigotTimings.processQueueTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.processQueueTimer.startTiming(); // Spigot
 +      while (!processQueue.isEmpty()) {
 +         processQueue.remove().run();
 +      }
-+      SpigotTimings.processQueueTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.processQueueTimer.stopTiming(); // Spigot
 +
-+      SpigotTimings.timeUpdateTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.timeUpdateTimer.startTiming(); // Spigot
 +      // Send time updates to everyone, it will get the right time from the world the player is in.
 +      if (this.tickCount % 20 == 0) {
 +         for (int i = 0; i < this.getPlayerList().players.size(); ++i) {
@@ -667,7 +634,7 @@
 +            serverplayer.connection.send(new ClientboundSetTimePacket(serverplayer.level().getGameTime(), serverplayer.getPlayerTime(), serverplayer.level().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT))); // Add support for per player time
 +         }
 +      }
-+      SpigotTimings.timeUpdateTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.timeUpdateTimer.stopTiming(); // Spigot
 +
 +      for(ServerLevel serverlevel : this.getWorldArray()) {
 +         long tickStart = Util.getNanos();
@@ -711,25 +678,25 @@
        }
  
        this.profiler.popPush("connection");
-+      SpigotTimings.connectionTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.connectionTimer.startTiming(); // Spigot
        this.getConnection().tick();
-+      SpigotTimings.connectionTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.connectionTimer.stopTiming(); // Spigot
        this.profiler.popPush("players");
-+      SpigotTimings.playerListTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.playerListTimer.startTiming(); // Spigot
        this.playerList.tick();
 -      if (SharedConstants.IS_RUNNING_IN_IDE && this.tickRateManager.runsNormally()) {
-+      SpigotTimings.playerListTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.playerListTimer.stopTiming(); // Spigot
 +      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
           GameTestTicker.SINGLETON.tick();
        }
  
        this.profiler.popPush("server gui refresh");
  
-+      SpigotTimings.tickablesTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.tickablesTimer.startTiming(); // Spigot
        for(int i = 0; i < this.tickables.size(); ++i) {
           this.tickables.get(i).run();
        }
-+      SpigotTimings.tickablesTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.tickablesTimer.stopTiming(); // Spigot
  
        this.profiler.popPush("send chunks");
  
@@ -860,7 +827,7 @@
 +
 +   @Deprecated
 +   public static MinecraftServer getServer() {
-+      return (org.bukkit.Bukkit.getServer() instanceof CraftServer) ? ((CraftServer) org.bukkit.Bukkit.getServer()).getServer() : null;
++      return (org.bukkit.Bukkit.getServer() instanceof org.bukkit.craftbukkit.CraftServer) ? ((org.bukkit.craftbukkit.CraftServer) org.bukkit.Bukkit.getServer()).getServer() : null;
 +   }
 +   // CraftBukkit end
 +

@@ -1,10 +1,8 @@
 --- a/net/minecraft/world/level/block/LeavesBlock.java
 +++ b/net/minecraft/world/level/block/LeavesBlock.java
-@@ -23,8 +_,9 @@
- import net.minecraft.world.level.material.Fluids;
+@@ -24,7 +_,7 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.event.block.LeavesDecayEvent;
  
 -public class LeavesBlock extends Block implements SimpleWaterloggedBlock {
 +public class LeavesBlock extends Block implements SimpleWaterloggedBlock, net.minecraftforge.common.IForgeShearable {
@@ -16,7 +14,7 @@
     public void randomTick(BlockState p_221379_, ServerLevel p_221380_, BlockPos p_221381_, RandomSource p_221382_) {
        if (this.decaying(p_221379_)) {
 +         // CraftBukkit start
-+         LeavesDecayEvent event = new LeavesDecayEvent(p_221380_.getWorld().getBlockAt(p_221381_.getX(), p_221381_.getY(), p_221381_.getZ()));
++         org.bukkit.event.block.LeavesDecayEvent event = new org.bukkit.event.block.LeavesDecayEvent(p_221380_.getWorld().getBlockAt(p_221381_.getX(), p_221381_.getY(), p_221381_.getZ()));
 +         p_221380_.getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (event.isCancelled() || p_221380_.getBlockState(p_221381_).getBlock() != this) {

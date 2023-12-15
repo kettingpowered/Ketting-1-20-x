@@ -1,20 +1,9 @@
 --- a/net/minecraft/world/entity/item/PrimedTnt.java
 +++ b/net/minecraft/world/entity/item/PrimedTnt.java
-@@ -18,6 +_,8 @@
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.entity.ExplosionPrimeEvent;
- 
- public class PrimedTnt extends Entity implements TraceableEntity {
-    private static final EntityDataAccessor<Integer> DATA_FUSE_ID = SynchedEntityData.defineId(PrimedTnt.class, EntityDataSerializers.INT);
-@@ -26,7 +_,9 @@
-    private static final String TAG_BLOCK_STATE = "block_state";
+@@ -27,6 +_,8 @@
     public static final String TAG_FUSE = "fuse";
     @Nullable
--   private LivingEntity owner;
-+   public LivingEntity owner;
+    public LivingEntity owner;
 +   public float yield = 4; // CraftBukkit - add field
 +   public boolean isIncendiary = false; // CraftBukkit - add field
  
@@ -51,7 +40,7 @@
 -      this.level().explode(this, this.getX(), this.getY(0.0625D), this.getZ(), 4.0F, Level.ExplosionInteraction.TNT);
 +      // CraftBukkit start
 +      // float f = 4.0F;
-+      ExplosionPrimeEvent event = CraftEventFactory.callExplosionPrimeEvent((org.bukkit.entity.Explosive)this.getBukkitEntity());
++      org.bukkit.event.entity.ExplosionPrimeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callExplosionPrimeEvent((org.bukkit.entity.Explosive)this.getBukkitEntity());
 +
 +      if (!event.isCancelled()) {
 +         this.level().explode(this, this.getX(), this.getY(0.0625D), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.TNT);

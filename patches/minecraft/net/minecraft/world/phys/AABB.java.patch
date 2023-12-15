@@ -1,19 +1,11 @@
 --- a/net/minecraft/world/phys/AABB.java
 +++ b/net/minecraft/world/phys/AABB.java
-@@ -4,6 +_,7 @@
- import javax.annotation.Nullable;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
-+import net.minecraft.core.Vec3i;
- import net.minecraft.util.Mth;
- import net.minecraft.world.level.levelgen.structure.BoundingBox;
- 
 @@ -28,6 +_,11 @@
     public AABB(BlockPos p_82305_) {
        this((double)p_82305_.getX(), (double)p_82305_.getY(), (double)p_82305_.getZ(), (double)(p_82305_.getX() + 1), (double)(p_82305_.getY() + 1), (double)(p_82305_.getZ() + 1));
     }
 +   //Ketting start
-+   public AABB(Vec3i start, Vec3i end) {
++   public AABB(net.minecraft.core.Vec3i start, net.minecraft.core.Vec3i end) {
 +      this((double)start.getX(), (double)start.getY(), (double)start.getZ(), (double)end.getX(), (double)end.getY(), (double)end.getZ());
 +   }
 +   //Ketting end

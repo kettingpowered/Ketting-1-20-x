@@ -1,49 +1,11 @@
 --- a/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-@@ -3,10 +_,8 @@
- import com.mojang.authlib.GameProfile;
- import com.mojang.logging.LogUtils;
- import javax.annotation.Nullable;
--import net.minecraft.CrashReport;
--import net.minecraft.CrashReportCategory;
--import net.minecraft.ReportedException;
--import net.minecraft.Util;
-+
-+import net.minecraft.*;
- import net.minecraft.network.Connection;
- import net.minecraft.network.PacketSendListener;
- import net.minecraft.network.chat.Component;
-@@ -19,11 +_,24 @@
- import net.minecraft.network.protocol.common.ServerboundKeepAlivePacket;
- import net.minecraft.network.protocol.common.ServerboundPongPacket;
- import net.minecraft.network.protocol.common.ServerboundResourcePackPacket;
-+import net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket;
-+import net.minecraft.resources.ResourceLocation;
- import net.minecraft.server.MinecraftServer;
- import net.minecraft.server.level.ClientInformation;
-+import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.util.VisibleForDebug;
-+import org.bukkit.craftbukkit.CraftServer;
-+import org.bukkit.craftbukkit.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.util.CraftChatMessage;
-+import org.bukkit.craftbukkit.util.CraftLocation;
-+import org.bukkit.craftbukkit.util.Waitable;
-+import org.bukkit.event.player.PlayerKickEvent;
-+import org.bukkit.event.player.PlayerResourcePackStatusEvent;
- import org.slf4j.Logger;
- 
-+import java.util.Objects;
-+import java.util.concurrent.ExecutionException;
-+
- public abstract class ServerCommonPacketListenerImpl implements ServerCommonPacketListener {
-    private static final Logger LOGGER = LogUtils.getLogger();
-    public static final int LATENCY_CHECK_INTERVAL = 15000;
 @@ -36,11 +_,22 @@
     private int latency;
     private volatile boolean suspendFlushingOnServerThread = false;
  
 -   public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_) {
-+   public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_, ServerPlayer player) { // CraftBukkit
++   public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_, net.minecraft.server.level.ServerPlayer player) { // CraftBukkit
        this.server = p_299469_;
        this.connection = p_300872_;
        this.keepAliveTime = Util.getMillis();
@@ -52,12 +14,12 @@
 +      this.player = player;
 +      this.cserver = p_299469_.server;
 +   }
-+   protected final ServerPlayer player;
-+   protected final CraftServer cserver;
++   protected final net.minecraft.server.level.ServerPlayer player;
++   protected final org.bukkit.craftbukkit.CraftServer cserver;
 +   public boolean processedDisconnect;
 +
-+   public CraftPlayer getCraftPlayer() {
-+      return (this.player == null) ? null : (CraftPlayer) this.player.getBukkitEntity();
++   public org.bukkit.craftbukkit.entity.CraftPlayer getCraftPlayer() {
++      return (this.player == null) ? null : (org.bukkit.craftbukkit.entity.CraftPlayer) this.player.getBukkitEntity();
 +      // CraftBukkit end
     }
  
@@ -75,8 +37,8 @@
     }
  
 +   // CraftBukkit start
-+   private static final ResourceLocation CUSTOM_REGISTER = new ResourceLocation("register");
-+   private static final ResourceLocation CUSTOM_UNREGISTER = new ResourceLocation("unregister");
++   private static final net.minecraft.resources.ResourceLocation CUSTOM_REGISTER = new net.minecraft.resources.ResourceLocation("register");
++   private static final net.minecraft.resources.ResourceLocation CUSTOM_UNREGISTER = new net.minecraft.resources.ResourceLocation("unregister");
     public void handleCustomPayload(ServerboundCustomPayloadPacket p_300164_) {
 -   }
 +      net.minecraftforge.common.ForgeHooks.onCustomPayload(p_300164_, this.connection);
@@ -94,7 +56,7 @@
           LOGGER.info("Disconnecting {} due to resource pack {} rejection", this.playerProfile().getName(), p_300656_.id());
           this.disconnect(Component.translatable("multiplayer.requiredTexturePrompt.disconnect"));
        }
-+      this.cserver.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(getCraftPlayer(), PlayerResourcePackStatusEvent.Status.values()[p_300656_.action().ordinal()])); // CraftBukkit
++      this.cserver.getPluginManager().callEvent(new org.bukkit.event.player.PlayerResourcePackStatusEvent(getCraftPlayer(), org.bukkit.event.player.PlayerResourcePackStatusEvent.Status.values()[p_300656_.action().ordinal()])); // CraftBukkit
  
     }
  
@@ -113,8 +75,8 @@
 +      // CraftBukkit start
 +      if (p_300325_ == null || this.processedDisconnect) { // Spigot
 +         return;
-+      } else if (p_300325_ instanceof ClientboundSetDefaultSpawnPositionPacket packet) {
-+         this.player.compassTarget = CraftLocation.toBukkit(packet.pos, this.getCraftPlayer().getWorld());
++      } else if (p_300325_ instanceof net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket packet) {
++         this.player.compassTarget = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(packet.pos, this.getCraftPlayer().getWorld());
 +      }
 +      // CraftBukkit end
        boolean flag = !this.suspendFlushingOnServerThread || !this.server.isSameThread();
@@ -128,7 +90,7 @@
     public void disconnect(Component p_299122_) {
 -      this.connection.send(new ClientboundDisconnectPacket(p_299122_), PacketSendListener.thenRun(() -> {
 -         this.connection.disconnect(p_299122_);
-+      disconnect(CraftChatMessage.fromComponent(p_299122_));
++      disconnect(org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(p_299122_));
 +   }
 +   // CraftBukkit end
 +
@@ -138,7 +100,7 @@
 +         return;
 +      }
 +      if (!this.cserver.isPrimaryThread()) {
-+         Waitable waitable = new Waitable() {
++         org.bukkit.craftbukkit.util.Waitable waitable = new org.bukkit.craftbukkit.util.Waitable() {
 +            @Override
 +            protected Object evaluate() {
 +               ServerCommonPacketListenerImpl.this.disconnect(s);
@@ -152,15 +114,15 @@
 +            waitable.get();
 +         } catch (InterruptedException e) {
 +            Thread.currentThread().interrupt();
-+         } catch (ExecutionException e) {
++         } catch (java.util.concurrent.ExecutionException e) {
 +            throw new RuntimeException(e);
 +         }
 +         return;
 +      }
 +
-+      String leaveMessage = ChatFormatting.YELLOW + this.player.getScoreboardName() + " left the game.";
++      String leaveMessage = net.minecraft.ChatFormatting.YELLOW + this.player.getScoreboardName() + " left the game.";
 +
-+      PlayerKickEvent event = new PlayerKickEvent(this.player.getBukkitEntity(), s, leaveMessage);
++      org.bukkit.event.player.PlayerKickEvent event = new org.bukkit.event.player.PlayerKickEvent(this.player.getBukkitEntity(), s, leaveMessage);
 +
 +      if (this.cserver.getServer().isRunning()) {
 +         this.cserver.getPluginManager().callEvent(event);
@@ -172,7 +134,7 @@
 +      }
 +      this.player.kickLeaveMessage = event.getLeaveMessage(); // CraftBukkit - SPIGOT-3034: Forward leave message to PlayerQuitEvent
 +      // Send the possibly modified leave message
-+      final Component ichatbasecomponent = CraftChatMessage.fromString(event.getReason(), true)[0];
++      final Component ichatbasecomponent = org.bukkit.craftbukkit.util.CraftChatMessage.fromString(event.getReason(), true)[0];
 +      // CraftBukkit end
 +
 +      this.connection.send(new ClientboundDisconnectPacket(ichatbasecomponent), PacketSendListener.thenRun(() -> {
@@ -183,7 +145,7 @@
 -      this.server.executeBlocking(this.connection::handleDisconnection);
 +      MinecraftServer minecraftserver = this.server;
 +
-+      Objects.requireNonNull(this.connection);
++      java.util.Objects.requireNonNull(this.connection);
 +      // CraftBukkit - Don't wait
 +      minecraftserver.wrapRunnable(this.connection::handleDisconnection);
     }

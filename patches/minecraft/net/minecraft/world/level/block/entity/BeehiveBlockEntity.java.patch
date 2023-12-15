@@ -1,11 +1,9 @@
 --- a/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BeehiveBlockEntity.java
-@@ -41,7 +_,8 @@
-    public static final int MIN_OCCUPATION_TICKS_NECTARLESS = 600;
+@@ -42,6 +_,7 @@
     private final List<BeehiveBlockEntity.BeeData> stored = Lists.newArrayList();
     @Nullable
--   private BlockPos savedFlowerPos;
-+   public BlockPos savedFlowerPos;
+    public BlockPos savedFlowerPos;
 +   public int maxBees = 3; // CraftBukkit - allow setting max amount of bees a hive can hold
  
     public BeehiveBlockEntity(BlockPos p_155134_, BlockState p_155135_) {
@@ -66,11 +64,9 @@
           p_58745_.stopRiding();
           p_58745_.ejectPassengers();
           CompoundTag compoundtag = new CompoundTag();
-@@ -154,9 +_,14 @@
-    public void storeBee(CompoundTag p_155158_, int p_155159_, boolean p_155160_) {
-       this.stored.add(new BeehiveBlockEntity.BeeData(p_155158_, p_155159_, p_155160_ ? 2400 : 600));
+@@ -156,7 +_,13 @@
     }
--
+ 
     private static boolean releaseOccupant(Level p_155137_, BlockPos p_155138_, BlockState p_155139_, BeehiveBlockEntity.BeeData p_155140_, @Nullable List<Entity> p_155141_, BeehiveBlockEntity.BeeReleaseStatus p_155142_, @Nullable BlockPos p_155143_) {
 -      if ((p_155137_.isNight() || p_155137_.isRaining()) && p_155142_ != BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY) {
 +      // CraftBukkit start - This allows us to bypass the night/rain/emergency check

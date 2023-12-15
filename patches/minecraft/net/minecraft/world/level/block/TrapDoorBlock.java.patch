@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/TrapDoorBlock.java
 +++ b/net/minecraft/world/level/block/TrapDoorBlock.java
-@@ -31,6 +_,7 @@
- import net.minecraft.world.phys.BlockHitResult;
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.event.block.BlockRedstoneEvent;
- 
- public class TrapDoorBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
-    public static final MapCodec<TrapDoorBlock> CODEC = RecordCodecBuilder.mapCodec((p_309899_) -> {
 @@ -128,12 +_,25 @@
        if (!p_57548_.isClientSide) {
           boolean flag = p_57548_.hasNeighborSignal(p_57549_);
@@ -20,7 +12,7 @@
 +            int oldPower = (Boolean) p_57547_.getValue(OPEN) ? 15 : 0;
 +
 +            if (oldPower == 0 ^ power == 0 || p_57550_.defaultBlockState().isSignalSource()) {
-+               BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bblock, oldPower, power);
++               org.bukkit.event.block.BlockRedstoneEvent eventRedstone = new org.bukkit.event.block.BlockRedstoneEvent(bblock, oldPower, power);
 +               p_57548_.getCraftServer().getPluginManager().callEvent(eventRedstone);
 +               flag = eventRedstone.getNewCurrent() > 0;
 +            }

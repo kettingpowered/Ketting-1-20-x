@@ -1,59 +1,10 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
-@@ -8,10 +_,12 @@
- import net.minecraft.core.particles.ParticleTypes;
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-+import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
- import net.minecraft.network.syncher.EntityDataAccessor;
- import net.minecraft.network.syncher.EntityDataSerializers;
- import net.minecraft.network.syncher.SynchedEntityData;
- import net.minecraft.server.level.ServerLevel;
-+import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.sounds.SoundEvent;
- import net.minecraft.sounds.SoundEvents;
- import net.minecraft.sounds.SoundSource;
-@@ -37,8 +_,12 @@
- import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhaseManager;
- import net.minecraft.world.entity.monster.Enemy;
- import net.minecraft.world.entity.player.Player;
-+import net.minecraft.world.item.ItemStack;
-+import net.minecraft.world.level.Explosion;
- import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.Level;
-+import net.minecraft.world.level.block.Block;
-+import net.minecraft.world.level.block.entity.BlockEntity;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.dimension.end.EndDragonFight;
- import net.minecraft.world.level.gameevent.GameEvent;
-@@ -47,8 +_,13 @@
- import net.minecraft.world.level.pathfinder.BinaryHeap;
- import net.minecraft.world.level.pathfinder.Node;
- import net.minecraft.world.level.pathfinder.Path;
-+import net.minecraft.world.level.storage.loot.LootParams;
-+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.block.CraftBlock;
-+import org.bukkit.event.entity.EntityExplodeEvent;
-+import org.bukkit.event.entity.EntityRegainHealthEvent;
- import org.joml.Vector3f;
- import org.slf4j.Logger;
- 
-@@ -63,7 +_,7 @@
-    private static final String DRAGON_PHASE_KEY = "DragonPhase";
-    public final double[][] positions = new double[64][3];
-    public int posPointer = -1;
--   private final EnderDragonPart[] subEntities;
-+   public final EnderDragonPart[] subEntities;
-    public final EnderDragonPart head;
-    private final EnderDragonPart neck;
-    private final EnderDragonPart body;
 @@ -88,6 +_,7 @@
     private final Node[] nodes = new Node[24];
     private final int[] nodeAdjacency = new int[24];
     private final BinaryHeap openSet = new BinaryHeap();
-+   private final Explosion explosionSource; // CraftBukkit - reusable source for CraftTNTPrimed.getSource()
++   private final net.minecraft.world.level.Explosion explosionSource; // CraftBukkit - reusable source for CraftTNTPrimed.getSource()
  
     public EnderDragon(EntityType<? extends EnderDragon> p_31096_, Level p_31097_) {
        super(EntityType.ENDER_DRAGON, p_31097_);
@@ -62,7 +13,7 @@
        this.noCulling = true;
        this.phaseManager = new EnderDragonPhaseManager(this);
 +      this.setId(ENTITY_COUNTER.getAndAdd(this.subEntities.length + 1) + 1); // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
-+      this.explosionSource = new Explosion(p_31097_, this, null, null, Double.NaN, Double.NaN, Double.NaN, Float.NaN, true, Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE); // CraftBukkit
++      this.explosionSource = new net.minecraft.world.level.Explosion(p_31097_, this, null, null, Double.NaN, Double.NaN, Double.NaN, Float.NaN, true, net.minecraft.world.level.Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE); // CraftBukkit
 +   }
 +
 +   @Override
@@ -100,7 +51,7 @@
           } else if (this.tickCount % 10 == 0 && this.getHealth() < this.getMaxHealth()) {
 -            this.setHealth(this.getHealth() + 1.0F);
 +            // CraftBukkit start
-+            EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), 1.0F, EntityRegainHealthEvent.RegainReason.ENDER_CRYSTAL);
++            org.bukkit.event.entity.EntityRegainHealthEvent event = new org.bukkit.event.entity.EntityRegainHealthEvent(this.getBukkitEntity(), 1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.ENDER_CRYSTAL);
 +            this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (!event.isCancelled()) {
@@ -130,7 +81,7 @@
 +                     // CraftBukkit start - Add blocks to list rather than destroying them
 +                     // flag1 = this.level().removeBlock(blockpos, false) || flag1;
 +                     flag1 = true;
-+                     destroyedBlocks.add(CraftBlock.at(this.level(), blockpos));
++                     destroyedBlocks.add(org.bukkit.craftbukkit.block.CraftBlock.at(this.level(), blockpos));
 +                     // CraftBukkit end
                    } else {
                       flag = true;
@@ -139,14 +90,14 @@
           }
        }
  
-+      // CraftBukkit start - Set off an EntityExplodeEvent for the dragon exploding all these blocks
++      // CraftBukkit start - Set off an org.bukkit.event.entity.EntityExplodeEvent for the dragon exploding all these blocks
 +      // SPIGOT-4882: don't fire event if nothing hit
 +      if (!flag1) {
 +         return flag;
 +      }
 +
 +      org.bukkit.entity.Entity bukkitEntity = this.getBukkitEntity();
-+      EntityExplodeEvent event = new EntityExplodeEvent(bukkitEntity, bukkitEntity.getLocation(), destroyedBlocks, 0F);
++      org.bukkit.event.entity.EntityExplodeEvent event = new org.bukkit.event.entity.EntityExplodeEvent(bukkitEntity, bukkitEntity.getLocation(), destroyedBlocks, 0F);
 +      bukkitEntity.getServer().getPluginManager().callEvent(event);
 +      if (event.isCancelled()) {
 +         // This flag literally means 'Dragon hit something hard' (Obsidian, White Stone or Bedrock) and will cause the dragon to slow down.
@@ -164,18 +115,18 @@
 +               continue;
 +            }
 +
-+            CraftBlock craftBlock = ((CraftBlock) block);
++            org.bukkit.craftbukkit.block.CraftBlock craftBlock = ((org.bukkit.craftbukkit.block.CraftBlock) block);
 +            BlockPos blockpos = craftBlock.getPosition();
 +
-+            Block nmsBlock = craftBlock.getNMS().getBlock();
++            net.minecraft.world.level.block.Block nmsBlock = craftBlock.getNMS().getBlock();
 +            if (nmsBlock.dropFromExplosion(explosionSource)) {
-+               BlockEntity blockEntity = craftBlock.getNMS().hasBlockEntity() ? this.level().getBlockEntity(blockpos) : null;
-+               LootParams.Builder loottableinfo_builder = (new LootParams.Builder((ServerLevel) this.level())).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockpos)).withParameter(LootContextParams.TOOL, ItemStack.EMPTY).withParameter(LootContextParams.EXPLOSION_RADIUS, 1.0F / event.getYield()).withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockEntity);
++               net.minecraft.world.level.block.entity.BlockEntity blockEntity = craftBlock.getNMS().hasBlockEntity() ? this.level().getBlockEntity(blockpos) : null;
++               net.minecraft.world.level.storage.loot.LootParams.Builder loottableinfo_builder = (new net.minecraft.world.level.storage.loot.LootParams.Builder((ServerLevel) this.level())).withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN, Vec3.atCenterOf(blockpos)).withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.TOOL, net.minecraft.world.item.ItemStack.EMPTY).withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.EXPLOSION_RADIUS, 1.0F / event.getYield()).withOptionalParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.BLOCK_ENTITY, blockEntity);
 +
 +               craftBlock.getNMS().getDrops(loottableinfo_builder).forEach((itemstack) -> {
-+                  Block.popResource(this.level(), blockpos, itemstack);
++                  net.minecraft.world.level.block.Block.popResource(this.level(), blockpos, itemstack);
 +               });
-+               craftBlock.getNMS().spawnAfterBreak((ServerLevel) this.level(), blockpos, ItemStack.EMPTY, false);
++               craftBlock.getNMS().spawnAfterBreak((ServerLevel) this.level(), blockpos, net.minecraft.world.item.ItemStack.EMPTY, false);
 +            }
 +            nmsBlock.wasExploded(this.level(), blockpos, explosionSource);
 +
@@ -237,7 +188,7 @@
 +            // CraftBukkit start - Use relative location for far away sounds
 +            // this.level().globalLevelEvent(1028, this.blockPosition(), 0);
 +            int viewDistance = this.level().getCraftServer().getViewDistance() * 16;
-+            for (ServerPlayer player : this.level().getServer().getPlayerList().players) {
++            for (net.minecraft.server.level.ServerPlayer player : this.level().getServer().getPlayerList().players) {
 +               double deltaX = this.getX() - player.getX();
 +               double deltaZ = this.getZ() - player.getZ();
 +               double distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
@@ -246,9 +197,9 @@
 +                  double deltaLength = Math.sqrt(distanceSquared);
 +                  double relativeX = player.getX() + (deltaX / deltaLength) * viewDistance;
 +                  double relativeZ = player.getZ() + (deltaZ / deltaLength) * viewDistance;
-+                  player.connection.send(new ClientboundLevelEventPacket(1028, new BlockPos((int) relativeX, (int) this.getY(), (int) relativeZ), 0, true));
++                  player.connection.send(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) relativeX, (int) this.getY(), (int) relativeZ), 0, true));
 +               } else {
-+                  player.connection.send(new ClientboundLevelEventPacket(1028, new BlockPos((int) this.getX(), (int) this.getY(), (int) this.getZ()), 0, true));
++                  player.connection.send(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) this.getX(), (int) this.getY(), (int) this.getZ()), 0, true));
 +               }
 +            }
 +            // CraftBukkit end

@@ -1,29 +1,14 @@
 --- a/net/minecraft/world/level/block/entity/SignBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/SignBlockEntity.java
-@@ -31,12 +_,21 @@
+@@ -31,7 +_,7 @@
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
  
 -public class SignBlockEntity extends BlockEntity {
-+//Ketting Start
-+import java.util.Objects;
-+import net.minecraft.server.level.ServerPlayer;
-+import org.bukkit.block.sign.Side;
-+import org.bukkit.craftbukkit.block.CraftBlock;
-+import org.bukkit.craftbukkit.util.CraftChatMessage;
-+import org.bukkit.event.block.SignChangeEvent;
-+//Ketting end
-+
 +public class SignBlockEntity extends BlockEntity implements CommandSource { // CraftBukkit - implements
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int MAX_TEXT_LINE_WIDTH = 90;
     private static final int TEXT_LINE_HEIGHT = 10;
-    @Nullable
--   private UUID playerWhoMayEdit;
-+   public UUID playerWhoMayEdit;
-    private SignText frontText = this.createDefaultSignText();
-    private SignText backText = this.createDefaultSignText();
-    private boolean isWaxed;
 @@ -140,12 +_,13 @@
     public void updateSignText(Player p_278048_, boolean p_278103_, List<FilteredText> p_277990_) {
        if (!this.isWaxed() && p_278048_.getUUID().equals(this.getPlayerWhoMayEdit()) && this.level != null) {
@@ -35,7 +20,7 @@
           this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 3);
        } else {
           LOGGER.warn("Player {} just tried to change non-editable sign", (Object)p_278048_.getName().getString());
-+         ((ServerPlayer) p_278048_).connection.send(this.getUpdatePacket()); // CraftBukkit
++         ((net.minecraft.server.level.ServerPlayer) p_278048_).connection.send(this.getUpdatePacket()); // CraftBukkit
        }
     }
  
@@ -54,14 +39,14 @@
        }
  
 +      // CraftBukkit start
-+      org.bukkit.entity.Player player = ((ServerPlayer) p_277396_).getBukkitEntity();
++      org.bukkit.entity.Player player = ((net.minecraft.server.level.ServerPlayer) p_277396_).getBukkitEntity();
 +      String[] lines = new String[4];
 +
 +      for (int i = 0; i < p_277744_.size(); ++i) {
-+         lines[i] = CraftChatMessage.fromComponent(p_277359_.getMessage(i, p_277396_.isTextFilteringEnabled()));
++         lines[i] = org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(p_277359_.getMessage(i, p_277396_.isTextFilteringEnabled()));
 +      }
 +
-+      SignChangeEvent event = new SignChangeEvent(CraftBlock.at(this.level, this.worldPosition), player, lines.clone(), (front) ? Side.FRONT : Side.BACK);
++      org.bukkit.event.block.SignChangeEvent event = new org.bukkit.event.block.SignChangeEvent(org.bukkit.craftbukkit.block.CraftBlock.at(this.level, this.worldPosition), player, lines.clone(), (front) ? org.bukkit.block.sign.Side.FRONT : org.bukkit.block.sign.Side.BACK);
 +      p_277396_.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) {
@@ -70,7 +55,7 @@
 +
 +      Component[] components = org.bukkit.craftbukkit.block.CraftSign.sanitizeLines(event.getLines());
 +      for (int i = 0; i < components.length; i++) {
-+         if (!Objects.equals(lines[i], event.getLine(i))) {
++         if (!java.util.Objects.equals(lines[i], event.getLine(i))) {
 +            p_277359_ = p_277359_.setMessage(i, components[i]);
 +         }
 +      }

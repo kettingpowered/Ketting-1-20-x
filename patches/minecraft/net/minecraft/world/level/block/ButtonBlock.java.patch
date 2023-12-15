@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/level/block/ButtonBlock.java
 +++ b/net/minecraft/world/level/block/ButtonBlock.java
-@@ -32,6 +_,8 @@
- import net.minecraft.world.phys.BlockHitResult;
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.event.block.BlockRedstoneEvent;
-+import org.bukkit.event.entity.EntityInteractEvent;
- 
- public class ButtonBlock extends FaceAttachedHorizontalDirectionalBlock {
-    public static final MapCodec<ButtonBlock> CODEC = RecordCodecBuilder.mapCodec((p_310359_) -> {
 @@ -122,6 +_,19 @@
        if (p_51088_.getValue(POWERED)) {
           return InteractionResult.CONSUME;
@@ -19,7 +10,7 @@
 +         int old = (powered) ? 15 : 0;
 +         int current = (!powered) ? 15 : 0;
 +
-+         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
++         org.bukkit.event.block.BlockRedstoneEvent eventRedstone = new org.bukkit.event.block.BlockRedstoneEvent(block, old, current);
 +         p_51089_.getCraftServer().getPluginManager().callEvent(eventRedstone);
 +
 +         if ((eventRedstone.getNewCurrent() > 0) != (!powered)) {
@@ -37,7 +28,7 @@
 +      // CraftBukkit start - Call interact event when arrows turn on wooden buttons
 +      if (flag1 != flag && flag) {
 +         org.bukkit.block.Block block = p_51122_.getWorld().getBlockAt(p_51123_.getX(), p_51123_.getY(), p_51123_.getZ());
-+         EntityInteractEvent event = new EntityInteractEvent(abstractarrow.getBukkitEntity(), block);
++         org.bukkit.event.entity.EntityInteractEvent event = new org.bukkit.event.entity.EntityInteractEvent(abstractarrow.getBukkitEntity(), block);
 +         p_51122_.getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (event.isCancelled()) {
@@ -54,7 +45,7 @@
 +         int old = (powered) ? 15 : 0;
 +         int current = (!powered) ? 15 : 0;
 +
-+         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
++         org.bukkit.event.block.BlockRedstoneEvent eventRedstone = new org.bukkit.event.block.BlockRedstoneEvent(block, old, current);
 +         p_51122_.getCraftServer().getPluginManager().callEvent(eventRedstone);
 +
 +         if ((flag && eventRedstone.getNewCurrent() <= 0) || (!flag && eventRedstone.getNewCurrent() > 0)) {

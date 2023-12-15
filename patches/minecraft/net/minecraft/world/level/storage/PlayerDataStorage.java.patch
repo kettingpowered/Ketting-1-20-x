@@ -1,19 +1,5 @@
 --- a/net/minecraft/world/level/storage/PlayerDataStorage.java
 +++ b/net/minecraft/world/level/storage/PlayerDataStorage.java
-@@ -15,6 +_,13 @@
- import net.minecraft.world.entity.player.Player;
- import org.slf4j.Logger;
- 
-+//Ketting start
-+import java.io.FileInputStream;
-+import java.io.InputStream;
-+import org.bukkit.craftbukkit.entity.CraftPlayer;
-+import net.minecraft.server.level.ServerPlayer;
-+//Ketting start
-+
- public class PlayerDataStorage {
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private final File playerDir;
 @@ -27,6 +_,7 @@
     }
  
@@ -62,8 +48,8 @@
  
        if (compoundtag != null) {
 +         // CraftBukkit start
-+         if (p_78436_ instanceof ServerPlayer) {
-+            CraftPlayer player = (CraftPlayer) p_78436_.getBukkitEntity();
++         if (p_78436_ instanceof net.minecraft.server.level.ServerPlayer) {
++            org.bukkit.craftbukkit.entity.CraftPlayer player = (org.bukkit.craftbukkit.entity.CraftPlayer) p_78436_.getBukkitEntity();
 +            // Only update first played if it is older than the one we have
 +            long modified = new File(this.playerDir, p_78436_.getUUID().toString() + ".dat").lastModified();
 +            if (modified < player.getFirstPlayed()) {
@@ -86,7 +72,7 @@
 +         File file1 = new File(this.playerDir, s + ".dat");
 +
 +         if (file1.exists()) {
-+            return NbtIo.readCompressed((InputStream) (new FileInputStream(file1)), NbtAccounter.unlimitedHeap());
++            return NbtIo.readCompressed((java.io.InputStream) (new java.io.FileInputStream(file1)), NbtAccounter.unlimitedHeap());
 +         }
 +      } catch (Exception exception) {
 +         LOGGER.warn("Failed to load player data for " + s);
