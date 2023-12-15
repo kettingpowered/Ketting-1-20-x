@@ -517,16 +517,7 @@
     }
  
     public void moveRelative(float p_19921_, Vec3 p_19922_) {
-@@ -1346,14 +_,15 @@
-       this.yRotO = this.getYRot();
-       this.xRotO = this.getXRot();
-    }
--
-    public void absMoveTo(double p_20249_, double p_20250_, double p_20251_) {
-       double d0 = Mth.clamp(p_20249_, -3.0E7D, 3.0E7D);
-       double d1 = Mth.clamp(p_20251_, -3.0E7D, 3.0E7D);
-+
-       this.xo = d0;
+@@ -1354,6 +_,7 @@
        this.yo = p_20250_;
        this.zo = d1;
        this.setPos(d0, p_20250_, d1);
@@ -893,11 +884,7 @@
           if (this.passengers.size() == 1 && this.passengers.get(0) == p_20352_) {
              this.passengers = ImmutableList.of();
           } else {
-@@ -1972,16 +_,18 @@
-                return p_185980_ != p_20352_;
-             }).collect(ImmutableList.toImmutableList());
-          }
--
+@@ -1976,12 +_,15 @@
           p_20352_.boardingCooldown = 60;
           this.gameEvent(GameEvent.ENTITY_DISMOUNT, p_20352_);
        }
@@ -956,7 +943,7 @@
        this.setSharedFlag(4, p_20283_);
     }
  
-@@ -2240,26 +_,29 @@
+@@ -2240,15 +_,19 @@
        return this.getTeam() != null ? this.getTeam().isAlliedTo(p_20032_) : false;
     }
  
@@ -979,10 +966,7 @@
        byte b0 = this.entityData.get(DATA_SHARED_FLAGS_ID);
        if (p_20117_) {
           this.entityData.set(DATA_SHARED_FLAGS_ID, (byte)(b0 | 1 << p_20116_));
-       } else {
-          this.entityData.set(DATA_SHARED_FLAGS_ID, (byte)(b0 & ~(1 << p_20116_)));
-       }
--
+@@ -2259,7 +_,7 @@
     }
  
     public int getMaxAirSupply() {

@@ -736,7 +736,7 @@
        this.experienceLevel += p_36276_;
        if (this.experienceLevel < 0) {
           this.experienceLevel = 0;
-@@ -1541,12 +_,21 @@
+@@ -1541,10 +_,20 @@
        }
     }
  
@@ -756,11 +756,9 @@
 +            }
 +            // CraftBukkit end
           }
--
-       }
-    }
  
-@@ -1629,13 +_,12 @@
+       }
+@@ -1629,11 +_,11 @@
     public void setItemSlot(EquipmentSlot p_36161_, ItemStack p_36162_) {
        this.verifyEquippedItem(p_36162_);
        if (p_36161_ == EquipmentSlot.MAINHAND) {
@@ -773,10 +771,8 @@
 -         this.onEquipItem(p_36161_, this.inventory.armor.set(p_36161_.getIndex(), p_36162_), p_36162_);
 +         this.onEquipItem(p_36161_, this.inventory.armor.set(p_36161_.getIndex(), p_36162_), p_36162_, isSilentEquip()); //Ketting
        }
--
-    }
  
-    public boolean addItem(ItemStack p_36357_) {
+    }
 @@ -1670,26 +_,31 @@
  
     protected void removeEntitiesOnShoulder() {

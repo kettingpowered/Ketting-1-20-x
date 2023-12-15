@@ -140,7 +140,7 @@
     public void remove(Entity.RemovalReason p_276115_) {
        super.remove(p_276115_);
        this.brain.clearMemories();
-@@ -703,10 +_,20 @@
+@@ -703,6 +_,17 @@
           }
        }
  
@@ -158,10 +158,6 @@
        if (p_21096_.contains("Health", 99)) {
           this.setHealth(p_21096_.getFloat("Health"));
        }
--
-       this.hurtTime = p_21096_.getShort("HurtTime");
-       this.deathTime = p_21096_.getShort("DeathTime");
-       this.lastHurtByMobTimestamp = p_21096_.getInt("HurtByTimestamp");
 @@ -733,14 +_,38 @@
        }
  
@@ -398,7 +394,7 @@
        if (mobeffectinstance != null) {
           this.onEffectRemoved(mobeffectinstance);
           return true;
-@@ -1040,19 +_,58 @@
+@@ -1040,19 +_,57 @@
  
     }
  
@@ -412,7 +408,6 @@
 +      if (p_21116_ <= 0) return;
 +
        float f = this.getHealth();
-+
        if (f > 0.0F) {
 -         this.setHealth(f + p_21116_);
 +         org.bukkit.event.entity.EntityRegainHealthEvent event = new org.bukkit.event.entity.EntityRegainHealthEvent(this.getBukkitEntity(), p_21116_, regainReason);
@@ -472,7 +467,7 @@
           return false;
        } else if (p_21016_.is(DamageTypeTags.IS_FIRE) && this.hasEffect(MobEffects.FIRE_RESISTANCE)) {
           return false;
-@@ -1076,50 +_,67 @@
+@@ -1076,21 +_,26 @@
  
           this.noActionTime = 0;
           float f = p_21017_;
@@ -511,10 +506,8 @@
           }
  
           if (p_21016_.is(DamageTypeTags.IS_FREEZING) && this.getType().is(EntityTypeTags.FREEZE_HURTS_EXTRA_TYPES)) {
-             p_21017_ *= 5.0F;
-          }
+@@ -1099,23 +_,35 @@
  
-+
           this.walkAnimation.setSpeed(1.5F);
           boolean flag1 = true;
 -         if ((float)this.invulnerableTime > 10.0F && !p_21016_.is(DamageTypeTags.BYPASSES_COOLDOWN)) {
@@ -554,10 +547,6 @@
              this.hurtHelmet(p_21016_, p_21017_);
              p_21017_ *= 0.75F;
           }
--
-          Entity entity1 = p_21016_.getEntity();
-          if (entity1 != null) {
-             if (entity1 instanceof LivingEntity) {
 @@ -1133,11 +_,10 @@
                 Player player1 = (Player)entity1;
                 this.lastHurtByPlayerTime = 100;

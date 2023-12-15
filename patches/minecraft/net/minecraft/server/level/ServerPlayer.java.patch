@@ -594,7 +594,7 @@
           this.enteredNetherPosition = null;
        }
  
-@@ -833,36 +_,70 @@
+@@ -833,32 +_,64 @@
        this.containerMenu.broadcastChanges();
     }
  
@@ -628,7 +628,6 @@
 +                  List<Monster> list = this.level().getEntitiesOfClass(Monster.class, new AABB(vec3d.x() - 8.0D, vec3d.y() - 5.0D, vec3d.z() - 8.0D, vec3d.x() + 8.0D, vec3d.y() + 5.0D, vec3d.z() + 8.0D), (entitymonster) -> {
 +                     return entitymonster.isPreventingPlayerRest(this);
                    });
-+
                    if (!list.isEmpty()) {
                       return Either.left(Player.BedSleepingProblem.NOT_SAFE);
                    }
@@ -669,11 +668,6 @@
                 Either<Player.BedSleepingProblem, Unit> either = super.startSleepInBed(p_9115_).ifRight((p_9029_) -> {
                    this.awardStat(Stats.SLEEP_IN_BED);
                    CriteriaTriggers.SLEPT_IN_BED.trigger(this);
-                });
-+
-                if (!this.serverLevel().canSleepThroughNights()) {
-                   this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
-                }
 @@ -871,9 +_,8 @@
                 return either;
              }

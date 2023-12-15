@@ -1,13 +1,12 @@
 --- a/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
 +++ b/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
-@@ -25,11 +_,17 @@
+@@ -25,11 +_,16 @@
     }
  
     public boolean test(LootContext p_81967_) {
 -      Entity entity = p_81967_.getParamOrNull(LootContextParams.KILLER_ENTITY);
 +      Entity entity = (Entity) p_81967_.getParamOrNull(LootContextParams.KILLER_ENTITY);
        int i = 0;
-+
        if (entity instanceof LivingEntity) {
 -         i = EnchantmentHelper.getMobLooting((LivingEntity)entity);
 -      }

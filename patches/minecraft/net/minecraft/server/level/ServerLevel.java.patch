@@ -631,11 +631,8 @@
        this.gameEventDispatcher.post(p_215041_, p_215042_, p_215043_);
     }
  
-@@ -935,11 +_,26 @@
-       this.getChunkSource().blockChanged(p_8755_);
-       VoxelShape voxelshape1 = p_8756_.getCollisionShape(this, p_8755_);
+@@ -937,8 +_,21 @@
        VoxelShape voxelshape = p_8757_.getCollisionShape(this, p_8755_);
-+
        if (Shapes.joinIsNotEmpty(voxelshape1, voxelshape, BooleanOp.NOT_SAME)) {
           List<PathNavigation> list = new ObjectArrayList<>();
 +         java.util.Iterator iterator = this.navigatingMobs.iterator();
@@ -655,10 +652,8 @@
 +            }
 +            // CraftBukkit end
              PathNavigation pathnavigation = mob.getNavigation();
-+
              if (pathnavigation.shouldRecomputePath(p_8755_)) {
                 list.add(pathnavigation);
-             }
 @@ -959,10 +_,15 @@
     }
  

@@ -50,7 +50,7 @@
        if (this.isInvulnerableTo(p_20785_)) {
           return false;
        } else if (this.level().isClientSide) {
-@@ -204,11 +_,13 @@
+@@ -204,11 +_,12 @@
     public void playerTouch(Player p_20792_) {
        if (!this.level().isClientSide) {
           if (p_20792_.takeXpDelay == 0) {
@@ -58,7 +58,6 @@
              p_20792_.takeXpDelay = 2;
              p_20792_.take(this, 1);
              int i = this.repairPlayerItems(p_20792_, this.value);
-+
              if (i > 0) {
 -               p_20792_.giveExperiencePoints(i);
 +               p_20792_.giveExperiencePoints(org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerExpChangeEvent(p_20792_, i).getAmount()); // CraftBukkit - this.value -> event.getAmount()

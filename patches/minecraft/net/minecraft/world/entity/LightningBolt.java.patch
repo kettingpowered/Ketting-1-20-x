@@ -50,11 +50,9 @@
                 entity.thunderHit((ServerLevel)this.level(), this);
              }
  
-@@ -142,17 +_,26 @@
-       if (!this.visualOnly && !this.level().isClientSide && this.level().getGameRules().getBoolean(GameRules.RULE_DOFIRETICK)) {
+@@ -143,16 +_,24 @@
           BlockPos blockpos = this.blockPosition();
           BlockState blockstate = BaseFireBlock.getState(this.level(), blockpos);
-+
           if (this.level().getBlockState(blockpos).isAir() && blockstate.canSurvive(this.level(), blockpos)) {
 -            this.level().setBlockAndUpdate(blockpos, blockstate);
 -            ++this.blocksSetOnFire;

@@ -123,7 +123,7 @@
                 LOGGER.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.getName().getString(), this.player.getName().getString(), d6, d7, d8);
                 this.send(new ClientboundMoveVehiclePacket(entity));
                 return;
-@@ -408,18 +_,90 @@
+@@ -408,18 +_,89 @@
              d8 = d5 - entity.getZ();
              d10 = d6 * d6 + d7 * d7 + d8 * d8;
              boolean flag2 = false;
@@ -138,7 +138,6 @@
              entity.absMoveTo(d3, d4, d5, f, f1);
 +            this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
              boolean flag3 = serverlevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625D));
-+
              if (flag && (flag2 || !flag3)) {
                 entity.absMoveTo(d0, d1, d2, f, f1);
 +               this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
@@ -259,7 +258,7 @@
           if (!merchantmenu.stillValid(this.player)) {
              LOGGER.debug("Player {} interacted with invalid menu {}", this.player, merchantmenu);
              return;
-@@ -718,7 +_,15 @@
+@@ -718,6 +_,13 @@
     }
  
     public void handleEditBook(ServerboundEditBookPacket p_9862_) {
@@ -271,10 +270,8 @@
 +      this.lastBookTick = MinecraftServer.currentTick;
 +      // CraftBukkit end
        int i = p_9862_.getSlot();
-+
        if (Inventory.isHotbarSlot(i) || i == 40) {
           List<String> list = Lists.newArrayList();
-          Optional<String> optional = p_9862_.getTitle();
 @@ -736,7 +_,7 @@
     private void updateBookContents(List<FilteredText> p_9813_, int p_9814_) {
        ItemStack itemstack = this.player.getInventory().getItem(p_9814_);
@@ -1258,12 +1255,7 @@
                       }
                    } else {
                       ServerGamePacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.invalid_entity_attacked"));
-@@ -1448,18 +_,19 @@
-       PacketUtils.ensureRunningOnSameThread(p_9843_, this, this.player.serverLevel());
-       this.player.resetLastActionTime();
-       ServerboundClientCommandPacket.Action serverboundclientcommandpacket$action = p_9843_.getAction();
-+
-       switch (serverboundclientcommandpacket$action) {
+@@ -1452,14 +_,14 @@
           case PERFORM_RESPAWN:
              if (this.player.wonGame) {
                 this.player.wonGame = false;
@@ -1303,11 +1295,9 @@
              this.player.containerMenu.sendAllDataToRemote();
           } else if (!this.player.containerMenu.stillValid(this.player)) {
              LOGGER.debug("Player {} interacted with invalid menu {}", this.player, this.player.containerMenu);
-@@ -1491,9 +_,286 @@
-                LOGGER.debug("Player {} clicked invalid slot index: {}, available slots: {}", this.player.getName(), i, this.player.containerMenu.slots.size());
+@@ -1492,8 +_,284 @@
              } else {
                 boolean flag = p_9856_.getStateId() != this.player.containerMenu.getStateId();
-+
                 this.player.containerMenu.suppressRemoteUpdates();
 -               this.player.containerMenu.clicked(i, p_9856_.getButtonNum(), p_9856_.getClickType(), this.player);
 -

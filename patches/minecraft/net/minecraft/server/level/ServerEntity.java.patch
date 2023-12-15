@@ -23,7 +23,7 @@
           removedPassengers(list, this.lastPassengers).forEach((p_308940_) -> {
              if (p_308940_ instanceof ServerPlayer serverplayer1) {
                 serverplayer1.connection.teleport(serverplayer1.getX(), serverplayer1.getY(), serverplayer1.getZ(), serverplayer1.getYRot(), serverplayer1.getXRot());
-@@ -93,15 +_,20 @@
+@@ -93,13 +_,17 @@
  
        Entity $$11 = this.entity;
        if ($$11 instanceof ItemFrame itemframe) {
@@ -44,10 +44,7 @@
 +
                       mapitemsaveddata.tickCarriedBy(serverplayer, itemstack);
                       Packet<?> packet = mapitemsaveddata.getUpdatePacket(integer, serverplayer);
-+
                       if (packet != null) {
-                         serverplayer.connection.send(packet);
-                      }
 @@ -203,7 +_,27 @@
  
        ++this.tickCount;
