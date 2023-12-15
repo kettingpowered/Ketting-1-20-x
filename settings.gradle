@@ -60,11 +60,10 @@ dependencyResolutionManagement {
             
             // Terminal Console Appender.. essentually make pretty colors in the console, but it's been a PITA
             library('terminalconsoleappender', 'net.minecrell:terminalconsoleappender:1.2.0')
-            version('jline', '3.12.1')
-            library('jline', 'jline', 'jline').version('2.14.6') //Ketting: bukkit lib
-            library('jline-reader',   'org.jline', 'jline-reader'  ).versionRef('jline')
-            library('jline-terminal', 'org.jline', 'jline-terminal').versionRef('jline')
-            bundle('terminalconsoleappender', ['terminalconsoleappender', 'jline', 'jline-reader', 'jline-terminal'])
+            version('jline', '3.21.0')
+            library('jline-reader',   'org.jline', 'jline-reader'        ).versionRef('jline')
+            library('jline-terminal', 'org.jline', 'jline-terminal'      ).versionRef('jline')
+            bundle('terminalconsoleappender', ['terminalconsoleappender', 'jline-reader', 'jline-terminal'])
             
             // The core of our configuration system, it has many flaws, but it works for the most part
             version('night-config', '3.6.4')
@@ -80,6 +79,11 @@ dependencyResolutionManagement {
             bundle('jarjar', ['jarjar-fs', 'jarjar-selector', 'jarjar-meta'])
 
             //Ketting libs
+            library('jline-jansi', 'org.jline', 'jline-terminal-jansi').versionRef('jline')
+            library('jansi', 'org.fusesource.jansi', 'jansi').version('1.18')
+            library('jline', 'jline', 'jline').version('2.13')
+            bundle('jline-extras', ['jline-jansi', 'jansi', 'jline']) //Apparently the order here is important, don't ask me why, magic.
+
             library('ketting', 'org.kettingpowered', 'kettingcore').version('1.2')
 
             version('snakeyaml', '2.2')
