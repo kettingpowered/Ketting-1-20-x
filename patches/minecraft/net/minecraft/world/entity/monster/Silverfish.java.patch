@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/entity/monster/Silverfish.java
 +++ b/net/minecraft/world/entity/monster/Silverfish.java
-@@ -32,6 +_,7 @@
+@@ -32,6 +_,6 @@
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.InfestedBlock;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  import org.joml.Vector3f;
  
  public class Silverfish extends Monster {
@@ -22,7 +21,7 @@
              BlockState blockstate = levelaccessor.getBlockState(blockpos);
              if (InfestedBlock.isCompatibleHostBlock(blockstate)) {
 +               // CraftBukkit start
-+               if (!CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockpos, InfestedBlock.infestedStateByHost(blockstate))) {
++               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockpos, InfestedBlock.infestedStateByHost(blockstate))) {
 +                  return;
 +               }
 +               // CraftBukkit end
@@ -35,7 +34,7 @@
                       if (block instanceof InfestedBlock) {
 -                        if (level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
 +                        // CraftBukkit start
-+                        if (!CraftEventFactory.callEntityChangeBlockEvent(this.silverfish, blockpos1, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
++                        if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.silverfish, blockpos1, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
 +                           continue;
 +                        }
 +                        // CraftBukkit end

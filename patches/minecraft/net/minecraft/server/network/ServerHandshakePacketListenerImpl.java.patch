@@ -1,20 +1,16 @@
 --- a/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
-@@ -3,6 +_,7 @@
+@@ -3,6 +_,6 @@
  import net.minecraft.SharedConstants;
  import net.minecraft.network.Connection;
  import net.minecraft.network.chat.Component;
-+import net.minecraft.network.chat.MutableComponent;
  import net.minecraft.network.protocol.handshake.ClientIntent;
  import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
  import net.minecraft.network.protocol.handshake.ServerHandshakePacketListener;
-@@ -10,7 +_,20 @@
+@@ -10,7 +_,17 @@
  import net.minecraft.network.protocol.status.ServerStatus;
  import net.minecraft.server.MinecraftServer;
  
-+import java.net.InetAddress;
-+import java.util.HashMap;
-+
  public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketListener {
 +
 +   // Spigot start
@@ -23,7 +19,7 @@
 +   static final java.util.regex.Pattern PROP_PATTERN = java.util.regex.Pattern.compile("\\w{0,16}");
 +   // Spigot end
 +   // CraftBukkit start - add fields
-+   private static final HashMap<InetAddress, Long> throttleTracker = new HashMap<InetAddress, Long>();
++   private static final java.util.HashMap<java.net.InetAddress, Long> throttleTracker = new java.util.HashMap<java.net.InetAddress, Long>();
 +   private static int throttleCounter = 0;
 +   // CraftBukkit end
     private static final Component IGNORE_STATUS_REASON = Component.translatable("disconnect.ignoring_status_request");
@@ -41,12 +37,12 @@
 +            try {
 +               long currentTime = System.currentTimeMillis();
 +               long connectionThrottle = this.server.server.getConnectionThrottle();
-+               InetAddress address = ((java.net.InetSocketAddress) this.connection.getRemoteAddress()).getAddress();
++               java.net.InetAddress address = ((java.net.InetSocketAddress) this.connection.getRemoteAddress()).getAddress();
 +
 +               synchronized (throttleTracker) {
 +                  if (throttleTracker.containsKey(address) && !"127.0.0.1".equals(address.getHostAddress()) && currentTime - throttleTracker.get(address) < connectionThrottle) {
 +                     throttleTracker.put(address, currentTime);
-+                     MutableComponent chatmessage = Component.literal("Connection throttled! Please wait before reconnecting.");
++                     net.minecraft.network.chat.MutableComponent chatmessage = Component.literal("Connection throttled! Please wait before reconnecting.");
 +                     this.connection.send(new ClientboundLoginDisconnectPacket(chatmessage));
 +                     this.connection.disconnect(chatmessage);
 +                     return;
@@ -60,7 +56,7 @@
 +                     // Cleanup stale entries
 +                     java.util.Iterator iter = throttleTracker.entrySet().iterator();
 +                     while (iter.hasNext()) {
-+                        java.util.Map.Entry<InetAddress, Long> entry = (java.util.Map.Entry) iter.next();
++                        java.util.Map.Entry<java.net.InetAddress, Long> entry = (java.util.Map.Entry) iter.next();
 +                        if (entry.getValue() > connectionThrottle) {
 +                           iter.remove();
 +                        }

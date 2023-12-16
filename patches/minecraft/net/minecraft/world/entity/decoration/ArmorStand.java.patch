@@ -1,12 +1,9 @@
 --- a/net/minecraft/world/entity/decoration/ArmorStand.java
 +++ b/net/minecraft/world/entity/decoration/ArmorStand.java
-@@ -41,6 +_,9 @@
+@@ -41,6 +_,6 @@
  import net.minecraft.world.level.material.PushReaction;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
-+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
  
  public class ArmorStand extends LivingEntity {
     public static final int WOBBLE_TIME = 5;
@@ -80,15 +77,15 @@
 -         p_31589_.setItemInHand(p_31592_, itemstack);
 -         return true;
 -      }
-+         org.bukkit.inventory.ItemStack armorStandItem = CraftItemStack.asCraftMirror(itemstack);
-+         org.bukkit.inventory.ItemStack playerHeldItem = CraftItemStack.asCraftMirror(p_31591_);
++         org.bukkit.inventory.ItemStack armorStandItem = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(itemstack);
++         org.bukkit.inventory.ItemStack playerHeldItem = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(p_31591_);
 +
 +         org.bukkit.entity.Player player = (org.bukkit.entity.Player) p_31589_.getBukkitEntity();
 +         org.bukkit.entity.ArmorStand self = (org.bukkit.entity.ArmorStand) this.getBukkitEntity();
 +
-+         org.bukkit.inventory.EquipmentSlot slot = CraftEquipmentSlot.getSlot(p_31590_);
-+         org.bukkit.inventory.EquipmentSlot hand = CraftEquipmentSlot.getHand(p_31592_);
-+         PlayerArmorStandManipulateEvent armorStandManipulateEvent = new PlayerArmorStandManipulateEvent(player, self, playerHeldItem, armorStandItem, slot, hand);
++         org.bukkit.inventory.EquipmentSlot slot = org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot.getSlot(p_31590_);
++         org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot.getHand(p_31592_);
++         org.bukkit.event.player.PlayerArmorStandManipulateEvent armorStandManipulateEvent = new org.bukkit.event.player.PlayerArmorStandManipulateEvent(player, self, playerHeldItem, armorStandItem, slot, hand);
 +         this.level().getCraftServer().getPluginManager().callEvent(armorStandManipulateEvent);
 +
 +         if (armorStandManipulateEvent.isCancelled()) {

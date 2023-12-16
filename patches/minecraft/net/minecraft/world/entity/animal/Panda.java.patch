@@ -1,11 +1,9 @@
 --- a/net/minecraft/world/entity/animal/Panda.java
 +++ b/net/minecraft/world/entity/animal/Panda.java
-@@ -62,6 +_,8 @@
+@@ -62,6 +_,6 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityTargetEvent;
  import org.joml.Vector3f;
  
  public class Panda extends Animal {
@@ -14,7 +12,7 @@
  
     protected void pickUpItem(ItemEntity p_29121_) {
 -      if (this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && PANDA_ITEMS.test(p_29121_)) {
-+      if (!CraftEventFactory.callEntityPickupItemEvent(this, p_29121_, 0, !(this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && Panda.PANDA_ITEMS.test(p_29121_))).isCancelled()) { // CraftBukkit
++      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPickupItemEvent(this, p_29121_, 0, !(this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && Panda.PANDA_ITEMS.test(p_29121_))).isCancelled()) { // CraftBukkit
           this.onItemPickup(p_29121_);
           ItemStack itemstack = p_29121_.getItem();
           this.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
@@ -23,7 +21,7 @@
        protected void alertOther(Mob p_29295_, LivingEntity p_29296_) {
           if (p_29295_ instanceof Panda && p_29295_.isAggressive()) {
 -            p_29295_.setTarget(p_29296_);
-+            p_29295_.setTarget(p_29296_, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit
++            p_29295_.setTarget(p_29296_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit
           }
  
        }

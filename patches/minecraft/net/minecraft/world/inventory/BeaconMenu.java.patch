@@ -1,15 +1,13 @@
 --- a/net/minecraft/world/inventory/BeaconMenu.java
 +++ b/net/minecraft/world/inventory/BeaconMenu.java
-@@ -7,10 +_,12 @@
+@@ -7,10 +_,10 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.SimpleContainer;
  import net.minecraft.world.effect.MobEffect;
-+import net.minecraft.world.entity.player.Inventory;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
  
  public class BeaconMenu extends AbstractContainerMenu {
     private static final int PAYMENT_SLOT = 0;
@@ -18,8 +16,8 @@
     private final ContainerLevelAccess access;
     private final ContainerData beaconData;
 +   // CraftBukkit start
-+   private CraftInventoryView bukkitEntity = null;
-+   private Inventory player;
++   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity = null;
++   private net.minecraft.world.entity.player.Inventory player;
 +   // CraftBukkit end
  
     public BeaconMenu(int p_39036_, Container p_39037_) {
@@ -28,7 +26,7 @@
  
     public BeaconMenu(int p_39039_, Container p_39040_, ContainerData p_39041_, ContainerLevelAccess p_39042_) {
        super(MenuType.BEACON, p_39039_);
-+      player = (Inventory) p_39040_; // CraftBukkit - TODO: check this
++      player = (net.minecraft.world.entity.player.Inventory) p_39040_; // CraftBukkit - TODO: check this
        checkContainerDataCount(p_39041_, 3);
        this.beaconData = p_39041_;
        this.access = p_39042_;
@@ -60,13 +58,13 @@
 +
 +   // CraftBukkit start
 +   @Override
-+   public CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
 +      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryBeacon(this.beacon);
-+      bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

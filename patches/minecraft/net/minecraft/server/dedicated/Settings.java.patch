@@ -1,11 +1,9 @@
 --- a/net/minecraft/server/dedicated/Settings.java
 +++ b/net/minecraft/server/dedicated/Settings.java
-@@ -20,19 +_,39 @@
+@@ -20,19 +_,37 @@
  import java.util.function.Supplier;
  import java.util.function.UnaryOperator;
  import javax.annotation.Nullable;
-+
-+import joptsimple.OptionSet;
  import net.minecraft.core.RegistryAccess;
  import org.slf4j.Logger;
  
@@ -14,10 +12,10 @@
 -   protected final Properties properties;
 +   public final Properties properties;
 +   // CraftBukkit start
-+   private OptionSet options = null;
++   private joptsimple.OptionSet options = null;
  
 -   public Settings(Properties p_139801_) {
-+   public Settings(Properties p_139801_, final OptionSet options) {
++   public Settings(Properties p_139801_, final joptsimple.OptionSet options) {
        this.properties = p_139801_;
 +      this.options = options;
 +   }
@@ -89,7 +87,7 @@
     }
  
 -   protected abstract T reload(RegistryAccess p_139857_, Properties p_139858_);
-+   protected abstract T reload(RegistryAccess p_139857_, Properties p_139858_, OptionSet optionset); // CraftBukkit
++   protected abstract T reload(RegistryAccess p_139857_, Properties p_139858_, joptsimple.OptionSet optionset); // CraftBukkit
  
     public class MutableValue<V> implements Supplier<V> {
        private final String key;

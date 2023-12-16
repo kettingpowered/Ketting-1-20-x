@@ -1,18 +1,12 @@
 --- a/net/minecraft/world/level/NaturalSpawner.java
 +++ b/net/minecraft/world/level/NaturalSpawner.java
-@@ -45,9 +_,15 @@
+@@ -45,9 +_,9 @@
  import net.minecraft.world.level.levelgen.structure.structures.NetherFortressStructure;
  import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.level.pathfinder.PathComputationType;
-+import net.minecraft.world.level.storage.LevelData;
-+import net.minecraft.world.level.storage.WorldData;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftSpawnCategory;
-+import org.bukkit.entity.SpawnCategory;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
  import org.slf4j.Logger;
  
-+// TODO: ForgeHooks.canEntitySpawn
  public final class NaturalSpawner {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int MIN_SPAWN_DISTANCE = 24;
@@ -31,15 +25,15 @@
        p_47030_.getProfiler().push("spawner");
 +      p_47030_.timings.mobSpawn.startTiming(); // Spigot
 +
-+      LevelData worlddata = p_47030_.getLevelData(); // CraftBukkit - Other mob type spawn tick rate
++      net.minecraft.world.level.storage.LevelData worlddata = p_47030_.getLevelData(); // CraftBukkit - Other mob type spawn tick rate
  
        for(MobCategory mobcategory : SPAWNING_CATEGORIES) {
 -         if ((p_47033_ || !mobcategory.isFriendly()) && (p_47034_ || mobcategory.isFriendly()) && (p_47035_ || !mobcategory.isPersistent()) && p_47032_.canSpawnForCategory(mobcategory, p_47031_.getPos())) {
 +         // CraftBukkit start - Use per-world spawn limits
 +         boolean spawnThisTick = true;
 +         int limit = mobcategory.getMaxInstancesPerChunk();
-+         SpawnCategory spawnCategory = CraftSpawnCategory.toBukkit(mobcategory);
-+         if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
++         org.bukkit.entity.SpawnCategory spawnCategory = org.bukkit.craftbukkit.v1_20_R2.util.CraftSpawnCategory.toBukkit(mobcategory);
++         if (org.bukkit.craftbukkit.v1_20_R2.util.CraftSpawnCategory.isValidForLimits(spawnCategory)) {
 +            spawnThisTick = p_47030_.ticksPerSpawnCategory.getLong(spawnCategory) != 0 && worlddata.getGameTime() % p_47030_.ticksPerSpawnCategory.getLong(spawnCategory) == 0;
 +            limit = p_47030_.getWorld().getSpawnLimit(spawnCategory);
 +         }
@@ -69,7 +63,7 @@
 -                           if (j >= mob.getMaxSpawnClusterSize()) {
 +                           // CraftBukkit start
 +                           // SPIGOT-7045: Give ocelot babies back their special spawn reason. Note: This is the only modification required as ocelots count as monsters which means they only spawn during normal chunk ticking and do not spawn during chunk generation as starter mobs.
-+                           p_47040_.addFreshEntityWithPassengers(mob, (mob instanceof net.minecraft.world.entity.animal.Ocelot && !((org.bukkit.entity.Ageable) mob.getBukkitEntity()).isAdult()) ? CreatureSpawnEvent.SpawnReason.OCELOT_BABY : CreatureSpawnEvent.SpawnReason.NATURAL);
++                           p_47040_.addFreshEntityWithPassengers(mob, (mob instanceof net.minecraft.world.entity.animal.Ocelot && !((org.bukkit.entity.Ageable) mob.getBukkitEntity()).isAdult()) ? org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.OCELOT_BABY : org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL);
 +                           if (!mob.isRemoved()) {
 +                              ++j;
 +                              ++l1;

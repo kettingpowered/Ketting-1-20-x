@@ -1,11 +1,9 @@
 --- a/net/minecraft/world/item/DyeItem.java
 +++ b/net/minecraft/world/item/DyeItem.java
-@@ -12,6 +_,8 @@
+@@ -12,6 +_,6 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.SignBlockEntity;
  
-+import org.bukkit.event.entity.SheepDyeWoolEvent; // CraftBukkit
-+
  public class DyeItem extends Item implements SignApplicator {
     private static final Map<DyeColor, DyeItem> ITEM_BY_COLOR = Maps.newEnumMap(DyeColor.class);
     private final DyeColor dyeColor;
@@ -16,7 +14,7 @@
 -               sheep.setColor(this.dyeColor);
 +               // CraftBukkit start
 +               byte bColor = (byte) this.dyeColor.getId();
-+               SheepDyeWoolEvent event = new SheepDyeWoolEvent((org.bukkit.entity.Sheep) sheep.getBukkitEntity(), org.bukkit.DyeColor.getByWoolData(bColor), (org.bukkit.entity.Player) p_41086_.getBukkitEntity());
++               org.bukkit.event.entity.SheepDyeWoolEvent event = new org.bukkit.event.entity.SheepDyeWoolEvent((org.bukkit.entity.Sheep) sheep.getBukkitEntity(), org.bukkit.DyeColor.getByWoolData(bColor), (org.bukkit.entity.Player) p_41086_.getBukkitEntity());
 +               sheep.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +               if (event.isCancelled()) {

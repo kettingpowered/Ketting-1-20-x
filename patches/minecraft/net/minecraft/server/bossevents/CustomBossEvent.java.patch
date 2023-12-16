@@ -1,11 +1,9 @@
 --- a/net/minecraft/server/bossevents/CustomBossEvent.java
 +++ b/net/minecraft/server/bossevents/CustomBossEvent.java
-@@ -16,12 +_,24 @@
+@@ -16,12 +_,22 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.Mth;
  import net.minecraft.world.BossEvent;
-+import org.bukkit.boss.KeyedBossBar;
-+import org.bukkit.craftbukkit.v1_20_R2.boss.CraftKeyedBossbar;
  
  public class CustomBossEvent extends ServerBossEvent {
     private final ResourceLocation id;
@@ -13,11 +11,11 @@
     private int value;
     private int max = 100;
 +   // CraftBukkit start
-+   private KeyedBossBar bossBar;
++   private org.bukkit.boss.KeyedBossBar bossBar;
 +
-+   public KeyedBossBar getBukkitEntity() {
++   public org.bukkit.boss.KeyedBossBar getBukkitEntity() {
 +      if (bossBar == null) {
-+         bossBar = new CraftKeyedBossbar(this);
++         bossBar = new org.bukkit.craftbukkit.v1_20_R2.boss.CraftKeyedBossbar(this);
 +      }
 +      return bossBar;
 +   }

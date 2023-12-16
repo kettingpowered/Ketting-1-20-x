@@ -1,11 +1,9 @@
 --- a/net/minecraft/server/dedicated/DedicatedServerProperties.java
 +++ b/net/minecraft/server/dedicated/DedicatedServerProperties.java
-@@ -17,6 +_,8 @@
+@@ -17,6 +_,6 @@
  import java.util.regex.Pattern;
  import java.util.stream.Collectors;
  import javax.annotation.Nullable;
-+
-+import joptsimple.OptionSet;
  import net.minecraft.core.Holder;
  import net.minecraft.core.Registry;
  import net.minecraft.core.RegistryAccess;
@@ -24,7 +22,7 @@
 -   public DedicatedServerProperties(Properties p_180926_) {
 -      super(p_180926_);
 +   // CraftBukkit start
-+   public DedicatedServerProperties(Properties properties, OptionSet optionset) {
++   public DedicatedServerProperties(Properties properties, joptsimple.OptionSet optionset) {
 +      super(properties, optionset);
 +      // CraftBukkit end
        String s = this.get("level-seed", "");
@@ -37,13 +35,13 @@
 -   public static DedicatedServerProperties fromFile(Path p_180930_) {
 -      return new DedicatedServerProperties(loadFromFile(p_180930_));
 +   // CraftBukkit start
-+   public static DedicatedServerProperties fromFile(Path p_180930_, OptionSet optionset) {
++   public static DedicatedServerProperties fromFile(Path p_180930_, joptsimple.OptionSet optionset) {
 +      return new DedicatedServerProperties(loadFromFile(p_180930_), optionset);
     }
  
 -   protected DedicatedServerProperties reload(RegistryAccess p_139761_, Properties p_139762_) {
 -      return new DedicatedServerProperties(p_139762_);
-+   protected DedicatedServerProperties reload(RegistryAccess p_139761_, Properties p_139762_, OptionSet optionset) {
++   protected DedicatedServerProperties reload(RegistryAccess p_139761_, Properties p_139762_, joptsimple.OptionSet optionset) {
 +      return new DedicatedServerProperties(properties, optionset);
 +      // CraftBukkit end
     }

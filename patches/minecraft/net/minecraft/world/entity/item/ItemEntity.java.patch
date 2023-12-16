@@ -1,20 +1,16 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -9,6 +_,7 @@
+@@ -9,6 +_,6 @@
  import net.minecraft.network.syncher.EntityDataAccessor;
  import net.minecraft.network.syncher.EntityDataSerializers;
  import net.minecraft.network.syncher.SynchedEntityData;
-+import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.Stats;
-@@ -28,25 +_,35 @@
+@@ -28,25 +_,32 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityPickupItemEvent;
-+import org.bukkit.event.player.PlayerPickupItemEvent;
  
  public class ItemEntity extends Entity implements TraceableEntity {
     private static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(ItemEntity.class, EntityDataSerializers.ITEM_STACK);
@@ -33,7 +29,7 @@
 -   private UUID target;
 +   public UUID target;
     public final float bobOffs;
-+   private int lastTick = MinecraftServer.currentTick - 1; // CraftBukkit
++   private int lastTick = net.minecraft.server.MinecraftServer.currentTick - 1; // CraftBukkit
 +   /**
 +    * The maximum age of this EntityItem.  The item is expired once this is reached.
 +    */
@@ -77,10 +73,10 @@
 -            --this.pickupDelay;
 -         }
 +         // CraftBukkit start - Use wall time for pickup and despawn timers
-+         int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++         int elapsedTicks = net.minecraft.server.MinecraftServer.currentTick - this.lastTick;
 +         if (this.pickupDelay != 32767) this.pickupDelay -= elapsedTicks;
 +         if (this.age != -32768) this.age += elapsedTicks;
-+         this.lastTick = MinecraftServer.currentTick;
++         this.lastTick = net.minecraft.server.MinecraftServer.currentTick;
 +         // CraftBukkit end
  
           this.xo = this.getX();
@@ -134,7 +130,7 @@
 +             int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
 +             if (hook < 0) {
 +                // CraftBukkit start - fire ItemDespawnEvent
-+                if (CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
++                if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
 +                   this.age = 0;
 +                   return;
 +                }
@@ -155,10 +151,10 @@
 +   @Override
 +   public void inactiveTick() {
 +      // CraftBukkit start - Use wall time for pickup and despawn timers
-+      int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++      int elapsedTicks = net.minecraft.server.MinecraftServer.currentTick - this.lastTick;
 +      if (this.pickupDelay != 32767) this.pickupDelay -= elapsedTicks;
 +      if (this.age != -32768) this.age += elapsedTicks;
-+      this.lastTick = MinecraftServer.currentTick;
++      this.lastTick = net.minecraft.server.MinecraftServer.currentTick;
 +      // CraftBukkit end
 +
 +      ItemStack item = this.getItem(); //Ketting
@@ -167,7 +163,7 @@
 +         int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
 +         if (hook < 0) {
 +            // CraftBukkit start - fire ItemDespawnEvent
-+            if (CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
 +               this.age = 0;
 +               return;
 +            }
@@ -223,7 +219,7 @@
  
     private static void merge(ItemEntity p_32018_, ItemStack p_32019_, ItemEntity p_32020_, ItemStack p_32021_) {
 +      // CraftBukkit start
-+      if (!CraftEventFactory.callItemMergeEvent(p_32020_, p_32018_)) {
++      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callItemMergeEvent(p_32020_, p_32018_)) {
 +         return;
 +      }
 +      // CraftBukkit end
@@ -235,7 +231,7 @@
           return true;
        } else {
 +         // CraftBukkit start
-+         if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_32013_, p_32014_)) {
++         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_32013_, p_32014_)) {
 +            return false;
 +         }
 +         // CraftBukkit end
@@ -285,7 +281,7 @@
 +         if (this.pickupDelay <= 0 && canHold > 0) {
 +            itemstack.setCount(canHold);
 +            // Call legacy event
-+            PlayerPickupItemEvent playerEvent = new PlayerPickupItemEvent((org.bukkit.entity.Player) p_32040_.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
++            org.bukkit.event.player.PlayerPickupItemEvent playerEvent = new org.bukkit.event.player.PlayerPickupItemEvent((org.bukkit.entity.Player) p_32040_.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
 +            playerEvent.setCancelled(!playerEvent.getPlayer().getCanPickupItems());
 +            this.level().getCraftServer().getPluginManager().callEvent(playerEvent);
 +            if (playerEvent.isCancelled()) {
@@ -294,7 +290,7 @@
 +            }
 +
 +            // Call newer event afterwards
-+            EntityPickupItemEvent entityEvent = new EntityPickupItemEvent((org.bukkit.entity.Player) p_32040_.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
++            org.bukkit.event.entity.EntityPickupItemEvent entityEvent = new org.bukkit.event.entity.EntityPickupItemEvent((org.bukkit.entity.Player) p_32040_.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
 +            entityEvent.setCancelled(!entityEvent.getEntity().getCanPickupItems());
 +            this.level().getCraftServer().getPluginManager().callEvent(entityEvent);
 +            if (entityEvent.isCancelled()) {

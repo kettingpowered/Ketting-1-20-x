@@ -1,19 +1,16 @@
 --- a/net/minecraft/commands/CommandSourceStack.java
 +++ b/net/minecraft/commands/CommandSourceStack.java
-@@ -16,6 +_,8 @@
+@@ -16,6 +_,6 @@
  import java.util.function.Supplier;
  import java.util.stream.Stream;
  import javax.annotation.Nullable;
-+
-+import com.mojang.brigadier.tree.CommandNode;
  import net.minecraft.ChatFormatting;
  import net.minecraft.commands.arguments.EntityAnchorArgument;
  import net.minecraft.core.Registry;
-@@ -39,8 +_,9 @@
+@@ -39,8 +_,8 @@
  import net.minecraft.world.level.dimension.DimensionType;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
-+import org.kettingpowered.ketting.command.ForgeCommand;
  
 -public class CommandSourceStack implements SharedSuggestionProvider {
 +public class CommandSourceStack implements SharedSuggestionProvider, net.minecraftforge.common.extensions.IForgeCommandSourceStack {
@@ -24,7 +21,7 @@
     private final CommandSigningContext signingContext;
     private final TaskChainer chatMessageChainer;
     private final IntConsumer returnValueConsumer;
-+   public volatile CommandNode currentCommand; // CraftBukkit
++   public volatile com.mojang.brigadier.tree.CommandNode currentCommand; // CraftBukkit
 +   public volatile boolean isForgeCommand; // Ketting
  
     public CommandSourceStack(CommandSource p_81302_, Vec3 p_81303_, Vec2 p_81304_, ServerLevel p_81305_, int p_81306_, String p_81307_, Component p_81308_, MinecraftServer p_81309_, @Nullable Entity p_81310_) {
@@ -34,8 +31,8 @@
  
     public boolean hasPermission(int p_81370_) {
 +      // CraftBukkit start
-+      CommandNode currentCommand = this.currentCommand;
-+      if (currentCommand != null && !ForgeCommand.checkIfForgeCommand(currentCommand)) { //Ketting - skip if forge command
++      com.mojang.brigadier.tree.CommandNode currentCommand = this.currentCommand;
++      if (currentCommand != null && !org.kettingpowered.ketting.command.ForgeCommand.checkIfForgeCommand(currentCommand)) { //Ketting - skip if forge command
 +         return hasPermission(p_81370_, org.bukkit.craftbukkit.v1_20_R2.command.VanillaCommandWrapper.getPermission(currentCommand));
 +      }
 +      // CraftBukkit end

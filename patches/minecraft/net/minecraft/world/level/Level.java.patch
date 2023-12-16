@@ -1,94 +1,64 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -3,12 +_,16 @@
+@@ -3,12 +_,12 @@
  import com.google.common.collect.Lists;
  import com.mojang.serialization.Codec;
  import java.io.IOException;
-+import java.util.HashMap;
  import java.util.Iterator;
  import java.util.List;
-+import java.util.Map;
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.Supplier;
  import javax.annotation.Nullable;
-+
-+import joptsimple.internal.Strings;
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.ReportedException;
-@@ -22,10 +_,12 @@
+@@ -22,10 +_,10 @@
  import net.minecraft.core.registries.Registries;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.protocol.Packet;
-+import net.minecraft.network.protocol.game.*;
  import net.minecraft.resources.ResourceKey;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.level.FullChunkStatus;
-+import net.minecraft.server.level.ServerLevel;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.util.AbortableIterationConsumer;
-@@ -38,26 +_,32 @@
+@@ -38,26 +_,26 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.boss.EnderDragonPart;
  import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-+import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.crafting.RecipeManager;
  import net.minecraft.world.level.biome.Biome;
  import net.minecraft.world.level.biome.BiomeManager;
-+import net.minecraft.world.level.biome.BiomeSource;
  import net.minecraft.world.level.block.BaseFireBlock;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.entity.BlockEntity;
  import net.minecraft.world.level.block.entity.TickingBlockEntity;
  import net.minecraft.world.level.block.state.BlockState;
-+import net.minecraft.world.level.border.BorderChangeListener;
  import net.minecraft.world.level.border.WorldBorder;
  import net.minecraft.world.level.chunk.ChunkAccess;
-+import net.minecraft.world.level.chunk.ChunkGenerator;
  import net.minecraft.world.level.chunk.ChunkStatus;
  import net.minecraft.world.level.chunk.LevelChunk;
  import net.minecraft.world.level.dimension.DimensionType;
-+import net.minecraft.world.level.dimension.LevelStem;
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.entity.LevelEntityGetter;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.levelgen.Heightmap;
-+import net.minecraft.world.level.levelgen.WorldGenSettings;
  import net.minecraft.world.level.lighting.LevelLightEngine;
  import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.level.material.Fluids;
-@@ -65,12 +_,30 @@
+@@ -65,12 +_,12 @@
  import net.minecraft.world.level.redstone.NeighborUpdater;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
  import net.minecraft.world.level.storage.LevelData;
-+import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.level.storage.WritableLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.Scoreboard;
-+import org.bukkit.Bukkit;
-+import org.bukkit.Chunk;
-+import org.bukkit.Registry;
-+import org.bukkit.World;
-+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
-+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
-+import org.bukkit.craftbukkit.v1_20_R2.SpigotTimings;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CapturedBlockState;
-+import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
-+import org.bukkit.craftbukkit.v1_20_R2.generator.CraftWorldInfo;
-+import org.bukkit.craftbukkit.v1_20_R2.generator.CustomChunkGenerator;
-+import org.bukkit.craftbukkit.v1_20_R2.generator.CustomWorldChunkManager;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftSpawnCategory;
-+import org.bukkit.entity.SpawnCategory;
-+import org.bukkit.event.block.BlockPhysicsEvent;
-+import org.bukkit.generator.BiomeProvider;
-+import org.kettingpowered.ketting.core.Ketting;
  
 -public abstract class Level implements LevelAccessor, AutoCloseable {
 +public abstract class Level extends net.minecraftforge.common.capabilities.CapabilityProvider<Level> implements LevelAccessor, AutoCloseable, net.minecraftforge.common.extensions.IForgeLevel {
@@ -133,7 +103,7 @@
 +   private final java.util.ArrayList<BlockEntity> pendingFreshBlockEntities = new java.util.ArrayList<>();
 +
 +   // CraftBukkit start Added the following
-+   private CraftWorld world;
++   private org.bukkit.craftbukkit.v1_20_R2.CraftWorld world;
 +   public boolean pvpMode;
 +   public boolean keepSpawnInMemory = true;
 +   public org.bukkit.generator.ChunkGenerator generator;
@@ -143,55 +113,55 @@
 +   public boolean preventPoiUpdated = false; // CraftBukkit - SPIGOT-5710
 +   public boolean captureBlockStates = false;
 +   public boolean captureTreeGeneration = false;
-+   public Map<BlockPos, CapturedBlockState> capturedBlockStates = new java.util.LinkedHashMap<>();
-+   public Map<BlockPos, BlockEntity> capturedTileEntities = new HashMap<>();
-+   public List<ItemEntity> captureDrops;
-+   public final it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<SpawnCategory> ticksPerSpawnCategory = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
++   public java.util.Map<BlockPos, org.bukkit.craftbukkit.v1_20_R2.block.CapturedBlockState> capturedBlockStates = new java.util.LinkedHashMap<>();
++   public java.util.Map<BlockPos, BlockEntity> capturedTileEntities = new java.util.HashMap<>();
++   public List<net.minecraft.world.entity.item.ItemEntity> captureDrops;
++   public final it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<org.bukkit.entity.SpawnCategory> ticksPerSpawnCategory = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
 +   public boolean populating;
 +   public final org.spigotmc.SpigotWorldConfig spigotConfig; // Spigot
 +
-+   public final SpigotTimings.WorldTimingsHandler timings; // Spigot
++   public final org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.WorldTimingsHandler timings; // Spigot
 +   public static BlockPos lastPhysicsProblem; // Spigot
 +   private org.spigotmc.TickLimiter entityLimiter;
 +   private org.spigotmc.TickLimiter tileLimiter;
 +   private int tileTickPosition;
 +
-+   public CraftWorld getWorld() {
++   public org.bukkit.craftbukkit.v1_20_R2.CraftWorld getWorld() {
 +      if (this.world == null) {
 +         if (environment == null) {
-+            environment = (World.Environment) Ketting.getInstance().getDimensionRegistry().get().getKey(getTypeKey());
++            environment = (org.bukkit.World.Environment) org.kettingpowered.ketting.core.Ketting.getInstance().getDimensionRegistry().get().getKey(getTypeKey());
 +         }
 +         if (generator == null) {
-+            generator = this.getCraftServer().getGenerator(((ServerLevelData) this.getLevelData()).getLevelName());
++            generator = this.getCraftServer().getGenerator(((net.minecraft.world.level.storage.ServerLevelData) this.getLevelData()).getLevelName());
 +
-+            if (this instanceof ServerLevel srvLevel && generator != null) {
-+               CraftWorldInfo info = new CraftWorldInfo((ServerLevelData) getLevelData(), srvLevel.convertable, environment, dimensionType());
++            if (this instanceof net.minecraft.server.level.ServerLevel srvLevel && generator != null) {
++               org.bukkit.craftbukkit.v1_20_R2.generator.CraftWorldInfo info = new org.bukkit.craftbukkit.v1_20_R2.generator.CraftWorldInfo((net.minecraft.world.level.storage.ServerLevelData) getLevelData(), srvLevel.convertable, environment, dimensionType());
 +
 +               if (biomeProvider == null)
 +                  biomeProvider = generator.getDefaultBiomeProvider(info);
 +
-+               ChunkGenerator generator = srvLevel.getChunkSource().getGenerator();
++               net.minecraft.world.level.chunk.ChunkGenerator generator = srvLevel.getChunkSource().getGenerator();
 +               if (biomeProvider != null) {
-+                  BiomeSource source = new CustomWorldChunkManager(info, biomeProvider, srvLevel.registryAccess().registryOrThrow(Registries.BIOME));
++                  net.minecraft.world.level.biome.BiomeSource source = new org.bukkit.craftbukkit.v1_20_R2.generator.CustomWorldChunkManager(info, biomeProvider, srvLevel.registryAccess().registryOrThrow(Registries.BIOME));
 +                  generator.setBiomeSource(source);
 +               }
 +
-+               CustomChunkGenerator gen = new CustomChunkGenerator(srvLevel, generator, this.generator);
++               org.bukkit.craftbukkit.v1_20_R2.generator.CustomChunkGenerator gen = new org.bukkit.craftbukkit.v1_20_R2.generator.CustomChunkGenerator(srvLevel, generator, this.generator);
 +               srvLevel.getChunkSource().setChunkGenerator(gen);
 +            }
 +         }
-+         this.world = new CraftWorld((ServerLevel) this, generator, biomeProvider, environment);
++         this.world = new org.bukkit.craftbukkit.v1_20_R2.CraftWorld((net.minecraft.server.level.ServerLevel) this, generator, biomeProvider, environment);
 +         this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
 +      }
 +      return this.world;
 +   }
 +
-+   public CraftServer getCraftServer() {
-+      return (CraftServer) Bukkit.getServer();
++   public org.bukkit.craftbukkit.v1_20_R2.CraftServer getCraftServer() {
++      return (org.bukkit.craftbukkit.v1_20_R2.CraftServer) org.bukkit.Bukkit.getServer();
 +   }
 +
 +   //Ketting start - remove abstract modifier + add default implementation
-+   public ResourceKey<LevelStem> getTypeKey() {
++   public ResourceKey<net.minecraft.world.level.dimension.LevelStem> getTypeKey() {
 +      return Registries.levelToLevelStem(this.dimension);
 +   }
 +   //Ketting end
@@ -209,20 +179,20 @@
 +    * Use bukkit version
 +    * @see #Level(WritableLevelData, ResourceKey, RegistryAccess, Holder, Supplier, boolean, boolean, long, int, org.bukkit.generator.ChunkGenerator, org.bukkit.generator.BiomeProvider, org.bukkit.World.Environment)
 +    */
-+   String levelname = Strings.EMPTY;
++   String levelname = joptsimple.internal.Strings.EMPTY;
 +   @Deprecated
 +   //Ketting end
     protected Level(WritableLevelData p_270739_, ResourceKey<Level> p_270683_, RegistryAccess p_270200_, Holder<DimensionType> p_270240_, Supplier<ProfilerFiller> p_270692_, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_) {
 +      super(Level.class);
 +
 +      if (p_270739_ != null)
-+         this.levelname = ((ServerLevelData) p_270739_).getLevelName(); //Ketting
++         this.levelname = ((net.minecraft.world.level.storage.ServerLevelData) p_270739_).getLevelName(); //Ketting
 +
 +      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(levelname); // Spigot
 +
 +      // CraftBukkit Ticks things
-+      for (SpawnCategory spawnCategory : SpawnCategory.values()) {
-+         if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
++      for (org.bukkit.entity.SpawnCategory spawnCategory : org.bukkit.entity.SpawnCategory.values()) {
++         if (org.bukkit.craftbukkit.v1_20_R2.util.CraftSpawnCategory.isValidForLimits(spawnCategory)) {
 +            this.ticksPerSpawnCategory.put(spawnCategory, (long) this.getCraftServer().getTicksPerSpawns(spawnCategory));
 +         }
 +      }
@@ -236,32 +206,32 @@
        this.registryAccess = p_270200_;
        this.damageSources = new DamageSources(p_270200_);
 +      // CraftBukkit start
-+      getWorldBorder().world = (ServerLevel) this;
++      getWorldBorder().world = (net.minecraft.server.level.ServerLevel) this;
 +      // From PlayerList.setPlayerFileData
-+      getWorldBorder().addListener(new BorderChangeListener() {
++      getWorldBorder().addListener(new net.minecraft.world.level.border.BorderChangeListener() {
 +         @Override
 +         public void onBorderSizeSet(WorldBorder worldborder, double d0) {
-+            getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderSizePacket(worldborder), worldborder.world);
++            getCraftServer().getHandle().broadcastAll(new net.minecraft.network.protocol.game.ClientboundSetBorderSizePacket(worldborder), worldborder.world);
 +         }
 +
 +         @Override
 +         public void onBorderSizeLerping(WorldBorder worldborder, double d0, double d1, long i) {
-+            getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderLerpSizePacket(worldborder), worldborder.world);
++            getCraftServer().getHandle().broadcastAll(new net.minecraft.network.protocol.game.ClientboundSetBorderLerpSizePacket(worldborder), worldborder.world);
 +         }
 +
 +         @Override
 +         public void onBorderCenterSet(WorldBorder worldborder, double d0, double d1) {
-+            getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderCenterPacket(worldborder), worldborder.world);
++            getCraftServer().getHandle().broadcastAll(new net.minecraft.network.protocol.game.ClientboundSetBorderCenterPacket(worldborder), worldborder.world);
 +         }
 +
 +         @Override
 +         public void onBorderSetWarningTime(WorldBorder worldborder, int i) {
-+            getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderWarningDelayPacket(worldborder), worldborder.world);
++            getCraftServer().getHandle().broadcastAll(new net.minecraft.network.protocol.game.ClientboundSetBorderWarningDelayPacket(worldborder), worldborder.world);
 +         }
 +
 +         @Override
 +         public void onBorderSetWarningBlocks(WorldBorder worldborder, int i) {
-+            getCraftServer().getHandle().broadcastAll(new ClientboundSetBorderWarningDistancePacket(worldborder), worldborder.world);
++            getCraftServer().getHandle().broadcastAll(new net.minecraft.network.protocol.game.ClientboundSetBorderWarningDistancePacket(worldborder), worldborder.world);
 +         }
 +
 +         @Override
@@ -271,7 +241,7 @@
 +         public void onBorderSetDamageSafeZOne(WorldBorder worldborder, double d0) {}
 +      });
 +      // CraftBukkit end
-+      timings = new SpigotTimings.WorldTimingsHandler(levelname); // Spigot - code below can generate new world and access timings
++      timings = new org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.WorldTimingsHandler(levelname); // Spigot - code below can generate new world and access timings
 +      this.entityLimiter = new org.spigotmc.TickLimiter(spigotConfig.entityMaxTickTime);
 +      this.tileLimiter = new org.spigotmc.TickLimiter(spigotConfig.tileMaxTickTime);
     }
@@ -283,9 +253,9 @@
     public boolean setBlock(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
 +      // CraftBukkit start - tree generation
 +      if (this.captureTreeGeneration) {
-+         CapturedBlockState blockstate = capturedBlockStates.get(p_46605_);
++         org.bukkit.craftbukkit.v1_20_R2.block.CapturedBlockState blockstate = capturedBlockStates.get(p_46605_);
 +         if (blockstate == null) {
-+            blockstate = CapturedBlockState.getTreeBlockState(this, p_46605_, p_46607_);
++            blockstate = org.bukkit.craftbukkit.v1_20_R2.block.CapturedBlockState.getTreeBlockState(this, p_46605_, p_46607_);
 +            this.capturedBlockStates.put(p_46605_.immutable(), blockstate);
 +         }
 +         blockstate.setData(p_46606_);
@@ -311,7 +281,7 @@
 +         // CraftBukkit start - capture blockstates
 +         boolean captured = false;
 +         if (this.captureBlockStates && !this.capturedBlockStates.containsKey(p_46605_)) {
-+            CapturedBlockState blockstate = CapturedBlockState.getBlockState(this, p_46605_, p_46607_);
++            org.bukkit.craftbukkit.v1_20_R2.block.CapturedBlockState blockstate = org.bukkit.craftbukkit.v1_20_R2.block.CapturedBlockState.getBlockState(this, p_46605_, p_46607_);
 +            this.capturedBlockStates.put(p_46605_.immutable(), blockstate);
 +            captured = true;
 +         }
@@ -352,7 +322,7 @@
 +   }
 +
 +   //Ketting start - craftbukkit compat
-+   public void notifyAndUpdatePhysics(BlockPos blockPosition, Chunk chunk, BlockState oldBlock, BlockState newBlock, BlockState actualBlock, int i, int j) {
++   public void notifyAndUpdatePhysics(BlockPos blockPosition, org.bukkit.Chunk chunk, BlockState oldBlock, BlockState newBlock, BlockState actualBlock, int i, int j) {
 +      markAndNotifyBlock(blockPosition, chunk == null ? null : (LevelChunk) chunk, oldBlock, newBlock, i, j);
 +   }
 +   //Ketting end
@@ -380,9 +350,9 @@
 +
                    blockstate.updateIndirectNeighbourShapes(this, p_46605_, i, p_46608_ - 1);
 +                  // CraftBukkit start
-+                  CraftWorld world = this.getWorld();
++                  org.bukkit.craftbukkit.v1_20_R2.CraftWorld world = this.getWorld();
 +                  if (world != null) {
-+                     BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(p_46605_.getX(), p_46605_.getY(), p_46605_.getZ()), CraftBlockData.fromData(p_46606_));
++                     org.bukkit.event.block.BlockPhysicsEvent event = new org.bukkit.event.block.BlockPhysicsEvent(world.getBlockAt(p_46605_.getX(), p_46605_.getY(), p_46605_.getZ()), org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData.fromData(p_46606_));
 +                     this.getCraftServer().getPluginManager().callEvent(event);
 +
 +                     if (event.isCancelled()) {
@@ -421,7 +391,7 @@
     public BlockState getBlockState(BlockPos p_46732_) {
 +      // CraftBukkit start - tree generation
 +      if (captureTreeGeneration) {
-+         CapturedBlockState previous = capturedBlockStates.get(p_46732_);
++         org.bukkit.craftbukkit.v1_20_R2.block.CapturedBlockState previous = capturedBlockStates.get(p_46732_);
 +         if (previous != null) {
 +            return previous.getHandle();
 +         }
@@ -506,9 +476,9 @@
     public <T extends Entity> void guardEntityTick(Consumer<T> p_46654_, T p_46655_) {
        try {
 +         net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackStart(p_46655_);
-+         SpigotTimings.tickEntityTimer.startTiming(); // Spigot
++         org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.tickEntityTimer.startTiming(); // Spigot
           p_46654_.accept(p_46655_);
-+         SpigotTimings.tickEntityTimer.stopTiming(); // Spigot
++         org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.tickEntityTimer.stopTiming(); // Spigot
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking entity");
           CrashReportCategory crashreportcategory = crashreport.addCategory("Entity being ticked");

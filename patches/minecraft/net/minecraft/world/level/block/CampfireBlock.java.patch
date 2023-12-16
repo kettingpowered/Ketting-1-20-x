@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/level/block/CampfireBlock.java
 +++ b/net/minecraft/world/level/block/CampfireBlock.java
-@@ -45,6 +_,7 @@
+@@ -45,6 +_,6 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
  
  public class CampfireBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
     protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 7.0D, 16.0D);
@@ -12,7 +11,7 @@
  
     public void entityInside(BlockState p_51269_, Level p_51270_, BlockPos p_51271_, Entity p_51272_) {
        if (p_51269_.getValue(LIT) && p_51272_ instanceof LivingEntity && !EnchantmentHelper.hasFrostWalker((LivingEntity)p_51272_)) {
-+         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.blockDamage = CraftBlock.at(p_51270_, p_51271_); // CraftBukkit
++         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.blockDamage = org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_51270_, p_51271_); // CraftBukkit
           p_51272_.hurt(p_51270_.damageSources().inFire(), (float)this.fireDamage);
 +         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.blockDamage = null; // CraftBukkit
        }

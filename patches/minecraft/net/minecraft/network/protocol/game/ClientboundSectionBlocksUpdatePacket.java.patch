@@ -1,10 +1,9 @@
 --- a/net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket.java
 +++ b/net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket.java
-@@ -7,6 +_,7 @@
+@@ -7,6 +_,6 @@
  import net.minecraft.network.FriendlyByteBuf;
  import net.minecraft.network.protocol.Packet;
  import net.minecraft.world.level.block.Block;
-+import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.chunk.LevelChunkSection;
  
@@ -13,7 +12,7 @@
        for(short short1 : p_285027_) {
           this.positions[j] = short1;
 -         this.states[j] = p_285414_.getBlockState(SectionPos.sectionRelativeX(short1), SectionPos.sectionRelativeY(short1), SectionPos.sectionRelativeZ(short1));
-+         this.states[j] = (p_285414_ != null) ? p_285414_.getBlockState(SectionPos.sectionRelativeX(short1), SectionPos.sectionRelativeY(short1), SectionPos.sectionRelativeZ(short1)) : Blocks.AIR.defaultBlockState(); // CraftBukkit - SPIGOT-6076, Mojang bug when empty chunk section notified
++         this.states[j] = (p_285414_ != null) ? p_285414_.getBlockState(SectionPos.sectionRelativeX(short1), SectionPos.sectionRelativeY(short1), SectionPos.sectionRelativeZ(short1)) : net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(); // CraftBukkit - SPIGOT-6076, Mojang bug when empty chunk section notified
           ++j;
        }
  
