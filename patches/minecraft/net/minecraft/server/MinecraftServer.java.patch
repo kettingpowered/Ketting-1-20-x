@@ -1,67 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -158,7 +_,7 @@
- import org.slf4j.Logger;
- 
- public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements ServerInfo, CommandSource, AutoCloseable {
--   private static final Logger LOGGER = LogUtils.getLogger();
-+   public static final Logger LOGGER = LogUtils.getLogger();
-    public static final String VANILLA_BRAND = "vanilla";
-    private static final float AVERAGE_TICK_TIME_SMOOTHING = 0.8F;
-    private static final int TICK_STATS_SPAN = 100;
-@@ -175,8 +_,8 @@
-    public static final LevelSettings DEMO_SETTINGS = new LevelSettings("Demo World", GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), WorldDataConfiguration.DEFAULT);
-    private static final long DELAYED_TASKS_TICK_EXTENSION = 50L;
-    public static final GameProfile ANONYMOUS_PLAYER_PROFILE = new GameProfile(Util.NIL_UUID, "Anonymous Player");
--   protected final LevelStorageSource.LevelStorageAccess storageSource;
--   protected final PlayerDataStorage playerDataStorage;
-+   public LevelStorageSource.LevelStorageAccess storageSource;
-+   public final PlayerDataStorage playerDataStorage;
-    private final List<Runnable> tickables = Lists.newArrayList();
-    private MetricsRecorder metricsRecorder = InactiveMetricsRecorder.INSTANCE;
-    private ProfilerFiller profiler = this.metricsRecorder.getProfiler();
-@@ -189,18 +_,18 @@
-    @Nullable
-    private MinecraftServer.TimeProfiler debugCommandProfiler;
-    private boolean debugCommandProfilerDelayStart;
--   private final ServerConnectionListener connection;
--   private final ChunkProgressListenerFactory progressListenerFactory;
-+   private ServerConnectionListener connection;
-+   public final ChunkProgressListenerFactory progressListenerFactory;
-    @Nullable
-    private ServerStatus status;
-    @Nullable
-    private ServerStatus.Favicon statusIcon;
-    private final RandomSource random = RandomSource.create();
--   private final DataFixer fixerUpper;
-+   public final DataFixer fixerUpper;
-    private String localIp;
-    private int port = -1;
-    private final LayeredRegistryAccess<RegistryLayer> registries;
--   private final Map<ResourceKey<Level>, ServerLevel> levels = Maps.newLinkedHashMap();
-+   private Map<ResourceKey<Level>, ServerLevel> levels = Maps.newLinkedHashMap();
-    private PlayerList playerList;
-    private volatile boolean running = true;
-    private boolean stopped;
-@@ -223,7 +_,7 @@
-    private long lastOverloadWarning;
-    protected final Services services;
-    private long lastServerStatus;
--   private final Thread serverThread;
-+   public final Thread serverThread;
-    protected long nextTickTime = Util.getMillis();
-    private long delayedTasksMaxNextTickTime;
-    private boolean mayHaveDelayedTasks;
-@@ -235,18 +_,37 @@
-    private final ServerFunctionManager functionManager;
-    private boolean enforceWhitelist;
-    private float averageTickTime;
--   private final Executor executor;
-+   public final Executor executor;
-    @Nullable
-    private String serverId;
--   private MinecraftServer.ReloadableResources resources;
-+   public MinecraftServer.ReloadableResources resources;
+@@ -242,11 +_,30 @@
     private final StructureTemplateManager structureTemplateManager;
     protected final WorldData worldData;
     private volatile boolean isSaving;
@@ -200,7 +139,7 @@
        if (!serverleveldata.isInitialized()) {
           try {
              setInitialSpawn(serverlevel, serverleveldata, worldoptions.generateBonusChest(), flag);
-@@ -371,21 +_,77 @@
+@@ -371,9 +_,49 @@
           if (resourcekey != LevelStem.OVERWORLD) {
              ResourceKey<Level> resourcekey1 = ResourceKey.create(Registries.DIMENSION, resourcekey.location());
              DerivedLevelData derivedleveldata = new DerivedLevelData(this.worldData, serverleveldata);
@@ -251,12 +190,7 @@
           }
        }
  
-       worldborder.applySettings(serverleveldata.getWorldBorder());
-    }
- 
--   private static void setInitialSpawn(ServerLevel p_177897_, ServerLevelData p_177898_, boolean p_177899_, boolean p_177900_) {
-+   protected static void setInitialSpawn(ServerLevel p_177897_, ServerLevelData p_177898_, boolean p_177899_, boolean p_177900_) {
-       if (p_177900_) {
+@@ -385,7 +_,23 @@
           p_177898_.setSpawn(BlockPos.ZERO.above(80), 0.0F);
        } else {
           ServerChunkCache serverchunkcache = p_177897_.getChunkSource();
@@ -280,15 +214,6 @@
           int i = serverchunkcache.getGenerator().getSpawnHeight(p_177897_);
           if (i < p_177897_.getMinBuildHeight()) {
              BlockPos blockpos = chunkpos.getWorldPosition();
-@@ -429,7 +_,7 @@
-       }
-    }
- 
--   private void setupDebugLevel(WorldData p_129848_) {
-+   protected void setupDebugLevel(WorldData p_129848_) {
-       p_129848_.setDifficulty(Difficulty.PEACEFUL);
-       p_129848_.setDifficultyLocked(true);
-       ServerLevelData serverleveldata = p_129848_.overworldData();
 @@ -440,8 +_,23 @@
        serverleveldata.setGameType(GameType.SPECTATOR);
     }
@@ -549,11 +474,10 @@
     }
  
     protected void waitUntilNextTick() {
-@@ -719,7 +_,19 @@
+@@ -719,6 +_,18 @@
        });
     }
  
--   protected TickTask wrapRunnable(Runnable p_129852_) {
 +   private void executeModerately() {
 +      this.runAllTasks();
 +      this.drainQueuedTasks();
@@ -566,10 +490,9 @@
 +      }
 +   }
 +
-+   public TickTask wrapRunnable(Runnable p_129852_) {
+    public TickTask wrapRunnable(Runnable p_129852_) {
        return new TickTask(this.tickCount, p_129852_);
     }
- 
 @@ -792,28 +_,49 @@
     }
  

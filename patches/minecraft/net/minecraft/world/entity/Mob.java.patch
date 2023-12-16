@@ -1,33 +1,5 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -95,21 +_,21 @@
-    protected JumpControl jumpControl;
-    private final BodyRotationControl bodyRotationControl;
-    protected PathNavigation navigation;
--   public final GoalSelector goalSelector;
--   public final GoalSelector targetSelector;
-+   public GoalSelector goalSelector;
-+   public GoalSelector targetSelector;
-    @Nullable
-    private LivingEntity target;
-    private final Sensing sensing;
-    private final NonNullList<ItemStack> handItems = NonNullList.withSize(2, ItemStack.EMPTY);
--   protected final float[] handDropChances = new float[2];
-+   public final float[] handDropChances = new float[2];
-    private final NonNullList<ItemStack> armorItems = NonNullList.withSize(4, ItemStack.EMPTY);
--   protected final float[] armorDropChances = new float[4];
-+   public final float[] armorDropChances = new float[4];
-    private boolean canPickUpLoot;
-    private boolean persistenceRequired;
-    private final Map<BlockPathTypes, Float> pathfindingMalus = Maps.newEnumMap(BlockPathTypes.class);
-    @Nullable
--   private ResourceLocation lootTable;
--   private long lootTableSeed;
-+   public ResourceLocation lootTable;
-+   public long lootTableSeed;
-    @Nullable
-    private Entity leashHolder;
-    private int delayedLeashHolderId;
 @@ -117,6 +_,11 @@
     private CompoundTag leashInfoTag;
     private BlockPos restrictCenter = BlockPos.ZERO;

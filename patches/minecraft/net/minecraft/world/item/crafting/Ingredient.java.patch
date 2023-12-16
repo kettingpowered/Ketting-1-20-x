@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/Ingredient.java
 +++ b/net/minecraft/world/item/crafting/Ingredient.java
-@@ -30,16 +_,27 @@
+@@ -30,14 +_,25 @@
  import net.minecraft.world.level.ItemLike;
  
  public class Ingredient implements Predicate<ItemStack> {
@@ -13,8 +13,7 @@
     public static final Ingredient EMPTY = new Ingredient(Stream.empty());
     private final Ingredient.Value[] values;
     @Nullable
--   private ItemStack[] itemStacks;
-+   public ItemStack[] itemStacks;
+    public ItemStack[] itemStacks;
     @Nullable
     private IntList stackingIds;
 -   public static final Codec<Ingredient> CODEC = codec(true);
@@ -27,11 +26,8 @@
 +   public static final Codec<Ingredient> CODEC_NONEMPTY = net.minecraftforge.common.ForgeHooks.enhanceIngredientCodec(VANILLA_CODEC_NONEMPTY);
 +   private int invalidationCounter;
  
--   protected Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
-+   public Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
+    public Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
        this.values = p_43907_.toArray((p_43933_) -> {
-          return new Ingredient.Value[p_43933_];
-       });
 @@ -50,7 +_,7 @@
     }
  

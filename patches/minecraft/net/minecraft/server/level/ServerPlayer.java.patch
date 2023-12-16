@@ -9,33 +9,6 @@
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
-@@ -165,14 +_,14 @@
-    private float lastSentHealth = -1.0E8F;
-    private int lastSentFood = -99999999;
-    private boolean lastFoodSaturationZero = true;
--   private int lastSentExp = -99999999;
--   private int spawnInvulnerableTime = 60;
-+   public int lastSentExp = -99999999;
-+   public int spawnInvulnerableTime = 60;
-    private ChatVisiblity chatVisibility = ChatVisiblity.FULL;
-    private boolean canChatColor = true;
-    private long lastActionTime = Util.getMillis();
-    @Nullable
-    private Entity camera;
--   private boolean isChangingDimension;
-+   public boolean isChangingDimension;
-    private boolean seenCredits;
-    private final ServerRecipeBook recipeBook = new ServerRecipeBook();
-    @Nullable
-@@ -180,7 +_,7 @@
-    private int levitationStartTime;
-    private boolean disconnected;
-    private int requestedViewDistance = 2;
--   private String language = "en_us";
-+   public String language = "en_us";
-    @Nullable
-    private Vec3 startingToFallPosition;
-    @Nullable
 @@ -243,6 +_,19 @@
     public int containerCounter;
     public boolean wonGame;
@@ -437,7 +410,7 @@
           this.unRide();
           this.serverLevel().removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
           if (!this.wonGame) {
-@@ -730,86 +_,162 @@
+@@ -730,71 +_,138 @@
  
           return this;
        } else {
@@ -603,11 +576,8 @@
           }
  
           return optional1;
-       }
-    }
- 
--   private void triggerDimensionChangeTriggers(ServerLevel p_9210_) {
-+   public void triggerDimensionChangeTriggers(ServerLevel p_9210_) {
+@@ -804,12 +_,21 @@
+    public void triggerDimensionChangeTriggers(ServerLevel p_9210_) {
        ResourceKey<Level> resourcekey = p_9210_.dimension();
        ResourceKey<Level> resourcekey1 = this.level().dimension();
 -      CriteriaTriggers.CHANGED_DIMENSION.trigger(this, resourcekey, resourcekey1);

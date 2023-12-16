@@ -8,12 +8,10 @@
  import java.util.Objects;
  import java.util.function.Predicate;
  import net.minecraft.core.BlockPos;
-@@ -21,7 +_,42 @@
-    public static final int MAX_BOOKS_IN_STORAGE = 6;
+@@ -22,6 +_,41 @@
     private static final Logger LOGGER = LogUtils.getLogger();
     private final NonNullList<ItemStack> items = NonNullList.withSize(6, ItemStack.EMPTY);
--   private int lastInteractedSlot = -1;
-+   public int lastInteractedSlot = -1;
+    public int lastInteractedSlot = -1;
 +   // CraftBukkit start - add fields and methods
 +   public java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<>();
 +   private int maxStack = 1;

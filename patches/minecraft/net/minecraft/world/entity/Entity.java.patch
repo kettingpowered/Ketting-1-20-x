@@ -36,7 +36,7 @@
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final String ID_TAG = "id";
     public static final String PASSENGERS_TAG = "Passengers";
-@@ -143,10 +_,11 @@
+@@ -143,6 +_,7 @@
     private static final double LAVA_SLOW_FLOW_SCALE = 0.0023333333333333335D;
     public static final String UUID_TAG = "UUID";
     private static double viewScale = 1.0D;
@@ -44,30 +44,10 @@
     private final EntityType<?> type;
     private int id = ENTITY_COUNTER.incrementAndGet();
     public boolean blocksBuilding;
--   private ImmutableList<Entity> passengers = ImmutableList.of();
-+   public ImmutableList<Entity> passengers = ImmutableList.of();
-    protected int boardingCooldown;
-    @Nullable
-    private Entity vehicle;
-@@ -163,7 +_,7 @@
-    public float yRotO;
-    public float xRotO;
-    private AABB bb = INITIAL_AABB;
--   private boolean onGround;
-+   public boolean onGround;
-    public boolean horizontalCollision;
-    public boolean verticalCollision;
-    public boolean verticalCollisionBelow;
-@@ -185,12 +_,14 @@
-    public double zOld;
-    private float maxUpStep;
-    public boolean noPhysics;
--   protected final RandomSource random = RandomSource.create();
-+   public final RandomSource random = RandomSource.create();
+@@ -189,8 +_,10 @@
     public int tickCount;
     private int remainingFireTicks = -this.getFireImmuneTicks();
--   protected boolean wasTouchingWater;
-+   public boolean wasTouchingWater;
+    public boolean wasTouchingWater;
 +   @Deprecated // Forge: Use forgeFluidTypeHeight instead
     protected Object2DoubleMap<TagKey<Fluid>> fluidHeight = new Object2DoubleArrayMap<>(2);
     protected boolean wasEyeInWater;
@@ -75,21 +55,8 @@
     private final Set<TagKey<Fluid>> fluidOnEyes = new HashSet<>();
     public int invulnerableTime;
     protected boolean firstTick = true;
-@@ -214,7 +_,7 @@
-    private final VecDeltaCodec packetPositionCodec = new VecDeltaCodec();
-    public boolean noCulling;
-    public boolean hasImpulse;
--   private int portalCooldown;
-+   public int portalCooldown;
-    protected boolean isInsidePortal;
-    protected int portalTime;
-    protected BlockPos portalEntrancePos;
-@@ -234,17 +_,51 @@
-    private boolean onGroundNoBlocks = false;
-    private float crystalSoundIntensity;
-    private int lastCrystalSoundPlayTick;
--   private boolean hasVisualFire;
-+   public boolean hasVisualFire;
+@@ -237,14 +_,48 @@
+    public boolean hasVisualFire;
     @Nullable
     private BlockState feetBlockState = null;
 +   // CraftBukkit start
@@ -889,7 +856,7 @@
        this.setSharedFlag(4, p_20283_);
     }
  
-@@ -2239,15 +_,19 @@
+@@ -2239,8 +_,12 @@
        return this.getTeam() != null ? this.getTeam().isAlliedTo(p_20032_) : false;
     }
  
@@ -902,16 +869,7 @@
 +      // CraftBukkit - end
     }
  
--   protected boolean getSharedFlag(int p_20292_) {
-+   public boolean getSharedFlag(int p_20292_) {
-       return (this.entityData.get(DATA_SHARED_FLAGS_ID) & 1 << p_20292_) != 0;
-    }
- 
--   protected void setSharedFlag(int p_20116_, boolean p_20117_) {
-+   public void setSharedFlag(int p_20116_, boolean p_20117_) {
-       byte b0 = this.entityData.get(DATA_SHARED_FLAGS_ID);
-       if (p_20117_) {
-          this.entityData.set(DATA_SHARED_FLAGS_ID, (byte)(b0 | 1 << p_20116_));
+    public boolean getSharedFlag(int p_20292_) {
 @@ -2258,7 +_,7 @@
     }
  
@@ -1235,15 +1193,6 @@
     }
  
     protected float getEyeHeight(Pose p_19976_, EntityDimensions p_19977_) {
-@@ -2969,7 +_,7 @@
-       return SoundSource.NEUTRAL;
-    }
- 
--   protected int getFireImmuneTicks() {
-+   public int getFireImmuneTicks() {
-       return 1;
-    }
- 
 @@ -3010,9 +_,22 @@
        this.yRotO = this.getYRot();
     }
@@ -1387,15 +1336,6 @@
     public float maxUpStep() {
        return this.maxUpStep;
     }
-@@ -3324,7 +_,7 @@
-       this.levelCallback.onRemove(p_146876_);
-    }
- 
--   protected void unsetRemoved() {
-+   public void unsetRemoved() {
-       this.removalReason = null;
-    }
- 
 @@ -3349,6 +_,109 @@
     public boolean mayInteract(Level p_146843_, BlockPos p_146844_) {
        return true;

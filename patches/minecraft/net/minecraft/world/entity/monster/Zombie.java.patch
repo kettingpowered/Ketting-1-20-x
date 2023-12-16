@@ -1,20 +1,9 @@
 --- a/net/minecraft/world/entity/monster/Zombie.java
 +++ b/net/minecraft/world/entity/monster/Zombie.java
-@@ -71,7 +_,7 @@
-    private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.5D, AttributeModifier.Operation.MULTIPLY_BASE);
-    private static final EntityDataAccessor<Boolean> DATA_BABY_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> DATA_SPECIAL_TYPE_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.INT);
--   private static final EntityDataAccessor<Boolean> DATA_DROWNED_CONVERSION_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
-+   public static final EntityDataAccessor<Boolean> DATA_DROWNED_CONVERSION_ID = SynchedEntityData.defineId(Zombie.class, EntityDataSerializers.BOOLEAN);
-    public static final float ZOMBIE_LEADER_CHANCE = 0.05F;
-    public static final int REINFORCEMENT_ATTEMPTS = 50;
-    public static final int REINFORCEMENT_RANGE_MAX = 40;
-@@ -84,7 +_,8 @@
-    private final BreakDoorGoal breakDoorGoal = new BreakDoorGoal(this, DOOR_BREAKING_PREDICATE);
+@@ -85,6 +_,7 @@
     private boolean canBreakDoors;
     private int inWaterTime;
--   private int conversionTime;
-+   public int conversionTime;
+    public int conversionTime;
 +   private int lastTick = net.minecraft.server.MinecraftServer.currentTick; // CraftBukkit - add field
  
     public Zombie(EntityType<? extends Zombie> p_34271_, Level p_34272_) {
@@ -50,12 +39,10 @@
     }
  
     public void aiStep() {
-@@ -237,7 +_,8 @@
-       super.aiStep();
+@@ -238,6 +_,7 @@
     }
  
--   private void startUnderWaterConversion(int p_34279_) {
-+   public void startUnderWaterConversion(int p_34279_) {
+    public void startUnderWaterConversion(int p_34279_) {
 +      this.lastTick = net.minecraft.server.MinecraftServer.currentTick; // CraftBukkit
        this.conversionTime = p_34279_;
        this.getEntityData().set(DATA_DROWNED_CONVERSION_ID, true);

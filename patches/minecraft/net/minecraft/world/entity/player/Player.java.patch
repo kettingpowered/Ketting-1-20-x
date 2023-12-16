@@ -23,22 +23,6 @@
     protected int jumpTriggerTime;
     public float oBob;
     public float bob;
-@@ -152,13 +_,13 @@
-    public double xCloak;
-    public double yCloak;
-    public double zCloak;
--   private int sleepCounter;
-+   public int sleepCounter;
-    protected boolean wasUnderwater;
-    private final Abilities abilities = new Abilities();
-    public int experienceLevel;
-    public int totalExperience;
-    public float experienceProgress;
--   protected int enchantmentSeed;
-+   public int enchantmentSeed;
-    protected final float defaultFlySpeed = 0.02F;
-    private int lastLevelUpTime;
-    private final GameProfile gameProfile;
 @@ -169,6 +_,19 @@
     @Nullable
     public FishingHook fishing;
@@ -113,15 +97,6 @@
        if (this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.SWIMMING)) {
           Pose pose;
           if (this.isFallFlying()) {
-@@ -419,7 +_,7 @@
-       return SoundSource.PLAYERS;
-    }
- 
--   protected int getFireImmuneTicks() {
-+   public int getFireImmuneTicks() {
-       return 20;
-    }
- 
 @@ -458,8 +_,14 @@
     public void rideTick() {
        if (!this.level().isClientSide && this.wantsToStopRiding() && this.isPassenger()) {
@@ -399,15 +374,6 @@
 +                     net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, itemstack1, p_36159_);
                       this.setItemInHand(p_36159_, ItemStack.EMPTY);
                    }
- 
-@@ -993,7 +_,7 @@
-       this.boardingCooldown = 0;
-    }
- 
--   protected boolean isImmobile() {
-+   public boolean isImmobile() {
-       return super.isImmobile() || this.isSleeping();
-    }
  
 @@ -1001,6 +_,7 @@
        return !this.abilities.flying;
@@ -877,24 +843,6 @@
 +      mutablecomponent = mutablecomponent.append(PlayerTeam.formatNameForTeam(this.getTeam(), this.displayname));
 +      mutablecomponent = suffixes.stream().reduce(mutablecomponent, MutableComponent::append);
        return this.decorateDisplayNameComponent(mutablecomponent);
-    }
- 
-@@ -1867,7 +_,7 @@
-       return this.entityData.get(DATA_SHOULDER_LEFT);
-    }
- 
--   protected void setShoulderEntityLeft(CompoundTag p_36363_) {
-+   public void setShoulderEntityLeft(CompoundTag p_36363_) {
-       this.entityData.set(DATA_SHOULDER_LEFT, p_36363_);
-    }
- 
-@@ -1875,7 +_,7 @@
-       return this.entityData.get(DATA_SHOULDER_RIGHT);
-    }
- 
--   protected void setShoulderEntityRight(CompoundTag p_36365_) {
-+   public void setShoulderEntityRight(CompoundTag p_36365_) {
-       this.entityData.set(DATA_SHOULDER_RIGHT, p_36365_);
     }
  
 @@ -1927,24 +_,24 @@

@@ -1,21 +1,5 @@
 --- a/net/minecraft/world/level/block/entity/BrushableBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrushableBlockEntity.java
-@@ -40,12 +_,12 @@
-    private int brushCount;
-    private long brushCountResetsAtTick;
-    private long coolDownEndsAtTick;
--   private ItemStack item = ItemStack.EMPTY;
-+   public ItemStack item = ItemStack.EMPTY;
-    @Nullable
-    private Direction hitDirection;
-    @Nullable
--   private ResourceLocation lootTable;
--   private long lootTableSeed;
-+   public ResourceLocation lootTable;
-+   public long lootTableSeed;
- 
-    public BrushableBlockEntity(BlockPos p_277558_, BlockState p_278093_) {
-       super(BlockEntityType.BRUSHABLE_BLOCK, p_277558_, p_278093_);
 @@ -141,7 +_,10 @@
              double d5 = (double)blockpos.getZ() + 0.5D * d1 + d2;
              ItemEntity itementity = new ItemEntity(this.level, d3, d4, d5, this.item.split(this.level.random.nextInt(21) + 10));

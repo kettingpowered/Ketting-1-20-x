@@ -11,7 +11,7 @@
     public static final int NUM_DATA = 1;
     public static final int SLOT_BOOK = 0;
     public static final int NUM_SLOTS = 1;
--   private final Container bookAccess = new Container() {
+-   public final Container bookAccess = new Container() {
 +   // CraftBukkit start - add fields and methods
 +   public final Container bookAccess = new LecternInventory();
 +   public class LecternInventory implements Container {
@@ -84,13 +84,7 @@
        }
  
        public void setChanged() {
-@@ -138,12 +_,12 @@
-       this.setChanged();
-    }
- 
--   void setPage(int p_59533_) {
-+   public void setPage(int p_59533_) {
-       int i = Mth.clamp(p_59533_, 0, this.pageCount - 1);
+@@ -143,7 +_,7 @@
        if (i != this.page) {
           this.page = i;
           this.setChanged();

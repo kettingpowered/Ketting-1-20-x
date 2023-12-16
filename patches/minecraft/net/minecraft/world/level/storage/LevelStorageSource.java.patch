@@ -58,12 +58,8 @@
     public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> levels) implements Iterable<LevelStorageSource.LevelDirectory> {
        public boolean isEmpty() {
           return this.levels.isEmpty();
-@@ -416,11 +_,21 @@
- 
-    public class LevelStorageAccess implements AutoCloseable {
-       final DirectoryLock lock;
--      final LevelStorageSource.LevelDirectory levelDirectory;
-+      public final LevelStorageSource.LevelDirectory levelDirectory;
+@@ -419,8 +_,18 @@
+       public final LevelStorageSource.LevelDirectory levelDirectory;
        private final String levelId;
        private final Map<LevelResource, Path> resources = Maps.newHashMap();
 -
