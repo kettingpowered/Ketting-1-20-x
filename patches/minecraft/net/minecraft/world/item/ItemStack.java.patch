@@ -1,13 +1,10 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -80,12 +_,19 @@
+@@ -80,12 +_,16 @@
  import net.minecraft.world.level.block.state.pattern.BlockInWorld;
  import org.slf4j.Logger;
  
 -public final class ItemStack {
-+//Ketting Start 
-+//Ketting end
-+
 +public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements net.minecraftforge.common.extensions.IForgeItemStack {
     public static final Codec<ItemStack> CODEC = RecordCodecBuilder.create((p_309238_) -> {
        return p_309238_.group(BuiltInRegistries.ITEM.holderByNameCodec().fieldOf("id").forGetter(ItemStack::getItemHolder), Codec.INT.fieldOf("Count").forGetter(ItemStack::getCount), CompoundTag.CODEC.optionalFieldOf("tag").forGetter((p_281115_) -> {

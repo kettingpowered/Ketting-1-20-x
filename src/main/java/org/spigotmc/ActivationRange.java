@@ -1,6 +1,7 @@
 package org.spigotmc;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -105,7 +106,7 @@ public class ActivationRange
      *
      * @param world
      */
-    public static void activateEntities(Level world)
+    public static void activateEntities(ServerLevel world)
     {
         SpigotTimings.entityActivationCheckTimer.startTiming();
         final int miscActivationRange = world.spigotConfig.miscActivationRange;

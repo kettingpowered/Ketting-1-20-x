@@ -39,24 +39,6 @@
           return false;
        } else {
           Vec3 vec3 = p_32535_.getViewVector(1.0F).normalize();
-@@ -251,7 +_,7 @@
-       super.customServerAiStep();
-    }
- 
--   protected boolean teleport() {
-+   public boolean teleport() {
-       if (!this.level().isClientSide() && this.isAlive()) {
-          double d0 = this.getX() + (this.random.nextDouble() - 0.5D) * 64.0D;
-          double d1 = this.getY() + (double)(this.random.nextInt(64) - 32);
-@@ -272,7 +_,7 @@
-       return this.teleport(d1, d2, d3);
-    }
- 
--   public boolean teleport(double p_32544_, double p_32545_, double p_32546_) {
-+   private boolean teleport(double p_32544_, double p_32545_, double p_32546_) {
-       BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(p_32544_, p_32545_, p_32546_);
- 
-       while(blockpos$mutableblockpos.getY() > this.level().getMinBuildHeight() && !this.level().getBlockState(blockpos$mutableblockpos).blocksMotion()) {
 @@ -283,8 +_,10 @@
        boolean flag = blockstate.blocksMotion();
        boolean flag1 = blockstate.getFluidState().is(FluidTags.WATER);
