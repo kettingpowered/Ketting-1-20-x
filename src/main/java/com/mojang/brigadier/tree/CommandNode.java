@@ -13,6 +13,7 @@ import com.mojang.brigadier.context.CommandContextBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import net.minecraft.commands.CommandSourceStack;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -22,8 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
-
-import net.minecraft.commands.CommandSourceStack; //Ketting/Craftbukkit
 
 public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
     private final Map<String, CommandNode<S>> children = new LinkedHashMap<>();
