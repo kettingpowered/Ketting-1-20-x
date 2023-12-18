@@ -13,7 +13,7 @@ public final class CraftSoil extends org.bukkit.craftbukkit.block.data.CraftBloc
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftFarmland
+    // org.bukkit.craftbukkit.block.data.type.CraftFarmland
 
     private static final net.minecraft.world.level.block.state.properties.IntegerProperty MOISTURE = getInteger(net.minecraft.world.level.block.FarmBlock.class, "moisture");
 

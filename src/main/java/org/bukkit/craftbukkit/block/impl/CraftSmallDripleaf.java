@@ -13,7 +13,7 @@ public final class CraftSmallDripleaf extends org.bukkit.craftbukkit.block.data.
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBisected
+    // org.bukkit.craftbukkit.block.data.CraftBisected
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> HALF = getEnum(net.minecraft.world.level.block.SmallDripleafBlock.class, "half");
 
@@ -27,7 +27,7 @@ public final class CraftSmallDripleaf extends org.bukkit.craftbukkit.block.data.
         set(HALF, half);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.SmallDripleafBlock.class, "facing");
 
@@ -46,7 +46,7 @@ public final class CraftSmallDripleaf extends org.bukkit.craftbukkit.block.data.
         return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.SmallDripleafBlock.class, "waterlogged");
 

@@ -13,7 +13,7 @@ public final class CraftWeatheringCopperSlab extends org.bukkit.craftbukkit.bloc
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSlab
+    // org.bukkit.craftbukkit.block.data.type.CraftSlab
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> TYPE = getEnum(net.minecraft.world.level.block.WeatheringCopperSlabBlock.class, "type");
 
@@ -27,7 +27,7 @@ public final class CraftWeatheringCopperSlab extends org.bukkit.craftbukkit.bloc
         set(TYPE, type);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.WeatheringCopperSlabBlock.class, "waterlogged");
 

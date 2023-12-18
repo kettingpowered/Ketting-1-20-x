@@ -13,7 +13,7 @@ public final class CraftSculkVein extends org.bukkit.craftbukkit.block.data.Craf
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftMultipleFacing
+    // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] FACES = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
         getBoolean(net.minecraft.world.level.block.SculkVeinBlock.class, "north", true), getBoolean(net.minecraft.world.level.block.SculkVeinBlock.class, "east", true), getBoolean(net.minecraft.world.level.block.SculkVeinBlock.class, "south", true), getBoolean(net.minecraft.world.level.block.SculkVeinBlock.class, "west", true), getBoolean(net.minecraft.world.level.block.SculkVeinBlock.class, "up", true), getBoolean(net.minecraft.world.level.block.SculkVeinBlock.class, "down", true)
@@ -63,7 +63,7 @@ public final class CraftSculkVein extends org.bukkit.craftbukkit.block.data.Craf
         return faces.build();
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.SculkVeinBlock.class, "waterlogged");
 

@@ -13,7 +13,7 @@ public final class CraftStairs extends org.bukkit.craftbukkit.block.data.CraftBl
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftStairs
+    // org.bukkit.craftbukkit.block.data.type.CraftStairs
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> SHAPE = getEnum(net.minecraft.world.level.block.StairBlock.class, "shape");
 
@@ -27,7 +27,7 @@ public final class CraftStairs extends org.bukkit.craftbukkit.block.data.CraftBl
         set(SHAPE, shape);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBisected
+    // org.bukkit.craftbukkit.block.data.CraftBisected
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> HALF = getEnum(net.minecraft.world.level.block.StairBlock.class, "half");
 
@@ -41,7 +41,7 @@ public final class CraftStairs extends org.bukkit.craftbukkit.block.data.CraftBl
         set(HALF, half);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.StairBlock.class, "facing");
 
@@ -60,7 +60,7 @@ public final class CraftStairs extends org.bukkit.craftbukkit.block.data.CraftBl
         return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.StairBlock.class, "waterlogged");
 

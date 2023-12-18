@@ -13,7 +13,7 @@ public final class CraftBrushable extends org.bukkit.craftbukkit.block.data.Craf
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBrushable
+    // org.bukkit.craftbukkit.block.data.CraftBrushable
 
     private static final net.minecraft.world.level.block.state.properties.IntegerProperty DUSTED = getInteger(net.minecraft.world.level.block.BrushableBlock.class, "dusted");
 

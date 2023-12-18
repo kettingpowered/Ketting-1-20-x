@@ -198,6 +198,13 @@ public abstract class PotionEffectType implements Keyed {
         }
         return potionEffectType;
     }
+    
+    //Ketting Start
+    public static void registerPotionEffectType(@NotNull PotionEffectType pet) {
+        Preconditions.checkNotNull(pet);
+        ID_MAP.put(ID_MAP.size(), pet);
+    }
+    //Ketting End
 
     /**
      * Creates a PotionEffect from this PotionEffectType, applying duration
@@ -312,12 +319,6 @@ public abstract class PotionEffectType implements Keyed {
         name = convertLegacy(name);
         return Registry.EFFECT.get(NamespacedKey.fromString(name.toLowerCase(java.util.Locale.ENGLISH)));
     }
-
-    //Ketting start
-    public static void startAcceptingRegistrations() {
-        acceptingNew = true;
-    }
-    //Ketting end
 
     /**
      * @return an array of all known PotionEffectTypes.

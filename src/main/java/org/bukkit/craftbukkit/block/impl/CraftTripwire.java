@@ -13,7 +13,7 @@ public final class CraftTripwire extends org.bukkit.craftbukkit.block.data.Craft
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftTripwire
+    // org.bukkit.craftbukkit.block.data.type.CraftTripwire
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty DISARMED = getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "disarmed");
 
@@ -27,7 +27,7 @@ public final class CraftTripwire extends org.bukkit.craftbukkit.block.data.Craft
         set(DISARMED, disarmed);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAttachable
+    // org.bukkit.craftbukkit.block.data.CraftAttachable
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty ATTACHED = getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "attached");
 
@@ -41,7 +41,7 @@ public final class CraftTripwire extends org.bukkit.craftbukkit.block.data.Craft
         set(ATTACHED, attached);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftMultipleFacing
+    // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] FACES = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
         getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "north", true), getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "east", true), getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "south", true), getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "west", true), getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "up", true), getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "down", true)
@@ -91,7 +91,7 @@ public final class CraftTripwire extends org.bukkit.craftbukkit.block.data.Craft
         return faces.build();
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
+    // org.bukkit.craftbukkit.block.data.CraftPowerable
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.TripWireBlock.class, "powered");
 

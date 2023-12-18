@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.Statistic;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -359,6 +360,7 @@ public class ForgeInject {
 
     private static void addForgeEnchantments() {
         ForgeRegistries.ENCHANTMENTS.getEntries().forEach(entry -> {
+            Registry.ENCHANTMENT.get(new NamespacedKey(entry.getKey().location().getNamespace(),entry.getKey().location().getPath()));
             CraftEnchantment enchantment = new CraftEnchantment(entry.getValue());
             if (!org.bukkit.enchantments.Enchantment.byKey.containsKey(enchantment.getKey())
                     || !org.bukkit.enchantments.Enchantment.byName.containsKey(enchantment.getName())) {
@@ -371,7 +373,6 @@ public class ForgeInject {
     }
 
     private static void addForgePotions() {
-        PotionEffectType.startAcceptingRegistrations();
         ForgeRegistries.MOB_EFFECTS.getEntries().forEach(entry -> {
             var pet = new CraftPotionEffectType(entry.getValue());
 
@@ -385,7 +386,6 @@ public class ForgeInject {
                 Ketting.LOGGER.error("Could not register potion effect into Bukkit: " + pet.getName() + ". " + e.getMessage());
             }
         });
-        PotionEffectType.stopAcceptingRegistrations();
         // Stage 1 complete - now to add the types to bukkit
 
         int ordinal = EntityType.values().length;

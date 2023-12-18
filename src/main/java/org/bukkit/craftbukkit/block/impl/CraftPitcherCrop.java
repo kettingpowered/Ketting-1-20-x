@@ -13,7 +13,7 @@ public final class CraftPitcherCrop extends org.bukkit.craftbukkit.block.data.Cr
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAgeable
+    // org.bukkit.craftbukkit.block.data.CraftAgeable
 
     private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger(net.minecraft.world.level.block.PitcherCropBlock.class, "age");
 
@@ -32,7 +32,7 @@ public final class CraftPitcherCrop extends org.bukkit.craftbukkit.block.data.Cr
         return getMax(AGE);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBisected
+    // org.bukkit.craftbukkit.block.data.CraftBisected
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> HALF = getEnum(net.minecraft.world.level.block.PitcherCropBlock.class, "half");
 

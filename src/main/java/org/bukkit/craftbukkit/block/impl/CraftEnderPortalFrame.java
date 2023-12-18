@@ -13,7 +13,7 @@ public final class CraftEnderPortalFrame extends org.bukkit.craftbukkit.block.da
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftEndPortalFrame
+    // org.bukkit.craftbukkit.block.data.type.CraftEndPortalFrame
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty EYE = getBoolean(net.minecraft.world.level.block.EndPortalFrameBlock.class, "eye");
 
@@ -27,7 +27,7 @@ public final class CraftEnderPortalFrame extends org.bukkit.craftbukkit.block.da
         set(EYE, eye);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.EndPortalFrameBlock.class, "facing");
 

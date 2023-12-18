@@ -13,7 +13,7 @@ public final class CraftSculkShrieker extends org.bukkit.craftbukkit.block.data.
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSculkShrieker
+    // org.bukkit.craftbukkit.block.data.type.CraftSculkShrieker
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty CAN_SUMMON = getBoolean(net.minecraft.world.level.block.SculkShriekerBlock.class, "can_summon");
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty SHRIEKING = getBoolean(net.minecraft.world.level.block.SculkShriekerBlock.class, "shrieking");
@@ -38,7 +38,7 @@ public final class CraftSculkShrieker extends org.bukkit.craftbukkit.block.data.
         set(SHRIEKING, shrieking);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.SculkShriekerBlock.class, "waterlogged");
 

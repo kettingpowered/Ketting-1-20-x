@@ -13,7 +13,7 @@ public final class CraftLever extends org.bukkit.craftbukkit.block.data.CraftBlo
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSwitch
+    // org.bukkit.craftbukkit.block.data.type.CraftSwitch
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACE = getEnum(net.minecraft.world.level.block.LeverBlock.class, "face");
 
@@ -27,7 +27,7 @@ public final class CraftLever extends org.bukkit.craftbukkit.block.data.CraftBlo
         set(FACE, face);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.LeverBlock.class, "facing");
 
@@ -46,7 +46,7 @@ public final class CraftLever extends org.bukkit.craftbukkit.block.data.CraftBlo
         return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftFaceAttachable
+    // org.bukkit.craftbukkit.block.data.CraftFaceAttachable
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> ATTACH_FACE = getEnum(net.minecraft.world.level.block.LeverBlock.class, "face");
 
@@ -60,7 +60,7 @@ public final class CraftLever extends org.bukkit.craftbukkit.block.data.CraftBlo
         set(ATTACH_FACE, face);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
+    // org.bukkit.craftbukkit.block.data.CraftPowerable
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.LeverBlock.class, "powered");
 

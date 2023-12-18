@@ -13,7 +13,7 @@ public final class CraftChiseledBookShelf extends org.bukkit.craftbukkit.block.d
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftChiseledBookshelf
+    // org.bukkit.craftbukkit.block.data.type.CraftChiseledBookshelf
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] SLOT_OCCUPIED = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
         getBoolean(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "slot_0_occupied"), getBoolean(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "slot_1_occupied"), getBoolean(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "slot_2_occupied"),
@@ -48,7 +48,7 @@ public final class CraftChiseledBookShelf extends org.bukkit.craftbukkit.block.d
         return SLOT_OCCUPIED.length;
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, "facing");
 

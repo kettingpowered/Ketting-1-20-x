@@ -13,7 +13,7 @@ public final class CraftPointedDripstone extends org.bukkit.craftbukkit.block.da
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftPointedDripstone
+    // org.bukkit.craftbukkit.block.data.type.CraftPointedDripstone
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> VERTICAL_DIRECTION = getEnum(net.minecraft.world.level.block.PointedDripstoneBlock.class, "vertical_direction");
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> THICKNESS = getEnum(net.minecraft.world.level.block.PointedDripstoneBlock.class, "thickness");
@@ -43,7 +43,7 @@ public final class CraftPointedDripstone extends org.bukkit.craftbukkit.block.da
         set(THICKNESS, thickness);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.PointedDripstoneBlock.class, "waterlogged");
 

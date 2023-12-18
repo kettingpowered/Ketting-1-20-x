@@ -13,7 +13,7 @@ public final class CraftRedstoneTorch extends org.bukkit.craftbukkit.block.data.
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftLightable
+    // org.bukkit.craftbukkit.block.data.CraftLightable
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty LIT = getBoolean(net.minecraft.world.level.block.RedstoneTorchBlock.class, "lit");
 
