@@ -96,28 +96,14 @@
           this.saveLevelData(compoundtag1);
        }
  
-@@ -504,6 +_,24 @@
+@@ -503,6 +_,10 @@
+ 
        public Optional<Path> getIconFile() {
           return !this.lock.isValid() ? Optional.empty() : Optional.of(this.levelDirectory.iconFile());
-       }
++      }
 +
-+      //Somebody start - Ketting - Who added this?
 +      public Path getWorldDir() {
 +         return baseDir;
-+      }
-+      public void readAdditionalLevelSaveData() {
-+         checkLock();
-+         LevelStorageSource.this.makeLevelSummary(this.levelDirectory, (path, dataFixer) -> {
-+            try {
-+               CompoundTag compoundTag = NbtIo.readCompressed(path.toFile());
-+               net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(compoundTag, this.levelDirectory);
-+            } catch (Exception e) {
-+                LOGGER.error("Exception reading {}", path, e);
-+            }
-+            return ""; // Return non-null to prevent level.dat-old inject
-+         });
-+      }
-+      //Somebody end - Ketting - Who added this?
+       }
  
        public void deleteLevel() throws IOException {
-          this.checkLock();

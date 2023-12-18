@@ -101,7 +101,7 @@
           if (!eula.hasAgreedToEULA()) {
              LOGGER.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
              return;
-@@ -119,8 +_,13 @@
+@@ -119,8 +_,12 @@
           File file1 = new File(optionset.valueOf(optionspec8));
           Services services = Services.create(new YggdrasilAuthenticationService(Proxy.NO_PROXY), file1);
           String s = Optional.ofNullable(optionset.valueOf(optionspec9)).orElse(dedicatedserversettings.getProperties().levelName);
@@ -112,7 +112,6 @@
           LevelStorageSource levelstoragesource = LevelStorageSource.createDefault(file1.toPath());
 -         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s);
 +         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s, LevelStem.OVERWORLD);
-+         levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData();
           Dynamic<?> dynamic;
           if (levelstoragesource$levelstorageaccess.hasWorldData()) {
              LevelSummary levelsummary;

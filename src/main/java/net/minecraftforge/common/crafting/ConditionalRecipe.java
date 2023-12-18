@@ -41,6 +41,7 @@ import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.crafting.conditions.ConditionCodec;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -167,6 +168,7 @@ public class ConditionalRecipe {
         @Override public ItemStack getResultItem(RegistryAccess reg) { return null; }
         @Override public RecipeSerializer<?> getSerializer() { return ConditionalRecipe.SERIALZIER; }
         @Override public RecipeType<?> getType() { throw new UnsupportedOperationException(); }
+        @Override public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) { return null; }
 
         @Nullable private final ICondition main;
         private final List<InnerRecipe> recipes;
