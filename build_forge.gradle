@@ -46,6 +46,7 @@ java {
 //Ketting Start - fix `./gradlew setup build`
 tasks.withType(JavaCompile).configureEach {
     dependsOn 'extractMapped' 
+    dependsOn generateKettingLibraries 
 }
 //Ketting End - fix `./gradlew setup build`
 
@@ -912,7 +913,6 @@ tasks.register('installerJar', InstallerJar) {
 //Ketting start
 tasks.register('generateKettingLibraries', dev.vankka.dependencydownload.task.GenerateDependencyDownloadResourceTask) {
     dependsOn['jar']
-//    var conf =
     configuration = configurations.internallibs
     file = "data/ketting_libraries.txt"
     includeShadowJarRelocations = false
@@ -921,6 +921,7 @@ tasks.register('generateKettingLibraries', dev.vankka.dependencydownload.task.Ge
 tasks.register('kettingJar', Jar) {
     dependsOn ':forge:downloadServerRaw'
     dependsOn ':forge:genServerBinPatches'
+    dependsOn generateKettingLibraries
     mustRunAfter ':setup'
 
     BUNDLED_PROJECTS.each { dep -> {
@@ -934,61 +935,91 @@ tasks.register('kettingJar', Jar) {
     archiveVersion = KETTING_VERSION
     destinationDirectory = file('build/libs')
 
-    doLast{
-        def CLASS_PATH = Util.getArtifacts(project, project.configurations.installer).values().collect { "libraries/${it.downloads.artifact.path}" } +
-                [
-                        'libraries/' + Util.getMavenInfoFromTask(rootProject.tasks.findByPath(':fmlloader:jar')),
-                        "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
-                ]
-        def claimed = CLASS_PATH.collect { it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
-        def downloadServerRaw = rootProject.tasks.findByPath(':forge:downloadServerRaw')
-        if (downloadServerRaw.dest.exists()) {
-            try (def zip = new java.util.zip.ZipFile(downloadServerRaw.dest)) {
-                CLASS_PATH += zip.getInputStream(zip.getEntry('META-INF/classpath-joined')).text.split(';')
-                        .findAll { it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
-            }
-        } else {
-            println("Can't read server")
+    def CLASS_PATH = Util.getArtifacts(project, project.configurations.installer).values().collect{"libraries/${it.downloads.artifact.path}"} +
+            [
+                    'libraries/' + Util.getMavenInfoFromTask(rootProject.tasks.findByPath(':fmlloader:jar')),
+                    "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
+            ]
+    def claimed = CLASS_PATH.collect { it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
+    if (project.downloadServerRaw.dest.exists()) {
+        try (def zip = new java.util.zip.ZipFile(project.downloadServerRaw.dest)) {
+            CLASS_PATH += zip.getInputStream(zip.getEntry('META-INF/classpath-joined')).text.split(';')
+                    .findAll { it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
         }
-    
-        manifest {
+    } else {
+        println("Can't read server")
+    }
+
+    def MODULE_PATH = Util.getArtifacts(project, project.configurations.moduleonly).values().collect{"libraries/${it.downloads.artifact.path}"}.sort()
+    def tokens = [
+            TASK:          'forge_server',
+            MAVEN_PATH:    "${project.group.replace('.', '/')}/${project.name}/${VERSION}",
+            FORGE_VERSION: FORGE_VERSION,
+            MC_VERSION:    MC_VERSION,
+            MCP_VERSION:   MCP_VERSION,
+            FORGE_GROUP:   project.group,
+            IGNORE_LIST: Util.getArtifacts(project, project.configurations.moduleonly).values().collect{it.downloads.artifact.path.rsplit('/', 1)[1]}.sort().join(','),
+            MODULES: 'ALL-MODULE-PATH'
+    ]
+
+    doFirst {
+        manifest{
             attributes([
-                    'Main-Class': 'org.kettingpowered.ketting.KettingLauncher',
-                    'Class-Path': CLASS_PATH.toString().replace("[", "").replace("]", "").replace(",", "")
+                        'Class-Path': CLASS_PATH.toString().replace("[", "").replace("]", "").replace(",", ""),
+                        'Main-Class': 'org.kettingpowered.ketting.KettingLauncher'
             ])
         }
-    
-        BUNDLED_PROJECTS.each { dep ->
-            from(project(dep).tasks.jar.outputs) {
-                rename { "data/${dep}-${MC_VERSION}-${FORGE_VERSION}.jar" }
+    }
+
+    BUNDLED_PROJECTS.each { dep ->
+        from(project(dep).tasks.jar.outputs) {
+            rename { "data/${dep}-${MC_VERSION}-${FORGE_VERSION}.jar" }
+        }
+    }
+
+    from(project(':kettinglauncher').project.sourceSets.main.output)
+    from(project(':fmlcore').project.sourceSets.main.output)
+    from(generateKettingLibraries)
+
+    //Add KettingCore to the jar, this contains BetterUI and some more common utils
+    project(':fmlcore').configurations.runtimeClasspath.getFiles().each { file ->
+        if (file.isFile() && file.name.startsWith('kettingcore')) {
+            println("Adding ${file.name} to the jar")
+            from(zipTree(file)) {
+                exclude 'META-INF/'
             }
         }
-    
-        from(project(':kettinglauncher').project.sourceSets.main.output)
-        from(project(':fmlcore').project.sourceSets.main.output)
-        from(':forge:generateKettingLibraries')
-    
-        //Add KettingCore to the jar, this contains BetterUI and some more common utils
-        project(':fmlcore').configurations.runtimeClasspath.getFiles().each { file ->
-            if (file.isFile() && file.name.startsWith('kettingcore')) {
-                println("Adding ${file.name} to the jar")
-                from(zipTree(file)) {
-                    exclude 'META-INF/'
-                }
-            }
-        }
-    
-        from(project(':forge').ext.EXTRA_TXTS)
-        from(rootProject.file('/forge_installer_logo.png')) {
-            rename { 'big_logo.png' }
-        }
-        from(genClientBinPatches.output) {
-            rename { 'data/client.lzma' }
-        }
-        from(genServerBinPatches.output) {
-            rename { 'data/server.lzma' }
-        }
-        jarSigner.sign(it)
+    }
+
+    from(genServerBinPatches.output) {
+        rename { 'data/server.lzma' }
+    }
+
+    from(universalJar) {
+        rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-universal.jar' }
+    }
+
+    from(installerJson.output) {
+        rename { 'data/installscript.json' }
+    }
+
+    from(rootProject.file('server_files/libraries.txt')) {
+        filter(ReplaceTokens, tokens: [CLASS_PATH: CLASS_PATH.join(';')])
+        rename { 'data/libraries.txt' }
+    }
+
+    from(rootProject.file('server_files/args.txt')) {
+        filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';')])
+        rename { 'data/win_args.txt' }
+    }
+
+    from(rootProject.file('server_files/args.txt')) {
+        filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':')])
+        rename { 'data/unix_args.txt' }
+    }
+
+    from(rootProject.file('server_files/user_jvm_args.txt')) {
+        rename { 'data/user_jvm_args.txt' }
     }
 }
 //Ketting end

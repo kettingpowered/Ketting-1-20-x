@@ -2,7 +2,7 @@ plugins {
     id 'com.github.ben-manes.versions'
     id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
 }
-apply plugin: 'java-library'
+apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: 'org.javamodularity.moduleplugin'
 
@@ -32,15 +32,12 @@ dependencies {
     implementation FART
 }
 
-license {
-    header = rootProject.file('LICENSE-header.txt')
-
-    include 'org/kettingpowered/ketting/'
-    exclude 'net/minecraftforge/'
-
-    tasks {
-        main {
-            files.from files("$rootDir/kettinglauncher/src/main/java")
-        }
+jar{
+    manifest{
+        attributes 'Main-Class': 'org.kettingpowered.ketting.KettingLauncher'
     }
+}
+
+ext{
+    mainClass = 'org.kettingpowered.ketting.KettingLauncher'
 }
