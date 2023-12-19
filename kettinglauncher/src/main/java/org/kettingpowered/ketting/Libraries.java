@@ -28,6 +28,7 @@ import java.util.Objects;
 public class Libraries {
 
     private static final List<URL> loadedLibs = new ArrayList<>();
+    private static final String seperator = "!";
 
     public static void setup() throws Exception {
         Lib[] libs = {
@@ -65,7 +66,7 @@ public class Libraries {
         loadedLibs.addAll(internalLibs);
         downloadExternal();
         downloadMcp();
-        System.setProperty("libs", String.join(File.pathSeparator, loadedLibs.stream().map(URL::toString).toArray(String[]::new)));
+        System.setProperty("libs", String.join(seperator, loadedLibs.stream().map(URL::toString).toArray(String[]::new)));
     }
 
     private void downloadExternal() throws IOException {
@@ -151,7 +152,7 @@ public class Libraries {
             System.exit(1);
         }
 
-        URL[] urls = Arrays.stream(libs.split(File.pathSeparator)).map(lib -> {
+        URL[] urls = Arrays.stream(libs.split(seperator)).map(lib -> {
             try {
                 return new URL(lib);
             } catch (Exception e) {

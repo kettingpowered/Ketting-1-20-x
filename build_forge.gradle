@@ -137,6 +137,8 @@ dependencies {
     installer(libs.ketting)
     installer(libs.bundles.bukkitlibs)
     installer(libs.bundles.launcher) // Add missing libraries
+    installer(variantOf(libs.nettyTransportEpoll) { classifier("linux-x86_64") })
+    installer(variantOf(libs.nettyTransportEpoll) { classifier("linux-aarch_64") })
     installer(libs.bundles.jline.extras)
 
     BUNDLED_PROJECTS.each {item -> {
