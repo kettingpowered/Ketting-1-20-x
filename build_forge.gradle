@@ -140,18 +140,8 @@ dependencies {
     installer(libs.bundles.jline.extras)
 
     BUNDLED_PROJECTS.each {item -> {
-        installer(project(item))
+        implementation(project(item)) //Ketting - Implement instead of installing, deps get added in the kettingJar task anyway
     }}
-
-//Transferred to call above.
-    if(false){
-    installer(project(':fmlcore'))
-    installer(project(':fmlloader'))
-    installer(project(':fmlearlydisplay')) //Ketting - we yeeted that.
-    installer(project(':javafmllanguage'))
-    installer(project(':lowcodelanguage'))
-    installer(project(':mclanguage'))
-    }
     //Ketting end
 
     runtimeOnly(libs.bootstrap)
