@@ -912,6 +912,7 @@ tasks.register('kettingJar', Jar) {
     dependsOn ':forge:downloadServerRaw'
     dependsOn ':forge:genServerBinPatches'
     dependsOn generateKettingLibraries
+    dependsOn createServerShimClasspath
     mustRunAfter ':setup'
 
     BUNDLED_PROJECTS.each { dep -> {
@@ -983,6 +984,9 @@ tasks.register('kettingJar', Jar) {
     from(project(':kettinglauncher').project.sourceSets.main.output)
     from(project(':fmlcore').project.sourceSets.main.output)
     from(generateKettingLibraries)
+    from(createServerShimClasspath.output) {
+        rename { 'data/bootstrap-shim.list' }
+    }
 
     //Add KettingCore to the jar, this contains BetterUI and some more common utils
     project(':fmlcore').configurations.runtimeClasspath.getFiles().each { file ->

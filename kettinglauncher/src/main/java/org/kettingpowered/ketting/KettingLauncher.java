@@ -1,12 +1,15 @@
 package org.kettingpowered.ketting;
 
 import org.kettingpowered.ketting.common.betterui.BetterUI;
-import org.kettingpowered.ketting.internal.utils.JarTool;
 import org.kettingpowered.ketting.utils.FileUtils;
 import org.kettingpowered.ketting.utils.ServerInitHelper;
 import org.kettingpowered.ketting.utils.Unsafe;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -15,15 +18,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static org.kettingpowered.ketting.internal.KettingConstants.*;
 
 public class KettingLauncher {
 
-    //Libs added here will get ignored by ServerInitHelper
+    //Libs added here will get ignored by getClassPathFromShim
     public static final String[] MANUALLY_PATCHED_LIBS = {
-        "com/mojang/brigadier"
+            "com/mojang/brigadier",
     };
 
     private static List<String> args;
@@ -90,19 +92,58 @@ public class KettingLauncher {
     private static void launch() {
         System.out.println("Launching Ketting...");
 
+        args.add("--launchTarget");
+        args.add("forge_server");
+
         try (URLClassLoader loader = new LibraryClassLoader()) {
             loadExternalFileSystems(loader);
             clearReservedIdentifiers();
             setProperties();
 
-            //TODO
-        } catch (Exception e) {
-            throw new RuntimeException("Could not launch server", e);
+            Class.forName("net.minecraftforge.bootstrap.ForgeBootstrap", true, loader)
+                    .getMethod("main", String[].class)
+                    .invoke(null, (Object) args.toArray(String[]::new));
+        } catch (Throwable t) {
+            throw new RuntimeException("Could not launch server", t);
         }
     }
 
     private static void setProperties() {
+        System.setProperty("java.class.path", getClassPathFromShim());
         System.setProperty("ketting.remapper.dump", "./.mixin.out/plugin_classes");
+    }
+
+    private static String getClassPathFromShim() {
+        InputStream stream = KettingLauncher.class.getClassLoader().getResourceAsStream("data/bootstrap-shim.list");
+        if (stream == null) throw new RuntimeException("Could not find bootstrap-shim.list");
+
+        StringBuilder builder = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+            String line;
+            for(line = reader.readLine(); line != null; line = reader.readLine()) {
+                String shim = line.split("\t")[2];
+                for (String lib : MANUALLY_PATCHED_LIBS) {
+                    if (shim.startsWith(lib)) {
+                        shim = null;
+                        break;
+                    }
+                }
+
+                if (shim == null) continue;
+
+                File target = new File(KettingFiles.LIBRARIES_PATH, shim);
+                if (!target.exists()) {
+                    System.err.println("Could not find " + shim + " in " + INSTALLER_LIBRARIES_FOLDER);
+                    continue;
+                }
+
+                builder.append(File.pathSeparator).append(target.getAbsolutePath());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Could not read bootstrap-shim.list", e);
+        }
+
+        return builder.toString();
     }
 
     //We love hacks
