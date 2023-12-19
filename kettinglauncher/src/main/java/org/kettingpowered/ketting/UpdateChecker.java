@@ -19,9 +19,7 @@ public class UpdateChecker {
     private static final String API_DOWNLOAD = "https://api.github.com/repos/kettingpowered/Ketting-1-20-x/releases/latest";
 
     public static void init() throws Exception {
-        URL[] urls = Libraries.getLoadedLibs();
-
-        try (URLClassLoader loader = new LibraryClassLoader(urls)) {
+        try (URLClassLoader loader = new LibraryClassLoader()) {
             Class<?> clazz = loader.loadClass(UpdateChecker.class.getName());
             clazz.getDeclaredConstructor().newInstance();
         } catch (InvocationTargetException e) {

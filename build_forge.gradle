@@ -879,7 +879,7 @@ tasks.named('universalJar').configure {
                 'Implementation-Version':   "${KETTING_VERSION}-${MCP_VERSION}",
                 'Implementation-Vendor':    'Kettingpowered'
         ] as LinkedHashMap, 'org/kettingpowered/ketting/internal/')
-        //Keting end
+        //Ketting end
     }
     jarSigner.sign(it)
 }
@@ -955,15 +955,28 @@ tasks.register('kettingJar', Jar) {
     doFirst {
         manifest{
             attributes([
-                        'Class-Path': CLASS_PATH.toString().replace("[", "").replace("]", "").replace(",", ""),
-                        'Main-Class': 'org.kettingpowered.ketting.KettingLauncher'
+                    'Main-Class':               'org.kettingpowered.ketting.KettingLauncher'
             ])
+            attributes([
+                    'Specification-Title':      'Kettingpowered',
+                    'Specification-Vendor':     'Kettingpowered',
+                    'Implementation-Title':     'Ketting',
+                    'Implementation-Version':   "${KETTING_VERSION}-${MCP_VERSION}",
+                    'Implementation-Vendor':    'Kettingpowered'
+            ] as LinkedHashMap, 'org/kettingpowered/ketting/')
+            attributes([
+                    'Specification-Title':      'Kettingpowered',
+                    'Specification-Vendor':     'Kettingpowered',
+                    'Implementation-Title':     'Ketting',
+                    'Implementation-Version':   "${KETTING_VERSION}-${MCP_VERSION}",
+                    'Implementation-Vendor':    'Kettingpowered'
+            ] as LinkedHashMap, 'org/kettingpowered/ketting/internal/')
         }
     }
 
     BUNDLED_PROJECTS.each { dep ->
         from(project(dep).tasks.jar.outputs) {
-            rename { "data/${dep}-${MC_VERSION}-${FORGE_VERSION}.jar" }
+            rename { "data/${dep.substring(1)}-${MC_VERSION}-${FORGE_VERSION}.jar" } //substring with 1 to remove :
         }
     }
 

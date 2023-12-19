@@ -65,12 +65,13 @@ public class Libraries {
         loadedLibs.addAll(internalLibs);
         downloadExternal();
         downloadMcp();
-        System.setProperty("libs", String.join(";", loadedLibs.stream().map(URL::toString).toArray(String[]::new)));
+        System.setProperty("libs", String.join(File.pathSeparator, loadedLibs.stream().map(URL::toString).toArray(String[]::new)));
     }
 
     private void downloadExternal() throws IOException {
         List<Repository> standardRepositories = new ArrayList<>();
         standardRepositories.add(new StandardRepository("https://nexus.c0d3m4513r.com/repository/Magma/"));
+        standardRepositories.add(new StandardRepository("https://nexus.c0d3m4513r.com/repository/Ketting/"));
         standardRepositories.add(new StandardRepository("https://repo1.maven.org/maven2"));
         standardRepositories.add(new StandardRepository("https://libraries.minecraft.net"));
         standardRepositories.add(new StandardRepository("https://maven.minecraftforge.net"));
@@ -150,7 +151,7 @@ public class Libraries {
             System.exit(1);
         }
 
-        URL[] urls = Arrays.stream(libs.split(";")).map(lib -> {
+        URL[] urls = Arrays.stream(libs.split(File.pathSeparator)).map(lib -> {
             try {
                 return new URL(lib);
             } catch (Exception e) {

@@ -60,7 +60,5 @@ public class KettingFiles {
 
     public static final File
             STORED_HASHES = new File(INSTALL_DIR, "hashes.txt"),
-            CORE_JAR = new File(KETTING_PATH, "KettingCore.jar"),
-            CORE_JAR_VERSION = new File(KETTING_PATH, "KettingCore.jar.version"),
             PATCHER_LOGS = new File(LOGS_PATH, "install.txt");
 }

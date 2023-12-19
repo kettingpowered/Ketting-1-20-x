@@ -7,7 +7,9 @@ import org.kettingpowered.ketting.utils.ServerInitHelper;
 import org.kettingpowered.ketting.utils.Unsafe;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLStreamHandlerFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -88,26 +90,12 @@ public class KettingLauncher {
     private static void launch() {
         System.out.println("Launching Ketting...");
 
-        fsHacks();
-        clearReservedIdentifiers();
+        try (URLClassLoader loader = new LibraryClassLoader()) {
+            loadExternalFileSystems(loader);
+            clearReservedIdentifiers();
+            setProperties();
 
-        List<String> launchArgs = JarTool.readFileLinesFromJar("data/" + (System.getProperty("os.name").toLowerCase().contains("win") ? "win" : "unix") + "_args.txt");
-        ServerInitHelper.init(launchArgs);
-
-        List<String> forgeArgs = new ArrayList<>();
-        launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).toList().forEach(arg -> {
-            forgeArgs.add(arg.split(" ")[0]);
-            forgeArgs.add(arg.split(" ")[1]);
-        });
-
-        String[] invokeArgs = Stream.concat(forgeArgs.stream(), KettingLauncher.args.stream()).toArray(String[]::new);
-
-        setProperties();
-
-        try {
-            Class.forName("net.minecraftforge.bootstrap.BootstrapLauncher")
-                    .getMethod("main", String[].class)
-                    .invoke(null, (Object) invokeArgs);
+            //TODO
         } catch (Exception e) {
             throw new RuntimeException("Could not launch server", e);
         }
@@ -135,17 +123,20 @@ public class KettingLauncher {
         }
     }
 
-    private static void fsHacks() {
+    private static void loadExternalFileSystems(URLClassLoader loader) {
         try {
             ServerInitHelper.addOpens("java.base", "java.nio.file.spi", "ALL-UNNAMED");
-            var loadingProvidersField = FileSystemProvider.class.getDeclaredField("loadingProviders");
-            loadingProvidersField.setAccessible(true);
-            loadingProvidersField.set(null, false);
-            var installedProvidersField = FileSystemProvider.class.getDeclaredField("installedProviders");
-            installedProvidersField.setAccessible(true);
-            installedProvidersField.set(null, null);
+            List<String> knownSchemes = FileSystemProvider.installedProviders().stream().map(FileSystemProvider::getScheme).toList();
+            ServiceLoader<FileSystemProvider> sl = ServiceLoader.load(FileSystemProvider.class, loader);
+            List<FileSystemProvider> newProviders = sl.stream().map(ServiceLoader.Provider::get).filter(provider -> !knownSchemes.contains(provider.getScheme())).toList();
+
+            final Field installedProviders = FileSystemProvider.class.getDeclaredField("installedProviders");
+            installedProviders.setAccessible(true);
+            List<FileSystemProvider> providers = new ArrayList<>((List<FileSystemProvider>) installedProviders.get(null));
+            providers.addAll(newProviders);
+            installedProviders.set(null, providers);
         } catch (Exception e) {
-            throw new RuntimeException("Could not set filesystem", e);
+            throw new RuntimeException("Could not load new file systems", e);
         }
     }
 

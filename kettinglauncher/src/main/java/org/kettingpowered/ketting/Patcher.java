@@ -25,9 +25,7 @@ import static org.kettingpowered.ketting.internal.utils.JarTool.extractJarConten
 public class Patcher {
 
     public static void init() throws Exception {
-        URL[] urls = Libraries.getLoadedLibs();
-
-        try (URLClassLoader loader = new LibraryClassLoader(urls)) {
+        try (URLClassLoader loader = new LibraryClassLoader()) {
             Class<?> clazz = loader.loadClass(Patcher.class.getName());
             clazz.getDeclaredConstructor().newInstance();
         } catch (InvocationTargetException e) {
@@ -50,8 +48,6 @@ public class Patcher {
 
     public Patcher() throws IOException, NoSuchAlgorithmException {
         downloadServer();
-        downloadCore();
-        ServerInitHelper.addToPath(KettingFiles.CORE_JAR.toPath());
         readInstallScript();
         extractJarContents();
         prepareTokens();
@@ -100,30 +96,6 @@ public class Patcher {
             NetworkUtils.downloadFile(serverUrl, serverJar, serverHash, "sha1");
         } catch (Exception e) {
             throw new IOException("Failed to download server jar", e);
-        }
-    }
-
-    private void downloadCore() throws IOException, NoSuchAlgorithmException {
-        final File coreJar = KettingFiles.CORE_JAR;
-        if (!updateNeeded() && coreJar.exists()) return;
-
-        final String manifest = NetworkUtils.readFile("https://api.github.com/repos/KettingPowered/KettingCore/releases/latest");
-        if (manifest == null) {
-            System.err.println("Failed to download KettingCore manifest");
-            System.exit(1);
-        }
-
-        final JsonArray assets = JsonParser.parseString(manifest).getAsJsonObject()
-                .getAsJsonArray("assets");
-        final JsonObject asset = assets.get(0).getAsJsonObject();
-        final String coreUrl = asset.get("browser_download_url").getAsString();
-
-        coreJar.getParentFile().mkdirs();
-        try {
-            NetworkUtils.downloadFile(coreUrl, coreJar);
-        } catch (Exception e) {
-            coreJar.delete();
-            throw new IOException("Failed to download " + coreJar.getName(), e);
         }
     }
 

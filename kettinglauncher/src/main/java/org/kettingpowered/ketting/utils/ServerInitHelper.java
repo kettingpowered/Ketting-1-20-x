@@ -68,8 +68,6 @@ public class ServerInitHelper {
                         }
                     }
 
-                    tmp.append(KettingFiles.CORE_JAR.getAbsolutePath());
-
                     System.setProperty(params[0], tmp.toString());
                 } else if (params[0].equals("libraryDirectory")) {
                     System.setProperty(params[0], libsPath);
