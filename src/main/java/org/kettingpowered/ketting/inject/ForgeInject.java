@@ -374,7 +374,7 @@ public class ForgeInject {
 
     private static void addForgePotions() {
         ForgeRegistries.MOB_EFFECTS.getEntries().forEach(entry -> {
-            var pet = new CraftPotionEffectType(entry.getValue());
+            var pet = new CraftPotionEffectType(new NamespacedKey(entry.getKey().location().getNamespace(), entry.getKey().location().getPath()), entry.getValue());
 
             if (pet == null)
                 return;
