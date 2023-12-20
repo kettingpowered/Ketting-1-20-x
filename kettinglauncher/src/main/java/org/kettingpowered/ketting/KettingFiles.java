@@ -6,6 +6,7 @@ import org.kettingpowered.ketting.internal.utils.JarTool;
 import java.io.File;
 
 public class KettingFiles {
+    public static final String DATA_DIR = "data/";
 
     private static final String
             MC = KettingConstants.MINECRAFT_VERSION,

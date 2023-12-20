@@ -17,6 +17,7 @@ import java.net.URLStreamHandlerFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.spi.FileSystemProvider;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import static org.kettingpowered.ketting.internal.KettingConstants.*;
@@ -34,11 +35,16 @@ public class KettingLauncher {
     public static void main(String[] args) throws Exception {
         KettingLauncher.args = new ArrayList<>();
         Collections.addAll(KettingLauncher.args, args);
+        //this callback's core_init, when keting_core is loaded (which is done eagerly)
+        //this callback's lib_init, when all libs are loaded
+        Libraries.setup();
 
+        launch();
+    }
+    
+    public static void core_init() throws IOException, NoSuchAlgorithmException {
         Path eula = Paths.get("eula.txt");
-
         parseArgs(eula);
-
         BetterUI.printTitle(NAME, BRAND, System.getProperty("java.version") + " (" + System.getProperty("java.vendor") + ")", VERSION, BUKKIT_PACKAGE_VERSION, FORGE_VERSION);
         if(!BetterUI.checkEula(eula)) System.exit(0);
 
@@ -47,15 +53,15 @@ public class KettingLauncher {
             FileUtils.deleteDir(KettingFiles.NMS_PATCHES_DIR);
             FileUtils.deleteDir(KettingFiles.FORGE_BASE_DIR);
         }
-
-        Libraries.setup();
-
-        setStreamFactory();
-        if (enableUpdate) UpdateChecker.init();
-        removeStreamFactory();
-
-        Patcher.init();
-        launch();
+    }
+    
+    public static void lib_init() throws IOException, NoSuchAlgorithmException {
+        if (enableUpdate) {
+            setStreamFactory();
+            new UpdateChecker();
+            removeStreamFactory();
+        }
+        new Patcher();
     }
 
     private static void parseArgs(Path eula) throws IOException {

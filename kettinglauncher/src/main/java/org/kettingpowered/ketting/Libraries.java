@@ -16,18 +16,30 @@ import org.kettingpowered.ketting.utils.LibHelper;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class Libraries {
 
-    private static final List<URL> loadedLibs = new ArrayList<>();
+    @SuppressWarnings("FieldMayBeFinal") //If this class is loaded in a child-class loader we may need to set this.
+    private static List<URL> loadedLibs = new ArrayList<>();
+    //This subclass exists, so these variables only get initialized when they actually should.
+    //Initialization in the wrong context will lead to an error.
+    private static class Helper{
+        private static final List<Repository> standardRepositories = List.of(
+                new StandardRepository("https://nexus.c0d3m4513r.com/repository/Magma/"),
+                new StandardRepository("https://nexus.c0d3m4513r.com/repository/Ketting/"),
+                new StandardRepository("https://repo1.maven.org/maven2"),
+                new StandardRepository("https://libraries.minecraft.net"),
+                new StandardRepository("https://maven.minecraftforge.net")
+        );
+    } 
     private static final String seperator = "!";
 
     public static void setup() throws Exception {
@@ -53,32 +65,53 @@ public class Libraries {
         urls.add(JarTool.getJar().toURI().toURL());
 
         try (URLClassLoader loader = new URLClassLoader(urls.toArray(URL[]::new), null)) {
-            Class<?> clazz = loader.loadClass(Libraries.class.getName());
-            clazz.getDeclaredConstructor(List.class).newInstance(urls);
+            passthrough_kettingLauncher(loader, true);
+            passthrough_libraries(loader).getDeclaredConstructor(List.class).newInstance(urls);
+            passthrough_kettingLauncher(loader, false);
         } catch (InvocationTargetException e) {
             System.err.println("Something went wrong while trying to load libraries");
             ShortenedStackTrace.findCause(e).printStackTrace();
             System.exit(1);
         }
     }
+    private static Class<?> passthrough_libraries(ClassLoader loader) throws IllegalAccessException, ClassNotFoundException, NoSuchFieldException {
+        return passthrough_static_field(Libraries.class, "loadedLibs", loader, true);
+    }
+    private static Class<?> passthrough_kettingLauncher(ClassLoader loader, boolean forward) throws IllegalAccessException, ClassNotFoundException, NoSuchFieldException {
+        passthrough_static_field(KettingLauncher.class, "args", loader, forward);
+        return passthrough_static_field(KettingLauncher.class, "enableUpdate", loader, forward);
+    }
+
+    private static Class<?> passthrough_static_field(Class<?> clazz, String field, ClassLoader loader, boolean forward) throws IllegalAccessException, ClassNotFoundException, NoSuchFieldException {
+        Class<?> clazz_loader = loader.loadClass(clazz.getName());
+        //Pass through the loadedLibs instance from this class loaded by the current class loader
+        // to the class instance loaded by the new class loader
+        Field loaderField = clazz_loader.getDeclaredField(field);
+        loaderField.setAccessible(true);
+        
+        Field origField = clazz.getDeclaredField(field);
+        origField.setAccessible(true);
+
+        if (forward) loaderField.set(null, origField.get(null));
+        else origField.set(null, loaderField.get(null));
+        return clazz_loader;
+    }
 
     public Libraries(List<URL> internalLibs) throws IOException {
         loadedLibs.addAll(internalLibs);
         downloadExternal();
         downloadMcp();
-        System.setProperty("libs", String.join(seperator, loadedLibs.stream().map(URL::toString).toArray(String[]::new)));
     }
 
     private void downloadExternal() throws IOException {
-        List<Repository> standardRepositories = new ArrayList<>();
-        standardRepositories.add(new StandardRepository("https://nexus.c0d3m4513r.com/repository/Magma/"));
-        standardRepositories.add(new StandardRepository("https://nexus.c0d3m4513r.com/repository/Ketting/"));
-        standardRepositories.add(new StandardRepository("https://repo1.maven.org/maven2"));
-        standardRepositories.add(new StandardRepository("https://libraries.minecraft.net"));
-        standardRepositories.add(new StandardRepository("https://maven.minecraftforge.net"));
-
         List<Dependency> dependencies = LibHelper.getManager().getDependencies();
+        dependencies.stream()
+                .filter(dependency -> dependency.getGroupId().equals("org.kettingpowered") && dependency.getArtifactId().equals("kettingcore"))
+                .forEach(this::loadDep);
 
+        final URL self = JarTool.getJar().toURI().toURL();
+        callback_main("core_init", self);
+        
         ProgressBarBuilder builder = new ProgressBarBuilder()
                 .setTaskName("Loading libs...")
                 .hideEta()
@@ -87,16 +120,35 @@ public class Libraries {
                 .setUpdateIntervalMillis(100)
                 .setInitialMax(dependencies.size());
 
-        ProgressBar.wrap(dependencies.stream(), builder).forEach(dep -> {
-            try {
-                LibHelper.downloadDependency(dep, standardRepositories);
-                LibHelper.loadDependency(dep, path -> loadedLibs.add(path.toUri().toURL()));
-            } catch (Exception e) {
-                throw new RuntimeException("Something went wrong while trying to load dependencies", e);
-            }
-        });
+        ProgressBar.wrap(dependencies.stream(), builder)
+                .forEach(this::loadDep);
 
-        loadedLibs.add(JarTool.getJar().toURI().toURL()); //Make sure that the classloader has access to this code
+        callback_main("lib_init", self);
+        loadedLibs.add(self); //Make sure that the classloader has access to this code
+    }
+    
+    private void callback_main(String method, URL self) {
+        List<URL> init_libs = new ArrayList<>(loadedLibs);
+        init_libs.add(self); //Make sure that the classloader has access to this code
+
+        try (URLClassLoader loader = new LibraryClassLoader(init_libs.toArray(URL[]::new))) {
+            passthrough_libraries(loader);
+            passthrough_kettingLauncher(loader, true).getDeclaredMethod(method).invoke(null);
+            passthrough_kettingLauncher(loader, false);
+        } catch (Exception e) {
+            System.err.println("Something went wrong while trying to init KettingLauncher");
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+    
+    private void loadDep(Dependency dep){
+        try {
+            LibHelper.downloadDependency(dep, Helper.standardRepositories);
+            LibHelper.loadDependency(dep, path -> loadedLibs.add(path.toUri().toURL()));
+        } catch (Exception e) {
+            throw new RuntimeException("Something went wrong while trying to load dependencies", e);
+        }
     }
 
     private void downloadMcp() throws IOException {
@@ -146,26 +198,11 @@ public class Libraries {
     }
 
     public static URL[] getLoadedLibs() {
-        String libs = System.getProperty("libs");
-        if (libs == null || libs.isBlank()) {
-            System.err.println("Libraries did not load correctly, please try again");
-            System.exit(1);
-        }
-
-        URL[] urls = Arrays.stream(libs.split(seperator)).map(lib -> {
-            try {
-                return new URL(lib);
-            } catch (Exception e) {
-                System.err.println("Failed to load library: " + lib);
-                return null;
-            }
-        }).toArray(URL[]::new);
-
-        if (Arrays.stream(urls).anyMatch(Objects::isNull)) {
+        if (loadedLibs.stream().anyMatch(Objects::isNull)) {
             System.err.println("Failed to load libraries, please try again");
             System.exit(1);
         }
 
-        return urls;
+        return loadedLibs.toArray(new URL[0]);
     }
 }

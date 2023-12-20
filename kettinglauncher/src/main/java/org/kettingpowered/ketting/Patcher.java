@@ -20,6 +20,7 @@ import java.net.URLClassLoader;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
+import static org.kettingpowered.ketting.KettingFiles.DATA_DIR;
 import static org.kettingpowered.ketting.internal.utils.JarTool.extractJarContent;
 
 public class Patcher {
@@ -39,7 +40,6 @@ public class Patcher {
         }
     }
 
-    private final String dataDir = "data/";
     private final List<JsonObject> processors = new ArrayList<>();
     private final Map<String, String> tokens = new HashMap<>();
 
@@ -100,7 +100,7 @@ public class Patcher {
     }
 
     private void readInstallScript() {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream(dataDir + "installscript.json");
+        InputStream stream = getClass().getClassLoader().getResourceAsStream(DATA_DIR + "installscript.json");
         if (stream == null) {
             System.err.println("Failed to load installscript.json");
             System.exit(1);
@@ -119,13 +119,13 @@ public class Patcher {
     }
 
     private void extractJarContents() throws IOException {
-        extractJarContent(dataDir + KettingFiles.FORGE_UNIVERSAL_NAME, KettingFiles.FORGE_UNIVERSAL_JAR);
-        extractJarContent(dataDir + KettingFiles.FMLCORE_NAME, KettingFiles.FMLCORE);
-        extractJarContent(dataDir + KettingFiles.FMLLOADER_NAME, KettingFiles.FMLLOADER);
-        extractJarContent(dataDir + KettingFiles.JAVAFMLLANGUAGE_NAME, KettingFiles.JAVAFMLLANGUAGE);
-        extractJarContent(dataDir + KettingFiles.LOWCODELANGUAGE_NAME, KettingFiles.LOWCODELANGUAGE);
-        extractJarContent(dataDir + KettingFiles.MCLANGUAGE_NAME, KettingFiles.MCLANGUAGE);
-        extractJarContent(dataDir + "server.lzma", KettingFiles.SERVER_LZMA);
+        extractJarContent(DATA_DIR + KettingFiles.FORGE_UNIVERSAL_NAME, KettingFiles.FORGE_UNIVERSAL_JAR);
+        extractJarContent(DATA_DIR + KettingFiles.FMLCORE_NAME, KettingFiles.FMLCORE);
+        extractJarContent(DATA_DIR + KettingFiles.FMLLOADER_NAME, KettingFiles.FMLLOADER);
+        extractJarContent(DATA_DIR + KettingFiles.JAVAFMLLANGUAGE_NAME, KettingFiles.JAVAFMLLANGUAGE);
+        extractJarContent(DATA_DIR + KettingFiles.LOWCODELANGUAGE_NAME, KettingFiles.LOWCODELANGUAGE);
+        extractJarContent(DATA_DIR + KettingFiles.MCLANGUAGE_NAME, KettingFiles.MCLANGUAGE);
+        extractJarContent(DATA_DIR + "server.lzma", KettingFiles.SERVER_LZMA);
     }
 
     private void prepareTokens() {

@@ -1,13 +1,18 @@
 package org.kettingpowered.ketting;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class LibraryClassLoader extends URLClassLoader {
 
     public LibraryClassLoader() {
-        super(Libraries.getLoadedLibs(), null);
+        this(Libraries.getLoadedLibs());
+    }
+    public LibraryClassLoader(URL[] libs) {
+        super(libs, null);
     }
 
     protected Class<?> findClass(String name) throws ClassNotFoundException {

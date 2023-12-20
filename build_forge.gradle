@@ -990,16 +990,6 @@ tasks.register('kettingJar', Jar) {
         rename { 'data/bootstrap-shim.list' }
     }
 
-    //Add KettingCore to the jar, this contains BetterUI and some more common utils
-    project(':fmlcore').configurations.runtimeClasspath.getFiles().each { file ->
-        if (file.isFile() && file.name.startsWith('kettingcore')) {
-            println("Adding ${file.name} to the jar")
-            from(zipTree(file)) {
-                exclude 'META-INF/'
-            }
-        }
-    }
-
     from(genServerBinPatches.output) {
         rename { 'data/server.lzma' }
     }
@@ -1015,20 +1005,6 @@ tasks.register('kettingJar', Jar) {
     from(rootProject.file('server_files/libraries.txt')) {
         filter(ReplaceTokens, tokens: [CLASS_PATH: CLASS_PATH.join(';')])
         rename { 'data/libraries.txt' }
-    }
-
-    from(rootProject.file('server_files/args.txt')) {
-        filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';')])
-        rename { 'data/win_args.txt' }
-    }
-
-    from(rootProject.file('server_files/args.txt')) {
-        filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':')])
-        rename { 'data/unix_args.txt' }
-    }
-
-    from(rootProject.file('server_files/user_jvm_args.txt')) {
-        rename { 'data/user_jvm_args.txt' }
     }
 }
 //Ketting end
