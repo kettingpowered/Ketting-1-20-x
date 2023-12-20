@@ -18,21 +18,6 @@ public class UpdateChecker {
     private static final String API_LAST_COMMIT = "https://api.github.com/repos/kettingpowered/Ketting-1-20-x/git/refs/heads/1.20.x";
     private static final String API_DOWNLOAD = "https://api.github.com/repos/kettingpowered/Ketting-1-20-x/releases/latest";
 
-    public static void init() throws Exception {
-        try (URLClassLoader loader = new LibraryClassLoader()) {
-            Class<?> clazz = loader.loadClass(UpdateChecker.class.getName());
-            clazz.getDeclaredConstructor().newInstance();
-        } catch (InvocationTargetException e) {
-            System.err.println("Something went wrong while trying to load the update checker");
-            ShortenedStackTrace.findCause(e).printStackTrace();
-            System.exit(1);
-        } catch (IOException io) {
-            System.err.println("Something went wrong while trying to check for updates");
-            ShortenedStackTrace.findCause(io).printStackTrace();
-            System.exit(1);
-        }
-    }
-
     public UpdateChecker() {
         if (checkForUpdates())
             downloadUpdate();

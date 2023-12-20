@@ -25,21 +25,6 @@ import static org.kettingpowered.ketting.internal.utils.JarTool.extractJarConten
 
 public class Patcher {
 
-    public static void init() throws Exception {
-        try (URLClassLoader loader = new LibraryClassLoader()) {
-            Class<?> clazz = loader.loadClass(Patcher.class.getName());
-            clazz.getDeclaredConstructor().newInstance();
-        } catch (InvocationTargetException e) {
-            System.err.println("Something went wrong while trying to load the patcher");
-            ShortenedStackTrace.findCause(e).printStackTrace();
-            System.exit(1);
-        } catch (IOException io) {
-            System.err.println("Something went wrong while trying to patch");
-            ShortenedStackTrace.findCause(io).printStackTrace();
-            System.exit(1);
-        }
-    }
-
     private final List<JsonObject> processors = new ArrayList<>();
     private final Map<String, String> tokens = new HashMap<>();
 
