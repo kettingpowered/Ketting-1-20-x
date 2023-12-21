@@ -30,18 +30,6 @@ public class Libraries {
 
     @SuppressWarnings("FieldMayBeFinal") //If this class is loaded in a child-class loader we may need to set this.
     private static List<URL> loadedLibs = new ArrayList<>();
-    //This subclass exists, so these variables only get initialized when they actually should.
-    //Initialization in the wrong context will lead to an error.
-    private static class Helper{
-        private static final List<Repository> standardRepositories = List.of(
-                new StandardRepository("https://nexus.c0d3m4513r.com/repository/Magma/"),
-                new StandardRepository("https://nexus.c0d3m4513r.com/repository/Ketting/"),
-                new StandardRepository("https://repo1.maven.org/maven2"),
-                new StandardRepository("https://libraries.minecraft.net"),
-                new StandardRepository("https://maven.minecraftforge.net")
-        );
-    } 
-    private static final String seperator = "!";
 
     public static void setup() throws Exception {
         Lib[] libs = {
@@ -189,16 +177,18 @@ public class Libraries {
         }
 
         private void download() throws Exception {
-            try {
-                NetworkUtils.downloadFile("https://nexus.c0d3m4513r.com/repository/Magma/" + path, file, this.signature());
-            } catch (Throwable e) {
-                System.err.println("Failed to download https://nexus.c0d3m4513r.com/repository/Magma/" + path + " to " + file.getAbsolutePath());
+            for (String repo : AvailableMavenRepos.INSTANCE) {
                 try {
-                    NetworkUtils.downloadFile("https://repo1.maven.org/maven2/" + path, file, this.signature());
-                } catch (Throwable e2) {
-                    System.err.println("Failed to download internal depencency https://repo1.maven.org/maven2/" + path + " to " + file.getAbsolutePath() + ", check your internet connection and try again.");
-                    e2.addSuppressed(e);
-                    throw e2;
+                    String fullPath = repo + path;
+                    NetworkUtils.downloadFile(fullPath, file, signature);
+                    return;
+                } catch (Throwable ignored) {
+                    if (AvailableMavenRepos.isLast(repo)) {
+                        System.err.println("Failed to download " + path + " from any repo, check your internet connection and try again.");
+                        System.exit(1);
+                    }
+
+                    System.err.println("Failed to download " + path + " from " + repo + ", trying next repo");
                 }
             }
         }
