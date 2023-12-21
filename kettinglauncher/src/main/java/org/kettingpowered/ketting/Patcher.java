@@ -9,14 +9,10 @@ import org.kettingpowered.ketting.common.betterui.BetterUI;
 import org.kettingpowered.ketting.internal.utils.Hash;
 import org.kettingpowered.ketting.internal.utils.JarTool;
 import org.kettingpowered.ketting.internal.utils.NetworkUtils;
-import org.kettingpowered.ketting.common.utils.ShortenedStackTrace;
 import org.kettingpowered.ketting.utils.Processors;
-import org.kettingpowered.ketting.utils.ServerInitHelper;
 
+import javax.annotation.Nonnull;
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
@@ -106,11 +102,16 @@ public class Patcher {
     private void extractJarContents() throws IOException {
         extractJarContent(DATA_DIR + KettingFiles.FORGE_UNIVERSAL_NAME, KettingFiles.FORGE_UNIVERSAL_JAR);
         extractJarContent(DATA_DIR + KettingFiles.FMLCORE_NAME, KettingFiles.FMLCORE);
-        extractJarContent(DATA_DIR + KettingFiles.FMLLOADER_NAME, KettingFiles.FMLLOADER);
+        extractAndLoad(DATA_DIR + KettingFiles.FMLLOADER_NAME, KettingFiles.FMLLOADER);
         extractJarContent(DATA_DIR + KettingFiles.JAVAFMLLANGUAGE_NAME, KettingFiles.JAVAFMLLANGUAGE);
         extractJarContent(DATA_DIR + KettingFiles.LOWCODELANGUAGE_NAME, KettingFiles.LOWCODELANGUAGE);
         extractJarContent(DATA_DIR + KettingFiles.MCLANGUAGE_NAME, KettingFiles.MCLANGUAGE);
         extractJarContent(DATA_DIR + "server.lzma", KettingFiles.SERVER_LZMA);
+    }
+    
+    private void extractAndLoad(@Nonnull String from, @Nonnull File to) throws IOException {
+        extractJarContent(from, to);
+        Libraries.addLoadedLib(to.toURI().toURL());
     }
 
     private void prepareTokens() {

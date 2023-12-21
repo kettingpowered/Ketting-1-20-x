@@ -79,6 +79,7 @@ public class Libraries {
     }
     private static Class<?> passthrough_kettingLauncher(ClassLoader loader, boolean forward) throws IllegalAccessException, ClassNotFoundException, NoSuchFieldException {
         passthrough_static_field(KettingLauncher.class, "args", loader, forward);
+        passthrough_static_field(KettingLauncher.class, "target", loader, forward);
         return passthrough_static_field(KettingLauncher.class, "enableUpdate", loader, forward);
     }
 
@@ -197,6 +198,11 @@ public class Libraries {
         }
     }
 
+    static void addLoadedLib(URL url){
+        if (url == null) return;
+        loadedLibs.add(url);
+    }
+    
     public static URL[] getLoadedLibs() {
         if (loadedLibs.stream().anyMatch(Objects::isNull)) {
             System.err.println("Failed to load libraries, please try again");

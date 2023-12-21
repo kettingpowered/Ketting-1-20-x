@@ -5,6 +5,7 @@ import org.kettingpowered.ketting.utils.FileUtils;
 import org.kettingpowered.ketting.utils.ServerInitHelper;
 import org.kettingpowered.ketting.utils.Unsafe;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +32,7 @@ public class KettingLauncher {
 
     private static List<String> args;
     public static boolean enableUpdate;
+    private static String target = "forge_server";
 
     public static void main(String[] args) throws Exception {
         KettingLauncher.args = new ArrayList<>();
@@ -80,26 +82,39 @@ public class KettingLauncher {
             BetterUI.forceAcceptEULA(eula);
 
         enableUpdate = !containsArg("-dau");
+        {
+            String target_candidate;
+            if ((target_candidate = getArg("-target"))!=null)
+                target = target_candidate;
+        }
     }
 
+    private static String getArg(@Nonnull String arg) {
+        if (args.isEmpty()) return null ;
+
+        arg = arg.toLowerCase();
+
+        int index = args.indexOf(arg);
+        if (index < 0) return null;
+        args.remove(index); //remove arg
+        return args.remove(index); //this should be the value to that arg
+    }
     private static boolean containsArg(String arg) {
         if (args.isEmpty()) return false;
 
         arg = arg.toLowerCase();
 
-        if (args.contains(arg)) {
-            args.remove(arg);
-            return true;
-        }
-
-        return false;
+        int index = args.indexOf(arg);
+        if (index < 0) return false;
+        args.remove(index);
+        return true;
     }
 
     private static void launch() {
         System.out.println("Launching Ketting...");
 
         args.add("--launchTarget");
-        args.add("forge_server");
+        args.add(target);
 
         try (URLClassLoader loader = new LibraryClassLoader()) {
             loadExternalFileSystems(loader);
