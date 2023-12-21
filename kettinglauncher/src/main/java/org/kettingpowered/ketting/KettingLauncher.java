@@ -2,8 +2,6 @@ package org.kettingpowered.ketting;
 
 import org.kettingpowered.ketting.common.betterui.BetterUI;
 import org.kettingpowered.ketting.utils.FileUtils;
-import org.kettingpowered.ketting.utils.ServerInitHelper;
-import org.kettingpowered.ketting.utils.Unsafe;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
@@ -11,17 +9,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLStreamHandlerFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.spi.FileSystemProvider;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import static org.kettingpowered.ketting.internal.KettingConstants.*;
+import static org.kettingpowered.ketting.utils.JavaHacks.clearReservedIdentifiers;
+import static org.kettingpowered.ketting.utils.JavaHacks.loadExternalFileSystems;
+import static org.kettingpowered.ketting.utils.JavaHacks.removeStreamFactory;
+import static org.kettingpowered.ketting.utils.JavaHacks.setStreamFactory;
 
 public class KettingLauncher {
 
@@ -30,6 +28,7 @@ public class KettingLauncher {
             "com/mojang/brigadier",
     };
 
+    //NOTE - when adding args, please also pass them in Libraries.passthrough_kettingLauncher
     private static List<String> args;
     public static boolean enableUpdate;
     private static String target = "forge_server";
@@ -164,48 +163,5 @@ public class KettingLauncher {
         }
 
         return builder.toString();
-    }
-
-    //We love hacks
-    public static void setStreamFactory() {
-        try {
-            var factory = Unsafe.lookup().findStaticGetter(URL.class, "defaultFactory", URLStreamHandlerFactory.class).invoke();
-            Unsafe.lookup().findStaticSetter(URL.class, "factory", URLStreamHandlerFactory.class).invoke(factory);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void removeStreamFactory() {
-        try {
-            Unsafe.lookup().findStaticSetter(URL.class, "factory", URLStreamHandlerFactory.class).invoke((Object) null);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void loadExternalFileSystems(URLClassLoader loader) {
-        try {
-            ServerInitHelper.addOpens("java.base", "java.nio.file.spi", "ALL-UNNAMED");
-            List<String> knownSchemes = FileSystemProvider.installedProviders().stream().map(FileSystemProvider::getScheme).toList();
-            ServiceLoader<FileSystemProvider> sl = ServiceLoader.load(FileSystemProvider.class, loader);
-            List<FileSystemProvider> newProviders = sl.stream().map(ServiceLoader.Provider::get).filter(provider -> !knownSchemes.contains(provider.getScheme())).toList();
-
-            final Field installedProviders = FileSystemProvider.class.getDeclaredField("installedProviders");
-            installedProviders.setAccessible(true);
-            List<FileSystemProvider> providers = new ArrayList<>((List<FileSystemProvider>) installedProviders.get(null));
-            providers.addAll(newProviders);
-            installedProviders.set(null, providers);
-        } catch (Exception e) {
-            throw new RuntimeException("Could not load new file systems", e);
-        }
-    }
-
-    private static void clearReservedIdentifiers() {
-        try {
-            Unsafe.lookup().findStaticSetter(Class.forName("jdk.internal.module.Checks"), "RESERVED", Set.class).invoke(Set.of());
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
     }
 }

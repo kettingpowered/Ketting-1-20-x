@@ -12,6 +12,7 @@ import org.kettingpowered.ketting.internal.utils.Hash;
 import org.kettingpowered.ketting.internal.utils.JarTool;
 import org.kettingpowered.ketting.internal.utils.NetworkUtils;
 import org.kettingpowered.ketting.common.utils.ShortenedStackTrace;
+import org.kettingpowered.ketting.utils.AvailableMavenRepos;
 import org.kettingpowered.ketting.utils.LibHelper;
 
 import java.io.File;
@@ -145,7 +146,7 @@ public class Libraries {
     
     private void loadDep(Dependency dep){
         try {
-            LibHelper.downloadDependency(dep, Helper.standardRepositories);
+            LibHelper.downloadDependency(dep);
             LibHelper.loadDependency(dep, path -> loadedLibs.add(path.toUri().toURL()));
         } catch (Exception e) {
             throw new RuntimeException("Something went wrong while trying to load dependencies", e);
@@ -159,10 +160,23 @@ public class Libraries {
 
         try {
             KettingFiles.MCP_ZIP.getParentFile().mkdirs();
+            String mavenBasePath = "de/oceanlabs/mcp/mcp_config/" + mcMcp + "/mcp_config-" + mcMcp + ".zip";
 
-            String baseURL = "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_config/" + mcMcp + "/mcp_config-" + mcMcp + ".zip";
-            String hash = NetworkUtils.readFile(baseURL + ".md5");
-            NetworkUtils.downloadFile(baseURL, KettingFiles.MCP_ZIP, hash);
+            for (String repo : AvailableMavenRepos.INSTANCE) {
+                try {
+                    String fullPath = repo + mavenBasePath;
+                    String hash = NetworkUtils.readFile(fullPath + ".md5");
+                    NetworkUtils.downloadFile(fullPath, KettingFiles.MCP_ZIP, hash);
+                    break;
+                } catch (Throwable ignored) {
+                    if (AvailableMavenRepos.isLast(repo)) {
+                        System.err.println("Failed to download mcp_config from any repo, check your internet connection and try again.");
+                        System.exit(1);
+                    }
+
+                    System.err.println("Failed to download " + mavenBasePath + " from " + repo + ", trying next repo");
+                }
+            }
         } catch (Exception e) {
             KettingFiles.MCP_ZIP.delete();
             throw new IOException("Failed to download MCP", e);

@@ -6,6 +6,7 @@ import dev.vankka.dependencydownload.dependency.Dependency;
 import dev.vankka.dependencydownload.path.CleanupPathProvider;
 import dev.vankka.dependencydownload.path.DependencyPathProvider;
 import dev.vankka.dependencydownload.repository.Repository;
+import dev.vankka.dependencydownload.repository.StandardRepository;
 import org.kettingpowered.ketting.internal.utils.Hash;
 import org.kettingpowered.ketting.internal.utils.JarTool;
 
@@ -23,15 +24,12 @@ import java.util.List;
 
 // Code copied from package dev.vankka.dependencydownload, all credit goes to the author
 // Check them out: https://github.com/Vankka/DependencyDownload
-public class LibHelper {
+public final class LibHelper {
 
+    private static final List<StandardRepository> REPOS = AvailableMavenRepos.INSTANCE.stream().map(StandardRepository::new).toList();
     private static DependencyManager manager;
 
-    public static void downloadDependency(Dependency dependency, List<Repository> repositories) throws IOException, NoSuchAlgorithmException {
-        if (repositories.isEmpty()) {
-            throw new RuntimeException("No repositories provided");
-        }
-
+    public static void downloadDependency(Dependency dependency) throws IOException, NoSuchAlgorithmException {
         Path dependencyPath = getManager().getPathForDependency(dependency, false);
 
         if (!Files.exists(dependencyPath.getParent())) {
@@ -51,7 +49,7 @@ public class LibHelper {
 
         RuntimeException failure = new RuntimeException("All provided repositories failed to download dependency");
         boolean anyFailures = false;
-        for (Repository repository : repositories) {
+        for (Repository repository : REPOS) {
             try {
                 MessageDigest digest = MessageDigest.getInstance(dependency.getHashingAlgorithm());
                 downloadFromRepository(dependency, repository, dependencyPath, digest);
