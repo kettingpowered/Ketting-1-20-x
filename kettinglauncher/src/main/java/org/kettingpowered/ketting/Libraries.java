@@ -176,7 +176,7 @@ public class Libraries {
             this(new File(KettingFiles.LIBRARIES_PATH + (path.startsWith("/") ? path.substring(1) : path)), (path.startsWith("/") ? path.substring(1) : path), signature);
         }
 
-        private void download() throws Exception {
+        private void download() {
             for (String repo : AvailableMavenRepos.INSTANCE) {
                 try {
                     String fullPath = repo + path;
