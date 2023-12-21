@@ -89,8 +89,8 @@ public class Libraries {
 
     public Libraries(List<URL> internalLibs) throws IOException {
         loadedLibs.addAll(internalLibs);
-        downloadExternal();
         downloadMcp();
+        downloadExternal();
     }
 
     private void downloadExternal() throws IOException {
