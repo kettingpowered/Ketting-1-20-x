@@ -1,0 +1,22 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradleutils'
+}
+
+apply from: rootProject.file('build_shared.gradle')
+
+dependencies {
+    compileOnly(libs.nulls)
+    api(libs.bundles.asm) // Needed by all the black magic
+    api(libs.ketting)
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
+    withSourcesJar()
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:-unchecked'
+}

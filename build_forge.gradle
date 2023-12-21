@@ -144,6 +144,7 @@ dependencies {
     BUNDLED_PROJECTS.each {item -> {
         implementation(project(item)) //Ketting - Implement instead of installing, deps get added in the kettingJar task anyway
     }}
+    implementation(project(':kettingcommonimpl'))
     //Ketting end
 
     runtimeOnly(libs.bootstrap)
@@ -921,6 +922,8 @@ tasks.register('kettingJar', Jar) {
         dependsOn project(dep).tasks.jar
         mustRunAfter project(dep).tasks.jar
     }}
+    dependsOn project(':kettingcommonimpl').tasks.jar
+    mustRunAfter project(':kettingcommonimpl').tasks.jar
 
     archiveClassifier = 'server'
     archiveExtension = 'jar'
@@ -984,7 +987,7 @@ tasks.register('kettingJar', Jar) {
     }
 
     from(project(':kettinglauncher').project.sourceSets.main.output)
-    from(project(':fmlcore').project.sourceSets.main.output)
+    from project(':kettingcommonimpl').project.sourceSets.main.output
     from(generateKettingLibraries)
     from(createServerShimClasspath.output) {
         rename { 'data/bootstrap-shim.list' }

@@ -17,6 +17,7 @@ apply from: rootProject.file('build_shared.gradle')
 
 dependencies {
     implementation project(':fmlcore')
+    implementation project(':kettingcommonimpl')
     implementation(libs.yaml)
     implementation(libs.securemodules)
     implementation(libs.gson)
@@ -33,6 +34,7 @@ dependencies {
 }
 
 jar{
+    from project(':kettingcommonimpl').project.sourceSets.main.output
     manifest{
         attributes 'Main-Class': 'org.kettingpowered.ketting.KettingLauncher'
     }
