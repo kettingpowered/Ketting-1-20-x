@@ -1,8 +1,6 @@
 package org.kettingpowered.ketting;
 
 import dev.vankka.dependencydownload.dependency.Dependency;
-import dev.vankka.dependencydownload.repository.Repository;
-import dev.vankka.dependencydownload.repository.StandardRepository;
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
