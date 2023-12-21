@@ -82,11 +82,10 @@ public class KettingLauncher {
             BetterUI.forceAcceptEULA(eula);
 
         enableUpdate = !containsArg("-dau");
-        {
-            String target_candidate;
-            if ((target_candidate = getArg("-target"))!=null)
-                target = target_candidate;
-        }
+
+        String launchTarget = getArg("--launchTarget");
+        if (launchTarget != null)
+            target = launchTarget;
     }
 
     private static String getArg(@Nonnull String arg) {
