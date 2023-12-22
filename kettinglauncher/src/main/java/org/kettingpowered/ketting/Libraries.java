@@ -9,7 +9,6 @@ import org.kettingpowered.ketting.common.betterui.BetterUI;
 import org.kettingpowered.ketting.internal.utils.Hash;
 import org.kettingpowered.ketting.internal.utils.JarTool;
 import org.kettingpowered.ketting.internal.utils.NetworkUtils;
-import org.kettingpowered.ketting.common.utils.ShortenedStackTrace;
 import org.kettingpowered.ketting.utils.AvailableMavenRepos;
 import org.kettingpowered.ketting.utils.LibHelper;
 
@@ -33,10 +32,9 @@ public class Libraries {
         Lib[] libs = {
                 new Lib("dev/vankka/dependencydownload-runtime/1.3.1/dependencydownload-runtime-1.3.1.jar", "65fbb417dd6898700906a45b3501dd1b"),
                 new Lib("dev/vankka/dependencydownload-common/1.3.1/dependencydownload-common-1.3.1.jar", "024cfedc649ac942621120c1774896a7"),
+                new Lib("org/jline/jline-reader/3.21.0/jline-reader-3.21.0.jar", "3fd7c434561cbdd6e3d76b9d83d30393"),
+                new Lib("org/jline/jline-terminal/3.21.0/jline-terminal-3.21.0.jar", "e3f8f0f98178d4a95a66b154d157ecf8"),
                 new Lib("me/tongfei/progressbar/0.10.0/progressbar-0.10.0.jar", "a66b941573c5e25ba6c8baf50610dc86"),
-                new Lib("net/minecrell/terminalconsoleappender/1.2.0/terminalconsoleappender-1.2.0.jar", "679363fa893293791e55a21f81342f87"),
-                new Lib("org/jline/jline-reader/3.12.1/jline-reader-3.12.1.jar", "a2e7b012cd9802f83321187409174a94"),
-                new Lib("org/jline/jline-terminal/3.12.1/jline-terminal-3.12.1.jar", "3c52be5ab5e3847be6e62269de924cb0"),
         };
 
         List<URL> urls = new ArrayList<>();
@@ -57,7 +55,7 @@ public class Libraries {
             passthrough_kettingLauncher(loader, false);
         } catch (InvocationTargetException e) {
             System.err.println("Something went wrong while trying to load libraries");
-            ShortenedStackTrace.findCause(e).printStackTrace();
+            e.printStackTrace();
             System.exit(1);
         }
     }
@@ -95,7 +93,7 @@ public class Libraries {
         List<Dependency> dependencies = LibHelper.getManager().getDependencies();
         dependencies.stream()
                 .filter(dependency -> dependency.getGroupId().equals("org.kettingpowered") && dependency.getArtifactId().equals("kettingcore"))
-                .forEach(this::loadDep);
+                .forEach(this::loadDep); //Will duplicate the core dependency, but that's fine as we catch it later
 
         final URL self = JarTool.getJar().toURI().toURL();
         callback_main("core_init", self);
@@ -112,7 +110,6 @@ public class Libraries {
                 .forEach(this::loadDep);
 
         callback_main("lib_init", self);
-        loadedLibs.add(self); //Make sure that the classloader has access to this code
     }
     
     private void callback_main(String method, URL self) {
@@ -133,7 +130,7 @@ public class Libraries {
     private void loadDep(Dependency dep){
         try {
             LibHelper.downloadDependency(dep);
-            LibHelper.loadDependency(dep, path -> loadedLibs.add(path.toUri().toURL()));
+            LibHelper.loadDependency(dep, path -> addLoadedLib(path.toUri().toURL()));
         } catch (Exception e) {
             throw new RuntimeException("Something went wrong while trying to load dependencies", e);
         }
@@ -202,7 +199,8 @@ public class Libraries {
 
     static void addLoadedLib(URL url){
         if (url == null) return;
-        loadedLibs.add(url);
+        if (!loadedLibs.contains(url))
+            loadedLibs.add(url);
     }
     
     public static URL[] getLoadedLibs() {
