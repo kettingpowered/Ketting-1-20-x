@@ -915,7 +915,6 @@ tasks.register('kettingJar', Jar) {
     dependsOn ':forge:downloadServerRaw'
     dependsOn ':forge:genServerBinPatches'
     dependsOn generateKettingLibraries
-    dependsOn createServerShimClasspath
     mustRunAfter ':setup'
 
     BUNDLED_PROJECTS.each { dep -> {
@@ -930,33 +929,6 @@ tasks.register('kettingJar', Jar) {
     archiveBaseName = 'ketting'
     archiveVersion = KETTING_VERSION
     destinationDirectory = file('build/libs')
-
-    def CLASS_PATH = Util.getArtifacts(project, project.configurations.installer).values().collect{"libraries/${it.downloads.artifact.path}"} +
-            [
-                    'libraries/' + Util.getMavenInfoFromTask(rootProject.tasks.findByPath(':fmlloader:jar')),
-                    "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
-            ]
-    def claimed = CLASS_PATH.collect { it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
-    if (project.downloadServerRaw.dest.exists()) {
-        try (def zip = new java.util.zip.ZipFile(project.downloadServerRaw.dest)) {
-            CLASS_PATH += zip.getInputStream(zip.getEntry('META-INF/classpath-joined')).text.split(';')
-                    .findAll { it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
-        }
-    } else {
-        println("Can't read server")
-    }
-
-    def MODULE_PATH = Util.getArtifacts(project, project.configurations.moduleonly).values().collect{"libraries/${it.downloads.artifact.path}"}.sort()
-    def tokens = [
-            TASK:          'forge_server',
-            MAVEN_PATH:    "${project.group.replace('.', '/')}/${project.name}/${VERSION}",
-            FORGE_VERSION: FORGE_VERSION,
-            MC_VERSION:    MC_VERSION,
-            MCP_VERSION:   MCP_VERSION,
-            FORGE_GROUP:   project.group,
-            IGNORE_LIST: Util.getArtifacts(project, project.configurations.moduleonly).values().collect{it.downloads.artifact.path.rsplit('/', 1)[1]}.sort().join(','),
-            MODULES: 'ALL-MODULE-PATH'
-    ]
 
     doFirst {
         manifest{
@@ -987,11 +959,8 @@ tasks.register('kettingJar', Jar) {
     }
 
     from(project(':kettinglauncher').project.sourceSets.main.output)
-    from project(':kettingcommonimpl').project.sourceSets.main.output
+    from(project(':kettingcommonimpl').project.sourceSets.main.output)
     from(generateKettingLibraries)
-    from(createServerShimClasspath.output) {
-        rename { 'data/bootstrap-shim.list' }
-    }
 
     from(genServerBinPatches.output) {
         rename { 'data/server.lzma' }
@@ -1003,11 +972,6 @@ tasks.register('kettingJar', Jar) {
 
     from(installerJson.output) {
         rename { 'data/installscript.json' }
-    }
-
-    from(rootProject.file('server_files/libraries.txt')) {
-        filter(ReplaceTokens, tokens: [CLASS_PATH: CLASS_PATH.join(';')])
-        rename { 'data/libraries.txt' }
     }
 }
 //Ketting end
