@@ -359,7 +359,7 @@ public class ForgeInject {
     }
 
     private static void addForgeEnchantments() {
-        ForgeRegistries.ENCHANTMENTS.getEntries().forEach(entry -> {
+        /*ForgeRegistries.ENCHANTMENTS.getEntries().forEach(entry -> {
             Registry.ENCHANTMENT.get(new NamespacedKey(entry.getKey().location().getNamespace(),entry.getKey().location().getPath()));
             CraftEnchantment enchantment = new CraftEnchantment(entry.getValue());
             if (!org.bukkit.enchantments.Enchantment.byKey.containsKey(enchantment.getKey())
@@ -369,7 +369,7 @@ public class ForgeInject {
                 debug("Injecting Forge Enchantments into Bukkit: " + enchantment.getName());
             }
         });
-        debug("Injecting Forge Enchantments into Bukkit: DONE");
+        debug("Injecting Forge Enchantments into Bukkit: DONE");*/
     }
 
     private static void addForgePotions() {
