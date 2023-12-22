@@ -129,7 +129,17 @@ public class KettingLauncher {
 
     private static void setProperties() {
         System.setProperty("java.class.path", getClassPathFromShim());
+        addToClassPath(KettingFiles.FORGE_PATCHED_JAR);
+        addToClassPath(KettingFiles.FMLCORE);
+        addToClassPath(KettingFiles.FMLLOADER);
+        addToClassPath(KettingFiles.JAVAFMLLANGUAGE);
+        addToClassPath(KettingFiles.LOWCODELANGUAGE);
+        addToClassPath(KettingFiles.MCLANGUAGE);
         System.setProperty("ketting.remapper.dump", "./.mixin.out/plugin_classes");
+    }
+
+    private static void addToClassPath(File file) {
+        System.setProperty("java.class.path", System.getProperty("java.class.path") + File.pathSeparator + file.getAbsolutePath());
     }
 
     private static String getClassPathFromShim() {

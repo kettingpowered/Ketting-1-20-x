@@ -915,6 +915,7 @@ tasks.register('kettingJar', Jar) {
     dependsOn ':forge:downloadServerRaw'
     dependsOn ':forge:genServerBinPatches'
     dependsOn generateKettingLibraries
+    dependsOn createServerShimClasspath
     mustRunAfter ':setup'
 
     BUNDLED_PROJECTS.each { dep -> {
@@ -961,6 +962,9 @@ tasks.register('kettingJar', Jar) {
     from(project(':kettinglauncher').project.sourceSets.main.output)
     from(project(':kettingcommonimpl').project.sourceSets.main.output)
     from(generateKettingLibraries)
+    from(createServerShimClasspath) {
+        rename { 'data/bootstrap-shim.list' }
+    }
 
     from(genServerBinPatches.output) {
         rename { 'data/server.lzma' }
