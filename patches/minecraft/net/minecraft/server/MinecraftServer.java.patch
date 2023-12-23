@@ -112,10 +112,12 @@
        if (!JvmProfiler.INSTANCE.isRunning()) {
        }
  
-@@ -314,6 +_,13 @@
+@@ -313,7 +_,14 @@
+       ChunkProgressListener chunkprogresslistener = this.progressListenerFactory.create(11);
        this.createLevels(chunkprogresslistener);
        this.forceDifficulty();
-       this.prepareLevels(chunkprogresslistener);
+-      this.prepareLevels(chunkprogresslistener);
++      this.prepareLevels(chunkprogresslistener, this.overworld());
 +
 +      //Ketting start
 +      this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
