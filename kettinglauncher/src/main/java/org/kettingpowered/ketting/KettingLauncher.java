@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -140,6 +141,11 @@ public class KettingLauncher {
     }
 
     private static void addToClassPath(File file) {
+        try {
+            Libraries.addLoadedLib(file.toURI().toURL());//Yes, this is important, and fixes an issue with forge not finding language jars
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
         System.setProperty("java.class.path", System.getProperty("java.class.path") + File.pathSeparator + file.getAbsolutePath());
     }
 
