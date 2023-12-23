@@ -3,7 +3,6 @@ package org.kettingpowered.ketting;
 import org.kettingpowered.ketting.common.betterui.BetterUI;
 import org.kettingpowered.ketting.utils.FileUtils;
 
-import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +42,7 @@ public class KettingLauncher {
         launch();
     }
     
+    @SuppressWarnings("unused")
     public static void core_init() throws IOException, NoSuchAlgorithmException {
         Path eula = Paths.get("eula.txt");
         parseArgs(eula);
@@ -56,6 +56,7 @@ public class KettingLauncher {
         }
     }
     
+    @SuppressWarnings("unused")
     public static void lib_init() throws IOException, NoSuchAlgorithmException {
         if (enableUpdate) {
             setStreamFactory();
@@ -87,10 +88,8 @@ public class KettingLauncher {
             target = launchTarget;
     }
 
-    private static String getArg(@Nonnull String arg) {
+    private static String getArg(String arg) {
         if (args.isEmpty()) return null ;
-
-        arg = arg.toLowerCase();
 
         int index = args.indexOf(arg);
         if (index < 0) return null;
@@ -99,8 +98,6 @@ public class KettingLauncher {
     }
     private static boolean containsArg(String arg) {
         if (args.isEmpty()) return false;
-
-        arg = arg.toLowerCase();
 
         int index = args.indexOf(arg);
         if (index < 0) return false;
