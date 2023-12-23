@@ -203,7 +203,12 @@ public class Libraries {
             loadedLibs.add(url);
     }
     
+    public static void deduplicateLoadedLibs() {
+        loadedLibs = new ArrayList<>(loadedLibs.stream().distinct().toList());
+    }
+
     public static URL[] getLoadedLibs() {
+        deduplicateLoadedLibs();
         if (loadedLibs.stream().anyMatch(Objects::isNull)) {
             System.err.println("Failed to load libraries, please try again");
             System.exit(1);
