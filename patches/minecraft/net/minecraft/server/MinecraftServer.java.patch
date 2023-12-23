@@ -112,10 +112,12 @@
        if (!JvmProfiler.INSTANCE.isRunning()) {
        }
  
-@@ -314,6 +_,13 @@
+@@ -313,7 +_,14 @@
+       ChunkProgressListener chunkprogresslistener = this.progressListenerFactory.create(11);
        this.createLevels(chunkprogresslistener);
        this.forceDifficulty();
-       this.prepareLevels(chunkprogresslistener);
+-      this.prepareLevels(chunkprogresslistener);
++      this.prepareLevels(chunkprogresslistener, this.overworld());
 +
 +      //Ketting start
 +      this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
@@ -263,7 +265,7 @@
  
 +   //Ketting Start
 +   private @Nullable ServerLevel worldserver = null;
-+   public void prepareLevels(ChunkProgressListener p_129941_, ServerLevel worldserver){
++   public void prepareLevels(ChunkProgressListener p_129941_, ServerLevel worldserver) {
 +      this.worldserver = worldserver;
 +      prepareLevels(p_129941_);
 +   }
@@ -285,7 +287,7 @@
        this.nextTickTimeNanos = Util.getNanos();
 -      serverchunkcache.addRegionTicket(TicketType.START, new ChunkPos(blockpos), 11, Unit.INSTANCE);
 +      // CraftBukkit start
-+      if (worldserver.getWorld().getKeepSpawnInMemory()) {
++      if (serverlevel.getWorld().getKeepSpawnInMemory()) {
 +         serverchunkcache.addRegionTicket(TicketType.START, new ChunkPos(blockpos), 11, Unit.INSTANCE);
  
 -      while(serverchunkcache.getTickingGenerated() != 441) {

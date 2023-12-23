@@ -202,6 +202,8 @@ public abstract class PotionEffectType implements Keyed {
     //Ketting Start
     public static void registerPotionEffectType(@NotNull PotionEffectType pet) {
         Preconditions.checkNotNull(pet);
+        if (ID_MAP.containsValue(pet)) //Make sure we don't add the same potion effect type twice
+            return;
         ID_MAP.put(ID_MAP.size(), pet);
     }
     //Ketting End
