@@ -15,12 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Bukkit_1_20_2_Adapter implements BukkitAdapter {
+public class Bukkit_1_20_3_Adapter implements BukkitAdapter {
 
     private final Map<String, Plugin> pluginCache = new HashMap<>();
 
     public String getMcVersion() {
-        return "1.20.2";
+        return "1.20.3";
     }
 
     public void reload() {

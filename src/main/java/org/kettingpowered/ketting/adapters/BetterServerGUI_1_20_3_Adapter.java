@@ -11,11 +11,11 @@ import org.kettingpowered.ketting.types.Player;
 import javax.swing.*;
 import java.util.List;
 
-public class BetterServerGUI_1_20_2_Adapter implements BetterServerGUIAdapter {
+public class BetterServerGUI_1_20_3_Adapter implements BetterServerGUIAdapter {
 
     private final DedicatedServer server;
 
-    public BetterServerGUI_1_20_2_Adapter(@NotNull DedicatedServer server) {
+    public BetterServerGUI_1_20_3_Adapter(@NotNull DedicatedServer server) {
         this.server = server;
     }
 
@@ -32,7 +32,7 @@ public class BetterServerGUI_1_20_2_Adapter implements BetterServerGUIAdapter {
     }
 
     public String getMcVersion() {
-        return "1.20.2";
+        return "1.20.3";
     }
 
     public void onWindowClosing() {}

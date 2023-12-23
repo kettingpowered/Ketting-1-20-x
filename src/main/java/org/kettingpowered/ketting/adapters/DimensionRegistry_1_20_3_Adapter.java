@@ -16,12 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class DimensionRegistry_1_20_2_Adapter implements DimensionRegistry<Registry<LevelStem>, World.Environment, ResourceKey<LevelStem>> {
+public class DimensionRegistry_1_20_3_Adapter implements DimensionRegistry<Registry<LevelStem>, World.Environment, ResourceKey<LevelStem>> {
 
     private static BiMap<ResourceKey<LevelStem>, World.Environment> DIMENSION_REGISTRY = null;
 
     public String getMcVersion() {
-        return "1.20.2";
+        return "1.20.3";
     }
 
     public void reload() {}

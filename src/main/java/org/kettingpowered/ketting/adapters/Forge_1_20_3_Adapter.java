@@ -13,13 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class Forge_1_20_2_Adapter implements ForgeAdapter {
+public class Forge_1_20_3_Adapter implements ForgeAdapter {
 
     private final Map<String, Mod> modCache = new HashMap<>();
     private final Map<String, ModDependency> dependencyCache = new HashMap<>();
 
     public String getMcVersion() {
-        return "1.20.2";
+        return "1.20.3";
     }
 
     public void reload() {
