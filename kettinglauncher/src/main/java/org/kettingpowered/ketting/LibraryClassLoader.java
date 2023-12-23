@@ -11,6 +11,9 @@ public class LibraryClassLoader extends URLClassLoader {
     public LibraryClassLoader() {
         this(Libraries.getLoadedLibs());
     }
+    public LibraryClassLoader(ClassLoader parent) {
+        super(Libraries.getLoadedLibs(), parent);
+    }
     public LibraryClassLoader(URL[] libs) {
         super(libs, null);
     }

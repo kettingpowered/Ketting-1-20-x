@@ -111,16 +111,20 @@ public class KettingLauncher {
         args.add("--launchTarget");
         args.add(target);
 
-        try (URLClassLoader loader = new LibraryClassLoader()) {
+        setProperties();
+        ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
+        try (URLClassLoader loader = new LibraryClassLoader(KettingLauncher.class.getClassLoader())) {
+            Thread.currentThread().setContextClassLoader(loader);
             loadExternalFileSystems(loader);
             clearReservedIdentifiers();
-            setProperties();
 
             Class.forName("net.minecraftforge.bootstrap.ForgeBootstrap", true, loader)
                     .getMethod("main", String[].class)
                     .invoke(null, (Object) args.toArray(String[]::new));
         } catch (Throwable t) {
             throw new RuntimeException("Could not launch server", t);
+        } finally{
+            Thread.currentThread().setContextClassLoader(oldCL);
         }
     }
 
@@ -164,6 +168,7 @@ public class KettingLauncher {
                 }
 
                 builder.append(File.pathSeparator).append(target.getAbsolutePath());
+                Libraries.addLoadedLib(target.toURI().toURL()); //Yes, this is important, and fixes an issue with forge not finding forge-universal jar
             }
         } catch (IOException e) {
             throw new RuntimeException("Could not read bootstrap-shim.list", e);
