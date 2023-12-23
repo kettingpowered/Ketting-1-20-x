@@ -48,6 +48,26 @@ jobs:
             tar -xvf $archive -C artifacts
             rm $archive
           done
+      - name: Restore Project Sources for build
+        uses: actions/cache/restore@v3
+        with:
+          fail-on-cache-miss: true
+          path: |
+            projects/
+          key: project-src-cache-${{ github.ref }}-${{ github.sha }}
+      - name: Delete Project Sources for build
+        continue-on-error: true
+        run: |
+          gh extension install actions/gh-actions-cache
+          REPO=${{ github.repository }}
+          BRANCH=${{ github.ref }}
+          echo "Deleting caches..."
+          ## Setting this to not fail the workflow while deleting cache keys. 
+          #set +e
+          gh actions-cache delete project-src-cache-${{ github.ref }}-${{ github.sha }} -R $REPO -B $BRANCH --confirm
+          echo "Done"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2.9.0
         with:
@@ -58,6 +78,7 @@ jobs:
           VERSION: ${{ steps.version_name.outputs.version }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
+        if: false
         run: |
           tag=$(git rev-parse --short ${{ github.sha }})
           gh release create "$tag" artifacts/* \
@@ -106,14 +127,9 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-      - name: Setup Ketting
-        id: setup
+      - name: Setup Ketting & Check Setup Ketting
+        id: setup build
         run: ./gradlew setup
-        env:
-          VERSION: ${{ steps.version_name.outputs.version }}
-      - name: Check Setup Ketting
-        id: build
-        run: ./gradlew build
         env:
           VERSION: ${{ steps.version_name.outputs.version }}
       - name: Save Project Sources
@@ -162,6 +178,7 @@ jobs:
             projects/
           key: project-src-cache-${{ github.ref }}-${{ github.sha }}
       - name: Delete Project Sources for build
+        if: github.ref_type != 'tag'
         continue-on-error: true
         run: |
           gh extension install actions/gh-actions-cache
@@ -197,7 +214,7 @@ jobs:
           path: |
             ketting.tar.gz
       - name: Test Simple Server Start&Stop
-#        if: false
+        if: false
         timeout-minutes: 10
         working-directory: projects/ketting/build/libs/
         run: echo "stop" | java -Dforge.enableGameTest=true -jar ketting*.jar -dau -accepteula

@@ -65,13 +65,18 @@ if (System.env.TEAMCITY_VERSION) {
 publishing {
     publications {
         myPublication(MavenPublication) {
-            artifact project(':forge').named('kettingJar')
+            ['universalJar', 'installerJar', 'userdevJar', 'sourcesJar', 'serverShimJar', 'kettingJar'].each { artifactTaskName -> 
+                project(':forge').getTasksByName(artifactTaskName, false).each {task->
+                    artifact task
+                }
+            }
+
             groupId = "org.kettingpowered.server"
             artifactId = "ketting-server"
-                version = System.getenv("VERSION")
+                version = System.getenv("VERSION") ?: 'dev-ver'
                 pom {
                     name = "Ketting-Server"
-                    description = "An API supported across all Ketting Versions"
+                    description = "A Forge/Bukkit Server hybrid"
                     url = "https://github.com/kettingpowered/Ketting-1-20-x"
                     developers {
                         developer {

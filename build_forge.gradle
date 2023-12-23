@@ -23,7 +23,7 @@ plugins {
     id 'eclipse'
     id 'java-library'
     id 'maven-publish'
-    id 'org.cadixdev.licenser'
+//    id 'org.cadixdev.licenser'
     id 'de.undercouch.download'
     id 'net.minecraftforge.gradleutils'
     id 'net.minecraftforge.gradle.patcher'
@@ -53,6 +53,7 @@ tasks.withType(JavaCompile).configureEach {
 jarSigner.autoDetect('forge')
 
 applyPatches {
+    mustRunAfter genPatches
     level 'WARNING'
 }
 
