@@ -15,6 +15,11 @@ dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
 
 apply from: rootProject.file('build_shared.gradle')
 
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
+    withSourcesJar()
+}
+
 dependencies {
     implementation project(':fmlcore')
     implementation project(':kettingcommonimpl')

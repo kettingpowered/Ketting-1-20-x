@@ -65,7 +65,7 @@ if (System.env.TEAMCITY_VERSION) {
 publishing {
     publications {
         myPublication(MavenPublication) {
-            ['universalJar', 'installerJar', 'userdevJar', 'sourcesJar', 'serverShimJar', 'kettingJar'].each { artifactTaskName -> 
+            [/*'universalJar', 'installerJar', 'userdevJar', 'sourcesJar', 'serverShimJar',*/ 'kettingJar'].each { artifactTaskName -> 
                 project(':forge').getTasksByName(artifactTaskName, false).each {task->
                     artifact task
                 }
