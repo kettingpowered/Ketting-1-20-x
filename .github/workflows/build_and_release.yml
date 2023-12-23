@@ -10,16 +10,17 @@ on:
     branches:
      - '*'
   workflow_dispatch:
-#This permission is needed to push a release (and/or tags)
-permissions:
-  contents: write #nessesary for tag creation and release creation
-  actions: write #nessesary for cache deletion
 
 jobs:
   create-release:
-    needs: build
-    if: github.ref_type == 'tag'
+    needs: test
     runs-on: ubuntu-latest
+    if: github.ref_type == 'tag'
+    #This permission is needed to push a release (and/or tags)
+    permissions:
+      contents: write #nessesary for tag creation and release creation
+      actions: write #nessesary for cache deletion
+      packages: write #packages write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -48,17 +49,31 @@ jobs:
             tar -xvf $archive -C artifacts
             rm $archive
           done
-      - name: Restore Project Sources for build
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Cache .gradle
+        uses: burrunan/gradle-cache-action@v1
+        with:
+          # Enable concurrent cache save and restore
+          # Default is concurrent=false for better log readability
+          concurrent: true
+          # Disable caching of $HOME/.gradle/caches/*.*/generated-gradle-jars
+          save-generated-gradle-jars: false
+          # Disable publishing Gradle Build Scan URL to job report
+          gradle-build-scan-report: false
+      - name: Restore Project Sources for faster setup
         uses: actions/cache/restore@v3
         with:
-          fail-on-cache-miss: true
           path: |
             projects/
           key: project-src-cache-${{ github.ref }}-${{ github.sha }}
-      - name: Build with Gradle
+      - name: Setup Gradle
         uses: gradle/gradle-build-action@v2.9.0
-        with:
-          arguments: kettingJar publish
+      - name: Publish Ketting
+        run: ./gradlew publish
         env:
           KETTINGUSERNAME: ${{ secrets.KETTINGUSERNAME }}
           KETTINGPASSWORD: ${{ secrets.KETTINGPASSWORD }}
