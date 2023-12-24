@@ -1,13 +1,17 @@
 --- a/net/minecraft/server/dedicated/Settings.java
 +++ b/net/minecraft/server/dedicated/Settings.java
-@@ -26,13 +_,31 @@
+@@ -26,13 +_,36 @@
  public abstract class Settings<T extends Settings<T>> {
     private static final Logger LOGGER = LogUtils.getLogger();
     public final Properties properties;
 +   // CraftBukkit start
 +   private joptsimple.OptionSet options = null;
  
--   public Settings(Properties p_139801_) {
++   //Ketting start - keep compat
+    public Settings(Properties p_139801_) {
++      this(p_139801_, new joptsimple.OptionParser().parse());
++   }
++   //Ketting end - keep compat
 +   public Settings(Properties p_139801_, final joptsimple.OptionSet options) {
        this.properties = p_139801_;
 +      this.options = options;
@@ -75,12 +79,17 @@
        String s = this.getStringRaw(p_139822_);
        V v = MoreObjects.firstNonNull((V)(s != null ? p_139823_.apply(s) : null), p_139825_);
        this.properties.put(p_139822_, p_139824_.apply(v));
-@@ -171,7 +_,7 @@
+@@ -171,7 +_,12 @@
        return properties;
     }
  
 -   protected abstract T reload(RegistryAccess p_139857_, Properties p_139858_);
-+   protected abstract T reload(RegistryAccess p_139857_, Properties p_139858_, joptsimple.OptionSet optionset); // CraftBukkit
++   //Ketting start - keep compat
++   protected @org.jetbrains.annotations.Nullable T reload(RegistryAccess p_139857_, Properties p_139858_){
++      return reload(p_139857_, p_139858_, Settings.this.options);
++   }
++   //Ketting end - keep compat
++   protected @org.jetbrains.annotations.Nullable T reload(RegistryAccess p_139857_, Properties p_139858_, joptsimple.OptionSet optionset){ return null; } // CraftBukkit
  
     public class MutableValue<V> implements Supplier<V> {
        private final String key;

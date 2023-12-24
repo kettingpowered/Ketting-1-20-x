@@ -242,7 +242,7 @@
        } else {
           compoundtag1 = this.playerIo.load(p_11225_);
        }
-@@ -307,22 +_,39 @@
+@@ -307,22 +_,44 @@
     }
  
     protected void save(ServerPlayer p_11277_) {
@@ -264,7 +264,12 @@
     }
  
 -   public void remove(ServerPlayer p_11287_) {
-+   public String remove(ServerPlayer p_11287_) { // CraftBukkit - return string
++   // Ketting start - keep compat
++   public void remove(ServerPlayer p_11287_) { 
++      remove_string(p_11287_);
++   }
++   //Ketting end
++   public String remove_string(ServerPlayer p_11287_) { // CraftBukkit - return string
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedOut(p_11287_);
        ServerLevel serverlevel = p_11287_.serverLevel();
        p_11287_.awardStat(Stats.LEAVE_GAME);
@@ -285,7 +290,7 @@
        this.save(p_11287_);
        if (p_11287_.isPassenger()) {
           Entity entity = p_11287_.getRootVehicle();
-@@ -339,48 +_,114 @@
+@@ -339,48 +_,124 @@
        serverlevel.removePlayerImmediately(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
        p_11287_.getAdvancements().stopListening();
        this.players.remove(p_11287_);
@@ -300,6 +305,8 @@
 -      }
 -
 -      this.broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(p_11287_.getUUID())));
+-   }
+-
 +         // CraftBukkit start
 +         // this.stats.remove(uuid);
 +         // this.advancements.remove(uuid);
@@ -321,9 +328,14 @@
 +      // CraftBukkit end
 +
 +      return playerQuitEvent.getQuitMessage(); // CraftBukkit
-    }
- 
++   }
 +
++
++   //Ketting start - keep compat
++   public Component canPlayerLogin(SocketAddress address, GameProfile profile){
++      return null;
++   }
++   //Ketting end
 +   // CraftBukkit start - Whole method, SocketAddress to LoginListener, added hostname to signature, return EntityPlayer
     @Nullable
 -   public Component canPlayerLogin(SocketAddress p_11257_, GameProfile p_11258_) {
@@ -400,13 +412,6 @@
        } else {
 -         return this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(p_11258_) ? Component.translatable("multiplayer.disconnect.server_full") : null;
 -      }
--   }
--
--   public ServerPlayer getPlayerForLogin(GameProfile p_215625_, ClientInformation p_300548_) {
--      return new ServerPlayer(this.server, this.server.overworld(), p_215625_, p_300548_);
--   }
--
--   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) {
 +         // return this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameprofile) ? IChatBaseComponent.translatable("multiplayer.disconnect.server_full") : null;
 +         if (this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameprofile)) {
 +            event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL, org.spigotmc.SpigotConfig.serverFullMessage); // Spigot
@@ -419,38 +424,48 @@
 +         return null;
 +      }
 +      return player;
-+   }
-+
+    }
+ 
++   //Ketting start - keep compat
+    public ServerPlayer getPlayerForLogin(GameProfile p_215625_, ClientInformation p_300548_) {
+       return new ServerPlayer(this.server, this.server.overworld(), p_215625_, p_300548_);
+    }
++   //Ketting end
 +   // CraftBukkit start - added EntityPlayer
 +   public ServerPlayer getPlayerForLogin(GameProfile gameprofile, ClientInformation clientinformation, ServerPlayer player) {
 +      player.updateOptions(clientinformation);
 +      return player;
 +      // CraftBukkit end
 +   }
-+
-+   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_, ServerPlayer player) { // CraftBukkit - added EntityPlayer
-+      /* CraftBukkit start - Moved up
+ 
+-   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) {
++   // Ketting start - keep compat
++   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) { 
        UUID uuid = p_299278_.getId();
        Set<ServerPlayer> set = Sets.newIdentityHashSet();
  
-@@ -400,75 +_,164 @@
-       }
+@@ -401,74 +_,171 @@
  
        return !set.isEmpty();
--   }
--
--   public ServerPlayer respawn(ServerPlayer p_11237_, boolean p_11238_) {
+    }
++   // Ketting end
++   // CraftBukkit start - Moved up
++   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_, ServerPlayer player) { // CraftBukkit - added EntityPlayer
++      return player == null;
++   }
++   // CraftBukkit end
+ 
++   //Ketting start - keep compat
+    public ServerPlayer respawn(ServerPlayer p_11237_, boolean p_11238_) {
 -      this.players.remove(p_11237_);
 -      p_11237_.serverLevel().removePlayerImmediately(p_11237_, Entity.RemovalReason.DISCARDED);
 -      BlockPos blockpos = p_11237_.getRespawnPosition();
 -      float f = p_11237_.getRespawnAngle();
 -      boolean flag = p_11237_.isRespawnForced();
 -      ServerLevel serverlevel = this.server.getLevel(p_11237_.getRespawnDimension());
-+      */
-+      return player == null;
-+      // CraftBukkit end
++      return respawn(p_11237_, p_11238_, org.bukkit.event.player.PlayerRespawnEvent.RespawnReason.DEATH);
 +   }
-+
++   //Ketting end
 +   public ServerPlayer respawn(ServerPlayer p_11237_, boolean p_11238_, org.bukkit.event.player.PlayerRespawnEvent.RespawnReason reason) {
 +      return this.respawn(p_11237_, this.server.getLevel(p_11237_.getRespawnDimension()), p_11238_, null, true, reason);
 +   }
@@ -813,14 +828,20 @@
  
     public void broadcastSystemMessage(Component p_240618_, boolean p_240644_) {
        this.broadcastSystemMessage(p_240618_, (p_215639_) -> {
-@@ -772,34 +_,43 @@
+@@ -772,34 +_,50 @@
        return p_251384_.hasSignature() && !p_251384_.hasExpiredServer(Instant.now());
     }
  
--   public ServerStatsCounter getPlayerStats(Player p_11240_) {
++   //Ketting start - keep compat
+    public ServerStatsCounter getPlayerStats(Player p_11240_) {
 -      UUID uuid = p_11240_.getUUID();
 -      ServerStatsCounter serverstatscounter = this.stats.get(uuid);
 -      if (serverstatscounter == null) {
++      if (p_11240_ instanceof ServerPlayer sp) return getPlayerStats(sp);
++      Component name = p_11240_.getDisplayName();
++      return getPlayerStats(p_11240_.getUUID(), name!=null?name.getString():"");
++   }
++   //Ketting end
 +   // CraftBukkit start
 +   public ServerStatsCounter getPlayerStats(ServerPlayer p_11240_) {
 +      ServerStatsCounter stats = p_11240_.getStats();

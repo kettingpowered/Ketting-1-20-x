@@ -4,7 +4,7 @@
  import net.minecraft.resources.ResourceLocation;
  
  public record RecipeHolder<T extends Recipe<?>>(ResourceLocation id, T value) {
-+   public final org.bukkit.inventory.Recipe toBukkitRecipe() {
++   public final @org.jetbrains.annotations.Nullable org.bukkit.inventory.Recipe toBukkitRecipe() {
 +      return this.value.toBukkitRecipe(org.bukkit.craftbukkit.util.CraftNamespacedKey.fromMinecraft(this.id));
 +   }
 +   // CraftBukkit end

@@ -309,11 +309,16 @@
              });
              if (this.useItem.isEmpty()) {
                 if (interactionhand == InteractionHand.MAIN_HAND) {
-@@ -880,19 +_,27 @@
+@@ -880,19 +_,32 @@
        }
     }
  
 -   protected void actuallyHurt(DamageSource p_36312_, float p_36313_) {
++   // Ketting start - delegate to CB
++   protected void actuallyHurt(DamageSource source, float f){
++      damageEntity0(source, f);
++   }
++   // Ketting end
 +   // CraftBukkit start
 +   protected boolean damageEntity0(DamageSource p_36312_, float p_36313_) {
 +      if (true) {
