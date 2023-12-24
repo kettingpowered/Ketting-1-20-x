@@ -625,6 +625,9 @@ tasks.register('checkJarCompatibility', CheckJarCompatibility) {
     
     commonLibraries.from(project.configurations.minecraftImplementation)
     commonLibraries.from(project.configurations.installer)
+    BUNDLED_PROJECTS.each { item ->
+        commonLibraries.from(project(item).project.tasks.getByName('jar'))
+    }
 }
 
 tasks.register('launcherJson', LauncherJson).configure {
