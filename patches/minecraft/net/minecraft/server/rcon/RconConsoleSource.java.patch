@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/rcon/RconConsoleSource.java
 +++ b/net/minecraft/server/rcon/RconConsoleSource.java
-@@ -14,8 +_,13 @@
+@@ -14,10 +_,18 @@
     private static final Component RCON_COMPONENT = Component.literal("Rcon");
     private final StringBuffer buffer = new StringBuffer();
     private final MinecraftServer server;
@@ -14,7 +14,12 @@
 +      // CraftBukkit end
        this.server = p_11505_;
     }
++   public RconConsoleSource(MinecraftServer p_11505_) {
++      this(p_11505_, null);
++   }
  
+    public void prepareForCommand() {
+       this.buffer.setLength(0);
 @@ -32,8 +_,19 @@
        return new CommandSourceStack(this, Vec3.atLowerCornerOf(serverlevel.getSharedSpawnPos()), Vec2.ZERO, serverlevel, 4, "Rcon", RCON_COMPONENT, this.server, (Entity)null);
     }

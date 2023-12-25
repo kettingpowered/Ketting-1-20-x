@@ -109,33 +109,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientChatEvent;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.ClientPlayerChangeGameTypeEvent;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.ComputeFovModifierEvent;
-import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.MovementInputUpdateEvent;
-import net.minecraftforge.client.event.RecipesUpdatedEvent;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
-import net.minecraftforge.client.event.RegisterShadersEvent;
-import net.minecraftforge.client.event.RenderArmEvent;
-import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderHighlightEvent;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.client.event.ScreenshotEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.event.ToastAddEvent;
-import net.minecraftforge.client.event.ViewportEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
@@ -795,6 +769,11 @@ public class ForgeHooksClient {
     public static Component onClientPlayerChat(ChatType.Bound boundChatType, Component message, PlayerChatMessage playerChatMessage, UUID sender) {
         ClientChatReceivedEvent.Player event = new ClientChatReceivedEvent.Player(boundChatType, message, playerChatMessage, sender);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
+    }
+
+    public static void onClientPauseUpdate(boolean paused)
+    {
+        MinecraftForge.EVENT_BUS.post(new ClientPauseEvent(paused));
     }
 
     private static final ChatTypeDecoration SYSTEM_CHAT_TYPE_DECORATION = new ChatTypeDecoration("forge.chatType.system", List.of(ChatTypeDecoration.Parameter.CONTENT), Style.EMPTY);

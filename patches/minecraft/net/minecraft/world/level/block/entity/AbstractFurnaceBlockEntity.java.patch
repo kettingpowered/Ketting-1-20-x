@@ -238,19 +238,22 @@
        }
     }
  
-@@ -455,8 +_,8 @@
-    public void awardUsedRecipes(Player p_58396_, List<ItemStack> p_282202_) {
-    }
+@@ -467,27 +_,56 @@
  
--   public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_) {
--      List<RecipeHolder<?>> list = this.getRecipesToAwardAndPopExperience(p_155004_.serverLevel(), p_155004_.position());
+       this.recipesUsed.clear();
+    }
 +   public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_, ItemStack itemstack, int amount) { // CraftBukkit
 +      List<RecipeHolder<?>> list = this.getRecipesToAwardAndPopExperience(p_155004_.serverLevel(), p_155004_.position(), this.worldPosition, p_155004_, itemstack, amount); // CraftBukkit
-       p_155004_.awardRecipes(list);
- 
-       for(RecipeHolder<?> recipeholder : list) {
-@@ -469,25 +_,42 @@
-    }
++      p_155004_.awardRecipes(list);
++
++      for(RecipeHolder<?> recipeholder : list) {
++         if (recipeholder != null) {
++            p_155004_.triggerRecipeCrafted(recipeholder, this.items);
++         }
++      }
++
++      this.recipesUsed.clear();
++   }
  
     public List<RecipeHolder<?>> getRecipesToAwardAndPopExperience(ServerLevel p_154996_, Vec3 p_154997_) {
 +      // CraftBukkit start

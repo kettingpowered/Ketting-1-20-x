@@ -831,16 +831,17 @@
 +         if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entity, false)) return;
           this.vehicle = null;
 -         entity.removePassenger(this);
-+         if (!entity.removePassenger(this)) this.vehicle = entity; // CraftBukkit
++         if (!entity.removePassenger_bool(this)) this.vehicle = entity; // CraftBukkit
        }
  
     }
-@@ -1961,10 +_,39 @@
-       }
+@@ -1962,9 +_,41 @@
     }
  
--   protected void removePassenger(Entity p_20352_) {
-+   protected boolean removePassenger(Entity p_20352_) { // CraftBukkit
+    protected void removePassenger(Entity p_20352_) {
++      removePassenger_bool(p_20352_); //Ketting - keep compat
++   }
++   protected boolean removePassenger_bool(Entity p_20352_) { // CraftBukkit
        if (p_20352_.getVehicle() == this) {
           throw new IllegalStateException("Use x.stopRiding(y), not y.removePassenger(x)");
        } else {
@@ -1201,12 +1202,13 @@
        }
     }
  
-@@ -2531,8 +_,23 @@
-       return PortalShape.getRelativePosition(p_20046_, p_20045_, this.position(), this.getDimensions(this.getPose()));
+@@ -2532,7 +_,25 @@
     }
  
--   protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel p_185935_, BlockPos p_185936_, boolean p_185937_, WorldBorder p_185938_) {
+    protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel p_185935_, BlockPos p_185936_, boolean p_185937_, WorldBorder p_185938_) {
 -      return p_185935_.getPortalForcer().findPortalAround(p_185936_, p_185937_, p_185938_);
++      return getExitPortal(p_185935_, p_185936_, p_185937_, p_185938_, p_185935_.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.NETHER? 16 : 128, false, 16);
++   }
 +   // CraftBukkit start
 +   protected org.bukkit.craftbukkit.event.CraftPortalEvent callPortalEvent(Entity entity, ServerLevel exitWorldServer, Vec3 exitPosition, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
 +      org.bukkit.entity.Entity bukkitEntity = entity.getBukkitEntity();

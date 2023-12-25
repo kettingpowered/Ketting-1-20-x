@@ -1,10 +1,13 @@
 --- a/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-@@ -36,11 +_,22 @@
-    private int latency;
+@@ -37,10 +_,26 @@
     private volatile boolean suspendFlushingOnServerThread = false;
  
--   public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_) {
+    public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_) {
++      //Ketting start - keep compat
++      this(p_299469_, p_300872_, p_300277_, new net.minecraft.server.level.ServerPlayer(p_299469_, p_299469_.getLevel(net.minecraft.world.level.Level.OVERWORLD), p_300277_.gameProfile(), p_300277_.clientInformation()));
++   }
++   //Ketting end - keep compat
 +   public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_, net.minecraft.server.level.ServerPlayer player) { // CraftBukkit
        this.server = p_299469_;
        this.connection = p_300872_;

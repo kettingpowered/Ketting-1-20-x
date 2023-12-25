@@ -9,8 +9,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.LoadingOverlay;
 import net.minecraft.server.packs.resources.ReloadInstance;
+import net.minecraftforge.fml.earlydisplay.DisplayWindow;
+
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * This is an implementation of the LoadingOverlay that calls back into the early window rendering, as part of the
@@ -22,7 +25,10 @@ import java.util.function.Consumer;
  */
 public class ForgeLoadingOverlay extends LoadingOverlay {
 
-    public ForgeLoadingOverlay(Minecraft p_96172_, ReloadInstance p_96173_, Consumer<Optional<Throwable>> p_96174_, boolean p_96175_) {
-        super(p_96172_, p_96173_, p_96174_, p_96175_);
+    public ForgeLoadingOverlay(Minecraft p_96172_, ReloadInstance p_96173_, Consumer<Optional<Throwable>> p_96174_, DisplayWindow displayWindow) {
+        super(p_96172_, p_96173_, p_96174_, false);
+    }
+    public static Supplier<LoadingOverlay> newInstance(Supplier<Minecraft> mc, Supplier<ReloadInstance> ri, Consumer<Optional<Throwable>> handler, DisplayWindow window) {
+        return null;
     }
 }

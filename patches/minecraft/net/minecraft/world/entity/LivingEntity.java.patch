@@ -910,11 +910,14 @@
                 }
              }
           }
-@@ -1607,8 +_,195 @@
+@@ -1607,8 +_,198 @@
        }
     }
  
 -   protected void actuallyHurt(DamageSource p_21240_, float p_21241_) {
++   protected void actuallyHurt(DamageSource source, float f){
++      damageEntity0(source, f); //Ketting - keep compat
++   }
 +   // CraftBukkit start
 +   protected boolean damageEntity0(final DamageSource damagesource, float f) { // void -> boolean, add final
 +      if (!this.isInvulnerableTo(damagesource)) {

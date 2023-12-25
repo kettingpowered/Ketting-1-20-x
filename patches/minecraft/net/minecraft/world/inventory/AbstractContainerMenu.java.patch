@@ -15,13 +15,15 @@
     private final IntList remoteDataSlots = new IntArrayList();
     private ItemStack remoteCarried = ItemStack.EMPTY;
     private int stateId;
-@@ -60,6 +_,27 @@
+@@ -60,6 +_,29 @@
     private ContainerSynchronizer synchronizer;
     private boolean suppressRemoteUpdates;
  
 +   // CraftBukkit start
 +   public boolean checkReachable = true;
-+   public abstract org.bukkit.inventory.InventoryView getBukkitView();
++   public @org.jetbrains.annotations.Nullable org.bukkit.inventory.InventoryView getBukkitView() {
++      return null; //Ketting - keep compat
++   }
 +   public void transferTo(AbstractContainerMenu other, org.bukkit.craftbukkit.entity.CraftHumanEntity player) {
 +      org.bukkit.inventory.InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
 +      ((org.bukkit.craftbukkit.inventory.CraftInventory) source.getTopInventory()).getInventory().onClose(player);

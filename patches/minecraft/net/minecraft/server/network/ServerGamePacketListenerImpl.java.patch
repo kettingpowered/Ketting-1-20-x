@@ -890,10 +890,53 @@
           this.send(new ClientboundSystemChatPacket(Component.translatable("chat.disabled.options").withStyle(ChatFormatting.RED), false));
           return Optional.empty();
        } else {
-@@ -1260,19 +_,165 @@
+@@ -1260,19 +_,176 @@
        return false;
     }
  
++   //Ketting start - keep compat (anonymous classes will make the compat checker give wrong output)
++   private class Waitable extends org.bukkit.craftbukkit.util.Waitable<java.lang.Object>{
++      final org.bukkit.event.player.PlayerChatEvent queueEvent;
++      final String originalFormat;
++      final String originalMessage;
++      final PlayerChatMessage original;
++      
++      private Waitable(final org.bukkit.event.player.PlayerChatEvent queueEvent, final String originalFormat, final String originalMessage, final PlayerChatMessage original){
++         this.queueEvent = queueEvent;
++         this.originalFormat = originalFormat;
++         this.originalMessage = originalMessage;
++         this.original = original;
++      }
++      @Override
++      protected java.lang.Object evaluate() {
++         org.bukkit.Bukkit.getPluginManager().callEvent(queueEvent);
++
++         if (queueEvent.isCancelled()) {
++            return null;
++         }
++
++         String message = String.format(queueEvent.getFormat(), queueEvent.getPlayer().getDisplayName(), queueEvent.getMessage());
++         if (((org.bukkit.craftbukkit.util.LazyPlayerSet) queueEvent.getRecipients()).isLazy()) {
++            if (!org.spigotmc.SpigotConfig.bungee && originalFormat.equals(queueEvent.getFormat()) && originalMessage.equals(queueEvent.getMessage()) && queueEvent.getPlayer().getName().equalsIgnoreCase(queueEvent.getPlayer().getDisplayName())) { // Spigot
++               ServerGamePacketListenerImpl.this.server.getPlayerList().broadcastChatMessage(original, ServerGamePacketListenerImpl.this.player, ChatType.bind(ChatType.CHAT, (Entity) ServerGamePacketListenerImpl.this.player));
++               return null;
++            }
++
++            for (ServerPlayer recipient : server.getPlayerList().players) {
++               recipient.getBukkitEntity().sendMessage(ServerGamePacketListenerImpl.this.player.getUUID(), message);
++            }
++         } else {
++            for (org.bukkit.entity.Player player : queueEvent.getRecipients()) {
++               player.sendMessage(ServerGamePacketListenerImpl.this.player.getUUID(), message);
++            }
++         }
++         ServerGamePacketListenerImpl.this.server.console.sendMessage(message);
++
++         return null;
++      }
++   }
++   //Ketting end
++   
 +   // CraftBukkit start - add method
 +   public void chat(String s, PlayerChatMessage original, boolean async) {
 +      if (s.isEmpty() || this.player.getChatVisibility() == ChatVisiblity.HIDDEN) {
@@ -915,34 +958,7 @@
 +            // Evil plugins still listening to deprecated event
 +            final org.bukkit.event.player.PlayerChatEvent queueEvent = new org.bukkit.event.player.PlayerChatEvent(player, event.getMessage(), event.getFormat(), event.getRecipients());
 +            queueEvent.setCancelled(event.isCancelled());
-+            org.bukkit.craftbukkit.util.Waitable waitable = new org.bukkit.craftbukkit.util.Waitable() {
-+               @Override
-+               protected Object evaluate() {
-+                  org.bukkit.Bukkit.getPluginManager().callEvent(queueEvent);
-+
-+                  if (queueEvent.isCancelled()) {
-+                     return null;
-+                  }
-+
-+                  String message = String.format(queueEvent.getFormat(), queueEvent.getPlayer().getDisplayName(), queueEvent.getMessage());
-+                  if (((org.bukkit.craftbukkit.util.LazyPlayerSet) queueEvent.getRecipients()).isLazy()) {
-+                     if (!org.spigotmc.SpigotConfig.bungee && originalFormat.equals(queueEvent.getFormat()) && originalMessage.equals(queueEvent.getMessage()) && queueEvent.getPlayer().getName().equalsIgnoreCase(queueEvent.getPlayer().getDisplayName())) { // Spigot
-+                        ServerGamePacketListenerImpl.this.server.getPlayerList().broadcastChatMessage(original, ServerGamePacketListenerImpl.this.player, ChatType.bind(ChatType.CHAT, (Entity) ServerGamePacketListenerImpl.this.player));
-+                        return null;
-+                     }
-+
-+                     for (ServerPlayer recipient : server.getPlayerList().players) {
-+                        recipient.getBukkitEntity().sendMessage(ServerGamePacketListenerImpl.this.player.getUUID(), message);
-+                     }
-+                  } else {
-+                     for (org.bukkit.entity.Player player : queueEvent.getRecipients()) {
-+                        player.sendMessage(ServerGamePacketListenerImpl.this.player.getUUID(), message);
-+                     }
-+                  }
-+                  ServerGamePacketListenerImpl.this.server.console.sendMessage(message);
-+
-+                  return null;
-+               }};
++            final org.bukkit.craftbukkit.util.Waitable<?> waitable = new Waitable(queueEvent, originalFormat, originalMessage, original); //Ketting - keep compat (anonymous classes will make the compat checker give wrong output)
 +            if (async) {
 +               server.processQueue.add(waitable);
 +            } else {
@@ -1023,12 +1039,7 @@
 +         LOGGER.warn(this.player.getScoreboardName() + " tried to send an empty message");
 +      } else if (getCraftPlayer().isConversing()) {
 +         final String conversationInput = s;
-+         this.server.processQueue.add(new Runnable() {
-+            @Override
-+            public void run() {
-+               getCraftPlayer().acceptConversationInput(conversationInput);
-+            }
-+         });
++         this.server.processQueue.add(() -> getCraftPlayer().acceptConversationInput(conversationInput)); //Ketting - keep compat (anonymous classes will make the compat checker give wrong output)
 +      } else if (this.player.getChatVisibility() == ChatVisiblity.SYSTEM) { // Re-add "Command Only" flag check
 +         this.send(new ClientboundSystemChatPacket(Component.translatable("chat.cannotSend").withStyle(ChatFormatting.RED), false));
 +      } else {
