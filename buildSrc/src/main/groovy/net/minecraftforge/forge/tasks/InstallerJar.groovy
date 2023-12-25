@@ -1,5 +1,6 @@
 package net.minecraftforge.forge.tasks
 
+import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.*
 import org.gradle.api.DefaultTask
@@ -96,7 +97,7 @@ abstract class InstallerJar extends Zip {
                 //println('')
                 def resolved = cfg.resolvedConfiguration.resolvedArtifacts
                 int found = 0
-                for (var dep : resolved) {
+                for (final ResolvedArtifact dep : resolved) {
                     def name = Util.getMavenInfoFromDep(dep).name
                     def info = deps.remove(name)
                     if (info == null) {

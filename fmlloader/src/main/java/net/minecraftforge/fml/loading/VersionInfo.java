@@ -11,9 +11,14 @@ import java.io.InputStreamReader;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import org.kettingpowered.ketting.internal.KettingConstants;
 
 /** TODO: [FML][Loader] Remove VersionInfo - we shouldn't need to base any decisions on forge or mc version info at the loader level. So once I get a proper replacement i'm gunna kill this. */
 public record VersionInfo(String forgeVersion, String mcVersion, String mcpVersion, String forgeGroup) {
+    public String mcAndForgeAndKettingVersion() {
+        return mcAndForgeVersion() + "-"+ KettingConstants.KETTING_VERSION;
+    }
+
     public String mcAndForgeVersion() {
         return mcVersion + "-" + forgeVersion;
     }

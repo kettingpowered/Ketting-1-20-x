@@ -51,14 +51,43 @@ publishing {
         artifactId = 'mclanguage'
         pom {
             name = project.name
-            description = 'Language provider for Minecraft Forge that provides Minecraft Itself'
-            url = 'https://github.com/MinecraftForge/MinecraftForge'
-            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
-            license PomUtils.Licenses.LGPLv2_1
+            description = 'Language provider for Ketting that provides Minecraft Itself'
+            url = "https://github.com/kettingpowered/Ketting-1-20-x"
+            developers {
+                developer {
+                    id = "justred23"
+                    name = "JustRed23"
+                }
+                developer {
+                    id = "c0d3m4513r"
+                    name = "C0D3 M4513R"
+                }
+            }
+            scm {
+                connection = "scm:git:https://github.com/kettingpowered/Ketting-1-20-x.git"
+                //developerConnection = "scm:svn:https://subversion.example.com/svn/project/trunk/"
+                url = "https://github.com/kettingpowered/Ketting-1-20-x"
+            }
+            PomUtils.setGitHubDetails(pom, 'kettingpowered', 'Ketting-1-20-x')
         }
     }
-    
+
     repositories {
-        maven gradleutils.publishingForgeMaven
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/kettingpowered/Ketting-1-20-x")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+        maven {
+            name = 'kettingRepo'
+            credentials {
+                username = System.getenv("KETTINGUSERNAME")
+                password = System.getenv("KETTINGPASSWORD")
+            }
+            url = "https://nexus.c0d3m4513r.com/repository/Ketting-Server-Releases/"
+        }
     }
 }

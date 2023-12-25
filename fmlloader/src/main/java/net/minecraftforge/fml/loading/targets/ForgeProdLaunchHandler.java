@@ -11,6 +11,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LibraryFinder;
+import org.kettingpowered.ketting.internal.KettingConstants;
 
 @ApiStatus.Internal
 abstract class ForgeProdLaunchHandler extends CommonLaunchHandler {
@@ -24,7 +25,7 @@ abstract class ForgeProdLaunchHandler extends CommonLaunchHandler {
     @Override
     public List<Path> getMinecraftPaths() {
         var vers = FMLLoader.versionInfo();
-        var mc = LibraryFinder.findPathForMaven(vers.forgeGroup(), "forge", "", this.type.name(), vers.mcAndForgeVersion());
+        var mc = LibraryFinder.findPathForMaven(KettingConstants.KETTINGSERVER_GROUP, "forge", "", this.type.name(), vers.mcAndForgeAndKettingVersion());
         return List.of(mc);
     }
 

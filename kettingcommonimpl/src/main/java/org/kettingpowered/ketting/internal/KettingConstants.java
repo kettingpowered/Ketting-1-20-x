@@ -14,7 +14,9 @@ public class KettingConstants {
     public static final String BUKKIT_PACKAGE_VERSION = "v1_20_R3";
     public static final String BUKKIT_VERSION = "1.20.3-R0.1-SNAPSHOT";
     public static final String FORGE_VERSION = !Objects.equals(fullVersion, "dev-env") ? fullVersion.split("-")[1] : "dev-env";
+    public static final String KETTING_VERSION = !Objects.equals(fullVersion, "dev-env") ? fullVersion.split("-")[2] : "dev-env";
     public static final String MCP_VERSION = !Objects.equals(fullVersion, "dev-env") ? fullVersion.split("-")[3] : "dev-env";
     public static final String INSTALLER_LIBRARIES_FOLDER = "libraries";
+    public static final String KETTINGSERVER_GROUP = "org.kettingpowered.server";
 
 }

@@ -875,14 +875,14 @@ tasks.named('universalJar').configure {
                 'Specification-Title':      'Kettingpowered',
                 'Specification-Vendor':     'Kettingpowered',
                 'Implementation-Title':     'Ketting',
-                'Implementation-Version':   "${KETTING_VERSION}-${MCP_VERSION}",
+                'Implementation-Version':   "${VERSION}-${MCP_VERSION}",
                 'Implementation-Vendor':    'Kettingpowered'
         ] as LinkedHashMap, 'org/kettingpowered/ketting/')
         attributes([
                 'Specification-Title':      'Kettingpowered',
                 'Specification-Vendor':     'Kettingpowered',
                 'Implementation-Title':     'Ketting',
-                'Implementation-Version':   "${KETTING_VERSION}-${MCP_VERSION}",
+                'Implementation-Version':   "${VERSION}-${MCP_VERSION}",
                 'Implementation-Vendor':    'Kettingpowered'
         ] as LinkedHashMap, 'org/kettingpowered/ketting/internal/')
         //Ketting end
@@ -931,7 +931,7 @@ tasks.register('kettingJar', Jar) {
     archiveClassifier = 'server'
     archiveExtension = 'jar'
     archiveBaseName = 'ketting'
-    archiveVersion = KETTING_VERSION
+    archiveClassifier = 'kettingJar'
     destinationDirectory = file('build/libs')
 
     doFirst {
@@ -943,14 +943,14 @@ tasks.register('kettingJar', Jar) {
                     'Specification-Title':      'Kettingpowered',
                     'Specification-Vendor':     'Kettingpowered',
                     'Implementation-Title':     'Ketting',
-                    'Implementation-Version':   "${KETTING_VERSION}-${MCP_VERSION}",
+                    'Implementation-Version':   "${VERSION}-${MCP_VERSION}",
                     'Implementation-Vendor':    'Kettingpowered'
             ] as LinkedHashMap, 'org/kettingpowered/ketting/')
             attributes([
                     'Specification-Title':      'Kettingpowered',
                     'Specification-Vendor':     'Kettingpowered',
                     'Implementation-Title':     'Ketting',
-                    'Implementation-Version':   "${KETTING_VERSION}-${MCP_VERSION}",
+                    'Implementation-Version':   "${VERSION}-${MCP_VERSION}",
                     'Implementation-Vendor':    'Kettingpowered'
             ] as LinkedHashMap, 'org/kettingpowered/ketting/internal/')
         }
@@ -958,7 +958,7 @@ tasks.register('kettingJar', Jar) {
 
     BUNDLED_PROJECTS.each { dep ->
         from(project(dep).tasks.jar.outputs) {
-            rename { "data/${dep.substring(1)}-${MC_VERSION}-${FORGE_VERSION}.jar" } //substring with 1 to remove :
+            rename { "data/${dep.substring(1)}-${MC_VERSION}-${FORGE_VERSION}-${KETTING_VERSION}.jar" } //substring with 1 to remove :
         }
     }
 
@@ -974,7 +974,7 @@ tasks.register('kettingJar', Jar) {
     }
 
     from(universalJar) {
-        rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-universal.jar' }
+        rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-' + KETTING_VERSION + '-universal.jar' }
     }
 
     from(installerJson.output) {
@@ -1091,12 +1091,12 @@ tasks.named('javadoc', Javadoc).configure {
         }
     }
 }
-
 publishing {
     publications.register('mavenJava', MavenPublication).configure {
         artifact universalJar
         artifact installerJar
         //artifact mdkZip //Ketting - we yeeted that
+        artifact kettingJar
         artifact userdevJar
         artifact sourcesJar
         artifact serverShimJar
@@ -1104,18 +1104,46 @@ publishing {
         artifactId = project.name
         pom {
             name = project.name
-            description = 'Modifactions to Minecraft to enable mod developers.'
-            url = 'https://github.com/MinecraftForge/MinecraftForge'
-            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
-            license PomUtils.Licenses.LGPLv2_1
+            description = "A Forge/Bukkit Server hybrid"
+            url = "https://github.com/kettingpowered/Ketting-1-20-x"
+            developers {
+                developer {
+                    id = "justred23"
+                    name = "JustRed23"
+                }
+                developer {
+                    id = "c0d3m4513r"
+                    name = "C0D3 M4513R"
+                }
+            }
+            scm {
+                connection = "scm:git:https://github.com/kettingpowered/Ketting-1-20-x.git"
+                //developerConnection = "scm:svn:https://subversion.example.com/svn/project/trunk/"
+                url = "https://github.com/kettingpowered/Ketting-1-20-x"
+            }
+            PomUtils.setGitHubDetails(pom, 'kettingpowered', 'Ketting-1-20-x')
         }
     }
     
     repositories {
-        maven gradleutils.publishingForgeMaven
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/kettingpowered/Ketting-1-20-x")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+        maven {
+            name = 'kettingRepo'
+            credentials {
+                username = System.getenv("KETTINGUSERNAME")
+                password = System.getenv("KETTINGPASSWORD")
+            }
+            url = "https://nexus.c0d3m4513r.com/repository/Ketting-Server-Releases/"
+        }
     }
 }
-
 // Make sure we run bin compat checking during local testing.
 if (!System.env.MAVEN_USER || !System.env.MAVEN_PASSWORD)
     publish.dependsOn(':forge:checkJarCompatibility')

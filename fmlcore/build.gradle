@@ -53,7 +53,6 @@ license {
 }
 */
 //Ketting end
-
 publishing {
     publications.register('mavenJava', MavenPublication).configure {
         from components.java
@@ -61,13 +60,42 @@ publishing {
         pom {
             name = project.name
             description = 'Modifactions to Minecraft to enable mod developers.'
-            url = 'https://github.com/MinecraftForge/MinecraftForge'
-            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
-            license PomUtils.Licenses.LGPLv2_1
+            url = "https://github.com/kettingpowered/Ketting-1-20-x"
+            developers {
+                developer {
+                    id = "justred23"
+                    name = "JustRed23"
+                }
+                developer {
+                    id = "c0d3m4513r"
+                    name = "C0D3 M4513R"
+                }
+            }
+            scm {
+                connection = "scm:git:https://github.com/kettingpowered/Ketting-1-20-x.git"
+                //developerConnection = "scm:svn:https://subversion.example.com/svn/project/trunk/"
+                url = "https://github.com/kettingpowered/Ketting-1-20-x"
+            }
+            PomUtils.setGitHubDetails(pom, 'kettingpowered', 'Ketting-1-20-x')
         }
     }
 
     repositories {
-        maven gradleutils.publishingForgeMaven
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/kettingpowered/Ketting-1-20-x")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+        maven {
+            name = 'kettingRepo'
+            credentials {
+                username = System.getenv("KETTINGUSERNAME")
+                password = System.getenv("KETTINGPASSWORD")
+            }
+            url = "https://nexus.c0d3m4513r.com/repository/Ketting-Server-Releases/"
+        }
     }
 }

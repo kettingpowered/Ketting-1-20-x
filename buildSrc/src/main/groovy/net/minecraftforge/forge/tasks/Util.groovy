@@ -74,6 +74,12 @@ public class Util {
             def url = "https://libraries.minecraft.net/$info.path"
             if (!checkExists(url))
                 url = "https://nexus.c0d3m4513r.com/repository/Forge/$info.path"
+            if (!checkExists(url))
+                url = "https://nexus.c0d3m4513r.com/repository/Ketting-Server-Releases/$info.path"
+            if (!checkExists(url))
+                url = "https://nexus.c0d3m4513r.com/repository/Ketting/$info.path"
+            if (!checkExists(url))
+                url = "https://nexus.c0d3m4513r.com/repository/Magma/$info.path"
 
             ret[info.key] = [
                 name: info.name,

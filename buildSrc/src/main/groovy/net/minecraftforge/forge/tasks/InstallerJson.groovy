@@ -52,7 +52,7 @@ abstract class InstallerJson extends DefaultTask {
                 downloads: [
                     artifact: [
                         path: info.path,
-                        url: "https://nexus.c0d3m4513r.com/repository/Forge/$info.path",
+                        url: "https://nexus.c0d3m4513r.com/repository/Ketting-Forge/$info.path",
                         sha1: packed.archiveFile.get().asFile.sha1(),
                         size: packed.archiveFile.get().asFile.length()
                     ]

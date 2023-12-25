@@ -53,7 +53,7 @@ public class KettingLauncher {
         if (Patcher.updateNeeded()) {
             //prematurely delete files to prevent errors
             FileUtils.deleteDir(KettingFiles.NMS_PATCHES_DIR);
-            FileUtils.deleteDir(KettingFiles.FORGE_BASE_DIR);
+            FileUtils.deleteDir(KettingFiles.KETTINGSERVER_BASE_DIR);
         }
     }
     
