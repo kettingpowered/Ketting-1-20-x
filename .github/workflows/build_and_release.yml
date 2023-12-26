@@ -84,7 +84,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Tag repo
         id: tag
-        if: false
         run: |
           function getVer(){
               IFS='=' read -ra ARR <<<$(grep $1 gradle.properties)
@@ -95,7 +94,7 @@ jobs:
           getVer MC_VERSION
           getVer FORGE_VERSION
           getVer KETTING_VERSION
-          tag=$MC_VERSION-$FORGE_VERSION-$KETTING_VERSION
+          tag=v$MC_VERSION-$FORGE_VERSION-$KETTING_VERSION
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           git tag $tag
           git push origin $tag
