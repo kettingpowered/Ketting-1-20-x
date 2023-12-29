@@ -98,8 +98,6 @@ public class ForgeInject {
         addForgeMaterials();
         debug("Registering Forge Materials to Bukkit");
         registerForgeMaterials();
-        debug("Injecting Forge Enchantments into Bukkit");
-        addForgeEnchantments();
         debug("Injecting Forge Potions into Bukkit");
         addForgePotions();
         debug("Injecting Forge Biomes into Bukkit");
@@ -356,20 +354,6 @@ public class ForgeInject {
                 });
             }
         }
-    }
-
-    private static void addForgeEnchantments() {
-        /*ForgeRegistries.ENCHANTMENTS.getEntries().forEach(entry -> {
-            Registry.ENCHANTMENT.get(new NamespacedKey(entry.getKey().location().getNamespace(),entry.getKey().location().getPath()));
-            CraftEnchantment enchantment = new CraftEnchantment(entry.getValue());
-            if (!org.bukkit.enchantments.Enchantment.byKey.containsKey(enchantment.getKey())
-                    || !org.bukkit.enchantments.Enchantment.byName.containsKey(enchantment.getName())) {
-                org.bukkit.enchantments.Enchantment.byKey.put(enchantment.getKey(), enchantment);
-                org.bukkit.enchantments.Enchantment.byName.put(enchantment.getName(), enchantment);
-                debug("Injecting Forge Enchantments into Bukkit: " + enchantment.getName());
-            }
-        });
-        debug("Injecting Forge Enchantments into Bukkit: DONE");*/
     }
 
     private static void addForgePotions() {
