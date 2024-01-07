@@ -33,6 +33,16 @@ public class Util {
             return md.digest().collect {String.format "%02x", it}.join()
         }
         File.metaClass.getSha256 = { !delegate.exists() ? null : delegate.sha256() }
+        //Ketting start
+        File.metaClass.sha512 = { ->
+            MessageDigest md = MessageDigest.getInstance('SHA3-512')
+            delegate.eachByte 4096, {bytes, size ->
+                md.update(bytes, 0, size)
+            }
+            return md.digest().collect {String.format "%02x", it}.join()
+        }
+        File.metaClass.getSha512 = { !delegate.exists() ? null : delegate.sha512() }
+        //Ketting end
 
         File.metaClass.json = { -> new JsonSlurper().parseText(delegate.text) }
         File.metaClass.getJson = { return delegate.exists() ? new JsonSlurper().parse(delegate) : [:] }

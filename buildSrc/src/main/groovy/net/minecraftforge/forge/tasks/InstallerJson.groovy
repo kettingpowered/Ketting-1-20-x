@@ -28,14 +28,12 @@ abstract class InstallerJson extends DefaultTask {
         welcome.convention("Welcome to the ${project.name.capitalize()} installer.")
         output.convention(project.layout.buildDirectory.file('libs/install_profile.json'))
         
-        project.afterEvaluate {
-            [
-                project.tasks.universalJar,
-                project.tasks.serverShimJar
-            ].forEach { packed ->
-                dependsOn(packed)
-                input.from packed.archiveFile
-            }
+        [
+            project.tasks.universalJar,
+            project.tasks.serverShimJar
+        ].forEach { packed ->
+            dependsOn(packed)
+            input.from packed.archiveFile
         }
     }
 
@@ -47,12 +45,15 @@ abstract class InstallerJson extends DefaultTask {
             project.tasks.serverShimJar
         ].forEach { packed ->
             def info = Util.getMavenInfoFromTask(packed)
+            def url = "https://nexus.c0d3m4513r.com/repository/Forge/$info.path"
+            if (!Util.checkExists(url)) url = "https://nexus.c0d3m4513r.com/repository/Ketting-Server-Releases/$info.path"
+            if (!Util.checkExists(url)) url = "https://nexus.c0d3m4513r.com/repository/Ketting/$info.path"
             libs.put(info.name, [
                 name: info.name,
                 downloads: [
                     artifact: [
                         path: info.path,
-                        url: "https://nexus.c0d3m4513r.com/repository/Ketting-Forge/$info.path",
+                        url: url,
                         sha1: packed.archiveFile.get().asFile.sha1(),
                         size: packed.archiveFile.get().asFile.length()
                     ]

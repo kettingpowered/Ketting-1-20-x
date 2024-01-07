@@ -26,28 +26,26 @@ abstract class InstallerJar extends Zip {
         from(installerJson, launcherJson)
 
         from(project.rootProject.file('/src/main/resources/url.png'))
-        project.afterEvaluate {
-            from(project.zipTree(downloadInstaller.output)) {
-                duplicatesStrategy = 'exclude'
+        from(project.zipTree(downloadInstaller.output)) {
+            duplicatesStrategy = 'exclude'
+        }
+        
+        if (fat.get() || offline.get()) {
+            def cfg = project.tasks.register(name + "Config", Configure)
+            cfg.get().configure {
+                parent = this
+                dependsOn(project.tasks.installerJson, project.tasks.launcherJson)
             }
-            
-            if (fat.get() || offline.get()) {
-                def cfg = project.tasks.register(name + "Config", Configure)
-                cfg.get().configure {
-                    parent = this
-                    dependsOn(project.tasks.installerJson, project.tasks.launcherJson)
-                }
-                dependsOn(cfg)
-            } else {
-                // Things we ALWAYS bundle, this just the server shim jar, because the installer spec only says to extract the file. 
-                // I should make it allow downloads but thats a spec break, and this is just a ~14KB jar
-                [
-                    project.tasks.serverShimJar // Server bootstrap executable jar
-                ].forEach { packed ->
-                    def path = Util.getMavenInfoFromTask(packed).path
-                    from(packed) {
-                        rename { "maven/$path" }
-                    }
+            dependsOn(cfg)
+        } else {
+            // Things we ALWAYS bundle, this just the server shim jar, because the installer spec only says to extract the file. 
+            // I should make it allow downloads but thats a spec break, and this is just a ~14KB jar
+            [
+                project.tasks.serverShimJar // Server bootstrap executable jar
+            ].forEach { packed ->
+                def path = Util.getMavenInfoFromTask(packed).path
+                from(packed) {
+                    rename { "maven/$path" }
                 }
             }
         }
