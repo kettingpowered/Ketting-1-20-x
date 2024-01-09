@@ -32,19 +32,18 @@ public class MinecraftLocator extends AbstractModProvider implements IModLocator
 
     @Override
     public List<IModLocator.ModFileOrException> scanMods() {
-        final var launchHandler = FMLLoader.getLaunchHandler();
-        var baseMC = launchHandler.getMinecraftPaths();
-        var mcjar = ModJarMetadata.buildFile(j->ModFileFactory.FACTORY.build(j, this, this::buildMinecraftTOML), j->true, baseMC.minecraftFilter(), baseMC.minecraftPaths().toArray(Path[]::new)).orElseThrow();
-        var artifacts = baseMC.otherArtifacts().stream()
-                .map(SecureJar::from)
-                .map(sj -> new ModFile(sj, this, ModFileParser::modsTomlParser))
-                .collect(Collectors.<IModFile>toList());
-        var othermods = baseMC.otherModPaths().stream()
-                .map(p -> createMod(p.toArray(Path[]::new)))
-                .filter(Objects::nonNull);
-        artifacts.add(mcjar);
+        var minecraft = FMLLoader.getLaunchHandler().getMinecraftPaths();
 
-        return Stream.concat(artifacts.stream().map(f -> new ModFileOrException(f, null)), othermods).toList();
+        // Minecraft itself.
+        var meta = new ModJarMetadata();
+        var mcjar = SecureJar.from(
+                jar -> meta,
+                minecraft.toArray(Path[]::new)
+        );
+        var mc = ModFileFactory.FACTORY.build(mcjar, this, this::buildMinecraftTOML);
+        meta.setModFile(mc);
+
+        return List.of(new ModFileOrException(mc, null));
     }
 
     private IModFileInfo buildMinecraftTOML(final IModFile iModFile) {

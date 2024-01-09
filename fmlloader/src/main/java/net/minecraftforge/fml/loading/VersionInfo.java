@@ -5,6 +5,8 @@
 
 package net.minecraftforge.fml.loading;
 
+import org.kettingpowered.ketting.internal.KettingConstants;
+
 import java.util.Map;
 
 public record VersionInfo(String forgeVersion, String mcVersion, String mcpVersion, String forgeGroup) {
@@ -18,5 +20,9 @@ public record VersionInfo(String forgeVersion, String mcVersion, String mcpVersi
 
     public String mcAndMCPVersion() {
         return mcVersion + "-" + mcpVersion;
+    }
+
+    public String mcAndForgeAndKettingVersion() {
+        return mcVersion+"-"+forgeVersion + "-" + KettingConstants.KETTING_VERSION;
     }
 }
