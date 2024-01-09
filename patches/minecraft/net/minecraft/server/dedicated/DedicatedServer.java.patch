@@ -164,14 +164,6 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
        thread.start();
-@@ -102,6 +_,7 @@
- 
-       LOGGER.info("Loading properties");
-       DedicatedServerProperties dedicatedserverproperties = this.settings.getProperties();
-+
-       if (this.isSingleplayer()) {
-          this.setLocalIp("127.0.0.1");
-       } else {
 @@ -109,15 +_,24 @@
           this.setPreventProxyConnections(dedicatedserverproperties.preventProxyConnections);
           this.setLocalIp(dedicatedserverproperties.serverIp);

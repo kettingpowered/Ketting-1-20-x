@@ -332,14 +332,6 @@
        if (this.noPhysics) {
           this.setPos(this.getX() + p_19974_.x, this.getY() + p_19974_.y, this.getZ() + p_19974_.z);
        } else {
-@@ -651,6 +_,7 @@
-          this.setOnGroundWithKnownMovement(this.verticalCollisionBelow, vec3);
-          BlockPos blockpos = this.getOnPosLegacy();
-          BlockState blockstate = this.level().getBlockState(blockpos);
-+
-          this.checkFallDamage(vec3.y, this.onGround(), blockstate, blockpos);
-          if (this.isRemoved()) {
-             this.level().getProfiler().pop();
 @@ -665,6 +_,28 @@
                 block.updateEntityAfterFallOn(this.level(), this);
              }

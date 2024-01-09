@@ -383,14 +383,6 @@
           this.connection.send(new ClientboundPlayerCombatKillPacket(this.getId(), component), PacketSendListener.exceptionallySend(() -> {
              int i = 256;
              String s = component.getString(256);
-@@ -582,6 +_,7 @@
-             return new ClientboundPlayerCombatKillPacket(this.getId(), component2);
-          }));
-          Team team = this.getTeam();
-+
-          if (team != null && team.getDeathMessageVisibility() != Team.Visibility.ALWAYS) {
-             if (team.getDeathMessageVisibility() == Team.Visibility.HIDE_FOR_OTHER_TEAMS) {
-                this.server.getPlayerList().broadcastSystemToTeam(this, component);
 @@ -600,12 +_,23 @@
           this.tellNeutralMobsThatIDied();
        }
