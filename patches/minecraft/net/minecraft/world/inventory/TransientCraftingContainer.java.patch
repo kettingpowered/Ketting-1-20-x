@@ -1,20 +1,9 @@
 --- a/net/minecraft/world/inventory/TransientCraftingContainer.java
 +++ b/net/minecraft/world/inventory/TransientCraftingContainer.java
-@@ -2,16 +_,78 @@
- 
- import java.util.List;
- import net.minecraft.core.NonNullList;
- import net.minecraft.world.ContainerHelper;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.entity.player.StackedContents;
- import net.minecraft.world.item.ItemStack;
- 
- public class TransientCraftingContainer implements CraftingContainer {
-    private final NonNullList<ItemStack> items;
-    private final int width;
+@@ -13,6 +_,68 @@
     private final int height;
     private final AbstractContainerMenu menu;
-+
+ 
 +   // CraftBukkit start - add fields
 +   public List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
 +   private net.minecraft.world.item.crafting.RecipeHolder<?> currentRecipe;
@@ -76,6 +65,7 @@
 +      this.owner = player;
 +   }
 +   // CraftBukkit end
- 
++
     public TransientCraftingContainer(AbstractContainerMenu p_287684_, int p_287629_, int p_287593_) {
        this(p_287684_, p_287629_, p_287593_, NonNullList.withSize(p_287629_ * p_287593_, ItemStack.EMPTY));
+    }

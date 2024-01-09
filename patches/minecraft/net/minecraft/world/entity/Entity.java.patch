@@ -1,21 +1,10 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -98,6 +_,6 @@
- import net.minecraft.world.level.block.state.properties.BlockStateProperties;
- import net.minecraft.world.level.border.WorldBorder;
- import net.minecraft.world.level.dimension.DimensionType;
- import net.minecraft.world.level.entity.EntityAccess;
- import net.minecraft.world.level.entity.EntityInLevelCallback;
- import net.minecraft.world.level.gameevent.DynamicGameEventListener;
-@@ -119,10 +_,37 @@
- import net.minecraft.world.phys.shapes.VoxelShape;
- import net.minecraft.world.scores.PlayerTeam;
- import net.minecraft.world.scores.Team;
+@@ -122,7 +_,34 @@
  import org.joml.Vector3f;
  import org.slf4j.Logger;
--
+ 
 -public abstract class Entity implements Nameable, EntityAccess, CommandSource {
-+
 +public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements Nameable, EntityAccess, CommandSource, net.minecraftforge.common.extensions.IForgeEntity {
 +
 +   // CraftBukkit start
