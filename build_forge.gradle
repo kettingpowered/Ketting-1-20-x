@@ -93,17 +93,11 @@ ext {
 
 configurations {
     // Don't pull all libraries, if we're missing something, add it to the installer list so the installer knows to download it.
-    bootstrap  { transitive = false }        
+    bootstrap  { transitive = false }
     installer { 
         extendsFrom(bootstrap)
         transitive = false
     }
-    //Ketting start
-    internallibs {
-        extendsFrom(installer)
-        transitive = true
-    }
-    //Ketting end
     api.extendsFrom(installer)
 }
 
@@ -136,10 +130,14 @@ dependencies {
     runtimeOnly(libs.bootstrap)
 
     //Ketting start
-    installer(libs.ketting)
+    installer(libs.ketting){
+        exclude group: 'org.spongepowered', module: 'mixin'
+    }
     installer(libs.kettingcommon)
     installer(libs.terminalcolors)
-    installer(libs.bundles.bukkitlibs)
+    installer(libs.bundles.bukkitlibs){
+        exclude group: 'junit', module: 'junit'
+    }
     installer(libs.bundles.launcher) // Add missing libraries
     installer(variantOf(libs.nettyTransportEpoll) { classifier("linux-x86_64") })
     installer(variantOf(libs.nettyTransportEpoll) { classifier("linux-aarch_64") })
@@ -147,20 +145,6 @@ dependencies {
     BUNDLED_PROJECTS.each {item -> {
         installer(project(item)) //Ketting - Implement instead of installing, deps get added in the kettingJarPacked task anyway
     }}
-
-    //don't ask about those deps please. IDK why they are needed. The forge/cpw launcher throws a fit if they aren't.
-//    internallibs 'javax.annotation:javax.annotation-api:1.3.2'
-//    internallibs 'javax.servlet:javax.servlet-api:4.0.1'
-//    internallibs 'jakarta.servlet:jakarta.servlet-api:6.0.0'
-//
-//    internallibs 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
-//    internallibs 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.1'
-//
-//    internallibs 'com.electronwill.night-config:hocon:3.6.7'
-//    internallibs 'com.electronwill.night-config:json:3.6.7'
-//    internallibs 'com.electronwill.night-config:yaml:3.6.7'
-//    internallibs 'com.electronwill.night-config:toml:3.6.7'
-//    Ketting end
 }
 
 patcher {
@@ -997,7 +981,7 @@ license {
 }
 
 tasks.register('genAllData') {
-    dependsOn 'forge_data', 'forge_test_data'
+    dependsOn 'forge_data', 'forge_data_test'
 }
 
 if (project.hasProperty('UPDATE_MAPPINGS')) {
