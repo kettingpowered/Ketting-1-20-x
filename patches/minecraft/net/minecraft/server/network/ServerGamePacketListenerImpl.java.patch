@@ -954,7 +954,7 @@
 +
        this.player.disconnect();
 -      this.server.getPlayerList().remove(this.player);
-+      String quitMessage = this.server.getPlayerList().remove(this.player);
++      String quitMessage = this.server.getPlayerList().removeString(this.player);
 +      if ((quitMessage != null) && (quitMessage.length() > 0)) {
 +         this.server.getPlayerList().broadcastMessage(CraftChatMessage.fromString(quitMessage));
 +      }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerConfigurationPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerConfigurationPacketListenerImpl.java
-@@ -36,16 +_,19 @@
+@@ -36,16 +_,23 @@
  public class ServerConfigurationPacketListenerImpl extends ServerCommonPacketListenerImpl implements TickablePacketListener, ServerConfigurationPacketListener {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Component DISCONNECT_REASON_INVALID_DATA = Component.translatable("multiplayer.disconnect.invalid_player_data");
@@ -12,8 +12,11 @@
     private ClientInformation clientInformation;
 +   private final net.minecraftforge.network.config.ConfigurationTaskContext taskContext;
  
--   public ServerConfigurationPacketListenerImpl(MinecraftServer p_301415_, Connection p_298106_, CommonListenerCookie p_301309_) {
+    public ServerConfigurationPacketListenerImpl(MinecraftServer p_301415_, Connection p_298106_, CommonListenerCookie p_301309_) {
 -      super(p_301415_, p_298106_, p_301309_);
++      this(p_301415_, p_298106_, p_301309_, new ServerPlayer(p_301415_, p_301415_.overworld(), p_301309_.gameProfile(), p_301309_.clientInformation()));
++
++   }
 +   public ServerConfigurationPacketListenerImpl(MinecraftServer p_301415_, Connection p_298106_, CommonListenerCookie p_301309_, ServerPlayer player) { // CraftBukkit
 +      super(p_301415_, p_298106_, p_301309_, player); // CraftBukkit
        this.gameProfile = p_301309_.gameProfile();

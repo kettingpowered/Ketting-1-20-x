@@ -37,11 +37,12 @@
  public abstract class ServerCommonPacketListenerImpl implements ServerCommonPacketListener {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final int LATENCY_CHECK_INTERVAL = 15000;
-@@ -36,11 +_,22 @@
-    private int latency;
+@@ -37,10 +_,24 @@
     private volatile boolean suspendFlushingOnServerThread = false;
  
--   public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_) {
+    public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_) {
++      this(p_299469_, p_300872_, p_300277_, new ServerPlayer(p_299469_, p_299469_.overworld(), p_300277_.gameProfile(), p_300277_.clientInformation()));
++   }
 +   public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_, ServerPlayer player) { // CraftBukkit
        this.server = p_299469_;
        this.connection = p_300872_;

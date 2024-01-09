@@ -1,11 +1,12 @@
 --- a/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
 +++ b/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
-@@ -194,8 +_,10 @@
-       };
+@@ -195,7 +_,12 @@
     }
  
--   protected void parseSelector() throws CommandSyntaxException {
+    protected void parseSelector() throws CommandSyntaxException {
 -      this.usesSelectors = true;
++      parseSelector(false);
++   }
 +   // CraftBukkit start
 +   protected void parseSelector(boolean overridePermissions) throws CommandSyntaxException {
 +      this.usesSelectors = !overridePermissions;

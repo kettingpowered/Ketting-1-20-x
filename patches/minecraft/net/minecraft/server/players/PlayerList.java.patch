@@ -1,13 +1,6 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -5,21 +_,19 @@
- import com.google.common.collect.Sets;
- import com.mojang.authlib.GameProfile;
- import com.mojang.logging.LogUtils;
-+import com.mojang.serialization.DataResult;
- import com.mojang.serialization.Dynamic;
- import java.io.File;
- import java.net.SocketAddress;
+@@ -11,15 +_,12 @@
  import java.nio.file.Path;
  import java.text.SimpleDateFormat;
  import java.time.Instant;
@@ -26,14 +19,7 @@
  import net.minecraft.ChatFormatting;
  import net.minecraft.FileUtil;
  import net.minecraft.commands.CommandSourceStack;
-@@ -59,17 +_,20 @@
- import net.minecraft.network.protocol.game.ClientboundSoundPacket;
- import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
- import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
-+import net.minecraft.network.protocol.login.ServerLoginPacketListener;
- import net.minecraft.network.protocol.status.ServerStatus;
- import net.minecraft.resources.ResourceKey;
- import net.minecraft.server.MinecraftServer;
+@@ -65,11 +_,13 @@
  import net.minecraft.server.PlayerAdvancements;
  import net.minecraft.server.RegistryLayer;
  import net.minecraft.server.ServerScoreboard;
@@ -47,14 +33,6 @@
  import net.minecraft.sounds.SoundEvents;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.ServerStatsCounter;
-@@ -77,6 +_,7 @@
- import net.minecraft.tags.BlockTags;
- import net.minecraft.tags.TagNetworkSerialization;
- import net.minecraft.util.Mth;
-+import net.minecraft.world.effect.MobEffect;
- import net.minecraft.world.effect.MobEffectInstance;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
 @@ -96,6 +_,13 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
@@ -325,7 +303,7 @@
        } else {
           compoundtag1 = this.playerIo.load(p_11225_);
        }
-@@ -307,22 +_,40 @@
+@@ -307,13 +_,15 @@
     }
  
     protected void save(ServerPlayer p_11277_) {
@@ -343,11 +321,13 @@
        if (playeradvancements != null) {
           playeradvancements.save();
        }
- 
+@@ -321,8 +_,27 @@
     }
  
--   public void remove(ServerPlayer p_11287_) {
-+   public String remove(ServerPlayer p_11287_) { // CraftBukkit - return string
+    public void remove(ServerPlayer p_11287_) {
++      removeString(p_11287_);
++   }
++   public String removeString(ServerPlayer p_11287_) { // CraftBukkit - return string
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedOut(p_11287_);
        ServerLevel serverlevel = p_11287_.serverLevel();
 +
@@ -369,7 +349,7 @@
        this.save(p_11287_);
        if (p_11287_.isPassenger()) {
           Entity entity = p_11287_.getRootVehicle();
-@@ -339,48 +_,115 @@
+@@ -339,19 +_,36 @@
        serverlevel.removePlayerImmediately(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
        p_11287_.getAdvancements().stopListening();
        this.players.remove(p_11287_);
@@ -408,32 +388,21 @@
 +      return playerQuitEvent.getQuitMessage(); // CraftBukkit
     }
  
-+
+-   @Nullable
+    public Component canPlayerLogin(SocketAddress p_11257_, GameProfile p_11258_) {
+       if (this.bans.isBanned(p_11258_)) {
+          UserBanListEntry userbanlistentry = this.bans.get(p_11258_);
+@@ -376,11 +_,90 @@
+       }
+    }
+ 
 +   // CraftBukkit start - Whole method, SocketAddress to LoginListener, added hostname to signature, return EntityPlayer
-    @Nullable
--   public Component canPlayerLogin(SocketAddress p_11257_, GameProfile p_11258_) {
--      if (this.bans.isBanned(p_11258_)) {
--         UserBanListEntry userbanlistentry = this.bans.get(p_11258_);
--         MutableComponent mutablecomponent1 = Component.translatable("multiplayer.disconnect.banned.reason", userbanlistentry.getReason());
--         if (userbanlistentry.getExpires() != null) {
--            mutablecomponent1.append(Component.translatable("multiplayer.disconnect.banned.expiration", BAN_DATE_FORMAT.format(userbanlistentry.getExpires())));
--         }
--
--         return mutablecomponent1;
--      } else if (!this.isWhiteListed(p_11258_)) {
--         return Component.translatable("multiplayer.disconnect.not_whitelisted");
--      } else if (this.ipBans.isBanned(p_11257_)) {
--         IpBanListEntry ipbanlistentry = this.ipBans.get(p_11257_);
--         MutableComponent mutablecomponent = Component.translatable("multiplayer.disconnect.banned_ip.reason", ipbanlistentry.getReason());
--         if (ipbanlistentry.getExpires() != null) {
--            mutablecomponent.append(Component.translatable("multiplayer.disconnect.banned_ip.expiration", BAN_DATE_FORMAT.format(ipbanlistentry.getExpires())));
--         }
--
--         return mutablecomponent;
++   @Nullable
 +   public ServerPlayer canPlayerLogin(ServerLoginPacketListenerImpl loginlistener, GameProfile gameprofile) {
 +      MutableComponent mutablecomponent;
 +
 +      // Moved from pprocessLogin
++      /*
 +      UUID uuid = gameprofile.getId();
 +      List<ServerPlayer> list = Lists.newArrayList();
 +
@@ -449,6 +418,8 @@
 +         save(serverPlayer); // CraftBukkit - Force the player's inventory to be saved
 +         serverPlayer.connection.disconnect(Component.translatable("multiplayer.disconnect.duplicate_login"));
 +      }
++      */
++      disconnectAllPlayersWithProfile(gameprofile); //Ketting - this should be equal, after adding the save
 +
 +      // Instead of kicking then returning, we need to store the kick reason
 +      // in the event, check with plugins to see if it's ok, and THEN kick
@@ -482,16 +453,7 @@
 +
 +         // return chatmessage;
 +         event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(mutablecomponent));
-       } else {
--         return this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(p_11258_) ? Component.translatable("multiplayer.disconnect.server_full") : null;
--      }
--   }
--
--   public ServerPlayer getPlayerForLogin(GameProfile p_215625_, ClientInformation p_300548_) {
--      return new ServerPlayer(this.server, this.server.overworld(), p_215625_, p_300548_);
--   }
--
--   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) {
++      } else {
 +         // return this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameprofile) ? IChatBaseComponent.translatable("multiplayer.disconnect.server_full") : null;
 +         if (this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameprofile)) {
 +            event.disallow(PlayerLoginEvent.Result.KICK_FULL, org.spigotmc.SpigotConfig.serverFullMessage); // Spigot
@@ -506,6 +468,11 @@
 +      return player;
 +   }
 +
+    public ServerPlayer getPlayerForLogin(GameProfile p_215625_, ClientInformation p_300548_) {
+       return new ServerPlayer(this.server, this.server.overworld(), p_215625_, p_300548_);
+    }
+ 
+-   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) {
 +   // CraftBukkit start - added EntityPlayer
 +   public ServerPlayer getPlayerForLogin(GameProfile gameprofile, ClientInformation clientinformation, ServerPlayer player) {
 +      player.updateOptions(clientinformation);
@@ -513,29 +480,35 @@
 +      // CraftBukkit end
 +   }
 +
-+   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_, ServerPlayer player) { // CraftBukkit - added EntityPlayer
-+      /* CraftBukkit start - Moved up
++   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) { 
        UUID uuid = p_299278_.getId();
        Set<ServerPlayer> set = Sets.newIdentityHashSet();
  
-@@ -400,75 +_,165 @@
+@@ -396,79 +_,175 @@
+       }
+ 
+       for(ServerPlayer serverplayer1 : set) {
++         save(serverplayer1); // CraftBukkit - Force the player's inventory to be saved
+          serverplayer1.connection.disconnect(DUPLICATE_LOGIN_DISCONNECT_MESSAGE);
        }
  
        return !set.isEmpty();
--   }
--
--   public ServerPlayer respawn(ServerPlayer p_11237_, boolean p_11238_) {
+    }
+ 
++   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_, ServerPlayer player) { // CraftBukkit start - added EntityPlayer
++      return player == null;
++   }
++   // CraftBukkit end
++
+    public ServerPlayer respawn(ServerPlayer p_11237_, boolean p_11238_) {
 -      this.players.remove(p_11237_);
 -      p_11237_.serverLevel().removePlayerImmediately(p_11237_, Entity.RemovalReason.DISCARDED);
 -      BlockPos blockpos = p_11237_.getRespawnPosition();
 -      float f = p_11237_.getRespawnAngle();
 -      boolean flag = p_11237_.isRespawnForced();
 -      ServerLevel serverlevel = this.server.getLevel(p_11237_.getRespawnDimension());
-+      */
-+      return player == null;
-+      // CraftBukkit end
++      return respawn(p_11237_, p_11238_, PlayerRespawnEvent.RespawnReason.PLUGIN); //Ketting todo: this should ideally be other
 +   }
-+
 +   public ServerPlayer respawn(ServerPlayer p_11237_, boolean p_11238_, PlayerRespawnEvent.RespawnReason reason) {
 +      return this.respawn(p_11237_, this.server.getLevel(p_11237_.getRespawnDimension()), p_11238_, null, true, reason);
 +   }
@@ -895,19 +868,23 @@
  
     public void broadcastSystemMessage(Component p_240618_, boolean p_240644_) {
        this.broadcastSystemMessage(p_240618_, (p_215639_) -> {
-@@ -767,34 +_,46 @@
+@@ -767,34 +_,51 @@
        return p_251384_.hasSignature() && !p_251384_.hasExpiredServer(Instant.now());
     }
  
--   public ServerStatsCounter getPlayerStats(Player p_11240_) {
++   // CraftBukkit start
++   //Ketting start
+    public ServerStatsCounter getPlayerStats(Player p_11240_) {
 -      UUID uuid = p_11240_.getUUID();
 -      ServerStatsCounter serverstatscounter = this.stats.get(uuid);
 -      if (serverstatscounter == null) {
-+   // CraftBukkit start
-+   public ServerStatsCounter getPlayerStats(ServerPlayer p_11240_) {
-+      ServerStatsCounter stats = p_11240_.getStats();
-+      return stats == null ? getPlayerStats(p_11240_.getUUID(), p_11240_.getDisplayName().getString()) : stats;
++      if(p_11240_ instanceof ServerPlayer sp){
++         ServerStatsCounter stats = sp.getStats();
++         if (stats != null) return stats;
++      }
++      return getPlayerStats(p_11240_.getUUID(), p_11240_.getDisplayName().getString());
 +   }
++   //Ketting end
 +
 +   public ServerStatsCounter getPlayerStats(UUID uuid, String displayName) {
 +      ServerPlayer player = this.getPlayer(uuid);

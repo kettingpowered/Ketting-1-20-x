@@ -58,7 +58,7 @@
 +               @Override
 +               public void run() {
 +                  try {
-+                     new LoginHandler().fireEvents(createOfflineProfile(ServerLoginPacketListenerImpl.this.requestedUsername));
++                     new LoginHandler().fireEvents(createOfflineProfileSpigot(ServerLoginPacketListenerImpl.this.requestedUsername));
 +                  } catch (Exception ex) {
 +                     disconnect("Failed to verify username!");
 +                     server.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + ServerLoginPacketListenerImpl.this.requestedUsername, ex);
@@ -119,7 +119,7 @@
                 } else if (ServerLoginPacketListenerImpl.this.server.isSingleplayer()) {
                    ServerLoginPacketListenerImpl.LOGGER.warn("Failed to verify username but will let them in anyway!");
 -                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.createOfflineProfile(s1));
-+                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfile(s1)); // Spigot
++                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfileSpigot(s1)); // Spigot
                 } else {
                    ServerLoginPacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.unverified_username"));
                    ServerLoginPacketListenerImpl.LOGGER.error("Username '{}' tried to join with an invalid session", (Object)s1);
@@ -128,7 +128,7 @@
                 if (ServerLoginPacketListenerImpl.this.server.isSingleplayer()) {
                    ServerLoginPacketListenerImpl.LOGGER.warn("Authentication servers are down but will let them in anyway!");
 -                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.createOfflineProfile(s1));
-+                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfile(s1)); // Spigot
++                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfileSpigot(s1)); // Spigot
                 } else {
                    ServerLoginPacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.authservers_down"));
                    ServerLoginPacketListenerImpl.LOGGER.error("Couldn't verify username because servers are unavailable");
@@ -141,7 +141,7 @@
              }
  
           }
-@@ -219,22 +_,92 @@
+@@ -219,22 +_,96 @@
        thread.start();
     }
  
@@ -202,17 +202,19 @@
        serverconfigurationpacketlistenerimpl.startConfiguration();
        this.state = ServerLoginPacketListenerImpl.State.ACCEPTED;
     }
- 
--   protected static GameProfile createOfflineProfile(String p_297551_) {
--      UUID uuid = UUIDUtil.createOfflinePlayerUUID(p_297551_);
--      return new GameProfile(uuid, p_297551_);
+-
+    protected static GameProfile createOfflineProfile(String p_297551_) {
+       UUID uuid = UUIDUtil.createOfflinePlayerUUID(p_297551_);
+       return new GameProfile(uuid, p_297551_);
++   }
++
++   // Spigot start
 +   @Nullable
 +   public GameProfile getAuthenticatedProfile() {
 +       return this.authenticatedProfile;
 +   }
 +
-+   // Spigot start
-+   protected GameProfile createOfflineProfile(String p_297551_) {
++   protected GameProfile createOfflineProfileSpigot(String p_297551_) {
 +      UUID uuid;
 +      if ( connection.spoofedUUID != null )
 +      {
