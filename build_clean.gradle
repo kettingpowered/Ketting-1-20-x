@@ -13,6 +13,12 @@ repositories {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
 
+//Ketting Start - fix `./gradlew setup build`
+tasks.withType(JavaCompile).configureEach {
+	dependsOn 'extractMapped'
+}
+//Ketting End - fix `./gradlew setup build`
+
 dependencies {
 	implementation(libs.forgespi)
 }
