@@ -16,69 +16,6 @@
     public static final int HAND_SLOTS = 2;
     public static final int ARMOR_SLOTS = 4;
     public static final int EQUIPMENT_SLOT_OFFSET = 98;
-@@ -145,10 +_,10 @@
-    protected static final int LIVING_ENTITY_FLAG_OFF_HAND = 2;
-    protected static final int LIVING_ENTITY_FLAG_SPIN_ATTACK = 4;
-    protected static final EntityDataAccessor<Byte> DATA_LIVING_ENTITY_FLAGS = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BYTE);
--   private static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
-+   public static final EntityDataAccessor<Float> DATA_HEALTH_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Integer> DATA_EFFECT_COLOR_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> DATA_EFFECT_AMBIENCE_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
--   private static final EntityDataAccessor<Integer> DATA_ARROW_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
-+   public static final EntityDataAccessor<Integer> DATA_ARROW_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> DATA_STINGER_COUNT_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Optional<BlockPos>> SLEEPING_POS_ID = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
-    protected static final float DEFAULT_EYE_HEIGHT = 1.74F;
-@@ -156,8 +_,8 @@
-    public static final float EXTRA_RENDER_CULLING_SIZE_WITH_BIG_HAT = 0.5F;
-    private static final int MAX_HEAD_ROTATION_RELATIVE_TO_BODY = 50;
-    private final AttributeMap attributes;
--   private final CombatTracker combatTracker = new CombatTracker(this);
--   private final Map<MobEffect, MobEffectInstance> activeEffects = Maps.newHashMap();
-+   public CombatTracker combatTracker = new CombatTracker(this);
-+   public final Map<MobEffect, MobEffectInstance> activeEffects = Maps.newHashMap();
-    private final NonNullList<ItemStack> lastHandItemStacks = NonNullList.withSize(2, ItemStack.EMPTY);
-    private final NonNullList<ItemStack> lastArmorItemStacks = NonNullList.withSize(4, ItemStack.EMPTY);
-    public boolean swinging;
-@@ -173,7 +_,7 @@
-    public float attackAnim;
-    protected int attackStrengthTicker;
-    public final WalkAnimationState walkAnimation = new WalkAnimationState();
--   public final int invulnerableDuration = 20;
-+   public int invulnerableDuration = 20;
-    public final float timeOffs;
-    public final float rotA;
-    public float yBodyRot;
-@@ -181,7 +_,7 @@
-    public float yHeadRot;
-    public float yHeadRotO;
-    @Nullable
--   protected Player lastHurtByPlayer;
-+   public Player lastHurtByPlayer;
-    protected int lastHurtByPlayerTime;
-    protected boolean dead;
-    protected int noActionTime;
-@@ -191,7 +_,7 @@
-    protected float animStepO;
-    protected float rotOffs;
-    protected int deathScore;
--   protected float lastHurt;
-+   public float lastHurt;
-    protected boolean jumping;
-    public float xxa;
-    public float yya;
-@@ -204,9 +_,9 @@
-    protected double lerpXRot;
-    protected double lerpYHeadRot;
-    protected int lerpHeadSteps;
--   private boolean effectsDirty = true;
-+   public boolean effectsDirty = true;
-    @Nullable
--   private LivingEntity lastHurtByMob;
-+   public LivingEntity lastHurtByMob;
-    private int lastHurtByMobTimestamp;
-    private LivingEntity lastHurtMob;
-    private int lastHurtMobTimestamp;
 @@ -226,11 +_,33 @@
     private float swimAmountO;
     protected Brain<?> brain;

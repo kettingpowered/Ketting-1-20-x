@@ -1,17 +1,14 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -169,9 +_,9 @@
+@@ -169,7 +_,7 @@
     final List<ServerPlayer> players = Lists.newArrayList();
     private final ServerChunkCache chunkSource;
     private final MinecraftServer server;
--   private final ServerLevelData serverLevelData;
+-   public final ServerLevelData serverLevelData;
 +   public final net.minecraft.world.level.storage.PrimaryLevelData serverLevelData; // CraftBukkit - type
     final EntityTickList entityTickList = new EntityTickList();
--   private final PersistentEntitySectionManager<Entity> entityManager;
-+   public final PersistentEntitySectionManager<Entity> entityManager;
+    public final PersistentEntitySectionManager<Entity> entityManager;
     private final GameEventDispatcher gameEventDispatcher;
-    public boolean noSave;
-    private final SleepStatus sleepStatus;
 @@ -188,24 +_,121 @@
     private final List<CustomSpawner> customSpawners;
     @Nullable

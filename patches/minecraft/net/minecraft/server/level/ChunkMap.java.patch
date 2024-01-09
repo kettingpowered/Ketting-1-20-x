@@ -1,45 +1,15 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
-@@ -106,36 +_,71 @@
-    public static final int MIN_VIEW_DISTANCE = 2;
-    public static final int MAX_VIEW_DISTANCE = 32;
-    public static final int FORCED_TICKET_LEVEL = ChunkLevel.byStatus(FullChunkStatus.ENTITY_TICKING);
--   private final Long2ObjectLinkedOpenHashMap<ChunkHolder> updatingChunkMap = new Long2ObjectLinkedOpenHashMap<>();
--   private volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> visibleChunkMap = this.updatingChunkMap.clone();
-+   public final Long2ObjectLinkedOpenHashMap<ChunkHolder> updatingChunkMap = new Long2ObjectLinkedOpenHashMap<>();
-+   public volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> visibleChunkMap = this.updatingChunkMap.clone();
-    private final Long2ObjectLinkedOpenHashMap<ChunkHolder> pendingUnloads = new Long2ObjectLinkedOpenHashMap<>();
-    private final LongSet entitiesInLevel = new LongOpenHashSet();
--   final ServerLevel level;
-+   public final ServerLevel level;
+@@ -114,7 +_,7 @@
     private final ThreadedLevelLightEngine lightEngine;
     private final BlockableEventLoop<Runnable> mainThreadExecutor;
--   private ChunkGenerator generator;
--   private final RandomState randomState;
-+   public ChunkGenerator generator;
+    public ChunkGenerator generator;
+-   private RandomState randomState;
 +   private RandomState randomState; //Ketting - not final
     private final ChunkGeneratorStructureState chunkGeneratorState;
     private final Supplier<DimensionDataStorage> overworldDataStorage;
     private final PoiManager poiManager;
--   final LongSet toDrop = new LongOpenHashSet();
-+   public final LongSet toDrop = new LongOpenHashSet();
-    private boolean modified;
-    private final ChunkTaskPriorityQueueSorter queueSorter;
-    private final ProcessorHandle<ChunkTaskPriorityQueueSorter.Message<Runnable>> worldgenMailbox;
-    private final ProcessorHandle<ChunkTaskPriorityQueueSorter.Message<Runnable>> mainThreadMailbox;
--   private final ChunkProgressListener progressListener;
-+   public final ChunkProgressListener progressListener;
-    private final ChunkStatusUpdateListener chunkStatusListener;
--   private final ChunkMap.DistanceManager distanceManager;
-+   public final ChunkMap.DistanceManager distanceManager;
-    private final AtomicInteger tickingGenerated = new AtomicInteger();
-    private final StructureTemplateManager structureTemplateManager;
-    private final String storageName;
-    private final PlayerMap playerMap = new PlayerMap();
--   private final Int2ObjectMap<ChunkMap.TrackedEntity> entityMap = new Int2ObjectOpenHashMap<>();
-+   public final Int2ObjectMap<ChunkMap.TrackedEntity> entityMap = new Int2ObjectOpenHashMap<>();
-    private final Long2ByteMap chunkTypeCache = new Long2ByteOpenHashMap();
-    private final Long2LongMap chunkSaveCooldowns = new Long2LongOpenHashMap();
+@@ -136,6 +_,41 @@
     private final Queue<Runnable> unloadQueue = Queues.newConcurrentLinkedQueue();
     private int serverViewDistance;
  
@@ -251,27 +221,8 @@
        if (p_140332_ instanceof ServerPlayer serverplayer) {
           this.updatePlayerStatus(serverplayer, false);
  
-@@ -1259,7 +_,7 @@
-       });
-    }
- 
--   class DistanceManager extends net.minecraft.server.level.DistanceManager {
-+   public class DistanceManager extends net.minecraft.server.level.DistanceManager {
-       protected DistanceManager(Executor p_140459_, Executor p_140460_) {
-          super(p_140459_, p_140460_);
-       }
-@@ -1279,15 +_,15 @@
-       }
-    }
- 
--   class TrackedEntity {
-+   public class TrackedEntity {
-       final ServerEntity serverEntity;
-       final Entity entity;
-       private final int range;
-       SectionPos lastSectionPos;
--      private final Set<ServerPlayerConnection> seenBy = Sets.newIdentityHashSet();
-+      public final Set<ServerPlayerConnection> seenBy = Sets.newIdentityHashSet();
+@@ -1287,7 +_,7 @@
+       public final Set<ServerPlayerConnection> seenBy = Sets.newIdentityHashSet();
  
        public TrackedEntity(Entity p_140478_, int p_140479_, int p_140480_, boolean p_140481_) {
 -         this.serverEntity = new ServerEntity(ChunkMap.this.level, p_140478_, p_140480_, p_140481_, this::broadcast);
