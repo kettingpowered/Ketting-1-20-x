@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/entity/monster/SpellcasterIllager.java
 +++ b/net/minecraft/world/entity/monster/SpellcasterIllager.java
-@@ -15,6 +_,7 @@
+@@ -15,6 +_,6 @@
  import net.minecraft.world.entity.LivingEntity;
  import net.minecraft.world.entity.ai.goal.Goal;
  import net.minecraft.world.level.Level;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  
  public abstract class SpellcasterIllager extends AbstractIllager {
     private static final EntityDataAccessor<Byte> DATA_SPELL_CASTING_ID = SynchedEntityData.defineId(SpellcasterIllager.class, EntityDataSerializers.BYTE);
@@ -31,7 +30,7 @@
           --this.attackWarmupDelay;
           if (this.attackWarmupDelay == 0) {
 +            // CraftBukkit start
-+            if (!CraftEventFactory.handleEntitySpellCastEvent(SpellcasterIllager.this, this.getSpell())) {
++            if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleEntitySpellCastEvent(SpellcasterIllager.this, this.getSpell())) {
 +               return;
 +            }
 +            // CraftBukkit end

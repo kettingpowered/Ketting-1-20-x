@@ -1,12 +1,9 @@
 --- a/net/minecraft/world/inventory/ResultContainer.java
 +++ b/net/minecraft/world/inventory/ResultContainer.java
-@@ -7,11 +_,47 @@
+@@ -7,11 +_,44 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.crafting.RecipeHolder;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
-+import org.bukkit.entity.HumanEntity;
  
  public class ResultContainer implements Container, RecipeCraftingHolder {
     private final NonNullList<ItemStack> itemStacks = NonNullList.withSize(1, ItemStack.EMPTY);
@@ -25,10 +22,10 @@
 +   }
 +
 +   // Don't need a transaction; the InventoryCrafting keeps track of it for us
-+   public void onOpen(CraftHumanEntity who) {}
-+   public void onClose(CraftHumanEntity who) {}
-+   public java.util.List<HumanEntity> getViewers() {
-+      return new java.util.ArrayList<HumanEntity>();
++   public void onOpen(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {}
++   public void onClose(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {}
++   public java.util.List<org.bukkit.entity.HumanEntity> getViewers() {
++      return new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
 +   }
 +
 +   @Override
@@ -41,7 +38,7 @@
 +   }
 +
 +   @Override
-+   public Location getLocation() {
++   public org.bukkit.Location getLocation() {
 +      return null;
 +   }
 +   // CraftBukkit end

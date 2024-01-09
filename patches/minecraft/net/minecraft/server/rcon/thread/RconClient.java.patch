@@ -1,12 +1,10 @@
 --- a/net/minecraft/server/rcon/thread/RconClient.java
 +++ b/net/minecraft/server/rcon/thread/RconClient.java
-@@ -9,7 +_,9 @@
+@@ -9,7 +_,7 @@
  import java.nio.charset.StandardCharsets;
  import java.util.Locale;
  import net.minecraft.server.ServerInterface;
-+import net.minecraft.server.dedicated.DedicatedServer;
  import net.minecraft.server.rcon.PktUtils;
-+import net.minecraft.server.rcon.RconConsoleSource;
  import org.slf4j.Logger;
  
  public class RconClient extends GenericThread {
@@ -16,14 +14,14 @@
     private final String rconPassword;
 -   private final ServerInterface serverInterface;
 +   // CraftBukkit start
-+   private final DedicatedServer serverInterface;
-+   private final RconConsoleSource rconConsoleSource;
++   private final net.minecraft.server.dedicated.DedicatedServer serverInterface;
++   private final net.minecraft.server.rcon.RconConsoleSource rconConsoleSource;
 +   // CraftBukkit end
  
     RconClient(ServerInterface p_11587_, String p_11588_, Socket p_11589_) {
        super("RCON Client " + p_11589_.getInetAddress());
 -      this.serverInterface = p_11587_;
-+      this.serverInterface = (DedicatedServer) p_11587_;
++      this.serverInterface = (net.minecraft.server.dedicated.DedicatedServer) p_11587_;
        this.client = p_11589_;
  
        try {

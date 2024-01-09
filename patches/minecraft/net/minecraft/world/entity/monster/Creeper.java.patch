@@ -1,12 +1,9 @@
 --- a/net/minecraft/world/entity/monster/Creeper.java
 +++ b/net/minecraft/world/entity/monster/Creeper.java
-@@ -40,15 +_,18 @@
+@@ -40,15 +_,15 @@
  import net.minecraft.world.item.Items;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
-+import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class Creeper extends Monster implements PowerableMob {
     private static final EntityDataAccessor<Integer> DATA_SWELL_DIR = SynchedEntityData.defineId(Creeper.class, EntityDataSerializers.INT);
@@ -27,7 +24,7 @@
     public void thunderHit(ServerLevel p_32286_, LightningBolt p_32287_) {
        super.thunderHit(p_32286_, p_32287_);
 +      // CraftBukkit start
-+      if (CraftEventFactory.callCreeperPowerEvent(this, p_32287_, org.bukkit.event.entity.CreeperPowerEvent.PowerCause.LIGHTNING).isCancelled()) {
++      if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callCreeperPowerEvent(this, p_32287_, org.bukkit.event.entity.CreeperPowerEvent.PowerCause.LIGHTNING).isCancelled()) {
 +         return;
 +      }
 +      // CraftBukkit end
@@ -56,7 +53,7 @@
 -         this.discard();
 -         this.spawnLingeringCloud();
 +         // CraftBukkit start
-+         ExplosionPrimeEvent event = CraftEventFactory.callExplosionPrimeEvent(this, this.explosionRadius * f, false);
++         org.bukkit.event.entity.ExplosionPrimeEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callExplosionPrimeEvent(this, this.explosionRadius * f, false);
 +         if (!event.isCancelled()) {
 +            // CraftBukkit end
 +            this.dead = true;
@@ -84,7 +81,7 @@
           }
  
 -         this.level().addFreshEntity(areaeffectcloud);
-+         this.level().addFreshEntity(areaeffectcloud, CreatureSpawnEvent.SpawnReason.EXPLOSION); // CraftBukkit
++         this.level().addFreshEntity(areaeffectcloud, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EXPLOSION); // CraftBukkit
        }
  
     }

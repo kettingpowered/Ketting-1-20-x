@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/level/block/RedStoneWireBlock.java
 +++ b/net/minecraft/world/level/block/RedStoneWireBlock.java
-@@ -32,6 +_,7 @@
+@@ -32,6 +_,6 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class RedStoneWireBlock extends Block {
     public static final EnumProperty<RedstoneSide> NORTH = BlockStateProperties.NORTH_REDSTONE;
@@ -41,7 +40,7 @@
 +      // CraftBukkit start
 +      int oldPower = (Integer) p_55533_.getValue(RedStoneWireBlock.POWER);
 +      if (oldPower != i) {
-+         BlockRedstoneEvent event = new BlockRedstoneEvent(p_55531_.getWorld().getBlockAt(p_55532_.getX(), p_55532_.getY(), p_55532_.getZ()), oldPower, i);
++         org.bukkit.event.block.BlockRedstoneEvent event = new org.bukkit.event.block.BlockRedstoneEvent(p_55531_.getWorld().getBlockAt(p_55532_.getX(), p_55532_.getY(), p_55532_.getZ()), oldPower, i);
 +         p_55531_.getCraftServer().getPluginManager().callEvent(event);
 +
 +         i = event.getNewCurrent();

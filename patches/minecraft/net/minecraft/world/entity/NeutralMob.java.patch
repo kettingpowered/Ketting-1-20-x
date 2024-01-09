@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/entity/NeutralMob.java
 +++ b/net/minecraft/world/entity/NeutralMob.java
-@@ -8,6 +_,7 @@
+@@ -8,6 +_,6 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
-+import org.bukkit.event.entity.EntityTargetEvent;
  
  public interface NeutralMob {
     String TAG_ANGER_TIME = "AngerTime";
@@ -25,10 +24,10 @@
 +   //Ketting start
 +   default void setTarget(@Nullable LivingEntity p_21681_)
 +   {
-+      setTarget(p_21681_, EntityTargetEvent.TargetReason.UNKNOWN, true);
++      setTarget(p_21681_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN, true);
 +   }
 +   //Ketting end
-+   boolean setTarget(@Nullable LivingEntity p_21681_, EntityTargetEvent.TargetReason reason, boolean fireEvent); // CraftBukkit
++   boolean setTarget(@Nullable LivingEntity p_21681_, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent); // CraftBukkit
  
     boolean canAttack(LivingEntity p_181126_);
  

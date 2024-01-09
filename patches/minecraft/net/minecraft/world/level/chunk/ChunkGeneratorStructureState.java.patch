@@ -1,13 +1,11 @@
 --- a/net/minecraft/world/level/chunk/ChunkGeneratorStructureState.java
 +++ b/net/minecraft/world/level/chunk/ChunkGeneratorStructureState.java
-@@ -28,8 +_,10 @@
+@@ -28,8 +_,8 @@
  import net.minecraft.world.level.levelgen.structure.Structure;
  import net.minecraft.world.level.levelgen.structure.StructureSet;
  import net.minecraft.world.level.levelgen.structure.placement.ConcentricRingsStructurePlacement;
-+import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
  import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
  import org.slf4j.Logger;
-+import org.spigotmc.SpigotWorldConfig;
  
  public class ChunkGeneratorStructureState {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -16,7 +14,7 @@
     private final List<Holder<StructureSet>> possibleStructureSets;
  
 -   public static ChunkGeneratorStructureState createForFlat(RandomState p_256240_, long p_256404_, BiomeSource p_256274_, Stream<Holder<StructureSet>> p_256348_) {
-+   public static ChunkGeneratorStructureState createForFlat(RandomState p_256240_, long p_256404_, BiomeSource p_256274_, Stream<Holder<StructureSet>> p_256348_, SpigotWorldConfig conf) { // Spigot
++   public static ChunkGeneratorStructureState createForFlat(RandomState p_256240_, long p_256404_, BiomeSource p_256274_, Stream<Holder<StructureSet>> p_256348_, org.spigotmc.SpigotWorldConfig conf) { // Spigot
        List<Holder<StructureSet>> list = p_256348_.filter((p_255616_) -> {
           return hasBiomesForStructureSet(p_255616_.value(), p_256274_);
        }).toList();
@@ -25,7 +23,7 @@
     }
  
 -   public static ChunkGeneratorStructureState createForNormal(RandomState p_256197_, long p_255806_, BiomeSource p_256653_, HolderLookup<StructureSet> p_256659_) {
-+   public static ChunkGeneratorStructureState createForNormal(RandomState p_256197_, long p_255806_, BiomeSource p_256653_, HolderLookup<StructureSet> p_256659_, SpigotWorldConfig conf) { // Spigot
++   public static ChunkGeneratorStructureState createForNormal(RandomState p_256197_, long p_255806_, BiomeSource p_256653_, HolderLookup<StructureSet> p_256659_, org.spigotmc.SpigotWorldConfig conf) { // Spigot
        List<Holder<StructureSet>> list = p_256659_.listElements().filter((p_256144_) -> {
           return hasBiomesForStructureSet(p_256144_.value(), p_256653_);
        }).collect(Collectors.toUnmodifiableList());
@@ -35,10 +33,10 @@
 +   }
 +
 +   // Spigot start
-+   private static List<Holder<StructureSet>> injectSpigot(List<Holder<StructureSet>> list, SpigotWorldConfig conf) {
++   private static List<Holder<StructureSet>> injectSpigot(List<Holder<StructureSet>> list, org.spigotmc.SpigotWorldConfig conf) {
 +      return list.stream().map((holder) -> {
 +         StructureSet structureset = holder.value();
-+         if (structureset.placement() instanceof RandomSpreadStructurePlacement randomConfig) {
++         if (structureset.placement() instanceof net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement randomConfig) {
 +            String name = holder.unwrapKey().orElseThrow().location().getPath();
 +            int seed = randomConfig.salt;
 +
@@ -87,7 +85,7 @@
 +                  break;
 +            }
 +
-+            structureset = new StructureSet(structureset.structures(), new RandomSpreadStructurePlacement(randomConfig.locateOffset, randomConfig.frequencyReductionMethod, randomConfig.frequency, seed, randomConfig.exclusionZone, randomConfig.spacing(), randomConfig.separation(), randomConfig.spreadType()));
++            structureset = new StructureSet(structureset.structures(), new net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement(randomConfig.locateOffset, randomConfig.frequencyReductionMethod, randomConfig.frequency, seed, randomConfig.exclusionZone, randomConfig.spacing(), randomConfig.separation(), randomConfig.spreadType()));
 +         }
 +         return Holder.direct(structureset);
 +      }).collect(Collectors.toUnmodifiableList());

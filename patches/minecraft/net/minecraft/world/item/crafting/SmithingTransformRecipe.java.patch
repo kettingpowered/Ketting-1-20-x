@@ -1,17 +1,9 @@
 --- a/net/minecraft/world/item/crafting/SmithingTransformRecipe.java
 +++ b/net/minecraft/world/item/crafting/SmithingTransformRecipe.java
-@@ -10,6 +_,14 @@
+@@ -10,6 +_,6 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  
-+// CraftBukkit start
-+import org.bukkit.NamespacedKey;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftSmithingTransformRecipe;
-+import org.bukkit.inventory.Recipe;
-+// CraftBukkit end
-+
  public class SmithingTransformRecipe implements SmithingRecipe {
     final Ingredient template;
     final Ingredient base;
@@ -26,10 +18,10 @@
 +
 +   // CraftBukkit start
 +   @Override
-+   public Recipe toBukkitRecipe(NamespacedKey id) {
-+      CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
++   public org.bukkit.inventory.Recipe toBukkitRecipe(org.bukkit.NamespacedKey id) {
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(this.result);
 +
-+      CraftSmithingTransformRecipe recipe = new CraftSmithingTransformRecipe(id, result, CraftRecipe.toBukkit(this.template), CraftRecipe.toBukkit(this.base), CraftRecipe.toBukkit(this.addition));
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftSmithingTransformRecipe recipe = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftSmithingTransformRecipe(id, result, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.template), org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.base), org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.addition));
 +
 +      return recipe;
 +   }

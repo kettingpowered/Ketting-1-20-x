@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
 +++ b/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
-@@ -25,15 +_,16 @@
+@@ -25,15 +_,15 @@
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  
  public class FireworkRocketEntity extends Projectile implements ItemSupplier {
 -   private static final EntityDataAccessor<ItemStack> DATA_ID_FIREWORKS_ITEM = SynchedEntityData.defineId(FireworkRocketEntity.class, EntityDataSerializers.ITEM_STACK);
@@ -108,9 +107,9 @@
  
        if (f > 0.0F) {
           if (this.attachedToEntity != null) {
-+            CraftEventFactory.entityDamage = this; // CraftBukkit
++            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = this; // CraftBukkit
              this.attachedToEntity.hurt(this.damageSources().fireworks(this, this.getOwner()), 5.0F + (float)(listtag.size() * 2));
-+            CraftEventFactory.entityDamage = null; // CraftBukkit
++            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = null; // CraftBukkit
           }
  
           double d0 = 5.0D;
@@ -118,9 +117,9 @@
  
                 if (flag) {
                    float f1 = f * (float)Math.sqrt((5.0D - (double)this.distanceTo(livingentity)) / 5.0D);
-+                  CraftEventFactory.entityDamage = this; // CraftBukkit
++                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = this; // CraftBukkit
                    livingentity.hurt(this.damageSources().fireworks(this, this.getOwner()), f1);
-+                  CraftEventFactory.entityDamage = null; // CraftBukkit
++                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = null; // CraftBukkit
                 }
              }
           }

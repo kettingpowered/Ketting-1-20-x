@@ -1,18 +1,14 @@
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -32,11 +_,15 @@
+@@ -32,11 +_,11 @@
  import net.minecraft.network.protocol.login.ServerboundKeyPacket;
  import net.minecraft.network.protocol.login.ServerboundLoginAcknowledgedPacket;
  import net.minecraft.server.MinecraftServer;
-+import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.server.players.PlayerList;
  import net.minecraft.util.Crypt;
  import net.minecraft.util.CryptException;
  import net.minecraft.util.RandomSource;
  import org.apache.commons.lang3.Validate;
-+import org.bukkit.craftbukkit.v1_20_R2.util.Waitable;
-+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-+import org.bukkit.event.player.PlayerPreLoginEvent;
  import org.slf4j.Logger;
  
  public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener, TickablePacketListener {
@@ -29,7 +25,7 @@
     @Nullable
     private GameProfile authenticatedProfile;
     private final String serverId = "";
-+   private ServerPlayer player; // CraftBukkit
++   private net.minecraft.server.level.ServerPlayer player; // CraftBukkit
  
     public ServerLoginPacketListenerImpl(MinecraftServer p_10027_, Connection p_10028_) {
        this.server = p_10027_;
@@ -154,28 +150,28 @@
 +         java.util.UUID uniqueId = gameprofile.getId();
 +         final org.bukkit.craftbukkit.v1_20_R2.CraftServer server = ServerLoginPacketListenerImpl.this.server.server;
 +
-+         AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
++         org.bukkit.event.player.AsyncPlayerPreLoginEvent asyncEvent = new org.bukkit.event.player.AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
 +         server.getPluginManager().callEvent(asyncEvent);
 +
-+         if (PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0) {
-+            final PlayerPreLoginEvent event = new PlayerPreLoginEvent(playerName, address, uniqueId);
-+            if (asyncEvent.getResult() != PlayerPreLoginEvent.Result.ALLOWED) {
++         if (org.bukkit.event.player.PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0) {
++            final org.bukkit.event.player.PlayerPreLoginEvent event = new org.bukkit.event.player.PlayerPreLoginEvent(playerName, address, uniqueId);
++            if (asyncEvent.getResult() != org.bukkit.event.player.PlayerPreLoginEvent.Result.ALLOWED) {
 +               event.disallow(asyncEvent.getResult(), asyncEvent.getKickMessage());
 +            }
-+            Waitable<PlayerPreLoginEvent.Result> waitable = new Waitable<PlayerPreLoginEvent.Result>() {
++            org.bukkit.craftbukkit.v1_20_R2.util.Waitable<org.bukkit.event.player.PlayerPreLoginEvent.Result> waitable = new org.bukkit.craftbukkit.v1_20_R2.util.Waitable<org.bukkit.event.player.PlayerPreLoginEvent.Result>() {
 +               @Override
-+               protected PlayerPreLoginEvent.Result evaluate() {
++               protected org.bukkit.event.player.PlayerPreLoginEvent.Result evaluate() {
 +                  server.getPluginManager().callEvent(event);
 +                  return event.getResult();
 +               }};
 +
 +            ServerLoginPacketListenerImpl.this.server.processQueue.add(waitable);
-+            if (waitable.get() != PlayerPreLoginEvent.Result.ALLOWED) {
++            if (waitable.get() != org.bukkit.event.player.PlayerPreLoginEvent.Result.ALLOWED) {
 +               disconnect(event.getKickMessage());
 +               return;
 +            }
 +         } else {
-+            if (asyncEvent.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
++            if (asyncEvent.getLoginResult() != org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result.ALLOWED) {
 +               disconnect(asyncEvent.getKickMessage());
 +               return;
 +            }

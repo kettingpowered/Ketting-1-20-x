@@ -1,12 +1,9 @@
 --- a/net/minecraft/server/dedicated/Settings.java
 +++ b/net/minecraft/server/dedicated/Settings.java
-@@ -20,19 +_,43 @@
+@@ -20,19 +_,40 @@
  import java.util.function.Supplier;
  import java.util.function.UnaryOperator;
  import javax.annotation.Nullable;
-+
-+import joptsimple.OptionParser;
-+import joptsimple.OptionSet;
  import net.minecraft.core.RegistryAccess;
  import org.slf4j.Logger;
  
@@ -15,12 +12,12 @@
 -   protected final Properties properties;
 +   public final Properties properties;
 +   // CraftBukkit start
-+   private OptionSet options = null;
++   private joptsimple.OptionSet options = null;
  
     public Settings(Properties p_139801_) {
-+      this(p_139801_, new OptionParser().parse());
++      this(p_139801_, new joptsimple.OptionParser().parse());
 +   }
-+   public Settings(Properties p_139801_, final OptionSet options) {
++   public Settings(Properties p_139801_, final joptsimple.OptionSet options) {
        this.properties = p_139801_;
 +      this.options = options;
 +   }
@@ -93,10 +90,10 @@
  
 -   protected abstract T reload(RegistryAccess p_139857_, Properties p_139858_);
 +   protected T reload(RegistryAccess p_139857_, Properties p_139858_){
-+      return reload(p_139857_, p_139858_, new OptionParser().parse());
++      return reload(p_139857_, p_139858_, new joptsimple.OptionParser().parse());
 +   }
 +   // CraftBukkit
-+   protected T reload(RegistryAccess p_139857_, Properties p_139858_, OptionSet optionset){
++   protected T reload(RegistryAccess p_139857_, Properties p_139858_, joptsimple.OptionSet optionset){
 +      throw new AbstractMethodError();
 +   } 
  

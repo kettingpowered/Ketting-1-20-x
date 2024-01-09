@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/level/block/DragonEggBlock.java
 +++ b/net/minecraft/world/level/block/DragonEggBlock.java
-@@ -15,6 +_,7 @@
+@@ -15,6 +_,6 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.event.block.BlockFromToEvent;
  
  public class DragonEggBlock extends FallingBlock {
     protected static final VoxelShape SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
@@ -15,7 +14,7 @@
 +            // CraftBukkit start
 +            org.bukkit.block.Block from = p_52937_.getWorld().getBlockAt(p_52938_.getX(), p_52938_.getY(), p_52938_.getZ());
 +            org.bukkit.block.Block to = p_52937_.getWorld().getBlockAt(blockpos.getX(), blockpos.getY(), blockpos.getZ());
-+            BlockFromToEvent event = new BlockFromToEvent(from, to);
++            org.bukkit.event.block.BlockFromToEvent event = new org.bukkit.event.block.BlockFromToEvent(from, to);
 +            org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +
 +            if (event.isCancelled()) {

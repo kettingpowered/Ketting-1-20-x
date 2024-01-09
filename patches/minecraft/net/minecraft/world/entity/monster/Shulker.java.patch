@@ -1,12 +1,9 @@
 --- a/net/minecraft/world/entity/monster/Shulker.java
 +++ b/net/minecraft/world/entity/monster/Shulker.java
-@@ -54,6 +_,9 @@
+@@ -54,6 +_,6 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
-+import org.bukkit.event.entity.EntityTeleportEvent;
  import org.joml.Vector3f;
  import org.joml.Vector3fc;
  
@@ -30,11 +27,11 @@
 +
 +               if (direction != null) {
 +                  // CraftBukkit start
-+                  EntityTeleportEvent teleportEvent = CraftEventFactory.callEntityTeleportEvent(this, blockpos1.getX(), blockpos1.getY(), blockpos1.getZ());
++                  org.bukkit.event.entity.EntityTeleportEvent teleportEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTeleportEvent(this, blockpos1.getX(), blockpos1.getY(), blockpos1.getZ());
 +                  if (teleportEvent.isCancelled()) {
 +                     return false;
 +                  } else {
-+                     blockpos1 = CraftLocation.toBlockPosition(teleportEvent.getTo());
++                     blockpos1 = org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation.toBlockPosition(teleportEvent.getTo());
 +                  }
 +                  // CraftBukkit end
                    this.unRide();

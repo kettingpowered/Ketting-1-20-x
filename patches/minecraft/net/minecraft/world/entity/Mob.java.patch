@@ -1,28 +1,24 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -22,6 +_,7 @@
+@@ -22,6 +_,6 @@
  import net.minecraft.network.syncher.SynchedEntityData;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.level.ServerLevel;
-+import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.Mth;
-@@ -62,7 +_,6 @@
+@@ -62,7 +_,7 @@
  import net.minecraft.world.item.SpawnEggItem;
  import net.minecraft.world.item.SwordItem;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
--import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.LevelReader;
-@@ -71,6 +_,9 @@
+@@ -71,6 +_,6 @@
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.AABB;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.*;
  
  public abstract class Mob extends LivingEntity implements Targeting {
     private static final EntityDataAccessor<Byte> DATA_MOB_FLAGS_ID = SynchedEntityData.defineId(Mob.class, EntityDataSerializers.BYTE);
@@ -85,30 +81,30 @@
     public void setTarget(@Nullable LivingEntity p_21544_) {
 -      this.target = p_21544_;
 +      // CraftBukkit start - fire event
-+      setTarget(p_21544_, EntityTargetEvent.TargetReason.UNKNOWN, true);
++      setTarget(p_21544_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN, true);
 +   }
 +
-+   public boolean setTarget(@Nullable LivingEntity p_21544_, EntityTargetEvent.TargetReason reason, boolean fireEvent) {
++   public boolean setTarget(@Nullable LivingEntity p_21544_, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent) {
 +      if (getTarget() == p_21544_) return false;
 +      if (fireEvent) {
-+         if (reason == EntityTargetEvent.TargetReason.UNKNOWN && getTarget() != null && p_21544_ == null) {
-+            reason = getTarget().isAlive() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
++         if (reason == org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN && getTarget() != null && p_21544_ == null) {
++            reason = getTarget().isAlive() ? org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET : org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_DIED;
 +         }
-+         if (reason == EntityTargetEvent.TargetReason.UNKNOWN) {
++         if (reason == org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN) {
 +            this.level().getCraftServer().getLogger().log(java.util.logging.Level.WARNING, "Unknown target reason, please report on the issue tracker", new Exception());
 +         }
-+         CraftLivingEntity ctarget = null;
++         org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity ctarget = null;
 +         if (p_21544_ != null) {
-+            ctarget = (CraftLivingEntity) p_21544_.getBukkitEntity();
++            ctarget = (org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) p_21544_.getBukkitEntity();
 +         }
-+         EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(this.getBukkitEntity(), ctarget, reason);
++         org.bukkit.event.entity.EntityTargetLivingEntityEvent event = new org.bukkit.event.entity.EntityTargetLivingEntityEvent(this.getBukkitEntity(), ctarget, reason);
 +         this.level().getCraftServer().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return false;
 +         }
 +
 +         if (event.getTarget() != null) {
-+            p_21544_ = ((CraftLivingEntity) event.getTarget()).getHandle();
++            p_21544_ = ((org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +         } else {
 +            p_21544_ = null;
 +         }
@@ -296,8 +292,8 @@
           return InteractionResult.PASS;
        } else if (this.getLeashHolder() == p_21420_) {
 +         // CraftBukkit start - fire PlayerUnleashEntityEvent
-+         if (CraftEventFactory.callPlayerUnleashEntityEvent(this, p_21420_, p_21421_).isCancelled()) {
-+            ((ServerPlayer) p_21420_).connection.send(new ClientboundSetEntityLinkPacket(this, this.getLeashHolder()));
++         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerUnleashEntityEvent(this, p_21420_, p_21421_).isCancelled()) {
++            ((net.minecraft.server.level.ServerPlayer) p_21420_).connection.send(new ClientboundSetEntityLinkPacket(this, this.getLeashHolder()));
 +            return InteractionResult.PASS;
 +         }
 +         // CraftBukkit end
@@ -309,8 +305,8 @@
        ItemStack itemstack = p_21500_.getItemInHand(p_21501_);
        if (itemstack.is(Items.LEAD) && this.canBeLeashed(p_21500_)) {
 +         // CraftBukkit start - fire PlayerLeashEntityEvent
-+         if (CraftEventFactory.callPlayerLeashEntityEvent(this, p_21500_, p_21500_, p_21501_).isCancelled()) {
-+            ((ServerPlayer) p_21500_).connection.send(new ClientboundSetEntityLinkPacket(this, this.getLeashHolder()));
++         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerLeashEntityEvent(this, p_21500_, p_21500_, p_21501_).isCancelled()) {
++            ((net.minecraft.server.level.ServerPlayer) p_21500_).connection.send(new ClientboundSetEntityLinkPacket(this, this.getLeashHolder()));
 +            return InteractionResult.PASS;
 +         }
 +         // CraftBukkit end
@@ -324,11 +320,11 @@
 +   // CraftBukkit start
     @Nullable
     public <T extends Mob> T convertTo(EntityType<T> p_21407_, boolean p_21408_) {
-+      return this.convertTo(p_21407_, p_21408_, EntityTransformEvent.TransformReason.UNKNOWN, CreatureSpawnEvent.SpawnReason.DEFAULT);
++      return this.convertTo(p_21407_, p_21408_, org.bukkit.event.entity.EntityTransformEvent.TransformReason.UNKNOWN, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   }
 +
 +   @Nullable
-+   public <T extends Mob> T convertTo(EntityType<T> p_21407_, boolean p_21408_, EntityTransformEvent.TransformReason transformReason, CreatureSpawnEvent.SpawnReason spawnReason) {
++   public <T extends Mob> T convertTo(EntityType<T> p_21407_, boolean p_21408_, org.bukkit.event.entity.EntityTransformEvent.TransformReason transformReason, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
 +      // CraftBukkit end
        if (this.isRemoved()) {
           return (T)null;
@@ -339,7 +335,7 @@
  
 -            this.level().addFreshEntity(t);
 +            // CraftBukkit start
-+            if (CraftEventFactory.callEntityTransformEvent(this, t, transformReason).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTransformEvent(this, t, transformReason).isCancelled()) {
 +               return null;
 +            }
 +            this.level().addFreshEntity(t, spawnReason);
@@ -351,7 +347,7 @@
  
        if (this.leashHolder != null) {
           if (!this.isAlive() || !this.leashHolder.isAlive()) {
-+            this.level().getCraftServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), (!this.isAlive()) ? EntityUnleashEvent.UnleashReason.PLAYER_UNLEASH : EntityUnleashEvent.UnleashReason.HOLDER_GONE)); // CraftBukkit
++            this.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.entity.EntityUnleashEvent(this.getBukkitEntity(), (!this.isAlive()) ? org.bukkit.event.entity.EntityUnleashEvent.UnleashReason.PLAYER_UNLEASH : org.bukkit.event.entity.EntityUnleashEvent.UnleashReason.HOLDER_GONE)); // CraftBukkit
              this.dropLeash(true, true);
           }
  
@@ -369,7 +365,7 @@
     public boolean startRiding(Entity p_21396_, boolean p_21397_) {
        boolean flag = super.startRiding(p_21396_, p_21397_);
        if (flag && this.isLeashed()) {
-+         this.level().getCraftServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), EntityUnleashEvent.UnleashReason.UNKNOWN)); // CraftBukkit
++         this.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.entity.EntityUnleashEvent(this.getBukkitEntity(), org.bukkit.event.entity.EntityUnleashEvent.UnleashReason.UNKNOWN)); // CraftBukkit
           this.dropLeash(true, true);
        }
  
@@ -388,7 +384,7 @@
        int i = EnchantmentHelper.getFireAspect(this);
        if (i > 0) {
 +         // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
-+         EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_21372_.getBukkitEntity(), i * 4);
++         org.bukkit.event.entity.EntityCombustByEntityEvent combustEvent = new org.bukkit.event.entity.EntityCombustByEntityEvent(this.getBukkitEntity(), p_21372_.getBukkitEntity(), i * 4);
 +         org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
 +
 +         if (!combustEvent.isCancelled()) {
@@ -429,7 +425,7 @@
  
     protected void removeAfterChangingDimensions() {
        super.removeAfterChangingDimensions();
-+      this.level().getCraftServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), EntityUnleashEvent.UnleashReason.UNKNOWN)); // CraftBukkit
++      this.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.entity.EntityUnleashEvent(this.getBukkitEntity(), org.bukkit.event.entity.EntityUnleashEvent.UnleashReason.UNKNOWN)); // CraftBukkit
        this.dropLeash(true, false);
        this.getAllSlots().forEach((p_278936_) -> {
           if (!p_278936_.isEmpty()) {

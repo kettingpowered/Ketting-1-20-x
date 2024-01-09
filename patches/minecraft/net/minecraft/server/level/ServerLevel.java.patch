@@ -1,61 +1,48 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -18,14 +_,7 @@
+@@ -18,14 +_,14 @@
  import java.io.Writer;
  import java.nio.file.Files;
  import java.nio.file.Path;
--import java.util.ArrayList;
--import java.util.Comparator;
--import java.util.List;
--import java.util.Locale;
--import java.util.Objects;
--import java.util.Optional;
--import java.util.Set;
--import java.util.UUID;
-+import java.util.*;
+ import java.util.ArrayList;
+ import java.util.Comparator;
+ import java.util.List;
+ import java.util.Locale;
+ import java.util.Objects;
+ import java.util.Optional;
+ import java.util.Set;
+ import java.util.UUID;
  import java.util.concurrent.Executor;
  import java.util.function.BooleanSupplier;
  import java.util.function.Function;
-@@ -114,6 +_,7 @@
+@@ -114,6 +_,6 @@
  import net.minecraft.world.level.StructureManager;
  import net.minecraft.world.level.WorldGenLevel;
  import net.minecraft.world.level.biome.Biome;
-+import net.minecraft.world.level.biome.BiomeSource;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.SnowLayerBlock;
-@@ -136,7 +_,9 @@
+@@ -136,7 +_,7 @@
  import net.minecraft.world.level.gameevent.DynamicGameEventListener;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.gameevent.GameEventDispatcher;
-+import net.minecraft.world.level.levelgen.FlatLevelSource;
  import net.minecraft.world.level.levelgen.Heightmap;
-+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
  import net.minecraft.world.level.levelgen.structure.BoundingBox;
  import net.minecraft.world.level.levelgen.structure.Structure;
  import net.minecraft.world.level.levelgen.structure.StructureCheck;
-@@ -146,15 +_,21 @@
+@@ -146,15 +_,15 @@
  import net.minecraft.world.level.portal.PortalForcer;
  import net.minecraft.world.level.saveddata.maps.MapIndex;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
--import net.minecraft.world.level.storage.DimensionDataStorage;
--import net.minecraft.world.level.storage.LevelStorageSource;
--import net.minecraft.world.level.storage.ServerLevelData;
-+import net.minecraft.world.level.storage.*;
+ import net.minecraft.world.level.storage.DimensionDataStorage;
+ import net.minecraft.world.level.storage.LevelStorageSource;
+ import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
-+import org.bukkit.WeatherType;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R2.generator.CustomWorldChunkManager;
-+import org.bukkit.craftbukkit.v1_20_R2.util.WorldUUID;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
-+import org.bukkit.event.weather.LightningStrikeEvent;
-+import org.bukkit.event.world.TimeSkipEvent;
-+import org.kettingpowered.ketting.utils.DelegateWorldInfo;
  import org.slf4j.Logger;
  
  public class ServerLevel extends Level implements WorldGenLevel {
@@ -64,7 +51,7 @@
     private final ServerChunkCache chunkSource;
     private final MinecraftServer server;
 -   private final ServerLevelData serverLevelData;
-+   public final PrimaryLevelData serverLevelData; // CraftBukkit - type
++   public final net.minecraft.world.level.storage.PrimaryLevelData serverLevelData; // CraftBukkit - type
     final EntityTickList entityTickList = new EntityTickList();
 -   private final PersistentEntitySectionManager<Entity> entityManager;
 +   public final PersistentEntitySectionManager<Entity> entityManager;
@@ -102,25 +89,25 @@
 +   public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
 +      super(p_215002_, p_215003_, p_214999_.registryAccess(), p_215004_.type(), p_214999_::getProfiler, false, p_215006_, p_215007_, p_214999_.getMaxChainedNeighborUpdates(), gen, biomeProvider, env);
 +      convertable = p_215001_;
-+      uuid = WorldUUID.getUUID(p_215001_.levelDirectory.path().toFile());
++      uuid = org.bukkit.craftbukkit.v1_20_R2.util.WorldUUID.getUUID(p_215001_.levelDirectory.path().toFile());
 +      // CraftBukkit end
 +      this.tickTime = p_215009_;
 +      this.server = p_214999_;
 +      this.customSpawners = p_215008_;
-+      if (p_215002_ instanceof PrimaryLevelData primary)
++      if (p_215002_ instanceof net.minecraft.world.level.storage.PrimaryLevelData primary)
 +         this.serverLevelData = primary;
 +      else
-+         this.serverLevelData = DelegateWorldInfo.wrap((DerivedLevelData) p_215002_);
++         this.serverLevelData = org.kettingpowered.ketting.utils.DelegateWorldInfo.wrap((net.minecraft.world.level.storage.DerivedLevelData) p_215002_);
 +      ChunkGenerator chunkgenerator = p_215004_.generator();
 +      // CraftBukkit start
 +      serverLevelData.setWorld(this);
 +
 +      if (biomeProvider != null) {
-+         BiomeSource worldChunkManager = new CustomWorldChunkManager(getWorld(), biomeProvider, server.registryAccess().registryOrThrow(Registries.BIOME));
-+         if (chunkgenerator instanceof NoiseBasedChunkGenerator cga) {
-+            chunkgenerator = new NoiseBasedChunkGenerator(worldChunkManager, cga.settings);
-+         } else if (chunkgenerator instanceof FlatLevelSource cpf) {
-+            chunkgenerator = new FlatLevelSource(cpf.settings(), worldChunkManager);
++         net.minecraft.world.level.biome.BiomeSource worldChunkManager = new org.bukkit.craftbukkit.v1_20_R2.generator.CustomWorldChunkManager(getWorld(), biomeProvider, server.registryAccess().registryOrThrow(Registries.BIOME));
++         if (chunkgenerator instanceof net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator cga) {
++            chunkgenerator = new net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator(worldChunkManager, cga.settings);
++         } else if (chunkgenerator instanceof net.minecraft.world.level.levelgen.FlatLevelSource cpf) {
++            chunkgenerator = new net.minecraft.world.level.levelgen.FlatLevelSource(cpf.settings(), worldChunkManager);
 +         }
 +      }
 +
@@ -173,16 +160,16 @@
     public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_) {
        super(p_215002_, p_215003_, p_214999_.registryAccess(), p_215004_.type(), p_214999_::getProfiler, false, p_215006_, p_215007_, p_214999_.getMaxChainedNeighborUpdates());
 +      convertable = p_215001_;
-+      uuid = WorldUUID.getUUID((p_215002_ instanceof DerivedLevelData ? p_215001_.getDimensionPath(p_215003_) : p_215001_.levelDirectory.path()).toFile()); //Ketting
++      uuid = org.bukkit.craftbukkit.v1_20_R2.util.WorldUUID.getUUID((p_215002_ instanceof net.minecraft.world.level.storage.DerivedLevelData ? p_215001_.getDimensionPath(p_215003_) : p_215001_.levelDirectory.path()).toFile()); //Ketting
 +      // CraftBukkit end
        this.tickTime = p_215009_;
        this.server = p_214999_;
        this.customSpawners = p_215008_;
 -      this.serverLevelData = p_215002_;
-+      if (p_215002_ instanceof PrimaryLevelData primary)
++      if (p_215002_ instanceof net.minecraft.world.level.storage.PrimaryLevelData primary)
 +         this.serverLevelData = primary;
 +      else
-+         this.serverLevelData = DelegateWorldInfo.wrap((DerivedLevelData) p_215002_);
++         this.serverLevelData = org.kettingpowered.ketting.utils.DelegateWorldInfo.wrap((net.minecraft.world.level.storage.DerivedLevelData) p_215002_);
        ChunkGenerator chunkgenerator = p_215004_.generator();
 +      // CraftBukkit start
 +      serverLevelData.setWorld(this);
@@ -226,7 +213,7 @@
        if (this.sleepStatus.areEnoughSleeping(i) && this.sleepStatus.areEnoughDeepSleeping(i, this.players)) {
 +         // CraftBukkit start
 +         j = this.levelData.getDayTime() + 24000L;
-+         TimeSkipEvent event = new TimeSkipEvent(this.getWorld(), TimeSkipEvent.SkipReason.NIGHT_SKIP, (j - j % 24000L) - this.getDayTime());
++         org.bukkit.event.world.TimeSkipEvent event = new org.bukkit.event.world.TimeSkipEvent(this.getWorld(), org.bukkit.event.world.TimeSkipEvent.SkipReason.NIGHT_SKIP, (j - j % 24000L) - this.getDayTime());
           if (this.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
 -            long j = this.levelData.getDayTime() + 24000L;
 -            this.setDayTime(j - j % 24000L);
@@ -403,7 +390,7 @@
 +         // Only send weather packets to those affected
 +         for (int idx = 0; idx < this.players.size(); ++idx) {
 +            if ((this.players.get(idx)).level() == this) {
-+               (this.players.get(idx)).setPlayerWeather((!flag ? WeatherType.DOWNFALL : WeatherType.CLEAR), false);
++               (this.players.get(idx)).setPlayerWeather((!flag ? org.bukkit.WeatherType.DOWNFALL : org.bukkit.WeatherType.CLEAR), false);
 +            }
 +         }
 +      }
@@ -513,11 +500,11 @@
     public boolean addFreshEntity(Entity p_8837_) {
 -      return this.addEntity(p_8837_);
 +      // CraftBukkit start
-+      return this.addFreshEntity(p_8837_, CreatureSpawnEvent.SpawnReason.DEFAULT);
++      return this.addFreshEntity(p_8837_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   }
 +
 +   @Override
-+   public boolean addFreshEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
++   public boolean addFreshEntity(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
 +      return this.addEntity(entity, reason);
 +      // CraftBukkit end
     }
@@ -525,10 +512,10 @@
     public boolean addWithUUID(Entity p_8848_) {
 -      return this.addEntity(p_8848_);
 +      // CraftBukkit start
-+      return this.addWithUUID(p_8848_, CreatureSpawnEvent.SpawnReason.DEFAULT);
++      return this.addWithUUID(p_8848_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   }
 +
-+   public boolean addWithUUID(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
++   public boolean addWithUUID(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
 +      return this.addEntity(entity, reason);
 +      // CraftBukkit end
     }
@@ -542,7 +529,7 @@
 +      this.addDuringTeleport(p_143335_, null);
 +   }
 +
-+   public void addDuringTeleport(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
++   public void addDuringTeleport(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
 +      this.addEntity(entity, reason);
 +      // CraftBukkit end
     }
@@ -566,7 +553,7 @@
     }
  
 -   private boolean addEntity(Entity p_8873_) {
-+   private boolean addEntity(Entity p_8873_, CreatureSpawnEvent.SpawnReason spawnReason) {
++   private boolean addEntity(Entity p_8873_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
 +      org.spigotmc.AsyncCatcher.catchOp("entity add"); // Spigot
        if (p_8873_.isRemoved()) {
 -         LOGGER.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.getKey(p_8873_.getType()));
@@ -575,7 +562,7 @@
        } else {
 -         return this.entityManager.addNewEntity(p_8873_);
 +         // SPIGOT-6415: Don't call spawn event when reason is null. For example when an entity teleports to a new world.
-+         if (spawnReason != null && !CraftEventFactory.doEntityAddEventCalling(this, p_8873_, spawnReason)) {
++         if (spawnReason != null && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.doEntityAddEventCalling(this, p_8873_, spawnReason)) {
 +            return false;
 +         }
 +         // CraftBukkit end
@@ -624,11 +611,11 @@
  
 +   // CraftBukkit start
 +   public boolean strikeLightning(Entity entitylightning) {
-+      return this.strikeLightning(entitylightning, LightningStrikeEvent.Cause.UNKNOWN);
++      return this.strikeLightning(entitylightning, org.bukkit.event.weather.LightningStrikeEvent.Cause.UNKNOWN);
 +   }
 +
-+   public boolean strikeLightning(Entity entitylightning, LightningStrikeEvent.Cause cause) {
-+      LightningStrikeEvent lightning = CraftEventFactory.callLightningStrikeEvent((org.bukkit.entity.LightningStrike) entitylightning.getBukkitEntity(), cause);
++   public boolean strikeLightning(Entity entitylightning, org.bukkit.event.weather.LightningStrikeEvent.Cause cause) {
++      org.bukkit.event.weather.LightningStrikeEvent lightning = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callLightningStrikeEvent((org.bukkit.entity.LightningStrike) entitylightning.getBukkitEntity(), cause);
 +
 +      if (lightning.isCancelled()) {
 +         return false;
@@ -698,7 +685,7 @@
 +
        if (Shapes.joinIsNotEmpty(voxelshape1, voxelshape, BooleanOp.NOT_SAME)) {
           List<PathNavigation> list = new ObjectArrayList<>();
-+         Iterator iterator = this.navigatingMobs.iterator();
++         java.util.Iterator iterator = this.navigatingMobs.iterator();
  
 -         for(Mob mob : this.navigatingMobs) {
 +         while (iterator.hasNext()) {
@@ -706,7 +693,7 @@
 +            Mob mob;
 +            try {
 +               mob = (Mob) iterator.next();
-+            } catch (ConcurrentModificationException ex) {
++            } catch (java.util.ConcurrentModificationException ex) {
 +               // This can happen because the pathfinder update below may trigger a chunk load, which in turn may cause more navigators to register
 +               // In this case we just run the update again across all the iterators as the chunk will then be loaded
 +               // As this is a relative edge case it is much faster than copying navigators (on either read or write)
@@ -899,7 +886,7 @@
 +                  {
 +                     MapItemSavedData map = (MapItemSavedData) o;
 +                     map.carriedByPlayers.remove( (Player) p_143375_ );
-+                     for ( Iterator<MapItemSavedData.HoldingPlayer> iter = map.carriedBy.iterator(); iter.hasNext(); )
++                     for ( java.util.Iterator<MapItemSavedData.HoldingPlayer> iter = map.carriedBy.iterator(); iter.hasNext(); )
 +                     {
 +                        if ( iter.next().player == p_143375_ )
 +                        {

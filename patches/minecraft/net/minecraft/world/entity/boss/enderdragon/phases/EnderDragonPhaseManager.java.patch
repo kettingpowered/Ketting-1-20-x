@@ -1,11 +1,9 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/phases/EnderDragonPhaseManager.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/phases/EnderDragonPhaseManager.java
-@@ -3,6 +_,8 @@
+@@ -3,6 +_,6 @@
  import com.mojang.logging.LogUtils;
  import javax.annotation.Nullable;
  import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEnderDragon;
-+import org.bukkit.event.entity.EnderDragonChangePhaseEvent;
  import org.slf4j.Logger;
  
  public class EnderDragonPhaseManager {
@@ -15,10 +13,10 @@
           }
 +
 +         // CraftBukkit start - Call EnderDragonChangePhaseEvent
-+         EnderDragonChangePhaseEvent event = new EnderDragonChangePhaseEvent(
-+                 (CraftEnderDragon) this.dragon.getBukkitEntity(),
-+                 (this.currentPhase == null) ? null : CraftEnderDragon.getBukkitPhase(this.currentPhase.getPhase()),
-+                 CraftEnderDragon.getBukkitPhase(p_31417_)
++         org.bukkit.event.entity.EnderDragonChangePhaseEvent event = new org.bukkit.event.entity.EnderDragonChangePhaseEvent(
++                 (org.bukkit.craftbukkit.v1_20_R2.entity.CraftEnderDragon) this.dragon.getBukkitEntity(),
++                 (this.currentPhase == null) ? null : org.bukkit.craftbukkit.v1_20_R2.entity.CraftEnderDragon.getBukkitPhase(this.currentPhase.getPhase()),
++                 org.bukkit.craftbukkit.v1_20_R2.entity.CraftEnderDragon.getBukkitPhase(p_31417_)
 +         );
 +         this.dragon.level().getCraftServer().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
@@ -26,7 +24,7 @@
 +         }
 +
 +         //Ketting start - check for modded phases
-+         EnderDragonPhase<?> newPhase = CraftEnderDragon.getMinecraftPhase(event.getNewPhase());
++         EnderDragonPhase<?> newPhase = org.bukkit.craftbukkit.v1_20_R2.entity.CraftEnderDragon.getMinecraftPhase(event.getNewPhase());
 +         if (newPhase != null)
 +            p_31417_ = newPhase;
 +         //Ketting end

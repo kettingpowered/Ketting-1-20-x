@@ -1,19 +1,17 @@
 --- a/net/minecraft/world/level/block/MushroomBlock.java
 +++ b/net/minecraft/world/level/block/MushroomBlock.java
-@@ -1,6 +_,5 @@
+@@ -1,6 +_,6 @@
  package net.minecraft.world.level.block;
  
--import java.util.Optional;
+ import java.util.Optional;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Holder;
  import net.minecraft.core.registries.Registries;
-@@ -16,6 +_,9 @@
+@@ -16,6 +_,7 @@
  import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.TreeType;
 +
-+import java.util.Optional;
  
  public class MushroomBlock extends BushBlock implements BonemealableBlock {
     protected static final float AABB_OFFSET = 3.0F;
@@ -52,7 +50,7 @@
 +         if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY)) return false;
           p_221774_.removeBlock(p_221775_, false);
 -         if (optional.get().value().place(p_221774_, p_221774_.getChunkSource().getGenerator(), p_221777_, p_221775_)) {
-+         SaplingBlock.treeType = (this == Blocks.BROWN_MUSHROOM) ? TreeType.BROWN_MUSHROOM : TreeType.BROWN_MUSHROOM; // CraftBukkit
++         SaplingBlock.treeType = (this == Blocks.BROWN_MUSHROOM) ? org.bukkit.TreeType.BROWN_MUSHROOM : org.bukkit.TreeType.BROWN_MUSHROOM; // CraftBukkit
 +         if (event.getFeature().value().place(p_221774_, p_221774_.getChunkSource().getGenerator(), p_221777_, p_221775_)) {
              return true;
           } else {

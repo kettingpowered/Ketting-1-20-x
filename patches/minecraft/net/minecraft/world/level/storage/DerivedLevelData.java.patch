@@ -1,26 +1,24 @@
 --- a/net/minecraft/world/level/storage/DerivedLevelData.java
 +++ b/net/minecraft/world/level/storage/DerivedLevelData.java
-@@ -3,23 +_,36 @@
+@@ -3,23 +_,34 @@
  import java.util.UUID;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.core.BlockPos;
-+import net.minecraft.resources.ResourceKey;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.world.Difficulty;
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.LevelHeightAccessor;
  import net.minecraft.world.level.border.WorldBorder;
-+import net.minecraft.world.level.dimension.LevelStem;
  import net.minecraft.world.level.timers.TimerQueue;
  
  public class DerivedLevelData implements ServerLevelData {
     private final WorldData worldData;
     private final ServerLevelData wrapped;
 +   //Ketting start
-+   private ResourceKey<LevelStem> typeKey;
++   private net.minecraft.resources.ResourceKey<net.minecraft.world.level.dimension.LevelStem> typeKey;
 +
-+   public void setTypeKey(ResourceKey<LevelStem> typeKey) {
++   public void setTypeKey(net.minecraft.resources.ResourceKey<net.minecraft.world.level.dimension.LevelStem> typeKey) {
 +      this.typeKey = typeKey;
 +   }
 +   //Ketting end
@@ -42,14 +40,14 @@
  
     public String getLevelName() {
 -      return this.worldData.getLevelName();
-+      if (typeKey == null || typeKey == LevelStem.OVERWORLD) {
++      if (typeKey == null || typeKey == net.minecraft.world.level.dimension.LevelStem.OVERWORLD) {
 +         return this.wrapped.getLevelName();
 +      } else {
 +         String worldName = this.wrapped.getLevelName() + "/";
 +         String suffix;
-+         if (typeKey == LevelStem.END) {
++         if (typeKey == net.minecraft.world.level.dimension.LevelStem.END) {
 +            suffix = "DIM1";
-+         } else if (typeKey == LevelStem.NETHER) {
++         } else if (typeKey == net.minecraft.world.level.dimension.LevelStem.NETHER) {
 +            suffix = "DIM-1";
 +         } else {
 +            suffix = typeKey.location().getNamespace() + "/" + typeKey.location().getPath();

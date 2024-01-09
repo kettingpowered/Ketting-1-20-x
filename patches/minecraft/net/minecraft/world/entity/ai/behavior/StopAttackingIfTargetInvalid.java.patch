@@ -1,12 +1,9 @@
 --- a/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
 +++ b/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
-@@ -7,6 +_,9 @@
+@@ -7,6 +_,6 @@
  import net.minecraft.world.entity.Mob;
  import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
  import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityTargetEvent;
  
  public class StopAttackingIfTargetInvalid {
     private static final int TIMEOUT_TO_GET_WITHIN_ATTACK_RANGE = 200;
@@ -16,7 +13,7 @@
                 } else {
 +                  // CraftBukkit start
 +                  LivingEntity old = p_258796_.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).orElse(null);
-+                  EntityTargetEvent event = CraftEventFactory.callEntityTargetLivingEvent(p_258796_, null, (old != null && !old.isAlive()) ? EntityTargetEvent.TargetReason.TARGET_DIED : EntityTargetEvent.TargetReason.FORGOT_TARGET);
++                  org.bukkit.event.entity.EntityTargetEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTargetLivingEvent(p_258796_, null, (old != null && !old.isAlive()) ? org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_DIED : org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET);
 +                  if (event.isCancelled()) {
 +                     return false;
 +                  }
@@ -24,7 +21,7 @@
 +                     p_258787_.erase();
 +                     return true;
 +                  }
-+                  livingentity = ((CraftLivingEntity) event.getTarget()).getHandle();
++                  livingentity = ((org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +                  // CraftBukkit end
                    p_259568_.accept(p_258796_, livingentity);
                    p_258787_.erase();

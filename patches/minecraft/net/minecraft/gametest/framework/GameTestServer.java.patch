@@ -1,28 +1,23 @@
 --- a/net/minecraft/gametest/framework/GameTestServer.java
 +++ b/net/minecraft/gametest/framework/GameTestServer.java
-@@ -8,6 +_,9 @@
+@@ -8,6 +_,6 @@
  import com.mojang.authlib.yggdrasil.ServicesKeySet;
  import com.mojang.logging.LogUtils;
  import com.mojang.serialization.Lifecycle;
-+
-+import java.io.IOException;
-+import java.net.InetAddress;
  import java.net.Proxy;
  import java.util.ArrayList;
  import java.util.Collection;
-@@ -18,6 +_,7 @@
+@@ -18,6 +_,6 @@
  import net.minecraft.CrashReport;
  import net.minecraft.SystemReport;
  import net.minecraft.Util;
-+import net.minecraft.commands.CommandSourceStack;
  import net.minecraft.commands.Commands;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.LayeredRegistryAccess;
-@@ -49,6 +_,7 @@
+@@ -49,6 +_,6 @@
  import net.minecraft.world.level.levelgen.presets.WorldPresets;
  import net.minecraft.world.level.storage.LevelStorageSource;
  import net.minecraft.world.level.storage.PrimaryLevelData;
-+import org.bukkit.command.CommandSender;
  import org.slf4j.Logger;
  
  public class GameTestServer extends MinecraftServer {
@@ -38,8 +33,8 @@
 +         this.setPort(25565);
 +      }
 +      try {
-+         this.getConnection().startTcpServerListener(InetAddress.getLocalHost(), this.getPort());
-+      } catch (IOException ioexception) {
++         this.getConnection().startTcpServerListener(java.net.InetAddress.getLocalHost(), this.getPort());
++      } catch (java.io.IOException ioexception) {
 +         LOGGER.warn("**** FAILED TO BIND TO PORT!");
 +         LOGGER.warn("The exception was: {}", (Object)ioexception.toString());
 +         LOGGER.warn("Perhaps a server is already running on that port?");
@@ -69,7 +64,7 @@
 +
 +   // Ketting start
 +   @Override
-+   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++   public org.bukkit.command.CommandSender getBukkitSender(net.minecraft.commands.CommandSourceStack wrapper) {
 +      return null;
 +   }
 +   // Ketting end

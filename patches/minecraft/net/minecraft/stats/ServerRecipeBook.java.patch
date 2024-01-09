@@ -1,10 +1,9 @@
 --- a/net/minecraft/stats/ServerRecipeBook.java
 +++ b/net/minecraft/stats/ServerRecipeBook.java
-@@ -17,6 +_,7 @@
+@@ -17,6 +_,6 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.world.item.crafting.RecipeHolder;
  import net.minecraft.world.item.crafting.RecipeManager;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  import org.slf4j.Logger;
  
  public class ServerRecipeBook extends RecipeBook {
@@ -13,7 +12,7 @@
        for(RecipeHolder<?> recipeholder : p_12792_) {
           ResourceLocation resourcelocation = recipeholder.id();
 -         if (!this.known.contains(resourcelocation) && !recipeholder.value().isSpecial()) {
-+         if (!this.known.contains(resourcelocation) && !recipeholder.value().isSpecial() && CraftEventFactory.handlePlayerRecipeListUpdateEvent(p_12793_, resourcelocation)) { // CraftBukkit
++         if (!this.known.contains(resourcelocation) && !recipeholder.value().isSpecial() && org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handlePlayerRecipeListUpdateEvent(p_12793_, resourcelocation)) { // CraftBukkit
              this.add(resourcelocation);
              this.addHighlight(resourcelocation);
              list.add(resourcelocation);

@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/net/minecraft/world/inventory/AnvilMenu.java
-@@ -16,6 +_,7 @@
+@@ -16,6 +_,6 @@
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.level.block.AnvilBlock;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
  import org.slf4j.Logger;
  
  public class AnvilMenu extends ItemCombinerMenu {
@@ -26,7 +25,7 @@
 +   // CraftBukkit start
 +   public static final int DEFAULT_DENIED_COST = -1;
 +   public int maximumRepairCost = 40;
-+   private CraftInventoryView bukkitEntity;
++   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity;
 +   // CraftBukkit end
  
     public AnvilMenu(int p_39005_, Inventory p_39006_) {
@@ -157,14 +156,14 @@
 +
 +   // CraftBukkit start
 +   @Override
-+   public CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
 +      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryAnvil(
 +              access.getLocation(), this.inputSlots, this.resultSlots, this);
-+      bukkitEntity = new CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

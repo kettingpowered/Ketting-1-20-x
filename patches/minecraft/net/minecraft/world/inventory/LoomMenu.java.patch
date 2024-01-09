@@ -1,27 +1,24 @@
 --- a/net/minecraft/world/inventory/LoomMenu.java
 +++ b/net/minecraft/world/inventory/LoomMenu.java
-@@ -23,8 +_,27 @@
+@@ -23,8 +_,24 @@
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.entity.BannerPattern;
  import net.minecraft.world.level.block.entity.BlockEntityType;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryLoom;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
  
  public class LoomMenu extends AbstractContainerMenu {
 +
 +   // CraftBukkit start
-+   private CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity = null;
 +   private org.bukkit.entity.Player player;
 +
 +   @Override
-+   public CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      CraftInventoryLoom inventory = new CraftInventoryLoom(this.inputContainer, this.outputContainer);
-+      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryLoom inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryLoom(this.inputContainer, this.outputContainer);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
@@ -63,7 +60,7 @@
 +
 +         // CraftBukkit start
 +         @Override
-+         public Location getLocation() {
++         public org.bukkit.Location getLocation() {
 +            return p_39861_.getLocation();
 +         }
 +         // CraftBukkit end
@@ -76,7 +73,7 @@
 +
 +         // CraftBukkit start
 +         @Override
-+         public Location getLocation() {
++         public org.bukkit.Location getLocation() {
 +            return p_39861_.getLocation();
 +         }
 +         // CraftBukkit end

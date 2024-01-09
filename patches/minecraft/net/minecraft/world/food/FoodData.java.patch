@@ -1,17 +1,14 @@
 --- a/net/minecraft/world/food/FoodData.java
 +++ b/net/minecraft/world/food/FoodData.java
-@@ -1,32 +_,62 @@
+@@ -1,32 +_,59 @@
  package net.minecraft.world.food;
  
  import net.minecraft.nbt.CompoundTag;
-+import net.minecraft.network.protocol.game.ClientboundSetHealthPacket;
-+import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.world.Difficulty;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.Item;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.GameRules;
-+import org.apache.commons.lang3.Validate;
  
  public class FoodData {
 -   private int foodLevel = 20;
@@ -35,7 +32,7 @@
 +
 +   // CraftBukkit start - added EntityHuman constructor
 +   public FoodData(Player entityhuman) {
-+      Validate.notNull(entityhuman);
++      org.apache.commons.lang3.Validate.notNull(entityhuman);
 +      this.entityhuman = entityhuman;
     }
 +   // CraftBukkit end
@@ -65,7 +62,7 @@
 +            this.eat(event.getFoodLevel() - oldFoodLevel, foodproperties.getSaturationModifier());
 +         }
 +
-+         ((ServerPlayer) entityhuman).getBukkitEntity().sendHealthUpdate();
++         ((net.minecraft.server.level.ServerPlayer) entityhuman).getBukkitEntity().sendHealthUpdate();
 +         // CraftBukkit end
        }
  
@@ -81,7 +78,7 @@
 +               this.foodLevel = event.getFoodLevel();
 +            }
 +
-+            ((ServerPlayer) entityhuman).connection.send(new ClientboundSetHealthPacket(((ServerPlayer) entityhuman).getBukkitEntity().getScaledHealth(), this.foodLevel, this.saturationLevel));
++            ((net.minecraft.server.level.ServerPlayer) entityhuman).connection.send(new net.minecraft.network.protocol.game.ClientboundSetHealthPacket(((net.minecraft.server.level.ServerPlayer) entityhuman).getBukkitEntity().getScaledHealth(), this.foodLevel, this.saturationLevel));
 +            // CraftBukkit end
              this.foodLevel = Math.max(this.foodLevel - 1, 0);
           }

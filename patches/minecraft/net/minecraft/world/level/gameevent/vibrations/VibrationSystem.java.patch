@@ -1,12 +1,9 @@
 --- a/net/minecraft/world/level/gameevent/vibrations/VibrationSystem.java
 +++ b/net/minecraft/world/level/gameevent/vibrations/VibrationSystem.java
-@@ -27,6 +_,9 @@
+@@ -27,6 +_,6 @@
  import net.minecraft.world.level.gameevent.PositionSource;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.CraftGameEvent;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.event.block.BlockReceiveGameEvent;
  
  public interface VibrationSystem {
     GameEvent[] RESONANCE_EVENTS = new GameEvent[]{GameEvent.RESONATE_1, GameEvent.RESONATE_2, GameEvent.RESONATE_3, GameEvent.RESONATE_4, GameEvent.RESONATE_5, GameEvent.RESONATE_6, GameEvent.RESONATE_7, GameEvent.RESONATE_8, GameEvent.RESONATE_9, GameEvent.RESONATE_10, GameEvent.RESONATE_11, GameEvent.RESONATE_12, GameEvent.RESONATE_13, GameEvent.RESONATE_14, GameEvent.RESONATE_15};
@@ -18,7 +15,7 @@
 +               // CraftBukkit start
 +               boolean defaultCancel = !vibrationsystem$user.canReceiveVibration(p_282254_, BlockPos.containing(p_282426_), p_283599_, p_283664_);
 +               Entity entity = p_283664_.sourceEntity();
-+               BlockReceiveGameEvent event = new BlockReceiveGameEvent(CraftGameEvent.minecraftToBukkit(p_283599_), CraftBlock.at(p_282254_, BlockPos.containing(vec3)), (entity == null) ? null : entity.getBukkitEntity());
++               org.bukkit.event.block.BlockReceiveGameEvent event = new org.bukkit.event.block.BlockReceiveGameEvent(org.bukkit.craftbukkit.v1_20_R2.CraftGameEvent.minecraftToBukkit(p_283599_), org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_282254_, BlockPos.containing(vec3)), (entity == null) ? null : entity.getBukkitEntity());
 +               event.setCancelled(defaultCancel);
 +               p_282254_.getCraftServer().getPluginManager().callEvent(event);
 +               if (event.isCancelled()) {

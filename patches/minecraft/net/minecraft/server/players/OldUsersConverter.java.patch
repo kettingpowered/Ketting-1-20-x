@@ -1,11 +1,9 @@
 --- a/net/minecraft/server/players/OldUsersConverter.java
 +++ b/net/minecraft/server/players/OldUsersConverter.java
-@@ -20,6 +_,8 @@
+@@ -20,6 +_,6 @@
  import java.util.UUID;
  import javax.annotation.Nullable;
  import net.minecraft.core.UUIDUtil;
-+import net.minecraft.nbt.CompoundTag;
-+import net.minecraft.nbt.NbtIo;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.dedicated.DedicatedServer;
  import net.minecraft.util.StringUtil;
@@ -60,23 +58,23 @@
                    File file6 = new File(p_11168_, p_11170_ + ".dat");
 +
 +                  // CraftBukkit start - Use old file name to seed lastKnownName
-+                  CompoundTag root = null;
++                  net.minecraft.nbt.CompoundTag root = null;
 +
 +                  try {
-+                     root = NbtIo.readCompressed(new java.io.FileInputStream(file5));
++                     root = net.minecraft.nbt.NbtIo.readCompressed(new java.io.FileInputStream(file5));
 +                  } catch (Exception exception) {
 +                     exception.printStackTrace();
 +                  }
 +
 +                  if (root != null) {
 +                     if (!root.contains("bukkit")) {
-+                        root.put("bukkit", new CompoundTag());
++                        root.put("bukkit", new net.minecraft.nbt.CompoundTag());
 +                     }
-+                     CompoundTag data = root.getCompound("bukkit");
++                     net.minecraft.nbt.CompoundTag data = root.getCompound("bukkit");
 +                     data.putString("lastKnownName", p_11169_);
 +
 +                     try {
-+                        NbtIo.writeCompressed(root, new java.io.FileOutputStream(file2));
++                        net.minecraft.nbt.NbtIo.writeCompressed(root, new java.io.FileOutputStream(file2));
 +                     } catch (Exception exception) {
 +                        exception.printStackTrace();
 +                     }

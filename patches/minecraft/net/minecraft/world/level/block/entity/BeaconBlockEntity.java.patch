@@ -1,11 +1,9 @@
 --- a/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
-@@ -38,6 +_,8 @@
+@@ -38,6 +_,6 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.levelgen.Heightmap;
  import net.minecraft.world.phys.AABB;
-+import org.bukkit.craftbukkit.v1_20_R2.potion.CraftPotionUtil;
-+import org.bukkit.potion.PotionEffect;
  
  public class BeaconBlockEntity extends BlockEntity implements MenuProvider, Nameable {
     private static final int MAX_LEVELS = 4;
@@ -37,12 +35,12 @@
     };
  
 +   // CraftBukkit start - add fields and methods
-+   public PotionEffect getPrimaryEffect() {
-+      return (this.primaryPower != null) ? CraftPotionUtil.toBukkit(new MobEffectInstance(this.primaryPower, getLevel(this.levels), getAmplification(levels, primaryPower, secondaryPower), true, true)) : null;
++   public org.bukkit.potion.PotionEffect getPrimaryEffect() {
++      return (this.primaryPower != null) ? org.bukkit.craftbukkit.v1_20_R2.potion.CraftPotionUtil.toBukkit(new MobEffectInstance(this.primaryPower, getLevel(this.levels), getAmplification(levels, primaryPower, secondaryPower), true, true)) : null;
 +   }
 +
-+   public PotionEffect getSecondaryEffect() {
-+      return (hasSecondaryEffect(levels, primaryPower, secondaryPower)) ? CraftPotionUtil.toBukkit(new MobEffectInstance(this.secondaryPower, getLevel(this.levels), getAmplification(levels, primaryPower, secondaryPower), true, true)) : null;
++   public org.bukkit.potion.PotionEffect getSecondaryEffect() {
++      return (hasSecondaryEffect(levels, primaryPower, secondaryPower)) ? org.bukkit.craftbukkit.v1_20_R2.potion.CraftPotionUtil.toBukkit(new MobEffectInstance(this.secondaryPower, getLevel(this.levels), getAmplification(levels, primaryPower, secondaryPower), true, true)) : null;
 +   }
 +   // CraftBukkit end
     @Nullable

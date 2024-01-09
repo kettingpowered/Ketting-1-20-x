@@ -1,27 +1,24 @@
 --- a/net/minecraft/world/inventory/GrindstoneMenu.java
 +++ b/net/minecraft/world/inventory/GrindstoneMenu.java
-@@ -16,8 +_,27 @@
+@@ -16,8 +_,24 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryGrindstone;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
  
  public class GrindstoneMenu extends AbstractContainerMenu {
 +
 +   // CraftBukkit start
-+   private CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity = null;
 +   private org.bukkit.entity.Player player;
 +
 +   @Override
-+   public CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      CraftInventoryGrindstone inventory = new CraftInventoryGrindstone(this.repairSlots, this.resultSlots);
-+      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryGrindstone inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryGrindstone(this.repairSlots, this.resultSlots);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
@@ -56,7 +53,7 @@
 +
 +         // CraftBukkit start
 +         @Override
-+         public Location getLocation() {
++         public org.bukkit.Location getLocation() {
 +            return p_39568_.getLocation();
 +         }
 +         // CraftBukkit end
