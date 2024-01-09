@@ -534,10 +534,12 @@
                    this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
                 }
              }
-@@ -856,11 +_,23 @@
-       return this.biomeManager;
-    }
+@@ -854,6 +_,18 @@
  
+    public BiomeManager getBiomeManager() {
+       return this.biomeManager;
++   }
++
 +   private double maxEntityRadius = 2.0D;
 +   @Override
 +   public double getMaxEntityRadius() {
@@ -548,14 +550,6 @@
 +      if (value > maxEntityRadius)
 +         maxEntityRadius = value;
 +      return maxEntityRadius;
-+   }
-+
-    public final boolean isDebug() {
-       return this.isDebug;
     }
  
--   protected abstract LevelEntityGetter<Entity> getEntities();
-+   public abstract LevelEntityGetter<Entity> getEntities();
- 
-    public long nextSubTickCount() {
-       return (long)(this.subTickCount++);
+    public final boolean isDebug() {
