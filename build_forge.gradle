@@ -93,17 +93,14 @@ ext {
 
 configurations {
     // Don't pull all libraries, if we're missing something, add it to the installer list so the installer knows to download it.
-    bootstrap  { transitive = false }        
+    bootstrap  { transitive = false }
     installer { 
         extendsFrom(bootstrap)
-        transitive = false 
+        transitive = false
     }
-    //Ketting start
-    internallibs {
-        extendsFrom(installer)
-        transitive = true
+    kettinglauncher{
+        transitive = false
     }
-    //Ketting end
     api.extendsFrom(installer)
 }
 
@@ -136,10 +133,15 @@ dependencies {
     runtimeOnly(libs.bootstrap)
 
     //Ketting start
-    installer(libs.ketting)
+    installer(libs.ketting){
+        exclude group: 'org.spongepowered', module: 'mixin'
+    }
     installer(libs.kettingcommon)
+    kettinglauncher libs.kettinglauncher
     installer(libs.terminalcolors)
-    installer(libs.bundles.bukkitlibs)
+    installer(libs.bundles.bukkitlibs){
+        exclude group: 'junit', module: 'junit'
+    }
     installer(libs.bundles.launcher) // Add missing libraries
     installer(variantOf(libs.nettyTransportEpoll) { classifier("linux-x86_64") })
     installer(variantOf(libs.nettyTransportEpoll) { classifier("linux-aarch_64") })
@@ -147,20 +149,6 @@ dependencies {
     BUNDLED_PROJECTS.each {item -> {
         installer(project(item)) //Ketting - Implement instead of installing, deps get added in the kettingJarPacked task anyway
     }}
-
-    //don't ask about those deps please. IDK why they are needed. The forge/cpw launcher throws a fit if they aren't.
-//    internallibs 'javax.annotation:javax.annotation-api:1.3.2'
-//    internallibs 'javax.servlet:javax.servlet-api:4.0.1'
-//    internallibs 'jakarta.servlet:jakarta.servlet-api:6.0.0'
-//
-//    internallibs 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
-//    internallibs 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.1'
-//
-//    internallibs 'com.electronwill.night-config:hocon:3.6.7'
-//    internallibs 'com.electronwill.night-config:json:3.6.7'
-//    internallibs 'com.electronwill.night-config:yaml:3.6.7'
-//    internallibs 'com.electronwill.night-config:toml:3.6.7'
-//    Ketting end
 }
 
 patcher {
@@ -916,61 +904,51 @@ tasks.register('installerJar', InstallerJar) {
 tasks.register('generateKettingLibraries', org.kettingpowered.task.GenerateLibs) {}
 
 tasks.register('kettingJar', Jar) {
-    archiveClassifier = 'server'
     archiveExtension = 'jar'
     archiveBaseName = 'ketting'
     archiveClassifier = 'kettingJar'
-
-    doFirst {
-        manifest{
-            attributes([
-                    'Main-Class':               'org.kettingpowered.ketting.KettingLauncher'
-            ])
-            attributes([
-                    'Specification-Title':      'Kettingpowered',
-                    'Specification-Vendor':     'Kettingpowered',
-                    'Implementation-Title':     'Ketting',
-                    'Implementation-Version':   "${VERSION}-${MCP_VERSION}",
-                    'Implementation-Vendor':    'Kettingpowered'
-            ] as LinkedHashMap, 'org/kettingpowered/ketting/')
-            attributes([
-                    'Specification-Title':      'Kettingpowered',
-                    'Specification-Vendor':     'Kettingpowered',
-                    'Implementation-Title':     'Ketting',
-                    'Implementation-Version':   "${VERSION}-${MCP_VERSION}",
-                    'Implementation-Vendor':    'Kettingpowered'
-            ] as LinkedHashMap, 'org/kettingpowered/ketting/internal/')
-        }
+    manifest{
     }
-
-}
-tasks.register('kettingJarPacked', Jar) {
-    dependsOn ':forge:downloadServerRaw'
-    dependsOn ':forge:genServerBinPatches'
-    dependsOn generateKettingLibraries
-    dependsOn createServerShimClasspath
+    manifest{
+        attributes 'Main-Class': 'org.kettingpowered.launcher.Main'
+        attributes 'Launcher-Agent-Class': 'org.kettingpowered.launcher.Main'
+        attributes 'Bundled': 'true'
+        attributes 'MinecraftVersion': MC_VERSION
+        attributes 'ForgeVersion': FORGE_VERSION
+        attributes 'KettingVersion': KETTING_VERSION
+        attributes([
+                "Specification-Title": "Kettingpowered",
+                "Specification-Vendor": "Kettingpowered",
+                "Implementation-Title": "Ketting",
+                "Implementation-Version": "dev-env",
+                "Implementation-Vendor": "Kettingpowered",
+        ], "org/kettingpowered/launcher/")
+    }
     mustRunAfter ':setup'
+    mustRunAfter ':forge:validateDeprecations'
+    dependsOn generateKettingLibraries
+    dependsOn ':forge:genServerBinPatches'
 
     BUNDLED_PROJECTS.each { dep -> {
         dependsOn project(dep).tasks.jar
         mustRunAfter project(dep).tasks.jar
     }}
-    dependsOn project(':kettingcommonimpl').tasks.jar
-    mustRunAfter project(':kettingcommonimpl').tasks.jar
 
     BUNDLED_PROJECTS.each { dep ->
         from(project(dep).tasks.jar.outputs) {
             rename { "data/${dep.substring(1)}-${MC_VERSION}-${FORGE_VERSION}-${KETTING_VERSION}.jar" } //substring with 1 to remove :
         }
     }
+    from {
+        configurations.kettinglauncher.collect { it.isDirectory() ? it : zipTree(it) }
+    } {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+    }
 
-    from(project(':kettinglauncher').project.sourceSets.main.output)
-    from(project(':kettingcommonimpl').project.sourceSets.main.output)
     from(generateKettingLibraries) {
         rename {'data/ketting_libraries.txt'}
-    }
-    from(createServerShimClasspath) {
-        rename { 'data/bootstrap-shim.list' }
     }
 
     from(genServerBinPatches.output) {
@@ -979,6 +957,9 @@ tasks.register('kettingJarPacked', Jar) {
 
     from(universalJar) {
         rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-' + KETTING_VERSION + '-universal.jar' }
+    }
+    from(installerJson.output) {
+        rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-' + KETTING_VERSION + '-installscript.json' }
     }
 }
 //Ketting end

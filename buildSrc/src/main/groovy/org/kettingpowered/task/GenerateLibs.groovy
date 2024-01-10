@@ -19,7 +19,7 @@ abstract class GenerateLibs extends DefaultTask {
     @TaskAction
     void genActions() {
         def entries = new HashMap<GString, GString> ()
-        getProject().configurations.internallibs.resolvedConfiguration.resolvedArtifacts.each { dep->
+        getProject().configurations.installer.resolvedConfiguration.resolvedArtifacts.each { dep->
             def art = dep.moduleVersion.id
             if ('junit'.equals(art.name) && 'junit'.equals(art.group)) return;
             def mavenId = "$art.group:$art.name:$art.version" + (dep.classifier != null ? ":$dep.classifier" : "") + (dep.extension != null ? "@$dep.extension" : "")
