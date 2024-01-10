@@ -98,6 +98,9 @@ configurations {
         extendsFrom(bootstrap)
         transitive = false
     }
+    kettinglauncher{
+        transitive = false
+    }
     api.extendsFrom(installer)
 }
 
@@ -134,6 +137,7 @@ dependencies {
         exclude group: 'org.spongepowered', module: 'mixin'
     }
     installer(libs.kettingcommon)
+    kettinglauncher libs.kettinglauncher
     installer(libs.terminalcolors)
     installer(libs.bundles.bukkitlibs){
         exclude group: 'junit', module: 'junit'
@@ -903,37 +907,27 @@ tasks.register('kettingJar', Jar) {
     archiveClassifier = 'server'
     archiveExtension = 'jar'
     archiveBaseName = 'ketting'
-    archiveClassifier = 'kettingJar'
-
-    doFirst {
-        manifest{
-            attributes([
-                    'Main-Class':               'org.kettingpowered.ketting.KettingLauncher'
-            ])
-            attributes([
-                    'Specification-Title':      'Kettingpowered',
-                    'Specification-Vendor':     'Kettingpowered',
-                    'Implementation-Title':     'Ketting',
-                    'Implementation-Version':   "${VERSION}-${MCP_VERSION}",
-                    'Implementation-Vendor':    'Kettingpowered'
-            ] as LinkedHashMap, 'org/kettingpowered/ketting/')
-            attributes([
-                    'Specification-Title':      'Kettingpowered',
-                    'Specification-Vendor':     'Kettingpowered',
-                    'Implementation-Title':     'Ketting',
-                    'Implementation-Version':   "${VERSION}-${MCP_VERSION}",
-                    'Implementation-Vendor':    'Kettingpowered'
-            ] as LinkedHashMap, 'org/kettingpowered/ketting/internal/')
-        }
+    archiveClassifier = 'kettingJarPacked'
+    manifest{
     }
-
-}
-tasks.register('kettingJarPacked', Jar) {
+    manifest{
+        attributes 'Main-Class': 'org.kettingpowered.launcher.Main'
+        attributes 'Launcher-Agent-Class': 'org.kettingpowered.launcher.Main'
+        attributes 'Bundled': 'true'
+        attributes([
+                "Specification-Title": "Kettingpowered",
+                "Specification-Vendor": "Kettingpowered",
+                "Implementation-Title": "Ketting",
+                "Implementation-Version": "dev-env",
+                "Implementation-Vendor": "Kettingpowered",
+        ], "org/kettingpowered/launcher/")
+    }
     dependsOn ':forge:downloadServerRaw'
     dependsOn ':forge:genServerBinPatches'
     dependsOn generateKettingLibraries
     dependsOn createServerShimClasspath
     mustRunAfter ':setup'
+    mustRunAfter ':forge:validateDeprecations'
 
     BUNDLED_PROJECTS.each { dep -> {
         dependsOn project(dep).tasks.jar
@@ -945,12 +939,16 @@ tasks.register('kettingJarPacked', Jar) {
             rename { "data/${dep.substring(1)}-${MC_VERSION}-${FORGE_VERSION}-${KETTING_VERSION}.jar" } //substring with 1 to remove :
         }
     }
-    
+    from {
+        configurations.kettinglauncher.collect { it.isDirectory() ? it : zipTree(it) }
+    } {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+    }
+
     from(generateKettingLibraries) {
         rename {'data/ketting_libraries.txt'}
-    }
-    from(createServerShimClasspath) {
-        rename { 'data/bootstrap-shim.list' }
     }
 
     from(genServerBinPatches.output) {
