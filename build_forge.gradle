@@ -904,16 +904,18 @@ tasks.register('installerJar', InstallerJar) {
 tasks.register('generateKettingLibraries', org.kettingpowered.task.GenerateLibs) {}
 
 tasks.register('kettingJar', Jar) {
-    archiveClassifier = 'server'
     archiveExtension = 'jar'
     archiveBaseName = 'ketting'
-    archiveClassifier = 'kettingJarPacked'
+    archiveClassifier = 'kettingJar'
     manifest{
     }
     manifest{
         attributes 'Main-Class': 'org.kettingpowered.launcher.Main'
         attributes 'Launcher-Agent-Class': 'org.kettingpowered.launcher.Main'
         attributes 'Bundled': 'true'
+        attributes 'MinecraftVersion': MC_VERSION
+        attributes 'ForgeVersion': FORGE_VERSION
+        attributes 'KettingVersion': KETTING_VERSION
         attributes([
                 "Specification-Title": "Kettingpowered",
                 "Specification-Vendor": "Kettingpowered",
@@ -957,6 +959,9 @@ tasks.register('kettingJar', Jar) {
 
     from(universalJar) {
         rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-' + KETTING_VERSION + '-universal.jar' }
+    }
+    from(installerJson.output) {
+        rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-' + KETTING_VERSION + '-installscript.json' }
     }
 }
 //Ketting end
