@@ -43,7 +43,7 @@
        this.server = p_203842_;
        this.registries = p_251844_;
        this.maxPlayers = p_203845_;
-@@ -147,9 +_,17 @@
+@@ -147,7 +_,14 @@
        }
  
        CompoundTag compoundtag = this.load(p_11263_);
@@ -58,11 +58,8 @@
 +      ResourceKey<Level> resourcekey = compoundtag != null ? DimensionType.parseLegacy(new Dynamic<>(NbtOps.INSTANCE, compoundtag.get("Dimension"))).resultOrPartial(LOGGER::error).orElse(p_11263_.serverLevel().dimension()) : p_11263_.serverLevel().dimension();
        ServerLevel serverlevel = this.server.getLevel(resourcekey);
        ServerLevel serverlevel1;
-+
        if (serverlevel == null) {
-          LOGGER.warn("Unknown respawn dimension {}, defaulting to overworld", (Object)resourcekey);
-          serverlevel1 = this.server.overworld();
-@@ -159,18 +_,38 @@
+@@ -159,7 +_,22 @@
  
        p_11263_.setServerLevel(serverlevel1);
        String s1 = p_11262_.getLoggableAddress(this.server.logIPs());
@@ -84,10 +81,9 @@
 +      // CraftBukkit - Moved message to after join
 +      // LOGGER.info("{}[{}] logged in with entity id {} at ({}, {}, {})", p_11263_.getName().getString(), s1, p_11263_.getId(), p_11263_.getX(), p_11263_.getY(), p_11263_.getZ());
        LevelData leveldata = serverlevel1.getLevelData();
-+
        p_11263_.loadGameTypes(compoundtag);
        ServerGamePacketListenerImpl servergamepacketlistenerimpl = new ServerGamePacketListenerImpl(this.server, p_11262_, p_11263_, p_297215_);
-       GameRules gamerules = serverlevel1.getGameRules();
+@@ -167,10 +_,14 @@
        boolean flag = gamerules.getBoolean(GameRules.RULE_DO_IMMEDIATE_RESPAWN);
        boolean flag1 = gamerules.getBoolean(GameRules.RULE_REDUCEDDEBUGINFO);
        boolean flag2 = gamerules.getBoolean(GameRules.RULE_LIMITED_CRAFTING);
@@ -103,7 +99,7 @@
        servergamepacketlistenerimpl.send(new ClientboundUpdateRecipesPacket(this.server.getRecipeManager().getRecipes()));
        this.sendPlayerPermissionLevel(p_11263_);
        p_11263_.getStats().markAllDirty();
-@@ -184,32 +_,89 @@
+@@ -184,29 +_,83 @@
           mutablecomponent = Component.translatable("multiplayer.player.joined.renamed", p_11263_.getDisplayName(), s);
        }
  
@@ -114,7 +110,6 @@
 +
        servergamepacketlistenerimpl.teleport(p_11263_.getX(), p_11263_.getY(), p_11263_.getZ(), p_11263_.getYRot(), p_11263_.getXRot());
        ServerStatus serverstatus = this.server.getStatus();
-+
        if (serverstatus != null) {
           p_11263_.sendServerStatus(serverstatus);
        }
@@ -195,13 +190,8 @@
 +            return !finalServerLevel.addWithUUID(p_215603_) ? null : p_215603_;
 +            // CraftBukkit end
           });
-+
           if (entity1 != null) {
              UUID uuid;
-+
-             if (compoundtag1.hasUUID("Attach")) {
-                uuid = compoundtag1.getUUID("Attach");
-             } else {
 @@ -239,6 +_,9 @@
        }
  
@@ -270,7 +260,7 @@
        if (playeradvancements != null) {
           playeradvancements.save();
        }
-@@ -321,8 +_,27 @@
+@@ -321,8 +_,26 @@
     }
  
     public void remove(ServerPlayer p_11287_) {
@@ -279,7 +269,6 @@
 +   public String removeString(ServerPlayer p_11287_) { // CraftBukkit - return string
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedOut(p_11287_);
        ServerLevel serverlevel = p_11287_.serverLevel();
-+
        p_11287_.awardStat(Stats.LEAVE_GAME);
 +
 +      // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
@@ -298,7 +287,7 @@
        this.save(p_11287_);
        if (p_11287_.isPassenger()) {
           Entity entity = p_11287_.getRootVehicle();
-@@ -339,19 +_,36 @@
+@@ -339,19 +_,35 @@
        serverlevel.removePlayerImmediately(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
        p_11287_.getAdvancements().stopListening();
        this.players.remove(p_11287_);
@@ -306,7 +295,6 @@
        this.server.getCustomBossEvents().onPlayerDisconnect(p_11287_);
        UUID uuid = p_11287_.getUUID();
        ServerPlayer serverplayer = this.playersByUUID.get(uuid);
-+
        if (serverplayer == p_11287_) {
           this.playersByUUID.remove(uuid);
 -         this.stats.remove(uuid);
@@ -433,7 +421,7 @@
        UUID uuid = p_299278_.getId();
        Set<ServerPlayer> set = Sets.newIdentityHashSet();
  
-@@ -396,79 +_,175 @@
+@@ -396,79 +_,174 @@
        }
  
        for(ServerPlayer serverplayer1 : set) {
@@ -596,7 +584,6 @@
 +      byte b0 = (byte)(flag ? 1 : 0);
        ServerLevel serverlevel2 = serverplayer.serverLevel();
        LevelData leveldata = serverlevel2.getLevelData();
-+
        serverplayer.connection.send(new ClientboundRespawnPacket(serverplayer.createCommonSpawnInfo(serverlevel2), b0));
 -      serverplayer.connection.teleport(serverplayer.getX(), serverplayer.getY(), serverplayer.getZ(), serverplayer.getYRot(), serverplayer.getXRot());
 +      serverplayer.connection.send(new ClientboundSetChunkCacheRadiusPacket(serverlevel1.spigotConfig.viewDistance)); // Spigot
@@ -817,7 +804,7 @@
  
     public void broadcastSystemMessage(Component p_240618_, boolean p_240644_) {
        this.broadcastSystemMessage(p_240618_, (p_215639_) -> {
-@@ -767,34 +_,51 @@
+@@ -767,34 +_,48 @@
        return p_251384_.hasSignature() && !p_251384_.hasExpiredServer(Instant.now());
     }
  
@@ -843,12 +830,10 @@
 +      if (stats == null) {
           File file1 = this.server.getWorldPath(LevelResource.PLAYER_STATS_DIR).toFile();
           File file2 = new File(file1, uuid + ".json");
-+
           if (!file2.exists()) {
 -            File file3 = new File(file1, p_11240_.getName().getString() + ".json");
 +            File file3 = new File(file1, displayName + ".json"); // CraftBukkit
              Path path = file3.toPath();
-+
              if (FileUtil.isPathNormalized(path) && FileUtil.isPathPortable(path) && path.startsWith(file1.getPath()) && file3.isFile()) {
                 file3.renameTo(file2);
              }
@@ -871,7 +856,6 @@
 +
        if (playeradvancements == null) {
           Path path = this.server.getWorldPath(LevelResource.PLAYER_ADVANCEMENTS_DIR).resolve(uuid + ".json");
-+
           playeradvancements = new PlayerAdvancements(this.server.getFixerUpper(), this, this.server.getAdvancements(), path, p_11297_);
 -         this.advancements.put(uuid, playeradvancements);
 +         // this.advancements.put(uuid, playeradvancements); // CraftBukkit

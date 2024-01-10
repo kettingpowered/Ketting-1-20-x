@@ -1,15 +1,9 @@
 --- a/net/minecraft/core/dispenser/ShulkerBoxDispenseBehavior.java
 +++ b/net/minecraft/core/dispenser/ShulkerBoxDispenseBehavior.java
-@@ -16,10 +_,35 @@
-    protected ItemStack execute(BlockSource p_123587_, ItemStack p_123588_) {
-       this.setSuccess(false);
-       Item item = p_123588_.getItem();
-+
-       if (item instanceof BlockItem) {
-          Direction direction = p_123587_.state().getValue(DispenserBlock.FACING);
+@@ -21,6 +_,30 @@
           BlockPos blockpos = p_123587_.pos().relative(direction);
           Direction direction1 = p_123587_.level().isEmptyBlock(blockpos.below()) ? direction : Direction.UP;
-+
+ 
 +         // CraftBukkit start
 +         org.bukkit.block.Block bukkitBlock = org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_123587_.level(), p_123587_.pos());
 +         org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(p_123588_);
@@ -33,6 +27,7 @@
 +            }
 +         }
 +         // CraftBukkit end
- 
++
           try {
              this.setSuccess(((BlockItem)item).place(new DirectionalPlaceContext(p_123587_.level(), blockpos, direction, p_123588_, direction1)).consumesAction());
+          } catch (Exception exception) {

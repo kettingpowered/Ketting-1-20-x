@@ -135,11 +135,8 @@
        this.level.getProfiler().pop();
        this.clearCache();
     }
-@@ -327,12 +_,15 @@
-       } else {
-          LevelData leveldata = this.level.getLevelData();
+@@ -329,7 +_,8 @@
           ProfilerFiller profilerfiller = this.level.getProfiler();
-+
           profilerfiller.push("pollingChunks");
           int k = this.level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
 -         boolean flag1 = leveldata.getGameTime() % 400L == 0L;
@@ -148,10 +145,6 @@
           profilerfiller.push("naturalSpawnCount");
           int l = this.distanceManager.getNaturalSpawnChunkCount();
           NaturalSpawner.SpawnState naturalspawner$spawnstate = NaturalSpawner.createState(l, this.level.getAllEntities(), this::getFullChunk, new LocalMobCapCalculator(this.chunkMap));
-+
-          this.lastSpawnState = naturalspawner$spawnstate;
-          profilerfiller.popPush("filteringLoadedChunks");
-          List<ServerChunkCache.ChunkAndHolder> list = Lists.newArrayListWithCapacity(l);
 @@ -345,20 +_,22 @@
           }
  

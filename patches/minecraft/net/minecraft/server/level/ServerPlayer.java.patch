@@ -114,7 +114,7 @@
        if (p_9131_.contains("SpawnX", 99) && p_9131_.contains("SpawnY", 99) && p_9131_.contains("SpawnZ", 99)) {
           this.respawnPosition = new BlockPos(p_9131_.getInt("SpawnX"), p_9131_.getInt("SpawnY"), p_9131_.getInt("SpawnZ"));
           this.respawnForced = p_9131_.getBoolean("SpawnForced");
-@@ -350,9 +_,24 @@
+@@ -350,7 +_,21 @@
  
        Entity entity1 = this.getRootVehicle();
        Entity entity = this.getVehicle();
@@ -136,10 +136,7 @@
 +         // CraftBukkit end
           CompoundTag compoundtag1 = new CompoundTag();
           CompoundTag compoundtag2 = new CompoundTag();
-+
           entity1.save(compoundtag2);
-          compoundtag1.putUUID("Attach", entity.getUUID());
-          compoundtag1.put("Entity", compoundtag2);
 @@ -371,8 +_,36 @@
              p_9197_.put("SpawnDimension", p_248207_);
           });
@@ -293,7 +290,7 @@
           this.connection.send(new ClientboundPlayerCombatKillPacket(this.getId(), component), PacketSendListener.exceptionallySend(() -> {
              int i = 256;
              String s = component.getString(256);
-@@ -600,12 +_,23 @@
+@@ -600,11 +_,21 @@
           this.tellNeutralMobsThatIDied();
        }
  
@@ -316,10 +313,8 @@
 +      // CraftBukkit - Get our scores instead
 +      this.level().getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.DEATH_COUNT, this.getScoreboardName(), Score::increment);
        LivingEntity livingentity = this.getKillCredit();
-+
        if (livingentity != null) {
           this.awardStat(Stats.ENTITY_KILLED_BY.get(livingentity.getType()));
-          livingentity.awardKillScore(this, this.deathScore, p_9035_);
 @@ -638,10 +_,13 @@
           this.increaseScore(p_9051_);
           String s = this.getScoreboardName();
@@ -593,7 +588,7 @@
           this.enteredNetherPosition = null;
        }
  
-@@ -828,36 +_,70 @@
+@@ -828,32 +_,64 @@
        this.containerMenu.broadcastChanges();
     }
  
@@ -627,7 +622,6 @@
 +                  List<Monster> list = this.level().getEntitiesOfClass(Monster.class, new AABB(vec3d.x() - 8.0D, vec3d.y() - 5.0D, vec3d.z() - 8.0D, vec3d.x() + 8.0D, vec3d.y() + 5.0D, vec3d.z() + 8.0D), (entitymonster) -> {
 +                     return entitymonster.isPreventingPlayerRest(this);
                    });
-+
                    if (!list.isEmpty()) {
                       return Either.left(Player.BedSleepingProblem.NOT_SAFE);
                    }
@@ -668,11 +662,6 @@
                 Either<Player.BedSleepingProblem, Unit> either = super.startSleepInBed(p_9115_).ifRight((p_9029_) -> {
                    this.awardStat(Stats.SLEEP_IN_BED);
                    CriteriaTriggers.SLEPT_IN_BED.trigger(this);
-                });
-+
-                if (!this.serverLevel().canSleepThroughNights()) {
-                   this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
-                }
 @@ -866,9 +_,8 @@
                 return either;
              }

@@ -109,11 +109,9 @@
              if (this.player.blockActionRestricted(this.level, p_215120_, this.gameModeForPlayer)) {
                 this.player.connection.send(new ClientboundBlockUpdatePacket(p_215120_, this.level.getBlockState(p_215120_)));
                 this.debugLogging(p_215120_, false, p_215124_, "block action restricted");
-@@ -150,12 +_,46 @@
- 
+@@ -151,11 +_,44 @@
              this.destroyProgressStart = this.gameTicks;
              float f = 1.0F;
-+
              BlockState blockstate = this.level.getBlockState(p_215120_);
 -            if (!blockstate.isAir()) {
 +            // CraftBukkit start - Swings at air do *NOT* exist.

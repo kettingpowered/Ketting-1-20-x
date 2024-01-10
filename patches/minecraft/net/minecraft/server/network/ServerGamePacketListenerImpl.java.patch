@@ -87,7 +87,7 @@
  
     }
  
-@@ -379,17 +_,46 @@
+@@ -379,7 +_,34 @@
              double d8 = d5 - this.vehicleFirstGoodZ;
              double d9 = entity.getDeltaMovement().lengthSqr();
              double d10 = d6 * d6 + d7 * d7 + d8 * d8;
@@ -123,19 +123,7 @@
                 LOGGER.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.getName().getString(), this.player.getName().getString(), d6, d7, d8);
                 this.send(new ClientboundMoveVehiclePacket(entity));
                 return;
-             }
- 
-             boolean flag = serverlevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625D));
-+
-             d6 = d3 - this.vehicleLastGoodX;
-             d7 = d4 - this.vehicleLastGoodY - 1.0E-6D;
-             d8 = d5 - this.vehicleLastGoodZ;
-             boolean flag1 = entity.verticalCollisionBelow;
-+
-             if (entity instanceof LivingEntity) {
-                LivingEntity livingentity = (LivingEntity)entity;
-                if (livingentity.onClimbable()) {
-@@ -407,18 +_,90 @@
+@@ -407,18 +_,89 @@
              d8 = d5 - entity.getZ();
              d10 = d6 * d6 + d7 * d7 + d8 * d8;
              boolean flag2 = false;
@@ -150,7 +138,6 @@
              entity.absMoveTo(d3, d4, d5, f, f1);
 +            this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
              boolean flag3 = serverlevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625D));
-+
              if (flag && (flag2 || !flag3)) {
                 entity.absMoveTo(d0, d1, d2, f, f1);
 +               this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
@@ -271,7 +258,7 @@
           if (!merchantmenu.stillValid(this.player)) {
              LOGGER.debug("Player {} interacted with invalid menu {}", this.player, merchantmenu);
              return;
-@@ -715,7 +_,15 @@
+@@ -715,6 +_,13 @@
     }
  
     public void handleEditBook(ServerboundEditBookPacket p_9862_) {
@@ -283,10 +270,8 @@
 +      this.lastBookTick = MinecraftServer.currentTick;
 +      // CraftBukkit end
        int i = p_9862_.getSlot();
-+
        if (Inventory.isHotbarSlot(i) || i == 40) {
           List<String> list = Lists.newArrayList();
-          Optional<String> optional = p_9862_.getTitle();
 @@ -733,7 +_,7 @@
     private void updateBookContents(List<FilteredText> p_9813_, int p_9814_) {
        ItemStack itemstack = this.player.getInventory().getItem(p_9814_);
@@ -1279,12 +1264,7 @@
                       }
                    } else {
                       ServerGamePacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.invalid_entity_attacked"));
-@@ -1446,18 +_,19 @@
-       PacketUtils.ensureRunningOnSameThread(p_9843_, this, this.player.serverLevel());
-       this.player.resetLastActionTime();
-       ServerboundClientCommandPacket.Action serverboundclientcommandpacket$action = p_9843_.getAction();
-+
-       switch (serverboundclientcommandpacket$action) {
+@@ -1450,14 +_,14 @@
           case PERFORM_RESPAWN:
              if (this.player.wonGame) {
                 this.player.wonGame = false;
@@ -1324,11 +1304,9 @@
              this.player.containerMenu.sendAllDataToRemote();
           } else if (!this.player.containerMenu.stillValid(this.player)) {
              LOGGER.debug("Player {} interacted with invalid menu {}", this.player, this.player.containerMenu);
-@@ -1489,9 +_,286 @@
-                LOGGER.debug("Player {} clicked invalid slot index: {}, available slots: {}", this.player.getName(), i, this.player.containerMenu.slots.size());
+@@ -1490,8 +_,284 @@
              } else {
                 boolean flag = p_9856_.getStateId() != this.player.containerMenu.getStateId();
-+
                 this.player.containerMenu.suppressRemoteUpdates();
 -               this.player.containerMenu.clicked(i, p_9856_.getButtonNum(), p_9856_.getClickType(), this.player);
 -

@@ -87,7 +87,7 @@
                    double d11;
                    if (entity instanceof LivingEntity) {
                       LivingEntity livingentity = (LivingEntity)entity;
-@@ -238,20 +_,78 @@
+@@ -238,20 +_,76 @@
           boolean flag1 = this.getIndirectSourceEntity() instanceof Player;
           Util.shuffle(this.toBlow, this.level.random);
  
@@ -151,12 +151,10 @@
 +
              if (!blockstate.isAir()) {
                 BlockPos blockpos1 = blockpos.immutable();
-+
                 this.level.getProfiler().push("explosion_blocks");
 -               if (block.dropFromExplosion(this)) {
 +               if (blockstate.canDropFromExplosion(this.level, blockpos, this)) {
                    Level $$9 = this.level;
-+
                    if ($$9 instanceof ServerLevel) {
                       ServerLevel serverlevel = (ServerLevel)$$9;
                       BlockEntity blockentity = blockstate.hasBlockEntity() ? this.level.getBlockEntity(blockpos) : null;

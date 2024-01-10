@@ -9,7 +9,7 @@
     final EntityTickList entityTickList = new EntityTickList();
     public final PersistentEntitySectionManager<Entity> entityManager;
     private final GameEventDispatcher gameEventDispatcher;
-@@ -188,24 +_,121 @@
+@@ -188,24 +_,120 @@
     private final List<CustomSpawner> customSpawners;
     @Nullable
     private EndDragonFight dragonFight;
@@ -128,7 +128,6 @@
        boolean flag = p_214999_.forceSynchronousWrites();
        DataFixer datafixer = p_214999_.getFixerUpper();
        EntityPersistentStorage<Entity> entitypersistentstorage = new EntityStorage(this, p_215001_.getDimensionPath(p_215003_).resolve("entities"), datafixer, flag, p_214999_);
-+
        this.entityManager = new PersistentEntitySectionManager<>(Entity.class, new ServerLevel.EntityCallbacks(), entitypersistentstorage);
 -      this.chunkSource = new ServerChunkCache(this, p_215001_, datafixer, p_214999_.getStructureManager(), p_215000_, chunkgenerator, p_214999_.getPlayerList().getViewDistance(), p_214999_.getPlayerList().getSimulationDistance(), flag, p_215005_, this.entityManager::updateChunkStatus, () -> {
 +      this.chunkSource = new ServerChunkCache(this, p_215001_, datafixer, p_214999_.getStructureManager(), p_215000_, chunkgenerator, this.spigotConfig.viewDistance, this.spigotConfig.simulationDistance, flag, p_215005_, this.entityManager::updateChunkStatus, () -> { // Spigot
@@ -629,11 +628,8 @@
        this.gameEventDispatcher.post(p_215041_, p_215042_, p_215043_);
     }
  
-@@ -917,11 +_,26 @@
-       this.getChunkSource().blockChanged(p_8755_);
-       VoxelShape voxelshape1 = p_8756_.getCollisionShape(this, p_8755_);
+@@ -919,8 +_,21 @@
        VoxelShape voxelshape = p_8757_.getCollisionShape(this, p_8755_);
-+
        if (Shapes.joinIsNotEmpty(voxelshape1, voxelshape, BooleanOp.NOT_SAME)) {
           List<PathNavigation> list = new ObjectArrayList<>();
 +         java.util.Iterator iterator = this.navigatingMobs.iterator();
@@ -653,10 +649,8 @@
 +            }
 +            // CraftBukkit end
              PathNavigation pathnavigation = mob.getNavigation();
-+
              if (pathnavigation.shouldRecomputePath(p_8755_)) {
                 list.add(pathnavigation);
-             }
 @@ -941,10 +_,15 @@
     }
  

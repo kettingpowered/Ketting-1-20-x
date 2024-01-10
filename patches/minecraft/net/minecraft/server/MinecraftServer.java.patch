@@ -82,7 +82,7 @@
     }
  
     private void readScoreboard(DimensionDataStorage p_129842_) {
-@@ -295,17 +_,37 @@
+@@ -295,7 +_,19 @@
  
     protected abstract boolean initServer() throws IOException;
  
@@ -103,11 +103,7 @@
        if (!JvmProfiler.INSTANCE.isRunning()) {
        }
  
-       boolean flag = false;
-       ProfiledDuration profiledduration = JvmProfiler.INSTANCE.onWorldLoadedStarted();
-       this.worldData.setModdedInfo(this.getServerModName(), this.getModdedStatus().shouldReportAsModified());
-+
-       ChunkProgressListener chunkprogresslistener = this.progressListenerFactory.create(11);
+@@ -306,6 +_,13 @@
        this.createLevels(chunkprogresslistener);
        this.forceDifficulty();
        this.prepareLevels(chunkprogresslistener);
@@ -418,7 +414,7 @@
              this.nextTickTime += 50L;
              this.startMetricsRecordingTick();
              this.profiler.push("tick");
-@@ -656,17 +_,30 @@
+@@ -656,8 +_,18 @@
              this.isReady = true;
              JvmProfiler.INSTANCE.onServerTick(this.averageTickTime);
           }
@@ -435,13 +431,9 @@
 +         }
 +         // Spigot End
           CrashReport crashreport = constructOrExtractCrashReport(throwable1);
-+
           this.fillSystemReport(crashreport.getSystemReport());
           File file1 = new File(new File(this.getServerDirectory(), "crash-reports"), "crash-" + Util.getFilenameFormattedDateTime() + "-server.txt");
-+
-          if (crashreport.saveToFile(file1)) {
-             LOGGER.error("This crash report has been saved to: {}", (Object)file1.getAbsolutePath());
-          } else {
+@@ -667,6 +_,7 @@
              LOGGER.error("We were unable to save this crash report to disk.");
           }
  
@@ -493,7 +485,7 @@
     public TickTask wrapRunnable(Runnable p_129852_) {
        return new TickTask(this.tickCount, p_129852_);
     }
-@@ -792,28 +_,49 @@
+@@ -792,20 +_,26 @@
     }
  
     public void tickServer(BooleanSupplier p_129871_) {
@@ -521,9 +513,7 @@
        }
  
        this.profiler.push("tallying");
-       long j = this.tickTimes[this.tickCount % 100] = Util.getNanos() - i;
-+
-       this.averageTickTime = this.averageTickTime * 0.8F + (float)j / 1000000.0F * 0.19999999F;
+@@ -814,6 +_,20 @@
        long k = Util.getNanos();
        this.logTickTime(k - i);
        this.profiler.pop();
