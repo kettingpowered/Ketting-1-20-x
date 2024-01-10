@@ -908,8 +908,6 @@ tasks.register('kettingJar', Jar) {
     archiveBaseName = 'ketting'
     archiveClassifier = 'kettingJar'
     manifest{
-    }
-    manifest{
         attributes 'Main-Class': 'org.kettingpowered.launcher.Main'
         attributes 'Launcher-Agent-Class': 'org.kettingpowered.launcher.Main'
         attributes 'Bundled': 'true'
@@ -924,22 +922,11 @@ tasks.register('kettingJar', Jar) {
                 "Implementation-Vendor": "Kettingpowered",
         ], "org/kettingpowered/launcher/")
     }
-    dependsOn ':forge:downloadServerRaw'
-    dependsOn ':forge:genServerBinPatches'
-    dependsOn generateKettingLibraries
-    dependsOn createServerShimClasspath
     mustRunAfter ':setup'
     mustRunAfter ':forge:validateDeprecations'
 
-    BUNDLED_PROJECTS.each { dep -> {
-        dependsOn project(dep).tasks.jar
-        mustRunAfter project(dep).tasks.jar
-    }}
-
-    BUNDLED_PROJECTS.each { dep ->
-        from(project(dep).tasks.jar.outputs) {
-            rename { "data/${dep.substring(1)}-${MC_VERSION}-${FORGE_VERSION}-${KETTING_VERSION}.jar" } //substring with 1 to remove :
-        }
+    from(generateKettingLibraries) {
+        rename {'data/ketting_libraries.txt'}
     }
     from {
         configurations.kettinglauncher.collect { it.isDirectory() ? it : zipTree(it) }
@@ -948,9 +935,14 @@ tasks.register('kettingJar', Jar) {
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
     }
+    from(installerJson.output) {
+        rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-' + KETTING_VERSION + '-installscript.json' }
+    }
 
-    from(generateKettingLibraries) {
-        rename {'data/ketting_libraries.txt'}
+    BUNDLED_PROJECTS.each { dep ->
+        from(project(dep).tasks.jar.outputs) {
+            rename { "data/${dep.substring(1)}-${MC_VERSION}-${FORGE_VERSION}-${KETTING_VERSION}.jar" } //substring with 1 to remove :
+        }
     }
 
     from(genServerBinPatches.output) {
@@ -959,9 +951,6 @@ tasks.register('kettingJar', Jar) {
 
     from(universalJar) {
         rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-' + KETTING_VERSION + '-universal.jar' }
-    }
-    from(installerJson.output) {
-        rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-' + KETTING_VERSION + '-installscript.json' }
     }
 }
 //Ketting end
