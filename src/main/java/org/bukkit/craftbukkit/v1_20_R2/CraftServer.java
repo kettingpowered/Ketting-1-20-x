@@ -1384,11 +1384,6 @@ public final class CraftServer implements Server {
         // Create a players Crafting Inventory
         AbstractContainerMenu container = new AbstractContainerMenu(null, -1) {
             @Override
-            public InventoryView getBukkitView() {
-                return null;
-            }
-
-            @Override
             public boolean stillValid(net.minecraft.world.entity.player.Player entityhuman) {
                 return false;
             }

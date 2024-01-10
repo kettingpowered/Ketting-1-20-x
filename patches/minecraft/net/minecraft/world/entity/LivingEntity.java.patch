@@ -911,11 +911,10 @@
                 }
              }
           }
-@@ -1610,8 +_,195 @@
+@@ -1610,8 +_,196 @@
        }
     }
  
--   protected void actuallyHurt(DamageSource p_21240_, float p_21241_) {
 +   // CraftBukkit start
 +   protected boolean damageEntity0(final DamageSource damagesource, float f) { // void -> boolean, add final
 +      if (!this.isInvulnerableTo(damagesource)) {
@@ -1101,8 +1100,10 @@
 +      return false; // CraftBukkit
 +   }
 +
-+   /*protected void actuallyHurt(DamageSource p_21240_, float p_21241_) {
-       if (!this.isInvulnerableTo(p_21240_)) {
+    protected void actuallyHurt(DamageSource p_21240_, float p_21241_) {
+-      if (!this.isInvulnerableTo(p_21240_)) {
++      damageEntity0(p_21240_, p_21241_);
++      if (false && !this.isInvulnerableTo(p_21240_)) {
 +         p_21241_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_21240_, p_21241_);
 +         if (p_21241_ <= 0) return;
           p_21241_ = this.getDamageAfterArmorAbsorb(p_21240_, p_21241_);
@@ -1116,15 +1117,6 @@
           if (f1 != 0.0F) {
              this.getCombatTracker().recordDamage(p_21240_, f1);
              this.setHealth(this.getHealth() - f1);
-@@ -1632,7 +_,7 @@
-             this.gameEvent(GameEvent.ENTITY_DAMAGE);
-          }
-       }
--   }
-+   }*/
- 
-    public CombatTracker getCombatTracker() {
-       return this.combatTracker;
 @@ -1660,8 +_,18 @@
     }
  

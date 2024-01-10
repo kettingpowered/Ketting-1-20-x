@@ -1,11 +1,13 @@
 --- a/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/net/minecraft/world/level/dimension/end/EndDragonFight.java
-@@ -453,7 +_,7 @@
-       return this.previouslyKilled;
+@@ -454,6 +_,10 @@
     }
  
--   public void tryRespawn() {
-+   public boolean tryRespawn() { // CraftBukkit - return boolean
+    public void tryRespawn() {
++      tryRespawnBool();
++   }
++
++   public boolean tryRespawnBool() { // CraftBukkit - return boolean
        if (this.dragonKilled && this.respawnStage == null) {
           BlockPos blockpos = this.portalLocation;
           if (blockpos == null) {

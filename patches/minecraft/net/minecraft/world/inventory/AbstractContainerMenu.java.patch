@@ -15,13 +15,18 @@
     private final IntList remoteDataSlots = new IntArrayList();
     private ItemStack remoteCarried = ItemStack.EMPTY;
     private int stateId;
-@@ -60,6 +_,27 @@
+@@ -60,6 +_,32 @@
     private ContainerSynchronizer synchronizer;
     private boolean suppressRemoteUpdates;
  
 +   // CraftBukkit start
 +   public boolean checkReachable = true;
-+   public abstract org.bukkit.inventory.InventoryView getBukkitView();
++
++   //Ketting start - Bogus client implementation, because it will never get called anyways
++   public org.bukkit.inventory.InventoryView getBukkitView(){
++      return null; //Ketting - todo: make this method return something sensible, because not all callsites handle nullability correctly
++   }
++   //Ketting End
 +   public void transferTo(AbstractContainerMenu other, org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity player) {
 +      org.bukkit.inventory.InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
 +      ((org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory) source.getTopInventory()).getInventory().onClose(player);

@@ -127,7 +127,7 @@
     }
  
     public boolean hasDynamicShape() {
-@@ -473,21 +_,109 @@
+@@ -473,6 +_,74 @@
        return this.stateDefinition.getPossibleStates().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), p_152459_));
     }
  
@@ -202,12 +202,14 @@
     /** @deprecated */
     @Deprecated
     public Holder.Reference<Block> builtInRegistryHolder() {
-       return this.builtInRegistryHolder;
+@@ -480,14 +_,37 @@
     }
  
--   protected void tryDropExperience(ServerLevel p_220823_, BlockPos p_220824_, ItemStack p_220825_, IntProvider p_220826_) {
+    protected void tryDropExperience(ServerLevel p_220823_, BlockPos p_220824_, ItemStack p_220825_, IntProvider p_220826_) {
++      tryDropExperienceInt(p_220823_, p_220824_, p_220825_, p_220826_);
++   }
 +   // CraftBukkit start
-+   protected int tryDropExperience(ServerLevel p_220823_, BlockPos p_220824_, ItemStack p_220825_, IntProvider p_220826_) {
++   protected int tryDropExperienceInt(ServerLevel p_220823_, BlockPos p_220824_, ItemStack p_220825_, IntProvider p_220826_) {
        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, p_220825_) == 0) {
           int i = p_220826_.sample(p_220823_.random);
           if (i > 0) {

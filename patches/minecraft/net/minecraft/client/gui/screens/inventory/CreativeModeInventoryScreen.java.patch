@@ -263,20 +263,6 @@
     @OnlyIn(Dist.CLIENT)
     static class CustomCreativeSlot extends Slot {
        public CustomCreativeSlot(Container p_98633_, int p_98634_, int p_98635_, int p_98636_) {
-@@ -838,6 +_,13 @@
-          return this.items.size() > 45;
-       }
- 
-+      //Ketting start - Bogus client implementation, because it will never get called anyways
-+      @Override
-+      public org.bukkit.inventory.InventoryView getBukkitView() {
-+         return null;
-+      }
-+      //Ketting end
-+
-       public ItemStack quickMoveStack(Player p_98650_, int p_98651_) {
-          if (p_98651_ >= this.slots.size() - 9 && p_98651_ < this.slots.size()) {
-             Slot slot = this.slots.get(p_98651_);
 @@ -926,6 +_,22 @@
  
        public boolean mayPickup(Player p_98665_) {

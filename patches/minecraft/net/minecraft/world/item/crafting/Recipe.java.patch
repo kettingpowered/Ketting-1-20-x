@@ -12,14 +12,17 @@
           }
        }
  
-@@ -57,7 +_,9 @@
+@@ -57,7 +_,12 @@
     default boolean isIncomplete() {
        NonNullList<Ingredient> nonnulllist = this.getIngredients();
        return nonnulllist.isEmpty() || nonnulllist.stream().anyMatch((p_151268_) -> {
 -         return p_151268_.getItems().length == 0;
 +         return net.minecraftforge.common.ForgeHooks.hasNoElements(p_151268_);
        });
-    }
++   }
 +
-+   org.bukkit.inventory.Recipe toBukkitRecipe(org.bukkit.NamespacedKey id); // CraftBukkit
++   // CraftBukkit
++   default org.bukkit.inventory.Recipe toBukkitRecipe(org.bukkit.NamespacedKey id){
++      return null;
+    }
  }

@@ -238,12 +238,13 @@
        }
     }
  
-@@ -455,8 +_,8 @@
+@@ -455,8 +_,9 @@
     public void awardUsedRecipes(Player p_58396_, List<ItemStack> p_282202_) {
     }
  
 -   public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_) {
 -      List<RecipeHolder<?>> list = this.getRecipesToAwardAndPopExperience(p_155004_.serverLevel(), p_155004_.position());
++   public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_) {}
 +   public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_, ItemStack itemstack, int amount) { // CraftBukkit
 +      List<RecipeHolder<?>> list = this.getRecipesToAwardAndPopExperience(p_155004_.serverLevel(), p_155004_.position(), this.worldPosition, p_155004_, itemstack, amount); // CraftBukkit
        p_155004_.awardRecipes(list);

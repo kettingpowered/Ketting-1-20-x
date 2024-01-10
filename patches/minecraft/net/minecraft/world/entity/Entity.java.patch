@@ -744,16 +744,17 @@
 +         if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entity, false)) return;
           this.vehicle = null;
 -         entity.removePassenger(this);
-+         if (!entity.removePassenger(this)) this.vehicle = entity; // CraftBukkit
++         if (!entity.removePassengerBool(this)) this.vehicle = entity; // CraftBukkit
        }
  
     }
-@@ -1960,10 +_,39 @@
-       }
+@@ -1961,9 +_,41 @@
     }
  
--   protected void removePassenger(Entity p_20352_) {
-+   protected boolean removePassenger(Entity p_20352_) { // CraftBukkit
+    protected void removePassenger(Entity p_20352_) {
++      removePassengerBool(p_20352_);
++   }
++   protected boolean removePassengerBool(Entity p_20352_) { // CraftBukkit
        if (p_20352_.getVehicle() == this) {
           throw new IllegalStateException("Use x.stopRiding(y), not y.removePassenger(x)");
        } else {
@@ -1110,12 +1111,10 @@
        }
     }
  
-@@ -2530,8 +_,23 @@
+@@ -2530,8 +_,26 @@
        return PortalShape.getRelativePosition(p_20046_, p_20045_, this.position(), this.getDimensions(this.getPose()));
     }
  
--   protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel p_185935_, BlockPos p_185936_, boolean p_185937_, WorldBorder p_185938_) {
--      return p_185935_.getPortalForcer().findPortalAround(p_185936_, p_185937_, p_185938_);
 +   // CraftBukkit start
 +   protected org.bukkit.craftbukkit.v1_20_R2.event.CraftPortalEvent callPortalEvent(Entity entity, ServerLevel exitWorldServer, Vec3 exitPosition, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
 +      org.bukkit.entity.Entity bukkitEntity = entity.getBukkitEntity();
@@ -1130,6 +1129,10 @@
 +      return new org.bukkit.craftbukkit.v1_20_R2.event.CraftPortalEvent(event);
 +   }
 +
+    protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel p_185935_, BlockPos p_185936_, boolean p_185937_, WorldBorder p_185938_) {
+-      return p_185935_.getPortalForcer().findPortalAround(p_185936_, p_185937_, p_185938_);
++      return getExitPortal(p_185935_, p_185936_, p_185937_, p_185938_, p_185935_.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.NETHER? 16 : 128, false, 16);
++   }
 +   protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel p_185935_, BlockPos p_185936_, boolean p_185937_, WorldBorder p_185938_, int searchRadius, boolean canCreatePortal, int createRadius) {
 +      return p_185935_.getPortalForcer().findPortalAround(p_185936_, p_185938_, searchRadius);
 +      // CraftBukkit end

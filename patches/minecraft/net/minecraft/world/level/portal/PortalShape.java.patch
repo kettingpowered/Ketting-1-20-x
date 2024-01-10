@@ -60,13 +60,14 @@
        }
  
        return 21;
-@@ -165,11 +_,28 @@
-       return this.bottomLeft != null && this.width >= 2 && this.width <= 21 && this.height >= 3 && this.height <= 21;
+@@ -166,10 +_,30 @@
     }
  
--   public void createPortalBlocks() {
+    public void createPortalBlocks() {
++      createPortalBlocksBoolean();
++   }
 +   // CraftBukkit start - return boolean
-+   public boolean createPortalBlocks() {
++   public boolean createPortalBlocksBoolean() {
 +      org.bukkit.World bworld = this.level.getMinecraftWorld().getWorld();
 +
 +      // Copy below for loop
@@ -90,11 +91,12 @@
     }
  
     public boolean isComplete() {
-@@ -201,7 +_,7 @@
-       return new Vec3(d2, d4, d3);
+@@ -202,6 +_,9 @@
     }
  
--   public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_) {
+    public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_) {
++      return createPortalInfo(p_259301_, p_259931_, p_259901_, p_259630_, p_259166_, p_260043_, p_259853_, p_259667_, null);
++   }
 +   public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_, org.bukkit.craftbukkit.v1_20_R2.event.CraftPortalEvent portalEventInfo) { // CraftBukkit
        BlockPos blockpos = p_259931_.minCorner;
        BlockState blockstate = p_259301_.getBlockState(blockpos);
