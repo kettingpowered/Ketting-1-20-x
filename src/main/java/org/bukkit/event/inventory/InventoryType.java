@@ -149,6 +149,7 @@ public enum InventoryType {
      */
     @Deprecated
     SMITHING_NEW(4, "Upgrade Gear"),
+    Stub(0, "StubInventory - Likely custom Modded type")
     ;
 
     private final int size;

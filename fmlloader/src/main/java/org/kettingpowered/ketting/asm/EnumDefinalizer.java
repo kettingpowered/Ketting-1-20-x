@@ -31,7 +31,7 @@ public class EnumDefinalizer implements Implementer {
             var find = false;
             for (FieldNode field : node.fields) {
                 if (Modifier.isStatic(field.access) && Modifier.isFinal(field.access)
-                        && field.name.equals("ENUM$VALUES")) {
+                        && field.name.equals("$VALUES")) {
                     field.access &= ~Opcodes.ACC_FINAL;
                     SwitchTableFixer.LOGGER.debug("Definalize enum class {} values field {}", node.name, field.name);
                     if (find) {
