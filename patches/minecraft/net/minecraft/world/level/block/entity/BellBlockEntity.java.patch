@@ -1,28 +1,28 @@
 --- a/net/minecraft/world/level/block/entity/BellBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BellBlockEntity.java
 @@ -33,8 +_,8 @@
-    public boolean shaking;
-    public Direction clickDirection;
-    private List<LivingEntity> nearbyEntities;
--   private boolean resonating;
--   private int resonationTicks;
-+   public boolean resonating;
-+   public int resonationTicks;
+    public boolean f_58814_;
+    public Direction f_58815_;
+    private List<LivingEntity> f_58817_;
+-   private boolean f_58818_;
+-   private int f_58819_;
++   public boolean f_58818_;
++   public int f_58819_;
  
     public BellBlockEntity(BlockPos p_155173_, BlockState p_155174_) {
-       super(BlockEntityType.BELL, p_155173_, p_155174_);
+       super(BlockEntityType.f_58909_, p_155173_, p_155174_);
 @@ -128,9 +_,12 @@
     }
  
-    private static void makeRaidersGlow(Level p_155187_, BlockPos p_155188_, List<LivingEntity> p_155189_) {
+    private static void m_155186_(Level p_155187_, BlockPos p_155188_, List<LivingEntity> p_155189_) {
 -      p_155189_.stream().filter((p_155219_) -> {
 +      List<org.bukkit.entity.LivingEntity> bukkitLivingEntities = p_155189_.stream().filter((p_155219_) -> {
-          return isRaiderWithinRange(p_155188_, p_155219_);
--      }).forEach(BellBlockEntity::glow);
+          return m_155196_(p_155188_, p_155219_);
+-      }).forEach(BellBlockEntity::m_58840_);
 +      }).map((entity) -> (org.bukkit.entity.LivingEntity) entity.getBukkitEntity()).collect(java.util.stream.Collectors.toCollection(java.util.ArrayList::new)); // CraftBukkit
 +
-+      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBellResonateEvent(p_155187_, p_155188_, bukkitLivingEntities).forEach(BellBlockEntity::glow);
++      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBellResonateEvent(p_155187_, p_155188_, bukkitLivingEntities).forEach(BellBlockEntity::m_58840_);
 +      // CraftBukkit end
     }
  
-    private static void showBellParticles(Level p_155208_, BlockPos p_155209_, List<LivingEntity> p_155210_) {
+    private static void m_155207_(Level p_155208_, BlockPos p_155209_, List<LivingEntity> p_155210_) {

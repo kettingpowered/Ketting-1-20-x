@@ -2,55 +2,55 @@
 +++ b/net/minecraft/world/level/biome/Biome.java
 @@ -34,9 +_,9 @@
  public final class Biome {
-    public static final Codec<Biome> DIRECT_CODEC = RecordCodecBuilder.create((p_220544_) -> {
-       return p_220544_.group(Biome.ClimateSettings.CODEC.forGetter((p_151717_) -> {
--         return p_151717_.climateSettings;
+    public static final Codec<Biome> f_47429_ = RecordCodecBuilder.create((p_220544_) -> {
+       return p_220544_.group(Biome.ClimateSettings.f_47679_.forGetter((p_151717_) -> {
+-         return p_151717_.f_47437_;
 +         return p_151717_.modifiableBiomeInfo().getOriginalBiomeInfo().climateSettings(); // FORGE: Patch codec to ignore field redirect coremods.
-       }), BiomeSpecialEffects.CODEC.fieldOf("effects").forGetter((p_220550_) -> {
--         return p_220550_.specialEffects;
+       }), BiomeSpecialEffects.f_47926_.fieldOf("effects").forGetter((p_220550_) -> {
+-         return p_220550_.f_47443_;
 +         return p_220550_.modifiableBiomeInfo().getOriginalBiomeInfo().effects(); // FORGE: Patch codec to ignore field redirect coremods.
-       }), BiomeGenerationSettings.CODEC.forGetter((p_220548_) -> {
-          return p_220548_.generationSettings;
-       }), MobSpawnSettings.CODEC.forGetter((p_220546_) -> {
+       }), BiomeGenerationSettings.f_47778_.forGetter((p_220548_) -> {
+          return p_220548_.f_47438_;
+       }), MobSpawnSettings.f_48327_.forGetter((p_220546_) -> {
 @@ -77,11 +_,18 @@
        });
     });
  
 +   //Ketting start - fix transformer error
 +   public Biome.ClimateSettings getClimateSettings() {
-+      return this.climateSettings;
++      return this.f_47437_;
 +   }
 +   //Ketting end
 +
     Biome(Biome.ClimateSettings p_220530_, BiomeSpecialEffects p_220531_, BiomeGenerationSettings p_220532_, MobSpawnSettings p_220533_) {
-       this.climateSettings = p_220530_;
-       this.generationSettings = p_220532_;
-       this.mobSettings = p_220533_;
-       this.specialEffects = p_220531_;
+       this.f_47437_ = p_220530_;
+       this.f_47438_ = p_220532_;
+       this.f_47439_ = p_220533_;
+       this.f_47443_ = p_220531_;
 +      this.modifiableBiomeInfo = new net.minecraftforge.common.world.ModifiableBiomeInfo(new net.minecraftforge.common.world.ModifiableBiomeInfo.BiomeInfo(p_220530_, p_220531_, p_220532_, p_220533_)); // FORGE: cache original biome info on construction so we can bypass our field read coremods where necessary
     }
  
-    public int getSkyColor() {
+    public int m_47463_() {
 @@ -89,7 +_,7 @@
     }
  
-    public MobSpawnSettings getMobSettings() {
--      return this.mobSettings;
+    public MobSpawnSettings m_47518_() {
+-      return this.f_47439_;
 +      return this.modifiableBiomeInfo().get().mobSpawnSettings();
     }
  
-    public boolean hasPrecipitation() {
+    public boolean m_264473_() {
 @@ -188,7 +_,7 @@
     }
  
-    public BiomeGenerationSettings getGenerationSettings() {
--      return this.generationSettings;
+    public BiomeGenerationSettings m_47536_() {
+-      return this.f_47438_;
 +      return this.modifiableBiomeInfo().get().generationSettings();
     }
  
-    public int getFogColor() {
+    public int m_47539_() {
 @@ -373,4 +_,34 @@
-          return this.name;
+          return this.f_47738_;
        }
     }
 +

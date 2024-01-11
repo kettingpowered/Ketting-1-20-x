@@ -1,21 +1,21 @@
 --- a/net/minecraft/world/item/DyeItem.java
 +++ b/net/minecraft/world/item/DyeItem.java
 @@ -27,7 +_,17 @@
-          if (sheep.isAlive() && !sheep.isSheared() && sheep.getColor() != this.dyeColor) {
-             sheep.level().playSound(p_41086_, sheep, SoundEvents.DYE_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
-             if (!p_41086_.level().isClientSide) {
--               sheep.setColor(this.dyeColor);
+          if (sheep.m_6084_() && !sheep.m_29875_() && sheep.m_29874_() != this.f_41077_) {
+             sheep.m_9236_().m_6269_(p_41086_, sheep, SoundEvents.f_144133_, SoundSource.PLAYERS, 1.0F, 1.0F);
+             if (!p_41086_.m_9236_().f_46443_) {
+-               sheep.m_29855_(this.f_41077_);
 +               // CraftBukkit start
-+               byte bColor = (byte) this.dyeColor.getId();
++               byte bColor = (byte) this.f_41077_.m_41060_();
 +               org.bukkit.event.entity.SheepDyeWoolEvent event = new org.bukkit.event.entity.SheepDyeWoolEvent((org.bukkit.entity.Sheep) sheep.getBukkitEntity(), org.bukkit.DyeColor.getByWoolData(bColor), (org.bukkit.entity.Player) p_41086_.getBukkitEntity());
-+               sheep.level().getCraftServer().getPluginManager().callEvent(event);
++               sheep.m_9236_().getCraftServer().getPluginManager().callEvent(event);
 +
 +               if (event.isCancelled()) {
 +                  return InteractionResult.PASS;
 +               }
 +
-+               sheep.setColor(DyeColor.byId(event.getColor().getWoolData()));
++               sheep.m_29855_(DyeColor.m_41053_(event.getColor().getWoolData()));
 +               // CraftBukkit end
-                p_41085_.shrink(1);
+                p_41085_.m_41774_(1);
              }
  

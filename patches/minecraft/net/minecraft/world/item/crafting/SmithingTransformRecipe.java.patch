@@ -1,24 +1,24 @@
 --- a/net/minecraft/world/item/crafting/SmithingTransformRecipe.java
 +++ b/net/minecraft/world/item/crafting/SmithingTransformRecipe.java
-@@ -58,8 +_,19 @@
+@@ -65,8 +_,19 @@
     }
  
-    public boolean isIncomplete() {
--      return Stream.of(this.template, this.base, this.addition).anyMatch(Ingredient::isEmpty);
+    public boolean m_142505_() {
+-      return Stream.of(this.f_265949_, this.f_265888_, this.f_265907_).anyMatch(Ingredient::m_43947_);
 -   }
-+      return Stream.of(this.template, this.base, this.addition).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
++      return Stream.of(this.f_265949_, this.f_265888_, this.f_265907_).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
 +   }
 +
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.Recipe toBukkitRecipe(org.bukkit.NamespacedKey id) {
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(this.result);
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(this.f_266098_);
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftSmithingTransformRecipe recipe = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftSmithingTransformRecipe(id, result, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.template), org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.base), org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.addition));
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftSmithingTransformRecipe recipe = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftSmithingTransformRecipe(id, result, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.f_265949_), org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.f_265888_), org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.f_265907_));
 +
 +      return recipe;
 +   }
 +   // CraftBukkit end
  
     public static class Serializer implements RecipeSerializer<SmithingTransformRecipe> {
-       private static final Codec<SmithingTransformRecipe> CODEC = RecordCodecBuilder.create((p_301330_) -> {
+       private static final Codec<SmithingTransformRecipe> f_291016_ = RecordCodecBuilder.create((p_301330_) -> {

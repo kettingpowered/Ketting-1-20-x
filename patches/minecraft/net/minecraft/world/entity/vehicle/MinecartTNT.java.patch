@@ -4,17 +4,17 @@
              d0 = 5.0D;
           }
  
--         this.level().explode(this, p_259539_, (ExplosionDamageCalculator)null, this.getX(), this.getY(), this.getZ(), (float)(4.0D + this.random.nextDouble() * 1.5D * d0), false, Level.ExplosionInteraction.TNT);
+-         this.m_9236_().m_254877_(this, p_259539_, (ExplosionDamageCalculator)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), (float)(4.0D + this.f_19796_.m_188500_() * 1.5D * d0), false, Level.ExplosionInteraction.TNT);
 +         // CraftBukkit start
-+         org.bukkit.event.entity.ExplosionPrimeEvent event = new org.bukkit.event.entity.ExplosionPrimeEvent(this.getBukkitEntity(), (float) (4.0D + this.random.nextDouble() * 1.5D * d0), false);
-+         this.level().getCraftServer().getPluginManager().callEvent(event);
++         org.bukkit.event.entity.ExplosionPrimeEvent event = new org.bukkit.event.entity.ExplosionPrimeEvent(this.getBukkitEntity(), (float) (4.0D + this.f_19796_.m_188500_() * 1.5D * d0), false);
++         this.m_9236_().getCraftServer().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
-+            fuse = -1;
++            f_38647_ = -1;
 +            return;
 +         }
-+         this.level().explode(this, p_259539_, (ExplosionDamageCalculator) null, this.getX(), this.getY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.TNT);
++         this.m_9236_().m_254877_(this, p_259539_, (ExplosionDamageCalculator) null, this.m_20185_(), this.m_20186_(), this.m_20189_(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.TNT);
 +         // CraftBukkit end
 +
-          this.discard();
+          this.m_146870_();
        }
  

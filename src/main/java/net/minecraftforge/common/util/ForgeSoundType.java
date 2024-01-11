@@ -33,16 +33,17 @@ import java.util.function.Supplier;
  *
  * @see SoundType
  */
-public class ForgeSoundType extends SoundType {
+public class ForgeSoundType extends SoundType
+{
     private final Supplier<SoundEvent> breakSound;
     private final Supplier<SoundEvent> stepSound;
     private final Supplier<SoundEvent> placeSound;
     private final Supplier<SoundEvent> hitSound;
     private final Supplier<SoundEvent> fallSound;
 
-    @SuppressWarnings("deprecation")
-    public ForgeSoundType(float volumeIn, float pitchIn, Supplier<SoundEvent> breakSoundIn, Supplier<SoundEvent> stepSoundIn, Supplier<SoundEvent> placeSoundIn, Supplier<SoundEvent> hitSoundIn, Supplier<SoundEvent> fallSoundIn) {
-        super(volumeIn, pitchIn, null, null, null, null, null);
+    public ForgeSoundType(float volumeIn, float pitchIn, Supplier<SoundEvent> breakSoundIn, Supplier<SoundEvent> stepSoundIn, Supplier<SoundEvent> placeSoundIn, Supplier<SoundEvent> hitSoundIn, Supplier<SoundEvent> fallSoundIn)
+    {
+        super(volumeIn, pitchIn, (SoundEvent) null, (SoundEvent) null, (SoundEvent) null, (SoundEvent) null, (SoundEvent) null);
         this.breakSound = breakSoundIn;
         this.stepSound = stepSoundIn;
         this.placeSound = placeSoundIn;
@@ -52,31 +53,36 @@ public class ForgeSoundType extends SoundType {
 
     @NotNull
     @Override
-    public SoundEvent getBreakSound() {
+    public SoundEvent getBreakSound()
+    {
         return breakSound.get();
     }
 
     @NotNull
     @Override
-    public SoundEvent getStepSound() {
+    public SoundEvent getStepSound()
+    {
         return stepSound.get();
     }
 
     @NotNull
     @Override
-    public SoundEvent getPlaceSound() {
+    public SoundEvent getPlaceSound()
+    {
         return placeSound.get();
     }
 
     @NotNull
     @Override
-    public SoundEvent getHitSound() {
+    public SoundEvent getHitSound()
+    {
         return hitSound.get();
     }
 
     @NotNull
     @Override
-    public SoundEvent getFallSound() {
+    public SoundEvent getFallSound()
+    {
         return fallSound.get();
     }
 }

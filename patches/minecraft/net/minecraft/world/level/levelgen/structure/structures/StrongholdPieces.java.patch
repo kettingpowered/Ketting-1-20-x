@@ -3,18 +3,21 @@
 @@ -703,15 +_,20 @@
           }
  
-          if (!this.hasPlacedSpawner) {
--            BlockPos blockpos = this.getWorldPos(5, 3, 6);
-+            BlockPos.MutableBlockPos blockpos = this.getWorldPos(5, 3, 6);
-             if (p_229639_.isInside(blockpos)) {
-                this.hasPlacedSpawner = true;
+          if (!this.f_229627_) {
+-            BlockPos blockpos = this.m_163582_(5, 3, 6);
++            BlockPos.MutableBlockPos blockpos = this.m_163582_(5, 3, 6);
+             if (p_229639_.m_71051_(blockpos)) {
+                this.f_229627_ = true;
+-               p_229635_.m_7731_(blockpos, Blocks.f_50085_.m_49966_(), 2);
+-               BlockEntity blockentity = p_229635_.m_7702_(blockpos);
 +               // CraftBukkit start
 +               /*
-                p_229635_.setBlock(blockpos, Blocks.SPAWNER.defaultBlockState(), 2);
-                BlockEntity blockentity = p_229635_.getBlockEntity(blockpos);
++               p_229635_.setBlock(blockpos, Blocks.SPAWNER.defaultBlockState(), 2);
++               BlockEntity blockentity = p_229635_.getBlockEntity(blockpos);
                 if (blockentity instanceof SpawnerBlockEntity) {
                    SpawnerBlockEntity spawnerblockentity = (SpawnerBlockEntity)blockentity;
-                   spawnerblockentity.setEntityId(EntityType.SILVERFISH, p_229638_);
+-                  spawnerblockentity.m_252803_(EntityType.f_20523_, p_229638_);
++                  spawnerblockentity.setEntityId(EntityType.SILVERFISH, p_229638_);
                 }
 +               */
 +               placeCraftSpawner(p_229635_, blockpos, org.bukkit.entity.EntityType.SILVERFISH, 2);

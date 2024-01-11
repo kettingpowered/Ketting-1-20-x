@@ -2,13 +2,13 @@
 +++ b/net/minecraft/world/item/HangingEntityItem.java
 @@ -64,6 +_,19 @@
  
-          if (hangingentity.survives()) {
-             if (!level.isClientSide) {
+          if (hangingentity.m_7088_()) {
+             if (!level.f_46443_) {
 +               // CraftBukkit start - fire HangingPlaceEvent
-+               org.bukkit.entity.Player who = (p_41331_.getPlayer() == null) ? null : (org.bukkit.entity.Player) p_41331_.getPlayer().getBukkitEntity();
-+               org.bukkit.block.Block blockClicked = level.getWorld().getBlockAt(blockpos.getX(), blockpos.getY(), blockpos.getZ());
++               org.bukkit.entity.Player who = (p_41331_.m_43723_() == null) ? null : (org.bukkit.entity.Player) p_41331_.m_43723_().getBukkitEntity();
++               org.bukkit.block.Block blockClicked = level.getWorld().getBlockAt(blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
 +               org.bukkit.block.BlockFace blockFace = org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.notchToBlockFace(direction);
-+               org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot.getHand(p_41331_.getHand());
++               org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot.getHand(p_41331_.m_43724_());
 +
 +               org.bukkit.event.hanging.HangingPlaceEvent event = new org.bukkit.event.hanging.HangingPlaceEvent((org.bukkit.entity.Hanging) hangingentity.getBukkitEntity(), who, blockClicked, blockFace, hand, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asBukkitCopy(itemstack));
 +               level.getCraftServer().getPluginManager().callEvent(event);
@@ -17,6 +17,6 @@
 +                  return InteractionResult.FAIL;
 +               }
 +               // CraftBukkit end
-                hangingentity.playPlacementSound();
-                level.gameEvent(player, GameEvent.ENTITY_PLACE, hangingentity.position());
-                level.addFreshEntity(hangingentity);
+                hangingentity.m_7084_();
+                level.m_220400_(player, GameEvent.f_157810_, hangingentity.m_20182_());
+                level.m_7967_(hangingentity);

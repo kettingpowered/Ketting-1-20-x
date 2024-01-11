@@ -12,26 +12,26 @@
 +      // CraftBukkit end
        int i = 0;
 -      EntitySelectorParser entityselectorparser = new EntitySelectorParser(p_91451_);
--      EntitySelector entityselector = entityselectorparser.parse();
+-      EntitySelector entityselector = entityselectorparser.m_121377_();
 +      EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader);
 +      EntitySelector entityselector = entityselectorparser.parse(overridePermissions); // CraftBukkit
-       if (entityselector.getMaxResults() > 1 && this.single) {
-          if (this.playersOnly) {
+       if (entityselector.m_121138_() > 1 && this.f_91443_) {
+          if (this.f_91444_) {
 -            p_91451_.setCursor(0);
--            throw ERROR_NOT_SINGLE_PLAYER.createWithContext(p_91451_);
+-            throw f_91437_.createWithContext(p_91451_);
 +            stringreader.setCursor(0);
-+            throw ERROR_NOT_SINGLE_PLAYER.createWithContext(stringreader);
++            throw f_91437_.createWithContext(stringreader);
           } else {
 -            p_91451_.setCursor(0);
--            throw ERROR_NOT_SINGLE_ENTITY.createWithContext(p_91451_);
+-            throw f_91436_.createWithContext(p_91451_);
 +            stringreader.setCursor(0);
-+            throw ERROR_NOT_SINGLE_ENTITY.createWithContext(stringreader);
++            throw f_91436_.createWithContext(stringreader);
           }
-       } else if (entityselector.includesEntities() && this.playersOnly && !entityselector.isSelfSelector()) {
+       } else if (entityselector.m_121159_() && this.f_91444_ && !entityselector.m_121162_()) {
 -         p_91451_.setCursor(0);
--         throw ERROR_ONLY_PLAYERS_ALLOWED.createWithContext(p_91451_);
+-         throw f_91438_.createWithContext(p_91451_);
 +         stringreader.setCursor(0);
-+         throw ERROR_ONLY_PLAYERS_ALLOWED.createWithContext(stringreader);
++         throw f_91438_.createWithContext(stringreader);
        } else {
           return entityselector;
        }
@@ -39,8 +39,8 @@
        if (s instanceof SharedSuggestionProvider sharedsuggestionprovider) {
           StringReader stringreader = new StringReader(p_91483_.getInput());
           stringreader.setCursor(p_91483_.getStart());
--         EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, sharedsuggestionprovider.hasPermission(2));
+-         EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, sharedsuggestionprovider.m_6761_(2));
 +         EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, net.minecraftforge.common.ForgeHooks.canUseEntitySelectors(sharedsuggestionprovider));
  
           try {
-             entityselectorparser.parse();
+             entityselectorparser.m_121377_();

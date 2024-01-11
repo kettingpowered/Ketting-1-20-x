@@ -1,10 +1,10 @@
 --- a/net/minecraft/world/entity/ai/behavior/StartAttacking.java
 +++ b/net/minecraft/world/entity/ai/behavior/StartAttacking.java
 @@ -30,7 +_,22 @@
-                      if (!p_258774_.canAttack(livingentity)) {
+                      if (!p_258774_.m_6779_(livingentity)) {
                          return false;
                       } else {
--                        p_258778_.set(livingentity);
+-                        p_258778_.m_257512_(livingentity);
 +                        net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(p_258774_, livingentity, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.BEHAVIOR_TARGET);
 +                        if (changeTargetEvent.isCanceled())
 +                           return false;
@@ -15,12 +15,12 @@
 +                           return false;
 +                        }
 +                        if (event.getTarget() == null) {
-+                           p_258779_.erase();
++                           p_258779_.m_257971_();
 +                           return true;
 +                        }
 +                        livingentity = ((org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +                        // CraftBukkit end
-+                        p_258778_.set(livingentity); //Ketting
-                         p_258779_.erase();
++                        p_258778_.m_257512_(livingentity); //Ketting
+                         p_258779_.m_257971_();
                          return true;
                       }

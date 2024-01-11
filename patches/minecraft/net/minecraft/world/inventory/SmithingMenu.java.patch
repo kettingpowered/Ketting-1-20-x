@@ -2,27 +2,27 @@
 +++ b/net/minecraft/world/inventory/SmithingMenu.java
 @@ -27,6 +_,9 @@
     @Nullable
-    private RecipeHolder<SmithingRecipe> selectedRecipe;
-    private final List<RecipeHolder<SmithingRecipe>> recipes;
+    private RecipeHolder<SmithingRecipe> f_40242_;
+    private final List<RecipeHolder<SmithingRecipe>> f_40243_;
 +   // CraftBukkit start
 +   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity;
 +   // CraftBukkit end
  
     public SmithingMenu(int p_40245_, Inventory p_40246_) {
-       this(p_40245_, p_40246_, ContainerLevelAccess.NULL);
+       this(p_40245_, p_40246_, ContainerLevelAccess.f_39287_);
 @@ -89,14 +_,16 @@
-    public void createResult() {
-       List<RecipeHolder<SmithingRecipe>> list = this.level.getRecipeManager().getRecipesFor(RecipeType.SMITHING, this.inputSlots, this.level);
+    public void m_6640_() {
+       List<RecipeHolder<SmithingRecipe>> list = this.f_40241_.m_7465_().m_44056_(RecipeType.f_44113_, this.f_39769_, this.f_40241_);
        if (list.isEmpty()) {
--         this.resultSlots.setItem(0, ItemStack.EMPTY);
-+         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
+-         this.f_39768_.m_6836_(0, ItemStack.f_41583_);
++         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
        } else {
           RecipeHolder<SmithingRecipe> recipeholder = list.get(0);
-          ItemStack itemstack = recipeholder.value().assemble(this.inputSlots, this.level.registryAccess());
-          if (itemstack.isItemEnabled(this.level.enabledFeatures())) {
-             this.selectedRecipe = recipeholder;
-             this.resultSlots.setRecipeUsed(recipeholder);
--            this.resultSlots.setItem(0, itemstack);
+          ItemStack itemstack = recipeholder.f_291008_().m_5874_(this.f_39769_, this.f_40241_.m_9598_());
+          if (itemstack.m_246617_(this.f_40241_.m_246046_())) {
+             this.f_40242_ = recipeholder;
+             this.f_39768_.m_40156_(recipeholder);
+-            this.f_39768_.m_6836_(0, itemstack);
 +            // CraftBukkit start
 +            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack);
 +            // CraftBukkit end
@@ -30,7 +30,7 @@
        }
  
 @@ -131,4 +_,17 @@
-          return !this.getSlot(p_296883_).hasItem();
+          return !this.m_38853_(p_296883_).m_6657_();
        }).findFirst();
     }
 +
@@ -41,8 +41,8 @@
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventorySmithing(access.getLocation(), this.inputSlots, this.resultSlots);
-+      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventorySmithing(f_39770_.getLocation(), this.f_39769_, this.f_39768_);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.f_39771_.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

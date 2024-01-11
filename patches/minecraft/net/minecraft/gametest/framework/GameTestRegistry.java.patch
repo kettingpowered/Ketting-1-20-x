@@ -1,44 +1,44 @@
 --- a/net/minecraft/gametest/framework/GameTestRegistry.java
 +++ b/net/minecraft/gametest/framework/GameTestRegistry.java
-@@ -25,22 +_,31 @@
-    private static final Map<String, Consumer<ServerLevel>> AFTER_BATCH_FUNCTIONS = Maps.newHashMap();
-    private static final Collection<TestFunction> LAST_FAILED_TESTS = Sets.newHashSet();
+@@ -25,21 +_,33 @@
+    private static final Map<String, Consumer<ServerLevel>> f_177498_ = Maps.newHashMap();
+    private static final Collection<TestFunction> f_177499_ = Sets.newHashSet();
  
 +   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
 +   @Deprecated
-    public static void register(Class<?> p_177502_) {
-       Arrays.stream(p_177502_.getDeclaredMethods()).forEach(GameTestRegistry::register);
+    public static void m_177501_(Class<?> p_177502_) {
+       Arrays.stream(p_177502_.getDeclaredMethods()).forEach(GameTestRegistry::m_177503_);
     }
  
 +   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
 +   @Deprecated
-    public static void register(Method p_177504_) {
+    public static void m_177503_(Method p_177504_) {
 +       register(p_177504_, java.util.Set.of());
 +   }
-+
 +   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
 +   @Deprecated
-+   public static void register(Method p_177504_, java.util.Set<String> allowed) {
++   public static void register(Method p_177504_, java.util.Set<String> allowedNamespaces) {
        String s = p_177504_.getDeclaringClass().getSimpleName();
        GameTest gametest = p_177504_.getAnnotation(GameTest.class);
-       if (gametest != null) {
--         TEST_FUNCTIONS.add(turnMethodIntoTestFunction(p_177504_));
--         TEST_CLASS_NAMES.add(s);
-+         net.minecraftforge.gametest.ForgeGameTestHooks.addTest(TEST_FUNCTIONS, TEST_CLASS_NAMES, allowed, turnMethodIntoTestFunction(p_177504_));
+-      if (gametest != null) {
++      if (gametest != null && (allowedNamespaces.isEmpty() || allowedNamespaces.contains(net.minecraftforge.gametest.ForgeGameTestHooks.getTemplateNamespace(p_177504_)))) {
+          f_177495_.add(m_177515_(p_177504_));
+          f_177496_.add(s);
        }
  
        GameTestGenerator gametestgenerator = p_177504_.getAnnotation(GameTestGenerator.class);
        if (gametestgenerator != null) {
--         TEST_FUNCTIONS.addAll(useTestGeneratorMethod(p_177504_));
--         TEST_CLASS_NAMES.add(s);
-+          for (var func : useTestGeneratorMethod(p_177504_))
-+             net.minecraftforge.gametest.ForgeGameTestHooks.addTest(TEST_FUNCTIONS, TEST_CLASS_NAMES, allowed, func);
+-         f_177495_.addAll(m_177513_(p_177504_));
++         Collection<TestFunction> testFunctions = new java.util.ArrayList<>(m_177513_(p_177504_));
++         if (!allowedNamespaces.isEmpty())
++             testFunctions.removeIf(t -> !allowedNamespaces.contains(new net.minecraft.resources.ResourceLocation(t.m_128078_()).m_135827_()));
++         f_177495_.addAll(testFunctions);
+          f_177496_.add(s);
        }
  
-       registerBatchFunction(p_177504_, BeforeBatch.class, BeforeBatch::batch, BEFORE_BATCH_FUNCTIONS);
 @@ -104,7 +_,9 @@
  
-    private static Collection<TestFunction> useTestGeneratorMethod(Method p_177514_) {
+    private static Collection<TestFunction> m_177513_(Method p_177514_) {
        try {
 -         Object object = p_177514_.getDeclaringClass().newInstance();
 +         Object object = null;
@@ -47,21 +47,20 @@
           return (Collection)p_177514_.invoke(object);
        } catch (ReflectiveOperationException reflectiveoperationexception) {
           throw new RuntimeException(reflectiveoperationexception);
-@@ -115,9 +_,9 @@
+@@ -115,8 +_,9 @@
        GameTest gametest = p_177516_.getAnnotation(GameTest.class);
        String s = p_177516_.getDeclaringClass().getSimpleName();
        String s1 = s.toLowerCase();
 -      String s2 = s1 + "." + p_177516_.getName().toLowerCase();
--      String s3 = gametest.template().isEmpty() ? s2 : s1 + "." + gametest.template();
--      String s4 = gametest.batch();
-+      String s2 = net.minecraftforge.gametest.ForgeGameTestHooks.getTestName(p_177516_, gametest);
-+      String s3 = net.minecraftforge.gametest.ForgeGameTestHooks.getTestTemplate(p_177516_, gametest, s2);
-+      String s4 = net.minecraftforge.gametest.ForgeGameTestHooks.getTestBatch(p_177516_, gametest);
-       Rotation rotation = StructureUtils.getRotationForRotationSteps(gametest.rotationSteps());
-       return new TestFunction(s4, s2, s3, rotation, gametest.timeoutTicks(), gametest.setupTicks(), gametest.required(), gametest.requiredSuccesses(), gametest.attempts(), (Consumer<net.minecraft.gametest.framework.GameTestHelper>)turnMethodIntoConsumer(p_177516_));
-    }
+-      String s3 = gametest.m_177046_().isEmpty() ? s2 : s1 + "." + gametest.m_177046_();
++      boolean prefixGameTestTemplate = net.minecraftforge.gametest.ForgeGameTestHooks.prefixGameTestTemplate(p_177516_);
++      String s2 = (prefixGameTestTemplate ? s1 + "." : "") + p_177516_.getName().toLowerCase();
++      String s3 = net.minecraftforge.gametest.ForgeGameTestHooks.getTemplateNamespace(p_177516_) + ":" + (gametest.m_177046_().isEmpty() ? s2 : (prefixGameTestTemplate ? s1 + "." : "") + gametest.m_177046_());
+       String s4 = gametest.m_177043_();
+       Rotation rotation = StructureUtils.m_127835_(gametest.m_177044_());
+       return new TestFunction(s4, s2, s3, rotation, gametest.m_177042_(), gametest.m_177047_(), gametest.m_177045_(), gametest.m_177049_(), gametest.m_177048_(), (Consumer<net.minecraft.gametest.framework.GameTestHelper>)m_177519_(p_177516_));
 @@ -125,7 +_,9 @@
-    private static Consumer<?> turnMethodIntoConsumer(Method p_177520_) {
+    private static Consumer<?> m_177519_(Method p_177520_) {
        return (p_177512_) -> {
           try {
 -            Object object = p_177520_.getDeclaringClass().newInstance();

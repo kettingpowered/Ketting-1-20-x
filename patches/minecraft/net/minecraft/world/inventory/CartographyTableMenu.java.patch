@@ -15,43 +15,43 @@
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryCartography inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryCartography(this.container, this.resultContainer);
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryCartography inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryCartography(this.f_39135_, this.f_39138_);
 +      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
-    public static final int MAP_SLOT = 0;
-    public static final int ADDITIONAL_SLOT = 1;
-    public static final int RESULT_SLOT = 2;
+    public static final int f_150501_ = 0;
+    public static final int f_150502_ = 1;
+    public static final int f_150503_ = 2;
 @@ -22,18 +_,8 @@
-    private static final int USE_ROW_SLOT_END = 39;
-    private final ContainerLevelAccess access;
-    long lastSoundTime;
--   public final Container container = new SimpleContainer(2) {
--      public void setChanged() {
--         CartographyTableMenu.this.slotsChanged(this);
--         super.setChanged();
+    private static final int f_150507_ = 39;
+    private final ContainerLevelAccess f_39136_;
+    long f_39137_;
+-   public final Container f_39135_ = new SimpleContainer(2) {
+-      public void m_6596_() {
+-         CartographyTableMenu.this.m_6199_(this);
+-         super.m_6596_();
 -      }
 -   };
--   private final ResultContainer resultContainer = new ResultContainer() {
--      public void setChanged() {
--         CartographyTableMenu.this.slotsChanged(this);
--         super.setChanged();
+-   private final ResultContainer f_39138_ = new ResultContainer() {
+-      public void m_6596_() {
+-         CartographyTableMenu.this.m_6199_(this);
+-         super.m_6596_();
 -      }
 -   };
-+   public final Container container;
-+   private final ResultContainer resultContainer;
++   public final Container f_39135_;
++   private final ResultContainer f_39138_;
  
     public CartographyTableMenu(int p_39140_, Inventory p_39141_) {
-       this(p_39140_, p_39141_, ContainerLevelAccess.NULL);
+       this(p_39140_, p_39141_, ContainerLevelAccess.f_39287_);
 @@ -41,6 +_,32 @@
  
     public CartographyTableMenu(int p_39143_, Inventory p_39144_, final ContainerLevelAccess p_39145_) {
-       super(MenuType.CARTOGRAPHY_TABLE, p_39143_);
-+      this.container = new SimpleContainer(2) {
-+         public void setChanged() {
-+            CartographyTableMenu.this.slotsChanged(this);
-+            super.setChanged();
+       super(MenuType.f_39979_, p_39143_);
++      this.f_39135_ = new SimpleContainer(2) {
++         public void m_6596_() {
++            CartographyTableMenu.this.m_6199_(this);
++            super.m_6596_();
 +         }
 +
 +         // CraftBukkit start
@@ -61,10 +61,10 @@
 +         }
 +         // CraftBukkit end
 +      };
-+      this.resultContainer = new ResultContainer() {
-+         public void setChanged() {
-+            CartographyTableMenu.this.slotsChanged(this);
-+            super.setChanged();
++      this.f_39138_ = new ResultContainer() {
++         public void m_6596_() {
++            CartographyTableMenu.this.m_6199_(this);
++            super.m_6596_();
 +         }
 +
 +         // CraftBukkit start
@@ -74,18 +74,18 @@
 +         }
 +         // CraftBukkit end
 +      };
-       this.access = p_39145_;
-       this.addSlot(new Slot(this.container, 0, 15, 15) {
-          public boolean mayPlace(ItemStack p_39194_) {
+       this.f_39136_ = p_39145_;
+       this.m_38897_(new Slot(this.f_39135_, 0, 15, 15) {
+          public boolean m_5857_(ItemStack p_39194_) {
 @@ -83,9 +_,11 @@
-          this.addSlot(new Slot(p_39144_, k, 8 + k * 18, 142));
+          this.m_38897_(new Slot(p_39144_, k, 8 + k * 18, 142));
        }
  
-+      player = (org.bukkit.entity.Player) p_39144_.player.getBukkitEntity(); // CraftBukkit
++      player = (org.bukkit.entity.Player) p_39144_.f_35978_.getBukkitEntity(); // CraftBukkit
     }
  
-    public boolean stillValid(Player p_39149_) {
+    public boolean m_6875_(Player p_39149_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
-       return stillValid(this.access, p_39149_, Blocks.CARTOGRAPHY_TABLE);
+       return m_38889_(this.f_39136_, p_39149_, Blocks.f_50621_);
     }
  

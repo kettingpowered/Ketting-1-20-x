@@ -1,17 +1,33 @@
 --- a/net/minecraft/world/item/crafting/StonecutterRecipe.java
 +++ b/net/minecraft/world/item/crafting/StonecutterRecipe.java
-@@ -17,4 +_,16 @@
-    public ItemStack getToastSymbol() {
-       return new ItemStack(Blocks.STONECUTTER);
+@@ -7,9 +_,14 @@
+ import net.minecraft.world.level.block.Blocks;
+ 
+ public class StonecutterRecipe extends SingleItemRecipe {
++   //Ketting start
++   public StonecutterRecipe(String p_44479_, Ingredient p_44480_, ItemStack itemstack) {
++      super(RecipeType.f_44112_, RecipeSerializer.f_44095_, p_44479_, p_44480_, itemstack);
++   }
+    public StonecutterRecipe(String p_44479_, Ingredient p_44480_, Item p_300034_, int p_297600_) {
+-      super(RecipeType.f_44112_, RecipeSerializer.f_44095_, p_44479_, p_44480_, new ItemStack(p_300034_, p_297600_));
++      this(p_44479_, p_44480_, new ItemStack(p_300034_, p_297600_));
+    }
++   //Ketting end
+ 
+    public boolean m_5818_(Container p_44483_, Level p_44484_) {
+       return this.f_44409_.test(p_44483_.m_8020_(0));
+@@ -18,4 +_,16 @@
+    public ItemStack m_8042_() {
+       return new ItemStack(Blocks.f_50679_);
     }
 +
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.Recipe toBukkitRecipe(org.bukkit.NamespacedKey id) {
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(this.result);
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(this.f_44410_);
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftStonecuttingRecipe recipe = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftStonecuttingRecipe(id, result, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.ingredient));
-+      recipe.setGroup(this.group);
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftStonecuttingRecipe recipe = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftStonecuttingRecipe(id, result, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.f_44409_));
++      recipe.setGroup(this.f_44412_);
 +
 +      return recipe;
 +   }

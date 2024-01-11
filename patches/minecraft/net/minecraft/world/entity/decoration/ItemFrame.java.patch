@@ -2,17 +2,17 @@
 +++ b/net/minecraft/world/entity/decoration/ItemFrame.java
 @@ -89,32 +_,43 @@
  
-    protected void recalculateBoundingBox() {
-       if (this.direction != null) {
+    protected void m_7087_() {
+       if (this.f_31699_ != null) {
 -         double d0 = 0.46875D;
--         double d1 = (double)this.pos.getX() + 0.5D - (double)this.direction.getStepX() * 0.46875D;
--         double d2 = (double)this.pos.getY() + 0.5D - (double)this.direction.getStepY() * 0.46875D;
--         double d3 = (double)this.pos.getZ() + 0.5D - (double)this.direction.getStepZ() * 0.46875D;
--         this.setPosRaw(d1, d2, d3);
--         double d4 = (double)this.getWidth();
--         double d5 = (double)this.getHeight();
--         double d6 = (double)this.getWidth();
--         Direction.Axis direction$axis = this.direction.getAxis();
+-         double d1 = (double)this.f_31698_.m_123341_() + 0.5D - (double)this.f_31699_.m_122429_() * 0.46875D;
+-         double d2 = (double)this.f_31698_.m_123342_() + 0.5D - (double)this.f_31699_.m_122430_() * 0.46875D;
+-         double d3 = (double)this.f_31698_.m_123343_() + 0.5D - (double)this.f_31699_.m_122431_() * 0.46875D;
+-         this.m_20343_(d1, d2, d3);
+-         double d4 = (double)this.m_7076_();
+-         double d5 = (double)this.m_7068_();
+-         double d6 = (double)this.m_7076_();
+-         Direction.Axis direction$axis = this.f_31699_.m_122434_();
 -         switch (direction$axis) {
 -            case X:
 -               d4 = 1.0D;
@@ -27,11 +27,11 @@
 -         d4 /= 32.0D;
 -         d5 /= 32.0D;
 -         d6 /= 32.0D;
--         this.setBoundingBox(new AABB(d1 - d4, d2 - d5, d3 - d6, d1 + d4, d2 + d5, d3 + d6));
+-         this.m_20011_(new AABB(d1 - d4, d2 - d5, d3 - d6, d1 + d4, d2 + d5, d3 + d6));
 -      }
 -   }
 +         // CraftBukkit start code moved in to calculateBoundingBox
-+         this.setBoundingBox(calculateBoundingBox(this, this.pos, this.direction, this.getWidth(), this.getHeight()));
++         this.m_20011_(calculateBoundingBox(this, this.f_31698_, this.f_31699_, this.m_7076_(), this.m_7068_()));
 +         // CraftBukkit end
 +      }
 +   }
@@ -39,16 +39,16 @@
 +   // CraftBukkit start - break out BB calc into own method
 +   public static AABB calculateBoundingBox(@Nullable Entity entity, BlockPos blockPosition, Direction direction, int width, int height) {
 +      double d0 = 0.46875D;
-+      double d1 = (double) blockPosition.getX() + 0.5D - (double) direction.getStepX() * 0.46875D;
-+      double d2 = (double) blockPosition.getY() + 0.5D - (double) direction.getStepY() * 0.46875D;
-+      double d3 = (double) blockPosition.getZ() + 0.5D - (double) direction.getStepZ() * 0.46875D;
++      double d1 = (double) blockPosition.m_123341_() + 0.5D - (double) direction.m_122429_() * 0.46875D;
++      double d2 = (double) blockPosition.m_123342_() + 0.5D - (double) direction.m_122430_() * 0.46875D;
++      double d3 = (double) blockPosition.m_123343_() + 0.5D - (double) direction.m_122431_() * 0.46875D;
 +      if (entity != null) {
-+         entity.setPosRaw(d1, d2, d3);
++         entity.m_20343_(d1, d2, d3);
 +      }
 +      double d4 = (double) width;
 +      double d5 = (double) height;
 +      double d6 = (double) width;
-+      Direction.Axis enumdirection_enumaxis = direction.getAxis();
++      Direction.Axis enumdirection_enumaxis = direction.m_122434_();
 +
 +      switch (enumdirection_enumaxis) {
 +         case X:
@@ -68,49 +68,49 @@
 +   }
 +   // CraftBukkit end
  
-    public boolean survives() {
-       if (this.fixed) {
+    public boolean m_7088_() {
+       if (this.f_31755_) {
 @@ -157,6 +_,11 @@
           return false;
-       } else if (!p_31776_.is(DamageTypeTags.IS_EXPLOSION) && !this.getItem().isEmpty()) {
-          if (!this.level().isClientSide) {
+       } else if (!p_31776_.m_269533_(DamageTypeTags.f_268415_) && !this.m_31822_().m_41619_()) {
+          if (!this.m_9236_().f_46443_) {
 +            // CraftBukkit start - fire EntityDamageEvent
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31776_, p_31777_, false) || this.isRemoved()) {
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31776_, p_31777_, false) || this.m_213877_()) {
 +               return true;
 +            }
 +            // CraftBukkit end
-             this.dropItem(p_31776_.getEntity(), false);
-             this.gameEvent(GameEvent.BLOCK_CHANGE, p_31776_.getEntity());
-             this.playSound(this.getRemoveItemSound(), 1.0F, 1.0F);
+             this.m_31802_(p_31776_.m_7639_(), false);
+             this.m_146852_(GameEvent.f_157792_, p_31776_.m_7639_());
+             this.m_5496_(this.m_142544_(), 1.0F, 1.0F);
 @@ -274,6 +_,7 @@
-       this.setItem(p_31806_, true);
+       this.m_31789_(p_31806_, true);
     }
  
 +   //Ketting start - forge compat
-    public void setItem(ItemStack p_31790_, boolean p_31791_) {
-       if (!p_31790_.isEmpty()) {
-          p_31790_ = p_31790_.copyWithCount(1);
+    public void m_31789_(ItemStack p_31790_, boolean p_31791_) {
+       if (!p_31790_.m_41619_()) {
+          p_31790_ = p_31790_.m_255036_(1);
 @@ -281,15 +_,22 @@
  
-       this.onItemChanged(p_31790_);
-       this.getEntityData().set(DATA_ITEM, p_31790_);
--      if (!p_31790_.isEmpty()) {
-+      if (!p_31790_.isEmpty() && setItem$playSound) { //Ketting
-          this.playSound(this.getAddItemSound(), 1.0F, 1.0F);
+       this.m_218865_(p_31790_);
+       this.m_20088_().m_135381_(f_31757_, p_31790_);
+-      if (!p_31790_.m_41619_()) {
++      if (!p_31790_.m_41619_() && setItem$playSound) { //Ketting
+          this.m_5496_(this.m_142546_(), 1.0F, 1.0F);
        }
  
-       if (p_31791_ && this.pos != null) {
-          this.level().updateNeighbourForOutputSignal(this.pos, Blocks.AIR);
+       if (p_31791_ && this.f_31698_ != null) {
+          this.m_9236_().m_46717_(this.f_31698_, Blocks.f_50016_);
        }
 +   }
  
 +   private boolean setItem$playSound = true;
 +   public void setItem(ItemStack p_31790_, boolean p_31791_, boolean playSound) {
 +      this.setItem$playSound = playSound;
-+      this.setItem(p_31790_, p_31791_);
++      this.m_31789_(p_31790_, p_31791_);
 +      this.setItem$playSound = true;
     }
 +   //Ketting end
  
-    public SoundEvent getAddItemSound() {
-       return SoundEvents.ITEM_FRAME_ADD_ITEM;
+    public SoundEvent m_142546_() {
+       return SoundEvents.f_12013_;

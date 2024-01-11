@@ -2,8 +2,8 @@
 +++ b/net/minecraft/server/dedicated/Settings.java
 @@ -26,13 +_,34 @@
  public abstract class Settings<T extends Settings<T>> {
-    private static final Logger LOGGER = LogUtils.getLogger();
-    public final Properties properties;
+    private static final Logger f_139797_ = LogUtils.getLogger();
+    public final Properties f_139798_;
 +   // CraftBukkit start
 +   private joptsimple.OptionSet options = null;
  
@@ -11,7 +11,7 @@
 +      this(p_139801_, new joptsimple.OptionParser().parse());
 +   }
 +   public Settings(Properties p_139801_, final joptsimple.OptionSet options) {
-       this.properties = p_139801_;
+       this.f_139798_ = p_139801_;
 +      this.options = options;
 +   }
 +
@@ -24,7 +24,7 @@
 +      // CraftBukkit end
     }
  
-    public static Properties loadFromFile(Path p_139840_) {
+    public static Properties m_139839_(Path p_139840_) {
        try {
 +         // CraftBukkit start - SPIGOT-7465, MC-264979: Don't load if file doesn't exist
 +         if (!p_139840_.toFile().exists()) {
@@ -38,7 +38,7 @@
 @@ -54,8 +_,14 @@
     }
  
-    public void store(Path p_139877_) {
+    public void m_139876_(Path p_139877_) {
 +      // CraftBukkit start - Don't attempt writing to file if it's read only
 +      if (p_139877_.toFile().exists() && !p_139877_.toFile().canWrite()) {
 +         return;
@@ -46,24 +46,24 @@
 +      // CraftBukkit end
 +
        try (Writer writer = Files.newBufferedWriter(p_139877_, StandardCharsets.UTF_8)) {
--         this.properties.store(writer, "Minecraft server properties");
-+         net.minecraftforge.common.util.SortedProperties.store(this.properties, writer, "Minecraft server properties");
+-         this.f_139798_.store(writer, "Minecraft server properties");
++         net.minecraftforge.common.util.SortedProperties.store(this.f_139798_, writer, "Minecraft server properties");
        } catch (IOException ioexception) {
-          LOGGER.error("Failed to store properties to file: {}", (Object)p_139877_);
+          f_139797_.error("Failed to store properties to file: {}", (Object)p_139877_);
        }
 @@ -84,7 +_,7 @@
  
     @Nullable
-    private String getStringRaw(String p_139879_) {
--      return (String)this.properties.get(p_139879_);
-+      return (String) getOverride(p_139879_, this.properties.getProperty(p_139879_)); // CraftBukkit
+    private String m_139878_(String p_139879_) {
+-      return (String)this.f_139798_.get(p_139879_);
++      return (String) getOverride(p_139879_, this.f_139798_.getProperty(p_139879_)); // CraftBukkit
     }
  
     @Nullable
 @@ -99,6 +_,16 @@
     }
  
-    protected <V> V get(String p_139822_, Function<String, V> p_139823_, Function<V, String> p_139824_, V p_139825_) {
+    protected <V> V m_139821_(String p_139822_, Function<String, V> p_139823_, Function<V, String> p_139824_, V p_139825_) {
 +      // CraftBukkit start
 +      try {
 +         return get0(p_139822_, p_139823_, p_139824_, p_139825_);
@@ -74,15 +74,15 @@
 +
 +   private <V> V get0(String p_139822_, Function<String, V> p_139823_, Function<V, String> p_139824_, V p_139825_) {
 +      // CraftBukkit end
-       String s = this.getStringRaw(p_139822_);
+       String s = this.m_139878_(p_139822_);
        V v = MoreObjects.firstNonNull((V)(s != null ? p_139823_.apply(s) : null), p_139825_);
-       this.properties.put(p_139822_, p_139824_.apply(v));
+       this.f_139798_.put(p_139822_, p_139824_.apply(v));
 @@ -171,7 +_,13 @@
        return properties;
     }
  
--   protected abstract T reload(RegistryAccess p_139857_, Properties p_139858_);
-+   protected T reload(RegistryAccess p_139857_, Properties p_139858_){
+-   protected abstract T m_6764_(RegistryAccess p_139857_, Properties p_139858_);
++   protected T m_6764_(RegistryAccess p_139857_, Properties p_139858_){
 +      return reload(p_139857_, p_139858_, new joptsimple.OptionParser().parse());
 +   }
 +   // CraftBukkit
@@ -91,12 +91,12 @@
 +   } 
  
     public class MutableValue<V> implements Supplier<V> {
-       private final String key;
+       private final String f_139881_;
 @@ -191,7 +_,7 @@
-       public T update(RegistryAccess p_139896_, V p_139897_) {
-          Properties properties = Settings.this.cloneProperties();
-          properties.put(this.key, this.serializer.apply(p_139897_));
--         return Settings.this.reload(p_139896_, properties);
+       public T m_139895_(RegistryAccess p_139896_, V p_139897_) {
+          Properties properties = Settings.this.m_139802_();
+          properties.put(this.f_139881_, this.f_139883_.apply(p_139897_));
+-         return Settings.this.m_6764_(p_139896_, properties);
 +         return Settings.this.reload(p_139896_, properties, Settings.this.options); // CraftBukkit
        }
     }

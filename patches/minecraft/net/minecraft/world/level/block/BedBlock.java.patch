@@ -4,12 +4,12 @@
              }
           }
  
--         if (!canSetSpawn(p_49516_)) {
+-         if (!m_49488_(p_49516_)) {
 +         // CraftBukkit - moved world and biome check into EntityHuman
-+         if (false && !canSetSpawn(p_49516_)) {
-             p_49516_.removeBlock(p_49517_, false);
-             BlockPos blockpos = p_49517_.relative(p_49515_.getValue(FACING).getOpposite());
-             if (p_49516_.getBlockState(blockpos).is(this)) {
++         if (false && !m_49488_(p_49516_)) {
+             p_49516_.m_7471_(p_49517_, false);
+             BlockPos blockpos = p_49517_.m_121945_(p_49515_.m_61143_(f_54117_).m_122424_());
+             if (p_49516_.m_8055_(blockpos).m_60713_(this)) {
 @@ -98,7 +_,16 @@
  
              return InteractionResult.SUCCESS;
@@ -18,14 +18,14 @@
 +            BlockState finaliblockdata = p_49515_;
 +            BlockPos finalblockposition = p_49517_;
 +            // CraftBukkit end
-             p_49518_.startSleepInBed(p_49517_).ifLeft((p_49477_) -> {
+             p_49518_.m_7720_(p_49517_).ifLeft((p_49477_) -> {
 +               // CraftBukkit start - handling bed explosion from below here
-+               if (!p_49516_.dimensionType().bedWorks()) {
++               if (!p_49516_.m_6042_().f_63862_()) {
 +                  this.explodeBed(finaliblockdata, p_49516_, finalblockposition);
 +               } else
 +                  // CraftBukkit end
-                if (p_49477_.getMessage() != null) {
-                   p_49518_.displayClientMessage(p_49477_.getMessage(), true);
+                if (p_49477_.m_36423_() != null) {
+                   p_49518_.m_5661_(p_49477_.m_36423_(), true);
                 }
 @@ -109,8 +_,29 @@
        }
@@ -35,38 +35,38 @@
 +   private InteractionResult explodeBed(BlockState blockstate, Level level, BlockPos blockpos) {
 +      {
 +         {
-+            level.removeBlock(blockpos, false);
-+            BlockPos blockposition1 = blockpos.relative(((Direction) blockstate.getValue(BedBlock.FACING)).getOpposite());
++            level.m_7471_(blockpos, false);
++            BlockPos blockposition1 = blockpos.m_121945_(((Direction) blockstate.m_61143_(BedBlock.f_54117_)).m_122424_());
 +
-+            if (level.getBlockState(blockposition1).getBlock() == this) {
-+               level.removeBlock(blockposition1, false);
++            if (level.m_8055_(blockposition1).m_60734_() == this) {
++               level.m_7471_(blockposition1, false);
 +            }
 +
-+            Vec3 vec3d = blockpos.getCenter();
++            Vec3 vec3d = blockpos.m_252807_();
 +
-+            level.explode((Entity) null, level.damageSources().badRespawnPointExplosion(vec3d), (ExplosionDamageCalculator) null, vec3d, 5.0F, true, Level.ExplosionInteraction.BLOCK);
++            level.m_254951_((Entity) null, level.m_269111_().m_269488_(vec3d), (ExplosionDamageCalculator) null, vec3d, 5.0F, true, Level.ExplosionInteraction.BLOCK);
 +            return InteractionResult.SUCCESS;
 +         }
 +      }
 +   }
 +   // CraftBukkit end
 +
-    public static boolean canSetSpawn(Level p_49489_) {
--      return p_49489_.dimensionType().bedWorks();
+    public static boolean m_49488_(Level p_49489_) {
+-      return p_49489_.m_6042_().f_63862_();
 +      // CraftBukkit - moved world and biome check into EntityHuman
-+      return true || p_49489_.dimensionType().bedWorks();
++      return true || p_49489_.m_6042_().f_63862_();
     }
  
-    private boolean kickVillagerOutOfBed(Level p_49491_, BlockPos p_49492_) {
+    private boolean m_49490_(Level p_49491_, BlockPos p_49492_) {
 @@ -281,6 +_,11 @@
-       if (!p_49499_.isClientSide) {
-          BlockPos blockpos = p_49500_.relative(p_49501_.getValue(FACING));
-          p_49499_.setBlock(blockpos, p_49501_.setValue(PART, BedPart.HEAD), 3);
+       if (!p_49499_.f_46443_) {
+          BlockPos blockpos = p_49500_.m_121945_(p_49501_.m_61143_(f_54117_));
+          p_49499_.m_7731_(blockpos, p_49501_.m_61124_(f_49440_, BedPart.HEAD), 3);
 +         // CraftBukkit start - SPIGOT-7315: Don't updated if we capture block states
 +         if (p_49499_.captureBlockStates) {
 +            return;
 +         }
 +         // CraftBukkit end
-          p_49499_.blockUpdated(p_49500_, Blocks.AIR);
-          p_49501_.updateNeighbourShapes(p_49499_, p_49500_, 3);
+          p_49499_.m_6289_(p_49500_, Blocks.f_50016_);
+          p_49501_.m_60701_(p_49499_, p_49500_, 3);
        }

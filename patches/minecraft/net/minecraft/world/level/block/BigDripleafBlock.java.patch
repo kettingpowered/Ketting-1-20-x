@@ -3,23 +3,23 @@
 @@ -104,7 +_,7 @@
     }
  
-    public void onProjectileHit(Level p_152228_, BlockState p_152229_, BlockHitResult p_152230_, Projectile p_152231_) {
--      this.setTiltAndScheduleTick(p_152229_, p_152228_, p_152230_.getBlockPos(), Tilt.FULL, SoundEvents.BIG_DRIPLEAF_TILT_DOWN);
-+      this.setTiltAndScheduleTick(p_152229_, p_152228_, p_152230_.getBlockPos(), Tilt.FULL, SoundEvents.BIG_DRIPLEAF_TILT_DOWN, p_152231_); // CraftBukkit
+    public void m_5581_(Level p_152228_, BlockState p_152229_, BlockHitResult p_152230_, Projectile p_152231_) {
+-      this.m_152282_(p_152229_, p_152228_, p_152230_.m_82425_(), Tilt.FULL, SoundEvents.f_144131_);
++      this.setTiltAndScheduleTick(p_152229_, p_152228_, p_152230_.m_82425_(), Tilt.FULL, SoundEvents.f_144131_, p_152231_); // CraftBukkit
     }
  
-    public FluidState getFluidState(BlockState p_152312_) {
+    public FluidState m_5888_(BlockState p_152312_) {
 @@ -152,7 +_,20 @@
-    public void entityInside(BlockState p_152266_, Level p_152267_, BlockPos p_152268_, Entity p_152269_) {
-       if (!p_152267_.isClientSide) {
-          if (p_152266_.getValue(TILT) == Tilt.NONE && canEntityTilt(p_152268_, p_152269_) && !p_152267_.hasNeighborSignal(p_152268_)) {
--            this.setTiltAndScheduleTick(p_152266_, p_152267_, p_152268_, Tilt.UNSTABLE, (SoundEvent)null);
+    public void m_7892_(BlockState p_152266_, Level p_152267_, BlockPos p_152268_, Entity p_152269_) {
+       if (!p_152267_.f_46443_) {
+          if (p_152266_.m_61143_(f_152201_) == Tilt.NONE && m_152301_(p_152268_, p_152269_) && !p_152267_.m_276867_(p_152268_)) {
+-            this.m_152282_(p_152266_, p_152267_, p_152268_, Tilt.UNSTABLE, (SoundEvent)null);
 +            // CraftBukkit start - tilt dripleaf
 +            org.bukkit.event.Cancellable cancellable;
 +            if (p_152269_ instanceof Player) {
 +               cancellable = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent((Player) p_152269_, org.bukkit.event.block.Action.PHYSICAL, p_152268_, null, null, null);
 +            } else {
-+               cancellable = new org.bukkit.event.entity.EntityInteractEvent(p_152269_.getBukkitEntity(), p_152267_.getWorld().getBlockAt(p_152268_.getX(), p_152268_.getY(), p_152268_.getZ()));
++               cancellable = new org.bukkit.event.entity.EntityInteractEvent(p_152269_.getBukkitEntity(), p_152267_.getWorld().getBlockAt(p_152268_.m_123341_(), p_152268_.m_123342_(), p_152268_.m_123343_()));
 +               p_152267_.getCraftServer().getPluginManager().callEvent((org.bukkit.event.entity.EntityInteractEvent) cancellable);
 +            }
 +
@@ -33,57 +33,57 @@
        }
 @@ -164,9 +_,9 @@
        } else {
-          Tilt tilt = p_220798_.getValue(TILT);
+          Tilt tilt = p_220798_.m_61143_(f_152201_);
           if (tilt == Tilt.UNSTABLE) {
--            this.setTiltAndScheduleTick(p_220798_, p_220799_, p_220800_, Tilt.PARTIAL, SoundEvents.BIG_DRIPLEAF_TILT_DOWN);
-+            this.setTiltAndScheduleTick(p_220798_, p_220799_, p_220800_, Tilt.PARTIAL, SoundEvents.BIG_DRIPLEAF_TILT_DOWN, null); // CraftBukkit
+-            this.m_152282_(p_220798_, p_220799_, p_220800_, Tilt.PARTIAL, SoundEvents.f_144131_);
++            this.setTiltAndScheduleTick(p_220798_, p_220799_, p_220800_, Tilt.PARTIAL, SoundEvents.f_144131_, null); // CraftBukkit
           } else if (tilt == Tilt.PARTIAL) {
--            this.setTiltAndScheduleTick(p_220798_, p_220799_, p_220800_, Tilt.FULL, SoundEvents.BIG_DRIPLEAF_TILT_DOWN);
-+            this.setTiltAndScheduleTick(p_220798_, p_220799_, p_220800_, Tilt.FULL, SoundEvents.BIG_DRIPLEAF_TILT_DOWN, null); // CraftBukkit
+-            this.m_152282_(p_220798_, p_220799_, p_220800_, Tilt.FULL, SoundEvents.f_144131_);
++            this.setTiltAndScheduleTick(p_220798_, p_220799_, p_220800_, Tilt.FULL, SoundEvents.f_144131_, null); // CraftBukkit
           } else if (tilt == Tilt.FULL) {
-             resetTilt(p_220798_, p_220799_, p_220800_);
+             m_152313_(p_220798_, p_220799_, p_220800_);
           }
 @@ -190,8 +_,10 @@
-       return p_152303_.onGround() && p_152303_.position().y > (double)((float)p_152302_.getY() + 0.6875F);
+       return p_152303_.m_20096_() && p_152303_.m_20182_().f_82480_ > (double)((float)p_152302_.m_123342_() + 0.6875F);
     }
  
--   private void setTiltAndScheduleTick(BlockState p_152283_, Level p_152284_, BlockPos p_152285_, Tilt p_152286_, @Nullable SoundEvent p_152287_) {
--      setTilt(p_152283_, p_152284_, p_152285_, p_152286_);
+-   private void m_152282_(BlockState p_152283_, Level p_152284_, BlockPos p_152285_, Tilt p_152286_, @Nullable SoundEvent p_152287_) {
+-      m_152277_(p_152283_, p_152284_, p_152285_, p_152286_);
 +   // CraftBukkit start
 +   private void setTiltAndScheduleTick(BlockState p_152283_, Level p_152284_, BlockPos p_152285_, Tilt p_152286_, @Nullable SoundEvent p_152287_, @Nullable Entity entity) {
 +      if (setTilt(p_152283_, p_152284_, p_152285_, p_152286_, entity)) return;
 +      // CraftBukkit end
        if (p_152287_ != null) {
-          playTiltSound(p_152284_, p_152285_, p_152287_);
+          m_152232_(p_152284_, p_152285_, p_152287_);
        }
 @@ -204,20 +_,28 @@
     }
  
-    private static void resetTilt(BlockState p_152314_, Level p_152315_, BlockPos p_152316_) {
--      setTilt(p_152314_, p_152315_, p_152316_, Tilt.NONE);
+    private static void m_152313_(BlockState p_152314_, Level p_152315_, BlockPos p_152316_) {
+-      m_152277_(p_152314_, p_152315_, p_152316_, Tilt.NONE);
 +      setTilt(p_152314_, p_152315_, p_152316_, Tilt.NONE, null); // CraftBukkit
-       if (p_152314_.getValue(TILT) != Tilt.NONE) {
-          playTiltSound(p_152315_, p_152316_, SoundEvents.BIG_DRIPLEAF_TILT_UP);
+       if (p_152314_.m_61143_(f_152201_) != Tilt.NONE) {
+          m_152232_(p_152315_, p_152316_, SoundEvents.f_144132_);
        }
  
     }
  
--   private static void setTilt(BlockState p_152278_, Level p_152279_, BlockPos p_152280_, Tilt p_152281_) {
+-   private static void m_152277_(BlockState p_152278_, Level p_152279_, BlockPos p_152280_, Tilt p_152281_) {
 +   // CraftBukkit start
 +   private static boolean setTilt(BlockState p_152278_, Level p_152279_, BlockPos p_152280_, Tilt p_152281_, @Nullable Entity entity) {
 +      if (entity != null) {
-+         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(entity, p_152280_, p_152278_.setValue(BigDripleafBlock.TILT, p_152281_))) {
++         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(entity, p_152280_, p_152278_.m_61124_(BigDripleafBlock.f_152201_, p_152281_))) {
 +            return false;
 +         }
 +      }
 +      // CraftBukkit end
-       Tilt tilt = p_152278_.getValue(TILT);
-       p_152279_.setBlock(p_152280_, p_152278_.setValue(TILT, p_152281_), 2);
-       if (p_152281_.causesVibration() && p_152281_ != tilt) {
-          p_152279_.gameEvent((Entity)null, GameEvent.BLOCK_CHANGE, p_152280_);
+       Tilt tilt = p_152278_.m_61143_(f_152201_);
+       p_152279_.m_7731_(p_152280_, p_152278_.m_61124_(f_152201_, p_152281_), 2);
+       if (p_152281_.m_156084_() && p_152281_ != tilt) {
+          p_152279_.m_142346_((Entity)null, GameEvent.f_157792_, p_152280_);
        }
  
 +      return true; // CraftBukkit
     }
  
-    public VoxelShape getCollisionShape(BlockState p_152307_, BlockGetter p_152308_, BlockPos p_152309_, CollisionContext p_152310_) {
+    public VoxelShape m_5939_(BlockState p_152307_, BlockGetter p_152308_, BlockPos p_152309_, CollisionContext p_152310_) {

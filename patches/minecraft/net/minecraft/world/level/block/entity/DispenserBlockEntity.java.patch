@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/level/block/entity/DispenserBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/DispenserBlockEntity.java
 @@ -17,6 +_,35 @@
-    public static final int CONTAINER_SIZE = 9;
-    private NonNullList<ItemStack> items = NonNullList.withSize(9, ItemStack.EMPTY);
+    public static final int f_155487_ = 9;
+    private NonNullList<ItemStack> f_59228_ = NonNullList.m_122780_(9, ItemStack.f_41583_);
  
 +   // CraftBukkit start - add fields and methods
 +   public java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
 +   private int maxStack = MAX_STACK;
 +
 +   public java.util.List<ItemStack> getContents() {
-+      return this.items;
++      return this.f_59228_;
 +   }
 +
 +   public void onOpen(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
@@ -25,7 +25,7 @@
 +   }
 +
 +   @Override
-+   public int getMaxStackSize() {
++   public int m_6893_() {
 +      return maxStack;
 +   }
 +

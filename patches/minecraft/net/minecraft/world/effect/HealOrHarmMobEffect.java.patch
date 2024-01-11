@@ -1,19 +1,19 @@
 --- a/net/minecraft/world/effect/HealOrHarmMobEffect.java
 +++ b/net/minecraft/world/effect/HealOrHarmMobEffect.java
 @@ -15,7 +_,7 @@
-    public void applyEffectTick(LivingEntity p_300845_, int p_301393_) {
-       super.applyEffectTick(p_300845_, p_301393_);
-       if (this.isHarm == p_300845_.isInvertedHealAndHarm()) {
--         p_300845_.heal((float)Math.max(4 << p_301393_, 0));
+    public void m_6742_(LivingEntity p_300845_, int p_301393_) {
+       super.m_6742_(p_300845_, p_301393_);
+       if (this.f_291810_ == p_300845_.m_21222_()) {
+-         p_300845_.m_5634_((float)Math.max(4 << p_301393_, 0));
 +         p_300845_.heal((float)Math.max(4 << p_301393_, 0), org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.MAGIC); // CraftBukkit
        } else {
-          p_300845_.hurt(p_300845_.damageSources().magic(), (float)(6 << p_301393_));
+          p_300845_.m_6469_(p_300845_.m_269291_().m_269425_(), (float)(6 << p_301393_));
        }
 @@ -25,7 +_,7 @@
-    public void applyInstantenousEffect(@Nullable Entity p_298495_, @Nullable Entity p_298887_, LivingEntity p_298479_, int p_298172_, double p_298163_) {
-       if (this.isHarm == p_298479_.isInvertedHealAndHarm()) {
+    public void m_19461_(@Nullable Entity p_298495_, @Nullable Entity p_298887_, LivingEntity p_298479_, int p_298172_, double p_298163_) {
+       if (this.f_291810_ == p_298479_.m_21222_()) {
           int i = (int)(p_298163_ * (double)(4 << p_298172_) + 0.5D);
--         p_298479_.heal((float)i);
+-         p_298479_.m_5634_((float)i);
 +         p_298479_.heal((float)i, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.MAGIC); // CraftBukkit
        } else {
           int j = (int)(p_298163_ * (double)(6 << p_298172_) + 0.5D);

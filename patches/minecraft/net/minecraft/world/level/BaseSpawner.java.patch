@@ -2,50 +2,50 @@
 +++ b/net/minecraft/world/level/BaseSpawner.java
 @@ -46,6 +_,7 @@
  
-    public void setEntityId(EntityType<?> p_253682_, @Nullable Level p_254041_, RandomSource p_254221_, BlockPos p_254050_) {
-       this.getOrCreateNextSpawnData(p_254041_, p_254221_, p_254050_).getEntityToSpawn().putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(p_253682_).toString());
-+      this.spawnPotentials = SimpleWeightedRandomList.empty(); // CraftBukkit - SPIGOT-3496, MC-92282
+    public void m_253197_(EntityType<?> p_253682_, @Nullable Level p_254041_, RandomSource p_254221_, BlockPos p_254050_) {
+       this.m_253144_(p_254041_, p_254221_, p_254050_).m_186567_().m_128359_("id", BuiltInRegistries.f_256780_.m_7981_(p_253682_).toString());
++      this.f_45443_ = SimpleWeightedRandomList.m_185864_(); // CraftBukkit - SPIGOT-3496, MC-92282
     }
  
-    private boolean isNearPlayer(Level p_151344_, BlockPos p_151345_) {
+    private boolean m_151343_(Level p_151344_, BlockPos p_151345_) {
 @@ -131,16 +_,29 @@
-                   entity.moveTo(entity.getX(), entity.getY(), entity.getZ(), randomsource.nextFloat() * 360.0F, 0.0F);
+                   entity.m_7678_(entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), randomsource.m_188501_() * 360.0F, 0.0F);
                    if (entity instanceof Mob) {
                       Mob mob = (Mob)entity;
--                     if (spawndata.getCustomSpawnRules().isEmpty() && !mob.checkSpawnRules(p_151312_, MobSpawnType.SPAWNER) || !mob.checkSpawnObstruction(p_151312_)) {
+-                     if (spawndata.m_186574_().isEmpty() && !mob.m_5545_(p_151312_, MobSpawnType.SPAWNER) || !mob.m_6914_(p_151312_)) {
 +                     if (!net.minecraftforge.event.ForgeEventFactory.checkSpawnPositionSpawner(mob, p_151312_, MobSpawnType.SPAWNER, spawndata, this)) {
                          continue;
                       }
  
--                     if (spawndata.getEntityToSpawn().size() == 1 && spawndata.getEntityToSpawn().contains("id", 8)) {
--                        ((Mob)entity).finalizeSpawn(p_151312_, p_151312_.getCurrentDifficultyAt(entity.blockPosition()), MobSpawnType.SPAWNER, (SpawnGroupData)null, (CompoundTag)null);
+-                     if (spawndata.m_186567_().m_128440_() == 1 && spawndata.m_186567_().m_128425_("id", 8)) {
+-                        ((Mob)entity).m_6518_(p_151312_, p_151312_.m_6436_(entity.m_20183_()), MobSpawnType.SPAWNER, (SpawnGroupData)null, (CompoundTag)null);
 -                     }
 +                     // Forge: Patch in FinalizeSpawn for spawners so it may be fired unconditionally, instead of only when vanilla normally would trigger it.
-+                     var event = net.minecraftforge.event.ForgeEventFactory.onFinalizeSpawnSpawner(mob, p_151312_, p_151312_.getCurrentDifficultyAt(entity.blockPosition()), null, compoundtag, this);
-+                     if (event != null && spawndata.getEntityToSpawn().size() == 1 && spawndata.getEntityToSpawn().contains("id", 8)) {
-+                        ((Mob)entity).finalizeSpawn(p_151312_, event.getDifficulty(), event.getSpawnType(), event.getSpawnData(), event.getSpawnTag());
++                     var event = net.minecraftforge.event.ForgeEventFactory.onFinalizeSpawnSpawner(mob, p_151312_, p_151312_.m_6436_(entity.m_20183_()), null, compoundtag, this);
++                     if (event != null && spawndata.m_186567_().m_128440_() == 1 && spawndata.m_186567_().m_128425_("id", 8)) {
++                        ((Mob)entity).m_6518_(p_151312_, event.getDifficulty(), event.getSpawnType(), event.getSpawnData(), event.getSpawnTag());
 +                     }
 +                     // Spigot Start
-+                     if ( mob.level().spigotConfig.nerfSpawnerMobs )
++                     if ( mob.m_9236_().spigotConfig.nerfSpawnerMobs )
 +                     {
 +                        mob.aware = false;
 +                     }
 +                     // Spigot End
                    }
  
--                  if (!p_151312_.tryAddFreshEntityWithPassengers(entity)) {
+-                  if (!p_151312_.m_8860_(entity)) {
 +                  // CraftBukkit start
 +                  if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callSpawnerSpawnEvent(entity, p_151313_).isCancelled()) {
 +                     continue;
 +                  }
 +                  if (!p_151312_.tryAddFreshEntityWithPassengers(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER)) {
 +                     // CraftBukkit end
-                      this.delay(p_151312_, p_151313_);
+                      this.m_151350_(p_151312_, p_151313_);
                       return;
                    }
 @@ -283,4 +_,12 @@
-    public double getoSpin() {
-       return this.oSpin;
+    public double m_45474_() {
+       return this.f_45446_;
     }
 +
 +   @Nullable

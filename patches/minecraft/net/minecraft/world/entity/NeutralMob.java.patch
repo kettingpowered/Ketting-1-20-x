@@ -1,26 +1,26 @@
 --- a/net/minecraft/world/entity/NeutralMob.java
 +++ b/net/minecraft/world/entity/NeutralMob.java
 @@ -108,7 +_,7 @@
-    default void stopBeingAngry() {
-       this.setLastHurtByMob((LivingEntity)null);
-       this.setPersistentAngerTarget((UUID)null);
--      this.setTarget((LivingEntity)null);
+    default void m_21662_() {
+       this.m_6703_((LivingEntity)null);
+       this.m_6925_((UUID)null);
+-      this.m_6710_((LivingEntity)null);
 +      this.setTarget((LivingEntity)null, org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit
-       this.setRemainingPersistentAngerTime(0);
+       this.m_7870_(0);
     }
  
 @@ -119,7 +_,13 @@
  
-    void setLastHurtByPlayer(@Nullable Player p_21680_);
+    void m_6598_(@Nullable Player p_21680_);
  
--   void setTarget(@Nullable LivingEntity p_21681_);
+-   void m_6710_(@Nullable LivingEntity p_21681_);
 +   //Ketting start
-+   default void setTarget(@Nullable LivingEntity p_21681_)
++   default void m_6710_(@Nullable LivingEntity p_21681_)
 +   {
 +      setTarget(p_21681_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN, true);
 +   }
 +   //Ketting end
 +   boolean setTarget(@Nullable LivingEntity p_21681_, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent); // CraftBukkit
  
-    boolean canAttack(LivingEntity p_181126_);
+    boolean m_6779_(LivingEntity p_181126_);
  

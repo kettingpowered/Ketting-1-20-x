@@ -81,8 +81,7 @@ public class ModInfo implements IModInfo, IConfigurable {
         this.displayName = config.<String>getConfigElement("displayName")
                 .orElse(this.modId);
         this.description = config.<String>getConfigElement("description")
-                .orElse("MISSING DESCRIPTION")
-                .replace("\r\n", "\n").stripIndent();
+                .orElse("MISSING DESCRIPTION");
         this.logoFile = Optional.ofNullable(config.<String>getConfigElement("logoFile")
                 .orElseGet(() -> ownFile.flatMap(mf -> mf.<String>getConfigElement("logoFile"))
                         .orElse(null)));
@@ -207,7 +206,7 @@ public class ModInfo implements IModInfo, IConfigurable {
         private final boolean mandatory;
         private final Ordering ordering;
         private final DependencySide side;
-        private final Optional<URL> referralUrl;
+        private Optional<URL> referralUrl;
 
         public ModVersion(final IModInfo owner, final IConfigurable config) {
             this.owner = owner;

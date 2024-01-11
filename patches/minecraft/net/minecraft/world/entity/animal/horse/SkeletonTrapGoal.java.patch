@@ -2,54 +2,54 @@
 +++ b/net/minecraft/world/entity/animal/horse/SkeletonTrapGoal.java
 @@ -28,34 +_,39 @@
  
-    public void tick() {
-       ServerLevel serverlevel = (ServerLevel)this.horse.level();
--      DifficultyInstance difficultyinstance = serverlevel.getCurrentDifficultyAt(this.horse.blockPosition());
--      this.horse.setTrap(false);
--      this.horse.setTamed(true);
--      this.horse.setAge(0);
--      LightningBolt lightningbolt = EntityType.LIGHTNING_BOLT.create(serverlevel);
+    public void m_8037_() {
+       ServerLevel serverlevel = (ServerLevel)this.f_30925_.m_9236_();
+-      DifficultyInstance difficultyinstance = serverlevel.m_6436_(this.f_30925_.m_20183_());
+-      this.f_30925_.m_30923_(false);
+-      this.f_30925_.m_30651_(true);
+-      this.f_30925_.m_146762_(0);
+-      LightningBolt lightningbolt = EntityType.f_20465_.m_20615_(serverlevel);
 -      if (lightningbolt != null) {
--         lightningbolt.moveTo(this.horse.getX(), this.horse.getY(), this.horse.getZ());
--         lightningbolt.setVisualOnly(true);
--         serverlevel.addFreshEntity(lightningbolt);
--         Skeleton skeleton = this.createSkeleton(difficultyinstance, this.horse);
+-         lightningbolt.m_6027_(this.f_30925_.m_20185_(), this.f_30925_.m_20186_(), this.f_30925_.m_20189_());
+-         lightningbolt.m_20874_(true);
+-         serverlevel.m_7967_(lightningbolt);
+-         Skeleton skeleton = this.m_30931_(difficultyinstance, this.f_30925_);
 -         if (skeleton != null) {
--            skeleton.startRiding(this.horse);
--            serverlevel.addFreshEntityWithPassengers(skeleton);
+-            skeleton.m_20329_(this.f_30925_);
+-            serverlevel.m_47205_(skeleton);
 +      // Forge: Trigger the trap in a tick task to avoid crashes when mods add goals to skeleton horses
 +      // (MC-206338/Forge PR #7509)
-+      serverlevel.getServer().tell(new net.minecraft.server.TickTask(serverlevel.getServer().getTickCount(), () -> {
-+         if (!this.horse.isAlive()) return;
-+         DifficultyInstance difficultyinstance = serverlevel.getCurrentDifficultyAt(this.horse.blockPosition());
-+         this.horse.setTrap(false);
-+         this.horse.setTamed(true);
-+         this.horse.setAge(0);
-+         LightningBolt lightningbolt = EntityType.LIGHTNING_BOLT.create(serverlevel);
++      serverlevel.m_7654_().m_6937_(new net.minecraft.server.TickTask(serverlevel.m_7654_().m_129921_(), () -> {
++         if (!this.f_30925_.m_6084_()) return;
++         DifficultyInstance difficultyinstance = serverlevel.m_6436_(this.f_30925_.m_20183_());
++         this.f_30925_.m_30923_(false);
++         this.f_30925_.m_30651_(true);
++         this.f_30925_.m_146762_(0);
++         LightningBolt lightningbolt = EntityType.f_20465_.m_20615_(serverlevel);
 +         if (lightningbolt != null) {
-+            lightningbolt.moveTo(this.horse.getX(), this.horse.getY(), this.horse.getZ());
-+            lightningbolt.setVisualOnly(true);
++            lightningbolt.m_6027_(this.f_30925_.m_20185_(), this.f_30925_.m_20186_(), this.f_30925_.m_20189_());
++            lightningbolt.m_20874_(true);
 +            serverlevel.strikeLightning(lightningbolt, org.bukkit.event.weather.LightningStrikeEvent.Cause.TRAP); // CraftBukkit
-+            Skeleton skeleton = this.createSkeleton(difficultyinstance, this.horse);
++            Skeleton skeleton = this.m_30931_(difficultyinstance, this.f_30925_);
 +            if (skeleton != null) {
-+               skeleton.startRiding(this.horse);
++               skeleton.m_20329_(this.f_30925_);
 +               serverlevel.addFreshEntityWithPassengers(skeleton, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.TRAP); // CraftBukkit
  
 -            for(int i = 0; i < 3; ++i) {
--               AbstractHorse abstracthorse = this.createHorse(difficultyinstance);
+-               AbstractHorse abstracthorse = this.m_30929_(difficultyinstance);
 -               if (abstracthorse != null) {
--                  Skeleton skeleton1 = this.createSkeleton(difficultyinstance, abstracthorse);
+-                  Skeleton skeleton1 = this.m_30931_(difficultyinstance, abstracthorse);
 -                  if (skeleton1 != null) {
--                     skeleton1.startRiding(abstracthorse);
--                     abstracthorse.push(this.horse.getRandom().triangle(0.0D, 1.1485D), 0.0D, this.horse.getRandom().triangle(0.0D, 1.1485D));
--                     serverlevel.addFreshEntityWithPassengers(abstracthorse);
+-                     skeleton1.m_20329_(abstracthorse);
+-                     abstracthorse.m_5997_(this.f_30925_.m_217043_().m_216328_(0.0D, 1.1485D), 0.0D, this.f_30925_.m_217043_().m_216328_(0.0D, 1.1485D));
+-                     serverlevel.m_47205_(abstracthorse);
 +               for(int i = 0; i < 3; ++i) {
-+                  AbstractHorse abstracthorse = this.createHorse(difficultyinstance);
++                  AbstractHorse abstracthorse = this.m_30929_(difficultyinstance);
 +                  if (abstracthorse != null) {
-+                     Skeleton skeleton1 = this.createSkeleton(difficultyinstance, abstracthorse);
++                     Skeleton skeleton1 = this.m_30931_(difficultyinstance, abstracthorse);
 +                     if (skeleton1 != null) {
-+                        skeleton1.startRiding(abstracthorse);
-+                        abstracthorse.push(this.horse.getRandom().triangle(0.0D, 1.1485D), 0.0D, this.horse.getRandom().triangle(0.0D, 1.1485D));
++                        skeleton1.m_20329_(abstracthorse);
++                        abstracthorse.m_5997_(this.f_30925_.m_217043_().m_216328_(0.0D, 1.1485D), 0.0D, this.f_30925_.m_217043_().m_216328_(0.0D, 1.1485D));
 +                        serverlevel.addFreshEntityWithPassengers(abstracthorse, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.JOCKEY); // CraftBukkit
 +                     }
                    }

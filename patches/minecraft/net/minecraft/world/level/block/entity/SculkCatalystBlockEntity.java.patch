@@ -2,33 +2,33 @@
 +++ b/net/minecraft/world/level/block/entity/SculkCatalystBlockEntity.java
 @@ -31,13 +_,17 @@
     public SculkCatalystBlockEntity(BlockPos p_222774_, BlockState p_222775_) {
-       super(BlockEntityType.SCULK_CATALYST, p_222774_, p_222775_);
-       this.catalystListener = new SculkCatalystBlockEntity.CatalystListener(p_222775_, new BlockPositionSource(p_222774_));
-+      catalystListener.level = level; // CraftBukkit
+       super(BlockEntityType.f_222758_, p_222774_, p_222775_);
+       this.f_279609_ = new SculkCatalystBlockEntity.CatalystListener(p_222775_, new BlockPositionSource(p_222774_));
++      f_279609_.level = f_58857_; // CraftBukkit
     }
  
-    public static void serverTick(Level p_222780_, BlockPos p_222781_, BlockState p_222782_, SculkCatalystBlockEntity p_222783_) {
-+      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.sourceBlockOverride = p_222783_.getBlockPos(); // CraftBukkit - SPIGOT-7068: Add source block override, not the most elegant way but better than passing down a BlockPosition up to five methods deep.
-       p_222783_.catalystListener.getSculkSpreader().updateCursors(p_222780_, p_222781_, p_222780_.getRandom(), true);
+    public static void m_222779_(Level p_222780_, BlockPos p_222781_, BlockState p_222782_, SculkCatalystBlockEntity p_222783_) {
++      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.sourceBlockOverride = p_222783_.m_58899_(); // CraftBukkit - SPIGOT-7068: Add source block override, not the most elegant way but better than passing down a BlockPosition up to five methods deep.
+       p_222783_.f_279609_.m_280490_().m_222255_(p_222780_, p_222781_, p_222780_.m_213780_(), true);
 +      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.sourceBlockOverride = null; // CraftBukkit
     }
  
-    public void load(CompoundTag p_222787_) {
-+      super.load(p_222787_); // CraftBukkit - SPIGOT-7393: Load super Bukkit data
-       this.catalystListener.sculkSpreader.load(p_222787_);
+    public void m_142466_(CompoundTag p_222787_) {
++      super.m_142466_(p_222787_); // CraftBukkit - SPIGOT-7393: Load super Bukkit data
+       this.f_279609_.f_279632_.m_222269_(p_222787_);
     }
  
 @@ -55,11 +_,13 @@
-       final SculkSpreader sculkSpreader;
-       private final BlockState blockState;
-       private final PositionSource positionSource;
+       final SculkSpreader f_279632_;
+       private final BlockState f_279646_;
+       private final PositionSource f_279622_;
 +      private Level level; // CraftBukkit
  
        public CatalystListener(BlockState p_283224_, PositionSource p_283095_) {
-          this.blockState = p_283224_;
-          this.positionSource = p_283095_;
-          this.sculkSpreader = SculkSpreader.createLevelSpreader();
-+         this.sculkSpreader.level = level; // CraftBukkit
+          this.f_279646_ = p_283224_;
+          this.f_279622_ = p_283095_;
+          this.f_279632_ = SculkSpreader.m_222254_();
++         this.f_279632_.level = level; // CraftBukkit
        }
  
-       public PositionSource getListenerSource() {
+       public PositionSource m_142460_() {

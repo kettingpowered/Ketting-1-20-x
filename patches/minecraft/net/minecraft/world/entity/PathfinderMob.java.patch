@@ -1,18 +1,18 @@
 --- a/net/minecraft/world/entity/PathfinderMob.java
 +++ b/net/minecraft/world/entity/PathfinderMob.java
 @@ -46,6 +_,7 @@
-          float f = this.distanceTo(entity);
-          if (this instanceof TamableAnimal && ((TamableAnimal)this).isInSittingPose()) {
+          float f = this.m_20270_(entity);
+          if (this instanceof TamableAnimal && ((TamableAnimal)this).m_21825_()) {
              if (f > 10.0F) {
-+               this.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.entity.EntityUnleashEvent(this.getBukkitEntity(), org.bukkit.event.entity.EntityUnleashEvent.UnleashReason.DISTANCE)); // CraftBukkit
-                this.dropLeash(true, true);
++               this.m_9236_().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.entity.EntityUnleashEvent(this.getBukkitEntity(), org.bukkit.event.entity.EntityUnleashEvent.UnleashReason.DISTANCE)); // CraftBukkit
+                this.m_21455_(true, true);
              }
  
 @@ -54,6 +_,7 @@
  
-          this.onLeashDistance(f);
+          this.m_7880_(f);
           if (f > 10.0F) {
-+            this.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.entity.EntityUnleashEvent(this.getBukkitEntity(), org.bukkit.event.entity.EntityUnleashEvent.UnleashReason.DISTANCE)); // CraftBukkit
-             this.dropLeash(true, true);
-             this.goalSelector.disableControlFlag(Goal.Flag.MOVE);
++            this.m_9236_().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.entity.EntityUnleashEvent(this.getBukkitEntity(), org.bukkit.event.entity.EntityUnleashEvent.UnleashReason.DISTANCE)); // CraftBukkit
+             this.m_21455_(true, true);
+             this.f_21345_.m_25355_(Goal.Flag.MOVE);
           } else if (f > 6.0F) {

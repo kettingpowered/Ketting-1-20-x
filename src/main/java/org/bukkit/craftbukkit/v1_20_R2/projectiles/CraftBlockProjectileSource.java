@@ -3,7 +3,7 @@ package org.bukkit.craftbukkit.v1_20_R2.projectiles;
 import com.google.common.base.Preconditions;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
-import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.core.BlockSourceImpl;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
@@ -58,10 +58,10 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
     public <T extends Projectile> T launchProjectile(Class<? extends T> projectile, Vector velocity) {
         Preconditions.checkArgument(getBlock().getType() == Material.DISPENSER, "Block is no longer dispenser");
         // Copied from DispenserBlock.dispense()
-        BlockSource sourceblock = new BlockSource((ServerLevel) dispenserBlock.getLevel(), dispenserBlock.getBlockPos(), dispenserBlock.getBlockState(), dispenserBlock);
+        BlockSourceImpl sourceblock = new BlockSourceImpl((ServerLevel) dispenserBlock.getLevel(), dispenserBlock.getBlockPos());
         // Copied from DispenseBehaviorProjectile
         Position iposition = DispenserBlock.getDispensePosition(sourceblock);
-        Direction enumdirection = (Direction) sourceblock.state().getValue(DispenserBlock.FACING);
+        Direction enumdirection = (Direction) sourceblock.m_6414_().getValue(DispenserBlock.FACING);
         net.minecraft.world.level.Level world = dispenserBlock.getLevel();
         net.minecraft.world.entity.Entity launch = null;
 

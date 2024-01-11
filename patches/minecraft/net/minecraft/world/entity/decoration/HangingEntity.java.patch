@@ -2,25 +2,25 @@
 +++ b/net/minecraft/world/entity/decoration/HangingEntity.java
 @@ -58,36 +_,47 @@
  
-    protected void recalculateBoundingBox() {
-       if (this.direction != null) {
--         double d0 = (double)this.pos.getX() + 0.5D;
--         double d1 = (double)this.pos.getY() + 0.5D;
--         double d2 = (double)this.pos.getZ() + 0.5D;
+    protected void m_7087_() {
+       if (this.f_31699_ != null) {
+-         double d0 = (double)this.f_31698_.m_123341_() + 0.5D;
+-         double d1 = (double)this.f_31698_.m_123342_() + 0.5D;
+-         double d2 = (double)this.f_31698_.m_123343_() + 0.5D;
 -         double d3 = 0.46875D;
--         double d4 = this.offs(this.getWidth());
--         double d5 = this.offs(this.getHeight());
--         d0 -= (double)this.direction.getStepX() * 0.46875D;
--         d2 -= (double)this.direction.getStepZ() * 0.46875D;
+-         double d4 = this.m_31709_(this.m_7076_());
+-         double d5 = this.m_31709_(this.m_7068_());
+-         d0 -= (double)this.f_31699_.m_122429_() * 0.46875D;
+-         d2 -= (double)this.f_31699_.m_122431_() * 0.46875D;
 -         d1 += d5;
--         Direction direction = this.direction.getCounterClockWise();
--         d0 += d4 * (double)direction.getStepX();
--         d2 += d4 * (double)direction.getStepZ();
--         this.setPosRaw(d0, d1, d2);
--         double d6 = (double)this.getWidth();
--         double d7 = (double)this.getHeight();
--         double d8 = (double)this.getWidth();
--         if (this.direction.getAxis() == Direction.Axis.Z) {
+-         Direction direction = this.f_31699_.m_122428_();
+-         d0 += d4 * (double)direction.m_122429_();
+-         d2 += d4 * (double)direction.m_122431_();
+-         this.m_20343_(d0, d1, d2);
+-         double d6 = (double)this.m_7076_();
+-         double d7 = (double)this.m_7068_();
+-         double d8 = (double)this.m_7076_();
+-         if (this.f_31699_.m_122434_() == Direction.Axis.Z) {
 -            d8 = 1.0D;
 -         } else {
 -            d6 = 1.0D;
@@ -29,13 +29,13 @@
 -         d6 /= 32.0D;
 -         d7 /= 32.0D;
 -         d8 /= 32.0D;
--         this.setBoundingBox(new AABB(d0 - d6, d1 - d7, d2 - d8, d0 + d6, d1 + d7, d2 + d8));
+-         this.m_20011_(new AABB(d0 - d6, d1 - d7, d2 - d8, d0 + d6, d1 + d7, d2 + d8));
 -      }
 -   }
 -
--   private double offs(int p_31710_) {
+-   private double m_31709_(int p_31710_) {
 +         // CraftBukkit start code moved in to calculateBoundingBox
-+         this.setBoundingBox(calculateBoundingBox(this, this.pos, this.direction, this.getWidth(), this.getHeight()));
++         this.m_20011_(calculateBoundingBox(this, this.f_31698_, this.f_31699_, this.m_7076_(), this.m_7068_()));
 +         // CraftBukkit end
 +      }
 +   }
@@ -43,25 +43,25 @@
 +   // CraftBukkit start - break out BB calc into own method
 +   public static AABB calculateBoundingBox(@Nullable Entity entity, BlockPos blockPosition, Direction direction, int width, int height) {
 +
-+      double d0 = (double) blockPosition.getX() + 0.5D;
-+      double d1 = (double) blockPosition.getY() + 0.5D;
-+      double d2 = (double) blockPosition.getZ() + 0.5D;
++      double d0 = (double) blockPosition.m_123341_() + 0.5D;
++      double d1 = (double) blockPosition.m_123342_() + 0.5D;
++      double d2 = (double) blockPosition.m_123343_() + 0.5D;
 +      double d3 = 0.46875D;
-+      double d4 = offs(width);
-+      double d5 = offs(height);
-+      d0 -= (double) direction.getStepX() * 0.46875D;
-+      d2 -= (double) direction.getStepZ() * 0.46875D;
++      double d4 = m_31709_(width);
++      double d5 = m_31709_(height);
++      d0 -= (double) direction.m_122429_() * 0.46875D;
++      d2 -= (double) direction.m_122431_() * 0.46875D;
 +      d1 += d5;
-+      Direction direction1 = direction.getCounterClockWise();
-+      d0 += d4 * (double) direction.getStepX();
-+      d2 += d4 * (double) direction.getStepZ();
++      Direction direction1 = direction.m_122428_();
++      d0 += d4 * (double) direction.m_122429_();
++      d2 += d4 * (double) direction.m_122431_();
 +      if (entity != null) {
-+         entity.setPosRaw(d0, d1, d2);
++         entity.m_20343_(d0, d1, d2);
 +      }
 +      double d6 = (double) width;
 +      double d7 = (double) height;
 +      double d8 = (double) width;
-+      if (direction.getAxis() == Direction.Axis.Z) {
++      if (direction.m_122434_() == Direction.Axis.Z) {
 +         d8 = 1.0D;
 +      } else {
 +         d6 = 1.0D;
@@ -74,19 +74,19 @@
 +   }
 +   // CraftBukkit end
 +
-+   private static double offs(int p_31710_) { // CraftBukkit - static
++   private static double m_31709_(int p_31710_) { // CraftBukkit - static
        return p_31710_ % 32 == 0 ? 0.5D : 0.0D;
     }
  
 @@ -97,6 +_,24 @@
-          if (this.checkInterval++ == 100) {
-             this.checkInterval = 0;
-             if (!this.isRemoved() && !this.survives()) {
+          if (this.f_31700_++ == 100) {
+             this.f_31700_ = 0;
+             if (!this.m_213877_() && !this.m_7088_()) {
 +               // CraftBukkit start - fire break events
-+               BlockState material = this.level().getBlockState(this.blockPosition());
++               BlockState material = this.m_9236_().m_8055_(this.m_20183_());
 +               org.bukkit.event.hanging.HangingBreakEvent.RemoveCause cause;
 +
-+               if (!material.isAir()) {
++               if (!material.m_60795_()) {
 +                  // TODO: This feels insufficient to catch 100% of suffocation cases
 +                  cause = org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.OBSTRUCTION;
 +               } else {
@@ -94,71 +94,71 @@
 +               }
 +
 +               org.bukkit.event.hanging.HangingBreakEvent event = new org.bukkit.event.hanging.HangingBreakEvent((org.bukkit.entity.Hanging) this.getBukkitEntity(), cause);
-+               this.level().getCraftServer().getPluginManager().callEvent(event);
++               this.m_9236_().getCraftServer().getPluginManager().callEvent(event);
 +
-+               if (this.isRemoved() || event.isCancelled()) {
++               if (this.m_213877_() || event.isCancelled()) {
 +                  return;
 +               }
 +               // CraftBukkit end
-                this.discard();
-                this.dropItem((Entity)null);
+                this.m_146870_();
+                this.m_5553_((Entity)null);
              }
 @@ -121,6 +_,8 @@
                 int j1 = (j - 1) / -2;
-                blockpos$mutableblockpos.set(blockpos).move(direction, k + i1).move(Direction.UP, l + j1);
-                BlockState blockstate = this.level().getBlockState(blockpos$mutableblockpos);
-+               if (net.minecraft.world.level.block.Block.canSupportCenter(this.level(), blockpos$mutableblockpos, this.direction))
+                blockpos$mutableblockpos.m_122190_(blockpos).m_122175_(direction, k + i1).m_122175_(Direction.UP, l + j1);
+                BlockState blockstate = this.m_9236_().m_8055_(blockpos$mutableblockpos);
++               if (net.minecraft.world.level.block.Block.m_49863_(this.m_9236_(), blockpos$mutableblockpos, this.f_31699_))
 +                  continue;
-                if (!blockstate.isSolid() && !DiodeBlock.isDiode(blockstate)) {
+                if (!blockstate.m_280296_() && !DiodeBlock.m_52586_(blockstate)) {
                    return false;
                 }
 @@ -152,6 +_,22 @@
           return false;
        } else {
-          if (!this.isRemoved() && !this.level().isClientSide) {
+          if (!this.m_213877_() && !this.m_9236_().f_46443_) {
 +            // CraftBukkit start - fire break events
-+            Entity damager = (p_31715_.isIndirect()) ? p_31715_.getEntity() : p_31715_.getDirectEntity();
++            Entity damager = (p_31715_.m_269014_()) ? p_31715_.m_7639_() : p_31715_.m_7640_();
 +            org.bukkit.event.hanging.HangingBreakEvent event;
 +            if (damager != null) {
-+               event = new org.bukkit.event.hanging.HangingBreakByEntityEvent((org.bukkit.entity.Hanging) this.getBukkitEntity(), damager.getBukkitEntity(), p_31715_.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION) ? org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.EXPLOSION : org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.ENTITY);
++               event = new org.bukkit.event.hanging.HangingBreakByEntityEvent((org.bukkit.entity.Hanging) this.getBukkitEntity(), damager.getBukkitEntity(), p_31715_.m_269533_(net.minecraft.tags.DamageTypeTags.f_268415_) ? org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.EXPLOSION : org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.ENTITY);
 +            } else {
-+               event = new org.bukkit.event.hanging.HangingBreakEvent((org.bukkit.entity.Hanging) this.getBukkitEntity(), p_31715_.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION) ? org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.EXPLOSION : org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.DEFAULT);
++               event = new org.bukkit.event.hanging.HangingBreakEvent((org.bukkit.entity.Hanging) this.getBukkitEntity(), p_31715_.m_269533_(net.minecraft.tags.DamageTypeTags.f_268415_) ? org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.EXPLOSION : org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.DEFAULT);
 +            }
 +
-+            this.level().getCraftServer().getPluginManager().callEvent(event);
++            this.m_9236_().getCraftServer().getPluginManager().callEvent(event);
 +
-+            if (this.isRemoved() || event.isCancelled()) {
++            if (this.m_213877_() || event.isCancelled()) {
 +               return true;
 +            }
 +            // CraftBukkit end
 +
-             this.kill();
-             this.markHurt();
-             this.dropItem(p_31715_.getEntity());
+             this.m_6074_();
+             this.m_5834_();
+             this.m_5553_(p_31715_.m_7639_());
 @@ -163,6 +_,17 @@
  
-    public void move(MoverType p_31719_, Vec3 p_31720_) {
-       if (!this.level().isClientSide && !this.isRemoved() && p_31720_.lengthSqr() > 0.0D) {
-+         if (this.isRemoved()) return; // CraftBukkit
+    public void m_6478_(MoverType p_31719_, Vec3 p_31720_) {
+       if (!this.m_9236_().f_46443_ && !this.m_213877_() && p_31720_.m_82556_() > 0.0D) {
++         if (this.m_213877_()) return; // CraftBukkit
 +
 +         // CraftBukkit start - fire break events
 +         // TODO - Does this need its own cause? Seems to only be triggered by pistons
 +         org.bukkit.event.hanging.HangingBreakEvent event = new org.bukkit.event.hanging.HangingBreakEvent((org.bukkit.entity.Hanging) this.getBukkitEntity(), org.bukkit.event.hanging.HangingBreakEvent.RemoveCause.PHYSICS);
-+         this.level().getCraftServer().getPluginManager().callEvent(event);
++         this.m_9236_().getCraftServer().getPluginManager().callEvent(event);
 +
-+         if (this.isRemoved() || event.isCancelled()) {
++         if (this.m_213877_() || event.isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end
-          this.kill();
-          this.dropItem((Entity)null);
+          this.m_6074_();
+          this.m_5553_((Entity)null);
        }
 @@ -170,7 +_,7 @@
     }
  
-    public void push(double p_31744_, double p_31745_, double p_31746_) {
--      if (!this.level().isClientSide && !this.isRemoved() && p_31744_ * p_31744_ + p_31745_ * p_31745_ + p_31746_ * p_31746_ > 0.0D) {
-+      if (false && !this.level().isClientSide && !this.isRemoved() && p_31744_ * p_31744_ + p_31745_ * p_31745_ + p_31746_ * p_31746_ > 0.0D) { // CraftBukkit - not needed
-          this.kill();
-          this.dropItem((Entity)null);
+    public void m_5997_(double p_31744_, double p_31745_, double p_31746_) {
+-      if (!this.m_9236_().f_46443_ && !this.m_213877_() && p_31744_ * p_31744_ + p_31745_ * p_31745_ + p_31746_ * p_31746_ > 0.0D) {
++      if (false && !this.m_9236_().f_46443_ && !this.m_213877_() && p_31744_ * p_31744_ + p_31745_ * p_31745_ + p_31746_ * p_31746_ > 0.0D) { // CraftBukkit - not needed
+          this.m_6074_();
+          this.m_5553_((Entity)null);
        }

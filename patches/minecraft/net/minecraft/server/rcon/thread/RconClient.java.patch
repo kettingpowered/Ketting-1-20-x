@@ -1,43 +1,43 @@
 --- a/net/minecraft/server/rcon/thread/RconClient.java
 +++ b/net/minecraft/server/rcon/thread/RconClient.java
 @@ -23,11 +_,14 @@
-    private final Socket client;
-    private final byte[] buf = new byte[1460];
-    private final String rconPassword;
--   private final ServerInterface serverInterface;
+    private final Socket f_11581_;
+    private final byte[] f_11582_ = new byte[1460];
+    private final String f_11583_;
+-   private final ServerInterface f_11584_;
 +   // CraftBukkit start
-+   private final net.minecraft.server.dedicated.DedicatedServer serverInterface;
++   private final net.minecraft.server.dedicated.DedicatedServer f_11584_;
 +   private final net.minecraft.server.rcon.RconConsoleSource rconConsoleSource;
 +   // CraftBukkit end
  
     RconClient(ServerInterface p_11587_, String p_11588_, Socket p_11589_) {
        super("RCON Client " + p_11589_.getInetAddress());
--      this.serverInterface = p_11587_;
-+      this.serverInterface = (net.minecraft.server.dedicated.DedicatedServer) p_11587_;
-       this.client = p_11589_;
+-      this.f_11584_ = p_11587_;
++      this.f_11584_ = (net.minecraft.server.dedicated.DedicatedServer) p_11587_;
+       this.f_11581_ = p_11589_;
  
        try {
 @@ -37,6 +_,7 @@
        }
  
-       this.rconPassword = p_11588_;
-+      this.rconConsoleSource = new net.minecraft.server.rcon.RconConsoleSource(this.serverInterface, p_11589_.getRemoteSocketAddress()); // CraftBukkit
+       this.f_11583_ = p_11588_;
++      this.rconConsoleSource = new net.minecraft.server.rcon.RconConsoleSource(this.f_11584_, p_11589_.getRemoteSocketAddress()); // CraftBukkit
     }
  
     public void run() {
 @@ -66,7 +_,7 @@
-                         String s1 = PktUtils.stringFromByteArray(this.buf, j, i);
+                         String s1 = PktUtils.m_11488_(this.f_11582_, j, i);
  
                          try {
--                           this.sendCmdResponse(l, this.serverInterface.runCommand(s1));
-+                           this.sendCmdResponse(l, this.serverInterface.runCommand(this.rconConsoleSource, s1)); // CraftBukkit
+-                           this.m_11594_(l, this.f_11584_.m_7261_(s1));
++                           this.m_11594_(l, this.f_11584_.runCommand(this.rconConsoleSource, s1)); // CraftBukkit
                          } catch (Exception exception) {
-                            this.sendCmdResponse(l, "Error executing: " + s1 + " (" + exception.getMessage() + ")");
+                            this.m_11594_(l, "Error executing: " + s1 + " (" + exception.getMessage() + ")");
                          }
 @@ -123,13 +_,14 @@
     }
  
-    private void sendCmdResponse(int p_11595_, String p_11596_) throws IOException {
+    private void m_11594_(int p_11595_, String p_11596_) throws IOException {
 -      int i = p_11596_.length();
 -
 +      byte[] whole = p_11596_.getBytes(StandardCharsets.UTF_8);
@@ -45,10 +45,10 @@
 +      int start = 0;
        do {
           int j = 4096 <= i ? 4096 : i;
--         this.send(p_11595_, 0, p_11596_.substring(0, j));
+-         this.m_11590_(p_11595_, 0, p_11596_.substring(0, j));
 -         p_11596_ = p_11596_.substring(j);
 -         i = p_11596_.length();
-+         this.send(p_11595_, 0, new String(java.util.Arrays.copyOfRange(whole, start, j+start), StandardCharsets.UTF_8));
++         this.m_11590_(p_11595_, 0, new String(java.util.Arrays.copyOfRange(whole, start, j+start), StandardCharsets.UTF_8));
 +         i -= j;
 +         start += j;
        } while(0 != i);

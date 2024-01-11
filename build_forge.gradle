@@ -45,14 +45,14 @@ java {
 
 //Ketting Start - fix `./gradlew setup build`
 tasks.withType(JavaCompile).configureEach {
-    dependsOn 'extractMapped' 
+    if (!patcher.srgPatches) dependsOn 'extractMapped' 
 }
 //Ketting End - fix `./gradlew setup build`
 
 jarSigner.autoDetect('forge')
 
 applyPatches {
-    mustRunAfter genPatches
+    if (!patcher.srgPatches) mustRunAfter genPatches
     level 'WARNING'
 }
 
@@ -60,6 +60,7 @@ sourceSets {
     main {
         java {
             srcDir "$rootDir/src/main/java"
+            srcDir "$rootDir/src/snapshots/java"
         }
         resources {
             srcDir "$rootDir/src/main/resources"
@@ -69,6 +70,7 @@ sourceSets {
     test {
         java {
             srcDir "$rootDir/src/test/java"
+            srcDir "$rootDir/src/snapshots/java"
         }
         resources {
             srcDir "$rootDir/src/test/resources"
@@ -158,7 +160,7 @@ patcher {
     mappings channel: MAPPING_CHANNEL, version: MAPPING_VERSION
     patches = file("$rootDir/patches/minecraft")
     patchedSrc = file('src/main/java')
-    srgPatches = false
+    srgPatches = true
     accessTransformers.from file("$rootDir/src/main/resources/META-INF/accesstransformer.cfg")
     sideAnnotationStrippers.from file("$rootDir/src/main/resources/forge.sas")
 

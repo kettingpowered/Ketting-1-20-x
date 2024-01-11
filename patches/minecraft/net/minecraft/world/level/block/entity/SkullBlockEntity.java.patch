@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/level/block/entity/SkullBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/SkullBlockEntity.java
 @@ -162,6 +_,16 @@
-       String s = p_301404_.getString("SkullOwner");
-       if (!Util.isBlank(s)) {
-          resolveGameProfile(p_301404_, s);
+       String s = p_301404_.m_128461_("SkullOwner");
+       if (!Util.m_288217_(s)) {
+          m_295828_(p_301404_, s);
 +         // CraftBukkit start
 +      } else {
-+         net.minecraft.nbt.ListTag textures = p_301404_.getCompound("SkullOwner").getCompound("Properties").getList("textures", 10); // Safe due to method contracts
++         net.minecraft.nbt.ListTag textures = p_301404_.m_128469_("SkullOwner").m_128469_("Properties").m_128437_("textures", 10); // Safe due to method contracts
 +         for (int i = 0; i < textures.size(); i++) {
-+            if (textures.get(i) instanceof CompoundTag && !((CompoundTag) textures.get(i)).contains("Signature", 8) && ((CompoundTag) textures.get(i)).getString("Value").trim().isEmpty()) {
-+               p_301404_.remove("SkullOwner");
++            if (textures.get(i) instanceof CompoundTag && !((CompoundTag) textures.get(i)).m_128425_("Signature", 8) && ((CompoundTag) textures.get(i)).m_128461_("Value").trim().isEmpty()) {
++               p_301404_.m_128473_("SkullOwner");
 +               break;
 +            }
 +         }

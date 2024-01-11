@@ -4,8 +4,8 @@
        for(Entity entity : p_250411_) {
           if (entity instanceof LivingEntity) {
              MobEffectInstance mobeffectinstance = new MobEffectInstance(mobeffect, j, p_251498_, false, p_249944_);
--            if (((LivingEntity)entity).addEffect(mobeffectinstance, p_250553_.getEntity())) {
-+            if (((LivingEntity)entity).addEffect(mobeffectinstance, p_250553_.getEntity(), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.COMMAND)) { // CraftBukkit
+-            if (((LivingEntity)entity).m_147207_(mobeffectinstance, p_250553_.m_81373_())) {
++            if (((LivingEntity)entity).addEffect(mobeffectinstance, p_250553_.m_81373_(), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.COMMAND)) { // CraftBukkit
                 ++i;
              }
           }
@@ -13,7 +13,7 @@
        int i = 0;
  
        for(Entity entity : p_136961_) {
--         if (entity instanceof LivingEntity && ((LivingEntity)entity).removeAllEffects()) {
+-         if (entity instanceof LivingEntity && ((LivingEntity)entity).m_21219_()) {
 +         if (entity instanceof LivingEntity && ((LivingEntity)entity).removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.COMMAND)) { // CraftBukkit
              ++i;
           }
@@ -22,7 +22,7 @@
        int i = 0;
  
        for(Entity entity : p_248561_) {
--         if (entity instanceof LivingEntity && ((LivingEntity)entity).removeEffect(mobeffect)) {
+-         if (entity instanceof LivingEntity && ((LivingEntity)entity).m_21195_(mobeffect)) {
 +         if (entity instanceof LivingEntity && ((LivingEntity)entity).removeEffect(mobeffect, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.COMMAND)) { // CraftBukkit
              ++i;
           }

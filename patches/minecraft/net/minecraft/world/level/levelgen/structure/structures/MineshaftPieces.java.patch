@@ -1,19 +1,22 @@
 --- a/net/minecraft/world/level/levelgen/structure/structures/MineshaftPieces.java
 +++ b/net/minecraft/world/level/levelgen/structure/structures/MineshaftPieces.java
 @@ -270,15 +_,18 @@
-                if (this.spiderCorridor && !this.hasPlacedSpider) {
+                if (this.f_227727_ && !this.f_227728_) {
                    int l1 = 1;
-                   int i2 = k1 - 1 + p_227746_.nextInt(3);
--                  BlockPos blockpos = this.getWorldPos(1, 0, i2);
-+                  BlockPos.MutableBlockPos blockpos = this.getWorldPos(1, 0, i2);
-                   if (p_227747_.isInside(blockpos) && this.isInterior(p_227743_, 1, 0, i2, p_227747_)) {
-                      this.hasPlacedSpider = true;
+                   int i2 = k1 - 1 + p_227746_.m_188503_(3);
+-                  BlockPos blockpos = this.m_163582_(1, 0, i2);
++                  BlockPos.MutableBlockPos blockpos = this.m_163582_(1, 0, i2);
+                   if (p_227747_.m_71051_(blockpos) && this.m_73414_(p_227743_, 1, 0, i2, p_227747_)) {
+                      this.f_227728_ = true;
+-                     p_227743_.m_7731_(blockpos, Blocks.f_50085_.m_49966_(), 2);
+-                     BlockEntity blockentity = p_227743_.m_7702_(blockpos);
 +                     /*
-                      p_227743_.setBlock(blockpos, Blocks.SPAWNER.defaultBlockState(), 2);
-                      BlockEntity blockentity = p_227743_.getBlockEntity(blockpos);
++                     p_227743_.setBlock(blockpos, Blocks.SPAWNER.defaultBlockState(), 2);
++                     BlockEntity blockentity = p_227743_.getBlockEntity(blockpos);
                       if (blockentity instanceof SpawnerBlockEntity) {
                          SpawnerBlockEntity spawnerblockentity = (SpawnerBlockEntity)blockentity;
-                         spawnerblockentity.setEntityId(EntityType.CAVE_SPIDER, p_227746_);
+-                        spawnerblockentity.m_252803_(EntityType.f_20554_, p_227746_);
++                        spawnerblockentity.setEntityId(EntityType.CAVE_SPIDER, p_227746_);
                       }
 +                     */
 +                     placeCraftSpawner(p_227743_, blockpos, org.bukkit.entity.EntityType.CAVE_SPIDER, 2);

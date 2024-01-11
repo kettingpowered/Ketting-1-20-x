@@ -2,13 +2,13 @@
 +++ b/net/minecraft/world/level/levelgen/structure/structures/EndCityPieces.java
 @@ -249,7 +_,10 @@
           if (p_227505_.startsWith("Chest")) {
-             BlockPos blockpos = p_227506_.below();
-             if (p_227509_.isInside(blockpos)) {
--               RandomizableContainerBlockEntity.setLootTable(p_227507_, p_227508_, blockpos, BuiltInLootTables.END_CITY_TREASURE);
+             BlockPos blockpos = p_227506_.m_7495_();
+             if (p_227509_.m_71051_(blockpos)) {
+-               RandomizableContainerBlockEntity.m_222766_(p_227507_, p_227508_, blockpos, BuiltInLootTables.f_78741_);
 +               // CraftBukkit start
 +               // RandomizableContainerBlockEntity.setLootTable(p_227507_, p_227508_, blockpos, BuiltInLootTables.END_CITY_TREASURE);
-+               setCraftLootTable(p_227507_, blockpos, p_227508_, BuiltInLootTables.END_CITY_TREASURE);
++               setCraftLootTable(p_227507_, blockpos, p_227508_, BuiltInLootTables.f_78741_);
 +               // CraftBukkit end
              }
-          } else if (p_227509_.isInside(p_227506_) && Level.isInSpawnableBounds(p_227506_)) {
+          } else if (p_227509_.m_71051_(p_227506_) && Level.m_46741_(p_227506_)) {
              if (p_227505_.startsWith("Sentry")) {

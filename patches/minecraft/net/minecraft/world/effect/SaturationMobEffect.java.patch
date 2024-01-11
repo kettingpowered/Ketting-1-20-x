@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/effect/SaturationMobEffect.java
 +++ b/net/minecraft/world/effect/SaturationMobEffect.java
 @@ -11,7 +_,15 @@
-    public void applyEffectTick(LivingEntity p_300503_, int p_301046_) {
-       super.applyEffectTick(p_300503_, p_301046_);
-       if (!p_300503_.level().isClientSide && p_300503_ instanceof Player player) {
--         player.getFoodData().eat(p_301046_ + 1, 1.0F);
+    public void m_6742_(LivingEntity p_300503_, int p_301046_) {
+       super.m_6742_(p_300503_, p_301046_);
+       if (!p_300503_.m_9236_().f_46443_ && p_300503_ instanceof Player player) {
+-         player.m_36324_().m_38707_(p_301046_ + 1, 1.0F);
 +         // CraftBukkit start
-+         int oldFoodLevel = player.getFoodData().foodLevel;
++         int oldFoodLevel = player.m_36324_().f_38696_;
 +         org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callFoodLevelChangeEvent(player, p_301046_ + 1 + oldFoodLevel);
 +         if (!event.isCancelled()) {
-+            player.getFoodData().eat(event.getFoodLevel() - oldFoodLevel, 1.0F);
++            player.m_36324_().m_38707_(event.getFoodLevel() - oldFoodLevel, 1.0F);
 +         }
 +
 +         ((org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer) player.getBukkitEntity()).sendHealthUpdate();

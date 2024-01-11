@@ -2,7 +2,7 @@
 +++ b/net/minecraft/world/level/redstone/NeighborUpdater.java
 @@ -39,7 +_,22 @@
  
-    static void executeUpdate(Level p_230764_, BlockState p_230765_, BlockPos p_230766_, Block p_230767_, BlockPos p_230768_, boolean p_230769_) {
+    static void m_230763_(Level p_230764_, BlockState p_230765_, BlockPos p_230766_, Block p_230767_, BlockPos p_230768_, boolean p_230769_) {
        try {
 +         // CraftBukkit start
 +         org.bukkit.craftbukkit.v1_20_R2.CraftWorld cworld = p_230764_.getWorld();
@@ -15,11 +15,11 @@
 +            }
 +         }
 +         // CraftBukkit end
-          p_230765_.neighborChanged(p_230764_, p_230766_, p_230767_, p_230768_, p_230769_);
+          p_230765_.m_60690_(p_230764_, p_230766_, p_230767_, p_230768_, p_230769_);
 +         // Spigot Start
 +      } catch (StackOverflowError ex) {
 +         p_230764_.lastPhysicsProblem = new BlockPos(p_230766_);
 +         // Spigot End
        } catch (Throwable throwable) {
-          CrashReport crashreport = CrashReport.forThrowable(throwable, "Exception while updating neighbours");
-          CrashReportCategory crashreportcategory = crashreport.addCategory("Block being updated");
+          CrashReport crashreport = CrashReport.m_127521_(throwable, "Exception while updating neighbours");
+          CrashReportCategory crashreportcategory = crashreport.m_127514_("Block being updated");

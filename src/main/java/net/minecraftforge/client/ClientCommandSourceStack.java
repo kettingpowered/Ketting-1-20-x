@@ -5,7 +5,8 @@
 
 package net.minecraftforge.client;
 
-import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.Util;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
@@ -31,26 +32,30 @@ import java.util.stream.Stream;
 /**
  * overrides for {@link CommandSourceStack} so that the methods will run successfully client side
  */
-public class ClientCommandSourceStack extends CommandSourceStack {
-    public ClientCommandSourceStack(CommandSource source, Vec3 position, Vec2 rotation, int permission, String plainTextName, Component displayName, Entity executing) {
+public class ClientCommandSourceStack extends CommandSourceStack
+{
+
+    public ClientCommandSourceStack(CommandSource source, Vec3 position, Vec2 rotation, int permission, String plainTextName, Component displayName,
+            Entity executing)
+    {
         super(source, position, rotation, null, permission, plainTextName, displayName, null, executing);
     }
 
     /**
      * Sends a success message without attempting to get the server side list of admins
      */
-    @SuppressWarnings("resource")
     @Override
-    public void sendSuccess(Supplier<Component> message, boolean sendToAdmins) {
+    public void sendSuccess(Supplier<Component> message, boolean sendToAdmins)
+    {
         Minecraft.getInstance().player.sendSystemMessage(message.get());
     }
 
     /**
      * {@return the list of teams from the client side}
      */
-    @SuppressWarnings("resource")
     @Override
-    public Collection<String> getAllTeams() {
+    public Collection<String> getAllTeams()
+    {
         return Minecraft.getInstance().level.getScoreboard().getTeamNames();
     }
 
@@ -58,7 +63,8 @@ public class ClientCommandSourceStack extends CommandSourceStack {
      * {@return the list of online player names from the client side}
      */
     @Override
-    public Collection<String> getOnlinePlayerNames() {
+    public Collection<String> getOnlinePlayerNames()
+    {
         return Minecraft.getInstance().getConnection().getOnlinePlayers().stream().map((player) -> player.getProfile().getName()).collect(Collectors.toList());
     }
 
@@ -66,7 +72,8 @@ public class ClientCommandSourceStack extends CommandSourceStack {
      * {@return a {@link Stream} of recipe ids that are available on the client}
      */
     @Override
-    public Stream<ResourceLocation> getRecipeNames() {
+    public Stream<ResourceLocation> getRecipeNames()
+    {
         return Minecraft.getInstance().getConnection().getRecipeManager().getRecipeIds();
     }
 
@@ -74,7 +81,8 @@ public class ClientCommandSourceStack extends CommandSourceStack {
      * {@return a set of {@link ResourceKey} for levels from the client side}
      */
     @Override
-    public Set<ResourceKey<Level>> levels() {
+    public Set<ResourceKey<Level>> levels()
+    {
         return Minecraft.getInstance().getConnection().levels();
     }
 
@@ -82,16 +90,17 @@ public class ClientCommandSourceStack extends CommandSourceStack {
      * {@return the {@link RegistryAccess} from the client side}
      */
     @Override
-    public RegistryAccess registryAccess() {
+    public RegistryAccess registryAccess()
+    {
         return Minecraft.getInstance().getConnection().registryAccess();
     }
 
     /**
      * {@return the scoreboard from the client side}
      */
-    @SuppressWarnings("resource")
     @Override
-    public Scoreboard getScoreboard() {
+    public Scoreboard getScoreboard()
+    {
         return Minecraft.getInstance().level.getScoreboard();
     }
 
@@ -99,24 +108,26 @@ public class ClientCommandSourceStack extends CommandSourceStack {
      * {@return the advancement from the id from the client side where the advancement needs to be visible to the player}
      */
     @Override
-    public AdvancementHolder getAdvancement(ResourceLocation id) {
-        return Minecraft.getInstance().getConnection().getAdvancements().get(id);
+    public Advancement getAdvancement(ResourceLocation id)
+    {
+        return Minecraft.getInstance().getConnection().getAdvancements().getAdvancements().get(id);
     }
 
     /**
      * {@return the {@link RecipeManager} from the client side}
      */
     @Override
-    public RecipeManager getRecipeManager() {
+    public RecipeManager getRecipeManager()
+    {
         return Minecraft.getInstance().getConnection().getRecipeManager();
     }
 
     /**
      * {@return the level from the client side}
      */
-    @SuppressWarnings("resource")
     @Override
-    public Level getUnsidedLevel() {
+    public Level getUnsidedLevel()
+    {
         return Minecraft.getInstance().level;
     }
 
@@ -125,7 +136,8 @@ public class ClientCommandSourceStack extends CommandSourceStack {
      *             because the server isn't available on the client
      */
     @Override
-    public MinecraftServer getServer() {
+    public MinecraftServer getServer()
+    {
         throw new UnsupportedOperationException("Attempted to get server in client command");
     }
 
@@ -134,7 +146,9 @@ public class ClientCommandSourceStack extends CommandSourceStack {
      *             because the server side level isn't available on the client side
      */
     @Override
-    public ServerLevel getLevel() {
+    public ServerLevel getLevel()
+    {
         throw new UnsupportedOperationException("Attempted to get server level in client command");
     }
+
 }

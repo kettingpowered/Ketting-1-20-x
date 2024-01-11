@@ -2,17 +2,17 @@
 +++ b/net/minecraft/world/level/block/EndPortalBlock.java
 @@ -36,11 +_,21 @@
  
-    public void entityInside(BlockState p_53025_, Level p_53026_, BlockPos p_53027_, Entity p_53028_) {
-       if (p_53026_ instanceof ServerLevel && p_53028_.canChangeDimensions() && Shapes.joinIsNotEmpty(Shapes.create(p_53028_.getBoundingBox().move((double)(-p_53027_.getX()), (double)(-p_53027_.getY()), (double)(-p_53027_.getZ()))), p_53025_.getShape(p_53026_, p_53027_), BooleanOp.AND)) {
--         ResourceKey<Level> resourcekey = p_53026_.dimension() == Level.END ? Level.OVERWORLD : Level.END;
-+         ResourceKey<Level> resourcekey = p_53026_.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.END ? Level.OVERWORLD : Level.END; // CraftBukkit - SPIGOT-6152: send back to main overworld in custom ends
-          ServerLevel serverlevel = ((ServerLevel)p_53026_).getServer().getLevel(resourcekey);
+    public void m_7892_(BlockState p_53025_, Level p_53026_, BlockPos p_53027_, Entity p_53028_) {
+       if (p_53026_ instanceof ServerLevel && p_53028_.m_6072_() && Shapes.m_83157_(Shapes.m_83064_(p_53028_.m_20191_().m_82386_((double)(-p_53027_.m_123341_()), (double)(-p_53027_.m_123342_()), (double)(-p_53027_.m_123343_()))), p_53025_.m_60808_(p_53026_, p_53027_), BooleanOp.f_82689_)) {
+-         ResourceKey<Level> resourcekey = p_53026_.m_46472_() == Level.f_46430_ ? Level.f_46428_ : Level.f_46430_;
++         ResourceKey<Level> resourcekey = p_53026_.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.f_63973_ ? Level.f_46428_ : Level.f_46430_; // CraftBukkit - SPIGOT-6152: send back to main overworld in custom ends
+          ServerLevel serverlevel = ((ServerLevel)p_53026_).m_7654_().m_129880_(resourcekey);
           if (serverlevel == null) {
 +            // return; // CraftBukkit - always fire event in case plugins wish to change it
 +         }
 +
 +         // CraftBukkit start - Entity in portal
-+         org.bukkit.event.entity.EntityPortalEnterEvent event = new org.bukkit.event.entity.EntityPortalEnterEvent(p_53028_.getBukkitEntity(), new org.bukkit.Location(p_53026_.getWorld(), p_53028_.getX(), p_53028_.getY(), p_53028_.getZ()));
++         org.bukkit.event.entity.EntityPortalEnterEvent event = new org.bukkit.event.entity.EntityPortalEnterEvent(p_53028_.getBukkitEntity(), new org.bukkit.Location(p_53026_.getWorld(), p_53028_.m_20185_(), p_53028_.m_20186_(), p_53028_.m_20189_()));
 +         p_53026_.getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (p_53028_ instanceof net.minecraft.server.level.ServerPlayer) {
@@ -21,5 +21,5 @@
           }
 +         // CraftBukkit end
  
-          p_53028_.changeDimension(serverlevel);
+          p_53028_.m_5489_(serverlevel);
        }

@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/inventory/MerchantMenu.java
 +++ b/net/minecraft/world/inventory/MerchantMenu.java
 @@ -29,6 +_,19 @@
-    private boolean showProgressBar;
-    private boolean canRestock;
+    private boolean f_40030_;
+    private boolean f_40031_;
  
 +   // CraftBukkit start
 +   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity = null;
@@ -11,19 +11,19 @@
 +   @Override
 +   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity == null) {
-+         bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player.player.getBukkitEntity(), new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryMerchant(trader, tradeContainer), this);
++         bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player.f_35978_.getBukkitEntity(), new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryMerchant(f_40027_, f_40028_), this);
 +      }
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
 +
     public MerchantMenu(int p_40033_, Inventory p_40034_) {
-       this(p_40033_, p_40034_, new ClientSideMerchant(p_40034_.player));
+       this(p_40033_, p_40034_, new ClientSideMerchant(p_40034_.f_35978_));
     }
 @@ -40,6 +_,7 @@
-       this.addSlot(new Slot(this.tradeContainer, 0, 136, 37));
-       this.addSlot(new Slot(this.tradeContainer, 1, 162, 37));
-       this.addSlot(new MerchantResultSlot(p_40037_.player, p_40038_, this.tradeContainer, 2, 220, 37));
+       this.m_38897_(new Slot(this.f_40028_, 0, 136, 37));
+       this.m_38897_(new Slot(this.f_40028_, 1, 162, 37));
+       this.m_38897_(new MerchantResultSlot(p_40037_.f_35978_, p_40038_, this.f_40028_, 2, 220, 37));
 +      this.player = p_40037_; // CraftBukkit - save player
  
        for(int i = 0; i < 3; ++i) {
@@ -31,9 +31,9 @@
 @@ -144,7 +_,7 @@
     }
  
-    private void playTradeSound() {
--      if (!this.trader.isClientSide()) {
-+      if (!this.trader.isClientSide() && this.trader instanceof Entity) { // CraftBukkit - SPIGOT-5035
-          Entity entity = (Entity)this.trader;
-          entity.level().playLocalSound(entity.getX(), entity.getY(), entity.getZ(), this.trader.getNotifyTradeSound(), SoundSource.NEUTRAL, 1.0F, 1.0F, false);
+    private void m_40077_() {
+-      if (!this.f_40027_.m_183595_()) {
++      if (!this.f_40027_.m_183595_() && this.f_40027_ instanceof Entity) { // CraftBukkit - SPIGOT-5035
+          Entity entity = (Entity)this.f_40027_;
+          entity.m_9236_().m_7785_(entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), this.f_40027_.m_7596_(), SoundSource.NEUTRAL, 1.0F, 1.0F, false);
        }

@@ -1,31 +1,31 @@
 --- a/net/minecraft/server/ServerScoreboard.java
 +++ b/net/minecraft/server/ServerScoreboard.java
 @@ -165,6 +_,7 @@
-       List<Packet<?>> list = this.getStartTrackingPackets(p_136232_);
+       List<Packet<?>> list = this.m_136229_(p_136232_);
  
-       for(ServerPlayer serverplayer : this.server.getPlayerList().getPlayers()) {
+       for(ServerPlayer serverplayer : this.f_136193_.m_6846_().m_11314_()) {
 +         if (serverplayer.getBukkitEntity().getScoreboard().getHandle() != this) continue; // CraftBukkit - Only players on this board
           for(Packet<?> packet : list) {
-             serverplayer.connection.send(packet);
+             serverplayer.f_8906_.m_141995_(packet);
           }
 @@ -190,6 +_,7 @@
-       List<Packet<?>> list = this.getStopTrackingPackets(p_136236_);
+       List<Packet<?>> list = this.m_136233_(p_136236_);
  
-       for(ServerPlayer serverplayer : this.server.getPlayerList().getPlayers()) {
+       for(ServerPlayer serverplayer : this.f_136193_.m_6846_().m_11314_()) {
 +         if (serverplayer.getBukkitEntity().getScoreboard().getHandle() != this) continue; // CraftBukkit - Only players on this board
           for(Packet<?> packet : list) {
-             serverplayer.connection.send(packet);
+             serverplayer.f_8906_.m_141995_(packet);
           }
 @@ -223,6 +_,16 @@
-    private ScoreboardSaveData createData(CompoundTag p_180014_) {
-       return this.createData().load(p_180014_);
+    private ScoreboardSaveData m_180013_(CompoundTag p_180014_) {
+       return this.m_180015_().m_166102_(p_180014_);
     }
 +
 +   // CraftBukkit start - Send to players
 +   private void broadcastAll(Packet packet) {
-+      for (ServerPlayer serverplayer : (List<ServerPlayer>) this.server.getPlayerList().players) {
++      for (ServerPlayer serverplayer : (List<ServerPlayer>) this.f_136193_.m_6846_().f_11196_) {
 +         if (serverplayer.getBukkitEntity().getScoreboard().getHandle() == this) {
-+            serverplayer.connection.send(packet);
++            serverplayer.f_8906_.m_141995_(packet);
 +         }
 +      }
 +   }

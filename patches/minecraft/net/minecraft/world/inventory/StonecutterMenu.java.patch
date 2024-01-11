@@ -1,16 +1,16 @@
 --- a/net/minecraft/world/inventory/StonecutterMenu.java
 +++ b/net/minecraft/world/inventory/StonecutterMenu.java
 @@ -33,14 +_,23 @@
-    final Slot resultSlot;
-    Runnable slotUpdateListener = () -> {
+    final Slot f_40283_;
+    Runnable f_40291_ = () -> {
     };
--   public final Container container = new SimpleContainer(1) {
--      public void setChanged() {
--         super.setChanged();
--         StonecutterMenu.this.slotsChanged(this);
--         StonecutterMenu.this.slotUpdateListener.run();
-+   public final Container container;
-+   final ResultContainer resultContainer;
+-   public final Container f_40284_ = new SimpleContainer(1) {
+-      public void m_6596_() {
+-         super.m_6596_();
+-         StonecutterMenu.this.m_6199_(this);
+-         StonecutterMenu.this.f_40291_.run();
++   public final Container f_40284_;
++   final ResultContainer f_40292_;
 +   // CraftBukkit start
 +   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity = null;
 +   private org.bukkit.entity.Player player;
@@ -21,25 +21,25 @@
 +         return bukkitEntity;
        }
 -   };
--   final ResultContainer resultContainer = new ResultContainer();
+-   final ResultContainer f_40292_ = new ResultContainer();
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryStonecutter inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryStonecutter(this.container, this.resultContainer);
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryStonecutter inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryStonecutter(this.f_40284_, this.f_40292_);
 +      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
  
     public StonecutterMenu(int p_40294_, Inventory p_40295_) {
-       this(p_40294_, p_40295_, ContainerLevelAccess.NULL);
+       this(p_40294_, p_40295_, ContainerLevelAccess.f_39287_);
 @@ -48,6 +_,21 @@
  
     public StonecutterMenu(int p_40297_, Inventory p_40298_, final ContainerLevelAccess p_40299_) {
-       super(MenuType.STONECUTTER, p_40297_);
-+      this.container = new SimpleContainer(1) {
-+         public void setChanged() {
-+            super.setChanged();
-+            StonecutterMenu.this.slotsChanged(this);
-+            StonecutterMenu.this.slotUpdateListener.run();
+       super(MenuType.f_39980_, p_40297_);
++      this.f_40284_ = new SimpleContainer(1) {
++         public void m_6596_() {
++            super.m_6596_();
++            StonecutterMenu.this.m_6199_(this);
++            StonecutterMenu.this.f_40291_.run();
 +         }
 +
 +         // CraftBukkit start
@@ -49,23 +49,23 @@
 +         }
 +         // CraftBukkit end
 +      };
-+      this.resultContainer = new ResultContainer();
-       this.access = p_40299_;
-       this.level = p_40298_.player.level();
-       this.inputSlot = this.addSlot(new Slot(this.container, 0, 20, 33));
++      this.f_40292_ = new ResultContainer();
+       this.f_40285_ = p_40299_;
+       this.f_40287_ = p_40298_.f_35978_.m_9236_();
+       this.f_40282_ = this.m_38897_(new Slot(this.f_40284_, 0, 20, 33));
 @@ -91,6 +_,7 @@
        }
  
-       this.addDataSlot(this.selectedRecipeIndex);
-+      player = (org.bukkit.entity.Player) p_40298_.player.getBukkitEntity(); // CraftBukkit
+       this.m_38895_(this.f_40286_);
++      player = (org.bukkit.entity.Player) p_40298_.f_35978_.getBukkitEntity(); // CraftBukkit
     }
  
-    public int getSelectedRecipeIndex() {
+    public int m_40338_() {
 @@ -110,6 +_,7 @@
     }
  
-    public boolean stillValid(Player p_40307_) {
+    public boolean m_6875_(Player p_40307_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
-       return stillValid(this.access, p_40307_, Blocks.STONECUTTER);
+       return m_38889_(this.f_40285_, p_40307_, Blocks.f_50679_);
     }
  

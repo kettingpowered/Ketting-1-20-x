@@ -2,11 +2,11 @@
 +++ b/net/minecraft/world/level/block/DaylightDetectorBlock.java
 @@ -61,7 +_,8 @@
  
-       i = Mth.clamp(i, 0, 15);
-       if (p_52411_.getValue(POWER) != i) {
--         p_52412_.setBlock(p_52413_, p_52411_.setValue(POWER, Integer.valueOf(i)), 3);
-+         i = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callRedstoneChange(p_52412_, p_52413_, ((Integer) p_52411_.getValue(POWER)), i).getNewCurrent(); // CraftBukkit - Call BlockRedstoneEvent
-+         p_52412_.setBlock(p_52413_, p_52411_.setValue(POWER, i), 3);
+       i = Mth.m_14045_(i, 0, 15);
+       if (p_52411_.m_61143_(f_52377_) != i) {
+-         p_52412_.m_7731_(p_52413_, p_52411_.m_61124_(f_52377_, Integer.valueOf(i)), 3);
++         i = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callRedstoneChange(p_52412_, p_52413_, ((Integer) p_52411_.m_61143_(f_52377_)), i).getNewCurrent(); // CraftBukkit - Call BlockRedstoneEvent
++         p_52412_.m_7731_(p_52413_, p_52411_.m_61124_(f_52377_, i), 3);
        }
  
     }

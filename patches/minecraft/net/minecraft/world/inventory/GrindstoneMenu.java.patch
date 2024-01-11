@@ -15,38 +15,38 @@
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryGrindstone inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryGrindstone(this.repairSlots, this.resultSlots);
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryGrindstone inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryGrindstone(this.f_39560_, this.f_39559_);
 +      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
-    public static final int MAX_NAME_LENGTH = 35;
-    public static final int INPUT_SLOT = 0;
-    public static final int ADDITIONAL_SLOT = 1;
+    public static final int f_150565_ = 35;
+    public static final int f_150566_ = 0;
+    public static final int f_150567_ = 1;
 @@ -27,13 +_,9 @@
-    private static final int USE_ROW_SLOT_START = 30;
-    private static final int USE_ROW_SLOT_END = 39;
-    private final Container resultSlots = new ResultContainer();
--   final Container repairSlots = new SimpleContainer(2) {
--      public void setChanged() {
--         super.setChanged();
--         GrindstoneMenu.this.slotsChanged(this);
+    private static final int f_150571_ = 30;
+    private static final int f_150572_ = 39;
+    private final Container f_39559_ = new ResultContainer();
+-   final Container f_39560_ = new SimpleContainer(2) {
+-      public void m_6596_() {
+-         super.m_6596_();
+-         GrindstoneMenu.this.m_6199_(this);
 -      }
 -   };
-+   final Container repairSlots;
-    private final ContainerLevelAccess access;
++   final Container f_39560_;
+    private final ContainerLevelAccess f_39561_;
 +   private int xp = -1;
  
     public GrindstoneMenu(int p_39563_, Inventory p_39564_) {
-       this(p_39563_, p_39564_, ContainerLevelAccess.NULL);
+       this(p_39563_, p_39564_, ContainerLevelAccess.f_39287_);
 @@ -41,15 +_,28 @@
  
     public GrindstoneMenu(int p_39566_, Inventory p_39567_, final ContainerLevelAccess p_39568_) {
-       super(MenuType.GRINDSTONE, p_39566_);
-+      this.repairSlots = new SimpleContainer(2) {
-+         public void setChanged() {
-+            super.setChanged();
-+            GrindstoneMenu.this.slotsChanged(this);
+       super(MenuType.f_39971_, p_39566_);
++      this.f_39560_ = new SimpleContainer(2) {
++         public void m_6596_() {
++            super.m_6596_();
++            GrindstoneMenu.this.m_6199_(this);
 +         }
 +
 +         // CraftBukkit start
@@ -56,120 +56,120 @@
 +         }
 +         // CraftBukkit end
 +      };
-       this.access = p_39568_;
-       this.addSlot(new Slot(this.repairSlots, 0, 49, 19) {
-          public boolean mayPlace(ItemStack p_39607_) {
--            return p_39607_.isDamageableItem() || p_39607_.is(Items.ENCHANTED_BOOK) || p_39607_.isEnchanted();
-+            return p_39607_.isDamageableItem() || p_39607_.is(Items.ENCHANTED_BOOK) || p_39607_.isEnchanted() || p_39607_.canGrindstoneRepair();
+       this.f_39561_ = p_39568_;
+       this.m_38897_(new Slot(this.f_39560_, 0, 49, 19) {
+          public boolean m_5857_(ItemStack p_39607_) {
+-            return p_39607_.m_41763_() || p_39607_.m_150930_(Items.f_42690_) || p_39607_.m_41793_();
++            return p_39607_.m_41763_() || p_39607_.m_150930_(Items.f_42690_) || p_39607_.m_41793_() || p_39607_.canGrindstoneRepair();
           }
        });
-       this.addSlot(new Slot(this.repairSlots, 1, 49, 40) {
-          public boolean mayPlace(ItemStack p_39616_) {
--            return p_39616_.isDamageableItem() || p_39616_.is(Items.ENCHANTED_BOOK) || p_39616_.isEnchanted();
-+            return p_39616_.isDamageableItem() || p_39616_.is(Items.ENCHANTED_BOOK) || p_39616_.isEnchanted() || p_39616_.canGrindstoneRepair();
+       this.m_38897_(new Slot(this.f_39560_, 1, 49, 40) {
+          public boolean m_5857_(ItemStack p_39616_) {
+-            return p_39616_.m_41763_() || p_39616_.m_150930_(Items.f_42690_) || p_39616_.m_41793_();
++            return p_39616_.m_41763_() || p_39616_.m_150930_(Items.f_42690_) || p_39616_.m_41793_() || p_39616_.canGrindstoneRepair();
           }
        });
-       this.addSlot(new Slot(this.resultSlots, 2, 129, 34) {
+       this.m_38897_(new Slot(this.f_39559_, 2, 129, 34) {
 @@ -58,6 +_,7 @@
           }
  
-          public void onTake(Player p_150574_, ItemStack p_150575_) {
-+            if (net.minecraftforge.common.ForgeHooks.onGrindstoneTake(GrindstoneMenu.this.repairSlots, p_39568_, this::getExperienceAmount)) return;
-             p_39568_.execute((p_39634_, p_39635_) -> {
+          public void m_142406_(Player p_150574_, ItemStack p_150575_) {
++            if (net.minecraftforge.common.ForgeHooks.onGrindstoneTake(GrindstoneMenu.this.f_39560_, p_39568_, this::m_39631_)) return;
+             p_39568_.m_39292_((p_39634_, p_39635_) -> {
                 if (p_39634_ instanceof ServerLevel) {
-                   ExperienceOrb.award((ServerLevel)p_39634_, Vec3.atCenterOf(p_39635_), this.getExperienceAmount(p_39634_));
+                   ExperienceOrb.m_147082_((ServerLevel)p_39634_, Vec3.m_82512_(p_39635_), this.m_39631_(p_39634_));
 @@ -70,6 +_,7 @@
           }
  
-          private int getExperienceAmount(Level p_39632_) {
+          private int m_39631_(Level p_39632_) {
 +            if (xp > -1) return xp;
              int l = 0;
-             l += this.getExperienceFromItem(GrindstoneMenu.this.repairSlots.getItem(0));
-             l += this.getExperienceFromItem(GrindstoneMenu.this.repairSlots.getItem(1));
+             l += this.m_39636_(GrindstoneMenu.this.f_39560_.m_8020_(0));
+             l += this.m_39636_(GrindstoneMenu.this.f_39560_.m_8020_(1));
 @@ -107,6 +_,7 @@
-          this.addSlot(new Slot(p_39567_, k, 8 + k * 18, 142));
+          this.m_38897_(new Slot(p_39567_, k, 8 + k * 18, 142));
        }
  
-+      player = (org.bukkit.entity.Player) p_39567_.player.getBukkitEntity(); // CraftBukkit
++      player = (org.bukkit.entity.Player) p_39567_.f_35978_.getBukkitEntity(); // CraftBukkit
     }
  
-    public void slotsChanged(Container p_39570_) {
+    public void m_6199_(Container p_39570_) {
 @@ -122,12 +_,14 @@
-       ItemStack itemstack1 = this.repairSlots.getItem(1);
-       boolean flag = !itemstack.isEmpty() || !itemstack1.isEmpty();
-       boolean flag1 = !itemstack.isEmpty() && !itemstack1.isEmpty();
-+      this.xp = net.minecraftforge.common.ForgeHooks.onGrindstoneChange(itemstack, itemstack1, this.resultSlots, -1);
+       ItemStack itemstack1 = this.f_39560_.m_8020_(1);
+       boolean flag = !itemstack.m_41619_() || !itemstack1.m_41619_();
+       boolean flag1 = !itemstack.m_41619_() && !itemstack1.m_41619_();
++      this.xp = net.minecraftforge.common.ForgeHooks.onGrindstoneChange(itemstack, itemstack1, this.f_39559_, -1);
 +      if (this.xp == Integer.MIN_VALUE)
        if (!flag) {
--         this.resultSlots.setItem(0, ItemStack.EMPTY);
-+         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
+-         this.f_39559_.m_6836_(0, ItemStack.f_41583_);
++         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
        } else {
-          boolean flag2 = !itemstack.isEmpty() && !itemstack.is(Items.ENCHANTED_BOOK) && !itemstack.isEnchanted() || !itemstack1.isEmpty() && !itemstack1.is(Items.ENCHANTED_BOOK) && !itemstack1.isEnchanted();
-          if (itemstack.getCount() > 1 || itemstack1.getCount() > 1 || !flag1 && flag2) {
--            this.resultSlots.setItem(0, ItemStack.EMPTY);
-+            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
-             this.broadcastChanges();
+          boolean flag2 = !itemstack.m_41619_() && !itemstack.m_150930_(Items.f_42690_) && !itemstack.m_41793_() || !itemstack1.m_41619_() && !itemstack1.m_150930_(Items.f_42690_) && !itemstack1.m_41793_();
+          if (itemstack.m_41613_() > 1 || itemstack1.m_41613_() > 1 || !flag1 && flag2) {
+-            this.f_39559_.m_6836_(0, ItemStack.f_41583_);
++            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
+             this.m_38946_();
              return;
           }
 @@ -137,20 +_,21 @@
           ItemStack itemstack2;
           if (flag1) {
-             if (!itemstack.is(itemstack1.getItem())) {
--               this.resultSlots.setItem(0, ItemStack.EMPTY);
-+               org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
-                this.broadcastChanges();
+             if (!itemstack.m_150930_(itemstack1.m_41720_())) {
+-               this.f_39559_.m_6836_(0, ItemStack.f_41583_);
++               org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
+                this.m_38946_();
                 return;
              }
  
-             Item item = itemstack.getItem();
--            int k = item.getMaxDamage() - itemstack.getDamageValue();
--            int l = item.getMaxDamage() - itemstack1.getDamageValue();
--            int i1 = k + l + item.getMaxDamage() * 5 / 100;
--            i = Math.max(item.getMaxDamage() - i1, 0);
-+            int k = itemstack.getMaxDamage() - itemstack.getDamageValue();
-+            int l = itemstack.getMaxDamage() - itemstack1.getDamageValue();
-+            int i1 = k + l + itemstack.getMaxDamage() * 5 / 100;
-+            i = Math.max(itemstack.getMaxDamage() - i1, 0);
-             itemstack2 = this.mergeEnchants(itemstack, itemstack1);
--            if (!itemstack2.isDamageableItem()) {
-+            if (!itemstack2.isRepairable()) i = itemstack.getDamageValue();
-+            if (!itemstack2.isDamageableItem() || !itemstack2.isRepairable()) {
-                if (!ItemStack.matches(itemstack, itemstack1)) {
--                  this.resultSlots.setItem(0, ItemStack.EMPTY);
-+                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
-                   this.broadcastChanges();
+             Item item = itemstack.m_41720_();
+-            int k = item.m_41462_() - itemstack.m_41773_();
+-            int l = item.m_41462_() - itemstack1.m_41773_();
+-            int i1 = k + l + item.m_41462_() * 5 / 100;
+-            i = Math.max(item.m_41462_() - i1, 0);
++            int k = itemstack.m_41776_() - itemstack.m_41773_();
++            int l = itemstack.m_41776_() - itemstack1.m_41773_();
++            int i1 = k + l + itemstack.m_41776_() * 5 / 100;
++            i = Math.max(itemstack.m_41776_() - i1, 0);
+             itemstack2 = this.m_39590_(itemstack, itemstack1);
+-            if (!itemstack2.m_41763_()) {
++            if (!itemstack2.isRepairable()) i = itemstack.m_41773_();
++            if (!itemstack2.m_41763_() || !itemstack2.isRepairable()) {
+                if (!ItemStack.m_41728_(itemstack, itemstack1)) {
+-                  this.f_39559_.m_6836_(0, ItemStack.f_41583_);
++                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
+                   this.m_38946_();
                    return;
                 }
 @@ -163,9 +_,14 @@
              itemstack2 = flag3 ? itemstack : itemstack1;
           }
  
--         this.resultSlots.setItem(0, this.removeNonCurses(itemstack2, i, j));
+-         this.f_39559_.m_6836_(0, this.m_39579_(itemstack2, i, j));
 +         // Forge: Skip the repair if the result would give an item stack with a count not normally obtainable
-+         if (j > itemstack2.getMaxStackSize())
-+            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
++         if (j > itemstack2.m_41741_())
++            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
 +         else
-+            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), this.removeNonCurses(itemstack2, i, j)); // CraftBukkit
++            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), this.m_39579_(itemstack2, i, j)); // CraftBukkit
        }
  
-+      sendAllDataToRemote(); // CraftBukkit - SPIGOT-6686: Always send completed inventory to stay in sync with client
-       this.broadcastChanges();
++      m_150429_(); // CraftBukkit - SPIGOT-6686: Always send completed inventory to stay in sync with client
+       this.m_38946_();
     }
  
 @@ -175,7 +_,7 @@
  
        for(Map.Entry<Enchantment, Integer> entry : map.entrySet()) {
           Enchantment enchantment = entry.getKey();
--         if (!enchantment.isCurse() || EnchantmentHelper.getItemEnchantmentLevel(enchantment, itemstack) == 0) {
-+         if (!enchantment.isCurse() || EnchantmentHelper.getTagEnchantmentLevel(enchantment, itemstack) == 0) {
-             itemstack.enchant(enchantment, entry.getValue());
+-         if (!enchantment.m_6589_() || EnchantmentHelper.m_44843_(enchantment, itemstack) == 0) {
++         if (!enchantment.m_6589_() || EnchantmentHelper.getTagEnchantmentLevel(enchantment, itemstack) == 0) {
+             itemstack.m_41663_(enchantment, entry.getValue());
           }
        }
 @@ -220,6 +_,7 @@
     }
  
-    public boolean stillValid(Player p_39572_) {
+    public boolean m_6875_(Player p_39572_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
-       return stillValid(this.access, p_39572_, Blocks.GRINDSTONE);
+       return m_38889_(this.f_39561_, p_39572_, Blocks.f_50623_);
     }
  

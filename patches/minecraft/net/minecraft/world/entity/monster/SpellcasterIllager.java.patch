@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/entity/monster/SpellcasterIllager.java
 +++ b/net/minecraft/world/entity/monster/SpellcasterIllager.java
 @@ -183,6 +_,11 @@
-       public void tick() {
-          --this.attackWarmupDelay;
-          if (this.attackWarmupDelay == 0) {
+       public void m_8037_() {
+          --this.f_33774_;
+          if (this.f_33774_ == 0) {
 +            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleEntitySpellCastEvent(SpellcasterIllager.this, this.getSpell())) {
++            if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleEntitySpellCastEvent(SpellcasterIllager.this, this.m_7269_())) {
 +               return;
 +            }
 +            // CraftBukkit end
-             this.performSpellCasting();
-             SpellcasterIllager.this.playSound(SpellcasterIllager.this.getCastingSoundEvent(), 1.0F, 1.0F);
+             this.m_8130_();
+             SpellcasterIllager.this.m_5496_(SpellcasterIllager.this.m_7894_(), 1.0F, 1.0F);
           }

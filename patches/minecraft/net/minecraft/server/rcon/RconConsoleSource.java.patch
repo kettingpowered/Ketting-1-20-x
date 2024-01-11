@@ -1,9 +1,9 @@
 --- a/net/minecraft/server/rcon/RconConsoleSource.java
 +++ b/net/minecraft/server/rcon/RconConsoleSource.java
 @@ -14,8 +_,16 @@
-    private static final Component RCON_COMPONENT = Component.literal("Rcon");
-    private final StringBuffer buffer = new StringBuffer();
-    private final MinecraftServer server;
+    private static final Component f_11500_ = Component.m_237113_("Rcon");
+    private final StringBuffer f_11501_ = new StringBuffer();
+    private final MinecraftServer f_11502_;
 +   // CraftBukkit start
 +   public final java.net.SocketAddress socketAddress;
 +   private final org.bukkit.craftbukkit.v1_20_R2.command.CraftRemoteConsoleCommandSender remoteConsole = new org.bukkit.craftbukkit.v1_20_R2.command.CraftRemoteConsoleCommandSender(this);
@@ -14,16 +14,16 @@
 +   public RconConsoleSource(MinecraftServer p_11505_, java.net.SocketAddress socketAddress) {
 +      this.socketAddress = socketAddress;
 +      // CraftBukkit end
-       this.server = p_11505_;
+       this.f_11502_ = p_11505_;
     }
  
 @@ -32,8 +_,19 @@
-       return new CommandSourceStack(this, Vec3.atLowerCornerOf(serverlevel.getSharedSpawnPos()), Vec2.ZERO, serverlevel, 4, "Rcon", RCON_COMPONENT, this.server, (Entity)null);
+       return new CommandSourceStack(this, Vec3.m_82528_(serverlevel.m_220360_()), Vec2.f_82462_, serverlevel, 4, "Rcon", f_11500_, this.f_11502_, (Entity)null);
     }
  
 +   // CraftBukkit start - Send a String
 +   public void sendMessage(String message) {
-+      this.buffer.append(message);
++      this.f_11501_.append(message);
 +   }
 +
 +   @Override
@@ -32,9 +32,9 @@
 +   }
 +   // CraftBukkit end
 +
-    public void sendSystemMessage(Component p_215653_) {
--      this.buffer.append(p_215653_.getString());
-+      this.buffer.append(p_215653_.getString()).append("\n"); // FIX MC-7569 - RCON has no newlines in multiline output
+    public void m_213846_(Component p_215653_) {
+-      this.f_11501_.append(p_215653_.getString());
++      this.f_11501_.append(p_215653_.getString()).append("\n"); // FIX MC-7569 - RCON has no newlines in multiline output
     }
  
-    public boolean acceptsSuccess() {
+    public boolean m_6999_() {

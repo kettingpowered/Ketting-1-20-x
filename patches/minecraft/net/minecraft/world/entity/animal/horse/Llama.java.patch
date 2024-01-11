@@ -6,20 +6,9 @@
  
 +   // CraftBukkit start
 +   public void setStrengthPublic(int i) {
-+      this.setStrength(i);
++      this.m_30840_(i);
 +   }
 +   // CraftBukkit end
-    private void setStrength(int p_30841_) {
-       this.entityData.set(DATA_STRENGTH_ID, Math.max(1, Math.min(5, p_30841_)));
+    private void m_30840_(int p_30841_) {
+       this.f_19804_.m_135381_(f_30745_, Math.max(1, Math.min(5, p_30841_)));
     }
-@@ -366,6 +_,10 @@
-    }
- 
-    public boolean causeFallDamage(float p_149538_, float p_149539_, DamageSource p_149540_) {
-+      var event = net.minecraftforge.event.ForgeEventFactory.onLivingFall(this, p_149538_, p_149539_);
-+      if (event.isCanceled()) return false;
-+      p_149538_ = event.getDistance();
-+      p_149539_ = event.getDamageMultiplier();
-       int i = this.calculateFallDamage(p_149538_, p_149539_);
-       if (i <= 0) {
-          return false;

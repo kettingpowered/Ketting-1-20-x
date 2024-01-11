@@ -6,12 +6,10 @@
 package net.minecraftforge.common.data;
 
 import com.google.gson.JsonObject;
-import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.Advancement.Builder;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.packs.VanillaRecipeProvider;
@@ -38,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public final class ForgeRecipeProvider extends VanillaRecipeProvider {
     private final Map<Item, TagKey<Item>> replacements = new HashMap<>();
@@ -60,7 +59,7 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
     }
 
     @Override
-    protected void buildRecipes(RecipeOutput consumer) {
+    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
         replace(Items.STICK, Tags.Items.RODS_WOODEN);
         replace(Items.GOLD_INGOT, Tags.Items.INGOTS_GOLD);
         replace(Items.IRON_INGOT, Tags.Items.INGOTS_IRON);
@@ -93,18 +92,10 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
         exclude(Blocks.COBBLED_DEEPSLATE_SLAB);
         exclude(Blocks.COBBLED_DEEPSLATE_WALL);
 
-        super.buildRecipes(new RecipeOutput() {
-            @Override
-            public void accept(FinishedRecipe vanilla) {
-                var modified = enhance(vanilla);
-                if (modified != null)
-                    consumer.accept(modified);
-            }
-
-            @Override
-            public Builder advancement() {
-                return consumer.advancement();
-            }
+        super.buildRecipes(vanilla -> {
+            FinishedRecipe modified = enhance(vanilla);
+            if (modified != null)
+                consumer.accept(modified);
         });
     }
 
@@ -122,7 +113,7 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
         List<Ingredient> ingredients = getField(ShapelessRecipeBuilder.Result.class, vanilla, 4);
         boolean modified = false;
         for (int x = 0; x < ingredients.size(); x++) {
-            Ingredient ing = enhance(vanilla.id(), ingredients.get(x));
+            Ingredient ing = enhance(vanilla.getId(), ingredients.get(x));
             if (ing != null) {
                 ingredients.set(x, ing);
                 modified = true;
@@ -133,13 +124,13 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
 
     @Nullable
     @Override
-    protected CompletableFuture<?> saveAdvancement(CachedOutput output, ResourceLocation advancementId, JsonObject advancementJson, FinishedRecipe finishedRecipe) {
+    protected CompletableFuture<?> saveAdvancement(CachedOutput output, FinishedRecipe recipe, JsonObject json) {
         // NOOP - We don't replace any of the advancement things yet...
         return null;
     }
 
     @Override
-    protected CompletableFuture<?> buildAdvancement(CachedOutput p_253674_, AdvancementHolder p_297687_) {
+    protected CompletableFuture<?> buildAdvancement(CachedOutput output, ResourceLocation name, Advancement.Builder builder) {
         // NOOP - We don't replace any of the advancement things yet...
         return CompletableFuture.allOf();
     }
@@ -149,7 +140,7 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
         Map<Character, Ingredient> ingredients = getField(ShapedRecipeBuilder.Result.class, vanilla, 5);
         boolean modified = false;
         for (Character x : ingredients.keySet()) {
-            Ingredient ing = enhance(vanilla.id(), ingredients.get(x));
+            Ingredient ing = enhance(vanilla.getId(), ingredients.get(x));
             if (ing != null) {
                 ingredients.put(x, ing);
                 modified = true;

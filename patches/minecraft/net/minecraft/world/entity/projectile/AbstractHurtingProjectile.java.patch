@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
 +++ b/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
 @@ -19,6 +_,8 @@
-    public double xPower;
-    public double yPower;
-    public double zPower;
+    public double f_36813_;
+    public double f_36814_;
+    public double f_36815_;
 +   public float bukkitYield = 1; // CraftBukkit
 +   public boolean isIncendiary = true; // CraftBukkit
  
@@ -11,8 +11,8 @@
        super(p_36833_, p_36834_);
 @@ -28,6 +_,12 @@
        this(p_36817_, p_36824_);
-       this.moveTo(p_36818_, p_36819_, p_36820_, this.getYRot(), this.getXRot());
-       this.reapplyPosition();
+       this.m_7678_(p_36818_, p_36819_, p_36820_, this.m_146908_(), this.m_146909_());
+       this.m_20090_();
 +      // CraftBukkit start - Added setDirection method
 +      this.setDirection(p_36821_, p_36822_, p_36823_);
 +   }
@@ -21,33 +21,33 @@
 +      // CraftBukkit end
        double d0 = Math.sqrt(p_36821_ * p_36821_ + p_36822_ * p_36822_ + p_36823_ * p_36823_);
        if (d0 != 0.0D) {
-          this.xPower = p_36821_ / d0 * 0.1D;
+          this.f_36813_ = p_36821_ / d0 * 0.1D;
 @@ -65,8 +_,14 @@
           }
  
-          HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
--         if (hitresult.getType() != HitResult.Type.MISS) {
--            this.onHit(hitresult);
-+         if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
+          HitResult hitresult = ProjectileUtil.m_278158_(this, this::m_5603_);
+-         if (hitresult.m_6662_() != HitResult.Type.MISS) {
+-            this.m_6532_(hitresult);
++         if (hitresult.m_6662_() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
 +            this.preOnHit(hitresult); // CraftBukkit - projectile hit event
 +
 +            // CraftBukkit start - Fire ProjectileHitEvent
-+            if (this.isRemoved()) {
++            if (this.m_213877_()) {
 +               org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callProjectileHitEvent(this, hitresult);
 +            }
 +            // CraftBukkit end
           }
  
-          this.checkInsideBlocks();
+          this.m_20101_();
 @@ -143,6 +_,11 @@
-          Entity entity = p_36839_.getEntity();
+          Entity entity = p_36839_.m_7639_();
           if (entity != null) {
-             if (!this.level().isClientSide) {
+             if (!this.m_9236_().f_46443_) {
 +               // CraftBukkit start
 +               if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_36839_, p_36840_, false)) {
 +                  return false;
 +               }
 +               // CraftBukkit end
-                Vec3 vec3 = entity.getLookAngle();
-                this.setDeltaMovement(vec3);
-                this.xPower = vec3.x * 0.1D;
+                Vec3 vec3 = entity.m_20154_();
+                this.m_20256_(vec3);
+                this.f_36813_ = vec3.f_82479_ * 0.1D;

@@ -15,45 +15,45 @@
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryLoom inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryLoom(this.inputContainer, this.outputContainer);
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryLoom inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryLoom(this.f_39853_, this.f_39854_);
 +      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
-    private static final int PATTERN_NOT_SET = -1;
-    private static final int INV_SLOT_START = 4;
-    private static final int INV_SLOT_END = 31;
+    private static final int f_219989_ = -1;
+    private static final int f_150612_ = 4;
+    private static final int f_150613_ = 31;
 @@ -40,19 +_,8 @@
-    private final Slot patternSlot;
-    private final Slot resultSlot;
-    long lastSoundTime;
--   private final Container inputContainer = new SimpleContainer(3) {
--      public void setChanged() {
--         super.setChanged();
--         LoomMenu.this.slotsChanged(this);
--         LoomMenu.this.slotUpdateListener.run();
+    private final Slot f_39850_;
+    private final Slot f_39851_;
+    long f_39852_;
+-   private final Container f_39853_ = new SimpleContainer(3) {
+-      public void m_6596_() {
+-         super.m_6596_();
+-         LoomMenu.this.m_6199_(this);
+-         LoomMenu.this.f_39847_.run();
 -      }
 -   };
--   private final Container outputContainer = new SimpleContainer(1) {
--      public void setChanged() {
--         super.setChanged();
--         LoomMenu.this.slotUpdateListener.run();
+-   private final Container f_39854_ = new SimpleContainer(1) {
+-      public void m_6596_() {
+-         super.m_6596_();
+-         LoomMenu.this.f_39847_.run();
 -      }
 -   };
-+   private final Container inputContainer;
-+   private final Container outputContainer;
++   private final Container f_39853_;
++   private final Container f_39854_;
  
     public LoomMenu(int p_39856_, Inventory p_39857_) {
-       this(p_39856_, p_39857_, ContainerLevelAccess.NULL);
+       this(p_39856_, p_39857_, ContainerLevelAccess.f_39287_);
 @@ -60,6 +_,33 @@
  
     public LoomMenu(int p_39859_, Inventory p_39860_, final ContainerLevelAccess p_39861_) {
-       super(MenuType.LOOM, p_39859_);
-+      this.inputContainer = new SimpleContainer(3) {
-+         public void setChanged() {
-+            super.setChanged();
-+            LoomMenu.this.slotsChanged(this);
-+            LoomMenu.this.slotUpdateListener.run();
+       super(MenuType.f_39974_, p_39859_);
++      this.f_39853_ = new SimpleContainer(3) {
++         public void m_6596_() {
++            super.m_6596_();
++            LoomMenu.this.m_6199_(this);
++            LoomMenu.this.f_39847_.run();
 +         }
 +
 +         // CraftBukkit start
@@ -63,10 +63,10 @@
 +         }
 +         // CraftBukkit end
 +      };
-+      this.outputContainer = new SimpleContainer(1) {
-+         public void setChanged() {
-+            super.setChanged();
-+            LoomMenu.this.slotUpdateListener.run();
++      this.f_39854_ = new SimpleContainer(1) {
++         public void m_6596_() {
++            super.m_6596_();
++            LoomMenu.this.f_39847_.run();
 +         }
 +
 +         // CraftBukkit start
@@ -76,25 +76,25 @@
 +         }
 +         // CraftBukkit end
 +      };
-       this.access = p_39861_;
-       this.bannerSlot = this.addSlot(new Slot(this.inputContainer, 0, 13, 26) {
-          public boolean mayPlace(ItemStack p_39918_) {
+       this.f_39845_ = p_39861_;
+       this.f_39848_ = this.m_38897_(new Slot(this.f_39853_, 0, 13, 26) {
+          public boolean m_5857_(ItemStack p_39918_) {
 @@ -111,9 +_,11 @@
        }
  
-       this.addDataSlot(this.selectedBannerPatternIndex);
-+      player = (org.bukkit.entity.Player) p_39860_.player.getBukkitEntity(); // CraftBukkit
+       this.m_38895_(this.f_39846_);
++      player = (org.bukkit.entity.Player) p_39860_.f_35978_.getBukkitEntity(); // CraftBukkit
     }
  
-    public boolean stillValid(Player p_39865_) {
+    public boolean m_6875_(Player p_39865_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
-       return stillValid(this.access, p_39865_, Blocks.LOOM);
+       return m_38889_(this.f_39845_, p_39865_, Blocks.f_50617_);
     }
  
 @@ -276,6 +_,11 @@
           ListTag listtag;
-          if (compoundtag != null && compoundtag.contains("Patterns", 9)) {
-             listtag = compoundtag.getList("Patterns", 10);
+          if (compoundtag != null && compoundtag.m_128425_("Patterns", 9)) {
+             listtag = compoundtag.m_128437_("Patterns", 10);
 +            // CraftBukkit start
 +            while (listtag.size() > 20) {
 +               listtag.remove(20);

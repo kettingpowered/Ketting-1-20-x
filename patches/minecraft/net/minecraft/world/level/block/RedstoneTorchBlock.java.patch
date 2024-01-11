@@ -6,12 +6,12 @@
  
 +      // CraftBukkit start
 +      org.bukkit.plugin.PluginManager manager = p_221950_.getCraftServer().getPluginManager();
-+      org.bukkit.block.Block block = p_221950_.getWorld().getBlockAt(p_221951_.getX(), p_221951_.getY(), p_221951_.getZ());
-+      int oldCurrent = ((Boolean) p_221949_.getValue(RedstoneTorchBlock.LIT)).booleanValue() ? 15 : 0;
++      org.bukkit.block.Block block = p_221950_.getWorld().getBlockAt(p_221951_.m_123341_(), p_221951_.m_123342_(), p_221951_.m_123343_());
++      int oldCurrent = ((Boolean) p_221949_.m_61143_(RedstoneTorchBlock.f_55674_)).booleanValue() ? 15 : 0;
 +
 +      org.bukkit.event.block.BlockRedstoneEvent event = new org.bukkit.event.block.BlockRedstoneEvent(block, oldCurrent, oldCurrent);
 +      // CraftBukkit end
-       if (p_221949_.getValue(LIT)) {
+       if (p_221949_.m_61143_(f_55674_)) {
           if (flag) {
 +            // CraftBukkit start
 +            if (oldCurrent != 0) {
@@ -22,13 +22,13 @@
 +               }
 +            }
 +            // CraftBukkit end
-             p_221950_.setBlock(p_221951_, p_221949_.setValue(LIT, Boolean.valueOf(false)), 3);
-             if (isToggledTooFrequently(p_221950_, p_221951_, true)) {
-                p_221950_.levelEvent(1502, p_221951_, 0);
+             p_221950_.m_7731_(p_221951_, p_221949_.m_61124_(f_55674_, Boolean.valueOf(false)), 3);
+             if (m_55684_(p_221950_, p_221951_, true)) {
+                p_221950_.m_46796_(1502, p_221951_, 0);
 @@ -71,6 +_,15 @@
              }
           }
-       } else if (!flag && !isToggledTooFrequently(p_221950_, p_221951_, false)) {
+       } else if (!flag && !m_55684_(p_221950_, p_221951_, false)) {
 +         // CraftBukkit start
 +         if (oldCurrent != 15) {
 +            event.setNewCurrent(15);
@@ -38,6 +38,6 @@
 +            }
 +         }
 +         // CraftBukkit end
-          p_221950_.setBlock(p_221951_, p_221949_.setValue(LIT, Boolean.valueOf(true)), 3);
+          p_221950_.m_7731_(p_221951_, p_221949_.m_61124_(f_55674_, Boolean.valueOf(true)), 3);
        }
  

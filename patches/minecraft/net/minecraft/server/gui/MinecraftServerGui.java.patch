@@ -5,24 +5,24 @@
     }
  
 +   private java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
-    public void start() {
-       this.logAppenderThread.start();
+    public void m_139908_() {
+       this.f_139902_.start();
 +      latch.countDown();
     }
  
-    public void close() {
+    public void m_139925_() {
 @@ -154,7 +_,11 @@
-       this.finalizers.forEach(Runnable::run);
+       this.f_139903_.forEach(Runnable::run);
     }
  
 +   private static final java.util.regex.Pattern ANSI = java.util.regex.Pattern.compile("\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})*)?[m|K]"); // CraftBukkit
-    public void print(JTextArea p_139915_, JScrollPane p_139916_, String p_139917_) {
+    public void m_139914_(JTextArea p_139915_, JScrollPane p_139916_, String p_139917_) {
 +      try {
 +         latch.await();
 +      } catch (InterruptedException e){} //Prevent logging until after constructor has ended.
        if (!SwingUtilities.isEventDispatchThread()) {
           SwingUtilities.invokeLater(() -> {
-             this.print(p_139915_, p_139916_, p_139917_);
+             this.m_139914_(p_139915_, p_139916_, p_139917_);
 @@ -168,7 +_,7 @@
           }
  

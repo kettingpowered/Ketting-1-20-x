@@ -1,18 +1,18 @@
 --- a/net/minecraft/world/item/crafting/CampfireCookingRecipe.java
 +++ b/net/minecraft/world/item/crafting/CampfireCookingRecipe.java
 @@ -15,4 +_,17 @@
-    public RecipeSerializer<?> getSerializer() {
-       return RecipeSerializer.CAMPFIRE_COOKING_RECIPE;
+    public RecipeSerializer<?> m_7707_() {
+       return RecipeSerializer.f_44094_;
     }
 +
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.Recipe toBukkitRecipe(org.bukkit.NamespacedKey id) {
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(this.result);
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(this.f_43730_);
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftCampfireRecipe recipe = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftCampfireRecipe(id, result, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.ingredient), this.experience, this.cookingTime);
-+      recipe.setGroup(this.group);
-+      recipe.setCategory(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.getCategory(this.category()));
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftCampfireRecipe recipe = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftCampfireRecipe(id, result, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.f_43729_), this.f_43731_, this.f_43732_);
++      recipe.setGroup(this.f_43728_);
++      recipe.setCategory(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.getCategory(this.m_245534_()));
 +
 +      return recipe;
 +   }

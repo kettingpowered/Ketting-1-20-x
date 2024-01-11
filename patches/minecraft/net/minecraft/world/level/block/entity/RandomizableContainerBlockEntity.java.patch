@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/RandomizableContainerBlockEntity.java
 @@ -27,8 +_,8 @@
-    public static final String LOOT_TABLE_TAG = "LootTable";
-    public static final String LOOT_TABLE_SEED_TAG = "LootTableSeed";
+    public static final String f_155626_ = "LootTable";
+    public static final String f_155627_ = "LootTableSeed";
     @Nullable
--   protected ResourceLocation lootTable;
--   protected long lootTableSeed;
-+   public ResourceLocation lootTable;
-+   public long lootTableSeed;
+-   protected ResourceLocation f_59605_;
+-   protected long f_59606_;
++   public ResourceLocation f_59605_;
++   public long f_59606_;
  
     protected RandomizableContainerBlockEntity(BlockEntityType<?> p_155629_, BlockPos p_155630_, BlockState p_155631_) {
        super(p_155629_, p_155630_, p_155631_);
@@ -19,8 +19,8 @@
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.Location getLocation() {
-+      if (level == null) return null;
-+      return new org.bukkit.Location(level.getWorld(), worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
++      if (f_58857_ == null) return null;
++      return new org.bukkit.Location(f_58857_.getWorld(), f_58858_.m_123341_(), f_58858_.m_123342_(), f_58858_.m_123343_());
 +   }
 +   // CraftBukkit end
  }

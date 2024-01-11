@@ -1,72 +1,49 @@
 --- a/net/minecraft/server/network/ServerConfigurationPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerConfigurationPacketListenerImpl.java
-@@ -36,16 +_,23 @@
- public class ServerConfigurationPacketListenerImpl extends ServerCommonPacketListenerImpl implements TickablePacketListener, ServerConfigurationPacketListener {
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private static final Component DISCONNECT_REASON_INVALID_DATA = Component.translatable("multiplayer.disconnect.invalid_player_data");
-+   private static final ConfigurationTask.Type VANILLA_START = new ConfigurationTask.Type("vanilla_start");
-    private final GameProfile gameProfile;
-    private final Queue<ConfigurationTask> configurationTasks = new ConcurrentLinkedQueue<>();
-    @Nullable
-    private ConfigurationTask currentTask;
-    private ClientInformation clientInformation;
-+   private final net.minecraftforge.network.config.ConfigurationTaskContext taskContext;
+@@ -43,7 +_,11 @@
+    private ClientInformation f_290851_;
  
     public ServerConfigurationPacketListenerImpl(MinecraftServer p_301415_, Connection p_298106_, CommonListenerCookie p_301309_) {
 -      super(p_301415_, p_298106_, p_301309_);
-+      this(p_301415_, p_298106_, p_301309_, new ServerPlayer(p_301415_, p_301415_.overworld(), p_301309_.gameProfile(), p_301309_.clientInformation()));
++      this(p_301415_, p_298106_, p_301309_, new ServerPlayer(p_301415_, p_301415_.m_129783_(), p_301309_.f_290628_(), p_301309_.f_290565_()));
 +
 +   }
 +   public ServerConfigurationPacketListenerImpl(MinecraftServer p_301415_, Connection p_298106_, CommonListenerCookie p_301309_, ServerPlayer player) { // CraftBukkit
 +      super(p_301415_, p_298106_, p_301309_, player); // CraftBukkit
-       this.gameProfile = p_301309_.gameProfile();
-       this.clientInformation = p_301309_.clientInformation();
-+      this.taskContext = new net.minecraftforge.network.config.ConfigurationTaskContext(p_298106_, this::send, this::finishCurrentTask);
+       this.f_291596_ = p_301309_.f_290628_();
+       this.f_290851_ = p_301309_.f_290565_();
+    }
+@@ -61,12 +_,15 @@
+       return this.f_291338_.m_129536_();
     }
  
-    protected GameProfile playerProfile() {
-@@ -61,12 +_,17 @@
-       return this.connection.isConnected();
-    }
- 
--   public void startConfiguration() {
+-   public void m_294295_() {
 +   private void vanillaStart() {
-       this.send(new ClientboundCustomPayloadPacket(new BrandPayload(this.server.getServerModName())));
-       LayeredRegistryAccess<RegistryLayer> layeredregistryaccess = this.server.registries();
-       this.send(new ClientboundUpdateEnabledFeaturesPacket(FeatureFlags.REGISTRY.toNames(this.server.getWorldData().enabledFeatures())));
-       this.send(new ClientboundRegistryDataPacket((new RegistryAccess.ImmutableRegistryAccess(RegistrySynchronization.networkedRegistries(layeredregistryaccess))).freeze()));
-       this.send(new ClientboundUpdateTagsPacket(TagNetworkSerialization.serializeTagsToNetwork(layeredregistryaccess)));
+       this.m_141995_(new ClientboundCustomPayloadPacket(new BrandPayload(this.f_291389_.getServerModName())));
+       LayeredRegistryAccess<RegistryLayer> layeredregistryaccess = this.f_291389_.m_247573_();
+       this.m_141995_(new ClientboundUpdateEnabledFeaturesPacket(FeatureFlags.f_244280_.m_245829_(this.f_291389_.m_129910_().m_247623_())));
+       this.m_141995_(new ClientboundRegistryDataPacket((new RegistryAccess.ImmutableRegistryAccess(RegistrySynchronization.m_257599_(layeredregistryaccess))).m_203557_()));
+       this.m_141995_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_245799_(layeredregistryaccess)));
 +   }
 +
-+   public void startConfiguration() {
-+      net.minecraftforge.event.ForgeEventFactory.gatherLoginConfigTasks(this.connection, this.configurationTasks::add);
-+      this.configurationTasks.add(new net.minecraftforge.network.config.SimpleConfigurationTask(VANILLA_START, this::vanillaStart));
-       this.addOptionalTasks();
-       this.configurationTasks.add(new JoinWorldTask());
-       this.startNextTask();
++   public void m_294295_() {
+       this.m_295612_();
+       this.f_290691_.add(new JoinWorldTask());
+       this.m_295676_();
 @@ -107,13 +_,14 @@
              return;
           }
  
--         Component component = playerlist.canPlayerLogin(this.connection.getRemoteAddress(), this.gameProfile);
+-         Component component = playerlist.m_6418_(this.f_291338_.m_129523_(), this.f_291596_);
 +         Component component = null; // CraftBukkit - login checks already completed
 +
           if (component != null) {
-             this.disconnect(component);
+             this.m_294716_(component);
              return;
           }
  
--         ServerPlayer serverplayer = playerlist.getPlayerForLogin(this.gameProfile, this.clientInformation);
-+         ServerPlayer serverplayer = playerlist.getPlayerForLogin(this.gameProfile, this.clientInformation, this.player); // CraftBukkit
-          playerlist.placeNewPlayer(this.connection, serverplayer, this.createCookie(this.clientInformation));
-          this.connection.resumeInboundAfterProtocolChange();
+-         ServerPlayer serverplayer = playerlist.m_215624_(this.f_291596_, this.f_290851_);
++         ServerPlayer serverplayer = playerlist.getPlayerForLogin(this.f_291596_, this.f_290851_, this.player); // CraftBukkit
+          playerlist.m_11261_(this.f_291338_, serverplayer, this.m_295477_(this.f_290851_));
+          this.f_291338_.m_294304_();
        } catch (Exception exception) {
-@@ -135,7 +_,7 @@
-          ConfigurationTask configurationtask = this.configurationTasks.poll();
-          if (configurationtask != null) {
-             this.currentTask = configurationtask;
--            configurationtask.start(this::send);
-+            configurationtask.start(this.taskContext);
-          }
- 
-       }

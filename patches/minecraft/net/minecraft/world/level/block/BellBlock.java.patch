@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/level/block/BellBlock.java
 +++ b/net/minecraft/world/level/block/BellBlock.java
 @@ -127,6 +_,12 @@
-             p_152192_ = p_152190_.getBlockState(p_152191_).getValue(FACING);
+             p_152192_ = p_152190_.m_8055_(p_152191_).m_61143_(f_49679_);
           }
  
 +         // CraftBukkit start
@@ -10,23 +10,23 @@
 +         }
 +         // CraftBukkit end
 +
-          ((BellBlockEntity)blockentity).onHit(p_152192_);
-          p_152190_.playSound((Player)null, p_152191_, SoundEvents.BELL_BLOCK, SoundSource.BLOCKS, 2.0F, 1.0F);
-          p_152190_.gameEvent(p_152189_, GameEvent.BLOCK_CHANGE, p_152191_);
+          ((BellBlockEntity)blockentity).m_58834_(p_152192_);
+          p_152190_.m_5594_((Player)null, p_152191_, SoundEvents.f_11699_, SoundSource.BLOCKS, 2.0F, 1.0F);
+          p_152190_.m_142346_(p_152189_, GameEvent.f_157792_, p_152191_);
 @@ -247,4 +_,16 @@
-    public boolean isPathfindable(BlockState p_49717_, BlockGetter p_49718_, BlockPos p_49719_, PathComputationType p_49720_) {
+    public boolean m_7357_(BlockState p_49717_, BlockGetter p_49718_, BlockPos p_49719_, PathComputationType p_49720_) {
        return false;
     }
 +
 +   // CraftBukkit start - fix MC-253819
 +   @Override
-+   public BlockState rotate(BlockState blockstate, Rotation rotation) {
-+      return blockstate.setValue(FACING, rotation.rotate(blockstate.getValue(FACING)));
++   public BlockState m_6843_(BlockState blockstate, Rotation rotation) {
++      return blockstate.m_61124_(f_49679_, rotation.m_55954_(blockstate.m_61143_(f_49679_)));
 +   }
 +
 +   @Override
-+   public BlockState mirror(BlockState blockstate, Mirror mirror) {
-+      return blockstate.rotate(mirror.getRotation(blockstate.getValue(FACING)));
++   public BlockState m_6943_(BlockState blockstate, Mirror mirror) {
++      return blockstate.m_60717_(mirror.m_54846_(blockstate.m_61143_(f_49679_)));
 +   }
 +   // CraftBukkit end
  }

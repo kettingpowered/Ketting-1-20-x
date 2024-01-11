@@ -3,34 +3,34 @@
 @@ -45,8 +_,14 @@
     }
  
-    public static int setTime(CommandSourceStack p_139078_, int p_139079_) {
--      for(ServerLevel serverlevel : p_139078_.getServer().getAllLevels()) {
--         serverlevel.setDayTime((long)p_139079_);
-+      for(ServerLevel serverlevel : java.util.Collections.singletonList(p_139078_.getLevel())) { // CraftBukkit - SPIGOT-6496: Only set the time for the world the command originates in
+    public static int m_139077_(CommandSourceStack p_139078_, int p_139079_) {
+-      for(ServerLevel serverlevel : p_139078_.m_81377_().m_129785_()) {
+-         serverlevel.m_8615_((long)p_139079_);
++      for(ServerLevel serverlevel : java.util.Collections.singletonList(p_139078_.m_81372_())) { // CraftBukkit - SPIGOT-6496: Only set the time for the world the command originates in
 +         // CraftBukkit start
-+         org.bukkit.event.world.TimeSkipEvent event = new org.bukkit.event.world.TimeSkipEvent(serverlevel.getWorld(), org.bukkit.event.world.TimeSkipEvent.SkipReason.COMMAND, p_139079_ - serverlevel.getDayTime());
++         org.bukkit.event.world.TimeSkipEvent event = new org.bukkit.event.world.TimeSkipEvent(serverlevel.getWorld(), org.bukkit.event.world.TimeSkipEvent.SkipReason.COMMAND, p_139079_ - serverlevel.m_46468_());
 +         org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +         if (!event.isCancelled()) {
-+            serverlevel.setDayTime((long) serverlevel.getDayTime() + event.getSkipAmount());
++            serverlevel.m_8615_((long) serverlevel.m_46468_() + event.getSkipAmount());
 +         }
 +         // CraftBukkit end
        }
  
-       p_139078_.sendSuccess(() -> {
+       p_139078_.m_288197_(() -> {
 @@ -56,8 +_,14 @@
     }
  
-    public static int addTime(CommandSourceStack p_139083_, int p_139084_) {
--      for(ServerLevel serverlevel : p_139083_.getServer().getAllLevels()) {
--         serverlevel.setDayTime(serverlevel.getDayTime() + (long)p_139084_);
-+      for(ServerLevel serverlevel : java.util.Collections.singletonList(p_139083_.getLevel())) {
+    public static int m_139082_(CommandSourceStack p_139083_, int p_139084_) {
+-      for(ServerLevel serverlevel : p_139083_.m_81377_().m_129785_()) {
+-         serverlevel.m_8615_(serverlevel.m_46468_() + (long)p_139084_);
++      for(ServerLevel serverlevel : java.util.Collections.singletonList(p_139083_.m_81372_())) {
 +         // CraftBukkit start
 +         org.bukkit.event.world.TimeSkipEvent event = new org.bukkit.event.world.TimeSkipEvent(serverlevel.getWorld(), org.bukkit.event.world.TimeSkipEvent.SkipReason.COMMAND, p_139084_);
 +         org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +         if (!event.isCancelled()) {
-+            serverlevel.setDayTime(serverlevel.getDayTime() + event.getSkipAmount());
++            serverlevel.m_8615_(serverlevel.m_46468_() + event.getSkipAmount());
 +         }
 +         // CraftBukkit end
        }
  
-       int i = getDayTime(p_139083_.getLevel());
+       int i = m_139069_(p_139083_.m_81372_());

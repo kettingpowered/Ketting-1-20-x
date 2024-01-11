@@ -1,29 +1,29 @@
 --- a/net/minecraft/world/level/levelgen/FlatLevelSource.java
 +++ b/net/minecraft/world/level/levelgen/FlatLevelSource.java
 @@ -33,17 +_,23 @@
-    private final FlatLevelGeneratorSettings settings;
+    private final FlatLevelGeneratorSettings f_64165_;
  
     public FlatLevelSource(FlatLevelGeneratorSettings p_256337_) {
--      super(new FixedBiomeSource(p_256337_.getBiome()), Util.memoize(p_256337_::adjustGenerationSettings));
+-      super(new FixedBiomeSource(p_256337_.m_204921_()), Util.m_143827_(p_256337_::m_226294_));
 +      // CraftBukkit start
-+      this(p_256337_, new FixedBiomeSource(p_256337_.getBiome()));
++      this(p_256337_, new FixedBiomeSource(p_256337_.m_204921_()));
 +   }
 +
 +   public FlatLevelSource(FlatLevelGeneratorSettings p_256337_, net.minecraft.world.level.biome.BiomeSource manager) {
-+      super(manager, Util.memoize(p_256337_::adjustGenerationSettings));
++      super(manager, Util.m_143827_(p_256337_::m_226294_));
 +      // CraftBukkit end
-       this.settings = p_256337_;
+       this.f_64165_ = p_256337_;
     }
  
--   public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> p_256602_, RandomState p_255830_, long p_256355_) {
+-   public ChunkGeneratorStructureState m_255169_(HolderLookup<StructureSet> p_256602_, RandomState p_255830_, long p_256355_) {
 +   public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> p_256602_, RandomState p_255830_, long p_256355_, org.spigotmc.SpigotWorldConfig conf) { // Spigot
-       Stream<Holder<StructureSet>> stream = this.settings.structureOverrides().map(HolderSet::stream).orElseGet(() -> {
-          return p_256602_.listElements().map((p_255579_) -> {
+       Stream<Holder<StructureSet>> stream = this.f_64165_.m_209810_().map(HolderSet::m_203614_).orElseGet(() -> {
+          return p_256602_.m_214062_().map((p_255579_) -> {
              return p_255579_;
           });
        });
--      return ChunkGeneratorStructureState.createForFlat(p_255830_, p_256355_, this.biomeSource, stream);
-+      return ChunkGeneratorStructureState.createForFlat(p_255830_, p_256355_, this.biomeSource, stream, conf); // Spigot
+-      return ChunkGeneratorStructureState.m_255343_(p_255830_, p_256355_, this.f_62137_, stream);
++      return ChunkGeneratorStructureState.createForFlat(p_255830_, p_256355_, this.f_62137_, stream, conf); // Spigot
     }
  
-    protected Codec<? extends ChunkGenerator> codec() {
+    protected Codec<? extends ChunkGenerator> m_6909_() {

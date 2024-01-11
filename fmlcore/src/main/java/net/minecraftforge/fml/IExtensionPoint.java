@@ -25,7 +25,6 @@ import java.util.function.Supplier;
  * @param <T> the type of the record which is held by the extension point
  */
 @SuppressWarnings("unused") // Type parameter T
-// TODO: Complete re-write, this hasnt actually be used in a generic way by mods and we could make it a lot simpler.
 public interface IExtensionPoint<T extends Record>
 {
     /**
@@ -41,7 +40,7 @@ public interface IExtensionPoint<T extends Record>
      * where {@code true} means it is from the server and {@code false} means it is from the world save. The return
      * value of the predicate determines whether the remote version is "compatible" for the purposes of the display test.</p>
      *
-     * <p>The local compatibility version may be of the value {@link DisplayTest#IGNORESERVERONLY},
+     * <p>The local compatibility version may be of the value {@link net.minecraftforge.network.NetworkConstants#IGNORESERVERONLY},
      * in which case clients will ignore the mod's presence if it is present on the server but not on the client.
      * However, the remote version test predicate must still accept this value as a remote version in order to display
      * as compatible if the mod is present on the client.</p>
@@ -95,6 +94,6 @@ public interface IExtensionPoint<T extends Record>
      */
     @SuppressWarnings("JavadocReference") // reference to NetworkConstants, ForgeHooksClient
     record DisplayTest(Supplier<String> suppliedVersion, BiPredicate<String, Boolean> remoteVersionTest) implements IExtensionPoint<DisplayTest> {
-        public static final String IGNORESERVERONLY = "SERVER_ONLY";
+        public static final String IGNORESERVERONLY = "OHNOES\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31";
     }
 }

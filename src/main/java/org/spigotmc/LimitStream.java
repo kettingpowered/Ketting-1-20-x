@@ -19,21 +19,21 @@ public class LimitStream extends FilterInputStream
     @Override
     public int read() throws IOException
     {
-        limit.accountBytes( 1 );
+        limit.m_128926_( 1 );
         return super.read();
     }
 
     @Override
     public int read(byte[] b) throws IOException
     {
-        limit.accountBytes( b.length );
+        limit.m_128926_( b.length );
         return super.read( b );
     }
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException
     {
-        limit.accountBytes( len );
+        limit.m_128926_( len );
         return super.read( b, off, len );
     }
 }

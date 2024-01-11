@@ -1,115 +1,103 @@
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 @@ -137,6 +_,7 @@
-    protected int gallopSoundCounter;
+    protected int f_30524_;
     @Nullable
-    private UUID owner;
+    private UUID f_268614_;
 +   public int maxDomestication = 100; // CraftBukkit - store max domestication value
  
     protected AbstractHorse(EntityType<? extends AbstractHorse> p_30531_, Level p_30532_) {
        super(p_30531_, p_30532_);
-@@ -283,6 +_,11 @@
-    }
- 
-    public boolean causeFallDamage(float p_149499_, float p_149500_, DamageSource p_149501_) {
-+      var event = net.minecraftforge.event.ForgeEventFactory.onLivingFall(this, p_149499_, p_149500_);
-+      if (event.isCanceled()) return false;
-+      p_149499_ = event.getDistance();
-+      p_149500_ = event.getDamageMultiplier();
-+
-       if (p_149499_ > 1.0F) {
-          this.playSound(SoundEvents.HORSE_LAND, 0.4F, 1.0F);
-       }
 @@ -313,7 +_,7 @@
  
-    public void createInventory() {
-       SimpleContainer simplecontainer = this.inventory;
--      this.inventory = new SimpleContainer(this.getInventorySize());
-+      this.inventory = new SimpleContainer(this.getInventorySize(), (org.bukkit.entity.AbstractHorse) this.getBukkitEntity()); // CraftBukkit
+    public void m_30625_() {
+       SimpleContainer simplecontainer = this.f_30520_;
+-      this.f_30520_ = new SimpleContainer(this.m_7506_());
++      this.f_30520_ = new SimpleContainer(this.m_7506_(), (org.bukkit.entity.AbstractHorse) this.getBukkitEntity()); // CraftBukkit
        if (simplecontainer != null) {
-          simplecontainer.removeListener(this);
-          int i = Math.min(simplecontainer.getContainerSize(), this.inventory.getContainerSize());
-@@ -328,6 +_,7 @@
+          simplecontainer.m_19181_(this);
+          int i = Math.min(simplecontainer.m_6643_(), this.f_30520_.m_6643_());
+@@ -327,6 +_,7 @@
  
-       this.inventory.addListener(this);
-       this.updateContainerEquipment();
-+      this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.inventory));
+       this.f_30520_.m_19164_(this);
+       this.m_7493_();
++      this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.f_30520_));
     }
  
-    protected void updateContainerEquipment() {
-@@ -375,9 +_,9 @@
-    protected void playStepSound(BlockPos p_30584_, BlockState p_30585_) {
-       if (!p_30585_.liquid()) {
-          BlockState blockstate = this.level().getBlockState(p_30584_.above());
--         SoundType soundtype = p_30585_.getSoundType();
-+         SoundType soundtype = p_30585_.getSoundType(level(), p_30584_, this);
-          if (blockstate.is(Blocks.SNOW)) {
--            soundtype = blockstate.getSoundType();
-+            soundtype = blockstate.getSoundType(level(), p_30584_, this);
+    protected void m_7493_() {
+@@ -374,9 +_,9 @@
+    protected void m_7355_(BlockPos p_30584_, BlockState p_30585_) {
+       if (!p_30585_.m_278721_()) {
+          BlockState blockstate = this.m_9236_().m_8055_(p_30584_.m_7494_());
+-         SoundType soundtype = p_30585_.m_60827_();
++         SoundType soundtype = p_30585_.getSoundType(m_9236_(), p_30584_, this);
+          if (blockstate.m_60713_(Blocks.f_50125_)) {
+-            soundtype = blockstate.m_60827_();
++            soundtype = blockstate.getSoundType(m_9236_(), p_30584_, this);
           }
  
-          if (this.isVehicle() && this.canGallop) {
+          if (this.m_20160_() && this.f_30523_) {
 @@ -413,7 +_,7 @@
     }
  
-    public int getMaxTemper() {
+    public int m_7555_() {
 -      return 100;
 +      return this.maxDomestication; // CraftBukkit - return stored max domestication instead of 100
     }
  
-    protected float getSoundVolume() {
+    protected float m_6121_() {
 @@ -483,7 +_,7 @@
        }
  
-       if (this.getHealth() < this.getMaxHealth() && f > 0.0F) {
--         this.heal(f);
+       if (this.m_21223_() < this.m_21233_() && f > 0.0F) {
+-         this.m_5634_(f);
 +         this.heal(f, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.EATING); // CraftBukkit
           flag = true;
        }
  
 @@ -555,7 +_,7 @@
-       super.aiStep();
-       if (!this.level().isClientSide && this.isAlive()) {
-          if (this.random.nextInt(900) == 0 && this.deathTime == 0) {
--            this.heal(1.0F);
+       super.m_8107_();
+       if (!this.m_9236_().f_46443_ && this.m_6084_()) {
+          if (this.f_19796_.m_188503_(900) == 0 && this.f_20919_ == 0) {
+-            this.m_5634_(1.0F);
 +            this.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.REGEN); // CraftBukkit
           }
  
-          if (this.canEatGrass()) {
-@@ -787,6 +_,7 @@
-       this.setDeltaMovement(vec3.x, d1, vec3.z);
-       this.setIsJumping(true);
-       this.hasImpulse = true;
+          if (this.m_7559_()) {
+@@ -786,6 +_,7 @@
+       this.m_20334_(vec3.f_82479_, d1, vec3.f_82481_);
+       this.m_30655_(true);
+       this.f_19812_ = true;
 +               net.minecraftforge.common.ForgeHooks.onLivingJump(this);
-       if (p_275435_.z > 0.0D) {
-          float f = Mth.sin(this.getYRot() * ((float)Math.PI / 180F));
-          float f1 = Mth.cos(this.getYRot() * ((float)Math.PI / 180F));
+       if (p_275435_.f_82481_ > 0.0D) {
+          float f = Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F));
+          float f1 = Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F));
 @@ -809,6 +_,8 @@
-          p_30589_.putUUID("Owner", this.getOwnerUUID());
+          p_30589_.m_128362_("Owner", this.m_21805_());
        }
  
-+      p_30589_.putInt("Bukkit.MaxDomestication", this.maxDomestication); // CraftBukkit
++      p_30589_.m_128405_("Bukkit.MaxDomestication", this.maxDomestication); // CraftBukkit
 +
-       if (!this.inventory.getItem(0).isEmpty()) {
-          p_30589_.put("SaddleItem", this.inventory.getItem(0).save(new CompoundTag()));
+       if (!this.f_30520_.m_8020_(0).m_41619_()) {
+          p_30589_.m_128365_("SaddleItem", this.f_30520_.m_8020_(0).m_41739_(new CompoundTag()));
        }
 @@ -833,6 +_,12 @@
-          this.setOwnerUUID(uuid);
+          this.m_30586_(uuid);
        }
  
 +      // CraftBukkit start
-+      if (p_30565_.contains("Bukkit.MaxDomestication")) {
-+         this.maxDomestication = p_30565_.getInt("Bukkit.MaxDomestication");
++      if (p_30565_.m_128441_("Bukkit.MaxDomestication")) {
++         this.maxDomestication = p_30565_.m_128451_("Bukkit.MaxDomestication");
 +      }
 +      // CraftBukkit end
 +
-       if (p_30565_.contains("SaddleItem", 10)) {
-          ItemStack itemstack = ItemStack.of(p_30565_.getCompound("SaddleItem"));
-          if (itemstack.is(Items.SADDLE)) {
+       if (p_30565_.m_128425_("SaddleItem", 10)) {
+          ItemStack itemstack = ItemStack.m_41712_(p_30565_.m_128469_("SaddleItem"));
+          if (itemstack.m_150930_(Items.f_42450_)) {
 @@ -925,6 +_,17 @@
     }
  
-    public void handleStartJump(int p_30574_) {
+    public void m_7199_(int p_30574_) {
 +      // CraftBukkit start
 +      float power;
 +      if (p_30574_ >= 90) {
@@ -121,20 +109,20 @@
 +         return;
 +      }
 +      // CraftBukkit end
-       this.allowStandSliding = true;
-       this.standIfPossible();
-       this.playJumpSound();
-@@ -1109,6 +_,25 @@
+       this.f_30510_ = true;
+       this.m_247525_();
+       this.m_7486_();
+@@ -1120,6 +_,25 @@
  
-       this.randomizeAttributes(p_30555_.getRandom());
-       return super.finalizeSpawn(p_30555_, p_30556_, p_30557_, p_30558_, p_30559_);
+       this.m_214179_(p_30555_.m_213780_());
+       return super.m_6518_(p_30555_, p_30556_, p_30557_, p_30558_, p_30559_);
 +   }
 +
 +   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = null;
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
-+      if (this.isAlive() && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && itemHandler != null)
++      if (this.m_6084_() && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && itemHandler != null)
 +         return itemHandler.cast();
 +      return super.getCapability(capability, facing);
 +   }
@@ -149,4 +137,4 @@
 +      }
     }
  
-    public boolean hasInventoryChanged(Container p_149512_) {
+    public boolean m_149511_(Container p_149512_) {

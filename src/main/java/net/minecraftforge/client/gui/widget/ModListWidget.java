@@ -54,9 +54,9 @@ public class ModListWidget extends ObjectSelectionList<ModListWidget.ModEntry>
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        this.parent.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+    protected void renderBackground(GuiGraphics guiGraphics)
+    {
+        this.parent.renderBackground(guiGraphics);
     }
 
     public class ModEntry extends ObjectSelectionList.Entry<ModEntry> {

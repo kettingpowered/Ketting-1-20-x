@@ -3,11 +3,11 @@
 @@ -58,20 +_,34 @@
  
     @Nullable
-    public static MapItemSavedData getSavedData(ItemStack p_42854_, Level p_42855_) {
--      Integer integer = getMapId(p_42854_);
--      return getSavedData(integer, p_42855_);
+    public static MapItemSavedData m_42853_(ItemStack p_42854_, Level p_42855_) {
+-      Integer integer = m_151131_(p_42854_);
+-      return m_151128_(integer, p_42855_);
 +      // Forge: Add instance method so that mods can override
-+      Item map = p_42854_.getItem();
++      Item map = p_42854_.m_41720_();
 +      if(map instanceof MapItem) {
 +         return ((MapItem)map).getCustomMapData(p_42854_, p_42855_);
 +      }
@@ -16,21 +16,21 @@
 +
 +   @Nullable
 +   protected MapItemSavedData getCustomMapData(ItemStack p_42910_, Level p_42911_) {
-+      Integer integer = getMapId(p_42910_);
-+      return getSavedData(integer, p_42911_);
++      Integer integer = m_151131_(p_42910_);
++      return m_151128_(integer, p_42911_);
     }
  
     @Nullable
-    public static Integer getMapId(ItemStack p_151132_) {
-       CompoundTag compoundtag = p_151132_.getTag();
--      return compoundtag != null && compoundtag.contains("map", 99) ? compoundtag.getInt("map") : null;
-+      return compoundtag != null && compoundtag.contains("map", 99) ? compoundtag.getInt("map") : -1; // CraftBukkit - make new maps for no tag
+    public static Integer m_151131_(ItemStack p_151132_) {
+       CompoundTag compoundtag = p_151132_.m_41783_();
+-      return compoundtag != null && compoundtag.m_128425_("map", 99) ? compoundtag.m_128451_("map") : null;
++      return compoundtag != null && compoundtag.m_128425_("map", 99) ? compoundtag.m_128451_("map") : -1; // CraftBukkit - make new maps for no tag
     }
  
-    public static int createNewSavedData(Level p_151121_, int p_151122_, int p_151123_, int p_151124_, boolean p_151125_, boolean p_151126_, ResourceKey<Level> p_151127_) {
-       MapItemSavedData mapitemsaveddata = MapItemSavedData.createFresh((double)p_151122_, (double)p_151123_, (byte)p_151124_, p_151125_, p_151126_, p_151127_);
-       int i = p_151121_.getFreeMapId();
-       p_151121_.setMapData(makeKey(i), mapitemsaveddata);
+    public static int m_151120_(Level p_151121_, int p_151122_, int p_151123_, int p_151124_, boolean p_151125_, boolean p_151126_, ResourceKey<Level> p_151127_) {
+       MapItemSavedData mapitemsaveddata = MapItemSavedData.m_164780_((double)p_151122_, (double)p_151123_, (byte)p_151124_, p_151125_, p_151126_, p_151127_);
+       int i = p_151121_.m_7354_();
+       p_151121_.m_142325_(m_42848_(i), mapitemsaveddata);
 +      // CraftBukkit start
 +      org.bukkit.event.server.MapInitializeEvent event = new org.bukkit.event.server.MapInitializeEvent(mapitemsaveddata.mapView);
 +      org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
@@ -40,12 +40,12 @@
  
 @@ -331,6 +_,10 @@
        if (mapitemsaveddata != null) {
-          int i = p_42858_.getFreeMapId();
-          p_42858_.setMapData(makeKey(i), mapitemsaveddata.scaled(p_42859_));
+          int i = p_42858_.m_7354_();
+          p_42858_.m_142325_(m_42848_(i), mapitemsaveddata.m_164787_(p_42859_));
 +         // CraftBukkit start
 +         org.bukkit.event.server.MapInitializeEvent event = new org.bukkit.event.server.MapInitializeEvent(mapitemsaveddata.mapView);
 +         org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
 +         // CraftBukkit end
-          storeMapData(p_42857_, i);
+          m_151108_(p_42857_, i);
        }
  

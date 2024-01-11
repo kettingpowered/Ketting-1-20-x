@@ -3,16 +3,16 @@
 @@ -208,8 +_,14 @@
              }
  
-             frog.setPersistenceRequired();
+             frog.m_21530_();
 +            // CraftBukkit start
 +            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTransformEvent(this, frog, org.bukkit.event.entity.EntityTransformEvent.TransformReason.METAMORPHOSIS).isCancelled()) {
-+               this.setAge(0); // Sets the age to 0 for avoid a loop if the event is canceled
++               this.m_218710_(0); // Sets the age to 0 for avoid a loop if the event is canceled
 +               return;
 +            }
 +            // CraftBukkit end
-             this.playSound(SoundEvents.TADPOLE_GROW_UP, 0.15F, 1.0F);
--            serverlevel.addFreshEntityWithPassengers(frog);
+             this.m_5496_(SoundEvents.f_215760_, 0.15F, 1.0F);
+-            serverlevel.m_47205_(frog);
 +            serverlevel.addFreshEntityWithPassengers(frog, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.METAMORPHOSIS); // CraftBukkit - add SpawnReason
-             this.discard();
+             this.m_146870_();
           }
        }

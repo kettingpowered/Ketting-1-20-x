@@ -5,23 +5,23 @@
              SocketAddress socketaddress = p_9686_.channel().remoteAddress();
              int i = bytebuf.readableBytes();
 +            String s;
-+            org.bukkit.event.server.ServerListPingEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callServerListPingEvent(socketaddress, server.getMotd(), server.getPlayerCount(), server.getMaxPlayers()); // CraftBukkit
++            org.bukkit.event.server.ServerListPingEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callServerListPingEvent(socketaddress, f_291585_.m_129916_(), f_291585_.m_129787_(), f_291585_.m_129788_()); // CraftBukkit
 +
              if (i == 0) {
-                LOGGER.debug("Ping: (<1.3.x) from {}", (Object)socketaddress);
--               String s = createVersion0Response(this.server);
-+               s = createVersion0Response(this.server, event); // CraftBukkit
-                sendFlushAndClose(p_9686_, createLegacyDisconnectPacket(p_9686_.alloc(), s));
+                f_9675_.debug("Ping: (<1.3.x) from {}", (Object)socketaddress);
+-               String s = m_293505_(this.f_291585_);
++               s = createVersion0Response(this.f_291585_, event); // CraftBukkit
+                m_9680_(p_9686_, m_294988_(p_9686_.alloc(), s));
              } else {
                 if (bytebuf.readUnsignedByte() != 1) {
 @@ -47,8 +_,8 @@
-                   LOGGER.debug("Ping: (1.4-1.5.x) from {}", (Object)socketaddress);
+                   f_9675_.debug("Ping: (1.4-1.5.x) from {}", (Object)socketaddress);
                 }
  
--               String s1 = createVersion1Response(this.server);
--               sendFlushAndClose(p_9686_, createLegacyDisconnectPacket(p_9686_.alloc(), s1));
-+               s = createVersion1Response(this.server, event); // CraftBukkit
-+               sendFlushAndClose(p_9686_, createLegacyDisconnectPacket(p_9686_.alloc(), s));
+-               String s1 = m_295367_(this.f_291585_);
+-               m_9680_(p_9686_, m_294988_(p_9686_.alloc(), s1));
++               s = createVersion1Response(this.f_291585_, event); // CraftBukkit
++               m_9680_(p_9686_, m_294988_(p_9686_.alloc(), s));
              }
  
              bytebuf.release();
@@ -29,20 +29,20 @@
        }
     }
  
--   private static String createVersion0Response(ServerInfo p_300881_) {
--      return String.format(Locale.ROOT, "%s\u00a7%d\u00a7%d", p_300881_.getMotd(), p_300881_.getPlayerCount(), p_300881_.getMaxPlayers());
+-   private static String m_293505_(ServerInfo p_300881_) {
+-      return String.format(Locale.ROOT, "%s\u00a7%d\u00a7%d", p_300881_.m_129916_(), p_300881_.m_129787_(), p_300881_.m_129788_());
 +   // CraftBukkit start
 +   private static String createVersion0Response(ServerInfo p_300881_, org.bukkit.event.server.ServerListPingEvent event) {
 +      return String.format(Locale.ROOT, "%s\u00a7%d\u00a7%d", event.getMotd(), event.getNumPlayers(), event.getMaxPlayers());
 +      // CraftBukkit end
     }
  
--   private static String createVersion1Response(ServerInfo p_297753_) {
--      return String.format(Locale.ROOT, "\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, p_297753_.getServerVersion(), p_297753_.getMotd(), p_297753_.getPlayerCount(), p_297753_.getMaxPlayers());
+-   private static String m_295367_(ServerInfo p_297753_) {
+-      return String.format(Locale.ROOT, "\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, p_297753_.m_129786_(), p_297753_.m_129916_(), p_297753_.m_129787_(), p_297753_.m_129788_());
 +   // CraftBukkit start
 +   private static String createVersion1Response(ServerInfo p_297753_, org.bukkit.event.server.ServerListPingEvent event) {
-+      return String.format(Locale.ROOT, "\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, p_297753_.getServerVersion(), event.getMotd(), event.getNumPlayers(), event.getMaxPlayers());
++      return String.format(Locale.ROOT, "\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, p_297753_.m_129786_(), event.getMotd(), event.getNumPlayers(), event.getMaxPlayers());
 +      // CraftBukkit end
     }
  
-    private static void sendFlushAndClose(ChannelHandlerContext p_9681_, ByteBuf p_9682_) {
+    private static void m_9680_(ChannelHandlerContext p_9681_, ByteBuf p_9682_) {

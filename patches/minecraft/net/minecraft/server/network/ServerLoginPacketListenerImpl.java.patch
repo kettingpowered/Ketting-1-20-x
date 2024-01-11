@@ -2,12 +2,27 @@
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 @@ -54,6 +_,7 @@
     @Nullable
-    private GameProfile authenticatedProfile;
-    private final String serverId = "";
+    private GameProfile f_291112_;
+    private final String f_10022_ = "";
 +   private net.minecraft.server.level.ServerPlayer player; // CraftBukkit
  
     public ServerLoginPacketListenerImpl(MinecraftServer p_10027_, Connection p_10028_) {
-       this.server = p_10027_;
+       this.f_10018_ = p_10027_;
+@@ -62,7 +_,13 @@
+    }
+ 
+    public void m_9933_() {
+-      if (this.f_10019_ == ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT) {
++      if (this.f_10019_ == State.NEGOTIATING) {
++         // We force the state into "NEGOTIATING" which is otherwise unused. Once we're completed we move the negotiation onto "READY_TO_ACCEPT"
++         // Might want to promote player object creation to here as well..
++         boolean negotiationComplete = net.minecraftforge.network.NetworkHooks.tickNegotiation(this, this.f_10013_, this.f_10024_);
++         if (negotiationComplete)
++            this.f_10019_ = State.READY_TO_ACCEPT;
++      } else if (this.f_10019_ == ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT) {
+          this.m_10055_();
+       } else if (this.f_10019_ == ServerLoginPacketListenerImpl.State.DELAY_ACCEPT) {
+          ServerPlayer serverplayer = this.f_10018_.m_6846_().m_11259_(this.f_10021_.getId());
 @@ -76,6 +_,13 @@
  
     }
@@ -15,28 +30,47 @@
 +   // CraftBukkit start
 +   @Deprecated
 +   public void disconnect(String s) {
-+      disconnect(Component.literal(s));
++      m_10053_(Component.m_237113_(s));
 +   }
 +   // CraftBukkit end
 +
-    public boolean isAcceptingMessages() {
-       return this.connection.isConnected();
+    public boolean m_6198_() {
+       return this.f_10013_.m_129536_();
     }
-@@ -116,7 +_,20 @@
-             this.state = ServerLoginPacketListenerImpl.State.KEY;
-             this.connection.send(new ClientboundHelloPacket("", this.server.getKeyPair().getPublic().getEncoded(), this.challenge));
+@@ -138,7 +_,8 @@
+    }
+ 
+    public String m_10056_() {
+-      return this.f_10021_ != null ? this.f_10021_ + " (" + this.f_10013_.m_129523_() + ")" : String.valueOf((Object)this.f_10013_.m_129523_());
++      final String addressString = net.minecraftforge.network.DualStackUtils.getAddressString(this.f_10013_.m_129523_());
++      return this.f_10021_ != null ? this.f_10021_ + " (" + addressString + ")" : addressString;
+    }
+ 
+    public void m_5990_(ServerboundHelloPacket p_10047_) {
+@@ -147,14 +_,28 @@
+       GameProfile gameprofile = this.f_10018_.m_236731_();
+       if (gameprofile != null && p_10047_.f_238040_().equalsIgnoreCase(gameprofile.getName())) {
+          this.f_10021_ = gameprofile;
+-         this.f_10019_ = ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT;
++         this.f_10019_ = ServerLoginPacketListenerImpl.State.NEGOTIATING; // FORGE: continue NEGOTIATING, we move to READY_TO_ACCEPT after Forge is ready
+       } else {
+          this.f_10021_ = new GameProfile((UUID)null, p_10047_.f_238040_());
+          if (this.f_10018_.m_129797_() && !this.f_10013_.m_129531_()) {
+             this.f_10019_ = ServerLoginPacketListenerImpl.State.KEY;
+             this.f_10013_.m_129512_(new ClientboundHelloPacket("", this.f_10018_.m_129790_().getPublic().getEncoded(), this.f_252396_));
           } else {
--            this.startClientVerification(createOfflineProfile(this.requestedUsername));
+-            this.f_10019_ = ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT;
++            //this.state = ServerLoginPacketListenerImpl.State.NEGOTIATING; // FORGE: continue NEGOTIATING, we move to READY_TO_ACCEPT after Forge is ready
 +            // Spigot start
-+            new Thread("User Authenticator #" + ServerLoginPacketListenerImpl.UNIQUE_THREAD_ID.incrementAndGet()) {
++            new Thread("User Authenticator #" + ServerLoginPacketListenerImpl.f_10014_.incrementAndGet()) {
 +
 +               @Override
 +               public void run() {
 +                  try {
-+                     new LoginHandler().fireEvents(createOfflineProfileSpigot(ServerLoginPacketListenerImpl.this.requestedUsername));
++                     new LoginHandler().fireEvents(createOfflineProfileSpigot(ServerLoginPacketListenerImpl.this.f_291165_));
 +                  } catch (Exception ex) {
 +                     disconnect("Failed to verify username!");
-+                     server.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + ServerLoginPacketListenerImpl.this.requestedUsername, ex);
++                     f_10018_.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + ServerLoginPacketListenerImpl.this.f_291165_, ex);
 +                  }
 +               }
 +            }.start();
@@ -46,75 +80,98 @@
        }
 @@ -129,9 +_,11 @@
  
-    private void verifyLoginAndFinishConnectionSetup(GameProfile p_299507_) {
-       PlayerList playerlist = this.server.getPlayerList();
--      Component component = playerlist.canPlayerLogin(this.connection.getRemoteAddress(), p_299507_);
+    private void m_294778_(GameProfile p_299507_) {
+       PlayerList playerlist = this.f_10018_.m_6846_();
+-      Component component = playerlist.m_6418_(this.f_10013_.m_129523_(), p_299507_);
 -      if (component != null) {
--         this.disconnect(component);
+-         this.m_10053_(component);
 +      // CraftBukkit start - fire PlayerLoginEvent
 +      this.player = playerlist.canPlayerLogin(this, p_299507_); // CraftBukkit
 +      if (player == null) {
 +         // this.disconnect(component);
 +         // CraftBukkit end
        } else {
-          if (this.server.getCompressionThreshold() >= 0 && !this.connection.isMemoryConnection()) {
-             this.connection.send(new ClientboundLoginCompressionPacket(this.server.getCompressionThreshold()), PacketSendListener.thenRun(() -> {
+          if (this.f_10018_.m_6328_() >= 0 && !this.f_10013_.m_129531_()) {
+             this.f_10013_.m_243124_(new ClientboundLoginCompressionPacket(this.f_10018_.m_6328_()), PacketSendListener.m_243092_(() -> {
 @@ -139,7 +_,8 @@
              }));
           }
  
--         boolean flag = playerlist.disconnectAllPlayersWithProfile(p_299507_);
+-         boolean flag = playerlist.m_292966_(p_299507_);
 +         boolean flag = playerlist.disconnectAllPlayersWithProfile(p_299507_, this.player); // CraftBukkit - add player reference
 +
           if (flag) {
-             this.state = ServerLoginPacketListenerImpl.State.WAITING_FOR_DUPE_DISCONNECT;
+             this.f_10019_ = ServerLoginPacketListenerImpl.State.WAITING_FOR_DUPE_DISCONNECT;
           } else {
-@@ -180,7 +_,7 @@
+@@ -180,19 +_,25 @@
           throw new IllegalStateException("Protocol error", cryptexception);
        }
  
--      Thread thread = new Thread("User Authenticator #" + UNIQUE_THREAD_ID.incrementAndGet()) {
-+      Thread thread = new Thread(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER, "User Authenticator #" + UNIQUE_THREAD_ID.incrementAndGet()) {
+-      Thread thread = new Thread("User Authenticator #" + f_10014_.incrementAndGet()) {
++      Thread thread = new Thread(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER, "User Authenticator #" + f_10014_.incrementAndGet()) {
           public void run() {
-             String s1 = Objects.requireNonNull(ServerLoginPacketListenerImpl.this.requestedUsername, "Player name not initialized");
+             GameProfile gameprofile = ServerLoginPacketListenerImpl.this.f_10021_;
  
-@@ -188,11 +_,16 @@
-                ProfileResult profileresult = ServerLoginPacketListenerImpl.this.server.getSessionService().hasJoinedServer(s1, s, this.getAddress());
+             try {
+-               ProfileResult profileresult = ServerLoginPacketListenerImpl.this.f_10018_.m_129925_().hasJoinedServer(s1, s, this.m_10064_());
++               ProfileResult profileresult = ServerLoginPacketListenerImpl.this.f_10018_.m_129925_().hasJoinedServer(s1, s, this.getAddress());
                 if (profileresult != null) {
                    GameProfile gameprofile = profileresult.profile();
--                  ServerLoginPacketListenerImpl.LOGGER.info("UUID of player {} is {}", gameprofile.getName(), gameprofile.getId());
--                  ServerLoginPacketListenerImpl.this.startClientVerification(gameprofile);
+-                  ServerLoginPacketListenerImpl.f_10015_.info("UUID of player {} is {}", gameprofile.getName(), gameprofile.getId());
+-                  ServerLoginPacketListenerImpl.this.m_294008_(gameprofile);
++                  //ServerLoginPacketListenerImpl.this.state = ServerLoginPacketListenerImpl.State.NEGOTIATING; // FORGE: continue NEGOTIATING, we move to READY_TO_ACCEPT after Forge is ready
 +
 +                  // CraftBukkit start - fire PlayerPreLoginEvent
-+                  if (!connection.isConnected()) {
++                  if (!f_10013_.m_129536_()) {
 +                     return;
 +                  }
 +
 +                  new LoginHandler().fireEvents(gameprofile);
-                } else if (ServerLoginPacketListenerImpl.this.server.isSingleplayer()) {
-                   ServerLoginPacketListenerImpl.LOGGER.warn("Failed to verify username but will let them in anyway!");
--                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.createOfflineProfile(s1));
-+                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfileSpigot(s1)); // Spigot
+                } else if (ServerLoginPacketListenerImpl.this.f_10018_.m_129792_()) {
+                   ServerLoginPacketListenerImpl.f_10015_.warn("Failed to verify username but will let them in anyway!");
+-                  ServerLoginPacketListenerImpl.this.m_294008_(ServerLoginPacketListenerImpl.m_295545_(s1));
++                  ServerLoginPacketListenerImpl.this.m_294008_(ServerLoginPacketListenerImpl.this.createOfflineProfileSpigot(s1)); // Spigot
                 } else {
-                   ServerLoginPacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.unverified_username"));
-                   ServerLoginPacketListenerImpl.LOGGER.error("Username '{}' tried to join with an invalid session", (Object)s1);
-@@ -200,11 +_,16 @@
-             } catch (AuthenticationUnavailableException authenticationunavailableexception) {
-                if (ServerLoginPacketListenerImpl.this.server.isSingleplayer()) {
-                   ServerLoginPacketListenerImpl.LOGGER.warn("Authentication servers are down but will let them in anyway!");
--                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.createOfflineProfile(s1));
-+                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfileSpigot(s1)); // Spigot
+                   ServerLoginPacketListenerImpl.this.m_10053_(Component.m_237115_("multiplayer.disconnect.unverified_username"));
+                   ServerLoginPacketListenerImpl.f_10015_.error("Username '{}' tried to join with an invalid session", (Object)s1);
+@@ -194,11 +_,11 @@
+                ServerLoginPacketListenerImpl.this.f_10021_ = ServerLoginPacketListenerImpl.this.f_10018_.m_129925_().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.m_10064_());
+                if (ServerLoginPacketListenerImpl.this.f_10021_ != null) {
+                   ServerLoginPacketListenerImpl.f_10015_.info("UUID of player {} is {}", ServerLoginPacketListenerImpl.this.f_10021_.getName(), ServerLoginPacketListenerImpl.this.f_10021_.getId());
+-                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT;
++                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.NEGOTIATING; // FORGE: continue NEGOTIATING, we move to READY_TO_ACCEPT after Forge is ready
+                } else if (ServerLoginPacketListenerImpl.this.f_10018_.m_129792_()) {
+                   ServerLoginPacketListenerImpl.f_10015_.warn("Failed to verify username but will let them in anyway!");
+                   ServerLoginPacketListenerImpl.this.f_10021_ = gameprofile;
+-                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT;
++                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.NEGOTIATING; // FORGE: continue NEGOTIATING, we move to READY_TO_ACCEPT after Forge is ready
                 } else {
-                   ServerLoginPacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.authservers_down"));
-                   ServerLoginPacketListenerImpl.LOGGER.error("Couldn't verify username because servers are unavailable");
+                   ServerLoginPacketListenerImpl.this.m_10053_(Component.m_237115_("multiplayer.disconnect.unverified_username"));
+                   ServerLoginPacketListenerImpl.f_10015_.error("Username '{}' tried to join with an invalid session", (Object)gameprofile.getName());
+@@ -207,17 +_,22 @@
+                if (ServerLoginPacketListenerImpl.this.f_10018_.m_129792_()) {
+                   ServerLoginPacketListenerImpl.f_10015_.warn("Authentication servers are down but will let them in anyway!");
+                   ServerLoginPacketListenerImpl.this.f_10021_ = gameprofile;
+-                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT;
++                  ServerLoginPacketListenerImpl.this.m_294008_(ServerLoginPacketListenerImpl.this.createOfflineProfileSpigot(s1)); // Spigot
+                } else {
+                   ServerLoginPacketListenerImpl.this.m_10053_(Component.m_237115_("multiplayer.disconnect.authservers_down"));
+                   ServerLoginPacketListenerImpl.f_10015_.error("Couldn't verify username because servers are unavailable");
                 }
 +               // CraftBukkit start - catch all exceptions
 +            } catch (Exception exception) {
 +               disconnect("Failed to verify username!");
-+               server.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + s1, exception);
++               f_10018_.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + s1, exception);
 +               // CraftBukkit end
              }
  
+          }
+ 
+          @Nullable
+-         private InetAddress m_10064_() {
++         private InetAddress getAddress() {
+             SocketAddress socketaddress = ServerLoginPacketListenerImpl.this.f_10013_.m_129523_();
+             return ServerLoginPacketListenerImpl.this.f_10018_.m_129798_() && socketaddress instanceof InetSocketAddress ? ((InetSocketAddress)socketaddress).getAddress() : null;
           }
 @@ -219,14 +_,58 @@
        thread.start();
@@ -125,9 +182,9 @@
 +
 +      public void fireEvents(GameProfile gameprofile) throws Exception {
 +         String playerName = gameprofile.getName();
-+         java.net.InetAddress address = ((java.net.InetSocketAddress) connection.getRemoteAddress()).getAddress();
++         java.net.InetAddress address = ((java.net.InetSocketAddress) f_10013_.m_129523_()).getAddress();
 +         java.util.UUID uniqueId = gameprofile.getId();
-+         final org.bukkit.craftbukkit.v1_20_R2.CraftServer server = ServerLoginPacketListenerImpl.this.server.server;
++         final org.bukkit.craftbukkit.v1_20_R2.CraftServer server = ServerLoginPacketListenerImpl.this.f_10018_.server;
 +
 +         org.bukkit.event.player.AsyncPlayerPreLoginEvent asyncEvent = new org.bukkit.event.player.AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
 +         server.getPluginManager().callEvent(asyncEvent);
@@ -144,7 +201,7 @@
 +                  return event.getResult();
 +               }};
 +
-+            ServerLoginPacketListenerImpl.this.server.processQueue.add(waitable);
++            ServerLoginPacketListenerImpl.this.f_10018_.processQueue.add(waitable);
 +            if (waitable.get() != org.bukkit.event.player.PlayerPreLoginEvent.Result.ALLOWED) {
 +               disconnect(event.getKickMessage());
 +               return;
@@ -156,53 +213,53 @@
 +            }
 +         }
 +         // CraftBukkit end
-+         ServerLoginPacketListenerImpl.LOGGER.info("UUID of player {} is {}", gameprofile.getName(), gameprofile.getId());
-+         ServerLoginPacketListenerImpl.this.startClientVerification(gameprofile);
++         ServerLoginPacketListenerImpl.f_10015_.info("UUID of player {} is {}", gameprofile.getName(), gameprofile.getId());
++         ServerLoginPacketListenerImpl.this.m_294008_(gameprofile);
 +      }
 +   }
 +   // Spigot end
 +
-    public void handleCustomQueryPacket(ServerboundCustomQueryAnswerPacket p_297965_) {
-+      if (!net.minecraftforge.common.ForgeHooks.onCustomPayload(p_297965_, this.connection))
-       this.disconnect(DISCONNECT_UNEXPECTED_QUERY);
+    public void m_10044_(ServerboundCustomQueryAnswerPacket p_297965_) {
++      if (!net.minecraftforge.network.NetworkHooks.onCustomPayload(p_10045_, this.f_10013_))
+       this.m_10053_(f_291075_);
     }
  
-    public void handleLoginAcknowledgement(ServerboundLoginAcknowledgedPacket p_298815_) {
-       Validate.validState(this.state == ServerLoginPacketListenerImpl.State.PROTOCOL_SWITCHING, "Unexpected login acknowledgement packet");
-       CommonListenerCookie commonlistenercookie = CommonListenerCookie.createInitial(Objects.requireNonNull(this.authenticatedProfile));
--      ServerConfigurationPacketListenerImpl serverconfigurationpacketlistenerimpl = new ServerConfigurationPacketListenerImpl(this.server, this.connection, commonlistenercookie);
-+      ServerConfigurationPacketListenerImpl serverconfigurationpacketlistenerimpl = new ServerConfigurationPacketListenerImpl(this.server, this.connection, commonlistenercookie, this.player); // CraftBukkit
+    public void m_7223_(ServerboundLoginAcknowledgedPacket p_298815_) {
+       Validate.validState(this.f_10019_ == ServerLoginPacketListenerImpl.State.PROTOCOL_SWITCHING, "Unexpected login acknowledgement packet");
+       CommonListenerCookie commonlistenercookie = CommonListenerCookie.m_294081_(Objects.requireNonNull(this.f_291112_));
+-      ServerConfigurationPacketListenerImpl serverconfigurationpacketlistenerimpl = new ServerConfigurationPacketListenerImpl(this.f_10018_, this.f_10013_, commonlistenercookie);
++      ServerConfigurationPacketListenerImpl serverconfigurationpacketlistenerimpl = new ServerConfigurationPacketListenerImpl(this.f_10018_, this.f_10013_, commonlistenercookie, this.player); // CraftBukkit
 +
-       this.connection.setListener(serverconfigurationpacketlistenerimpl);
-       serverconfigurationpacketlistenerimpl.startConfiguration();
-       this.state = ServerLoginPacketListenerImpl.State.ACCEPTED;
+       this.f_10013_.m_129505_(serverconfigurationpacketlistenerimpl);
+       serverconfigurationpacketlistenerimpl.m_294295_();
+       this.f_10019_ = ServerLoginPacketListenerImpl.State.ACCEPTED;
 @@ -235,6 +_,37 @@
-    protected static GameProfile createOfflineProfile(String p_297551_) {
-       UUID uuid = UUIDUtil.createOfflinePlayerUUID(p_297551_);
+    protected static GameProfile m_295545_(String p_297551_) {
+       UUID uuid = UUIDUtil.m_235879_(p_297551_);
        return new GameProfile(uuid, p_297551_);
 +   }
 +
 +   // Spigot start
 +   @Nullable
 +   public GameProfile getAuthenticatedProfile() {
-+       return this.authenticatedProfile;
++       return this.f_291112_;
 +   }
 +
 +   protected GameProfile createOfflineProfileSpigot(String p_297551_) {
 +      UUID uuid;
-+      if ( connection.spoofedUUID != null )
++      if ( f_10013_.spoofedUUID != null )
 +      {
-+         uuid = connection.spoofedUUID;
++         uuid = f_10013_.spoofedUUID;
 +      } else
 +      {
-+         uuid = UUIDUtil.createOfflinePlayerUUID( p_297551_ );
++         uuid = UUIDUtil.m_235879_( p_297551_ );
 +      }
 +
 +      GameProfile gameProfile = new GameProfile( uuid, p_297551_ );
 +
-+      if (connection.spoofedProfile != null)
++      if (f_10013_.spoofedProfile != null)
 +      {
-+         for ( com.mojang.authlib.properties.Property property : connection.spoofedProfile )
++         for ( com.mojang.authlib.properties.Property property : f_10013_.spoofedProfile )
 +         {
 +            if ( !ServerHandshakePacketListenerImpl.PROP_PATTERN.matcher( property.name()).matches() ) continue;
 +            gameProfile.getProperties().put( property.name(), property );

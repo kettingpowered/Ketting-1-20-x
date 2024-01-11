@@ -15,16 +15,16 @@
 +   }
 +
 +   default org.bukkit.Location getLocation() {
-+      return new org.bukkit.Location(getWorld().getWorld(), getPosition().getX(), getPosition().getY(), getPosition().getZ());
++      return new org.bukkit.Location(getWorld().getWorld(), getPosition().m_123341_(), getPosition().m_123342_(), getPosition().m_123343_());
 +   }
 +   // CraftBukkit end
 +
-    ContainerLevelAccess NULL = new ContainerLevelAccess() {
-       public <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39304_) {
+    ContainerLevelAccess f_39287_ = new ContainerLevelAccess() {
+       public <T> Optional<T> m_6721_(BiFunction<Level, BlockPos, T> p_39304_) {
           return Optional.empty();
 @@ -15,6 +_,18 @@
  
-    static ContainerLevelAccess create(final Level p_39290_, final BlockPos p_39291_) {
+    static ContainerLevelAccess m_39289_(final Level p_39290_, final BlockPos p_39291_) {
        return new ContainerLevelAccess() {
 +         // CraftBukkit start
 +         @Override
@@ -38,6 +38,6 @@
 +         }
 +         // CraftBukkit end
 +
-          public <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39311_) {
+          public <T> Optional<T> m_6721_(BiFunction<Level, BlockPos, T> p_39311_) {
              return Optional.of(p_39311_.apply(p_39290_, p_39291_));
           }

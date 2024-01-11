@@ -2,14 +2,14 @@
 +++ b/net/minecraft/world/level/block/entity/ChestBlockEntity.java
 @@ -50,6 +_,36 @@
     };
-    private final ChestLidController chestLidController = new ChestLidController();
+    private final ChestLidController f_155325_ = new ChestLidController();
  
 +   // CraftBukkit start - add fields and methods
 +   public java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
 +   private int maxStack = MAX_STACK;
 +
 +   public java.util.List<ItemStack> getContents() {
-+      return this.items;
++      return this.f_59073_;
 +   }
 +
 +   public void onOpen(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
@@ -25,7 +25,7 @@
 +   }
 +
 +   @Override
-+   public int getMaxStackSize() {
++   public int m_6893_() {
 +      return maxStack;
 +   }
 +
@@ -38,13 +38,13 @@
        super(p_155327_, p_155328_, p_155329_);
     }
 @@ -160,6 +_,45 @@
-       return ChestMenu.threeRows(p_59082_, p_59083_, this);
+       return ChestMenu.m_39237_(p_59082_, p_59083_, this);
     }
  
 +   private net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandlerModifiable> chestHandler;
 +   @Override
-+   public void setBlockState(BlockState p_155251_) {
-+      super.setBlockState(p_155251_);
++   public void m_155250_(BlockState p_155251_) {
++      super.m_155250_(p_155251_);
 +      if (this.chestHandler != null) {
 +         net.minecraftforge.common.util.LazyOptional<?> oldHandler = this.chestHandler;
 +         this.chestHandler = null;
@@ -54,7 +54,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, Direction side) {
-+       if (!this.remove && cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER) {
++       if (!this.f_58859_ && cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER) {
 +          if (this.chestHandler == null)
 +             this.chestHandler = net.minecraftforge.common.util.LazyOptional.of(this::createHandler);
 +          return this.chestHandler.cast();
@@ -63,11 +63,11 @@
 +   }
 +
 +   private net.minecraftforge.items.IItemHandlerModifiable createHandler() {
-+      BlockState state = this.getBlockState();
-+      if (!(state.getBlock() instanceof ChestBlock)) {
++      BlockState state = this.m_58900_();
++      if (!(state.m_60734_() instanceof ChestBlock)) {
 +         return new net.minecraftforge.items.wrapper.InvWrapper(this);
 +      }
-+      Container inv = ChestBlock.getContainer((ChestBlock) state.getBlock(), state, getLevel(), getBlockPos(), true);
++      Container inv = ChestBlock.m_51511_((ChestBlock) state.m_60734_(), state, m_58904_(), m_58899_(), true);
 +      return new net.minecraftforge.items.wrapper.InvWrapper(inv == null ? this : inv);
 +   }
 +
@@ -80,17 +80,17 @@
 +      }
 +   }
 +
-    public void recheckOpen() {
-       if (!this.remove) {
-          this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
+    public void m_155350_() {
+       if (!this.f_58859_) {
+          this.f_155324_.m_155476_(this.m_58904_(), this.m_58899_(), this.m_58900_());
 @@ -171,4 +_,11 @@
-       Block block = p_155335_.getBlock();
-       p_155333_.blockEvent(p_155334_, block, 1, p_155337_);
+       Block block = p_155335_.m_60734_();
+       p_155333_.m_7696_(p_155334_, block, 1, p_155337_);
     }
 +
 +   // CraftBukkit start
 +   @Override
-+   public boolean onlyOpCanSetNbt() {
++   public boolean m_6326_() {
 +      return true;
 +   }
 +   // CraftBukkit end

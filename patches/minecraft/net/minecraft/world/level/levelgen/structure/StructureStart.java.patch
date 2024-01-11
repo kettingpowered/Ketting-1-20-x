@@ -1,47 +1,51 @@
 --- a/net/minecraft/world/level/levelgen/structure/StructureStart.java
 +++ b/net/minecraft/world/level/levelgen/structure/StructureStart.java
 @@ -29,6 +_,7 @@
-    private int references;
+    private int f_73568_;
     @Nullable
-    private volatile BoundingBox cachedBoundingBox;
+    private volatile BoundingBox f_163593_;
 +   public org.bukkit.event.world.AsyncStructureGenerateEvent.Cause generationEventCause = org.bukkit.event.world.AsyncStructureGenerateEvent.Cause.WORLD_GENERATION; // CraftBukkit
  
     public StructureStart(Structure p_226846_, ChunkPos p_226847_, int p_226848_, PiecesContainer p_226849_) {
-       this.structure = p_226846_;
+       this.f_226844_ = p_226846_;
 @@ -84,12 +_,25 @@
-          BoundingBox boundingbox = (list.get(0)).boundingBox;
-          BlockPos blockpos = boundingbox.getCenter();
-          BlockPos blockpos1 = new BlockPos(blockpos.getX(), boundingbox.minY(), blockpos.getZ());
+          BoundingBox boundingbox = (list.get(0)).f_73383_;
+          BlockPos blockpos = boundingbox.m_162394_();
+          BlockPos blockpos1 = new BlockPos(blockpos.m_123341_(), boundingbox.m_162396_(), blockpos.m_123343_());
 -
 +         // CraftBukkit start
 +         /*
           for(StructurePiece structurepiece : list) {
-             if (structurepiece.getBoundingBox().intersects(p_226855_)) {
-                structurepiece.postProcess(p_226851_, p_226852_, p_226853_, p_226854_, p_226855_, p_226856_, blockpos1);
-             }
-          }
+-            if (structurepiece.m_73547_().m_71049_(p_226855_)) {
+-               structurepiece.m_213694_(p_226851_, p_226852_, p_226853_, p_226854_, p_226855_, p_226856_, blockpos1);
+-            }
+-         }
++            if (structurepiece.getBoundingBox().intersects(p_226855_)) {
++               structurepiece.postProcess(p_226851_, p_226852_, p_226853_, p_226854_, p_226855_, p_226856_, blockpos1);
++            }
++         }
 +         */
-+         List<StructurePiece> pieces = list.stream().filter(piece -> piece.getBoundingBox().intersects(p_226855_)).toList();
++         List<StructurePiece> pieces = list.stream().filter(piece -> piece.m_73547_().m_71049_(p_226855_)).toList();
 +         if (!pieces.isEmpty()) {
 +            org.bukkit.craftbukkit.v1_20_R2.util.TransformerGeneratorAccess transformerAccess = new org.bukkit.craftbukkit.v1_20_R2.util.TransformerGeneratorAccess();
 +            transformerAccess.setHandle(p_226851_);
-+            transformerAccess.setStructureTransformer(new org.bukkit.craftbukkit.v1_20_R2.util.CraftStructureTransformer(generationEventCause, p_226851_, p_226852_, structure, p_226855_, p_226856_));
++            transformerAccess.setStructureTransformer(new org.bukkit.craftbukkit.v1_20_R2.util.CraftStructureTransformer(generationEventCause, p_226851_, p_226852_, f_226844_, p_226855_, p_226856_));
 +            for (StructurePiece piece : pieces) {
-+               piece.postProcess(transformerAccess, p_226852_, p_226853_, p_226854_, p_226855_, p_226856_, blockpos1);
++               piece.m_213694_(transformerAccess, p_226852_, p_226853_, p_226854_, p_226855_, p_226856_, blockpos1);
 +            }
 +            transformerAccess.getStructureTransformer().discard();
 +         }
 +         // CraftBukkit end
  
-          this.structure.afterPlace(p_226851_, p_226852_, p_226853_, p_226854_, p_226855_, p_226856_, this.pieceContainer);
+          this.f_226844_.m_214110_(p_226851_, p_226852_, p_226853_, p_226854_, p_226855_, p_226856_, this.f_192654_);
        }
 @@ -98,6 +_,9 @@
-    public CompoundTag createTag(StructurePieceSerializationContext p_192661_, ChunkPos p_192662_) {
+    public CompoundTag m_192660_(StructurePieceSerializationContext p_192661_, ChunkPos p_192662_) {
        CompoundTag compoundtag = new CompoundTag();
-       if (this.isValid()) {
-+         if (p_192661_.registryAccess().registryOrThrow(Registries.STRUCTURE).getKey(this.getStructure()) == null) { // FORGE: This is just a more friendly error instead of the 'Null String' below
-+            throw new RuntimeException("StructureStart \"" + this.getClass().getName() + "\": \"" + this.getStructure() + "\" unregistered, serializing impossible.");
+       if (this.m_73603_()) {
++         if (p_192661_.f_192763_().m_175515_(Registries.f_256944_).m_7981_(this.m_226861_()) == null) { // FORGE: This is just a more friendly error instead of the 'Null String' below
++            throw new RuntimeException("StructureStart \"" + this.getClass().getName() + "\": \"" + this.m_226861_() + "\" unregistered, serializing impossible.");
 +         }
-          compoundtag.putString("id", p_192661_.registryAccess().registryOrThrow(Registries.STRUCTURE).getKey(this.structure).toString());
-          compoundtag.putInt("ChunkX", p_192662_.x);
-          compoundtag.putInt("ChunkZ", p_192662_.z);
+          compoundtag.m_128359_("id", p_192661_.f_192763_().m_175515_(Registries.f_256944_).m_7981_(this.f_226844_).toString());
+          compoundtag.m_128405_("ChunkX", p_192662_.f_45578_);
+          compoundtag.m_128405_("ChunkZ", p_192662_.f_45579_);

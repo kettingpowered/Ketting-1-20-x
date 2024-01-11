@@ -13,41 +13,41 @@
 +      return (craftMerchant == null) ? craftMerchant = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMerchant(this) : craftMerchant;
 +   }
 +   // CraftBukkit end
-    private static final EntityDataAccessor<Integer> DATA_UNHAPPY_COUNTER = SynchedEntityData.defineId(AbstractVillager.class, EntityDataSerializers.INT);
-    public static final int VILLAGER_SLOT_OFFSET = 300;
-    private static final int VILLAGER_INVENTORY_SIZE = 8;
+    private static final EntityDataAccessor<Integer> f_35262_ = SynchedEntityData.m_135353_(AbstractVillager.class, EntityDataSerializers.f_135028_);
+    public static final int f_149991_ = 300;
+    private static final int f_149992_ = 8;
 @@ -43,7 +_,7 @@
-    private Player tradingPlayer;
+    private Player f_35263_;
     @Nullable
-    protected MerchantOffers offers;
--   private final SimpleContainer inventory = new SimpleContainer(8);
-+   private final SimpleContainer inventory = new SimpleContainer(8, (org.bukkit.craftbukkit.v1_20_R2.entity.CraftAbstractVillager) this.getBukkitEntity()); // CraftBukkit add argument
+    protected MerchantOffers f_35261_;
+-   private final SimpleContainer f_35264_ = new SimpleContainer(8);
++   private final SimpleContainer f_35264_ = new SimpleContainer(8, (org.bukkit.craftbukkit.v1_20_R2.entity.CraftAbstractVillager) this.getBukkitEntity()); // CraftBukkit add argument
  
     public AbstractVillager(EntityType<? extends AbstractVillager> p_35267_, Level p_35268_) {
        super(p_35267_, p_35268_);
 @@ -116,6 +_,7 @@
-          CriteriaTriggers.TRADE.trigger((ServerPlayer)this.tradingPlayer, this, p_35274_.getResult());
+          CriteriaTriggers.f_10585_.m_70959_((ServerPlayer)this.f_35263_, this, p_35274_.m_45368_());
        }
  
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.TradeWithVillagerEvent(this.tradingPlayer, p_35274_, this));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.TradeWithVillagerEvent(this.f_35263_, p_35274_, this));
     }
  
-    protected abstract void rewardTradeXp(MerchantOffer p_35299_);
+    protected abstract void m_8058_(MerchantOffer p_35299_);
 @@ -164,9 +_,9 @@
     }
  
     @Nullable
--   public Entity changeDimension(ServerLevel p_35295_) {
+-   public Entity m_5489_(ServerLevel p_35295_) {
 +   public Entity changeDimension(ServerLevel p_35295_, net.minecraftforge.common.util.ITeleporter teleporter) {
-       this.stopTrading();
--      return super.changeDimension(p_35295_);
+       this.m_7996_();
+-      return super.m_5489_(p_35295_);
 +      return super.changeDimension(p_35295_, teleporter);
     }
  
-    protected void stopTrading() {
+    protected void m_7996_() {
 @@ -210,7 +_,16 @@
        while(i < p_35280_ && !arraylist.isEmpty()) {
-          MerchantOffer merchantoffer = arraylist.remove(this.random.nextInt(arraylist.size())).getOffer(this, this.random);
+          MerchantOffer merchantoffer = arraylist.remove(this.f_19796_.m_188503_(arraylist.size())).m_213663_(this, this.f_19796_);
           if (merchantoffer != null) {
 -            p_35278_.add(merchantoffer);
 +            // CraftBukkit start
