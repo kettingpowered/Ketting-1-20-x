@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraftforge.forgespi.language.ModFileScanData;
-import net.minecraftforge.forgespi.language.ModFileScanData.EnumData;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Type;
@@ -19,11 +18,35 @@ import org.objectweb.asm.Type;
 import com.google.common.base.MoreObjects;
 
 @ApiStatus.Internal
+public //Ketting - keep public for compat 
 class ModAnnotation {
     public static ModFileScanData.AnnotationData fromModAnnotation(Type clazz, ModAnnotation annotation) {
         return new ModFileScanData.AnnotationData(annotation.asmType, annotation.type, clazz, annotation.member, annotation.values);
     }
 
+    //Ketting start - keep EnumHolder for compat
+    public static class EnumHolder {
+        private final String desc;
+        private final String value;
+
+        public EnumHolder(String desc, String value)
+        {
+            this.desc = desc;
+            this.value = value;
+        }
+
+        public String getDesc()
+        {
+            return desc;
+        }
+
+        public String getValue()
+        {
+            return value;
+        }
+    }
+    //Ketting end
+    
     private final ElementType type;
     private final Type asmType;
     private final String member;
@@ -80,7 +103,7 @@ class ModAnnotation {
     }
 
     public void addEnumProperty(String key, String enumName, String value) {
-        addProperty(key, new EnumData(Type.getType(enumName), value));
+        addProperty(key, new EnumHolder(enumName, value));
     }
 
     public void endArray() {
