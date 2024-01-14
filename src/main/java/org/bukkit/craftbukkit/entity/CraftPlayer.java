@@ -205,6 +205,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
     @Override
     public boolean isOp() {
+        if (getHandle() == null) return false; //Ketting - this fixes a NPE when using the gatherCapabilities event on a player.
         return server.getHandle().isOp(getProfile());
     }
 

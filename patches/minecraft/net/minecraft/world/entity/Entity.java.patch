@@ -108,7 +108,7 @@
        this.entityData = new SynchedEntityData(this);
        this.entityData.define(DATA_SHARED_FLAGS_ID, (byte)0);
        this.entityData.define(DATA_AIR_SUPPLY_ID, this.getMaxAirSupply());
-@@ -256,8 +_,11 @@
+@@ -256,8 +_,14 @@
        this.entityData.define(DATA_POSE, Pose.STANDING);
        this.entityData.define(DATA_TICKS_FROZEN, 0);
        this.defineSynchedData();
@@ -116,6 +116,9 @@
        this.setPos(0.0D, 0.0D, 0.0D);
        this.eyeHeight = this.getEyeHeight(Pose.STANDING, this.dimensions);
 +      net.minecraftforge.event.ForgeEventFactory.onEntityConstructing(this);
++      //Ketting - If we gatherCapabilities on a Player, it might cause an isOp check, which requires a GameProfile to be set.
++      // So we move the gatherCapabilities check to after the Player initialization is done.
++      if (!(this instanceof Player)) 
 +      this.gatherCapabilities();
     }
  
