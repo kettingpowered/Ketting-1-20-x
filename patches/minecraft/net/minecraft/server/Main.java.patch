@@ -9,7 +9,7 @@
        OptionSpec<Void> optionspec2 = optionparser.accepts("demo");
        OptionSpec<Void> optionspec3 = optionparser.accepts("bonusChest");
        OptionSpec<Void> optionspec4 = optionparser.accepts("forceUpgrade");
-@@ -80,13 +_,51 @@
+@@ -84,6 +_,51 @@
        OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
        OptionSpec<Path> optionspec14 = optionparser.accepts("pidFile").withRequiredArg().withValuesConvertedBy(new PathConverter());
        OptionSpec<String> optionspec15 = optionparser.nonOptions();
@@ -61,7 +61,7 @@
  
           Path path = optionset.valueOf(optionspec14);
           if (path != null) {
-@@ -98,29 +_,52 @@
+@@ -102,29 +_,52 @@
              JvmProfiler.f_185340_.m_183425_(Environment.SERVER);
           }
  
@@ -124,10 +124,10 @@
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
           if (levelsummary != null) {
              if (levelsummary.m_193020_()) {
-@@ -141,11 +_,31 @@
+@@ -145,11 +_,31 @@
  
-          PackRepository packrepository = ServerPacksSource.m_247728_(levelstoragesource$levelstorageaccess);
- 
+          PackRepository packrepository = ServerPacksSource.m_245786_(levelstoragesource$levelstorageaccess.m_78283_(LevelResource.f_78180_));
+
 +         // CraftBukkit start
 +         File bukkitDataPackFolder = new File(levelstoragesource$levelstorageaccess.m_78283_(net.minecraft.world.level.storage.LevelResource.f_78180_).toFile(), "bukkit");
 +         if (!bukkitDataPackFolder.exists()) {

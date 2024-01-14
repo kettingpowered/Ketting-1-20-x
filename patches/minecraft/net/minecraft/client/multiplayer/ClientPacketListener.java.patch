@@ -8,7 +8,7 @@
        int i = p_105030_.f_132360_();
        this.f_104888_.f_91074_.m_20234_(i);
        this.f_104889_.m_104630_(i, this.f_104888_.f_91074_);
-@@ -425,8 +_,9 @@
+@@ -425,6 +_,7 @@
        this.f_104888_.f_91074_.m_287199_(p_105030_.f_286971_());
        this.f_104888_.f_91072_.m_171805_(p_105030_.f_132363_(), p_105030_.f_132364_());
        this.f_104888_.f_91066_.m_193770_(p_105030_.f_132370_());
@@ -16,18 +16,16 @@
        this.f_104888_.f_91066_.m_92172_();
        this.f_104885_.m_129512_(new ServerboundCustomPayloadPacket(ServerboundCustomPayloadPacket.f_133979_, (new FriendlyByteBuf(Unpooled.buffer())).m_130070_(ClientBrandRetriever.getClientModName())));
        this.f_252517_ = null;
-       this.f_244346_ = new LastSeenMessagesTracker(20);
-       this.f_244113_ = MessageSignatureCache.m_246587_();
-@@ -773,7 +_,7 @@
+@@ -817,7 +_,7 @@
  
     public void m_213990_(ClientboundSystemChatPacket p_233708_) {
-       PacketUtils.m_131363_(p_233708_, this, this.f_291812_);
--      this.f_291812_.m_240442_().m_240494_(p_233708_.f_237849_(), p_233708_.f_240374_());
-+      this.f_291812_.m_240442_().m_240494_(net.minecraft.network.chat.MutableComponent.Serializer.m_130714_(p_233708_.content()), p_233708_.f_240374_());
+       PacketUtils.m_131363_(p_233708_, this, this.f_104888_);
+-      this.f_104888_.m_240442_().m_240494_(p_233708_.f_237849_(), p_233708_.f_240374_());
++     // this.minecraft.getChatListener().handleSystemMessage(p_233708_.content(), p_233708_.overlay());
     }
  
     public void m_213629_(ClientboundPlayerChatPacket p_233702_) {
-@@ -1026,8 +_,10 @@
+@@ -1069,8 +_,10 @@
           localplayer1.m_21204_().m_22159_(localplayer.m_21204_());
        }
  

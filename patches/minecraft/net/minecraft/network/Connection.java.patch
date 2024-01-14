@@ -1,9 +1,9 @@
 --- a/net/minecraft/network/Connection.java
 +++ b/net/minecraft/network/Connection.java
-@@ -82,8 +_,13 @@
+@@ -72,8 +_,13 @@
     });
     private final PacketFlow f_129466_;
-    private final Queue<Consumer<Connection>> f_290881_ = Queues.newConcurrentLinkedQueue();
+    private final Queue<Connection.PacketHolder> f_129467_ = Queues.newConcurrentLinkedQueue();
 -   private Channel f_129468_;
 -   private SocketAddress f_129469_;
 +   public Channel f_129468_;
@@ -13,11 +13,11 @@
 +   public com.mojang.authlib.properties.Property[] spoofedProfile;
 +   public boolean preparing = true;
 +   // Spigot End
-    @Nullable
-    private volatile PacketListener f_290681_;
-    @Nullable
+    private PacketListener f_129470_;
+    private Component f_129471_;
+    private boolean f_129472_;
 @@ -86,6 +_,8 @@
-    private volatile Component f_290021_;
+    private boolean f_129479_;
     @Nullable
     private volatile Component f_290021_;
 +   private java.util.function.Consumer<Connection> activationHandler;
@@ -48,7 +48,7 @@
     }
  
     public void channelInactive(ChannelHandlerContext p_129527_) {
-@@ -159,7 +_,8 @@
+@@ -147,6 +_,7 @@
  
           }
        }
@@ -56,7 +56,6 @@
     }
  
     protected void channelRead0(ChannelHandlerContext p_129487_, Packet<?> p_129488_) {
- 
 @@ -395,11 +_,14 @@
        if (this.f_129469_ == null) {
           return "local";

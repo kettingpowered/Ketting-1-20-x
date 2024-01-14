@@ -68,14 +68,14 @@
              if (!this.f_9244_.m_7966_(this.f_9245_, p_215120_)) {
 +               // CraftBukkit start - fire PlayerInteractEvent
 +               org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent(this.f_9245_, org.bukkit.event.block.Action.LEFT_CLICK_BLOCK, p_215120_, p_215122_, this.f_9245_.m_150109_().m_36056_(), InteractionHand.MAIN_HAND);
-                this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
+                this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
                 this.m_215125_(p_215120_, false, p_215124_, "may not interact");
 -               return;
 -            }
 +               // Update any tile entity data for this block
 +               BlockEntity blockEntity = f_9244_.m_7702_(p_215120_);
 +               if (blockEntity != null)
-+                  this.f_9245_.f_8906_.m_141995_(blockEntity.m_58483_());
++                  this.f_9245_.f_8906_.m_9829_(blockEntity.m_58483_());
 +               return;
 +            }
 +
@@ -83,11 +83,11 @@
 +            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent(this.f_9245_, org.bukkit.event.block.Action.LEFT_CLICK_BLOCK, p_215120_, p_215122_, this.f_9245_.m_150109_().m_36056_(), InteractionHand.MAIN_HAND);
 +            if (event.isCancelled()) {
 +               // Let the client know the block still exists
-+               this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++               this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
 +               // Update any tile entity data for this block
 +               BlockEntity blockEntity = this.f_9244_.m_7702_(p_215120_);
 +               if (blockEntity != null) {
-+                  this.f_9245_.f_8906_.m_141995_(blockEntity.m_58483_());
++                  this.f_9245_.f_8906_.m_9829_(blockEntity.m_58483_());
 +               }
 +               return;
 +            }
@@ -101,13 +101,13 @@
 +            // Spigot start - handle debug stick left click for non-creative
 +            if (this.f_9245_.m_21205_().m_150930_(net.minecraft.world.item.Items.f_42751_)
 +                    && ((net.minecraft.world.item.DebugStickItem) net.minecraft.world.item.Items.f_42751_).m_150802_(this.f_9245_, this.f_9244_.m_8055_(p_215120_), this.f_9244_, p_215120_, false, this.f_9245_.m_21205_())) {
-+               this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++               this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
 +               return;
 +            }
 +            // Spigot end
 +
              if (this.f_9245_.m_36187_(this.f_9244_, p_215120_, this.f_9247_)) {
-                this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
+                this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
                 this.m_215125_(p_215120_, false, p_215124_, "block action restricted");
 @@ -151,11 +_,44 @@
              this.f_9250_ = this.f_9252_;

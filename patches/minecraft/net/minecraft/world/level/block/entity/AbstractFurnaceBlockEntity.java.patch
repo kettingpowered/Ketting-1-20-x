@@ -224,7 +224,7 @@
  
           if (itemstack.m_150930_(Blocks.f_50057_.m_5456_()) && !p_267073_.get(1).m_41619_() && p_267073_.get(1).m_150930_(Items.f_42446_)) {
              p_267073_.set(1, new ItemStack(Items.f_42447_));
-@@ -344,18 +_,19 @@
+@@ -344,16 +_,16 @@
           return 0;
        } else {
           Item item = p_58343_.m_41720_();
@@ -232,12 +232,10 @@
 +         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_58343_, this.recipeType);
        }
     }
- 
+
     private static int m_222692_(Level p_222693_, AbstractFurnaceBlockEntity p_222694_) {
-+      if (p_222693_ == null) return 200; // CraftBukkit - SPIGOT-4302
-       return p_222694_.f_222691_.m_213657_(p_222694_, p_222693_).map((p_296950_) -> {
-          return p_296950_.f_291008_().m_43753_();
-       }).orElse(200);
+-      return p_222694_.f_222691_.m_213657_(p_222694_, p_222693_).map(AbstractCookingRecipe::m_43753_).orElse(200);
++      return (p_222693_ != null) ? (Integer) p_222694_.f_222691_.m_213657_(p_222694_, p_222693_).map(AbstractCookingRecipe::m_43753_).orElse(200) : 200; // CraftBukkit - SPIGOT-4302
     }
  
     public static boolean m_58399_(ItemStack p_58400_) {
@@ -255,7 +253,7 @@
        }
     }
  
-@@ -455,8 +_,9 @@
+@@ -453,8 +_,9 @@
     public void m_58395_(Player p_58396_, List<ItemStack> p_282202_) {
     }
  

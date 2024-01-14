@@ -1,19 +1,19 @@
 --- a/net/minecraft/network/protocol/PacketUtils.java
 +++ b/net/minecraft/network/protocol/PacketUtils.java
-@@ -18,6 +_,7 @@
+@@ -17,6 +_,7 @@
     public static <T extends PacketListener> void m_131363_(Packet<T> p_131364_, T p_131365_, BlockableEventLoop<?> p_131366_) throws RunningOnDifferentThreadException {
        if (!p_131366_.m_18695_()) {
           p_131366_.m_201446_(() -> {
-+            if (net.minecraft.server.MinecraftServer.getServer().hasStopped() || (p_131365_ instanceof net.minecraft.server.network.ServerCommonPacketListenerImpl && ((net.minecraft.server.network.ServerCommonPacketListenerImpl) p_131365_).processedDisconnect)) return; // CraftBukkit, MC-142590
-             if (p_131365_.m_294638_(p_131364_)) {
++            if (net.minecraft.server.MinecraftServer.getServer().hasStopped() || (p_131364_ instanceof net.minecraft.server.network.ServerCommonPacketListenerImpl && ((net.minecraft.server.network.ServerCommonPacketListenerImpl) p_131364_).processedDisconnect)) return; // CraftBukkit, MC-142590
+             if (p_131365_.m_6198_()) {
                 try {
                    p_131364_.m_5797_(p_131365_);
-@@ -42,6 +_,10 @@
- 
+@@ -33,6 +_,10 @@
+
           });
           throw RunningOnDifferentThreadException.f_136017_;
 +         // CraftBukkit start - SPIGOT-5477, MC-142590
-+      } else if (net.minecraft.server.MinecraftServer.getServer().hasStopped() || (p_131365_ instanceof net.minecraft.server.network.ServerCommonPacketListenerImpl && ((net.minecraft.server.network.ServerCommonPacketListenerImpl) p_131365_).processedDisconnect)) {
++      } else if (net.minecraft.server.MinecraftServer.getServer().hasStopped() || (p_131364_ instanceof net.minecraft.server.network.ServerCommonPacketListenerImpl && ((net.minecraft.server.network.ServerCommonPacketListenerImpl) p_131364_).processedDisconnect)) {
 +         throw RunningOnDifferentThreadException.f_136017_;
 +         // CraftBukkit end
        }

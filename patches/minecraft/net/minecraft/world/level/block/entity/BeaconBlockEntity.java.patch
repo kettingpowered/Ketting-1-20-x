@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
-@@ -105,6 +_,15 @@
+@@ -101,6 +_,16 @@
        }
     };
  
@@ -13,9 +13,10 @@
 +      return (hasSecondaryEffect(f_58650_, f_58652_, f_58653_)) ? org.bukkit.craftbukkit.v1_20_R2.potion.CraftPotionUtil.toBukkit(new MobEffectInstance(this.f_58653_, getLevel(this.f_58650_), getAmplification(f_58650_, f_58652_, f_58653_), true, true)) : null;
 +   }
 +   // CraftBukkit end
-    @Nullable
-    static MobEffect m_294441_(@Nullable MobEffect p_300420_) {
-       return f_58647_.contains(p_300420_) ? p_300420_ : null;
++
+    public BeaconBlockEntity(BlockPos p_155088_, BlockState p_155089_) {
+       super(BlockEntityType.f_58930_, p_155088_, p_155089_);
+    }
 @@ -124,8 +_,8 @@
        for(int i1 = 0; i1 < 10 && blockpos.m_123342_() <= l; ++i1) {
           BlockState blockstate = p_155108_.m_8055_(blockpos);
@@ -27,7 +28,7 @@
              if (p_155111_.f_58649_.size() <= 1) {
                 beaconblockentity$beaconbeamsection = new BeaconBlockEntity.BeaconBeamSection(afloat);
                 p_155111_.f_58649_.add(beaconblockentity$beaconbeamsection);
-@@ -225,30 +_,71 @@
+@@ -216,30 +_,71 @@
        super.m_7651_();
     }
  
@@ -119,20 +120,3 @@
  
     public static void m_155103_(Level p_155104_, BlockPos p_155105_, SoundEvent p_155106_) {
        p_155104_.m_5594_((Player)null, p_155105_, p_155106_, SoundSource.BLOCKS, 1.0F, 1.0F);
-@@ -280,7 +_,7 @@
-    private static MobEffect m_296015_(CompoundTag p_298536_, String p_301201_) {
-       if (p_298536_.m_128425_(p_301201_, 8)) {
-          ResourceLocation resourcelocation = ResourceLocation.m_135820_(p_298536_.m_128461_(p_301201_));
--         return m_294441_(BuiltInRegistries.f_256974_.m_7745_(resourcelocation));
-+         return (MobEffect) BuiltInRegistries.f_256974_.m_7745_(resourcelocation); // CraftBukkit - persist manually set non-default beacon effects (SPIGOT-3598)
-       } else {
-          return null;
-       }
-@@ -290,6 +_,7 @@
-       super.m_142466_(p_155113_);
-       this.f_58652_ = m_296015_(p_155113_, "primary_effect");
-       this.f_58653_ = m_296015_(p_155113_, "secondary_effect");
-+      this.f_58650_ = p_155113_.m_128451_("Levels"); // CraftBukkit - SPIGOT-5053, use where available
-       if (p_155113_.m_128425_("CustomName", 8)) {
-          this.f_58654_ = Component.Serializer.m_130701_(p_155113_.m_128461_("CustomName"));
-       }

@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/entity/monster/ZombifiedPiglin.java
 +++ b/net/minecraft/world/entity/monster/ZombifiedPiglin.java
-@@ -142,7 +_,7 @@
-       }).filter((p_296830_) -> {
-          return !p_296830_.m_7307_(this.m_5448_());
-       }).forEach((p_296829_) -> {
--         p_296829_.m_6710_(this.m_5448_());
-+         p_296829_.setTarget(this.m_5448_(), org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY, true); // CraftBukkit
+@@ -144,7 +_,7 @@
+       }).filter((p_289463_) -> {
+          return !p_289463_.m_7307_(this.m_5448_());
+       }).forEach((p_289464_) -> {
+-         p_289464_.m_6710_(this.m_5448_());
++         p_289464_.setTarget(this.m_5448_(), org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY, true); // CraftBukkit
        });
     }
  
-@@ -150,7 +_,7 @@
+@@ -152,7 +_,7 @@
        this.m_5496_(SoundEvents.f_12611_, this.m_6121_() * 2.0F, this.m_6100_() * 1.8F);
     }
  
@@ -18,7 +18,7 @@
        if (this.m_5448_() == null && p_34478_ != null) {
           this.f_34417_ = f_34424_.m_214085_(this.f_19796_);
           this.f_34422_ = f_34421_.m_214085_(this.f_19796_);
-@@ -160,11 +_,20 @@
+@@ -162,11 +_,20 @@
           this.m_6598_((Player)p_34478_);
        }
  

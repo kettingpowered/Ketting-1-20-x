@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
-@@ -130,8 +_,10 @@
+@@ -129,6 +_,10 @@
     public static final int f_165685_ = 3;
     public static final int f_165686_ = 4;
     private final CommandDispatcher<CommandSourceStack> f_82090_ = new CommandDispatcher<>();
@@ -44,7 +44,7 @@
     }
  
     public static <S> ParseResults<S> m_242611_(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
-@@ -236,12 +_,68 @@
+@@ -231,11 +_,68 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }
  
@@ -133,7 +133,7 @@
           } catch (CommandRuntimeException commandruntimeexception) {
              commandsourcestack.m_81352_(commandruntimeexception.m_79226_());
              return 0;
-@@ -258,7 +_,7 @@
+@@ -252,7 +_,7 @@
              if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
                 int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
                 MutableComponent mutablecomponent1 = Component.m_237119_().m_130940_(ChatFormatting.GRAY).m_130938_((p_82134_) -> {
@@ -145,7 +145,7 @@
 @@ -301,16 +_,60 @@
        }
     }
- 
+
 +   //Ketting start - rewrite to add forge dispatcher support
     public void m_82095_(ServerPlayer p_82096_) {
 -      Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
