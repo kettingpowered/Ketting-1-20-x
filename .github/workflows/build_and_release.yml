@@ -84,20 +84,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Tag repo
         id: tag
-        run: |
-          function getVer(){
-              IFS='=' read -ra ARR <<<$(grep $1 gradle.properties)
-              read -r -d '' "$1" <<< ${ARR[1]}
-              unset IFS
-              unset ARR
-          }
-          getVer MC_VERSION
-          getVer FORGE_VERSION
-          getVer KETTING_VERSION
-          tag=v$MC_VERSION-$FORGE_VERSION-$KETTING_VERSION
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          git tag $tag
-          git push origin $tag
+        run: bash .github/workflows/tagging.sh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Github Release if on default branch
@@ -111,6 +98,7 @@ jobs:
               --title="${GITHUB_REPOSITORY#*/} ${TAG#v}" \
               --generate-notes
       - name: Delete Project Sources for build
+        continue-on-error: true
         run: |
           gh extension install actions/gh-actions-cache
           REPO=${{ github.repository }}
