@@ -1,9 +1,6 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -34,27 +_,45 @@
- public class RecipeManager extends SimpleJsonResourceReloadListener {
-    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
-    private static final Logger LOGGER = LogUtils.getLogger();
+@@ -37,23 +_,41 @@
     public Map<RecipeType<?>, Map<ResourceLocation, RecipeHolder<?>>> recipes = ImmutableMap.of();
     private Map<ResourceLocation, RecipeHolder<?>> byName = ImmutableMap.of();
     private boolean hasErrors;
@@ -47,7 +44,6 @@
              }).put(resourcelocation, recipeholder);
              builder.put(resourcelocation, recipeholder);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
-             LOGGER.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
 @@ -62,20 +_,38 @@
        }
  
