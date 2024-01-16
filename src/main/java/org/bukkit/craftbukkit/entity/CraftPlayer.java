@@ -40,6 +40,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.common.ClientboundResourcePackPopPacket;
 import net.minecraft.network.protocol.common.ClientboundResourcePackPushPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ClientboundClearTitlesPacket;
@@ -906,7 +907,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         }
 
         if (entity.connection == null) {
-           return false;
+            return false;
         }
 
         if (entity.isVehicle()) {
@@ -1726,6 +1727,19 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         } else {
             getHandle().connection.send(new ClientboundResourcePackPushPacket(id, url, "", force, CraftChatMessage.fromStringOrNull(prompt, true)));
         }
+    }
+
+    @Override
+    public void removeResourcePack(UUID id) {
+        Preconditions.checkArgument(id != null, "Resource pack id cannot be null");
+        if (getHandle().connection == null) return;
+        getHandle().connection.send(new ClientboundResourcePackPopPacket(Optional.of(id)));
+    }
+
+    @Override
+    public void removeResourcePacks() {
+        if (getHandle().connection == null) return;
+        getHandle().connection.send(new ClientboundResourcePackPopPacket(Optional.empty()));
     }
 
     public void addChannel(String channel) {

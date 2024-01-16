@@ -10,11 +10,10 @@
              BlockPos blockpos = findOrCreateValidTeleportPos(serverlevel, p_155830_);
              blockpos = blockpos.above(10);
              LOGGER.debug("Creating portal at {}", (Object)blockpos);
-@@ -180,6 +_,27 @@
-             } else {
+@@ -181,9 +_,35 @@
                 entity = p_155832_.getRootVehicle();
              }
-+
+ 
 +            // CraftBukkit start - Fire PlayerTeleportEvent
 +            if (entity instanceof ServerPlayer) {
 +               org.bukkit.craftbukkit.entity.CraftPlayer player = (org.bukkit.craftbukkit.entity.CraftPlayer) entity.getBukkitEntity();
@@ -34,7 +33,18 @@
 +               return;
 +
 +            }
-+            // CraftBukkit end
- 
++
++            org.bukkit.event.entity.EntityTeleportEvent teleEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTeleportEvent(entity, blockpos1.getX() + 0.5, blockpos1.getY() + 0.5, blockpos1.getZ() + 0.5);
++            if (teleEvent.isCancelled()) {
++                return;
++            }
++
              entity.setPortalCooldown();
-             entity.teleportToWithTicket((double)blockpos1.getX() + 0.5D, (double)blockpos1.getY(), (double)blockpos1.getZ() + 0.5D);
+-            entity.teleportToWithTicket((double)blockpos1.getX() + 0.5D, (double)blockpos1.getY(), (double)blockpos1.getZ() + 0.5D);
+-         }
++            entity.teleportToWithTicket(teleEvent.getTo().getX(), teleEvent.getTo().getY(), teleEvent.getTo().getZ());
++            // CraftBukkit end
++        }
+ 
+          triggerCooldown(p_155829_, p_155830_, p_155831_, p_155833_);
+       }

@@ -729,7 +729,19 @@
           return null;
        } else {
           Optional<HolderSet.Named<Structure>> optional = this.registryAccess().registryOrThrow(Registries.STRUCTURE).getTag(p_215012_);
-@@ -1141,6 +_,7 @@
+@@ -1137,10 +_,18 @@
+ 
+    @Nullable
+    public MapItemSavedData getMapData(String p_8785_) {
+-      return this.getServer().overworld().getDataStorage().get(MapItemSavedData.factory(), p_8785_);
++//      return this.getServer().overworld().getDataStorage().get(MapItemSavedData.factory(), p_8785_);
++        // CraftBukkit start
++        net.minecraft.world.level.saveddata.maps.MapItemSavedData worldmap = this.getServer().overworld().getDataStorage().get(MapItemSavedData.factory(), p_8785_);
++        if (worldmap != null) {
++            worldmap.id = p_8785_;
++        }
++        return worldmap;
++        // CraftBukkit end
     }
  
     public void setMapData(String p_143305_, MapItemSavedData p_143306_) {
