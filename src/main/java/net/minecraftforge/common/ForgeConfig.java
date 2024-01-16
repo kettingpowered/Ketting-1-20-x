@@ -32,7 +32,7 @@ public class ForgeConfig {
 
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
-                   .push("server");
+                    .push("server");
 
             removeErroringBlockEntities = builder
                     .comment("Set this to true to remove any BlockEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
@@ -113,24 +113,24 @@ public class ForgeConfig {
 
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
-                   .push("client");
+                    .push("client");
 
             alwaysSetupTerrainOffThread = builder
-                .comment("Enable Forge to queue all chunk updates to the Chunk Update thread.",
-                        "May increase FPS significantly, but may also cause weird rendering lag.",
-                        "Not recommended for computers without a significant number of cores available.")
-                .translation("forge.configgui.alwaysSetupTerrainOffThread")
-                .define("alwaysSetupTerrainOffThread", false);
+                    .comment("Enable Forge to queue all chunk updates to the Chunk Update thread.",
+                            "May increase FPS significantly, but may also cause weird rendering lag.",
+                            "Not recommended for computers without a significant number of cores available.")
+                    .translation("forge.configgui.alwaysSetupTerrainOffThread")
+                    .define("alwaysSetupTerrainOffThread", false);
 
             experimentalForgeLightPipelineEnabled = builder
-                .comment("EXPERIMENTAL: Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
-                .translation("forge.configgui.forgeLightPipelineEnabled")
-                .define("experimentalForgeLightPipelineEnabled", false);
+                    .comment("EXPERIMENTAL: Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
+                    .translation("forge.configgui.forgeLightPipelineEnabled")
+                    .define("experimentalForgeLightPipelineEnabled", false);
 
             showLoadWarnings = builder
-                .comment("When enabled, Forge will show any warnings that occurred during loading.")
-                .translation("forge.configgui.showLoadWarnings")
-                .define("showLoadWarnings", true);
+                    .comment("When enabled, Forge will show any warnings that occurred during loading.")
+                    .translation("forge.configgui.showLoadWarnings")
+                    .define("showLoadWarnings", true);
 
             useCombinedDepthStencilAttachment = builder
                     .comment("Set to true to use a combined DEPTH_STENCIL attachment instead of two separate ones.")
@@ -157,6 +157,16 @@ public class ForgeConfig {
                     .define("stabilizeDirectionGetNearest", true);
 
             builder.pop();
+        }
+
+        // Allow these to be called before the config is loaded because its used before loading the error screens.
+        // Prevents a ton of spam when an error screen is displayed.
+        public final boolean calculateAllNormals() {
+            return clientSpec.isLoaded() ? calculateAllNormals.get() : calculateAllNormals.getDefault();
+        }
+
+        public final boolean showLoadWarnings() {
+            return clientSpec.isLoaded() ? showLoadWarnings.get() : showLoadWarnings.getDefault();
         }
     }
 
