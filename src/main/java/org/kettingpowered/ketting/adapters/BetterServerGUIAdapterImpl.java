@@ -6,16 +6,17 @@ import net.minecraft.server.dedicated.DedicatedServer;
 import org.jetbrains.annotations.NotNull;
 import org.kettingpowered.ketting.adapter.BetterServerGUIAdapter;
 import org.kettingpowered.ketting.common.betterservergui.BetterServerGUI;
+import org.kettingpowered.ketting.internal.KettingConstants;
 import org.kettingpowered.ketting.types.Player;
 
 import javax.swing.*;
 import java.util.List;
 
-public class BetterServerGUI_1_20_3_Adapter implements BetterServerGUIAdapter {
+public class BetterServerGUIAdapterImpl implements BetterServerGUIAdapter {
 
     private final DedicatedServer server;
 
-    public BetterServerGUI_1_20_3_Adapter(@NotNull DedicatedServer server) {
+    public BetterServerGUIAdapterImpl(@NotNull DedicatedServer server) {
         this.server = server;
     }
 
@@ -32,7 +33,7 @@ public class BetterServerGUI_1_20_3_Adapter implements BetterServerGUIAdapter {
     }
 
     public String getMcVersion() {
-        return "1.20.3";
+        return KettingConstants.MINECRAFT_VERSION;
     }
 
     public void onWindowClosing() {}

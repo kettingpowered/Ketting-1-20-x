@@ -20,7 +20,7 @@
 +
 +      //Ketting start - Initialize Ketting
 +      org.kettingpowered.ketting.core.Ketting ketting = org.kettingpowered.ketting.core.Ketting.init(SharedConstants.getCurrentVersion().getName());
-+      ketting.registerAdapter(new org.kettingpowered.ketting.adapters.Forge_1_20_3_Adapter(), new org.kettingpowered.ketting.adapters.Bukkit_1_20_3_Adapter());
++      ketting.registerAdapter(new org.kettingpowered.ketting.adapters.ForgeAdapterImpl(), new org.kettingpowered.ketting.adapters.BukkitAdapterImpl());
 +      //Ketting end
  
        try {
@@ -67,7 +67,7 @@
           Bootstrap.validate();
 +
 +         //Ketting start - init dimension registry after bootstrap
-+         ketting.registerDimensionRegistry(new org.kettingpowered.ketting.adapters.DimensionRegistry_1_20_3_Adapter());
++         ketting.registerDimensionRegistry(new org.kettingpowered.ketting.adapters.DimensionRegistryAdapterImpl());
 +         //Ketting end
 +
           Util.startTimerHackThread();
