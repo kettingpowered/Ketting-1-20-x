@@ -9,10 +9,6 @@ import java.nio.file.Path;
 import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.LibraryFinder;
-import org.kettingpowered.ketting.internal.KettingConstants;
-
 @ApiStatus.Internal
 abstract class ForgeProdLaunchHandler extends CommonLaunchHandler {
     protected ForgeProdLaunchHandler(LaunchType type) {
@@ -22,22 +18,25 @@ abstract class ForgeProdLaunchHandler extends CommonLaunchHandler {
     @Override public String getNaming() { return "srg"; }
     @Override public boolean isProduction() { return true; }
 
-    @Override
-    public List<Path> getMinecraftPaths() {
-        var vers = FMLLoader.versionInfo();
-        var mc = LibraryFinder.findPathForMaven(KettingConstants.KETTINGSERVER_GROUP, "forge", "", this.type.name(), vers.mcAndForgeAndKettingVersion());
-        return List.of(mc);
-    }
-
     public static class Client extends ForgeProdLaunchHandler {
         public Client() {
             super(CLIENT);
+        }
+
+        @Override
+        public List<Path> getMinecraftPaths() {
+            return List.of(getPathFromResource("net/minecraft/client/Minecraft.class"));
         }
     }
 
     public static class Server extends ForgeProdLaunchHandler {
         public Server() {
             super(SERVER);
+        }
+
+        @Override
+        public List<Path> getMinecraftPaths() {
+            return List.of(getPathFromResource("net/minecraft/server/MinecraftServer.class"));
         }
     }
 }

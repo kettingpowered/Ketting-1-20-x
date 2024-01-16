@@ -105,7 +105,7 @@ public class Util {
         }
         return ret
     }
-
+    
     public static Map getMavenInfoFromDep(dep) {
         return getMavenInfoFromMap([
             group: dep.moduleVersion.id.group,
@@ -124,7 +124,16 @@ public class Util {
             extension: task.archiveExtension.get()
         ])
     }
-
+    public static Map getMavenInfoFromTask(task,classifier) {
+        return getMavenInfoFromMap([
+            group: task.project.group,
+            name: task.project.name,
+            version: task.project.version,
+            classifier: classifier,
+            extension: 'jar'
+        ])
+    }
+    
     private static Map getMavenInfoFromMap(art) {
         def key = "$art.group:$art.name"
         def name = "$art.group:$art.name:$art.version"

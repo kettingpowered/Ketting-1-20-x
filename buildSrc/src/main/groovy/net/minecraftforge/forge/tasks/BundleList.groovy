@@ -1,5 +1,6 @@
 package net.minecraftforge.forge.tasks
 
+import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.tasks.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
@@ -23,7 +24,7 @@ abstract class BundleList extends DefaultTask {
     void run() {
         def entries = [:] as TreeMap
         def resolved = project.configurations.installer.resolvedConfiguration.resolvedArtifacts
-        for (var dep : resolved) {
+        for (ResolvedArtifact dep : resolved) {
             def info = Util.getMavenInfoFromDep(dep)
             //println("$dep.file.sha1\t$info.name\t$info.path")
             entries.put("$info.art.group:$info.art.name", "$dep.file.sha256\t$info.name\t$info.path")
@@ -34,6 +35,13 @@ abstract class BundleList extends DefaultTask {
         ].forEach{ packed -> 
             def info = Util.getMavenInfoFromTask(packed)
             def file = packed.archiveFile.get().asFile
+            entries.put("$info.art.group:$info.art.name:$info.art.classifier", "$file.sha256\t$info.name\t$info.path")
+        }
+        [
+            'server': project.tasks.applyServerBinPatches
+        ].forEach { classifier, genned ->
+            def info = Util.getMavenInfoFromTask(genned, classifier)
+            def file = genned.output.get().asFile
             entries.put("$info.art.group:$info.art.name:$info.art.classifier", "$file.sha256\t$info.name\t$info.path")
         }
         

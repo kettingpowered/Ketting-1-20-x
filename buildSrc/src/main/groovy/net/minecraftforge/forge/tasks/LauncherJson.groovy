@@ -42,13 +42,17 @@ abstract class LauncherJson extends DefaultTask {
                 mainClass: '',
                 libraries: []
             ] as LinkedHashMap)
-
+            
             [
                 project.tasks.universalJar
             ].forEach { packed ->
                 dependsOn(packed)
                 input.from packed.archiveFile
             }
+            
+            def patched = project.tasks.applyClientBinPatches
+            dependsOn(patched)
+            input.from patched.output
         }
     }
 
@@ -70,7 +74,23 @@ abstract class LauncherJson extends DefaultTask {
                 ]
             ])
         }
-        getArtifacts(project, project.configurations.installer).each { key, lib ->
+        [
+            'client': project.tasks.applyClientBinPatches
+        ].forEach { classifier, genned ->
+            def info = Util.getMavenInfoFromTask(genned, classifier)
+            json.libraries.add([
+                name: info.name,
+                downloads: [
+                    artifact: [
+                        path: info.path,
+                        url: "",
+                        sha1: genned.output.get().asFile.sha1(),
+                        size: genned.output.get().asFile.length()
+                    ]
+                ]
+            ])
+        }
+        getArtifacts(project, project.configurations.installer).each { key, lib -> 
             json.libraries.add(lib)
         }
         Files.writeString(output.get().asFile.toPath(), new JsonBuilder(json).toPrettyString())
