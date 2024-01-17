@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
-@@ -129,6 +_,10 @@
+@@ -128,8 +_,10 @@
     public static final int f_165685_ = 3;
     public static final int f_165686_ = 4;
     private final CommandDispatcher<CommandSourceStack> f_82090_ = new CommandDispatcher<>();
@@ -11,8 +11,6 @@
        AdvancementCommands.m_136310_(this.f_82090_);
        AttributeCommand.m_245835_(this.f_82090_, p_230944_);
        ExecuteCommand.m_214434_(this.f_82090_, p_230944_);
-@@ -196,0 +_,0 @@
-
 @@ -193,7 +_,7 @@
           JfrCommand.m_183645_(this.f_82090_);
        }
@@ -44,7 +42,7 @@
     }
  
     public static <S> ParseResults<S> m_242611_(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
-@@ -231,11 +_,68 @@
+@@ -230,12 +_,68 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }
  
@@ -142,10 +140,10 @@
                 });
                 if (j > 10) {
                    mutablecomponent1.m_7220_(CommonComponents.f_238772_);
-@@ -301,16 +_,60 @@
+@@ -295,16 +_,60 @@
        }
     }
-
+ 
 +   //Ketting start - rewrite to add forge dispatcher support
     public void m_82095_(ServerPlayer p_82096_) {
 -      Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
@@ -165,7 +163,7 @@
        RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
        map.put(this.f_82090_.getRoot(), rootcommandnode);
 -      this.m_82112_(this.f_82090_.getRoot(), rootcommandnode, p_82096_.m_20203_(), map);
--      p_82096_.f_8906_.m_141995_(new ClientboundCommandsPacket(rootcommandnode));
+-      p_82096_.f_8906_.m_9829_(new ClientboundCommandsPacket(rootcommandnode));
 +
 +      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.f_82090_.getRoot(), rootcommandnode, map, p_82096_.m_20203_(), ctx -> 0, suggest -> SuggestionProviders.m_121664_((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
 +
@@ -206,7 +204,7 @@
           if (commandnode.canUse(p_82115_)) {
              ArgumentBuilder<SharedSuggestionProvider, ?> argumentbuilder = (ArgumentBuilder)commandnode.createBuilder();
              argumentbuilder.requires((p_82126_) -> {
-@@ -364,7 +_,44 @@
+@@ -358,7 +_,44 @@
     }
  
     public CommandDispatcher<CommandSourceStack> m_82094_() {

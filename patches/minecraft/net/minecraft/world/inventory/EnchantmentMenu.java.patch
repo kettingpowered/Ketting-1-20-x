@@ -1,9 +1,8 @@
 --- a/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -27,18 +_,17 @@
+@@ -25,17 +_,16 @@
  
  public class EnchantmentMenu extends AbstractContainerMenu {
-    static final ResourceLocation f_291161_ = new ResourceLocation("item/empty_slot_lapis_lazuli");
 -   private final Container f_39449_ = new SimpleContainer(2) {
 -      public void m_6596_() {
 -         super.m_6596_();
@@ -24,7 +23,7 @@
  
     public EnchantmentMenu(int p_39454_, Inventory p_39455_) {
        this(p_39454_, p_39455_, ContainerLevelAccess.f_39287_);
-@@ -46,6 +_,19 @@
+@@ -43,6 +_,19 @@
  
     public EnchantmentMenu(int p_39457_, Inventory p_39458_, ContainerLevelAccess p_39459_) {
        super(MenuType.f_39969_, p_39457_);
@@ -43,8 +42,8 @@
 +      };
        this.f_39450_ = p_39459_;
        this.m_38897_(new Slot(this.f_39449_, 0, 15, 47) {
-          public int m_6641_() {
-@@ -54,8 +_,8 @@
+          public boolean m_5857_(ItemStack p_39508_) {
+@@ -55,8 +_,8 @@
        });
        this.m_38897_(new Slot(this.f_39449_, 1, 35, 47) {
           public boolean m_5857_(ItemStack p_39517_) {
@@ -53,8 +52,8 @@
           }
        });
  
-          public Pair<ResourceLocation, ResourceLocation> m_7543_() {
-@@ -82,30 +_,34 @@
+       for(int i = 0; i < 3; ++i) {
+@@ -79,30 +_,34 @@
        this.m_38895_(DataSlot.m_39406_(this.f_39448_, 0));
        this.m_38895_(DataSlot.m_39406_(this.f_39448_, 1));
        this.m_38895_(DataSlot.m_39406_(this.f_39448_, 2));
@@ -93,7 +92,7 @@
                 }
  
                 for(int l = 0; l < 3; ++l) {
-@@ -119,6 +_,41 @@
+@@ -116,6 +_,41 @@
                    }
                 }
  
@@ -135,8 +134,8 @@
                 this.m_38946_();
              });
           } else {
-@@ -145,8 +_,26 @@
-             this.f_39450_.m_39292_((p_296875_, p_296876_) -> {
+@@ -142,8 +_,26 @@
+             this.f_39450_.m_39292_((p_39481_, p_39482_) -> {
                 ItemStack itemstack2 = itemstack;
                 List<EnchantmentInstance> list = this.m_39471_(itemstack, p_39466_, this.f_39446_[p_39466_]);
 -               if (!list.isEmpty()) {
@@ -154,7 +153,7 @@
 +                  org.bukkit.enchantments.Enchantment hintedEnchantment = org.bukkit.enchantments.Enchantment.getByKey(org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey.fromMinecraft(BuiltInRegistries.f_256876_.m_7981_(net.minecraft.world.item.enchantment.Enchantment.m_44697_(f_39447_[i]))));
 +                  int hintedEnchantmentLevel = f_39448_[i];
 +                  org.bukkit.event.enchantment.EnchantItemEvent event = new org.bukkit.event.enchantment.EnchantItemEvent((org.bukkit.entity.Player) p_39465_.getBukkitEntity(), this.getBukkitView(), f_39450_.getLocation().getBlock(), item, this.f_39446_[i], enchants, hintedEnchantment, hintedEnchantmentLevel, i);
-+                  p_296875_.getCraftServer().getPluginManager().callEvent(event);
++                  p_39481_.getCraftServer().getPluginManager().callEvent(event);
 +
 +                  int level = event.getExpLevelCost();
 +                  if (event.isCancelled() || (level > p_39465_.f_36078_ && !p_39465_.m_150110_().f_35937_) || event.getEnchantsToAdd().isEmpty()) {
@@ -164,11 +163,12 @@
                    boolean flag = itemstack.m_150930_(Items.f_42517_);
                    if (flag) {
                       itemstack2 = new ItemStack(Items.f_42690_);
-@@ -158,14 +_,30 @@
+@@ -155,15 +_,30 @@
                       this.f_39449_.m_6836_(0, itemstack2);
                    }
  
--                  for(EnchantmentInstance enchantmentinstance : list) {
+-                  for(int j = 0; j < list.size(); ++j) {
+-                     EnchantmentInstance enchantmentinstance = list.get(j);
 -                     if (flag) {
 -                        EnchantedBookItem.m_41153_(itemstack2, enchantmentinstance);
 -                     } else {
@@ -200,7 +200,7 @@
                    if (!p_39465_.m_150110_().f_35937_) {
                       itemstack1.m_41774_(i);
                       if (itemstack1.m_41619_()) {
-@@ -220,6 +_,7 @@
+@@ -218,6 +_,7 @@
     }
  
     public boolean m_6875_(Player p_39463_) {
@@ -208,7 +208,7 @@
        return m_38889_(this.f_39450_, p_39463_, Blocks.f_50201_);
     }
  
-@@ -237,7 +_,7 @@
+@@ -235,7 +_,7 @@
              if (!this.m_38903_(itemstack1, 2, 38, true)) {
                 return ItemStack.f_41583_;
              }
@@ -217,7 +217,7 @@
              if (!this.m_38903_(itemstack1, 1, 2, true)) {
                 return ItemStack.f_41583_;
              }
-@@ -266,4 +_,17 @@
+@@ -264,4 +_,17 @@
  
        return itemstack;
     }

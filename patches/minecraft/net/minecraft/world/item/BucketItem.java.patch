@@ -29,10 +29,10 @@
        if (blockhitresult.m_6662_() == HitResult.Type.MISS) {
           return InteractionResultHolder.m_19098_(itemstack);
        } else if (blockhitresult.m_6662_() != HitResult.Type.BLOCK) {
-@@ -53,14 +_,25 @@
-                Block $$10 = blockstate1.m_60734_();
-                if ($$10 instanceof BucketPickup) {
-                   BucketPickup bucketpickup = (BucketPickup)$$10;
+@@ -52,14 +_,25 @@
+                BlockState blockstate1 = p_40703_.m_8055_(blockpos);
+                if (blockstate1.m_60734_() instanceof BucketPickup) {
+                   BucketPickup bucketpickup = (BucketPickup)blockstate1.m_60734_();
 +                  // CraftBukkit start
 +                  ItemStack dummyFluid = bucketpickup.m_142598_(p_40704_, org.bukkit.craftbukkit.v1_20_R2.util.DummyGeneratorAccess.INSTANCE, blockpos, blockstate1);
 +                  if (dummyFluid.m_41619_()) return InteractionResultHolder.m_19100_(itemstack); // Don't fire event if the bucket won't be filled.
@@ -44,7 +44,7 @@
 +                     return InteractionResultHolder.m_19100_(itemstack);
 +                  }
 +                  // CraftBukkit end
-                   ItemStack itemstack1 = bucketpickup.m_142598_(p_40704_, p_40703_, blockpos, blockstate1);
+                   ItemStack itemstack1 = bucketpickup.m_142598_(p_40703_, blockpos, blockstate1);
                    if (!itemstack1.m_41619_()) {
                       p_40704_.m_36246_(Stats.f_12982_.m_12902_(this));
 -                     bucketpickup.m_142298_().ifPresent((p_150709_) -> {
@@ -52,10 +52,10 @@
                          p_40704_.m_5496_(p_150709_, 1.0F, 1.0F);
                       });
                       p_40703_.m_142346_(p_40704_, GameEvent.f_157816_, blockpos);
--                     ItemStack itemstack1 = ItemUtils.m_41813_(itemstack, p_40704_, itemstack2);
-+                     ItemStack itemstack1 = ItemUtils.m_41813_(itemstack, p_40704_, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
+-                     ItemStack itemstack2 = ItemUtils.m_41813_(itemstack, p_40704_, itemstack1);
++                     ItemStack itemstack2 = ItemUtils.m_41813_(itemstack, p_40704_, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
                       if (!p_40703_.f_46443_) {
-                         CriteriaTriggers.f_10576_.m_38772_((ServerPlayer)p_40704_, itemstack2);
+                         CriteriaTriggers.f_10576_.m_38772_((ServerPlayer)p_40704_, itemstack1);
                       }
 @@ -71,8 +_,8 @@
                 return InteractionResultHolder.m_19100_(itemstack);

@@ -33,14 +33,14 @@
                 Connection.m_264299_(channelpipeline, PacketFlow.SERVERBOUND);
                 int i = ServerConnectionListener.this.f_9702_.m_7032_();
                 Connection connection = (Connection)(i > 0 ? new RateKickingConnection(i) : new Connection(PacketFlow.SERVERBOUND));
-@@ -96,9 +_,19 @@
-                connection.m_295611_(channelpipeline);
-                connection.m_294587_(new ServerHandshakePacketListenerImpl(ServerConnectionListener.this.f_9702_, connection));
+@@ -92,9 +_,19 @@
+                channelpipeline.addLast("packet_handler", connection);
+                connection.m_129505_(new ServerHandshakePacketListenerImpl(ServerConnectionListener.this.f_9702_, connection));
              }
--         }).group(eventloopgroup).localAddress(p_9712_, p_9713_).bind().syncUninterruptibly());
+-         }).group(lazyloadedvalue.m_13971_()).localAddress(p_9712_, p_9713_).bind().syncUninterruptibly());
 -      }
 -   }
-+         }).group(eventloopgroup).localAddress(p_9712_, p_9713_).option(ChannelOption.AUTO_READ, false).bind().syncUninterruptibly()); // CraftBukkit
++         }).group(lazyloadedvalue.m_13971_()).localAddress(p_9712_, p_9713_).option(ChannelOption.AUTO_READ, false).bind().syncUninterruptibly()); // CraftBukkit
 +      }
 +   }
 +
@@ -56,7 +56,7 @@
  
     public SocketAddress m_9708_() {
        ChannelFuture channelfuture;
-@@ -135,6 +_,13 @@
+@@ -129,6 +_,13 @@
  
     public void m_9721_() {
        synchronized(this.f_9704_) {
@@ -70,7 +70,7 @@
           Iterator<Connection> iterator = this.f_9704_.iterator();
  
           while(iterator.hasNext()) {
-@@ -156,6 +_,10 @@
+@@ -150,6 +_,10 @@
                       connection.m_129540_();
                    }
                 } else {

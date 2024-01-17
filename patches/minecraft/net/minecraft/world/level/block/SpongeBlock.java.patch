@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SpongeBlock.java
 +++ b/net/minecraft/world/level/block/SpongeBlock.java
-@@ -38,7 +_,83 @@
+@@ -38,43 +_,83 @@
     }
  
     private boolean m_56807_(Level p_56808_, BlockPos p_56809_) {
@@ -13,16 +13,16 @@
 +            consumer.accept(blockposition1.m_121945_(direction));
           }
  
-       }, (p_296944_) -> {
-          if (p_296944_.equals(p_56809_)) {
+       }, (p_279054_) -> {
+          if (p_279054_.equals(p_56809_)) {
              return true;
           } else {
 -            BlockState blockstate = p_56808_.m_8055_(p_279054_);
 -            FluidState fluidstate = p_56808_.m_6425_(p_279054_);
 -            if (!fluidstate.m_205070_(FluidTags.f_13131_)) {
 +            // CraftBukkit start
-+            BlockState blockstate = blockList.m_8055_(p_296944_);
-+            FluidState fluidstate = blockList.m_6425_(p_296944_);
++            BlockState blockstate = blockList.m_8055_(p_279054_);
++            FluidState fluidstate = blockList.m_6425_(p_279054_);
 +            // CraftBukkit end
 +            if (!spongeState.canBeHydrated(p_56808_, p_56809_, fluidstate, p_279054_)) {
                 return false;
@@ -30,26 +30,26 @@
                 Block block = blockstate.m_60734_();
                 if (block instanceof BucketPickup) {
                    BucketPickup bucketpickup = (BucketPickup)block;
--                  if (!bucketpickup.m_142598_((Player)null, p_56808_, p_296944_, blockstate).m_41619_()) {
-+                  if (!bucketpickup.m_142598_((Player) null, blockList, p_296944_, blockstate).m_41619_()) { // CraftBukkit
+-                  if (!bucketpickup.m_142598_(p_56808_, p_279054_, blockstate).m_41619_()) {
++                  if (!bucketpickup.m_142598_((Player) null, blockList, p_279054_, blockstate).m_41619_()) { // CraftBukkit
                       return true;
                    }
                 }
  
                 if (blockstate.m_60734_() instanceof LiquidBlock) {
--                  p_56808_.m_7731_(p_296944_, Blocks.f_50016_.m_49966_(), 3);
-+                  blockList.m_7731_(p_296944_, Blocks.f_50016_.m_49966_(), 3);
+-                  p_56808_.m_7731_(p_279054_, Blocks.f_50016_.m_49966_(), 3);
++                  blockList.m_7731_(p_279054_, Blocks.f_50016_.m_49966_(), 3);
                 } else {
                    if (!blockstate.m_60713_(Blocks.f_50575_) && !blockstate.m_60713_(Blocks.f_50576_) && !blockstate.m_60713_(Blocks.f_50037_) && !blockstate.m_60713_(Blocks.f_50038_)) {
                       return false;
                    }
  
--                  BlockEntity blockentity = blockstate.m_155947_() ? p_56808_.m_7702_(p_296944_) : null;
--                  m_49892_(blockstate, p_56808_, p_296944_, blockentity);
--                  p_56808_.m_7731_(p_296944_, Blocks.f_50016_.m_49966_(), 3);
+-                  BlockEntity blockentity = blockstate.m_155947_() ? p_56808_.m_7702_(p_279054_) : null;
+-                  m_49892_(blockstate, p_56808_, p_279054_, blockentity);
+-                  p_56808_.m_7731_(p_279054_, Blocks.f_50016_.m_49966_(), 3);
 +                  // CraftBukkit start
-+                  // BlockEntity blockentity = blockstate.hasBlockEntity() ? p_56808_.getBlockEntity(p_296944_) : null;
-+                  blockList.m_7731_(p_296944_, Blocks.f_50016_.m_49966_(), 3);
++                  // BlockEntity blockentity = blockstate.hasBlockEntity() ? p_56808_.getBlockEntity(p_279054_) : null;
++                  blockList.m_7731_(p_279054_, Blocks.f_50016_.m_49966_(), 3);
 +                  // CraftBukkit end
                 }
  

@@ -288,7 +288,7 @@
              iterator.remove();
           }
  
-@@ -908,18 +_,51 @@
+@@ -908,17 +_,50 @@
        return this.m_147207_(p_21165_, (Entity)null);
     }
  
@@ -313,7 +313,6 @@
           return false;
        } else {
           MobEffectInstance mobeffectinstance = this.f_20945_.get(p_147208_.m_19544_());
-          boolean flag = false;
 +
 +         // CraftBukkit start
 +         boolean override = false;
@@ -331,16 +330,16 @@
           if (mobeffectinstance == null) {
              this.f_20945_.put(p_147208_.m_19544_(), p_147208_);
              this.m_142540_(p_147208_, p_147209_);
-             flag = true;
+             return true;
 -         } else if (mobeffectinstance.m_19558_(p_147208_)) {
 +            // CraftBukkit start
 +         } else if (event.isOverride()) {
 +            mobeffectinstance.m_19558_(p_147208_);
              this.m_141973_(mobeffectinstance, true, p_147209_);
 +            // CraftBukkit end
-             flag = true;
-          }
- 
+             return true;
+          } else {
+             return false;
 @@ -927,6 +_,9 @@
     }
  
@@ -351,7 +350,7 @@
        if (this.m_6336_() == MobType.f_21641_) {
           MobEffect mobeffect = p_21197_.m_19544_();
           if (mobeffect == MobEffects.f_19605_ || mobeffect == MobEffects.f_19614_) {
-@@ -955,13 +_,40 @@
+@@ -953,13 +_,40 @@
        return this.m_6336_() == MobType.f_21641_;
     }
  
@@ -394,7 +393,7 @@
        if (mobeffectinstance != null) {
           this.m_7285_(mobeffectinstance);
           return true;
-@@ -1041,19 +_,57 @@
+@@ -1015,19 +_,57 @@
  
     }
  
@@ -467,7 +466,7 @@
           return false;
        } else if (p_21016_.m_269533_(DamageTypeTags.f_268745_) && this.m_21023_(MobEffects.f_19607_)) {
           return false;
-@@ -1077,21 +_,26 @@
+@@ -1051,21 +_,26 @@
  
           this.f_20891_ = 0;
           float f = p_21017_;
@@ -506,7 +505,7 @@
           }
  
           if (p_21016_.m_269533_(DamageTypeTags.f_268419_) && this.m_6095_().m_204039_(EntityTypeTags.f_144295_)) {
-@@ -1100,23 +_,35 @@
+@@ -1074,23 +_,35 @@
  
           this.f_267362_.m_267771_(1.5F);
           boolean flag1 = true;
@@ -547,7 +546,7 @@
              this.m_142642_(p_21016_, p_21017_);
              p_21017_ *= 0.75F;
           }
-@@ -1134,11 +_,10 @@
+@@ -1108,11 +_,10 @@
                 Player player1 = (Player)entity1;
                 this.f_20889_ = 100;
                 this.f_20888_ = player1;
@@ -571,7 +570,7 @@
              }
           }
  
-@@ -1223,31 +_,46 @@
+@@ -1197,31 +_,46 @@
        } else {
           ItemStack itemstack = null;
  
@@ -631,7 +630,7 @@
        }
     }
  
-@@ -1305,6 +_,7 @@
+@@ -1278,6 +_,7 @@
     }
  
     public void m_6667_(DamageSource p_21014_) {
@@ -639,7 +638,7 @@
        if (!this.m_213877_() && !this.f_20890_) {
           Entity entity = p_21014_.m_7639_();
           LivingEntity livingentity = this.m_21232_();
-@@ -1317,7 +_,7 @@
+@@ -1290,7 +_,7 @@
           }
  
           if (!this.m_9236_().f_46443_ && this.m_8077_()) {
@@ -648,7 +647,7 @@
           }
  
           this.f_20890_ = true;
-@@ -1342,17 +_,26 @@
+@@ -1315,17 +_,26 @@
        if (!this.m_9236_().f_46443_) {
           boolean flag = false;
           if (p_21269_ instanceof WitherBoss) {
@@ -679,7 +678,7 @@
                 this.m_9236_().m_7967_(itementity);
              }
           }
-@@ -1360,31 +_,92 @@
+@@ -1333,31 +_,92 @@
        }
     }
  
@@ -793,7 +792,7 @@
        p_147241_ *= 1.0D - this.m_21133_(Attributes.f_22278_);
        if (!(p_147241_ <= 0.0D)) {
           this.f_19812_ = true;
-@@ -1474,6 +_,28 @@
+@@ -1445,6 +_,28 @@
        return p_21202_.m_41616_();
     }
  
@@ -822,7 +821,7 @@
     public Optional<BlockPos> m_21227_() {
        return this.f_20957_;
     }
-@@ -1484,15 +_,9 @@
+@@ -1455,15 +_,9 @@
        } else {
           BlockPos blockpos = this.m_20183_();
           BlockState blockstate = this.m_146900_();
@@ -878,7 +877,7 @@
              this.m_5496_(soundtype.m_56779_(), soundtype.m_56773_() * 0.5F, soundtype.m_56774_() * 0.75F);
           }
  
-@@ -1568,7 +_,7 @@
+@@ -1539,7 +_,7 @@
  
     protected float m_21161_(DamageSource p_21162_, float p_21163_) {
        if (!p_21162_.m_269533_(DamageTypeTags.f_268490_)) {
@@ -887,7 +886,7 @@
           p_21163_ = CombatRules.m_19272_(p_21163_, (float)this.m_21230_(), (float)this.m_21133_(Attributes.f_22285_));
        }
  
-@@ -1579,7 +_,8 @@
+@@ -1550,7 +_,8 @@
        if (p_21193_.m_269533_(DamageTypeTags.f_268437_)) {
           return p_21194_;
        } else {
@@ -897,7 +896,7 @@
              int i = (this.m_21124_(MobEffects.f_19606_).m_19564_() + 1) * 5;
              int j = 25 - i;
              float f = p_21194_ * (float)j;
-@@ -1588,9 +_,9 @@
+@@ -1559,9 +_,9 @@
              float f2 = f1 - p_21194_;
              if (f2 > 0.0F && f2 < 3.4028235E37F) {
                 if (this instanceof ServerPlayer) {
@@ -909,7 +908,7 @@
                 }
              }
           }
-@@ -1610,8 +_,196 @@
+@@ -1581,8 +_,196 @@
        }
     }
  
@@ -1115,7 +1114,7 @@
           if (f1 != 0.0F) {
              this.m_21231_().m_289194_(p_21240_, f1);
              this.m_21153_(this.m_21223_() - f1);
-@@ -1660,8 +_,18 @@
+@@ -1627,8 +_,18 @@
     }
  
     public final void m_21317_(int p_21318_) {
@@ -1136,7 +1135,7 @@
  
     public final int m_21235_() {
        return this.f_19804_.m_135370_(f_20941_);
-@@ -1684,6 +_,8 @@
+@@ -1651,6 +_,8 @@
     }
  
     public void m_21011_(InteractionHand p_21012_, boolean p_21013_) {
@@ -1158,7 +1157,7 @@
     }
  
     protected void m_6088_() {
-@@ -1895,6 +_,27 @@
+@@ -1862,6 +_,27 @@
  
     public abstract ItemStack m_6844_(EquipmentSlot p_21127_);
  
@@ -1186,7 +1185,7 @@
     public abstract void m_8061_(EquipmentSlot p_21036_, ItemStack p_21037_);
  
     protected void m_181122_(ItemStack p_181123_) {
-@@ -1985,14 +_,17 @@
+@@ -1955,14 +_,17 @@
        }
  
        this.f_19812_ = true;
@@ -1243,7 +1242,7 @@
           } else if (this.m_20077_() && this.m_6129_() && !this.m_203441_(fluidstate)) {
              double d8 = this.m_20186_();
              this.m_19920_(0.02F, p_21280_);
-@@ -2105,11 +_,12 @@
+@@ -2075,11 +_,12 @@
              }
  
              if (this.m_20096_() && !this.m_9236_().f_46443_) {
@@ -1275,7 +1274,7 @@
        super.m_8119_();
        this.m_21329_();
        this.m_21333_();
-@@ -2265,7 +_,7 @@
+@@ -2235,7 +_,7 @@
              }
           }
  
@@ -1284,7 +1283,7 @@
           if (this.f_19797_ % 20 == 0) {
              this.m_21231_().m_19296_();
           }
-@@ -2276,7 +_,9 @@
+@@ -2246,7 +_,9 @@
        }
  
        if (!this.m_213877_()) {
@@ -1294,19 +1293,7 @@
        }
  
        double d1 = this.m_20185_() - this.f_19854_;
-@@ -2357,6 +_,11 @@
-       }
- 
-       this.m_292733_();
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timerEntityTickRest.stopTiming(); // Spigot
-+   }
-+
-+   public void detectEquipmentUpdatesPublic() { // CraftBukkit
-+      m_21315_(); //Ketting - just redirect this
-    }
- 
-    private void m_21315_() {
-@@ -2389,6 +_,7 @@
+@@ -2358,6 +_,7 @@
  
           ItemStack itemstack1 = this.m_6844_(equipmentslot);
           if (this.m_246525_(itemstack, itemstack1)) {
@@ -1314,15 +1301,15 @@
              if (map == null) {
                 map = Maps.newEnumMap(EquipmentSlot.class);
              }
-@@ -2513,6 +_,7 @@
+@@ -2489,6 +_,7 @@
  
-       this.m_20334_(d0, d1, d2);
+       this.m_20334_(d1, d3, d5);
        this.m_9236_().m_46473_().m_6180_("ai");
 +      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timerEntityAI.startTiming(); // Spigot
        if (this.m_6107_()) {
           this.f_20899_ = false;
           this.f_20900_ = 0.0F;
-@@ -2522,11 +_,15 @@
+@@ -2498,11 +_,15 @@
           this.m_6140_();
           this.m_9236_().m_46473_().m_7238_();
        }
@@ -1358,7 +1345,7 @@
           }
        } else {
           this.f_20954_ = 0;
-@@ -2562,6 +_,7 @@
+@@ -2538,6 +_,7 @@
           this.m_183634_();
        }
  
@@ -1366,15 +1353,15 @@
        label104: {
           LivingEntity livingentity = this.m_6688_();
           if (livingentity instanceof Player player) {
-@@ -2573,6 +_,7 @@
+@@ -2549,6 +_,7 @@
  
-          this.m_7023_(vec31);
+          this.m_7023_(vec3);
        }
 +      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timerEntityAIMove.stopTiming(); // Spigot
  
        this.m_9236_().m_46473_().m_7238_();
        this.m_9236_().m_46473_().m_6180_("freezing");
-@@ -2598,7 +_,9 @@
+@@ -2574,7 +_,9 @@
           this.m_21071_(aabb, this.m_20191_());
        }
  
@@ -1384,7 +1371,7 @@
        this.m_9236_().m_46473_().m_7238_();
        if (!this.m_9236_().f_46443_ && this.m_6126_() && this.m_20071_()) {
           this.m_6469_(this.m_269291_().m_269063_(), 1.0F);
-@@ -2614,6 +_,8 @@
+@@ -2590,6 +_,8 @@
        boolean flag = this.m_20291_(7);
        if (flag && !this.m_20096_() && !this.m_20159_() && !this.m_21023_(MobEffects.f_19620_)) {
           ItemStack itemstack = this.m_6844_(EquipmentSlot.CHEST);
@@ -1393,7 +1380,7 @@
           if (itemstack.m_150930_(Items.f_42741_) && ElytraItem.m_41140_(itemstack)) {
              flag = true;
              int i = this.f_20937_ + 1;
-@@ -2635,6 +_,7 @@
+@@ -2611,6 +_,7 @@
        }
  
        if (!this.m_9236_().f_46443_) {
@@ -1401,7 +1388,7 @@
           this.m_20115_(7, flag);
        }
  
-@@ -2802,12 +_,19 @@
+@@ -2760,12 +_,19 @@
     }
  
     public boolean m_6087_() {
@@ -1424,7 +1411,7 @@
  
     public float m_6080_() {
        return this.f_20885_;
-@@ -2863,8 +_,11 @@
+@@ -2821,8 +_,11 @@
  
     private void m_21329_() {
        if (this.m_6117_()) {
@@ -1545,7 +1532,7 @@
              return false;
           } else {
              return item.m_8105_(this.f_20935_) - this.f_20936_ >= 5;
-@@ -3070,6 +_,12 @@
+@@ -3028,6 +_,12 @@
     }
  
     public boolean m_20984_(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_) {
@@ -1558,7 +1545,7 @@
        double d0 = this.m_20185_();
        double d1 = this.m_20186_();
        double d2 = this.m_20189_();
-@@ -3092,16 +_,41 @@
+@@ -3050,16 +_,41 @@
           }
  
           if (flag1) {
@@ -1603,7 +1590,7 @@
        } else {
           if (p_20988_) {
              level.m_7605_(this, (byte)46);
-@@ -3111,7 +_,7 @@
+@@ -3069,7 +_,7 @@
              ((PathfinderMob)this).m_21573_().m_26573_();
           }
  
@@ -1612,7 +1599,7 @@
        }
     }
  
-@@ -3174,8 +_,8 @@
+@@ -3127,8 +_,8 @@
        }
  
        BlockState blockstate = this.m_9236_().m_8055_(p_21141_);

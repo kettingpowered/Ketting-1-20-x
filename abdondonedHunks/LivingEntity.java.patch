@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/entity/LivingEntity.java
++++ b/net/minecraft/world/entity/LivingEntity.java
+@@ -2357,6 +_,11 @@
+       }
+ 
+       this.m_292733_();
++      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timerEntityTickRest.stopTiming(); // Spigot
++   }
++
++   public void detectEquipmentUpdatesPublic() { // CraftBukkit
++      m_21315_(); //Ketting - just redirect this
+    }
+ 
+    private void m_21315_() {

@@ -1,14 +1,14 @@
 --- a/net/minecraft/server/PlayerAdvancements.java
 +++ b/net/minecraft/server/PlayerAdvancements.java
-@@ -132,6 +_,7 @@
+@@ -142,6 +_,7 @@
     }
  
     public void m_135991_() {
 +      if (org.spigotmc.SpigotConfig.disableAdvancementSaving) return; // Spigot
-       JsonElement jsonelement = Util.m_260975_(this.f_290992_.encodeStart(JsonOps.INSTANCE, this.m_295536_()), IllegalStateException::new);
+       Map<ResourceLocation, AdvancementProgress> map = new LinkedHashMap<>();
  
-       try {
-@@ -171,6 +_,8 @@
+       for(Map.Entry<Advancement, AdvancementProgress> entry : this.f_263740_.entrySet()) {
+@@ -167,6 +_,8 @@
     }
  
     public boolean m_135988_(Advancement p_135989_, String p_135990_) {

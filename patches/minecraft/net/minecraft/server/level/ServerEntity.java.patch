@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
-@@ -63,8 +_,15 @@
+@@ -60,8 +_,15 @@
     private boolean f_8525_;
     @Nullable
     private List<SynchedEntityData.DataValue<?>> f_263120_;
@@ -16,16 +16,16 @@
        this.f_8509_ = p_8528_;
        this.f_8513_ = p_8532_;
        this.f_8510_ = p_8529_;
-@@ -81,7 +_,7 @@
+@@ -78,7 +_,7 @@
     public void m_8533_() {
        List<Entity> list = this.f_8510_.m_20197_();
        if (!list.equals(this.f_8523_)) {
 -         this.f_8513_.accept(new ClientboundSetPassengersPacket(this.f_8510_));
 +         this.m_8538_(new ClientboundSetPassengersPacket(this.f_8510_)); // CraftBukkit
-          m_277180_(list, this.f_8523_).forEach((p_296578_) -> {
-             if (p_296578_ instanceof ServerPlayer serverplayer1) {
+          m_277180_(list, this.f_8523_).forEach((p_289307_) -> {
+             if (p_289307_ instanceof ServerPlayer serverplayer1) {
                 serverplayer1.f_8906_.m_9774_(serverplayer1.m_20185_(), serverplayer1.m_20186_(), serverplayer1.m_20189_(), serverplayer1.m_146908_(), serverplayer1.m_146909_());
-@@ -91,13 +_,17 @@
+@@ -90,13 +_,17 @@
  
        Entity $$11 = this.f_8510_;
        if ($$11 instanceof ItemFrame itemframe) {
@@ -47,7 +47,7 @@
                       mapitemsaveddata.m_77918_(serverplayer, itemstack);
                       Packet<?> packet = mapitemsaveddata.m_164796_(integer, serverplayer);
                       if (packet != null) {
-@@ -203,7 +_,27 @@
+@@ -200,7 +_,27 @@
  
        ++this.f_8521_;
        if (this.f_8510_.f_19864_) {
@@ -101,7 +101,7 @@
        }
  
        Packet<ClientGamePacketListener> packet = this.f_8510_.m_5654_();
-@@ -242,6 +_,13 @@
+@@ -239,6 +_,13 @@
        boolean flag = this.f_8512_;
        if (this.f_8510_ instanceof LivingEntity) {
           Collection<AttributeInstance> collection = ((LivingEntity)this.f_8510_).m_21204_().m_22170_();
@@ -115,7 +115,7 @@
           if (!collection.isEmpty()) {
              p_289563_.accept(new ClientboundUpdateAttributesPacket(this.f_8510_.m_19879_(), collection));
           }
-@@ -269,7 +_,14 @@
+@@ -266,7 +_,14 @@
           if (!list.isEmpty()) {
              p_289563_.accept(new ClientboundSetEquipmentPacket(this.f_8510_.m_19879_(), list));
           }
@@ -131,7 +131,7 @@
  
        if (!this.f_8510_.m_20197_().isEmpty()) {
           p_289563_.accept(new ClientboundSetPassengersPacket(this.f_8510_));
-@@ -299,6 +_,11 @@
+@@ -296,6 +_,11 @@
        if (this.f_8510_ instanceof LivingEntity) {
           Set<AttributeInstance> set = ((LivingEntity)this.f_8510_).m_21204_().m_22145_();
           if (!set.isEmpty()) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
-@@ -88,6 +_,7 @@
+@@ -86,6 +_,7 @@
     private final Node[] f_31077_ = new Node[24];
     private final int[] f_31078_ = new int[24];
     private final BinaryHeap f_31079_ = new BinaryHeap();
@@ -36,16 +36,16 @@
        this.m_146874_();
        if (this.m_9236_().f_46443_) {
           this.m_21153_(this.m_21223_());
-@@ -232,7 +_,7 @@
+@@ -237,7 +_,7 @@
                 }
  
                 Vec3 vec3 = dragonphaseinstance.m_5535_();
 -               if (vec3 != null) {
 +               if (vec3 != null && dragonphaseinstance.m_7309_() != EnderDragonPhase.f_31387_) { // CraftBukkit - Don't move when hovering
-                   double d0 = vec3.f_82479_ - this.m_20185_();
-                   double d1 = vec3.f_82480_ - this.m_20186_();
-                   double d2 = vec3.f_82481_ - this.m_20189_();
-@@ -362,7 +_,14 @@
+                   double d7 = vec3.f_82479_ - this.m_20185_();
+                   double d8 = vec3.f_82480_ - this.m_20186_();
+                   double d9 = vec3.f_82481_ - this.m_20189_();
+@@ -367,7 +_,14 @@
           if (this.f_31086_.m_213877_()) {
              this.f_31086_ = null;
           } else if (this.f_19797_ % 10 == 0 && this.m_21223_() < this.m_21233_()) {
@@ -61,7 +61,7 @@
           }
        }
  
-@@ -426,6 +_,9 @@
+@@ -431,6 +_,9 @@
        int j1 = Mth.m_14107_(p_31140_.f_82293_);
        boolean flag = false;
        boolean flag1 = false;
@@ -71,7 +71,7 @@
  
        for(int k1 = i; k1 <= l; ++k1) {
           for(int l1 = j; l1 <= i1; ++l1) {
-@@ -433,8 +_,12 @@
+@@ -438,8 +_,12 @@
                 BlockPos blockpos = new BlockPos(k1, l1, i2);
                 BlockState blockstate = this.m_9236_().m_8055_(blockpos);
                 if (!blockstate.m_60795_() && !blockstate.m_204336_(BlockTags.f_215822_)) {
@@ -86,7 +86,7 @@
                    } else {
                       flag = true;
                    }
-@@ -443,6 +_,51 @@
+@@ -448,6 +_,51 @@
           }
        }
  
@@ -138,7 +138,7 @@
        if (flag1) {
           BlockPos blockpos1 = new BlockPos(i + this.f_19796_.m_188503_(l - i + 1), j + this.f_19796_.m_188503_(i1 - j + 1), k + this.f_19796_.m_188503_(j1 - k + 1));
           this.m_9236_().m_46796_(2008, blockpos1, 0);
-@@ -503,6 +_,21 @@
+@@ -508,6 +_,21 @@
  
     }
  
@@ -160,7 +160,7 @@
     protected void m_6153_() {
        if (this.f_31073_ != null) {
           this.f_31073_.m_64096_(this);
-@@ -516,26 +_,50 @@
+@@ -521,26 +_,50 @@
           this.m_9236_().m_7106_(ParticleTypes.f_123812_, this.m_20185_() + (double)f, this.m_20186_() + 2.0D + (double)f1, this.m_20189_() + (double)f2, 0.0D, 0.0D, 0.0D);
        }
  
@@ -218,7 +218,7 @@
           }
  
           if (this.f_31073_ != null) {
-@@ -724,6 +_,7 @@
+@@ -729,6 +_,7 @@
        super.m_7380_(p_31144_);
        p_31144_.m_128405_("DragonPhase", this.f_31074_.m_31415_().m_7309_().m_31405_());
        p_31144_.m_128405_("DragonDeathTime", this.f_31084_);
@@ -226,7 +226,7 @@
     }
  
     public void m_7378_(CompoundTag p_31134_) {
-@@ -736,6 +_,11 @@
+@@ -741,6 +_,11 @@
           this.f_31084_ = p_31134_.m_128451_("DragonDeathTime");
        }
  
@@ -238,7 +238,7 @@
     }
  
     public void m_6043_() {
-@@ -858,8 +_,19 @@
+@@ -863,8 +_,19 @@
        return false;
     }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/saveddata/maps/MapItemSavedData.java
 +++ b/net/minecraft/world/level/saveddata/maps/MapItemSavedData.java
-@@ -51,6 +_,13 @@
+@@ -50,6 +_,13 @@
     private final Map<String, MapFrame> f_77898_ = Maps.newHashMap();
     private int f_181308_;
  
@@ -11,10 +11,10 @@
 +   public String id;
 +   // CraftBukkit end
 +
-    public static SavedData.Factory<MapItemSavedData> m_295558_() {
-       return new SavedData.Factory<>(() -> {
-          throw new IllegalStateException("Should never create an empty map saved data");
-@@ -66,6 +_,10 @@
+    private MapItemSavedData(int p_164768_, int p_164769_, byte p_164770_, boolean p_164771_, boolean p_164772_, boolean p_164773_, ResourceKey<Level> p_164774_) {
+       this.f_77890_ = p_164770_;
+       this.f_256718_ = p_164768_;
+@@ -59,6 +_,10 @@
        this.f_77889_ = p_164772_;
        this.f_77892_ = p_164773_;
        this.m_77762_();
@@ -25,7 +25,7 @@
     }
  
     public static MapItemSavedData m_164780_(double p_164781_, double p_164782_, byte p_164783_, boolean p_164784_, boolean p_164785_, ResourceKey<Level> p_164786_) {
-@@ -82,8 +_,26 @@
+@@ -75,8 +_,26 @@
     }
  
     public static MapItemSavedData m_164807_(CompoundTag p_164808_) {
@@ -54,7 +54,7 @@
        });
        int i = p_164808_.m_128451_("xCenter");
        int j = p_164808_.m_128451_("zCenter");
-@@ -120,6 +_,25 @@
+@@ -113,6 +_,25 @@
        ResourceLocation.f_135803_.encodeStart(NbtOps.f_128958_, this.f_77887_.m_135782_()).resultOrPartial(f_77895_::error).ifPresent((p_77954_) -> {
           p_77956_.m_128365_("dimension", p_77954_);
        });
@@ -80,7 +80,7 @@
        p_77956_.m_128405_("xCenter", this.f_256718_);
        p_77956_.m_128405_("zCenter", this.f_256789_);
        p_77956_.m_128344_("scale", this.f_77890_);
-@@ -455,7 +_,7 @@
+@@ -448,7 +_,7 @@
           this.f_77959_ = p_77970_;
        }
  
@@ -89,7 +89,7 @@
           int i = this.f_77963_;
           int j = this.f_77964_;
           int k = this.f_77965_ + 1 - this.f_77963_;
-@@ -464,7 +_,7 @@
+@@ -457,7 +_,7 @@
  
           for(int i1 = 0; i1 < k; ++i1) {
              for(int j1 = 0; j1 < l; ++j1) {
@@ -98,7 +98,7 @@
              }
           }
  
-@@ -474,17 +_,28 @@
+@@ -467,17 +_,28 @@
        @Nullable
        Packet<?> m_164815_(int p_164816_) {
           MapItemSavedData.MapPatch mapitemsaveddata$mappatch;

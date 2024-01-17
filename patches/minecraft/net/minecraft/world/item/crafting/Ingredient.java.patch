@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/Ingredient.java
 +++ b/net/minecraft/world/item/crafting/Ingredient.java
-@@ -30,14 +_,22 @@
+@@ -30,12 +_,20 @@
  import net.minecraft.world.level.ItemLike;
  
  public class Ingredient implements Predicate<ItemStack> {
@@ -17,13 +17,11 @@
     @Nullable
     private IntList f_43904_;
 +   public boolean exact; // CraftBukkit
-    public static final Codec<Ingredient> f_291570_ = m_294319_(true);
-    public static final Codec<Ingredient> f_290991_ = m_294319_(false);
 +   private int invalidationCounter;
  
     public Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
        this.f_43902_ = p_43907_.toArray((p_43933_) -> {
-@@ -68,6 +_,15 @@
+@@ -62,6 +_,15 @@
           return p_43914_.m_41619_();
        } else {
           for(ItemStack itemstack : this.m_43908_()) {

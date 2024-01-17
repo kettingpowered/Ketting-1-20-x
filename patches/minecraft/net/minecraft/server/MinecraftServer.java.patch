@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -242,11 +_,30 @@
+@@ -244,11 +_,30 @@
     private final StructureTemplateManager f_236720_;
     protected final WorldData f_129749_;
     private volatile boolean f_195494_;
@@ -32,7 +32,7 @@
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
           f_129750_.error("Uncaught exception in server thread", p_177910_);
-@@ -265,7 +_,7 @@
+@@ -267,7 +_,7 @@
        super("Server");
        this.f_244176_ = p_236726_.f_244542_();
        this.f_129749_ = p_236726_.f_206895_();
@@ -41,7 +41,7 @@
           throw new IllegalStateException("Missing Overworld dimension data");
        } else {
           this.f_129747_ = p_236727_;
-@@ -276,7 +_,7 @@
+@@ -278,7 +_,7 @@
              p_236729_.f_214336_().m_143974_(this);
           }
  
@@ -50,7 +50,7 @@
           this.f_129756_ = p_236730_;
           this.f_129744_ = p_236724_;
           this.f_129745_ = p_236724_.m_78301_();
-@@ -287,6 +_,31 @@
+@@ -289,6 +_,31 @@
           this.f_129725_ = p_236723_;
           this.f_129738_ = Util.m_183991_();
        }
@@ -82,7 +82,7 @@
     }
  
     private void m_129841_(DimensionDataStorage p_129842_) {
-@@ -295,7 +_,19 @@
+@@ -297,7 +_,19 @@
  
     protected abstract boolean m_7038_() throws IOException;
  
@@ -103,7 +103,7 @@
        if (!JvmProfiler.f_185340_.m_183608_()) {
        }
  
-@@ -306,6 +_,13 @@
+@@ -308,6 +_,13 @@
        this.m_129815_(chunkprogresslistener);
        this.m_7044_();
        this.m_129940_(chunkprogresslistener);
@@ -117,7 +117,7 @@
        if (profiledduration != null) {
           profiledduration.m_185413_();
        }
-@@ -332,12 +_,16 @@
+@@ -334,12 +_,16 @@
        long j = BiomeManager.m_47877_(i);
        List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(serverleveldata));
        LevelStem levelstem = registry.m_6246_(LevelStem.f_63971_);
@@ -135,7 +135,7 @@
        if (!serverleveldata.m_6535_()) {
           try {
              m_177896_(serverlevel, serverleveldata, worldoptions.m_245100_(), flag);
-@@ -371,9 +_,49 @@
+@@ -373,9 +_,49 @@
           if (resourcekey != LevelStem.f_63971_) {
              ResourceKey<Level> resourcekey1 = ResourceKey.m_135785_(Registries.f_256858_, resourcekey.m_135782_());
              DerivedLevelData derivedleveldata = new DerivedLevelData(this.f_129749_, serverleveldata);
@@ -210,7 +210,7 @@
           int i = serverchunkcache.m_8481_().m_142051_(p_177897_);
           if (i < p_177897_.m_141937_()) {
              BlockPos blockpos = chunkpos.m_45615_();
-@@ -440,8 +_,23 @@
+@@ -442,8 +_,23 @@
        serverleveldata.m_5458_(GameType.SPECTATOR);
     }
  
@@ -234,7 +234,7 @@
        f_129750_.info("Preparing start region for dimension {}", (Object)serverlevel.m_46472_().m_135782_());
        BlockPos blockpos = serverlevel.m_220360_();
        p_129941_.m_7647_(new ChunkPos(blockpos));
-@@ -449,13 +_,11 @@
+@@ -451,13 +_,11 @@
        this.f_129726_ = Util.m_137550_();
        serverchunkcache.m_8387_(TicketType.f_9442_, new ChunkPos(blockpos), 11, Unit.INSTANCE);
  
@@ -250,7 +250,7 @@
 +      this.executeModerately();
  
        for(ServerLevel serverlevel1 : this.f_129762_.values()) {
-          ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.m_8895_().m_164858_(ForcedChunksSavedData.m_293948_(), "chunks");
+          ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.m_8895_().m_164858_(ForcedChunksSavedData::m_151483_, "chunks");
 @@ -469,13 +_,19 @@
                 ChunkPos chunkpos = new ChunkPos(i);
                 serverlevel1.m_7726_().m_6692_(chunkpos, true);
@@ -273,7 +273,7 @@
     }
  
     public GameType m_130008_() {
-@@ -502,11 +_,15 @@
+@@ -504,11 +_,15 @@
           flag = true;
        }
  
@@ -294,7 +294,7 @@
        if (p_129887_) {
           for(ServerLevel serverlevel1 : this.m_129785_()) {
              f_129750_.info("ThreadedAnvilChunkStorage ({}): All chunks are saved", (Object)serverlevel1.m_7726_().f_8325_.m_182285_());
-@@ -535,18 +_,40 @@
+@@ -537,21 +_,43 @@
        this.m_7041_();
     }
  
@@ -325,7 +325,10 @@
 +         this.server.disablePlugins();
 +      }
 +      // CraftBukkit end
-       this.m_129919_().m_9718_();
+       if (this.m_129919_() != null) {
+          this.m_129919_().m_9718_();
+       }
+ 
        this.f_195494_ = true;
        if (this.f_129763_ != null) {
           f_129750_.info("Saving players");
@@ -343,7 +346,7 @@
                 serverlevel2.close();
              } catch (IOException ioexception1) {
                 f_129750_.error("Exception closing the level", (Throwable)ioexception1);
-@@ -593,6 +_,12 @@
+@@ -598,6 +_,12 @@
           f_129750_.error("Failed to unlock level {}", this.f_129744_.m_78277_(), ioexception);
        }
  
@@ -356,7 +359,7 @@
     }
  
     public String m_130009_() {
-@@ -619,30 +_,56 @@
+@@ -624,30 +_,56 @@
  
     }
  
@@ -462,7 +465,7 @@
              this.m_6988_();
           }
  
-@@ -709,7 +_,7 @@
+@@ -714,7 +_,7 @@
     }
  
     private boolean m_129960_() {
@@ -471,7 +474,7 @@
     }
  
     protected void m_130012_() {
-@@ -719,6 +_,18 @@
+@@ -724,6 +_,18 @@
        });
     }
  
@@ -490,7 +493,7 @@
     public TickTask m_6681_(Runnable p_129852_) {
        return new TickTask(this.f_129766_, p_129852_);
     }
-@@ -792,20 +_,26 @@
+@@ -797,20 +_,26 @@
     }
  
     public void m_5705_(BooleanSupplier p_129871_) {
@@ -518,7 +521,7 @@
        }
  
        this.f_129754_.m_6180_("tallying");
-@@ -814,11 +_,25 @@
+@@ -819,11 +_,25 @@
        long k = Util.m_137569_();
        this.f_129735_.m_13755_(k - i);
        this.f_129754_.m_7238_();
@@ -545,10 +548,10 @@
     }
  
     private ServerStatus.Players m_271961_() {
-@@ -848,47 +_,92 @@
-       this.m_6846_().m_11314_().forEach((p_296434_) -> {
-          p_296434_.f_8906_.m_295499_();
-       });
+@@ -847,47 +_,92 @@
+    }
+ 
+    public void m_5703_(BooleanSupplier p_129954_) {
 +      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.schedulerTimer.startTiming(); // Spigot
 +      this.server.getScheduler().mainThreadHeartbeat(this.f_129766_); // CraftBukkit
 +      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.schedulerTimer.stopTiming(); // Spigot
@@ -643,9 +646,9 @@
        }
 +      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.tickablesTimer.stopTiming(); // Spigot
  
-       this.f_129754_.m_6182_("send chunks");
- 
-@@ -943,6 +_,22 @@
+       this.f_129754_.m_7238_();
+    }
+@@ -935,6 +_,22 @@
        return this.f_129762_.get(p_129881_);
     }
  
@@ -677,16 +680,16 @@
     }
  
     public SystemReport m_177935_(SystemReport p_177936_) {
-@@ -1171,7 +_,7 @@
-    }
+@@ -1164,7 +_,7 @@
  
+    @Nullable
     public ServerConnectionListener m_129919_() {
 -      return this.f_129755_;
 +      return this.f_129755_ == null ? this.f_129755_ = new ServerConnectionListener(this) : this.f_129755_; // Spigot
     }
  
     public boolean m_129920_() {
-@@ -1310,6 +_,13 @@
+@@ -1303,6 +_,13 @@
        }).thenAcceptAsync((p_248090_) -> {
           this.f_129740_.close();
           this.f_129740_ = p_248090_;
@@ -700,7 +703,7 @@
           this.f_129730_.m_10509_(p_129862_);
           WorldDataConfiguration worlddataconfiguration = new WorldDataConfiguration(m_129817_(this.f_129730_), this.f_129749_.m_247623_());
           this.f_129749_.m_245843_(worlddataconfiguration);
-@@ -1318,6 +_,7 @@
+@@ -1311,6 +_,7 @@
           this.m_6846_().m_11315_();
           this.f_129734_.m_136120_(this.f_129740_.f_206585_.m_206860_());
           this.f_236720_.m_230370_(this.f_129740_.f_206584_);
@@ -756,7 +759,7 @@
     public void m_142116_(Path p_177911_) throws IOException {
     }
  
-@@ -1586,6 +_,22 @@
+@@ -1583,6 +_,22 @@
        }
     }
  
@@ -779,7 +782,7 @@
     private void m_177945_() {
        if (this.f_177875_) {
           this.f_177872_ = ActiveMetricsRecorder.m_146132_(new ServerMetricsSamplersProvider(Util.f_137440_, this.m_6982_()), Util.f_137440_, Util.m_183992_(), new MetricsPersister("server"), this.f_177873_, (p_212927_) -> {
-@@ -1649,6 +_,10 @@
+@@ -1646,6 +_,10 @@
        return this.f_129749_;
     }
  
@@ -790,7 +793,7 @@
     public RegistryAccess.Frozen m_206579_() {
        return this.f_244176_.m_247579_();
     }
-@@ -1709,6 +_,11 @@
+@@ -1706,6 +_,11 @@
        }
  
     }

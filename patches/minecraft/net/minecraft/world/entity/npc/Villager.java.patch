@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/npc/Villager.java
 +++ b/net/minecraft/world/entity/npc/Villager.java
-@@ -145,7 +_,7 @@
+@@ -144,7 +_,7 @@
     }
  
     public Brain<Villager> m_6274_() {
@@ -9,7 +9,7 @@
     }
  
     protected Brain.Provider<Villager> m_5490_() {
-@@ -205,6 +_,17 @@
+@@ -204,6 +_,17 @@
        return this.f_35366_;
     }
  
@@ -27,7 +27,7 @@
     protected void m_8024_() {
        this.m_9236_().m_46473_().m_6180_("villagerBrain");
        this.m_6274_().m_21865_((ServerLevel)this.m_9236_(), this);
-@@ -221,7 +_,7 @@
+@@ -220,7 +_,7 @@
                 this.f_35374_ = false;
              }
  
@@ -36,7 +36,7 @@
           }
        }
  
-@@ -256,7 +_,7 @@
+@@ -255,7 +_,7 @@
  
     public InteractionResult m_6071_(Player p_35472_, InteractionHand p_35473_) {
        ItemStack itemstack = p_35472_.m_21120_(p_35473_);
@@ -45,7 +45,7 @@
           if (this.m_6162_()) {
              this.m_35518_();
              return InteractionResult.m_19078_(this.m_9236_().f_46443_);
-@@ -332,7 +_,13 @@
+@@ -331,7 +_,13 @@
        this.m_35523_();
  
        for(MerchantOffer merchantoffer : this.m_6616_()) {
@@ -60,7 +60,7 @@
        }
  
        this.m_275846_();
-@@ -387,7 +_,13 @@
+@@ -386,7 +_,13 @@
        int i = 2 - this.f_35364_;
        if (i > 0) {
           for(MerchantOffer merchantoffer : this.m_6616_()) {
@@ -75,7 +75,7 @@
           }
        }
  
-@@ -561,7 +_,7 @@
+@@ -560,7 +_,7 @@
     }
  
     public void m_6667_(DamageSource p_35419_) {
@@ -84,7 +84,7 @@
        Entity entity = p_35419_.m_7639_();
        if (entity != null) {
           this.m_35420_(entity);
-@@ -670,7 +_,8 @@
+@@ -669,7 +_,8 @@
     }
  
     protected Component m_5677_() {
@@ -118,11 +118,11 @@
              this.m_35524_();
              this.m_146870_();
           } else {
-@@ -824,7 +_,7 @@
+@@ -816,7 +_,7 @@
              return p_186293_.m_35392_(p_35399_);
           }).limit(5L).collect(Collectors.toList());
           if (list1.size() >= p_35400_) {
--            if (!SpawnUtil.m_216403_(EntityType.f_20460_, MobSpawnType.MOB_SUMMONED, p_35398_, this.m_20183_(), 10, 8, 6, SpawnUtil.Strategy.f_216412_).isEmpty()) {
+-            if (SpawnUtil.m_216403_(EntityType.f_20460_, MobSpawnType.MOB_SUMMONED, p_35398_, this.m_20183_(), 10, 8, 6, SpawnUtil.Strategy.f_216412_).isPresent()) {
 +            if (!SpawnUtil.trySpawnMob(EntityType.f_20460_, MobSpawnType.MOB_SUMMONED, p_35398_, this.m_20183_(), 10, 8, 6, SpawnUtil.Strategy.f_216412_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE).isEmpty()) { // CraftBukkit
                 list.forEach(GolemSensor::m_26649_);
              }

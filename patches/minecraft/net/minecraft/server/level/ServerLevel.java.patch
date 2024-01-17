@@ -134,7 +134,7 @@
           return p_214999_.m_129783_().m_8895_();
        });
        this.f_8547_.m_255415_().m_254958_();
-@@ -220,9 +_,9 @@
+@@ -224,9 +_,9 @@
  
        long i = p_214999_.m_129910_().m_246337_().m_245499_();
        this.f_196556_ = new StructureCheck(this.f_8547_.m_196555_(), this.m_9598_(), p_214999_.m_236738_(), p_215003_, chunkgenerator, this.f_8547_.m_214994_(), this, chunkgenerator.m_62218_(), i, datafixer);
@@ -179,7 +179,7 @@
           if (this.m_46469_().m_46207_(GameRules.f_46150_) && this.m_46471_()) {
              this.m_184097_();
           }
-@@ -280,6 +_,7 @@
+@@ -288,6 +_,7 @@
        this.m_46465_();
        this.m_8809_();
        profilerfiller.m_6182_("tickPending");
@@ -187,7 +187,7 @@
        if (!this.m_46659_()) {
           long k = this.m_46467_();
           profilerfiller.m_6180_("blockTicks");
-@@ -288,31 +_,37 @@
+@@ -296,31 +_,37 @@
           this.f_184047_.m_193225_(k, 65536, this::m_184076_);
           profilerfiller.m_7238_();
        }
@@ -245,7 +245,7 @@
           profilerfiller.m_7238_();
           this.m_46463_();
        }
-@@ -393,7 +_,7 @@
+@@ -401,7 +_,7 @@
        int j = chunkpos.m_45605_();
        ProfilerFiller profilerfiller = this.m_46473_();
        profilerfiller.m_6180_("thunder");
@@ -254,7 +254,7 @@
           BlockPos blockpos = this.m_143288_(this.m_46496_(i, 0, j, 15));
           if (this.m_46758_(blockpos)) {
              DifficultyInstance difficultyinstance = this.m_6436_(blockpos);
-@@ -404,7 +_,7 @@
+@@ -412,7 +_,7 @@
                    skeletonhorse.m_30923_(true);
                    skeletonhorse.m_146762_(0);
                    skeletonhorse.m_6034_((double)blockpos.m_123341_(), (double)blockpos.m_123342_(), (double)blockpos.m_123343_());
@@ -263,7 +263,7 @@
                 }
              }
  
-@@ -412,7 +_,7 @@
+@@ -420,7 +_,7 @@
              if (lightningbolt != null) {
                 lightningbolt.m_20219_(Vec3.m_82539_(blockpos));
                 lightningbolt.m_20874_(flag1);
@@ -278,31 +278,21 @@
           Biome biome = this.m_204166_(blockpos1).m_203334_();
 +         if (this.isAreaLoaded(blockpos2, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
           if (biome.m_47477_(this, blockpos2)) {
-             this.m_46597_(blockpos2, Blocks.f_50126_.m_49966_());
+-            this.m_46597_(blockpos2, Blocks.f_50126_.m_49966_());
++            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.f_50126_.m_49966_(), null); // CraftBukkit
           }
  
-@@ -461,8 +_,9 @@
-       BlockPos blockpos = this.m_5452_(Heightmap.Types.MOTION_BLOCKING, p_300602_);
-       BlockPos blockpos1 = blockpos.m_7495_();
-       Biome biome = this.m_204166_(blockpos).m_203334_();
-+      if (this.isAreaLoaded(blockpos1, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
-       if (biome.m_47477_(this, blockpos1)) {
--         this.m_46597_(blockpos1, Blocks.f_50126_.m_49966_());
-+         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.f_50126_.m_49966_(), null); // CraftBukkit
-       }
- 
-       if (p_298297_) {
-@@ -475,9 +_,10 @@
-                   BlockState blockstate1 = blockstate.m_61124_(SnowLayerBlock.f_56581_, Integer.valueOf(j + 1));
-                   Block.m_49897_(blockstate, blockstate1, this, blockpos);
-                   this.m_46597_(blockpos, blockstate1);
-+                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos, blockstate1, null); // CraftBukkit
+@@ -444,9 +_,9 @@
+                      BlockState blockstate1 = blockstate.m_61124_(SnowLayerBlock.f_56581_, Integer.valueOf(k + 1));
+                      Block.m_49897_(blockstate, blockstate1, this, blockpos1);
+-                     this.m_46597_(blockpos1, blockstate1);
++                     org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos, blockstate1, null); // CraftBukkit
+                   }
+                } else {
+-                  this.m_46597_(blockpos1, Blocks.f_50125_.m_49966_());
++                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos, Blocks.f_50125_.m_49966_(), null); // CraftBukkit
                 }
-             } else {
--               this.m_46597_(blockpos, Blocks.f_50125_.m_49966_());
-+               org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos, Blocks.f_50125_.m_49966_(), null); // CraftBukkit
              }
-          }
  
 @@ -625,32 +_,69 @@
           this.f_46438_ = Mth.m_14036_(this.f_46438_, 0.0F, 1.0F);

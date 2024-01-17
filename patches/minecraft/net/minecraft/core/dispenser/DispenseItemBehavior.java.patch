@@ -76,8 +76,8 @@
 +            }
 +            // CraftBukkit end
 +
-             Consumer<ArmorStand> consumer = EntityType.m_264081_((p_296333_) -> {
-                p_296333_.m_146922_(direction.m_122435_());
+             Consumer<ArmorStand> consumer = EntityType.m_264081_((p_277236_) -> {
+                p_277236_.m_146922_(direction.m_122435_());
              }, serverlevel, p_123462_, (Player)null);
              ArmorStand armorstand = EntityType.f_20529_.m_262455_(serverlevel, p_123462_.m_41783_(), consumer, blockpos, MobSpawnType.DISPENSER, false, false);
              if (armorstand != null) {
@@ -125,7 +125,7 @@
                 return p_123530_;
              } else {
 @@ -242,7 +_,35 @@
-                return p_296334_.m_6084_() && p_296334_.m_7482_();
+                return p_289248_.m_6084_() && p_289248_.m_7482_();
              })) {
                 if (abstracthorse.m_6010_(p_123536_) && !abstracthorse.m_7481_() && abstracthorse.m_30614_()) {
 -                  abstracthorse.m_141942_(401).m_142104_(p_123536_.m_41620_(1));
@@ -162,8 +162,8 @@
                    return p_123536_;
                 }
 @@ -278,8 +_,36 @@
-             for(AbstractChestedHorse abstractchestedhorse : p_123541_.m_7727_().m_6443_(AbstractChestedHorse.class, new AABB(blockpos), (p_296335_) -> {
-                return p_296335_.m_6084_() && !p_296335_.m_30502_();
+             for(AbstractChestedHorse abstractchestedhorse : p_123541_.m_7727_().m_6443_(AbstractChestedHorse.class, new AABB(blockpos), (p_289249_) -> {
+                return p_289249_.m_6084_() && !p_289249_.m_30502_();
              })) {
 -               if (abstractchestedhorse.m_30614_() && abstractchestedhorse.m_141942_(499).m_142104_(p_123542_)) {
 -                  p_123542_.m_41774_(1);
@@ -342,7 +342,7 @@
              } else {
                 return this.f_123558_.m_6115_(p_123561_, p_123562_);
              }
-@@ -373,7 +_,45 @@
+@@ -373,17 +_,45 @@
           private final DefaultDispenseItemBehavior f_123563_ = new DefaultDispenseItemBehavior();
  
           public ItemStack m_7498_(BlockSource p_123566_, ItemStack p_123567_) {
@@ -352,8 +352,8 @@
 -            BlockState blockstate = levelaccessor.m_8055_(blockpos);
 +            BlockState blockstate = level.m_8055_(blockpos);
              Block block = blockstate.m_60734_();
-             if (block instanceof BucketPickup bucketpickup) {
--               ItemStack itemstack = bucketpickup.m_142598_((Player)null, levelaccessor, blockpos, blockstate);
+             if (block instanceof BucketPickup) {
+-               ItemStack itemstack = ((BucketPickup)block).m_142598_(levelaccessor, blockpos, blockstate);
 +               ItemStack itemstack = bucketpickup.m_142598_((Player)null, org.bukkit.craftbukkit.v1_20_R2.util.DummyGeneratorAccess.INSTANCE, blockpos, blockstate); // CraftBukkit
 +
                 if (itemstack.m_41619_()) {

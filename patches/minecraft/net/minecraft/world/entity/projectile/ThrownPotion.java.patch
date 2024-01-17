@@ -135,10 +135,10 @@
     private void m_150192_(BlockPos p_150193_) {
        BlockState blockstate = this.m_9236_().m_8055_(p_150193_);
        if (blockstate.m_204336_(BlockTags.f_13076_)) {
--         this.m_9236_().m_46953_(p_150193_, false, this);
+-         this.m_9236_().m_7471_(p_150193_, false);
 +         // CraftBukkit start
 +         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, net.minecraft.world.level.block.Blocks.f_50016_.m_49966_())) {
-+            this.m_9236_().m_46953_(p_150193_, false, this);
++            this.m_9236_().m_7471_(p_150193_, false);
 +         }
 +         // CraftBukkit end
        } else if (AbstractCandleBlock.m_151933_(blockstate)) {

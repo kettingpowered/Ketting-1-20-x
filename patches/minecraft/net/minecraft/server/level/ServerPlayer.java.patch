@@ -1,7 +1,7 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
 @@ -245,6 +_,19 @@
-    public int f_8940_;
+    public int f_8943_;
     public boolean f_8944_;
  
 +   // CraftBukkit start
@@ -17,13 +17,12 @@
 +   public String kickLeaveMessage = null; // SPIGOT-3034: Forward leave message to PlayerQuitEvent
 +   // CraftBukkit end
 +
-    public ServerPlayer(MinecraftServer p_254143_, ServerLevel p_254435_, GameProfile p_253651_, ClientInformation p_299301_) {
+    public ServerPlayer(MinecraftServer p_254143_, ServerLevel p_254435_, GameProfile p_253651_) {
        super(p_254435_, p_254435_.m_220360_(), p_254435_.m_220361_(), p_253651_);
        this.f_8939_ = p_254143_.m_7950_(this);
-@@ -255,11 +_,56 @@
+@@ -255,10 +_,55 @@
        this.m_274367_(1.0F);
        this.m_9201_(p_254435_);
-       this.m_9156_(p_299301_);
 -   }
 +
 +      // CraftBukkit start
@@ -79,7 +78,7 @@
           int i = Math.max(0, this.f_8924_.m_129803_(p_9202_));
           int j = Mth.m_14107_(p_9202_.m_6857_().m_61941_((double)blockpos.m_123341_(), (double)blockpos.m_123343_()));
           if (j < i) {
-@@ -319,11 +_,25 @@
+@@ -318,11 +_,25 @@
        if (p_9131_.m_128425_("recipeBook", 10)) {
           this.f_8929_.m_12794_(p_9131_.m_128469_("recipeBook"), this.f_8924_.m_129894_());
        }
@@ -105,7 +104,7 @@
        if (p_9131_.m_128425_("SpawnX", 99) && p_9131_.m_128425_("SpawnY", 99) && p_9131_.m_128425_("SpawnZ", 99)) {
           this.f_8936_ = new BlockPos(p_9131_.m_128451_("SpawnX"), p_9131_.m_128451_("SpawnY"), p_9131_.m_128451_("SpawnZ"));
           this.f_8937_ = p_9131_.m_128471_("SpawnForced");
-@@ -352,7 +_,21 @@
+@@ -351,7 +_,21 @@
  
        Entity entity1 = this.m_20201_();
        Entity entity = this.m_20202_();
@@ -128,7 +127,7 @@
           CompoundTag compoundtag1 = new CompoundTag();
           CompoundTag compoundtag2 = new CompoundTag();
           entity1.m_20223_(compoundtag2);
-@@ -373,8 +_,36 @@
+@@ -372,8 +_,36 @@
              p_9197_.m_128365_("SpawnDimension", p_248207_);
           });
        }
@@ -167,7 +166,7 @@
  
     public void m_8985_(int p_8986_) {
        float f = (float)this.m_36323_();
-@@ -426,6 +_,11 @@
+@@ -425,6 +_,11 @@
     }
  
     public void m_8119_() {
@@ -179,7 +178,7 @@
        this.f_8941_.m_7712_();
        this.f_244516_.m_219571_();
        --this.f_8921_;
-@@ -479,7 +_,7 @@
+@@ -478,7 +_,7 @@
           }
  
           if (this.m_21223_() != this.f_8917_ || this.f_8918_ != this.f_36097_.m_38702_() || this.f_36097_.m_38722_() == 0.0F != this.f_8919_) {
@@ -188,7 +187,7 @@
              this.f_8917_ = this.m_21223_();
              this.f_8918_ = this.f_36097_.m_38702_();
              this.f_8919_ = this.f_36097_.m_38722_() == 0.0F;
-@@ -510,6 +_,12 @@
+@@ -509,6 +_,12 @@
              this.m_9104_(ObjectiveCriteria.f_83597_, Mth.m_14167_((float)this.f_8916_));
           }
  
@@ -201,7 +200,7 @@
           if (this.f_36078_ != this.f_8915_) {
              this.f_8915_ = this.f_36078_;
              this.m_9104_(ObjectiveCriteria.f_83598_, Mth.m_14167_((float)this.f_8915_));
-@@ -524,6 +_,20 @@
+@@ -523,6 +_,20 @@
              CriteriaTriggers.f_10582_.m_222618_(this);
           }
  
@@ -222,7 +221,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.m_127514_("Player being ticked");
-@@ -564,16 +_,55 @@
+@@ -563,16 +_,55 @@
     }
  
     private void m_9104_(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -281,7 +280,7 @@
           this.f_8906_.m_295553_(new ClientboundPlayerCombatKillPacket(this.m_19879_(), component), PacketSendListener.m_243073_(() -> {
              int i = 256;
              String s = component.m_130668_(256);
-@@ -602,11 +_,21 @@
+@@ -601,11 +_,21 @@
           this.m_9215_();
        }
  
@@ -306,7 +305,7 @@
        LivingEntity livingentity = this.m_21232_();
        if (livingentity != null) {
           this.m_36246_(Stats.f_12987_.m_12902_(livingentity.m_6095_()));
-@@ -640,10 +_,13 @@
+@@ -639,10 +_,13 @@
           this.m_36401_(p_9051_);
           String s = this.m_6302_();
           String s1 = p_9050_.m_6302_();
@@ -322,7 +321,7 @@
           } else {
              this.m_36220_(Stats.f_12936_);
           }
-@@ -659,7 +_,8 @@
+@@ -658,7 +_,8 @@
        if (playerteam != null) {
           int i = playerteam.m_7414_().m_126656_();
           if (i >= 0 && i < p_9127_.length) {
@@ -332,7 +331,7 @@
           }
        }
  
-@@ -702,15 +_,18 @@
+@@ -701,15 +_,18 @@
     }
  
     private boolean m_9216_() {
@@ -354,7 +353,7 @@
        } else {
           return portalinfo;
        }
-@@ -718,10 +_,31 @@
+@@ -717,10 +_,31 @@
  
     @Nullable
     public Entity m_5489_(ServerLevel p_9180_) {
@@ -388,7 +387,7 @@
           this.m_19877_();
           this.m_284548_().m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
           if (!this.f_8944_) {
-@@ -732,71 +_,138 @@
+@@ -731,71 +_,138 @@
  
           return this;
        } else {
@@ -559,7 +558,7 @@
           }
  
           return optional1;
-@@ -806,12 +_,21 @@
+@@ -805,12 +_,21 @@
     public void m_9209_(ServerLevel p_9210_) {
        ResourceKey<Level> resourcekey = p_9210_.m_46472_();
        ResourceKey<Level> resourcekey1 = this.m_9236_().m_46472_();
@@ -584,7 +583,7 @@
           this.f_8933_ = null;
        }
  
-@@ -830,32 +_,64 @@
+@@ -829,32 +_,64 @@
        this.f_36096_.m_38946_();
     }
  
@@ -659,7 +658,7 @@
                 Either<Player.BedSleepingProblem, Unit> either = super.m_7720_(p_9115_).ifRight((p_9029_) -> {
                    this.m_36220_(Stats.f_12969_);
                    CriteriaTriggers.f_10583_.m_222618_(this);
-@@ -868,9 +_,8 @@
+@@ -867,9 +_,8 @@
                 return either;
              }
           }
@@ -711,7 +710,7 @@
        }
  
     }
-@@ -940,16 +_,46 @@
+@@ -939,16 +_,46 @@
        this.f_8940_ = this.f_8940_ % 100 + 1;
     }
  
@@ -760,7 +759,7 @@
           if (abstractcontainermenu == null) {
              if (this.m_5833_()) {
                 this.m_5661_(Component.m_237115_("container.spectatorCantOpen").m_130940_(ChatFormatting.RED), true);
-@@ -957,9 +_,14 @@
+@@ -956,9 +_,14 @@
  
              return OptionalInt.empty();
           } else {
@@ -777,7 +776,7 @@
              return OptionalInt.of(this.f_8940_);
           }
        }
-@@ -970,14 +_,26 @@
+@@ -969,14 +_,26 @@
     }
  
     public void m_6658_(AbstractHorse p_9059_, Container p_9060_) {
@@ -809,7 +808,7 @@
     }
  
     public void m_6986_(ItemStack p_9082_, InteractionHand p_9083_) {
-@@ -996,6 +_,7 @@
+@@ -995,6 +_,7 @@
     }
  
     public void m_6915_() {
@@ -817,7 +816,7 @@
        this.f_8906_.m_141995_(new ClientboundContainerClosePacket(this.f_36096_.f_38840_));
        this.m_9230_();
     }
-@@ -1003,6 +_,7 @@
+@@ -1002,6 +_,7 @@
     public void m_9230_() {
        this.f_36096_.m_6877_(this);
        this.f_36095_.m_150414_(this.f_36096_);
@@ -825,7 +824,7 @@
        this.f_36096_ = this.f_36095_;
     }
  
-@@ -1017,6 +_,16 @@
+@@ -1016,6 +_,16 @@
           }
  
           this.f_20899_ = p_8983_;
@@ -842,7 +841,7 @@
           this.m_20260_(p_8984_);
        }
  
-@@ -1024,14 +_,14 @@
+@@ -1023,14 +_,14 @@
  
     public void m_6278_(Stat<?> p_9026_, int p_9027_) {
        this.f_8910_.m_13023_(this, p_9026_, p_9027_);
@@ -859,7 +858,7 @@
     }
  
     public int m_7281_(Collection<RecipeHolder<?>> p_9129_) {
-@@ -1076,6 +_,7 @@
+@@ -1075,6 +_,7 @@
  
     public void m_9233_() {
        this.f_8917_ = -1.0E8F;
@@ -905,7 +904,7 @@
     }
  
     protected void m_142540_(MobEffectInstance p_143393_, @Nullable Entity p_143394_) {
-@@ -1174,6 +_,12 @@
+@@ -1173,6 +_,12 @@
     }
  
     public boolean m_264318_(ServerLevel p_265564_, double p_265424_, double p_265680_, double p_265312_, Set<RelativeMovement> p_265192_, float p_265059_, float p_265266_) {
@@ -918,7 +917,7 @@
        ChunkPos chunkpos = new ChunkPos(BlockPos.m_274561_(p_265424_, p_265680_, p_265312_));
        p_265564_.m_7726_().m_8387_(TicketType.f_9448_, chunkpos, 1, this.m_19879_());
        this.m_8127_();
-@@ -1182,9 +_,9 @@
+@@ -1181,9 +_,9 @@
        }
  
        if (p_265564_ == this.m_9236_()) {
@@ -930,7 +929,7 @@
        }
  
        this.m_5616_(p_265059_);
-@@ -1216,6 +_,8 @@
+@@ -1215,6 +_,8 @@
     }
  
     public boolean m_143403_(GameType p_143404_) {
@@ -939,10 +938,10 @@
        if (!this.f_8941_.m_143473_(p_143404_)) {
           return false;
        } else {
-@@ -1277,6 +_,16 @@
+@@ -1276,6 +_,16 @@
     }
  
-    public void m_9156_(ClientInformation p_297843_) {
+    public void m_9156_(ServerboundClientInformationPacket p_9157_) {
 +      // CraftBukkit start
 +      if (m_5737_() != p_297843_.f_291270_()) {
 +         org.bukkit.event.player.PlayerChangedMainHandEvent event = new org.bukkit.event.player.PlayerChangedMainHandEvent(getBukkitEntity(), m_5737_() == HumanoidArm.LEFT ? org.bukkit.inventory.MainHand.LEFT : org.bukkit.inventory.MainHand.RIGHT);
@@ -964,7 +963,7 @@
     }
  
     public boolean m_143432_() {
-@@ -1350,11 +_,12 @@
+@@ -1341,11 +_,12 @@
     public void m_9213_(@Nullable Entity p_9214_) {
        Entity entity = this.m_8954_();
        this.f_8926_ = (Entity)(p_9214_ == null ? this : p_9214_);
@@ -991,7 +990,7 @@
     }
  
     public void m_6674_(InteractionHand p_9031_) {
-@@ -1409,27 +_,39 @@
+@@ -1400,27 +_,39 @@
        return this.f_8909_;
     }
  
@@ -1048,7 +1047,7 @@
  
     }
  
-@@ -1451,6 +_,34 @@
+@@ -1442,6 +_,34 @@
     }
  
     public void m_9158_(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_) {
@@ -1185,9 +1184,9 @@
     }
  
     public boolean m_184128_() {
-@@ -1642,4 +_,146 @@
-    public CommonPlayerSpawnInfo m_292591_(ServerLevel p_301182_) {
-       return new CommonPlayerSpawnInfo(p_301182_.m_220362_(), p_301182_.m_46472_(), BiomeManager.m_47877_(p_301182_.m_7328_()), this.f_8941_.m_9290_(), this.f_8941_.m_9293_(), p_301182_.m_46659_(), p_301182_.m_8584_(), this.m_219759_(), this.m_287157_());
+@@ -1632,4 +_,146 @@
+       }
+ 
     }
 +
 +   // CraftBukkit start - Add per-player time and weather.

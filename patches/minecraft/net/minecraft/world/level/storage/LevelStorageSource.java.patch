@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
-@@ -251,6 +_,8 @@
+@@ -247,6 +_,8 @@
           WorldDimensions.Complete worlddimensions$complete = worldgensettings.f_64605_().m_245300_(p_249363_);
           Lifecycle lifecycle = worlddimensions$complete.m_245945_().add(p_251214_);
           PrimaryLevelData primaryleveldata = PrimaryLevelData.m_78530_(dynamic, p_265021_, i, compoundtag2, levelsettings, levelversion, worlddimensions$complete.f_244634_(), worldgensettings.f_243992_(), lifecycle);
@@ -9,7 +9,7 @@
           return Pair.of(primaryleveldata, worlddimensions$complete);
        };
     }
-@@ -341,24 +_,46 @@
+@@ -334,24 +_,46 @@
     }
  
     public LevelStorageSource.LevelStorageAccess m_289864_(String p_289980_) throws IOException, ContentValidationException {
@@ -18,7 +18,7 @@
 +
 +   public LevelStorageSource.LevelStorageAccess validateAndCreateAccess(String p_289980_, ResourceKey<LevelStem> dimensionType) throws IOException, ContentValidationException { // CraftBukkit
        Path path = this.m_289874_(p_289980_);
-       List<ForbiddenSymlinkInfo> list = this.f_289816_.m_294444_(path, true);
+       List<ForbiddenSymlinkInfo> list = this.f_289816_.m_289885_(path, true);
        if (!list.isEmpty()) {
           throw new ContentValidationException(path, list);
        } else {
@@ -58,7 +58,7 @@
     public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> f_230840_) implements Iterable<LevelStorageSource.LevelDirectory> {
        public boolean m_230843_() {
           return this.f_230840_.isEmpty();
-@@ -404,8 +_,18 @@
+@@ -397,8 +_,18 @@
        public final LevelStorageSource.LevelDirectory f_230867_;
        private final String f_78272_;
        private final Map<LevelResource, Path> f_78273_ = Maps.newHashMap();
@@ -79,7 +79,7 @@
           this.f_78272_ = p_289967_;
           this.f_230867_ = new LevelStorageSource.LevelDirectory(p_289988_);
           this.f_78270_ = DirectoryLock.m_13640_(p_289988_);
-@@ -424,7 +_,7 @@
+@@ -413,7 +_,7 @@
        }
  
        public Path m_197394_(ResourceKey<Level> p_197395_) {

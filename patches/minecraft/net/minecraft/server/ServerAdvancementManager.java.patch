@@ -1,8 +1,8 @@
 --- a/net/minecraft/server/ServerAdvancementManager.java
 +++ b/net/minecraft/server/ServerAdvancementManager.java
 @@ -26,18 +_,36 @@
-    private static final Gson f_136022_ = (new GsonBuilder()).create();
-    private AdvancementList f_136023_ = new AdvancementList();
+    public static final Gson f_136022_ = (new GsonBuilder()).create();
+    public AdvancementList f_136023_ = new AdvancementList();
     private final LootDataManager f_278379_;
 +   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
  
@@ -19,7 +19,7 @@
     }
  
     protected void m_5787_(Map<ResourceLocation, JsonElement> p_136034_, ResourceManager p_136035_, ProfilerFiller p_136036_) {
-       ImmutableMap.Builder<ResourceLocation, AdvancementHolder> builder = ImmutableMap.builder();
+       Map<ResourceLocation, Advancement.Builder> map = Maps.newHashMap();
        p_136034_.forEach((p_278903_, p_278904_) -> {
 +         // Spigot start
 +         if (org.spigotmc.SpigotConfig.disabledAdvancements != null && (org.spigotmc.SpigotConfig.disabledAdvancements.contains("*") || org.spigotmc.SpigotConfig.disabledAdvancements.contains(p_296449_.toString()) || org.spigotmc.SpigotConfig.disabledAdvancements.contains(p_296449_.m_135827_()))) {

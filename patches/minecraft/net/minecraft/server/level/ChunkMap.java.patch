@@ -1,8 +1,8 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
-@@ -136,6 +_,41 @@
+@@ -144,6 +_,41 @@
     private final Queue<Runnable> f_140125_ = Queues.newConcurrentLinkedQueue();
-    private int f_290679_;
+    int f_140126_;
  
 +   // CraftBukkit start - recursion-safe executor for Chunk loadCallback() and unloadCallback()
 +   public final CallbackExecutor callbackExecutor = new CallbackExecutor();
@@ -42,7 +42,7 @@
     public ChunkMap(ServerLevel p_214836_, LevelStorageSource.LevelStorageAccess p_214837_, DataFixer p_214838_, StructureTemplateManager p_214839_, Executor p_214840_, BlockableEventLoop<Runnable> p_214841_, LightChunkGetter p_214842_, ChunkGenerator p_214843_, ChunkProgressListener p_214844_, ChunkStatusUpdateListener p_214845_, Supplier<DimensionDataStorage> p_214846_, int p_214847_, boolean p_214848_) {
        super(p_214837_.m_197394_(p_214836_.m_46472_()).resolve("region"), p_214838_, p_214848_);
        this.f_214833_ = p_214839_;
-@@ -143,6 +_,11 @@
+@@ -151,6 +_,11 @@
        this.f_182284_ = path.getFileName().toString();
        this.f_140133_ = p_214836_;
        this.f_140136_ = p_214843_;
@@ -54,7 +54,7 @@
        RegistryAccess registryaccess = p_214836_.m_9598_();
        long i = p_214836_.m_7328_();
        if (p_214843_ instanceof NoiseBasedChunkGenerator noisebasedchunkgenerator) {
-@@ -151,7 +_,7 @@
+@@ -159,7 +_,7 @@
           this.f_214834_ = RandomState.m_255302_(NoiseGeneratorSettings.m_238396_(), registryaccess.m_255025_(Registries.f_256865_), i);
        }
  
@@ -63,7 +63,7 @@
        this.f_140135_ = p_214841_;
        ProcessorMailbox<Runnable> processormailbox1 = ProcessorMailbox.m_18751_(p_214840_, "worldgen");
        ProcessorHandle<Runnable> processorhandle = ProcessorHandle.m_18714_("main", p_214841_::m_6937_);
-@@ -392,6 +_,7 @@
+@@ -398,6 +_,7 @@
              this.f_140140_ = true;
           }
  
@@ -79,7 +79,7 @@
                 }
  
                 this.m_140258_(p_203002_);
-@@ -679,7 +_,21 @@
+@@ -685,7 +_,21 @@
  
     private static void m_143064_(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
        if (!p_143066_.isEmpty()) {
@@ -102,7 +102,7 @@
        }
  
     }
-@@ -707,8 +_,14 @@
+@@ -713,8 +_,14 @@
              levelchunk.m_62952_();
              if (this.f_140132_.add(chunkpos.m_45588_())) {
                 levelchunk.m_62913_(true);
@@ -125,10 +125,15 @@
              this.m_63502_(chunkpos, compoundtag);
              this.m_140229_(chunkpos, chunkstatus.m_62494_());
              return true;
-@@ -889,2 +_,2 @@
+@@ -889,6 +_,7 @@
  
-    }
-@@ -947,20 +_,33 @@
+          if (!p_183759_ && p_183758_) {
+             p_183755_.m_9088_(p_183756_);
++            net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_183755_, p_183756_, this.f_140133_);
+          }
+ 
+       }
+@@ -946,21 +_,34 @@
  
     private CompletableFuture<Optional<CompoundTag>> m_214963_(ChunkPos p_214964_) {
        return this.m_223454_(p_214964_).thenApplyAsync((p_214907_) -> {
@@ -157,10 +162,11 @@
 +
 +      double blockRange = (reducedRange) ? Math.pow(chunkRange << 4, 2) : 16384.0D;
 +      // Spigot end
-       if (!this.f_140145_.m_140847_(p_183880_.m_45588_())) {
+       long i = p_183880_.m_45588_();
+       if (!this.f_140145_.m_140847_(i)) {
           return false;
        } else {
-          for(ServerPlayer serverplayer : this.f_140149_.m_183926_()) {
+          for(ServerPlayer serverplayer : this.f_140149_.m_183926_(i)) {
 -            if (this.m_183751_(serverplayer, p_183880_)) {
 +            if (this.playerIsCloseEnoughForSpawning(serverplayer, p_183880_, blockRange)) { // Spigot
                 return true;
@@ -169,7 +175,7 @@
 @@ -977,7 +_,7 @@
           ImmutableList.Builder<ServerPlayer> builder = ImmutableList.builder();
  
-          for(ServerPlayer serverplayer : this.f_140149_.m_183926_()) {
+          for(ServerPlayer serverplayer : this.f_140149_.m_183926_(i)) {
 -            if (this.m_183751_(serverplayer, p_183889_)) {
 +            if (this.playerIsCloseEnoughForSpawning(serverplayer, p_183889_, 16384.0D)) { // Spigot
                 builder.add(serverplayer);
@@ -190,14 +196,6 @@
        }
     }
  
-@@ -1099,6 +_,7 @@
-             this.m_294841_(p_301380_, p_296566_);
-          }, (p_296568_) -> {
-             m_295122_(p_301380_, p_296568_);
-+            net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_301380_, p_296568_, this.f_140133_);
-          });
-          p_301380_.m_294756_(p_301057_);
-       }
 @@ -1132,9 +_,12 @@
     }
  
@@ -212,7 +210,7 @@
           if (i != 0) {
              int j = entitytype.m_20682_();
              if (this.f_140150_.containsKey(p_140200_.m_19879_())) {
-@@ -1146,6 +_,7 @@
+@@ -1160,6 +_,7 @@
     }
  
     protected void m_140331_(Entity p_140332_) {
@@ -228,7 +226,7 @@
     }
  
     protected PoiManager m_140424_() {
-@@ -1287,7 +_,7 @@
+@@ -1324,7 +_,7 @@
        public final Set<ServerPlayerConnection> f_140475_ = Sets.newIdentityHashSet();
  
        public TrackedEntity(Entity p_140478_, int p_140479_, int p_140480_, boolean p_140481_) {
@@ -237,7 +235,7 @@
           this.f_140472_ = p_140478_;
           this.f_140473_ = p_140479_;
           this.f_140474_ = SectionPos.m_235861_(p_140478_);
-@@ -1328,6 +_,7 @@
+@@ -1365,6 +_,7 @@
        }
  
        public void m_140485_(ServerPlayer p_140486_) {
@@ -245,18 +243,18 @@
           if (this.f_140475_.remove(p_140486_.f_8906_)) {
              this.f_140471_.m_8534_(p_140486_);
           }
-@@ -1335,6 +_,7 @@
+@@ -1372,6 +_,7 @@
        }
  
        public void m_140497_(ServerPlayer p_140498_) {
 +         org.spigotmc.AsyncCatcher.catchOp("player tracker update"); // Spigot
           if (p_140498_ != this.f_140472_) {
              Vec3 vec3 = p_140498_.m_20182_().m_82546_(this.f_140472_.m_20182_());
-             int i = ChunkMap.this.m_294650_(p_140498_);
-@@ -1342,6 +_,12 @@
+             double d0 = (double)Math.min(this.m_140496_(), ChunkMap.this.f_140126_ * 16);
+@@ -1378,6 +_,12 @@
              double d1 = vec3.f_82479_ * vec3.f_82479_ + vec3.f_82481_ * vec3.f_82481_;
              double d2 = d0 * d0;
-             boolean flag = d1 <= d2 && this.f_140472_.m_6459_(p_140498_) && ChunkMap.this.m_295978_(p_140498_, this.f_140472_.m_146902_().f_45578_, this.f_140472_.m_146902_().f_45579_);
+             boolean flag = d1 <= d2 && this.f_140472_.m_6459_(p_140498_);
 +
 +            // CraftBukkit start - respect vanish API
 +            if (!p_140498_.getBukkitEntity().canSee(this.f_140472_.getBukkitEntity())) {
