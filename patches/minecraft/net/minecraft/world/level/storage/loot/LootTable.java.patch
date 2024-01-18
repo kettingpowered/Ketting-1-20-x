@@ -8,7 +8,7 @@
 +   private final List<LootPool> f_79109_;
     final LootItemFunction[] f_79110_;
     private final BiFunction<ItemStack, LootContext, ItemStack> f_79111_;
-+   public org.bukkit.craftbukkit.v1_20_R2.CraftLootTable craftLootTable; // CraftBukkit
++   public org.bukkit.craftbukkit.CraftLootTable craftLootTable; // CraftBukkit
  
     LootTable(LootContextParamSet p_287716_, @Nullable ResourceLocation p_287737_, LootPool[] p_287700_, LootItemFunction[] p_287663_) {
        this.f_79108_ = p_287716_;
@@ -60,6 +60,17 @@
        return objectarraylist;
     }
  
+@@ -121,8 +_,8 @@
+    }
+ 
+    public void m_79136_(ValidationContext p_79137_) {
+-      for(int i = 0; i < this.f_79109_.length; ++i) {
+-         this.f_79109_[i].m_79051_(p_79137_.m_79365_(".pools[" + i + "]"));
++      for(int i = 0; i < this.f_79109_.size(); ++i) {
++         this.f_79109_.get(i).m_79051_(p_79137_.m_79365_(".pools[" + i + "]"));
+       }
+ 
+       for(int j = 0; j < this.f_79110_.length; ++j) {
 @@ -132,9 +_,22 @@
     }
  
@@ -74,11 +85,11 @@
        ObjectArrayList<ItemStack> objectarraylist = this.m_230922_(lootcontext);
        RandomSource randomsource = lootcontext.m_230907_();
 +      // CraftBukkit start
-+      org.bukkit.event.world.LootGenerateEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callLootGenerateEvent(p_287662_, this, lootcontext, objectarraylist, plugin);
++      org.bukkit.event.world.LootGenerateEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callLootGenerateEvent(p_287662_, this, lootcontext, objectarraylist, plugin);
 +      if (event.isCancelled()) {
 +         return;
 +      }
-+      objectarraylist = event.getLoot().stream().map(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
++      objectarraylist = event.getLoot().stream().map(org.bukkit.craftbukkit.inventory.CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
 +      // CraftBukkit end
        List<Integer> list = this.m_230919_(p_287662_, randomsource);
        this.m_230924_(objectarraylist, list.size(), randomsource);

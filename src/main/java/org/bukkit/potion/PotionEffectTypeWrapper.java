@@ -27,7 +27,7 @@ public class PotionEffectTypeWrapper extends PotionEffectType {
      */
     @NotNull
     public PotionEffectType getType() {
-        return PotionEffectType.getByKey(getKey());
+        return PotionEffectType.getById(getId());
     }
 
     @Override

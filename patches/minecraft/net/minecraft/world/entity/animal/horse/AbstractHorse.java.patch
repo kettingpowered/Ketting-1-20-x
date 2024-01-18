@@ -8,7 +8,7 @@
  
     protected AbstractHorse(EntityType<? extends AbstractHorse> p_30531_, Level p_30532_) {
        super(p_30531_, p_30532_);
-@@ -313,7 +_,7 @@
+@@ -312,7 +_,7 @@
  
     public void m_30625_() {
        SimpleContainer simplecontainer = this.f_30520_;
@@ -72,15 +72,17 @@
        if (p_275435_.f_82481_ > 0.0D) {
           float f = Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F));
           float f1 = Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F));
-@@ -809,6 +_,8 @@
+@@ -806,7 +_,10 @@
+       p_30589_.m_128379_("Tame", this.m_30614_());
+       if (this.m_21805_() != null) {
           p_30589_.m_128362_("Owner", this.m_21805_());
++         p_30589_.m_128362_("Owner", this.m_21805_());
        }
- 
-+      p_30589_.m_128405_("Bukkit.MaxDomestication", this.maxDomestication); // CraftBukkit
 +
++      p_30589_.m_128405_("Bukkit.MaxDomestication", this.maxDomestication); // CraftBukkit
+ 
        if (!this.f_30520_.m_8020_(0).m_41619_()) {
           p_30589_.m_128365_("SaddleItem", this.f_30520_.m_8020_(0).m_41739_(new CompoundTag()));
-       }
 @@ -832,6 +_,12 @@
           this.m_30586_(uuid);
        }
@@ -94,7 +96,7 @@
        if (p_30565_.m_128425_("SaddleItem", 10)) {
           ItemStack itemstack = ItemStack.m_41712_(p_30565_.m_128469_("SaddleItem"));
           if (itemstack.m_150930_(Items.f_42450_)) {
-@@ -925,6 +_,17 @@
+@@ -924,6 +_,17 @@
     }
  
     public void m_7199_(int p_30574_) {
@@ -105,7 +107,7 @@
 +      } else {
 +         power = 0.4F + 0.4F * (float) p_30574_ / 90.0F;
 +      }
-+      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callHorseJumpEvent(this, power)) {
++      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callHorseJumpEvent(this, power)) {
 +         return;
 +      }
 +      // CraftBukkit end

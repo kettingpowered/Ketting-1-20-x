@@ -38,7 +38,7 @@ public class ConditionalRecipe
     public static class Serializer<T extends Recipe<?>> implements RecipeSerializer<T>
     {
         @Override
-        public T fromJson(ResourceLocation recipeId, JsonObject json)
+        public T m_6729_(ResourceLocation recipeId, JsonObject json)
         {
             return fromJson(recipeId, json, ICondition.IContext.EMPTY);
         }
@@ -189,23 +189,23 @@ public class ConditionalRecipe
         }
 
         @Override
-        public ResourceLocation getId() {
+        public ResourceLocation m_6445_() {
             return id;
         }
 
         @Override
-        public RecipeSerializer<?> getType()
+        public RecipeSerializer<?> m_6637_()
         {
             return SERIALZIER;
         }
 
         @Override
-        public JsonObject serializeAdvancement() {
+        public JsonObject m_5860_() {
             return adv == null ? null : adv.write();
         }
 
         @Override
-        public ResourceLocation getAdvancementId() {
+        public ResourceLocation m_6448_() {
             return advId;
         }
     }

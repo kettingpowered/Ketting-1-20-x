@@ -159,7 +159,7 @@ public class ServerLifecycleHooks
             return false;
         }
 
-        if (packet.getIntention() == ConnectionProtocol.LOGIN) {
+        if (packet.m_134735_() == ConnectionProtocol.LOGIN) {
             final ConnectionType connectionType = ConnectionType.forVersionFlag(packet.getFMLVersion());
             final int versionNumber = connectionType.getFMLVersionNumber(packet.getFMLVersion());
 
@@ -174,7 +174,7 @@ public class ServerLifecycleHooks
             }
         }
 
-        if (packet.getIntention() == ConnectionProtocol.STATUS) return true;
+        if (packet.m_134735_() == ConnectionProtocol.STATUS) return true;
 
         NetworkHooks.registerServerLoginChannel(manager, packet);
         return true;
@@ -182,7 +182,7 @@ public class ServerLifecycleHooks
     }
 
     private static void rejectConnection(final Connection manager, ConnectionType type, String message) {
-        manager.setProtocol(ConnectionProtocol.LOGIN);
+        manager.m_129498_(ConnectionProtocol.LOGIN);
         String ip = "local";
         if (manager.getRemoteAddress() != null)
            ip = manager.getRemoteAddress().toString();

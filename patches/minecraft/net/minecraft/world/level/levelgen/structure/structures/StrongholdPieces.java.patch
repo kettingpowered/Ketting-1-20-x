@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/structure/structures/StrongholdPieces.java
 +++ b/net/minecraft/world/level/levelgen/structure/structures/StrongholdPieces.java
-@@ -703,15 +_,20 @@
+@@ -703,7 +_,7 @@
           }
  
           if (!this.f_229627_) {
@@ -8,20 +8,4 @@
 +            BlockPos.MutableBlockPos blockpos = this.m_163582_(5, 3, 6);
              if (p_229639_.m_71051_(blockpos)) {
                 this.f_229627_ = true;
--               p_229635_.m_7731_(blockpos, Blocks.f_50085_.m_49966_(), 2);
--               BlockEntity blockentity = p_229635_.m_7702_(blockpos);
-+               // CraftBukkit start
-+               /*
-+               p_229635_.setBlock(blockpos, Blocks.SPAWNER.defaultBlockState(), 2);
-+               BlockEntity blockentity = p_229635_.getBlockEntity(blockpos);
-                if (blockentity instanceof SpawnerBlockEntity) {
-                   SpawnerBlockEntity spawnerblockentity = (SpawnerBlockEntity)blockentity;
--                  spawnerblockentity.m_252803_(EntityType.f_20523_, p_229638_);
-+                  spawnerblockentity.setEntityId(EntityType.SILVERFISH, p_229638_);
-                }
-+               */
-+               placeCraftSpawner(p_229635_, blockpos, org.bukkit.entity.EntityType.SILVERFISH, 2);
-+               // CraftBukkit end
-             }
-          }
- 
+                p_229635_.m_7731_(blockpos, Blocks.f_50085_.m_49966_(), 2);

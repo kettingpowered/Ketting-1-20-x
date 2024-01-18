@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -60,31 +_,68 @@
+@@ -60,7 +_,7 @@
     public final List<ConsoleInput> f_139600_ = Collections.synchronizedList(Lists.newArrayList());
     @Nullable
     private QueryThreadGs4 f_139601_;
@@ -9,7 +9,7 @@
     @Nullable
     private RconThread f_139603_;
     public DedicatedServerSettings f_139604_;
-    @Nullable
+@@ -68,23 +_,60 @@
     private MinecraftServerGui f_139605_;
     @Nullable
     private final TextFilterClient f_139606_;
@@ -85,7 +85,7 @@
 +      for (java.util.logging.Handler handler : global.getHandlers()) {
 +         global.removeHandler(handler);
 +      }
-+      global.addHandler(new org.bukkit.craftbukkit.v1_20_R2.util.ForwardLogHandler());
++      global.addHandler(new org.bukkit.craftbukkit.util.ForwardLogHandler());
 +
 +      final org.apache.logging.log4j.core.Logger logger = ((org.apache.logging.log4j.core.Logger) org.apache.logging.log4j.LogManager.getRootLogger());
 +      for (org.apache.logging.log4j.core.Appender appender : logger.getAppenders().values()) {
@@ -230,7 +230,7 @@
     }
  
     public void m_139665_() {
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.serverCommandTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.serverCommandTimer.startTiming(); // Spigot
        while(!this.f_139600_.isEmpty()) {
           ConsoleInput consoleinput = this.f_139600_.remove(0);
 -         this.m_129892_().m_230957_(consoleinput.f_135929_, consoleinput.f_135928_);
@@ -246,7 +246,7 @@
 +         // CraftBukkit end
        }
  
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.serverCommandTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.SpigotTimings.serverCommandTimer.stopTiming(); // Spigot
     }
  
     public boolean m_6982_() {

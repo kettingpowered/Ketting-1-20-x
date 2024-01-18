@@ -1,5 +1,13 @@
 --- a/net/minecraft/advancements/Advancement.java
 +++ b/net/minecraft/advancements/Advancement.java
+@@ -37,6 +_,7 @@
+    private final Set<Advancement> f_138304_ = Sets.newLinkedHashSet();
+    private final Component f_138305_;
+    private final boolean f_285575_;
++   public final org.bukkit.advancement.Advancement bukkit = new org.bukkit.craftbukkit.advancement.CraftAdvancement(this); // CraftBukkit
+ 
+    public Advancement(ResourceLocation p_286878_, @Nullable Advancement p_286496_, @Nullable DisplayInfo p_286499_, AdvancementRewards p_286389_, Map<String, Criterion> p_286635_, String[][] p_286882_, boolean p_286478_) {
+       this.f_138301_ = p_286878_;
 @@ -150,7 +_,7 @@
        return this.f_138305_;
     }
@@ -13,9 +21,10 @@
           return "Task Advancement{parentId=" + this.f_138332_ + ", display=" + this.f_138334_ + ", rewards=" + this.f_138335_ + ", criteria=" + this.f_138336_ + ", requirements=" + Arrays.deepToString(this.f_138337_) + ", sends_telemetry_event=" + this.f_285655_ + "}";
        }
  
+-      public static Advancement.Builder m_138380_(JsonObject p_138381_, DeserializationContext p_138382_) {
 +      /** @deprecated Forge: use {@linkplain #fromJson(JsonObject, DeserializationContext, net.minecraftforge.common.crafting.conditions.ICondition.IContext) overload with context}. */
 +      @Deprecated
-       public static Advancement.Builder m_138380_(JsonObject p_138381_, DeserializationContext p_138382_) {
++      public static Advancement.Builder fromJson(JsonObject p_138381_, DeserializationContext p_138382_) {
 +         return fromJson(p_138381_, p_138382_, net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
 +      }
 +

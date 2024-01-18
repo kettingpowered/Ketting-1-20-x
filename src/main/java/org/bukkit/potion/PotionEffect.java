@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import org.bukkit.Color;
-import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.LivingEntity;
@@ -109,14 +108,8 @@ public class PotionEffect implements ConfigurationSerializable {
 
     @NotNull
     private static PotionEffectType getEffectType(@NotNull Map<?, ?> map) {
-        PotionEffectType effect;
-        if (map.get(TYPE) instanceof String) {
-            String type = (String) map.get(TYPE);
-            effect = PotionEffectType.getByKey(NamespacedKey.fromString(type));
-        } else {
-            int type = getInt(map, TYPE);
-            effect = PotionEffectType.getById(type);
-        }
+        int type = getInt(map, TYPE);
+        PotionEffectType effect = PotionEffectType.getById(type);
         if (effect != null) {
             return effect;
         }
@@ -143,7 +136,7 @@ public class PotionEffect implements ConfigurationSerializable {
     @NotNull
     public Map<String, Object> serialize() {
         return ImmutableMap.<String, Object>builder()
-            .put(TYPE, type.getKey().toString())
+            .put(TYPE, type.getId())
             .put(DURATION, duration)
             .put(AMPLIFIER, amplifier)
             .put(AMBIENT, ambient)

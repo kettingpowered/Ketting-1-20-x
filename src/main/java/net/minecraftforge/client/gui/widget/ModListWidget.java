@@ -54,7 +54,7 @@ public class ModListWidget extends ObjectSelectionList<ModListWidget.ModEntry>
     }
 
     @Override
-    protected void renderBackground(GuiGraphics guiGraphics)
+    protected void m_7733_(GuiGraphics guiGraphics)
     {
         this.parent.renderBackground(guiGraphics);
     }

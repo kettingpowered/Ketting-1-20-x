@@ -1,16 +1,12 @@
 --- a/net/minecraft/world/item/crafting/StonecutterRecipe.java
 +++ b/net/minecraft/world/item/crafting/StonecutterRecipe.java
-@@ -7,9 +_,14 @@
+@@ -7,9 +_,11 @@
  import net.minecraft.world.level.block.Blocks;
  
  public class StonecutterRecipe extends SingleItemRecipe {
 +   //Ketting start
-+   public StonecutterRecipe(String p_44479_, Ingredient p_44480_, ItemStack itemstack) {
-+      super(RecipeType.f_44112_, RecipeSerializer.f_44095_, p_44479_, p_44480_, itemstack);
-+   }
     public StonecutterRecipe(ResourceLocation p_44478_, String p_44479_, Ingredient p_44480_, ItemStack p_44481_) {
--      super(RecipeType.f_44112_, RecipeSerializer.f_44095_, p_44478_, p_44479_, p_44480_, p_44481_);
-+      this(p_44479_, p_44480_, new ItemStack(p_300034_, p_297600_));
+       super(RecipeType.f_44112_, RecipeSerializer.f_44095_, p_44478_, p_44479_, p_44480_, p_44481_);
     }
 +   //Ketting end
  
@@ -23,10 +19,10 @@
 +
 +   // CraftBukkit start
 +   @Override
-+   public org.bukkit.inventory.Recipe toBukkitRecipe(org.bukkit.NamespacedKey id) {
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(this.f_44410_);
++   public org.bukkit.inventory.Recipe toBukkitRecipe() {
++      org.bukkit.craftbukkit.inventory.CraftItemStack result = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(this.f_44410_);
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftStonecuttingRecipe recipe = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftStonecuttingRecipe(id, result, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.f_44409_));
++      org.bukkit.craftbukkit.inventory.CraftStonecuttingRecipe recipe = new org.bukkit.craftbukkit.inventory.CraftStonecuttingRecipe(org.bukkit.craftbukkit.util.CraftNamespacedKey.fromMinecraft(this.f_44411_), result, org.bukkit.craftbukkit.inventory.CraftRecipe.toBukkit(this.f_44409_));
 +      recipe.setGroup(this.f_44412_);
 +
 +      return recipe;

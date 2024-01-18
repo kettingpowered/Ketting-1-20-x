@@ -1,6 +1,7 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -38,8 +_,16 @@
+@@ -37,24 +_,48 @@
+    public Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> f_44007_ = ImmutableMap.of();
     private Map<ResourceLocation, Recipe<?>> f_199900_ = ImmutableMap.of();
     private boolean f_44008_;
 +   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
@@ -17,7 +18,6 @@
     }
  
     protected void m_5787_(Map<ResourceLocation, JsonElement> p_44037_, ResourceManager p_44038_, ProfilerFiller p_44039_) {
-@@ -46,15 +_,31 @@
        this.f_44008_ = false;
 -      Map<RecipeType<?>, ImmutableMap.Builder<ResourceLocation, Recipe<?>>> map = Maps.newHashMap();
 +      // CraftBukkit start - SPIGOT-5667 make sure all types are populated and mutable
@@ -34,27 +34,27 @@
  
           try {
 -            Recipe<?> recipe = m_44045_(resourcelocation, GsonHelper.m_13918_(entry.getValue(), "top element"));
+-            map.computeIfAbsent(recipe.m_6671_(), (p_44075_) -> {
+-               return ImmutableMap.builder();
+-            }).put(resourcelocation, recipe);
 +            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions", this.context)) {
 +               f_44006_.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
 +               continue;
 +            }
 +            Recipe<?> recipe = fromJson(resourcelocation, GsonHelper.m_13918_(entry.getValue(), "top element"), this.context);
--            map.computeIfAbsent(recipe.m_6671_(), (p_44075_) -> {
--               return ImmutableMap.builder();
--            }).put(resourcelocation, recipe);
 +            if (recipe == null) {
 +               f_44006_.info("Skipping loading recipe {} as it's serializer returned null", resourcelocation);
 +               continue;
 +            }
 +            // CraftBukkit start
-+            (map.computeIfAbsent(recipeholder.f_291008_().m_6671_(), (recipes) -> {
++            (map.computeIfAbsent(recipe.m_6671_(), (recipes) -> {
 +               return new it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<>();
 +               // CraftBukkit end
-+            })).put(resourcelocation, recipeholder);
++            })).put(resourcelocation, recipe);
              builder.put(resourcelocation, recipe);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
              f_44006_.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
-@@ -62,10 +_,24 @@
+@@ -62,20 +_,38 @@
        }
  
        this.f_44007_ = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (p_44033_) -> {
@@ -67,29 +67,29 @@
     }
  
 +   // CraftBukkit start
-+   public void addRecipe(RecipeHolder<?> irecipe) {
++   public void addRecipe(Recipe<?> irecipe) {
 +      org.spigotmc.AsyncCatcher.catchOp("Recipe Add"); // Spigot
-+      it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<ResourceLocation, RecipeHolder<?>> map = this.f_44007_.get(irecipe.f_291008_().m_6671_()); // CraftBukkit
++      Map<ResourceLocation, Recipe<?>> map = this.f_44007_.get(irecipe.m_6671_()); // CraftBukkit
 +
-+      if (f_199900_.containsKey(irecipe.f_291676_()) || map.containsKey(irecipe.f_291676_())) {
-+         throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.f_291676_());
++      if (f_199900_.containsKey(irecipe.m_6423_()) || map.containsKey(irecipe.m_6423_())) {
++         throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.m_6423_());
 +      } else {
-+         map.putAndMoveToFirst(irecipe.f_291676_(), irecipe); // CraftBukkit - SPIGOT-4638: last recipe gets priority
-+         f_199900_.put(irecipe.f_291676_(), irecipe);
++         map.put(irecipe.m_6423_(), irecipe); // CraftBukkit - SPIGOT-4638: last recipe gets priority
++         f_199900_.put(irecipe.m_6423_(), irecipe);
 +      }
 +   }
 +   // CraftBukkit end
 +
     public boolean m_151269_() {
-@@ -72,10 +_,14 @@
        return this.f_44008_;
     }
  
     public <C extends Container, T extends Recipe<C>> Optional<T> m_44015_(RecipeType<T> p_44016_, C p_44017_, Level p_44018_) {
 -      return this.m_44054_(p_44016_).values().stream().filter((p_220266_) -> {
+-         return p_220266_.m_5818_(p_44017_, p_44018_);
 +      // CraftBukkit start
-+      Optional<RecipeHolder<T>> recipe = this.m_44054_(p_44016_).values().stream().filter((p_296918_) -> {
-          return p_220266_.m_5818_(p_44017_, p_44018_);
++      Optional<T> recipe = this.m_44054_(p_44016_).values().stream().filter((p_296918_) -> {
++         return p_296918_.m_5818_(p_44017_, p_44018_);
        }).findFirst();
 +      p_44017_.setCurrentRecipe(recipe.orElse(null)); // CraftBukkit - Clear recipe when no recipe is found
 +      return recipe;
@@ -136,7 +136,7 @@
 +
 +   // CraftBukkit start
 +   public boolean removeRecipe(ResourceLocation resourceLocation) {
-+      for (it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<ResourceLocation, RecipeHolder<?>> recipes : f_44007_.values()) {
++      for (Map<ResourceLocation, Recipe<?>> recipes : f_44007_.values()) {
 +         recipes.remove(resourceLocation);
 +      }
 +

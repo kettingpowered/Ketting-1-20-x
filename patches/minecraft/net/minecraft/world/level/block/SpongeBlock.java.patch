@@ -6,7 +6,7 @@
     private boolean m_56807_(Level p_56808_, BlockPos p_56809_) {
 -      return BlockPos.m_276833_(p_56809_, 6, 65, (p_277519_, p_277492_) -> {
 +      BlockState spongeState = p_56808_.m_8055_(p_56809_);
-+      org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator(p_56808_); // CraftBukkit - Use BlockStateListPopulator
++      org.bukkit.craftbukkit.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.util.BlockStateListPopulator(p_56808_); // CraftBukkit - Use BlockStateListPopulator
 +      BlockPos.m_276833_(p_56809_, 6, 65, (blockposition1, consumer) -> {
           for(Direction direction : f_276425_) {
 -            p_277492_.accept(p_277519_.m_121945_(direction));
@@ -31,7 +31,7 @@
                 if (block instanceof BucketPickup) {
                    BucketPickup bucketpickup = (BucketPickup)block;
 -                  if (!bucketpickup.m_142598_(p_56808_, p_279054_, blockstate).m_41619_()) {
-+                  if (!bucketpickup.m_142598_((Player) null, blockList, p_279054_, blockstate).m_41619_()) { // CraftBukkit
++                  if (!bucketpickup.m_142598_(blockList, p_279054_, blockstate).m_41619_()) { // CraftBukkit
                       return true;
                    }
                 }
@@ -59,7 +59,7 @@
 -      }) > 1;
 +      });
 +      // CraftBukkit start
-+      java.util.List<org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState> blocks = blockList.getList(); // Is a clone
++      java.util.List<org.bukkit.craftbukkit.block.CraftBlockState> blocks = blockList.getList(); // Is a clone
 +      if (!blocks.isEmpty()) {
 +         final org.bukkit.block.Block bblock = p_56808_.getWorld().getBlockAt(p_56809_.m_123341_(), p_56809_.m_123342_(), p_56809_.m_123343_());
 +
@@ -70,13 +70,13 @@
 +            return false;
 +         }
 +
-+         for (org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState block : blocks) {
++         for (org.bukkit.craftbukkit.block.CraftBlockState block : blocks) {
 +            BlockPos blockposition1 = block.getPosition();
 +            BlockState iblockdata = p_56808_.m_8055_(blockposition1);
 +            FluidState fluid = p_56808_.m_6425_(blockposition1);
 +
 +            if (fluid.m_205070_(FluidTags.f_13131_)) {
-+               if (iblockdata.m_60734_() instanceof BucketPickup && !((BucketPickup) iblockdata.m_60734_()).m_142598_((Player) null, blockList, blockposition1, iblockdata).m_41619_()) {
++               if (iblockdata.m_60734_() instanceof BucketPickup && !((BucketPickup) iblockdata.m_60734_()).m_142598_(blockList, blockposition1, iblockdata).m_41619_()) {
 +                  // NOP
 +               } else if (iblockdata.m_60734_() instanceof LiquidBlock) {
 +                  // NOP

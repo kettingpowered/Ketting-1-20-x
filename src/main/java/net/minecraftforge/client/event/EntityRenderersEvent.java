@@ -169,10 +169,6 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
         public net.minecraft.client.renderer.entity.EntityRenderer<?> getEntityRenderer(net.minecraft.world.entity.EntityType<?> type){
             return renderers.get(type);
         }
-        @Nullable
-        public net.minecraft.client.renderer.entity.EntityRenderer<?> getPlayerSkin(net.minecraft.client.resources.PlayerSkin.Model model){
-            return skinMap.get(model);
-        }
         /**
          * Returns a player skin renderer for the given skin name.
          *

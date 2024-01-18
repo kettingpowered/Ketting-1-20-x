@@ -56,7 +56,7 @@ public class RestartCommand extends Command
                 // Kick all players
                 for ( ServerPlayer p : (List<ServerPlayer>) MinecraftServer.getServer().getPlayerList().players )
                 {
-                    p.connection.disconnect(SpigotConfig.restartMessage);
+                    p.connection.m_9942_(SpigotConfig.restartMessage);
                 }
                 // Give the socket a chance to send the packets
                 try

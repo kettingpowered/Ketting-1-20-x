@@ -1192,10 +1192,7 @@ public enum Material implements Keyed, Translatable {
     GREEN_TERRACOTTA(4105),
     RED_TERRACOTTA(5086),
     BLACK_TERRACOTTA(26691),
-    /**
-     * BlockData: {@link Waterlogged}
-     */
-    BARRIER(26453, Waterlogged.class),
+    BARRIER(26453),
     /**
      * BlockData: {@link Light}
      */
@@ -4529,7 +4526,7 @@ public enum Material implements Keyed, Translatable {
      * @return new data instance
      */
     @NotNull
-    public BlockData createBlockData(@Nullable Consumer<? super BlockData> consumer) {
+    public BlockData createBlockData(@Nullable Consumer<BlockData> consumer) {
         return Bukkit.createBlockData(this, consumer);
     }
 
@@ -7946,7 +7943,7 @@ public enum Material implements Keyed, Translatable {
      *   <li>Only occluding blocks can be "powered" ({@link Block#isBlockPowered()}).
      * </ul>
      * This list may be inconclusive. For a full list of the side effects of an occluding
-     * block, see the <a href="https://minecraft.wiki/w/Opacity">Minecraft Wiki</a>.
+     * block, see the <a href="https://minecraft.fandom.com/wiki/Opacity">Minecraft Wiki</a>.
      *
      * @return True if this material is a block and occludes light
      */

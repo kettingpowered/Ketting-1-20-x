@@ -18,9 +18,9 @@
        this.f_134723_ = ConnectionProtocol.m_129583_(p_179801_.m_130242_());
 +      this.fmlVersion = net.minecraftforge.network.NetworkHooks.getFMLVersion(hostName);
 +      this.f_134721_ = hostName.split("\0")[0];
-+//-      this(p_179801_.m_130242_(), p_179801_.m_130136_(255), p_179801_.readUnsignedShort(), ClientIntent.m_293987_(p_179801_.m_130242_()));
++//-      this(p_179801_.readVarInt(), p_179801_.readUtf(255), p_179801_.readUnsignedShort(), ClientIntent.byId(p_179801_.readVarInt()));
 +//+      // Spigot - increase max hostName length
-+//+      this(p_179801_.m_130242_(), p_179801_.m_130136_(Short.MAX_VALUE), p_179801_.readUnsignedShort(), ClientIntent.m_293987_(p_179801_.m_130242_()));
++//+      this(p_179801_.readVarInt(), p_179801_.readUtf(Short.MAX_VALUE), p_179801_.readUnsignedShort(), ClientIntent.byId(p_179801_.readVarInt()));
     }
  
     public void m_5779_(FriendlyByteBuf p_134737_) {

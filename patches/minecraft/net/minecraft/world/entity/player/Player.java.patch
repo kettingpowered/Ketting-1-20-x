@@ -36,8 +36,8 @@
 +   public int oldLevel = -1;
 +
 +   @Override
-+   public org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity getBukkitEntity() {
-+      return (org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity) super.getBukkitEntity();
++   public org.bukkit.craftbukkit.entity.CraftHumanEntity getBukkitEntity() {
++      return (org.bukkit.craftbukkit.entity.CraftHumanEntity) super.getBukkitEntity();
 +   }
 +   // CraftBukkit end
  
@@ -77,7 +77,7 @@
     }
  
     public boolean m_36341_() {
-@@ -300,7 +_,7 @@
+@@ -299,7 +_,7 @@
     private void m_36372_() {
        ItemStack itemstack = this.m_6844_(EquipmentSlot.HEAD);
        if (itemstack.m_150930_(Items.f_42354_) && !this.m_204029_(FluidTags.f_13131_)) {
@@ -482,7 +482,7 @@
 +                     // CraftBukkit start - Add Velocity Event
 +                     boolean cancelled = false;
 +                     org.bukkit.entity.Player player = (org.bukkit.entity.Player) p_36347_.getBukkitEntity();
-+                     org.bukkit.util.Vector velocity = org.bukkit.craftbukkit.v1_20_R2.util.CraftVector.toBukkit(vec3);
++                     org.bukkit.util.Vector velocity = org.bukkit.craftbukkit.util.CraftVector.toBukkit(vec3);
 +
 +                     org.bukkit.event.player.PlayerVelocityEvent event = new org.bukkit.event.player.PlayerVelocityEvent(player, velocity.clone());
 +                     this.m_9236_().getCraftServer().getPluginManager().callEvent(event);
@@ -494,7 +494,7 @@
 +                     }
 +
 +                     if (!cancelled) {
-+                        ((ServerPlayer)p_36347_).f_8906_.m_141995_(new ClientboundSetEntityMotionPacket(p_36347_));
++                        ((ServerPlayer)p_36347_).f_8906_.m_9829_(new ClientboundSetEntityMotionPacket(p_36347_));
 +                        p_36347_.f_19864_ = false;
 +                        p_36347_.m_20256_(vec3);
 +                     }
@@ -614,7 +614,7 @@
           this.m_183634_();
 -         this.m_20115_(7, false);
 +         // CraftBukkit start
-+         if (m_20291_(7) && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++         if (m_20291_(7) && !org.bukkit.craftbukkit.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +            this.m_20115_(7, false);
 +         }
 +         // CraftBukkit end
@@ -684,7 +684,7 @@
     public void m_36320_() {
 -      this.m_20115_(7, true);
 +      // CraftBukkit start
-+      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
++      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
 +         this.m_20115_(7, true);
 +      } else {
 +         // SPIGOT-5542: must toggle like below
@@ -698,7 +698,7 @@
 -      this.m_20115_(7, true);
 -      this.m_20115_(7, false);
 +      // CraftBukkit start
-+      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +         this.m_20115_(7, true);
 +         this.m_20115_(7, false);
 +      }
@@ -767,7 +767,7 @@
           if (!this.m_9236_().f_46443_) {
 -            this.f_36097_.m_38703_(p_36400_);
 +            // CraftBukkit start
-+            org.bukkit.event.entity.EntityExhaustionEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerExhaustionEvent(this, reason, p_36400_);
++            org.bukkit.event.entity.EntityExhaustionEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerExhaustionEvent(this, reason, p_36400_);
 +            if (!event.isCancelled()) {
 +               this.f_36097_.m_38703_(event.getExhaustion());
 +            }
@@ -814,14 +814,17 @@
 +   private boolean respawnEntityOnShoulder(CompoundTag p_36371_) { // CraftBukkit void->boolean
        if (!this.m_9236_().f_46443_ && !p_36371_.m_128456_()) {
 -         EntityType.m_20642_(p_36371_, this.m_9236_()).ifPresent((p_289491_) -> {
+-            if (p_289491_ instanceof TamableAnimal) {
+-               ((TamableAnimal)p_289491_).m_21816_(this.f_19820_);
 +         return EntityType.m_20642_(p_36371_, this.m_9236_()).map((p_296858_) -> { // CraftBukkit
-             if (p_289491_ instanceof TamableAnimal) {
-                ((TamableAnimal)p_289491_).m_21816_(this.f_19820_);
++            if (p_296858_ instanceof TamableAnimal) {
++               ((TamableAnimal)p_296858_).m_21816_(this.f_19820_);
              }
  
-             p_289491_.m_6034_(this.m_20185_(), this.m_20186_() + (double)0.7F, this.m_20189_());
+-            p_289491_.m_6034_(this.m_20185_(), this.m_20186_() + (double)0.7F, this.m_20189_());
 -            ((ServerLevel)this.m_9236_()).m_8847_(p_289491_);
 -         });
++            p_296858_.m_6034_(this.m_20185_(), this.m_20186_() + (double)0.7F, this.m_20189_());
 +            return ((ServerLevel) this.m_9236_()).addWithUUID(p_296858_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY); // CraftBukkit
 +         }).orElse(true); // CraftBukkit
        }

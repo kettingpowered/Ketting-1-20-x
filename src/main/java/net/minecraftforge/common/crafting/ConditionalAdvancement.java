@@ -79,12 +79,12 @@ public class ConditionalAdvancement
 
         public Builder addAdvancement(Advancement.Builder advancement)
         {
-            return addAdvancement(advancement::serializeToJson);
+            return addAdvancement(advancement::m_138400_);
         }
 
         public Builder addAdvancement(FinishedRecipe fromRecipe)
         {
-            return addAdvancement(fromRecipe::serializeAdvancement);
+            return addAdvancement(fromRecipe::m_5860_);
         }
 
         private Builder addAdvancement(Supplier<JsonElement> jsonSupplier)

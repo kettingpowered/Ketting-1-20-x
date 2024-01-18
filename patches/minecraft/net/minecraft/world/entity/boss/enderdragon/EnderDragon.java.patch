@@ -81,7 +81,7 @@
 +                     // CraftBukkit start - Add blocks to list rather than destroying them
 +                     // flag1 = this.level().removeBlock(blockpos, false) || flag1;
 +                     flag1 = true;
-+                     destroyedBlocks.add(org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(this.m_9236_(), blockpos));
++                     destroyedBlocks.add(org.bukkit.craftbukkit.block.CraftBlock.at(this.m_9236_(), blockpos));
 +                     // CraftBukkit end
                    } else {
                       flag = true;
@@ -115,7 +115,7 @@
 +               continue;
 +            }
 +
-+            org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock craftBlock = ((org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock) block);
++            org.bukkit.craftbukkit.block.CraftBlock craftBlock = ((org.bukkit.craftbukkit.block.CraftBlock) block);
 +            BlockPos blockpos = craftBlock.getPosition();
 +
 +            net.minecraft.world.level.block.Block nmsBlock = craftBlock.getNMS().m_60734_();
@@ -199,9 +199,9 @@
 +                  double deltaLength = Math.sqrt(distanceSquared);
 +                  double relativeX = player.m_20185_() + (deltaX / deltaLength) * viewDistance;
 +                  double relativeZ = player.m_20189_() + (deltaZ / deltaLength) * viewDistance;
-+                  player.f_8906_.m_141995_(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) relativeX, (int) this.m_20186_(), (int) relativeZ), 0, true));
++                  player.f_8906_.m_9829_(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) relativeX, (int) this.m_20186_(), (int) relativeZ), 0, true));
 +               } else {
-+                  player.f_8906_.m_141995_(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) this.m_20185_(), (int) this.m_20186_(), (int) this.m_20189_()), 0, true));
++                  player.f_8906_.m_9829_(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) this.m_20185_(), (int) this.m_20186_(), (int) this.m_20189_()), 0, true));
 +               }
 +            }
 +            // CraftBukkit end
