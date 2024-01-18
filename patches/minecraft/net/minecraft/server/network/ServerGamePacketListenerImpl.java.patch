@@ -24,23 +24,26 @@
     private int f_9751_;
     private double f_9753_;
     private double f_9754_;
-@@ -223,17 +_,35 @@
-    private boolean f_290343_;
+@@ -232,18 +_,39 @@
+    private final FutureChain f_241681_;
  
-    public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_, CommonListenerCookie p_300908_) {
--      super(p_9770_, p_9771_, p_300908_);
-+      super(p_9770_, p_9771_, p_300908_, p_9772_); // CraftBukkit
-       this.f_290664_ = new PlayerChunkSender(p_9771_.m_129531_());
+    public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_) {
+       this.f_9745_ = p_9770_;
+       this.f_9742_ = p_9771_;
        p_9771_.m_129505_(this);
        this.f_9743_ = p_9772_;
        p_9772_.f_8906_ = this;
+       this.f_9747_ = Util.m_137550_();
        p_9772_.m_8967_().m_7674_();
        this.f_240889_ = p_9770_.m_214005_() ? SignedMessageChain.Decoder.f_252472_ : SignedMessageChain.Decoder.m_246683_(p_9772_.m_20148_());
 -      this.f_241681_ = new FutureChain(p_9770_);
 +      this.f_241681_ = new FutureChain(p_9770_.chatExecutor); // CraftBukkit - async chat
++      // CraftBukkit start - add fields and methods
++      this.cserver = minecraftserver.server;
     }
 +
-+   // CraftBukkit start - add fields
++   private final org.bukkit.craftbukkit.CraftServer cserver;
++   public boolean processedDisconnect;
 +   private int lastTick = MinecraftServer.currentTick;
 +   private int allowedPlayerTicks = 1;
 +   private int lastDropTick = MinecraftServer.currentTick;
@@ -62,10 +65,10 @@
        if (this.f_215200_ > -1) {
           this.m_9829_(new ClientboundBlockChangedAckPacket(this.f_215200_));
           this.f_215200_ = -1;
-@@ -283,17 +_,24 @@
+@@ -306,17 +_,24 @@
        }
  
-       this.m_295188_();
+       this.f_9745_.m_129905_().m_7238_();
 -      if (this.f_9750_ > 0) {
 -         --this.f_9750_;
 +      // CraftBukkit start
@@ -743,9 +746,9 @@
 +         this.processedDisconnect = true;
 +      }
 +      // CraftBukkit end
+       this.f_241681_.close();
        f_9744_.info("{} lost connection: {}", this.f_9743_.m_7755_().getString(), p_9825_.getString());
-       this.m_294538_();
-       super.m_7026_(p_9825_);
+       this.f_9745_.m_129929_();
 @@ -1145,6 +_,14 @@
     }
  
@@ -837,7 +840,7 @@
              });
           }
  
-@@ -1216,11 +_,24 @@
+@@ -1216,21 +_,34 @@
     }
  
     private void m_246958_(ServerboundChatCommandPacket p_251139_, LastSeenMessages p_250484_) {
@@ -864,7 +867,8 @@
        } catch (SignedMessageChain.DecodeException signedmessagechain$decodeexception) {
           this.m_246889_(signedmessagechain$decodeexception);
           return;
-
+       }
+ 
        CommandSigningContext commandsigningcontext = new CommandSigningContext.SignedArguments(map);
 -      parseresults = Commands.m_242611_(parseresults, (p_242749_) -> {
 +      parseresults = Commands.<CommandSourceStack>m_242611_(parseresults, (p_242749_) -> { // CraftBukkit
@@ -1585,8 +1589,8 @@
           if (!this.f_9743_.f_36096_.m_6875_(this.f_9743_)) {
              f_9744_.debug("Player {} interacted with invalid menu {}", this.f_9743_, this.f_9743_.f_36096_);
           } else {
--            this.f_9745_.m_129894_().m_44043_(p_9882_.m_134252_()).ifPresent((p_296595_) -> {
--               ((RecipeBookMenu)this.f_9743_.f_36096_).m_6951_(p_9882_.m_134253_(), p_296595_, this.f_9743_);
+-            this.f_9745_.m_129894_().m_44043_(p_9882_.m_134252_()).ifPresent((p_287379_) -> {
+-               ((RecipeBookMenu)this.f_9743_.f_36096_).m_6951_(p_9882_.m_134253_(), p_287379_, this.f_9743_);
 +            // CraftBukkit start - implement PlayerRecipeBookClickEvent
 +            org.bukkit.inventory.Recipe recipe = this.cserver.getRecipe(org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey.fromMinecraft(p_9882_.m_134252_()));
 +            if (recipe == null) {
@@ -1697,7 +1701,7 @@
 +      // CraftBukkit end
     }
  
-    public void m_9844_(ServerboundClientInformationPacket p_298714_) {
+    public void m_5617_(ServerboundClientInformationPacket p_9845_) {
 @@ -1659,6 +_,7 @@
     }
  

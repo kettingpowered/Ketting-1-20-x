@@ -1,0 +1,20 @@
+@@
++   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_, ServerPlayer player) { // CraftBukkit start - added EntityPlayer
++      return player == null;
++   }
++   // CraftBukkit end
++
+@@
+ 
+-   public boolean m_292966_(GameProfile p_299278_) {
++   // CraftBukkit start - added EntityPlayer
++   public ServerPlayer getPlayerForLogin(GameProfile gameprofile, ClientInformation clientinformation, ServerPlayer player) {
++      player.m_9156_(clientinformation);
++      return player;
++      // CraftBukkit end
++   }
++
++   public boolean m_292966_(GameProfile p_299278_) { 
+       UUID uuid = p_299278_.getId();
+       Set<ServerPlayer> set = Sets.newIdentityHashSet();
+ 

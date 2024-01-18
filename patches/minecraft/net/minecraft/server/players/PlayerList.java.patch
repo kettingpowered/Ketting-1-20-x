@@ -343,7 +343,7 @@
     public Component m_6418_(SocketAddress p_11257_, GameProfile p_11258_) {
        if (this.f_11198_.m_11406_(p_11258_)) {
           UserBanListEntry userbanlistentry = this.f_11198_.m_11388_(p_11258_);
-@@ -376,11 +_,90 @@
+@@ -392,4 +_,76 @@
        }
     }
  
@@ -419,23 +419,8 @@
 +      return player;
 +   }
 +
-    public ServerPlayer m_215624_(GameProfile p_215625_, ClientInformation p_300548_) {
-       return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_, p_300548_);
-    }
- 
--   public boolean m_292966_(GameProfile p_299278_) {
-+   // CraftBukkit start - added EntityPlayer
-+   public ServerPlayer getPlayerForLogin(GameProfile gameprofile, ClientInformation clientinformation, ServerPlayer player) {
-+      player.m_9156_(clientinformation);
-+      return player;
-+      // CraftBukkit end
-+   }
-+
-+   public boolean m_292966_(GameProfile p_299278_) { 
-       UUID uuid = p_299278_.getId();
-       Set<ServerPlayer> set = Sets.newIdentityHashSet();
- 
-@@ -409,79 +_,174 @@
+    public ServerPlayer m_215624_(GameProfile p_215625_) {
+@@ -409,9 +_,10 @@
        }
  
        for(ServerPlayer serverplayer1 : list) {
@@ -446,11 +431,7 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_);
     }
  
-+   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_, ServerPlayer player) { // CraftBukkit start - added EntityPlayer
-+      return player == null;
-+   }
-+   // CraftBukkit end
-+
+@@ -418,69 +_,158 @@
     public ServerPlayer m_11236_(ServerPlayer p_11237_, boolean p_11238_) {
 -      this.f_11196_.remove(p_11237_);
 -      p_11237_.m_284548_().m_143261_(p_11237_, Entity.RemovalReason.DISCARDED);
@@ -483,7 +464,7 @@
        }
  
 -      ServerLevel serverlevel1 = serverlevel != null && optional.isPresent() ? serverlevel : this.f_11195_.m_129783_();
--      ServerPlayer serverplayer = new ServerPlayer(this.f_11195_, serverlevel1, p_11237_.m_36316_(), p_11237_.m_294559_());
+-      ServerPlayer serverplayer = new ServerPlayer(this.f_11195_, serverlevel1, p_11237_.m_36316_());
 -      serverplayer.f_8906_ = p_11237_.f_8906_;
 -      serverplayer.m_9015_(p_11237_, p_11238_);
 -      serverplayer.m_20234_(p_11237_.m_19879_());
@@ -524,7 +505,7 @@
 -         serverplayer.m_9158_(serverlevel1.m_46472_(), blockpos, f, flag, false);
 -         flag2 = !p_11238_ && flag1;
 -      } else if (blockpos != null) {
--         serverplayer.f_8906_.m_141995_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132153_, 0.0F));
+-         serverplayer.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132153_, 0.0F));
 +
 +      // CraftBukkit start - fire PlayerRespawnEvent
 +      if (location == null) {
@@ -597,16 +578,15 @@
  
 -      byte b0 = (byte)(p_11238_ ? 1 : 0);
 +      byte b0 = (byte)(flag ? 1 : 0);
-       ServerLevel serverlevel2 = serverplayer.m_284548_();
-       LevelData leveldata = serverlevel2.m_6106_();
-       serverplayer.f_8906_.m_141995_(new ClientboundRespawnPacket(serverplayer.m_292591_(serverlevel2), b0));
+       LevelData leveldata = serverplayer.m_9236_().m_6106_();
+       serverplayer.f_8906_.m_9829_(new ClientboundRespawnPacket(serverplayer.m_9236_().m_220362_(), serverplayer.m_9236_().m_46472_(), BiomeManager.m_47877_(serverplayer.m_284548_().m_7328_()), serverplayer.f_8941_.m_9290_(), serverplayer.f_8941_.m_9293_(), serverplayer.m_9236_().m_46659_(), serverplayer.m_284548_().m_8584_(), b0, serverplayer.m_219759_(), serverplayer.m_287157_()));
 -      serverplayer.f_8906_.m_9774_(serverplayer.m_20185_(), serverplayer.m_20186_(), serverplayer.m_20189_(), serverplayer.m_146908_(), serverplayer.m_146909_());
 +      serverplayer.f_8906_.m_141995_(new ClientboundSetChunkCacheRadiusPacket(serverlevel1.spigotConfig.viewDistance)); // Spigot
 +      serverplayer.f_8906_.m_141995_(new ClientboundSetSimulationDistancePacket(serverlevel1.spigotConfig.simulationDistance)); // Spigot
 +      serverplayer.f_8906_.teleport(org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation.toBukkit(serverplayer.m_20182_(), serverlevel2.getWorld(), serverplayer.m_146908_(), serverplayer.m_146909_())); // CraftBukkit
-       serverplayer.f_8906_.m_141995_(new ClientboundSetDefaultSpawnPositionPacket(serverlevel1.m_220360_(), serverlevel1.m_220361_()));
-       serverplayer.f_8906_.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
-       serverplayer.f_8906_.m_141995_(new ClientboundSetExperiencePacket(serverplayer.f_36080_, serverplayer.f_36079_, serverplayer.f_36078_));
+       serverplayer.f_8906_.m_9829_(new ClientboundSetDefaultSpawnPositionPacket(serverlevel1.m_220360_(), serverlevel1.m_220361_()));
+       serverplayer.f_8906_.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
+       serverplayer.f_8906_.m_9829_(new ClientboundSetExperiencePacket(serverplayer.f_36080_, serverplayer.f_36079_, serverplayer.f_36078_));
        this.m_11229_(serverplayer, serverlevel1);
        this.m_11289_(serverplayer);
 -      serverlevel1.m_8845_(serverplayer);
@@ -649,7 +629,7 @@
  
        return serverplayer;
     }
-@@ -481,18 +_,44 @@
+@@ -493,18 +_,45 @@
  
     public void m_11288_() {
        if (++this.f_11210_ > 600) {
@@ -674,11 +654,10 @@
     public void m_11268_(Packet<?> p_11269_) {
 -      for(ServerPlayer serverplayer : this.f_11196_) {
 +      for (ServerPlayer serverplayer : this.f_11196_) {
-          serverplayer.f_8906_.m_141995_(p_11269_);
+          serverplayer.f_8906_.m_9829_(p_11269_);
        }
--
--   }
-+   }
+ 
+    }
 +
 +   // CraftBukkit start - add a world/entity limited version
 +   public void broadcastAll(Packet packet, Player player) {
@@ -749,19 +728,19 @@
           if (serverplayer != p_11242_ && serverplayer.m_9236_().m_46472_() == p_11247_) {
              double d0 = p_11243_ - serverplayer.m_20185_();
              double d1 = p_11244_ - serverplayer.m_20186_();
-@@ -657,22 +_,34 @@
+@@ -657,14 +_,18 @@
     }
  
     public void m_11229_(ServerPlayer p_11230_, ServerLevel p_11231_) {
 -      WorldBorder worldborder = this.f_11195_.m_129783_().m_6857_();
 +      WorldBorder worldborder = p_11230_.m_9236_().m_6857_(); // CraftBukkit
-       p_11230_.f_8906_.m_141995_(new ClientboundInitializeBorderPacket(worldborder));
-       p_11230_.f_8906_.m_141995_(new ClientboundSetTimePacket(p_11231_.m_46467_(), p_11231_.m_46468_(), p_11231_.m_46469_().m_46207_(GameRules.f_46140_)));
-       p_11230_.f_8906_.m_141995_(new ClientboundSetDefaultSpawnPositionPacket(p_11231_.m_220360_(), p_11231_.m_220361_()));
+       p_11230_.f_8906_.m_9829_(new ClientboundInitializeBorderPacket(worldborder));
+       p_11230_.f_8906_.m_9829_(new ClientboundSetTimePacket(p_11231_.m_46467_(), p_11231_.m_46468_(), p_11231_.m_46469_().m_46207_(GameRules.f_46140_)));
+       p_11230_.f_8906_.m_9829_(new ClientboundSetDefaultSpawnPositionPacket(p_11231_.m_220360_(), p_11231_.m_220361_()));
        if (p_11231_.m_46471_()) {
--         p_11230_.f_8906_.m_141995_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132154_, 0.0F));
--         p_11230_.f_8906_.m_141995_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132160_, p_11231_.m_46722_(1.0F)));
--         p_11230_.f_8906_.m_141995_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132161_, p_11231_.m_46661_(1.0F)));
+-         p_11230_.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132154_, 0.0F));
+-         p_11230_.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132160_, p_11231_.m_46722_(1.0F)));
+-         p_11230_.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132161_, p_11231_.m_46661_(1.0F)));
 +         // CraftBukkit start - handle player weather
 +         // p_11230_.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.START_RAINING, 0.0F));
 +         // p_11230_.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.RAIN_LEVEL_CHANGE, p_11231_.getRainLevel(1.0F)));
@@ -772,14 +751,14 @@
        }
  
     }
- 
+@@ -672,7 +_,15 @@
     public void m_11292_(ServerPlayer p_11293_) {
        p_11293_.f_36095_.m_150429_();
 -      p_11293_.m_9233_();
 +      // p_11293_.resetSentInfo();
 +      p_11293_.getBukkitEntity().updateScaledHealth(); // CraftBukkit - Update scaled health on respawn and worldchange
 +      p_11293_.m_20088_().refresh(p_11293_); // CraftBukkkit - SPIGOT-7218: sync metadata
-       p_11293_.f_8906_.m_141995_(new ClientboundSetCarriedItemPacket(p_11293_.m_150109_().f_35977_));
+       p_11293_.f_8906_.m_9829_(new ClientboundSetCarriedItemPacket(p_11293_.m_150109_().f_35977_));
 +      // CraftBukkit start - from GameRules
 +      int i = p_11293_.m_9236_().m_46469_().m_46207_(GameRules.f_46145_) ? 22 : 23;
 +      p_11293_.f_8906_.m_141995_(new ClientboundEntityEventPacket(p_11293_, (byte) i));
@@ -794,7 +773,7 @@
  
     public void m_11313_() {
 -      for(int i = 0; i < this.f_11196_.size(); ++i) {
--         (this.f_11196_.get(i)).f_8906_.m_294716_(Component.m_237115_("multiplayer.disconnect.server_shutdown"));
+-         (this.f_11196_.get(i)).f_8906_.m_9942_(Component.m_237115_("multiplayer.disconnect.server_shutdown"));
 -      }
 -
 -   }
