@@ -20,6 +20,7 @@ import org.jetbrains.annotations.ApiStatus;
 import static java.util.Arrays.asList;
 
 @ApiStatus.Internal
+public //Ketting - keep compat
 class NightConfigWrapper implements IConfigurable {
     private final UnmodifiableConfig config;
     private IModFileInfo file;

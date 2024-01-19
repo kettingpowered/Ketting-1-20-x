@@ -104,7 +104,7 @@
        this.f_19804_ = new SynchedEntityData(this);
        this.f_19804_.m_135372_(f_19805_, (byte)0);
        this.f_19804_.m_135372_(f_19832_, this.m_6062_());
-@@ -253,8 +_,13 @@
+@@ -253,8 +_,16 @@
        this.f_19804_.m_135372_(f_19806_, Pose.STANDING);
        this.f_19804_.m_135372_(f_146800_, 0);
        this.m_8097_();
@@ -115,7 +115,10 @@
 +      this.f_19815_ = sizeEvent.getNewSize();
 +      this.f_19816_ = sizeEvent.getNewEyeHeight();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
-+      this.gatherCapabilities();
++      //Ketting - If we gatherCapabilities on a Player, it might cause an isOp check, which requires a GameProfile to be set.
++      // So we move the gatherCapabilities check to after the Player initialization is done.
++      if (!(this instanceof Player))
++         this.gatherCapabilities();
     }
  
     public boolean m_20039_(BlockPos p_20040_, BlockState p_20041_) {

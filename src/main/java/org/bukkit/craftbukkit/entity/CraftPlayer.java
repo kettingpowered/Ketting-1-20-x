@@ -172,6 +172,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public boolean isOp() {
+        if (getProfile() == null) return false; //Ketting - fix NPE, if this should be called during player init.
         return server.getHandle().isOp(getProfile());
     }
 

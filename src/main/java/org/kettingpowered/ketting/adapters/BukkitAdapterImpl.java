@@ -5,6 +5,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kettingpowered.ketting.adapter.BukkitAdapter;
+import org.kettingpowered.ketting.internal.KettingConstants;
 import org.kettingpowered.ketting.types.Plugin;
 import org.kettingpowered.ketting.types.PluginInfo;
 import org.slf4j.LoggerFactory;
@@ -15,12 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Bukkit_1_20_2_Adapter implements BukkitAdapter {
+public class BukkitAdapterImpl implements BukkitAdapter {
 
     private final Map<String, Plugin> pluginCache = new HashMap<>();
 
     public String getMcVersion() {
-        return "1.20.2";
+        return KettingConstants.MINECRAFT_VERSION;
     }
 
     public void reload() {

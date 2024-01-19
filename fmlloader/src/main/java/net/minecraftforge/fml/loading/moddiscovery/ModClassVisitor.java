@@ -22,12 +22,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ApiStatus.Internal
+public //Ketting - keep compat
 class ModClassVisitor extends ClassVisitor {
     private Type asmType;
     private Type asmSuperType;
     private Set<Type> interfaces;
     private final LinkedList<ModAnnotation> annotations = new LinkedList<>();
 
+    public //Ketting - keep compat
     ModClassVisitor() {
         super(Opcodes.ASM9);
     }
@@ -48,26 +50,12 @@ class ModClassVisitor extends ClassVisitor {
 
     @Override
     public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-        return new FieldVisitor(Opcodes.ASM9) {
-            @Override
-            public AnnotationVisitor visitAnnotation(String annotationName, boolean runtimeVisible) {
-                var ann = new ModAnnotation(ElementType.FIELD, Type.getType(annotationName), name);
-                annotations.addFirst(ann);
-                return new ModAnnotationVisitor(ann);
-            }
-        };
+        return new ModFieldVisitor(name, annotations);
     }
 
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-        return new MethodVisitor(Opcodes.ASM9) {
-            @Override
-            public AnnotationVisitor visitAnnotation(String annotationName, boolean runtimeVisible) {
-                ModAnnotation ann = new ModAnnotation(ElementType.METHOD, Type.getType(annotationName), name + desc);
-                annotations.addFirst(ann);
-                return new ModAnnotationVisitor(ann);
-            }
-        };
+        return new ModMethodVisitor(name, desc, annotations);
     }
 
     public void buildData(final Set<ModFileScanData.ClassData> classes, final Set<ModFileScanData.AnnotationData> baked) {

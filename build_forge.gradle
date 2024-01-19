@@ -45,8 +45,7 @@ java {
 
 //Ketting Start - fix `./gradlew setup build`
 tasks.withType(JavaCompile).configureEach {
-    if (!patcher.srgPatches) dependsOn 'extractMapped'
-    options.compilerArgs << "-Xmaxerrs" << "40000"
+    mustRunAfter 'extractMapped' 
 }
 //Ketting End - fix `./gradlew setup build`
 

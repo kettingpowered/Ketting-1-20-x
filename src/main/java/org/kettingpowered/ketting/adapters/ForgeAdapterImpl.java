@@ -1,25 +1,24 @@
 package org.kettingpowered.ketting.adapters;
 
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kettingpowered.ketting.adapter.ForgeAdapter;
+import org.kettingpowered.ketting.internal.KettingConstants;
 import org.kettingpowered.ketting.types.Mod;
 import org.kettingpowered.ketting.types.ModDependency;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class Forge_1_20_2_Adapter implements ForgeAdapter {
+public class ForgeAdapterImpl implements ForgeAdapter {
 
     private final Map<String, Mod> modCache = new HashMap<>();
     private final Map<String, ModDependency> dependencyCache = new HashMap<>();
 
     public String getMcVersion() {
-        return "1.20.2";
+        return KettingConstants.MINECRAFT_VERSION;
     }
 
     public void reload() {

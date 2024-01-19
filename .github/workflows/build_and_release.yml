@@ -15,7 +15,7 @@ jobs:
   create-release:
     needs: test
     runs-on: ubuntu-latest
-    if: ${{ format('refs/heads/{0}', github.event.repository.default_branch) == github.ref || 'refs/heads/dev/mc-update' == github.ref}}
+    if: ${{ format('refs/heads/{0}', github.event.repository.default_branch) == github.ref || 'refs/heads/dev/mc-update' == github.ref || 'refs/heads/dev/1.20.2' == github.ref}}
     #This permission is needed to push a release (and/or tags)
     permissions:
       contents: write #nessesary for tag creation and release creation
@@ -24,6 +24,30 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Cache .gradle
+        uses: burrunan/gradle-cache-action@v1
+        with:
+          # Enable concurrent cache save and restore
+          # Default is concurrent=false for better log readability
+          concurrent: true
+          # Disable caching of $HOME/.gradle/caches/*.*/generated-gradle-jars
+          save-generated-gradle-jars: false
+          # Disable publishing Gradle Build Scan URL to job report
+          gradle-build-scan-report: false
+      - name: Restore Project Sources for faster setup
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            projects/
+          key: project-src-cache-sha-${{ github.ref }}-${{ github.sha }}
+          restore-keys: project-src-cache-
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2.9.0
       - name: Get Version Name
         id: version_name
         run: |
@@ -51,34 +75,8 @@ jobs:
           done
           #PLEASE ALWAYS regen library hashes!!!
           rm -f projects/ketting/build/ketting_libraries.txt
-      - name: Setup Java 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-      - name: Cache .gradle
-        uses: burrunan/gradle-cache-action@v1
-        with:
-          # Enable concurrent cache save and restore
-          # Default is concurrent=false for better log readability
-          concurrent: true
-          # Disable caching of $HOME/.gradle/caches/*.*/generated-gradle-jars
-          save-generated-gradle-jars: false
-          # Disable publishing Gradle Build Scan URL to job report
-          gradle-build-scan-report: false
-      - name: Restore Project Sources for faster setup
-        uses: actions/cache/restore@v3
-        with:
-          path: |
-            projects/
-          key: project-src-cache-sha-${{ github.ref }}-${{ github.sha }}
-          restore-keys: project-src-cache-
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2.9.0
-      - name: Setup Ketting
-        run: ./gradlew setup
       - name: Publish Ketting
-        run: ./gradlew publish --stacktrace --info
+        run: ./gradlew setup forge:checkJarCompatibility publish
         env:
           KETTINGUSERNAME: ${{ secrets.KETTINGUSERNAME }}
           KETTINGPASSWORD: ${{ secrets.KETTINGPASSWORD }}
@@ -86,20 +84,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Tag repo
         id: tag
-        run: |
-          function getVer(){
-              IFS='=' read -ra ARR <<<$(grep $1 gradle.properties)
-              read -r -d '' "$1" <<< ${ARR[1]}
-              unset IFS
-              unset ARR
-          }
-          getVer MC_VERSION
-          getVer FORGE_VERSION
-          getVer KETTING_VERSION
-          tag=v$MC_VERSION-$FORGE_VERSION-$KETTING_VERSION
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          git tag $tag
-          git push origin $tag
+        run: bash .github/workflows/tagging.sh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Github Release if on default branch
@@ -113,6 +98,7 @@ jobs:
               --title="${GITHUB_REPOSITORY#*/} ${TAG#v}" \
               --generate-notes
       - name: Delete Project Sources for build
+        continue-on-error: true
         run: |
           gh extension install actions/gh-actions-cache
           REPO=${{ github.repository }}

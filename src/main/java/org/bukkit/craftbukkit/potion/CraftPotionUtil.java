@@ -13,7 +13,7 @@ import org.bukkit.potion.PotionType;
 
 public class CraftPotionUtil {
 
-    private static final BiMap<PotionType, String> regular = ImmutableBiMap.<PotionType, String>builder()
+    public static BiMap<PotionType, String> regular = ImmutableBiMap.<PotionType, String>builder()
             .put(PotionType.UNCRAFTABLE, "empty")
             .put(PotionType.WATER, "water")
             .put(PotionType.MUNDANE, "mundane")

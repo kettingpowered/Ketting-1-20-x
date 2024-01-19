@@ -11,17 +11,18 @@ import net.minecraft.world.level.dimension.LevelStem;
 import org.bukkit.World;
 import org.kettingpowered.ketting.adapter.DimensionRegistry;
 import org.kettingpowered.ketting.inject.ForgeInject;
+import org.kettingpowered.ketting.internal.KettingConstants;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class DimensionRegistry_1_20_2_Adapter implements DimensionRegistry<Registry<LevelStem>, World.Environment, ResourceKey<LevelStem>> {
+public class DimensionRegistryAdapterImpl implements DimensionRegistry<Registry<LevelStem>, World.Environment, ResourceKey<LevelStem>> {
 
     private static BiMap<ResourceKey<LevelStem>, World.Environment> DIMENSION_REGISTRY = null;
 
     public String getMcVersion() {
-        return "1.20.2";
+        return KettingConstants.MINECRAFT_VERSION;
     }
 
     public void reload() {}
