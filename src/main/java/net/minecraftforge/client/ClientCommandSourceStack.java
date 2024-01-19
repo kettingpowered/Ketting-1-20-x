@@ -110,7 +110,7 @@ public class ClientCommandSourceStack extends CommandSourceStack
     @Override
     public Advancement getAdvancement(ResourceLocation id)
     {
-        return Minecraft.getInstance().getConnection().getAdvancements().m_104396_().m_139337_(id);
+        return Minecraft.getInstance().getConnection().getAdvancements().getAdvancements().get(id);
     }
 
     /**

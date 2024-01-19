@@ -533,7 +533,7 @@ public class ForgeHooks
         // Tell client the block is gone immediately then process events
         if (level.getBlockEntity(pos) == null)
         {
-            entityPlayer.connection.m_9829_(new ClientboundBlockUpdatePacket(pos, level.getFluidState(pos).createLegacyBlock()));
+            entityPlayer.connection.send(new ClientboundBlockUpdatePacket(pos, level.getFluidState(pos).createLegacyBlock()));
         }
 
         // Post the block break event
@@ -546,7 +546,7 @@ public class ForgeHooks
         if (event.isCanceled())
         {
             // Let the client know the block still exists
-            entityPlayer.connection.m_9829_(new ClientboundBlockUpdatePacket(level, pos));
+            entityPlayer.connection.send(new ClientboundBlockUpdatePacket(level, pos));
 
             // Update any tile entity data for this block
             BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -555,7 +555,7 @@ public class ForgeHooks
                 Packet<?> pkt = blockEntity.getUpdatePacket();
                 if (pkt != null)
                 {
-                    entityPlayer.connection.m_9829_(pkt);
+                    entityPlayer.connection.send(pkt);
                 }
             }
         }
@@ -1492,7 +1492,7 @@ public class ForgeHooks
 
     public static void writeTypedPackFormats(JsonObject json, PackMetadataSection section)
     {
-        int packFormat = section.m_10374_();
+        int packFormat = section.getPackFormat();
         for (PackType packType : PackType.values())
         {
             int format = section.getPackFormat(packType);

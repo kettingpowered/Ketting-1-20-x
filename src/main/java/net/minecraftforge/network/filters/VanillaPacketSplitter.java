@@ -86,7 +86,7 @@ public class VanillaPacketSplitter
                         {
                             partPrefix = Unpooled.buffer(5);
                             partPrefix.writeByte(STATE_FIRST);
-                            new FriendlyByteBuf(partPrefix).writeVarInt(protocol.m_264521_(direction, packet));
+                            new FriendlyByteBuf(partPrefix).writeVarInt(protocol.getPacketId(direction, packet));
                         }
                         else
                         {
@@ -140,7 +140,7 @@ public class VanillaPacketSplitter
         {
             FriendlyByteBuf full = new FriendlyByteBuf(Unpooled.wrappedBuffer(receivedBuffers.toArray(new FriendlyByteBuf[0])));
             int packetId = full.readVarInt();
-            Packet<?> packet = protocol.m_178321_(direction, packetId, full);
+            Packet<?> packet = protocol.createPacket(direction, packetId, full);
             if (packet == null)
             {
                 LOGGER.error("Received invalid packet ID {} in forge:split", packetId);

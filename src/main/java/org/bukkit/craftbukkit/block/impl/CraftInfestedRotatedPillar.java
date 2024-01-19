@@ -13,7 +13,7 @@ public final class CraftInfestedRotatedPillar extends org.bukkit.craftbukkit.blo
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftOrientable
+    // org.bukkit.craftbukkit.block.data.CraftOrientable
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> AXIS = getEnum(net.minecraft.world.level.block.InfestedRotatedPillarBlock.class, "axis");
 

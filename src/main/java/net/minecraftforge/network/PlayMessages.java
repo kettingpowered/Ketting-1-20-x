@@ -164,7 +164,7 @@ public class PlayMessages
 
                     e.setId(msg.entityId);
                     e.setUUID(msg.uuid);
-                    world.filter(ClientLevel.class::isInstance).ifPresent(w -> ((ClientLevel) w).m_104627_(msg.entityId, e));
+                    world.filter(ClientLevel.class::isInstance).ifPresent(w -> ((ClientLevel) w).putNonPlayerEntity(msg.entityId, e));
                     e.lerpMotion(msg.velX / 8000.0, msg.velY / 8000.0, msg.velZ / 8000.0);
                     if (e instanceof IEntityAdditionalSpawnData entityAdditionalSpawnData)
                     {

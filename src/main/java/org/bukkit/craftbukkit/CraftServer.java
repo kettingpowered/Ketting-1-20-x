@@ -583,7 +583,7 @@ public final class CraftServer implements Server {
 
     @Override
     public String getVersion() {
-        return serverVersion + " (MC: " + console.m_7630_() + ")";
+        return serverVersion + " (MC: " + console.getServerVersion() + ")";
     }
 
     @Override
@@ -1062,7 +1062,7 @@ public final class CraftServer implements Server {
 
     @Override
     public String toString() {
-        return "CraftServer{" + "serverName=" + serverName + ",serverVersion=" + serverVersion + ",minecraftVersion=" + console.m_7630_() + '}';
+        return "CraftServer{" + "serverName=" + serverName + ",serverVersion=" + serverVersion + ",minecraftVersion=" + console.getServerVersion() + '}';
     }
 
     public World createWorld(String name, World.Environment environment) {
@@ -1412,7 +1412,7 @@ public final class CraftServer implements Server {
 
         if (recipe.isPresent()) {
             CraftingRecipe recipeCrafting = recipe.get();
-            if (craftResult.m_40135_(craftWorld.getHandle(), craftPlayer.getHandle(), recipeCrafting)) {
+            if (craftResult.setRecipeUsed(craftWorld.getHandle(), craftPlayer.getHandle(), recipeCrafting)) {
                 itemstack = recipeCrafting.assemble(inventoryCrafting, craftWorld.getHandle().registryAccess());
             }
         }
@@ -2257,7 +2257,7 @@ public final class CraftServer implements Server {
     public org.bukkit.advancement.Advancement getAdvancement(NamespacedKey key) {
         Preconditions.checkArgument(key != null, "NamespacedKey key cannot be null");
 
-        Advancement advancement = console.getAdvancements().m_136041_(CraftNamespacedKey.toMinecraft(key));
+        Advancement advancement = console.getAdvancements().getAdvancement(CraftNamespacedKey.toMinecraft(key));
         return (advancement == null) ? null : advancement.bukkit;
     }
 

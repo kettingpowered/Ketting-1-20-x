@@ -13,7 +13,7 @@ public final class CraftSculkSensor extends org.bukkit.craftbukkit.block.data.Cr
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSculkSensor
+    // org.bukkit.craftbukkit.block.data.type.CraftSculkSensor
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> PHASE = getEnum(net.minecraft.world.level.block.SculkSensorBlock.class, "sculk_sensor_phase");
 
@@ -27,7 +27,7 @@ public final class CraftSculkSensor extends org.bukkit.craftbukkit.block.data.Cr
         set(PHASE, phase);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAnaloguePowerable
+    // org.bukkit.craftbukkit.block.data.CraftAnaloguePowerable
 
     private static final net.minecraft.world.level.block.state.properties.IntegerProperty POWER = getInteger(net.minecraft.world.level.block.SculkSensorBlock.class, "power");
 
@@ -46,7 +46,7 @@ public final class CraftSculkSensor extends org.bukkit.craftbukkit.block.data.Cr
         return getMax(POWER);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.SculkSensorBlock.class, "waterlogged");
 

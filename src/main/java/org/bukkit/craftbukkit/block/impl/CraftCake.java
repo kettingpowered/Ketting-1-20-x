@@ -13,7 +13,7 @@ public final class CraftCake extends org.bukkit.craftbukkit.block.data.CraftBloc
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftCake
+    // org.bukkit.craftbukkit.block.data.type.CraftCake
 
     private static final net.minecraft.world.level.block.state.properties.IntegerProperty BITES = getInteger(net.minecraft.world.level.block.CakeBlock.class, "bites");
 

@@ -23,7 +23,7 @@ public class CraftComplexRecipe implements CraftRecipe, ComplexRecipe {
 
     @Override
     public NamespacedKey getKey() {
-        return CraftNamespacedKey.fromMinecraft(recipe.m_6423_());
+        return CraftNamespacedKey.fromMinecraft(recipe.getId());
     }
 
     @Override

@@ -200,7 +200,7 @@ public class PacketDistributor<T> {
     }
 
     private Consumer<Packet<?>> playerConsumer(final Supplier<ServerPlayer> entityPlayerMPSupplier) {
-        return p -> entityPlayerMPSupplier.get().connection.f_9742_.send(p);
+        return p -> entityPlayerMPSupplier.get().connection.connection.send(p);
     }
     private Consumer<Packet<?>> playerListDimConsumer(final Supplier<ResourceKey<Level>> dimensionTypeSupplier) {
         return p->getServer().getPlayerList().broadcastAll(p, dimensionTypeSupplier.get());
@@ -211,7 +211,7 @@ public class PacketDistributor<T> {
     }
 
     private Consumer<Packet<?>> clientToServer(final Supplier<Void> voidSupplier) {
-        return p -> Minecraft.getInstance().getConnection().m_104955_(p);
+        return p -> Minecraft.getInstance().getConnection().send(p);
     }
 
     private Consumer<Packet<?>> playerListPointConsumer(final Supplier<TargetPoint> targetPointSupplier) {
@@ -238,7 +238,7 @@ public class PacketDistributor<T> {
     private Consumer<Packet<?>> trackingChunk(final Supplier<LevelChunk> chunkPosSupplier) {
         return p -> {
             final LevelChunk chunk = chunkPosSupplier.get();
-            ((ServerChunkCache)chunk.getLevel().getChunkSource()).chunkMap.getPlayers(chunk.getPos(), false).forEach(e -> e.connection.m_9829_(p));
+            ((ServerChunkCache)chunk.getLevel().getChunkSource()).chunkMap.getPlayers(chunk.getPos(), false).forEach(e -> e.connection.send(p));
         };
     }
 

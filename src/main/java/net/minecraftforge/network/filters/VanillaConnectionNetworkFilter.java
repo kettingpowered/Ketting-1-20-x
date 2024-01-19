@@ -114,7 +114,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
      * It prevents a rare error from logging and reduces the packet size
      */
     private static ClientboundUpdateTagsPacket filterCustomTagTypes(ClientboundUpdateTagsPacket packet) {
-        Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = packet.m_179482_()
+        Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = packet.getTags()
                 .entrySet().stream().filter(e -> isVanillaRegistry(e.getKey().location()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         return new ClientboundUpdateTagsPacket(tags);

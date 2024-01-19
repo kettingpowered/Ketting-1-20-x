@@ -33,7 +33,7 @@ public interface IForgeAdvancementBuilder
      */
     default Advancement save(Consumer<Advancement> saver, ResourceLocation id, ExistingFileHelper fileHelper)
     {
-        boolean canBuild = self().m_138392_((advancementId) ->
+        boolean canBuild = self().canBuild((advancementId) ->
         {
             if (fileHelper.exists(advancementId, PackType.SERVER_DATA, ".json", "advancements"))
             {

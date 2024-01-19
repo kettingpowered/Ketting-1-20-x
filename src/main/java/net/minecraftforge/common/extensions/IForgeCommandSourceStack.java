@@ -36,7 +36,7 @@ public interface IForgeCommandSourceStack
      */
     default Advancement getAdvancement(ResourceLocation id)
     {
-        return self().getServer().getAdvancements().m_136041_(id);
+        return self().getServer().getAdvancements().getAdvancement(id);
     }
 
     /**

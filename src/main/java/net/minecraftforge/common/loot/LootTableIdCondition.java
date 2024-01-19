@@ -65,13 +65,13 @@ public class LootTableIdCondition implements LootItemCondition
     public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<LootTableIdCondition>
     {
         @Override
-        public void m_6170_(JsonObject object, LootTableIdCondition instance, JsonSerializationContext ctx)
+        public void serialize(JsonObject object, LootTableIdCondition instance, JsonSerializationContext ctx)
         {
             object.addProperty("loot_table_id", instance.targetLootTableId.toString());
         }
 
         @Override
-        public LootTableIdCondition m_7561_(JsonObject object, JsonDeserializationContext ctx)
+        public LootTableIdCondition deserialize(JsonObject object, JsonDeserializationContext ctx)
         {
             return new LootTableIdCondition(new ResourceLocation(GsonHelper.getAsString(object, "loot_table_id")));
         }

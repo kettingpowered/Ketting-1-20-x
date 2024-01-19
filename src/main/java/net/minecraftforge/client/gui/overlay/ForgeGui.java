@@ -210,15 +210,15 @@ public class ForgeGui extends Gui
         {
             if (i < level)
             {
-                guiGraphics.blit(f_279580_, left, top, 34, 9, 9, 9);
+                guiGraphics.blit(GUI_ICONS_LOCATION, left, top, 34, 9, 9, 9);
             }
             else if (i == level)
             {
-                guiGraphics.blit(f_279580_, left, top, 25, 9, 9, 9);
+                guiGraphics.blit(GUI_ICONS_LOCATION, left, top, 25, 9, 9, 9);
             }
             else if (i > level)
             {
-                guiGraphics.blit(f_279580_, left, top, 16, 9, 9, 9);
+                guiGraphics.blit(GUI_ICONS_LOCATION, left, top, 16, 9, 9, 9);
             }
             left += 8;
         }
@@ -253,7 +253,7 @@ public class ForgeGui extends Gui
 
             for (int i = 0; i < full + partial; ++i)
             {
-                guiGraphics.blit(f_279580_, left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9);
+                guiGraphics.blit(GUI_ICONS_LOCATION, left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9);
             }
             rightHeight += 10;
         }
@@ -352,12 +352,12 @@ public class ForgeGui extends Gui
                 y = top + (random.nextInt(3) - 1);
             }
 
-            guiGraphics.blit(f_279580_, x, y, 16 + background * 9, 27, 9, 9);
+            guiGraphics.blit(GUI_ICONS_LOCATION, x, y, 16 + background * 9, 27, 9, 9);
 
             if (idx < level)
-                guiGraphics.blit(f_279580_, x, y, icon + 36, 27, 9, 9);
+                guiGraphics.blit(GUI_ICONS_LOCATION, x, y, icon + 36, 27, 9, 9);
             else if (idx == level)
-                guiGraphics.blit(f_279580_, x, y, icon + 45, 27, 9, 9);
+                guiGraphics.blit(GUI_ICONS_LOCATION, x, y, icon + 45, 27, 9, 9);
         }
         RenderSystem.disableBlend();
         minecraft.getProfiler().pop();
@@ -429,7 +429,7 @@ public class ForgeGui extends Gui
             }
         }
 
-        if (this.minecraft.options.f_92063_)
+        if (this.minecraft.options.renderDebug)
         {
             debugOverlay.update();
             listL.addAll(debugOverlay.getLeft());
@@ -468,7 +468,7 @@ public class ForgeGui extends Gui
 
     protected void renderFPSGraph(GuiGraphics guiGraphics)
     {
-        if (this.minecraft.options.f_92063_ && this.minecraft.options.f_92065_)
+        if (this.minecraft.options.renderDebug && this.minecraft.options.renderFpsChart)
         {
             this.debugOverlay.render(guiGraphics);
         }
@@ -624,12 +624,12 @@ public class ForgeGui extends Gui
             for (int i = 0; i < rowCount; ++i)
             {
                 int x = left_align - i * 8 - 9;
-                guiGraphics.blit(f_279580_, x, top, BACKGROUND, 9, 9, 9);
+                guiGraphics.blit(GUI_ICONS_LOCATION, x, top, BACKGROUND, 9, 9, 9);
 
                 if (i * 2 + 1 + heart < health)
-                    guiGraphics.blit(f_279580_, x, top, FULL, 9, 9, 9);
+                    guiGraphics.blit(GUI_ICONS_LOCATION, x, top, FULL, 9, 9, 9);
                 else if (i * 2 + 1 + heart == health)
-                    guiGraphics.blit(f_279580_, x, top, HALF, 9, 9, 9);
+                    guiGraphics.blit(GUI_ICONS_LOCATION, x, top, HALF, 9, 9, 9);
             }
 
             rightHeight += 10;
@@ -681,7 +681,7 @@ public class ForgeGui extends Gui
             List<String> ret = this.getGameInformation();
             ret.add("");
             boolean flag = this.mc.getSingleplayerServer() != null;
-            ret.add("Debug: Pie [shift]: " + (this.mc.options.f_92064_ ? "visible" : "hidden") + (flag ? " FPS + TPS" : " FPS") + " [alt]: " + (this.mc.options.f_92065_ ? "visible" : "hidden"));
+            ret.add("Debug: Pie [shift]: " + (this.mc.options.renderDebugCharts ? "visible" : "hidden") + (flag ? " FPS + TPS" : " FPS") + " [alt]: " + (this.mc.options.renderFpsChart ? "visible" : "hidden"));
             ret.add("For help: press F3 + Q");
             return ret;
         }

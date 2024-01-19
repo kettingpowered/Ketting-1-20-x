@@ -13,7 +13,7 @@ public final class CraftTorchWall extends org.bukkit.craftbukkit.block.data.Craf
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.WallTorchBlock.class, "facing");
 

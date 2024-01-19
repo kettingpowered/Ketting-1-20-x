@@ -402,7 +402,7 @@ public class ForgeInject {
             var effect = potion.getEffects().isEmpty() ? null : potion.getEffects().get(0);
             var type = effect == null
                     ? null
-                    : PotionEffectType.getById(MobEffect.m_19459_(effect.getEffect()));
+                    : PotionEffectType.getById(MobEffect.getId(effect.getEffect()));
             try {
                 var potionType = EnumHelper.makeEnum(PotionType.class, enumName, ordinal,
                         List.of(PotionEffectType.class, boolean.class, boolean.class),

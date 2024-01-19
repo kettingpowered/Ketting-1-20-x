@@ -13,7 +13,7 @@ public final class CraftDecoratedPot extends org.bukkit.craftbukkit.block.data.C
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.DecoratedPotBlock.class, "facing");
 
@@ -32,7 +32,7 @@ public final class CraftDecoratedPot extends org.bukkit.craftbukkit.block.data.C
         return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.DecoratedPotBlock.class, "waterlogged");
 

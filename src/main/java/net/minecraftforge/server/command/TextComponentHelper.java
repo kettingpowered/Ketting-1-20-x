@@ -40,7 +40,7 @@ public class TextComponentHelper
         {
             ServerPlayer playerMP = (ServerPlayer) sender;
             ServerGamePacketListenerImpl channel = playerMP.connection;
-            return NetworkHooks.getConnectionType(()->channel.f_9742_) == ConnectionType.VANILLA;
+            return NetworkHooks.getConnectionType(()->channel.connection) == ConnectionType.VANILLA;
         }
         return false;
     }

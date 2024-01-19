@@ -12,8 +12,6 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 
-import static net.minecraft.client.gui.Gui.f_92982_;
-
 /**
  * This class provides a button that fixes several bugs present in the vanilla GuiButton drawing code.
  * The gist of it is that it allows buttons of any size without gaps in the graphics and with the
@@ -49,7 +47,7 @@ public class ExtendedButton extends Button
     {
         Minecraft mc = Minecraft.getInstance();
         int k = !this.active ? 0 : (this.isHoveredOrFocused() ? 2 : 1);
-        guiGraphics.blitWithBorder(f_92982_, this.getX(), this.getY(), 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2);
+        guiGraphics.blitWithBorder(WIDGETS_LOCATION, this.getX(), this.getY(), 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2);
 
         final FormattedText buttonText = mc.font.ellipsize(this.getMessage(), this.width - 6); // Remove 6 pixels so that the text is always contained within the button's borders
         guiGraphics.drawCenteredString(mc.font, Language.getInstance().getVisualOrder(buttonText), this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, getFGColor());

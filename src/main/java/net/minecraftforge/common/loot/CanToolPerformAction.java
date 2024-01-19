@@ -53,12 +53,12 @@ public class CanToolPerformAction implements LootItemCondition {
     }
 
     public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<CanToolPerformAction> {
-        public void m_6170_(JsonObject json, CanToolPerformAction itemCondition, @NotNull JsonSerializationContext context) {
+        public void serialize(JsonObject json, CanToolPerformAction itemCondition, @NotNull JsonSerializationContext context) {
             json.addProperty("action", itemCondition.action.name());
         }
 
         @NotNull
-        public CanToolPerformAction m_7561_(JsonObject json, @NotNull JsonDeserializationContext context) {
+        public CanToolPerformAction deserialize(JsonObject json, @NotNull JsonDeserializationContext context) {
             return new CanToolPerformAction(ToolAction.get(json.get("action").getAsString()));
         }
     }

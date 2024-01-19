@@ -77,7 +77,7 @@ public final class CraftScoreboardManager implements ScoreboardManager {
         for (int i = 0; i < 3; ++i) {
             Objective scoreboardobjective = oldboard.getDisplayObjective(i);
             if (scoreboardobjective != null && !removed.contains(scoreboardobjective)) {
-                entityplayer.connection.m_9829_(new ClientboundSetObjectivePacket(scoreboardobjective, 1));
+                entityplayer.connection.send(new ClientboundSetObjectivePacket(scoreboardobjective, 1));
                 removed.add(scoreboardobjective);
             }
         }
@@ -86,7 +86,7 @@ public final class CraftScoreboardManager implements ScoreboardManager {
         Iterator<PlayerTeam> iterator = oldboard.getPlayerTeams().iterator();
         while (iterator.hasNext()) {
             PlayerTeam scoreboardteam = iterator.next();
-            entityplayer.connection.m_9829_(ClientboundSetPlayerTeamPacket.createRemovePacket(scoreboardteam));
+            entityplayer.connection.send(ClientboundSetPlayerTeamPacket.createRemovePacket(scoreboardteam));
         }
 
         // The above is the reverse of the below method.

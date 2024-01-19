@@ -13,7 +13,7 @@ public final class CraftChain extends org.bukkit.craftbukkit.block.data.CraftBlo
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftOrientable
+    // org.bukkit.craftbukkit.block.data.CraftOrientable
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> AXIS = getEnum(net.minecraft.world.level.block.ChainBlock.class, "axis");
 
@@ -32,7 +32,7 @@ public final class CraftChain extends org.bukkit.craftbukkit.block.data.CraftBlo
         return getValues(AXIS, org.bukkit.Axis.class);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.ChainBlock.class, "waterlogged");
 

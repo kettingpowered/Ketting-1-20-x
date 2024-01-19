@@ -20,6 +20,6 @@ public interface IForgeRecipeSerializer<T extends Recipe<?>>
 
 	default T fromJson(ResourceLocation recipeLoc, JsonObject recipeJson, ICondition.IContext context)
 	{
-		return self().m_6729_(recipeLoc, recipeJson);
+		return self().fromJson(recipeLoc, recipeJson);
 	}
 }

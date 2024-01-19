@@ -13,7 +13,7 @@ public final class CraftObserver extends org.bukkit.craftbukkit.block.data.Craft
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.ObserverBlock.class, "facing");
 
@@ -32,7 +32,7 @@ public final class CraftObserver extends org.bukkit.craftbukkit.block.data.Craft
         return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
+    // org.bukkit.craftbukkit.block.data.CraftPowerable
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.ObserverBlock.class, "powered");
 

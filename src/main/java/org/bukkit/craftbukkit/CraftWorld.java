@@ -332,7 +332,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
                 for (ServerPlayer player : playersInRange) {
                     if (player.connection == null) continue;
 
-                    player.connection.m_9829_(refreshPacket);
+                    player.connection.send(refreshPacket);
                 }
             });
         });
@@ -649,7 +649,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
             CraftPlayer cp = (CraftPlayer) p;
             if (cp.getHandle().connection == null) continue;
 
-            cp.getHandle().connection.m_9829_(new ClientboundSetTimePacket(cp.getHandle().level().getGameTime(), cp.getHandle().getPlayerTime(), cp.getHandle().level().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)));
+            cp.getHandle().connection.send(new ClientboundSetTimePacket(cp.getHandle().level().getGameTime(), cp.getHandle().getPlayerTime(), cp.getHandle().level().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)));
         }
     }
 
@@ -1149,7 +1149,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
             distance = (int) player.getLocation().distanceSquared(location);
             if (distance <= radius) {
-                ((CraftPlayer) player).getHandle().connection.m_9829_(packet);
+                ((CraftPlayer) player).getHandle().connection.send(packet);
             }
         }
     }

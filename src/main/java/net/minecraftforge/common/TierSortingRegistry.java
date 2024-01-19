@@ -351,7 +351,7 @@ public class TierSortingRegistry
 
     private static void syncToPlayer(ServerPlayer serverPlayer)
     {
-        if (SYNC_CHANNEL.isRemotePresent(serverPlayer.connection.f_9742_) && !serverPlayer.connection.f_9742_.isMemoryConnection())
+        if (SYNC_CHANNEL.isRemotePresent(serverPlayer.connection.connection) && !serverPlayer.connection.connection.isMemoryConnection())
         {
             SYNC_CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SyncPacket(sortedTiers.stream().map(TierSortingRegistry::getName).toList()));
         }

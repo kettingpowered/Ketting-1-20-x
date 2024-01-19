@@ -264,7 +264,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         JsonObject jsonobject = GsonHelper.convertToJsonObject(jsonelement, "advancement");
         net.minecraft.advancements.Advancement.Builder nms = net.minecraft.advancements.Advancement.Builder.fromJson(jsonobject, new DeserializationContext(minecraftkey, MinecraftServer.getServer().getLootData()));
         if (nms != null) {
-            MinecraftServer.getServer().getAdvancements().advancements.m_139333_(Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
+            MinecraftServer.getServer().getAdvancements().advancements.add(Maps.newHashMap(Collections.singletonMap(minecraftkey, nms)));
             Advancement bukkit = Bukkit.getAdvancement(key);
 
             if (bukkit != null) {

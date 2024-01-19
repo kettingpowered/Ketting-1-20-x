@@ -24,7 +24,7 @@ public class VanillaIngredientSerializer implements IIngredientSerializer<Ingred
 
     public Ingredient parse(JsonObject json)
     {
-       return Ingredient.fromValues(Stream.of(Ingredient.m_43919_(json)));
+       return Ingredient.fromValues(Stream.of(Ingredient.valueFromJson(json)));
     }
 
     public void write(FriendlyByteBuf buffer, Ingredient ingredient)

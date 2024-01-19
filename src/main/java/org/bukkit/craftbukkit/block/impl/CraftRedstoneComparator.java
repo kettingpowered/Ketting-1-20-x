@@ -13,7 +13,7 @@ public final class CraftRedstoneComparator extends org.bukkit.craftbukkit.block.
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftComparator
+    // org.bukkit.craftbukkit.block.data.type.CraftComparator
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> MODE = getEnum(net.minecraft.world.level.block.ComparatorBlock.class, "mode");
 
@@ -27,7 +27,7 @@ public final class CraftRedstoneComparator extends org.bukkit.craftbukkit.block.
         set(MODE, mode);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.ComparatorBlock.class, "facing");
 
@@ -46,7 +46,7 @@ public final class CraftRedstoneComparator extends org.bukkit.craftbukkit.block.
         return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
+    // org.bukkit.craftbukkit.block.data.CraftPowerable
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.ComparatorBlock.class, "powered");
 

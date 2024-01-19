@@ -60,7 +60,7 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
         BlockSourceImpl sourceblock = new BlockSourceImpl((ServerLevel) dispenserBlock.getLevel(), dispenserBlock.getBlockPos());
         // Copied from DispenseBehaviorProjectile
         Position iposition = DispenserBlock.getDispensePosition(sourceblock);
-        Direction enumdirection = (Direction) sourceblock.m_6414_().getValue(DispenserBlock.FACING);
+        Direction enumdirection = (Direction) sourceblock.getBlockState().getValue(DispenserBlock.FACING);
         net.minecraft.world.level.Level world = dispenserBlock.getLevel();
         net.minecraft.world.entity.Entity launch = null;
 

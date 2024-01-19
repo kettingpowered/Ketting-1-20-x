@@ -341,7 +341,7 @@ public class HandshakeHandler
     public boolean tickServer()
     {
         if (!negotiationStarted) {
-            GameProfile profile = ((ServerLoginPacketListenerImpl) manager.getPacketListener()).f_10021_;
+            GameProfile profile = ((ServerLoginPacketListenerImpl) manager.getPacketListener()).gameProfile;
             PlayerNegotiationEvent event = new PlayerNegotiationEvent(manager, profile, pendingFutures);
             MinecraftForge.EVENT_BUS.post(event);
             negotiationStarted = true;

@@ -155,7 +155,7 @@ public class IntersectionIngredient extends AbstractIngredient
 
             return new IntersectionIngredient(
                     IntStream.range(0, children.size())
-                            .mapToObj(i -> Ingredient.m_288218_(children.get(i), false))
+                            .mapToObj(i -> Ingredient.fromJson(children.get(i), false))
                             .toList()
             );
         }

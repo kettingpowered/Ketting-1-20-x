@@ -13,7 +13,7 @@ public final class CraftCobbleWall extends org.bukkit.craftbukkit.block.data.Cra
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftWall
+    // org.bukkit.craftbukkit.block.data.type.CraftWall
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty UP = getBoolean(net.minecraft.world.level.block.WallBlock.class, "up");
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?>[] HEIGHTS = new net.minecraft.world.level.block.state.properties.EnumProperty[]{
@@ -40,7 +40,7 @@ public final class CraftCobbleWall extends org.bukkit.craftbukkit.block.data.Cra
         set(HEIGHTS[face.ordinal()], height);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.WallBlock.class, "waterlogged");
 

@@ -102,14 +102,13 @@
        return this.f_9745_.m_7779_(this.f_9743_.m_36316_());
     }
 -
--   public void m_9942_(Component p_9943_) {
--      this.f_9742_.m_243124_(new ClientboundDisconnectPacket(p_9943_), PacketSendListener.m_243092_(() -> {
--         this.f_9742_.m_129507_(p_9943_);
 +   
 +   // CraftBukkit start
 +   @Deprecated
-+   public void m_9942_(Component p_9943_) {
-+      m_9942_(org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(p_9943_));
+    public void m_9942_(Component p_9943_) {
+-      this.f_9742_.m_243124_(new ClientboundDisconnectPacket(p_9943_), PacketSendListener.m_243092_(() -> {
+-         this.f_9742_.m_129507_(p_9943_);
++      disconnect(org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(p_9943_));
 +   }
 +   // CraftBukkit end
 +
@@ -121,11 +120,11 @@
 +
 +      @Override
 +      protected T evaluate() {
-+         ServerGamePacketListenerImpl.this.m_9942_(s);
++         ServerGamePacketListenerImpl.this.disconnect(s);
 +         return null;
 +      }
 +   }
-+   public void m_9942_(String s) {
++   public void disconnect(String s) {
 +       // CraftBukkit start - fire PlayerKickEvent
 +       if (this.processedDisconnect) {
 +           return;
@@ -174,14 +173,14 @@
 +       this.f_9745_.m_6681_(this.f_9742_::m_129541_);
 +   }
 +   /*
-+   public void m_9942_(Component p_9943_) {
-+      this.f_9742_.send(new ClientboundDisconnectPacket(p_9943_), PacketSendListener.thenRun(() -> {
-+         this.f_9742_.disconnect(p_9943_);
++   public void disconnect(Component p_9943_) {
++      this.connection.send(new ClientboundDisconnectPacket(p_9943_), PacketSendListener.thenRun(() -> {
++         this.connection.disconnect(p_9943_);
        }));
 -      this.f_9742_.m_129540_();
 -      this.f_9745_.m_18709_(this.f_9742_::m_129541_);
-+      this.f_9742_.setReadOnly();
-+      this.f_9745_.executeBlocking(this.f_9742_::handleDisconnection);
++      this.connection.setReadOnly();
++      this.server.executeBlocking(this.connection::handleDisconnection);
     }
 +   */
  
@@ -364,7 +363,7 @@
     public void m_6829_(ServerboundEditBookPacket p_9862_) {
 +      // CraftBukkit start
 +      if (this.lastBookTick + 20 > MinecraftServer.currentTick) {
-+         this.m_9942_("Book edited too quickly!");
++         this.disconnect("Book edited too quickly!");
 +         return;
 +      }
 +      this.lastBookTick = MinecraftServer.currentTick;
@@ -698,7 +697,7 @@
 +                  this.dropCount++;
 +                  if (this.dropCount >= 20) {
 +                     f_9744_.warn(this.f_9743_.m_6302_() + " dropped their items too quickly!");
-+                     this.m_9942_("You dropped your items too quickly (Hacking?)");
++                     this.disconnect("You dropped your items too quickly (Hacking?)");
 +                     return;
 +                  }
 +               }
@@ -880,7 +879,7 @@
           this.f_9743_.m_9243_();
        } else {
           f_9744_.warn("{} tried to set an invalid carried item", (Object)this.f_9743_.m_7755_().getString());
-+         this.m_9942_("Invalid hotbar selection (Hacking?)"); // CraftBukkit
++         this.disconnect("Invalid hotbar selection (Hacking?)"); // CraftBukkit
        }
     }
  
@@ -1259,7 +1258,7 @@
 +      // Spigot Start
 +      if ( entity == f_9743_ && !f_9743_.m_5833_() )
 +      {
-+         m_9942_( "Cannot interact with self!" );
++         disconnect( "Cannot interact with self!" );
 +         return;
 +      }
 +      // Spigot End
@@ -1817,7 +1816,7 @@
 +              }
 +          } catch (Exception ex) {
 +             PacketUtils.f_131354_.error("Couldn\'t register custom payload", ex);
-+              this.m_9942_("Invalid payload REGISTER!");
++              this.disconnect("Invalid payload REGISTER!");
 +          }
 +      } else if (p_9860_.f_133980_.equals(CUSTOM_UNREGISTER)) {
 +          try {
@@ -1827,7 +1826,7 @@
 +              }
 +          } catch (Exception ex) {
 +             PacketUtils.f_131354_.error("Couldn\'t unregister custom payload", ex);
-+              this.m_9942_("Invalid payload UNREGISTER!");
++              this.disconnect("Invalid payload UNREGISTER!");
 +          }
 +      } else {
 +          try {
@@ -1836,7 +1835,7 @@
 +              cserver.getMessenger().dispatchIncomingMessage(f_9743_.getBukkitEntity(), p_9860_.f_133980_.toString(), data);
 +          } catch (Exception ex) {
 +             PacketUtils.f_131354_.error("Couldn\'t dispatch custom payload", ex);
-+              this.m_9942_("Invalid custom payload!");
++              this.disconnect("Invalid custom payload!");
 +          }
 +      }
 +

@@ -109,7 +109,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
         } else if (index > 35) {
             index = 8 - (index - 36);
         }
-        player.connection.m_9829_(new ClientboundContainerSetSlotPacket(player.inventoryMenu.containerId, player.inventoryMenu.incrementStateId(), index, CraftItemStack.asNMSCopy(item)));
+        player.connection.send(new ClientboundContainerSetSlotPacket(player.inventoryMenu.containerId, player.inventoryMenu.incrementStateId(), index, CraftItemStack.asNMSCopy(item)));
     }
 
     @Override
@@ -176,7 +176,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
     public void setHeldItemSlot(int slot) {
         Preconditions.checkArgument(slot >= 0 && slot < Inventory.getSelectionSize(), "Slot (%s) is not between 0 and %s inclusive", slot, Inventory.getSelectionSize() - 1);
         this.getInventory().selected = slot;
-        ((CraftPlayer) this.getHolder()).getHandle().connection.m_9829_(new ClientboundSetCarriedItemPacket(slot));
+        ((CraftPlayer) this.getHolder()).getHandle().connection.send(new ClientboundSetCarriedItemPacket(slot));
     }
 
     @Override

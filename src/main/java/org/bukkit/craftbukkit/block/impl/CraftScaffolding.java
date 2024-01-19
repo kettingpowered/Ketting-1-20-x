@@ -13,7 +13,7 @@ public final class CraftScaffolding extends org.bukkit.craftbukkit.block.data.Cr
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftScaffolding
+    // org.bukkit.craftbukkit.block.data.type.CraftScaffolding
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty BOTTOM = getBoolean(net.minecraft.world.level.block.ScaffoldingBlock.class, "bottom");
     private static final net.minecraft.world.level.block.state.properties.IntegerProperty DISTANCE = getInteger(net.minecraft.world.level.block.ScaffoldingBlock.class, "distance");
@@ -43,7 +43,7 @@ public final class CraftScaffolding extends org.bukkit.craftbukkit.block.data.Cr
         return getMax(DISTANCE);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.ScaffoldingBlock.class, "waterlogged");
 

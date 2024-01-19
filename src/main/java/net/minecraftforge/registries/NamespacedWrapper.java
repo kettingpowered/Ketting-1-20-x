@@ -69,7 +69,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     }
 
     @Override
-    public Holder.Reference<T> m_203704_(int id, ResourceKey<T> key, T value, Lifecycle lifecycle)
+    public Holder.Reference<T> registerMapping(int id, ResourceKey<T> key, T value, Lifecycle lifecycle)
     {
         if (locked)
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
@@ -88,7 +88,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     @Override
     public Holder.Reference<T> register(ResourceKey<T> key, T value, Lifecycle lifecycle)
     {
-        return m_203704_(-1, key, value, lifecycle);
+        return registerMapping(-1, key, value, lifecycle);
     }
 
     // Reading Functions

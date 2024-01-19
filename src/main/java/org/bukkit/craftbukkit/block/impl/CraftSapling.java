@@ -13,7 +13,7 @@ public final class CraftSapling extends org.bukkit.craftbukkit.block.data.CraftB
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSapling
+    // org.bukkit.craftbukkit.block.data.type.CraftSapling
 
     private static final net.minecraft.world.level.block.state.properties.IntegerProperty STAGE = getInteger(net.minecraft.world.level.block.SaplingBlock.class, "stage");
 

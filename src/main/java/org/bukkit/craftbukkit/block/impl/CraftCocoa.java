@@ -13,7 +13,7 @@ public final class CraftCocoa extends org.bukkit.craftbukkit.block.data.CraftBlo
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAgeable
+    // org.bukkit.craftbukkit.block.data.CraftAgeable
 
     private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger(net.minecraft.world.level.block.CocoaBlock.class, "age");
 
@@ -32,7 +32,7 @@ public final class CraftCocoa extends org.bukkit.craftbukkit.block.data.CraftBlo
         return getMax(AGE);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.CocoaBlock.class, "facing");
 

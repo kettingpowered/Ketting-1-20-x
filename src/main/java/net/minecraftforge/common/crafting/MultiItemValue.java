@@ -30,7 +30,7 @@ public class MultiItemValue implements Value
     }
 
     @Override
-    public JsonObject m_6544_()
+    public JsonObject serialize()
     {
         if (items.size() == 1)
             return toJson(items.iterator().next());

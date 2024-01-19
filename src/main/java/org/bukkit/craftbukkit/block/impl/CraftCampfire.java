@@ -13,7 +13,7 @@ public final class CraftCampfire extends org.bukkit.craftbukkit.block.data.Craft
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftCampfire
+    // org.bukkit.craftbukkit.block.data.type.CraftCampfire
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty SIGNAL_FIRE = getBoolean(net.minecraft.world.level.block.CampfireBlock.class, "signal_fire");
 
@@ -27,7 +27,7 @@ public final class CraftCampfire extends org.bukkit.craftbukkit.block.data.Craft
         set(SIGNAL_FIRE, signalFire);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.CampfireBlock.class, "facing");
 
@@ -46,7 +46,7 @@ public final class CraftCampfire extends org.bukkit.craftbukkit.block.data.Craft
         return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftLightable
+    // org.bukkit.craftbukkit.block.data.CraftLightable
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty LIT = getBoolean(net.minecraft.world.level.block.CampfireBlock.class, "lit");
 
@@ -60,7 +60,7 @@ public final class CraftCampfire extends org.bukkit.craftbukkit.block.data.Craft
         set(LIT, lit);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.CampfireBlock.class, "waterlogged");
 

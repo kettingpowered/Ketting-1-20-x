@@ -104,7 +104,7 @@ public class FakePlayer extends ServerPlayer
 
         @Override public void tick() { }
         @Override public void resetPosition() { }
-        @Override public void m_9942_(Component message) { }
+        @Override public void disconnect(Component message) { }
         @Override public void handlePlayerInput(ServerboundPlayerInputPacket packet) { }
         @Override public void handleMoveVehicle(ServerboundMoveVehiclePacket packet) { }
         @Override public void handleAcceptTeleportPacket(ServerboundAcceptTeleportationPacket packet) { }
@@ -130,11 +130,11 @@ public class FakePlayer extends ServerPlayer
         @Override public void handleUseItemOn(ServerboundUseItemOnPacket packet) { }
         @Override public void handleUseItem(ServerboundUseItemPacket packet) { }
         @Override public void handleTeleportToEntityPacket(ServerboundTeleportToEntityPacket packet) { }
-        @Override public void m_7529_(ServerboundResourcePackPacket packet) { }
+        @Override public void handleResourcePackResponse(ServerboundResourcePackPacket packet) { }
         @Override public void handlePaddleBoat(ServerboundPaddleBoatPacket packet) { }
         @Override public void onDisconnect(Component message) { }
-        @Override public void m_9829_(Packet<?> packet) { }
-        @Override public void m_243119_(Packet<?> packet, @Nullable PacketSendListener sendListener) { }
+        @Override public void send(Packet<?> packet) { }
+        @Override public void send(Packet<?> packet, @Nullable PacketSendListener sendListener) { }
         @Override public void handleSetCarriedItem(ServerboundSetCarriedItemPacket packet) { }
         @Override public void handleChat(ServerboundChatPacket packet) { }
         @Override public void handleAnimate(ServerboundSwingPacket packet) { }
@@ -147,10 +147,10 @@ public class FakePlayer extends ServerPlayer
         @Override public void handleContainerButtonClick(ServerboundContainerButtonClickPacket packet) { }
         @Override public void handleSetCreativeModeSlot(ServerboundSetCreativeModeSlotPacket packet) { }
         @Override public void handleSignUpdate(ServerboundSignUpdatePacket packet) { }
-        @Override public void m_5683_(ServerboundKeepAlivePacket packet) { }
+        @Override public void handleKeepAlive(ServerboundKeepAlivePacket packet) { }
         @Override public void handlePlayerAbilities(ServerboundPlayerAbilitiesPacket packet) { }
-        @Override public void m_5617_(ServerboundClientInformationPacket packet) { }
-        @Override public void m_7423_(ServerboundCustomPayloadPacket packet) { }
+        @Override public void handleClientInformation(ServerboundClientInformationPacket packet) { }
+        @Override public void handleCustomPayload(ServerboundCustomPayloadPacket packet) { }
         @Override public void handleChangeDifficulty(ServerboundChangeDifficultyPacket packet) { }
         @Override public void handleLockDifficulty(ServerboundLockDifficultyPacket packet) { }
         @Override public void teleport(double x, double y, double z, float yaw, float pitch, Set<RelativeMovement> relativeSet) { }

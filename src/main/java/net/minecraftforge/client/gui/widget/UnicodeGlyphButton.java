@@ -9,8 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
-import static net.minecraft.client.gui.Gui.f_92982_;
-
 /**
  * This class provides a button that shows a string glyph at the beginning. The glyph can be scaled using the glyphScale parameter.
  *
@@ -36,7 +34,7 @@ public class UnicodeGlyphButton extends ExtendedButton
             Minecraft mc = Minecraft.getInstance();
             this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
             int k = !this.active ? 0 : (this.isHoveredOrFocused() ? 2 : 1);
-            guiGraphics.blitWithBorder(f_92982_, this.getX(), this.getY(), 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2);
+            guiGraphics.blitWithBorder(WIDGETS_LOCATION, this.getX(), this.getY(), 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2);
 
             Component buttonText = this.createNarrationMessage();
             int glyphWidth = (int) (mc.font.width(glyph) * glyphScale);

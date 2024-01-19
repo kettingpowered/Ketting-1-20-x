@@ -54,9 +54,9 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
     @NotNull
     private ItemStack fillContainer(@NotNull BlockSource source, @NotNull ItemStack stack)
     {
-        Level level = source.m_7727_();
-        Direction dispenserFacing = source.m_6414_().getValue(DispenserBlock.FACING);
-        BlockPos blockpos = source.m_7961_().relative(dispenserFacing);
+        Level level = source.getLevel();
+        Direction dispenserFacing = source.getBlockState().getValue(DispenserBlock.FACING);
+        BlockPos blockpos = source.getPos().relative(dispenserFacing);
 
         FluidActionResult actionResult = FluidUtil.tryPickUpFluid(stack, null, level, blockpos, dispenserFacing.getOpposite());
         ItemStack resultStack = actionResult.getResult();
@@ -70,7 +70,7 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
         {
             return resultStack;
         }
-        else if (((DispenserBlockEntity)source.m_8118_()).addItem(resultStack) < 0)
+        else if (((DispenserBlockEntity)source.getEntity()).addItem(resultStack) < 0)
         {
             this.dispenseBehavior.dispense(source, resultStack);
         }
@@ -95,9 +95,9 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
         }
 
         FluidStack fluidStack = fluidHandler.drain(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE);
-        Direction dispenserFacing = source.m_6414_().getValue(DispenserBlock.FACING);
-        BlockPos blockpos = source.m_7961_().relative(dispenserFacing);
-        FluidActionResult result = FluidUtil.tryPlaceFluid(null, source.m_7727_(), InteractionHand.MAIN_HAND, blockpos, stack, fluidStack);
+        Direction dispenserFacing = source.getBlockState().getValue(DispenserBlock.FACING);
+        BlockPos blockpos = source.getPos().relative(dispenserFacing);
+        FluidActionResult result = FluidUtil.tryPlaceFluid(null, source.getLevel(), InteractionHand.MAIN_HAND, blockpos, stack, fluidStack);
 
         if (result.isSuccess())
         {
@@ -107,7 +107,7 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
             {
                 return drainedStack;
             }
-            else if (!drainedStack.isEmpty() && ((DispenserBlockEntity)source.m_8118_()).addItem(drainedStack) < 0)
+            else if (!drainedStack.isEmpty() && ((DispenserBlockEntity)source.getEntity()).addItem(drainedStack) < 0)
             {
                 this.dispenseBehavior.dispense(source, drainedStack);
             }

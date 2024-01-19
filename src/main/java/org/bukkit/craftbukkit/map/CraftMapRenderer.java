@@ -42,7 +42,7 @@ public class CraftMapRenderer extends MapRenderer {
             }
 
             MapDecoration decoration = worldMap.decorations.get(key);
-            cursors.addCursor(decoration.m_77804_(), decoration.m_77805_(), (byte) (decoration.m_77806_() & 15), decoration.m_77803_().getIcon(), true, CraftChatMessage.fromComponent(decoration.m_77810_()));
+            cursors.addCursor(decoration.getX(), decoration.getY(), (byte) (decoration.getRot() & 15), decoration.getType().getIcon(), true, CraftChatMessage.fromComponent(decoration.getName()));
         }
     }
 

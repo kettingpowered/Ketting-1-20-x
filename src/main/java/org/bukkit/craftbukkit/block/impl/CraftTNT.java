@@ -13,7 +13,7 @@ public final class CraftTNT extends org.bukkit.craftbukkit.block.data.CraftBlock
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftTNT
+    // org.bukkit.craftbukkit.block.data.type.CraftTNT
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty UNSTABLE = getBoolean(net.minecraft.world.level.block.TntBlock.class, "unstable");
 

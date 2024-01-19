@@ -43,7 +43,7 @@ public class RecipeIterator implements Iterator<Recipe> {
         try {
             return recipe.toBukkitRecipe();
         } catch (Throwable e) {
-            throw new RuntimeException("Error converting recipe " + recipe.m_6423_(), e);
+            throw new RuntimeException("Error converting recipe " + recipe.getId(), e);
         }
     }
 

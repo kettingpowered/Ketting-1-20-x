@@ -37,7 +37,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class LootModifierManager extends SimpleJsonResourceReloadListener {
     public static final Logger LOGGER = LogManager.getLogger();
-    public static final Gson GSON_INSTANCE = Deserializers.m_78799_().create();
+    public static final Gson GSON_INSTANCE = Deserializers.createFunctionSerializer().create();
 
     private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
     private static final String folder = "loot_modifiers";

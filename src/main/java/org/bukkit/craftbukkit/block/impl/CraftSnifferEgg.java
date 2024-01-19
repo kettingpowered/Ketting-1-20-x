@@ -13,7 +13,7 @@ public final class CraftSnifferEgg extends org.bukkit.craftbukkit.block.data.Cra
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftHatchable
+    // org.bukkit.craftbukkit.block.data.CraftHatchable
 
     private static final net.minecraft.world.level.block.state.properties.IntegerProperty HATCH = getInteger(net.minecraft.world.level.block.SnifferEggBlock.class, "hatch");
 

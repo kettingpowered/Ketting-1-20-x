@@ -36,7 +36,7 @@ public class CraftTippedArrow extends CraftArrow implements Arrow {
         int effectId = effect.getType().getId();
         MobEffectInstance existing = null;
         for (MobEffectInstance mobEffect : getHandle().effects) {
-            if (MobEffect.m_19459_(mobEffect.getEffect()) == effectId) {
+            if (MobEffect.getId(mobEffect.getEffect()) == effectId) {
                 existing = mobEffect;
             }
         }
@@ -86,7 +86,7 @@ public class CraftTippedArrow extends CraftArrow implements Arrow {
         int effectId = effect.getId();
         MobEffectInstance existing = null;
         for (MobEffectInstance mobEffect : getHandle().effects) {
-            if (MobEffect.m_19459_(mobEffect.getEffect()) == effectId) {
+            if (MobEffect.getId(mobEffect.getEffect()) == effectId) {
                 existing = mobEffect;
             }
         }

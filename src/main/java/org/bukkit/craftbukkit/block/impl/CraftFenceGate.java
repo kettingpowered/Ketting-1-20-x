@@ -13,7 +13,7 @@ public final class CraftFenceGate extends org.bukkit.craftbukkit.block.data.Craf
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftGate
+    // org.bukkit.craftbukkit.block.data.type.CraftGate
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty IN_WALL = getBoolean(net.minecraft.world.level.block.FenceGateBlock.class, "in_wall");
 
@@ -27,7 +27,7 @@ public final class CraftFenceGate extends org.bukkit.craftbukkit.block.data.Craf
         set(IN_WALL, inWall);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.FenceGateBlock.class, "facing");
 
@@ -46,7 +46,7 @@ public final class CraftFenceGate extends org.bukkit.craftbukkit.block.data.Craf
         return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftOpenable
+    // org.bukkit.craftbukkit.block.data.CraftOpenable
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty OPEN = getBoolean(net.minecraft.world.level.block.FenceGateBlock.class, "open");
 
@@ -60,7 +60,7 @@ public final class CraftFenceGate extends org.bukkit.craftbukkit.block.data.Craf
         set(OPEN, open);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftPowerable
+    // org.bukkit.craftbukkit.block.data.CraftPowerable
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.FenceGateBlock.class, "powered");
 

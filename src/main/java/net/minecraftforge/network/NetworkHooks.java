@@ -206,7 +206,7 @@ public class NetworkHooks
             return;
         MenuType<?> type = c.getType();
         PlayMessages.OpenContainer msg = new PlayMessages.OpenContainer(type, openContainerId, containerSupplier.getDisplayName(), output);
-        NetworkConstants.playChannel.sendTo(msg, player.connection.f_9742_, NetworkDirection.PLAY_TO_CLIENT);
+        NetworkConstants.playChannel.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
 
         player.containerMenu = c;
         player.initMenu(player.containerMenu);

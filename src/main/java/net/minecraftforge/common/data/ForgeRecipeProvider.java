@@ -113,7 +113,7 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
         List<Ingredient> ingredients = getField(ShapelessRecipeBuilder.Result.class, vanilla, 4);
         boolean modified = false;
         for (int x = 0; x < ingredients.size(); x++) {
-            Ingredient ing = enhance(vanilla.m_6445_(), ingredients.get(x));
+            Ingredient ing = enhance(vanilla.getId(), ingredients.get(x));
             if (ing != null) {
                 ingredients.set(x, ing);
                 modified = true;
@@ -140,7 +140,7 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
         Map<Character, Ingredient> ingredients = getField(ShapedRecipeBuilder.Result.class, vanilla, 5);
         boolean modified = false;
         for (Character x : ingredients.keySet()) {
-            Ingredient ing = enhance(vanilla.m_6445_(), ingredients.get(x));
+            Ingredient ing = enhance(vanilla.getId(), ingredients.get(x));
             if (ing != null) {
                 ingredients.put(x, ing);
                 modified = true;
