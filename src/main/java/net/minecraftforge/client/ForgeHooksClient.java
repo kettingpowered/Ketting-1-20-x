@@ -380,7 +380,7 @@ public class ForgeHooksClient
     public static void renderMainMenu(TitleScreen gui, GuiGraphics guiGraphics, Font font, int width, int height, int alpha)
     {
         VersionChecker.Status status = ForgeVersion.getStatus();
-        ForgeSnapshotsModClient.renderMainMenuWarning(status, gui, guiGraphics, font, width, height, alpha);
+//        ForgeSnapshotsModClient.renderMainMenuWarning(status, gui, guiGraphics, font, width, height, alpha);
 
         forgeStatusLine = switch(status)
         {

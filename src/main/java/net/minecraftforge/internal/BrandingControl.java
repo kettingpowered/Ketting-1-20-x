@@ -32,7 +32,7 @@ public class BrandingControl
         if (brandings == null)
         {
             ImmutableList.Builder<String> brd = ImmutableList.builder();
-            brd.add(ForgeSnapshotsMod.BRANDING_NAME + ' ' + ForgeVersion.getVersion());
+            brd.add("Forge " + ForgeVersion.getVersion());
             brd.add("Minecraft " + MCPVersion.getMCVersion());
             brd.add("MCP " + MCPVersion.getMCPVersion());
             int tModCount = ModList.get().size();
@@ -71,11 +71,11 @@ public class BrandingControl
     }
 
     public static String getClientBranding() {
-        return ForgeSnapshotsMod.BRANDING_ID;
+        return "forge";
     }
 
     public static String getServerBranding() {
-        return ForgeSnapshotsMod.BRANDING_ID;
+        return "forge";
     }
 
     public static ResourceManagerReloadListener resourceManagerReloadListener() {

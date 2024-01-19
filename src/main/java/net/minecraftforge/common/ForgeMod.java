@@ -417,7 +417,7 @@ public class ForgeMod
     public ForgeMod()
     {
         LOGGER.info(FORGEMOD,"Forge mod loading, version {}, for MC {} with MCP {}", ForgeVersion.getVersion(), MCPVersion.getMCVersion(), MCPVersion.getMCPVersion());
-        ForgeSnapshotsMod.logStartupWarning();
+//        ForgeSnapshotsMod.logStartupWarning();
         INSTANCE = this;
         MinecraftForge.initialize();
         CrashReportCallables.registerCrashCallable("Crash Report UUID", ()-> {
