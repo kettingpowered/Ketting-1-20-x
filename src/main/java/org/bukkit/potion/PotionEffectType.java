@@ -1,7 +1,8 @@
 package org.bukkit.potion;
 
 import com.google.common.base.Preconditions;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Objects;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Color;
@@ -184,6 +185,7 @@ public abstract class PotionEffectType implements Keyed {
      * Causes the player's vision to dim occasionally.
      */
     public static final PotionEffectType DARKNESS = new PotionEffectTypeWrapper(33, "darkness");
+    public static final PotionEffectType NORMAL = new PotionEffectTypeWrapper(34, new NamespacedKey("kettingpowered", "neutral")); // Ketting
 
     private final int id;
     private final NamespacedKey key;
@@ -281,7 +283,7 @@ public abstract class PotionEffectType implements Keyed {
         return "PotionEffectType[" + id + ", " + getName() + "]";
     }
 
-    private static final PotionEffectType[] byId = new PotionEffectType[1337];
+    private static final ArrayList<PotionEffectType> byId = new ArrayList<>(); //Ketting - to arraylist
     private static final Map<String, PotionEffectType> byName = new HashMap<String, PotionEffectType>();
     private static final Map<NamespacedKey, PotionEffectType> byKey = new HashMap<NamespacedKey, PotionEffectType>();
     // will break on updates.
@@ -309,9 +311,9 @@ public abstract class PotionEffectType implements Keyed {
     @Deprecated
     @Nullable
     public static PotionEffectType getById(int id) {
-        if (id >= byId.length || id < 0)
+        if (id >= byId.size() || id < 0) //Ketting - to arraylist
             return null;
-        return byId[id];
+        return byId.get(id); //Ketting - to arraylist
     }
 
     /**
@@ -333,15 +335,17 @@ public abstract class PotionEffectType implements Keyed {
      *
      * @param type PotionType to register
      */
+    //Ketting - make byId be an arraylist
     public static void registerPotionEffectType(@NotNull PotionEffectType type) {
-        if (byId[type.id] != null || byName.containsKey(type.getName().toLowerCase(java.util.Locale.ENGLISH)) || byKey.containsKey(type.key)) {
+        while (byId.size() <= type.id) byId.add(null);
+        if (byId.get(type.id) != null || byName.containsKey(type.getName().toLowerCase(java.util.Locale.ENGLISH)) || byKey.containsKey(type.key)) {
             throw new IllegalArgumentException("Cannot set already-set type");
         } else if (!acceptingNew) {
             throw new IllegalStateException(
                     "No longer accepting new potion effect types (can only be done by the server implementation)");
         }
 
-        byId[type.id] = type;
+        byId.set(type.id, type);
         byName.put(type.getName().toLowerCase(java.util.Locale.ENGLISH), type);
         byKey.put(type.key, type);
     }
@@ -353,7 +357,7 @@ public abstract class PotionEffectType implements Keyed {
         acceptingNew = false;
     }
 
-    //Ketting start
+    //Ketting startSer
     public static void startAcceptingRegistrations() {
         acceptingNew = true;
     }
@@ -367,6 +371,6 @@ public abstract class PotionEffectType implements Keyed {
      */
     @NotNull
     public static PotionEffectType[] values() {
-        return Arrays.copyOfRange(byId, 1, byId.length);
+        return byId.stream().filter(Objects::nonNull).toArray(PotionEffectType[]::new); //Ketting - to arraylist
     }
 }

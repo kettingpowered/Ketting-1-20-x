@@ -400,9 +400,9 @@ public class ForgeInject {
             var enumName = standardize(location);
             var potion = entry.getValue();
             var effect = potion.getEffects().isEmpty() ? null : potion.getEffects().get(0);
-            var type = effect == null
-                    ? null
-                    : PotionEffectType.getById(MobEffect.getId(effect.getEffect()));
+            PotionEffectType type = null;
+            if (effect != null) type = PotionEffectType.getById(MobEffect.getId(effect.getEffect()));
+            if (type == null) type = PotionEffectType.NORMAL;
             try {
                 var potionType = EnumHelper.makeEnum(PotionType.class, enumName, ordinal,
                         List.of(PotionEffectType.class, boolean.class, boolean.class),

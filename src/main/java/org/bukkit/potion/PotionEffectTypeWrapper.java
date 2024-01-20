@@ -5,6 +5,11 @@ import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
 public class PotionEffectTypeWrapper extends PotionEffectType {
+    //Ketting start - allow adding potionEffectTypes in other Namespaces
+    protected PotionEffectTypeWrapper(int id, @NotNull NamespacedKey name) {
+        super(id, name);
+    }
+    //Ketting end
     protected PotionEffectTypeWrapper(int id, @NotNull String name) {
         super(id, NamespacedKey.minecraft(name));
     }
