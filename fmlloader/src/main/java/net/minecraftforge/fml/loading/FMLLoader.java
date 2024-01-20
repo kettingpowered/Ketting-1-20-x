@@ -5,7 +5,9 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.google.common.collect.Lists;
 import com.mojang.logging.LogUtils;
+import cpw.mods.jarhandling.impl.Jar;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.*;
 import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
@@ -18,18 +20,20 @@ import net.minecraftforge.fml.loading.targets.CommonLaunchHandler;
 import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.forgespi.coremod.ICoreModProvider;
 import org.apache.commons.lang3.tuple.Pair;
+import org.kettingpowered.ketting.internal.hacks.Unsafe;
 import org.slf4j.Logger;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.ServiceConfigurationError;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.nio.file.spi.FileSystemProvider;
+import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
@@ -53,7 +57,60 @@ public class FMLLoader {
     private static boolean production;
     private static IModuleLayerManager moduleLayerManager;
 
+    //Ketting start
+
+    /**
+     * This is needed, because some Mods/LanguageProviders use the FileSystemProvider.
+     * When we do this, the classes contained in the {@link FileSystemProvider#installedProviders()} are
+     * partly in the wrong classloader. This manually re-loads the FileSystemProviders 
+     * (because doing it automatically queries the systemClassloader?).
+     */
+    private static void reloadFileSystems(){
+        try{
+            final List<FileSystemProvider> oldProviders = FileSystemProvider.installedProviders();
+            final List<FileSystemProvider> newProviders = new ArrayList<>();
+            for(
+                    var itr = Thread.currentThread()
+                    .getContextClassLoader()
+                    .getResources("/META-INF/services/"+FileSystemProvider.class.getName());
+                    itr.hasMoreElements();
+            ){
+                try(BufferedReader reader = new BufferedReader(new InputStreamReader(itr.nextElement().openStream()))){
+                    reader.lines()
+                            .filter(s->!s.isEmpty())
+                            .filter(s->!s.isBlank())
+                            .filter(s->!s.startsWith("#"))
+                            .filter(s->!s.startsWith(";"))
+                            .map(s->{
+                                try{
+                                    return (FileSystemProvider) Class.forName(s, true, Thread.currentThread().getContextClassLoader()).getDeclaredConstructor().newInstance();
+                                }catch (Throwable e){
+                                    LOGGER.error("error loading class "+ s, e);
+                                    return null;
+                                }
+                            })
+                            .filter(Objects::nonNull)
+                            .forEach(newProviders::add);
+                }catch (IOException e){
+                    LOGGER.error("Unable to read FileSystemProvider service declaration file: ", e);
+                }
+            }
+            final Set<String> newSchemes = newProviders.stream().map(FileSystemProvider::getScheme).collect(Collectors.toSet());
+            oldProviders.stream().filter(fsp->!newSchemes.contains(fsp.getScheme())).forEach(newProviders::add);
+            Unsafe.lookup().findStaticSetter(FileSystemProvider.class, "installedProviders", List.class).invokeWithArguments((Object)newProviders);
+            FileSystemProvider ufsp = newProviders.stream()
+                    .filter(p -> "union".equalsIgnoreCase(p.getScheme()))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Couldn't find UnionFileSystemProvider"));
+            Unsafe.lookup().findStaticSetter(Jar.class, "UFSP", FileSystemProvider.class).invokeWithArguments((Object) ufsp);
+        }catch (Throwable e){
+            LOGGER.error("Unable to reload FileSystems. There might be more errors up adead", e);
+        }
+    }
+    //Ketting end
+    
     static void onInitialLoad(IEnvironment env, Set<String> otherServices) throws IncompatibleEnvironmentException {
+        reloadFileSystems();
         LOGGER.debug(CORE, "Detected version data : {}", versionInfo);
         LOGGER.debug(CORE, "FML {} loading", LauncherVersion.getVersion());
 
