@@ -2453,4 +2453,10 @@ public final class CraftServer implements Server {
         return spigot;
     }
     // Spigot end
+    
+    //Ketting start
+    public boolean isStopping(){
+        return !getServer().isRunning();
+    }
+    //Ketting stop
 }

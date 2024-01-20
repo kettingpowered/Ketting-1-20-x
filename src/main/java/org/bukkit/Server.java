@@ -1747,4 +1747,12 @@ public interface Server extends PluginMessageRecipient {
     @NotNull
     Spigot spigot();
     // Spigot end
+
+    // Ketting start
+
+    // This method exists for compatibility with plugins, that would otherwise misbehave:
+    // https://github.com/SkriptLang/Skript/issues/6351
+    @Deprecated(forRemoval = true) //reason: only provided for compatibility purposes
+    boolean isStopping();
+    // Ketting end
 }
