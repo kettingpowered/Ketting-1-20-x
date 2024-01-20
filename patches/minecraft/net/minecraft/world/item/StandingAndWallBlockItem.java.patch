@@ -19,7 +19,7 @@
 +         boolean defaultReturn = levelreader.m_45752_(blockstate1, blockpos, CollisionContext.m_82749_());
 +         org.bukkit.entity.Player player = (p_43255_.m_43723_() instanceof net.minecraft.server.level.ServerPlayer) ? (org.bukkit.entity.Player) p_43255_.m_43723_().getBukkitEntity() : null;
 +
-+         org.bukkit.event.block.BlockCanBuildEvent event = new org.bukkit.event.block.BlockCanBuildEvent(org.bukkit.craftbukkit.block.CraftBlock.at(levelreader, blockpos), player, org.bukkit.craftbukkit.block.data.CraftBlockData.fromData(blockstate1), defaultReturn);
++         org.bukkit.event.block.BlockCanBuildEvent event = new org.bukkit.event.block.BlockCanBuildEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(levelreader, blockpos), player, org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData.fromData(blockstate1), defaultReturn);
 +         p_43255_.m_43725_().getCraftServer().getPluginManager().callEvent(event);
 +
 +         return (event.isBuildable()) ? blockstate1 : null;

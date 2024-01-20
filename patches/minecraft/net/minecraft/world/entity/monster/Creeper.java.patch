@@ -5,7 +5,7 @@
     public void m_8038_(ServerLevel p_32286_, LightningBolt p_32287_) {
        super.m_8038_(p_32286_, p_32287_);
 +      // CraftBukkit start
-+      if (org.bukkit.craftbukkit.event.CraftEventFactory.callCreeperPowerEvent(this, p_32287_, org.bukkit.event.entity.CreeperPowerEvent.PowerCause.LIGHTNING).isCancelled()) {
++      if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callCreeperPowerEvent(this, p_32287_, org.bukkit.event.entity.CreeperPowerEvent.PowerCause.LIGHTNING).isCancelled()) {
 +         return;
 +      }
 +      // CraftBukkit end
@@ -30,7 +30,7 @@
 -         this.m_146870_();
 -         this.m_32316_();
 +         // CraftBukkit start
-+         org.bukkit.event.entity.ExplosionPrimeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callExplosionPrimeEvent(this, this.f_32272_ * f, false);
++         org.bukkit.event.entity.ExplosionPrimeEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callExplosionPrimeEvent(this, this.f_32272_ * f, false);
 +         if (!event.isCancelled()) {
 +            // CraftBukkit end
 +            this.f_20890_ = true;

@@ -5,7 +5,7 @@
     private static final int f_150561_ = 45;
     private final Container f_39431_;
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.inventory.CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView bukkitEntity = null;
 +   private Inventory player;
 +   // CraftBukkit end
  
@@ -37,13 +37,13 @@
 +
 +   // CraftBukkit start
 +   @Override
-+   public org.bukkit.craftbukkit.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventory(this.f_39431_);
-+      bukkitEntity = new org.bukkit.craftbukkit.inventory.CraftInventoryView(this.player.f_35978_.getBukkitEntity(), inventory, this);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory(this.f_39431_);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView(this.player.f_35978_.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

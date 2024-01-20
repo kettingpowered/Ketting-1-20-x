@@ -203,7 +203,7 @@
 +         String playerName = f_10021_.getName();
 +         java.net.InetAddress address = ((java.net.InetSocketAddress) f_10013_.m_129523_()).getAddress();
 +         java.util.UUID uniqueId = f_10021_.getId();
-+         final org.bukkit.craftbukkit.CraftServer server = ServerLoginPacketListenerImpl.this.f_10018_.server;
++         final org.bukkit.craftbukkit.v1_20_R1.CraftServer server = ServerLoginPacketListenerImpl.this.f_10018_.server;
 +
 +         org.bukkit.event.player.AsyncPlayerPreLoginEvent asyncEvent = new org.bukkit.event.player.AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
 +         server.getPluginManager().callEvent(asyncEvent);
@@ -213,7 +213,7 @@
 +            if (asyncEvent.getResult() != org.bukkit.event.player.PlayerPreLoginEvent.Result.ALLOWED) {
 +               event.disallow(asyncEvent.getResult(), asyncEvent.getKickMessage());
 +            }
-+            org.bukkit.craftbukkit.util.Waitable<org.bukkit.event.player.PlayerPreLoginEvent.Result> waitable = new org.bukkit.craftbukkit.util.Waitable<org.bukkit.event.player.PlayerPreLoginEvent.Result>() {
++            org.bukkit.craftbukkit.v1_20_R1.util.Waitable<org.bukkit.event.player.PlayerPreLoginEvent.Result> waitable = new org.bukkit.craftbukkit.v1_20_R1.util.Waitable<org.bukkit.event.player.PlayerPreLoginEvent.Result>() {
 +               @Override
 +               protected org.bukkit.event.player.PlayerPreLoginEvent.Result evaluate() {
 +                  server.getPluginManager().callEvent(event);

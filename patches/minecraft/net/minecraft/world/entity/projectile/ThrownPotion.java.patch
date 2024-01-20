@@ -69,15 +69,15 @@
 +      }
 +
 +
-+      org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPotionSplashEvent(this, affected);
++      org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPotionSplashEvent(this, affected);
 +      if (!event.isCancelled() && p_37548_ != null && !p_37548_.isEmpty()) { // do not process effects if there are no effects to process
 +         Entity entity1 = this.m_150173_();
 +         for (org.bukkit.entity.LivingEntity victim : event.getAffectedEntities()) {
-+            if (!(victim instanceof org.bukkit.craftbukkit.entity.CraftLivingEntity)) {
++            if (!(victim instanceof org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity)) {
 +               continue;
 +            }
 +
-+            LivingEntity livingentity = ((org.bukkit.craftbukkit.entity.CraftLivingEntity) victim).getHandle();
++            LivingEntity livingentity = ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity) victim).getHandle();
 +            double intensity = event.getIntensity(victim);
 +            // CraftBukkit end
 +
@@ -121,7 +121,7 @@
  
 -      this.m_9236_().m_7967_(areaeffectcloud);
 +      // CraftBukkit start
-+      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callLingeringPotionSplashEvent(this, areaeffectcloud);
++      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callLingeringPotionSplashEvent(this, areaeffectcloud);
 +      if (!(event.isCancelled() || areaeffectcloud.m_213877_())) {
 +         this.m_9236_().m_7967_(areaeffectcloud);
 +      } else {
@@ -137,14 +137,14 @@
        if (blockstate.m_204336_(BlockTags.f_13076_)) {
 -         this.m_9236_().m_7471_(p_150193_, false);
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, net.minecraft.world.level.block.Blocks.f_50016_.m_49966_())) {
++         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, net.minecraft.world.level.block.Blocks.f_50016_.m_49966_())) {
 +            this.m_9236_().m_7471_(p_150193_, false);
 +         }
 +         // CraftBukkit end
        } else if (AbstractCandleBlock.m_151933_(blockstate)) {
 -         AbstractCandleBlock.m_151899_((Player)null, blockstate, this.m_9236_(), p_150193_);
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, blockstate.m_61124_(AbstractCandleBlock.f_151895_, false))) {
++         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, blockstate.m_61124_(AbstractCandleBlock.f_151895_, false))) {
 +            AbstractCandleBlock.m_151899_((Player) null, blockstate, this.m_9236_(), p_150193_);
 +         }
 +         // CraftBukkit end
@@ -153,7 +153,7 @@
 -         CampfireBlock.m_152749_(this.m_19749_(), this.m_9236_(), p_150193_, blockstate);
 -         this.m_9236_().m_46597_(p_150193_, blockstate.m_61124_(CampfireBlock.f_51227_, Boolean.valueOf(false)));
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, blockstate.m_61124_(CampfireBlock.f_51227_, false))) {
++         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, blockstate.m_61124_(CampfireBlock.f_51227_, false))) {
 +            this.m_9236_().m_5898_((Player) null, 1009, p_150193_, 0);
 +            CampfireBlock.m_152749_(this.m_19749_(), this.m_9236_(), p_150193_, blockstate);
 +            this.m_9236_().m_46597_(p_150193_, (BlockState) blockstate.m_61124_(CampfireBlock.f_51227_, false));

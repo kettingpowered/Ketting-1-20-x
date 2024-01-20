@@ -6,12 +6,12 @@
        ItemStack itemstack;
 -      if (p_34845_.m_32055_().m_150930_(Items.f_42587_)) {
 +      // CraftBukkit start
-+      if (p_34845_.m_32055_().m_150930_(Items.f_42587_) && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(p_34844_, p_34845_, 0, false).isCancelled()) {
++      if (p_34845_.m_32055_().m_150930_(Items.f_42587_) && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityPickupItemEvent(p_34844_, p_34845_, 0, false).isCancelled()) {
           p_34844_.m_7938_(p_34845_, p_34845_.m_32055_().m_41613_());
           itemstack = p_34845_.m_32055_();
           p_34845_.m_146870_();
 -      } else {
-+      } else if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(p_34844_, p_34845_, p_34845_.m_32055_().m_41613_() - 1, false).isCancelled()) {
++      } else if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityPickupItemEvent(p_34844_, p_34845_, p_34845_.m_32055_().m_41613_() - 1, false).isCancelled()) {
           p_34844_.m_7938_(p_34845_, 1);
           itemstack = m_34822_(p_34845_);
 +      } else {
@@ -41,9 +41,9 @@
           if (p_34869_ && flag) {
 -            m_34860_(p_34868_, m_34996_(p_34868_));
 +            // CraftBukkit start
-+            org.bukkit.event.entity.PiglinBarterEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPiglinBarterEvent(p_34868_, m_34996_(p_34868_), itemstack);
++            org.bukkit.event.entity.PiglinBarterEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPiglinBarterEvent(p_34868_, m_34996_(p_34868_), itemstack);
 +            if (!event.isCancelled()) {
-+               m_34860_(p_34868_, event.getOutcome().stream().map(org.bukkit.craftbukkit.inventory.CraftItemStack::asNMSCopy).collect(java.util.stream.Collectors.toList()));
++               m_34860_(p_34868_, event.getOutcome().stream().map(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack::asNMSCopy).collect(java.util.stream.Collectors.toList()));
 +            }
 +            // CraftBukkit end
           } else if (!flag) {

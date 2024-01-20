@@ -6,7 +6,7 @@
     private volatile boolean f_195494_;
 +   // CraftBukkit start
 +   public WorldLoader.DataLoadContext worldLoader; //Ketting - not final
-+   public org.bukkit.craftbukkit.CraftServer server;
++   public org.bukkit.craftbukkit.v1_20_R1.CraftServer server;
 +   public joptsimple.OptionSet options;
 +   public org.bukkit.command.ConsoleCommandSender console;
 +   public jline.console.ConsoleReader reader;
@@ -77,7 +77,7 @@
 +            f_129750_.warn((String) null, ex);
 +         }
 +      }
-+      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.util.ServerShutdownThread(this));
++      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.v1_20_R1.util.ServerShutdownThread(this));
 +      // CraftBukkit end
     }
  
@@ -126,7 +126,7 @@
 +      org.kettingpowered.ketting.core.Ketting.getInstance().getDimensionRegistry().get().register(this.m_206579_().m_175515_(Registries.f_256862_)); //Ketting
        this.f_129762_.put(Level.f_46428_, serverlevel);
        DimensionDataStorage dimensiondatastorage = serverlevel.m_8895_();
-+      this.server.scoreboardManager = new org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager(this, serverlevel.m_6188_()); // CraftBukkit
++      this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_20_R1.scoreboard.CraftScoreboardManager(this, serverlevel.m_6188_()); // CraftBukkit
        this.m_129841_(dimensiondatastorage);
        this.f_129732_ = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.m_6857_();
@@ -495,7 +495,7 @@
     }
  
     public void m_5705_(BooleanSupplier p_129871_) {
-+      org.bukkit.craftbukkit.SpigotTimings.serverTickTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.serverTickTimer.startTiming(); // Spigot
        long i = Util.m_137569_();
 +
 +      net.minecraftforge.event.ForgeEventFactory.onPreServerTick(p_129871_, this);
@@ -509,13 +509,13 @@
  
 -      if (this.f_129766_ % 6000 == 0) {
 +      if (autosavePeriod > 0 && this.f_129766_ % autosavePeriod == 0) { // CraftBukkit
-+         org.bukkit.craftbukkit.SpigotTimings.worldSaveTimer.startTiming(); // Spigot
++         org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.worldSaveTimer.startTiming(); // Spigot
           f_129750_.debug("Autosave started");
           this.f_129754_.m_6180_("save");
           this.m_195514_(true, false, false);
           this.f_129754_.m_7238_();
           f_129750_.debug("Autosave finished");
-+         org.bukkit.craftbukkit.SpigotTimings.worldSaveTimer.stopTiming(); // Spigot
++         org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.worldSaveTimer.stopTiming(); // Spigot
        }
  
        this.f_129754_.m_6180_("tallying");
@@ -525,7 +525,7 @@
        this.f_129754_.m_7238_();
 +      net.minecraftforge.event.ForgeEventFactory.onPostServerTick(p_129871_, this);
 +      org.spigotmc.WatchdogThread.tick(); // Spigot
-+      org.bukkit.craftbukkit.SpigotTimings.serverTickTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.serverTickTimer.stopTiming(); // Spigot
 +      org.spigotmc.CustomTimingsHandler.tick(); // Spigot
 +   }
 +
@@ -550,25 +550,25 @@
     }
  
     public void m_5703_(BooleanSupplier p_129954_) {
-+      org.bukkit.craftbukkit.SpigotTimings.schedulerTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.schedulerTimer.startTiming(); // Spigot
 +      this.server.getScheduler().mainThreadHeartbeat(this.f_129766_); // CraftBukkit
-+      org.bukkit.craftbukkit.SpigotTimings.schedulerTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.schedulerTimer.stopTiming(); // Spigot
        this.f_129754_.m_6180_("commandFunctions");
-+      org.bukkit.craftbukkit.SpigotTimings.commandFunctionsTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.commandFunctionsTimer.startTiming(); // Spigot
        this.m_129890_().m_136128_();
-+      org.bukkit.craftbukkit.SpigotTimings.commandFunctionsTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.commandFunctionsTimer.stopTiming(); // Spigot
        this.f_129754_.m_6182_("levels");
  
 -      for(ServerLevel serverlevel : this.m_129785_()) {
 +      // CraftBukkit start
 +      // Run tasks that are waiting on processing
-+      org.bukkit.craftbukkit.SpigotTimings.processQueueTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.processQueueTimer.startTiming(); // Spigot
 +      while (!processQueue.isEmpty()) {
 +         processQueue.remove().run();
 +      }
-+      org.bukkit.craftbukkit.SpigotTimings.processQueueTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.processQueueTimer.stopTiming(); // Spigot
 +
-+      org.bukkit.craftbukkit.SpigotTimings.timeUpdateTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.timeUpdateTimer.startTiming(); // Spigot
 +      // Send time updates to everyone, it will get the right time from the world the player is in.
 +      if (this.f_129766_ % 20 == 0) {
 +         for (int i = 0; i < this.m_6846_().f_11196_.size(); ++i) {
@@ -576,7 +576,7 @@
 +            serverplayer.f_8906_.m_9829_(new ClientboundSetTimePacket(serverplayer.m_9236_().m_46467_(), serverplayer.getPlayerTime(), serverplayer.m_9236_().m_46469_().m_46207_(GameRules.f_46140_))); // Add support for per player time
 +         }
 +      }
-+      org.bukkit.craftbukkit.SpigotTimings.timeUpdateTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.timeUpdateTimer.stopTiming(); // Spigot
 +
 +      for(ServerLevel serverlevel : this.getWorldArray()) {
 +         long tickStart = Util.m_137569_();
@@ -624,25 +624,25 @@
        }
  
        this.f_129754_.m_6182_("connection");
-+      org.bukkit.craftbukkit.SpigotTimings.connectionTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.connectionTimer.startTiming(); // Spigot
        this.m_129919_().m_9721_();
-+      org.bukkit.craftbukkit.SpigotTimings.connectionTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.connectionTimer.stopTiming(); // Spigot
        this.f_129754_.m_6182_("players");
-+      org.bukkit.craftbukkit.SpigotTimings.playerListTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.playerListTimer.startTiming(); // Spigot
        this.f_129763_.m_11288_();
 -      if (SharedConstants.f_136183_) {
-+      org.bukkit.craftbukkit.SpigotTimings.playerListTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.playerListTimer.stopTiming(); // Spigot
 +      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
           GameTestTicker.f_177648_.m_127790_();
        }
  
        this.f_129754_.m_6182_("server gui refresh");
  
-+      org.bukkit.craftbukkit.SpigotTimings.tickablesTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.tickablesTimer.startTiming(); // Spigot
        for(int i = 0; i < this.f_129752_.size(); ++i) {
           this.f_129752_.get(i).run();
        }
-+      org.bukkit.craftbukkit.SpigotTimings.tickablesTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.tickablesTimer.stopTiming(); // Spigot
  
        this.f_129754_.m_7238_();
     }
@@ -773,7 +773,7 @@
 +
 +   @Deprecated
 +   public static MinecraftServer getServer() {
-+      return (org.bukkit.Bukkit.getServer() instanceof org.bukkit.craftbukkit.CraftServer) ? ((org.bukkit.craftbukkit.CraftServer) org.bukkit.Bukkit.getServer()).getServer() : null;
++      return (org.bukkit.Bukkit.getServer() instanceof org.bukkit.craftbukkit.v1_20_R1.CraftServer) ? ((org.bukkit.craftbukkit.v1_20_R1.CraftServer) org.bukkit.Bukkit.getServer()).getServer() : null;
 +   }
 +   // CraftBukkit end
 +

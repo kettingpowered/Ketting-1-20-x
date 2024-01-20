@@ -13,7 +13,7 @@
     private BlockPos f_77690_;
     private int f_77691_;
     private final int f_77692_;
-+   org.bukkit.craftbukkit.util.BlockStateListPopulator blocks; // CraftBukkit - add field
++   org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator blocks; // CraftBukkit - add field
  
     public static Optional<PortalShape> m_77708_(LevelAccessor p_77709_, BlockPos p_77710_, Direction.Axis p_77711_) {
        return m_77712_(p_77709_, p_77710_, (p_77727_) -> {
@@ -21,7 +21,7 @@
     }
  
     public PortalShape(LevelAccessor p_77695_, BlockPos p_77696_, Direction.Axis p_77697_) {
-+      blocks = new org.bukkit.craftbukkit.util.BlockStateListPopulator(p_77695_.getMinecraftWorld()); // CraftBukkit
++      blocks = new org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator(p_77695_.getMinecraftWorld()); // CraftBukkit
        this.f_77686_ = p_77695_;
        this.f_77687_ = p_77697_;
        this.f_77688_ = p_77697_ == Direction.Axis.X ? Direction.WEST : Direction.SOUTH;
@@ -97,7 +97,7 @@
     public static PortalInfo m_257966_(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_) {
 +      return createPortalInfo(p_259301_, p_259931_, p_259901_, p_259630_, p_259166_, p_260043_, p_259853_, p_259667_, null);
 +   }
-+   public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_, org.bukkit.craftbukkit.event.CraftPortalEvent portalEventInfo) { // CraftBukkit
++   public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_, org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent portalEventInfo) { // CraftBukkit
        BlockPos blockpos = p_259931_.f_124348_;
        BlockState blockstate = p_259301_.m_8055_(blockpos);
        Direction.Axis direction$axis = blockstate.m_61145_(BlockStateProperties.f_61364_).orElse(Direction.Axis.X);

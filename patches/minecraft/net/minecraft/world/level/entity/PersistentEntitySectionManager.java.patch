@@ -66,7 +66,7 @@
           }).collect(Collectors.toList());
           if (list.isEmpty()) {
              if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.LOADED) {
-+               if (callEvent) org.bukkit.craftbukkit.event.CraftEventFactory.callEntitiesUnloadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) f_157493_).f_156538_, new ChunkPos(p_157513_), ImmutableList.of()); // CraftBukkit
++               if (callEvent) org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntitiesUnloadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) f_157493_).f_156538_, new ChunkPos(p_157513_), ImmutableList.of()); // CraftBukkit
                 this.f_157493_.m_141971_(new ChunkEntities<>(new ChunkPos(p_157513_), ImmutableList.of()));
              }
  
@@ -74,7 +74,7 @@
              this.m_157562_(p_157513_);
              return false;
           } else {
-+            if (callEvent) org.bukkit.craftbukkit.event.CraftEventFactory.callEntitiesUnloadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) f_157493_).f_156538_, new ChunkPos(p_157513_), list.stream().map(entity -> (Entity) entity).collect(Collectors.toList())); // CraftBukkit
++            if (callEvent) org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntitiesUnloadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) f_157493_).f_156538_, new ChunkPos(p_157513_), list.stream().map(entity -> (Entity) entity).collect(Collectors.toList())); // CraftBukkit
              this.f_157493_.m_141971_(new ChunkEntities<>(new ChunkPos(p_157513_), list));
              list.forEach(p_157514_);
              return true;
@@ -100,7 +100,7 @@
           this.f_157498_.put(chunkentities.m_156791_().m_45588_(), PersistentEntitySectionManager.ChunkLoadStatus.LOADED);
 +         // CraftBukkit start - call entity load event
 +         List<Entity> entities = getEntities(chunkentities.m_156791_());
-+         org.bukkit.craftbukkit.event.CraftEventFactory.callEntitiesLoadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) f_157493_).f_156538_, chunkentities.m_156791_(), entities);
++         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntitiesLoadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) f_157493_).f_156538_, chunkentities.m_156791_(), entities);
 +         // CraftBukkit end
        }
  

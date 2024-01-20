@@ -34,9 +34,9 @@
                 if (blockstate1.m_60734_() instanceof BucketPickup) {
                    BucketPickup bucketpickup = (BucketPickup)blockstate1.m_60734_();
 +                  // CraftBukkit start
-+                  ItemStack dummyFluid = bucketpickup.m_142598_(org.bukkit.craftbukkit.util.DummyGeneratorAccess.INSTANCE, blockpos, blockstate1);
++                  ItemStack dummyFluid = bucketpickup.m_142598_(org.bukkit.craftbukkit.v1_20_R1.util.DummyGeneratorAccess.INSTANCE, blockpos, blockstate1);
 +                  if (dummyFluid.m_41619_()) return InteractionResultHolder.m_19100_(itemstack); // Don't fire event if the bucket won't be filled.
-+                  org.bukkit.event.player.PlayerBucketFillEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerBucketFillEvent((net.minecraft.server.level.ServerLevel) p_40703_, p_40704_, blockpos, blockpos, blockhitresult.m_82434_(), itemstack, dummyFluid.m_41720_(), p_40705_);
++                  org.bukkit.event.player.PlayerBucketFillEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerBucketFillEvent((net.minecraft.server.level.ServerLevel) p_40703_, p_40704_, blockpos, blockpos, blockhitresult.m_82434_(), itemstack, dummyFluid.m_41720_(), p_40705_);
 +
 +                  if (event.isCancelled()) {
 +                     ((ServerPlayer) p_40704_).f_8906_.m_9829_(new net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket(p_40703_, blockpos)); // SPIGOT-5163 (see PlayerInteractManager)
@@ -53,7 +53,7 @@
                       });
                       p_40703_.m_142346_(p_40704_, GameEvent.f_157816_, blockpos);
 -                     ItemStack itemstack2 = ItemUtils.m_41813_(itemstack, p_40704_, itemstack1);
-+                     ItemStack itemstack2 = ItemUtils.m_41813_(itemstack, p_40704_, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
++                     ItemStack itemstack2 = ItemUtils.m_41813_(itemstack, p_40704_, org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
                       if (!p_40703_.f_46443_) {
                          CriteriaTriggers.f_10576_.m_38772_((ServerPlayer)p_40704_, itemstack1);
                       }
@@ -107,7 +107,7 @@
 +         // CraftBukkit start
 +         if (flag1 && p_150716_ != null && (emptyContents$clicked != null && emptyContents$direction != null && emptyContents$hand != null)) { //Ketting
 +            if (p_150717_ instanceof net.minecraft.server.level.ServerLevel level) { //Ketting
-+               org.bukkit.event.player.PlayerBucketEmptyEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerBucketEmptyEvent(level, p_150716_, p_150718_, emptyContents$clicked, emptyContents$direction, container, emptyContents$hand);
++               org.bukkit.event.player.PlayerBucketEmptyEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerBucketEmptyEvent(level, p_150716_, p_150718_, emptyContents$clicked, emptyContents$direction, container, emptyContents$hand);
 +               if (event.isCancelled()) {
 +                  ((ServerPlayer) p_150716_).f_8906_.m_9829_(new net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket(p_150717_, p_150718_)); // SPIGOT-4238: needed when looking through entity
 +                  ((ServerPlayer) p_150716_).getBukkitEntity().updateInventory(); // SPIGOT-4541

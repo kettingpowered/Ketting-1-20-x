@@ -7,7 +7,7 @@
 +            // CraftBukkit start - special case for handling block placement with water lilies and snow buckets
 +            org.bukkit.block.BlockState bblockstate = null;
 +            if (this instanceof PlaceOnWaterBlockItem || this instanceof SolidBucketItem) {
-+               bblockstate = org.bukkit.craftbukkit.block.CraftBlockStates.getBlockState(blockplacecontext.m_43725_(), blockplacecontext.m_8083_());
++               bblockstate = org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockStates.getBlockState(blockplacecontext.m_43725_(), blockplacecontext.m_8083_());
 +            }
 +            // CraftBukkit end
 +
@@ -20,7 +20,7 @@
                    blockstate1.m_60734_().m_6402_(level, blockpos, blockstate1, player, itemstack);
 +                  // CraftBukkit start
 +                  if (bblockstate != null) {
-+                     org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent((net.minecraft.server.level.ServerLevel) level, player, blockplacecontext.m_43724_(), bblockstate, blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
++                     org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockPlaceEvent((net.minecraft.server.level.ServerLevel) level, player, blockplacecontext.m_43724_(), bblockstate, blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
 +                     if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
 +                        bblockstate.update(true, false);
 +
@@ -112,7 +112,7 @@
 +      boolean defaultReturn = (!this.m_6652_() || p_40612_.m_60710_(p_40611_.m_43725_(), p_40611_.m_8083_())) && p_40611_.m_43725_().m_45752_(p_40612_, p_40611_.m_8083_(), collisioncontext);
 +      org.bukkit.entity.Player playerBukkit = (p_40611_.m_43723_() instanceof ServerPlayer) ? (org.bukkit.entity.Player) p_40611_.m_43723_().getBukkitEntity() : null;
 +
-+      org.bukkit.event.block.BlockCanBuildEvent event = new org.bukkit.event.block.BlockCanBuildEvent(org.bukkit.craftbukkit.block.CraftBlock.at(p_40611_.m_43725_(), p_40611_.m_8083_()), playerBukkit, org.bukkit.craftbukkit.block.data.CraftBlockData.fromData(p_40612_), defaultReturn);
++      org.bukkit.event.block.BlockCanBuildEvent event = new org.bukkit.event.block.BlockCanBuildEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_40611_.m_43725_(), p_40611_.m_8083_()), playerBukkit, org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData.fromData(p_40612_), defaultReturn);
 +      p_40611_.m_43725_().getCraftServer().getPluginManager().callEvent(event);
 +
 +      return event.isBuildable();

@@ -36,8 +36,8 @@
 +   public int oldLevel = -1;
 +
 +   @Override
-+   public org.bukkit.craftbukkit.entity.CraftHumanEntity getBukkitEntity() {
-+      return (org.bukkit.craftbukkit.entity.CraftHumanEntity) super.getBukkitEntity();
++   public org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity getBukkitEntity() {
++      return (org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity) super.getBukkitEntity();
 +   }
 +   // CraftBukkit end
  
@@ -490,7 +490,7 @@
 +                     // CraftBukkit start - Add Velocity Event
 +                     boolean cancelled = false;
 +                     org.bukkit.entity.Player player = (org.bukkit.entity.Player) p_36347_.getBukkitEntity();
-+                     org.bukkit.util.Vector velocity = org.bukkit.craftbukkit.util.CraftVector.toBukkit(vec3);
++                     org.bukkit.util.Vector velocity = org.bukkit.craftbukkit.v1_20_R1.util.CraftVector.toBukkit(vec3);
 +
 +                     org.bukkit.event.player.PlayerVelocityEvent event = new org.bukkit.event.player.PlayerVelocityEvent(player, velocity.clone());
 +                     this.m_9236_().getCraftServer().getPluginManager().callEvent(event);
@@ -622,7 +622,7 @@
           this.m_183634_();
 -         this.m_20115_(7, false);
 +         // CraftBukkit start
-+         if (m_20291_(7) && !org.bukkit.craftbukkit.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++         if (m_20291_(7) && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +            this.m_20115_(7, false);
 +         }
 +         // CraftBukkit end
@@ -692,7 +692,7 @@
     public void m_36320_() {
 -      this.m_20115_(7, true);
 +      // CraftBukkit start
-+      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
++      if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
 +         this.m_20115_(7, true);
 +      } else {
 +         // SPIGOT-5542: must toggle like below
@@ -706,7 +706,7 @@
 -      this.m_20115_(7, true);
 -      this.m_20115_(7, false);
 +      // CraftBukkit start
-+      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++      if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +         this.m_20115_(7, true);
 +         this.m_20115_(7, false);
 +      }
@@ -775,7 +775,7 @@
           if (!this.m_9236_().f_46443_) {
 -            this.f_36097_.m_38703_(p_36400_);
 +            // CraftBukkit start
-+            org.bukkit.event.entity.EntityExhaustionEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerExhaustionEvent(this, reason, p_36400_);
++            org.bukkit.event.entity.EntityExhaustionEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerExhaustionEvent(this, reason, p_36400_);
 +            if (!event.isCancelled()) {
 +               this.f_36097_.m_38703_(event.getExhaustion());
 +            }

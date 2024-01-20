@@ -49,7 +49,7 @@
                    if (!list.isEmpty()) {
                       LivingEntity livingentity1 = list.get(this.f_19796_.m_188503_(list.size()));
 +
-+                     if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetLivingEvent(this, livingentity1, org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_ENTITY).isCancelled()) continue; // CraftBukkit
++                     if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTargetLivingEvent(this, livingentity1, org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_ENTITY).isCancelled()) continue; // CraftBukkit
                       this.m_31454_(i, livingentity1.m_19879_());
                    }
                 }
@@ -69,7 +69,7 @@
 -                        if (m_31491_(blockstate)) {
 +                        if (blockstate.canEntityDestroy(this.m_9236_(), blockpos, this) && net.minecraftforge.event.ForgeEventFactory.onEntityDestroyBlock(this, blockpos, blockstate)) {
 +                           // CraftBukkit start
-+                           if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.f_50016_.m_49966_())) {
++                           if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.f_50016_.m_49966_())) {
 +                              continue;
 +                           }
 +                           // CraftBukkit end

@@ -64,7 +64,7 @@
 +                     continue;
 +                  }
 +
-+                  org.bukkit.craftbukkit.event.CraftEventFactory.entityDamage = f_46016_;
++                  org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = f_46016_;
 +                  entity.lastDamageCancelled = false;
 +
 +                  if (entity instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon dragon) {
@@ -79,7 +79,7 @@
 +                     entity.m_6469_(this.m_46077_(), (float)((int)((d10 * d10 + d10) / 2.0D * 7.0D * (double)f2 + 1.0D)));
 +                  }
 +
-+                  org.bukkit.craftbukkit.event.CraftEventFactory.entityDamage = null;
++                  org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = null;
 +                  if (entity.lastDamageCancelled) { // SPIGOT-5339, SPIGOT-6252, SPIGOT-6777: Skip entity if damage event was cancelled
 +                     continue;
 +                  }
@@ -142,7 +142,7 @@
 +            if (block instanceof net.minecraft.world.level.block.TntBlock) {
 +               Entity sourceEntity = f_46016_ == null ? null : f_46016_;
 +               BlockPos sourceBlock = sourceEntity == null ? BlockPos.m_274561_(this.f_46013_, this.f_46014_, this.f_46015_) : null;
-+               if (!org.bukkit.craftbukkit.event.CraftEventFactory.callTNTPrimeEvent(this.f_46012_, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.EXPLOSION, sourceEntity, sourceBlock)) {
++               if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callTNTPrimeEvent(this.f_46012_, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.EXPLOSION, sourceEntity, sourceBlock)) {
 +                  this.f_46012_.m_7260_(blockpos, Blocks.f_50016_.m_49966_(), blockstate, 3); // Update the block on the client
 +                  continue;
 +               }
@@ -183,7 +183,7 @@
              if (this.f_46011_.m_188503_(3) == 0 && this.f_46012_.m_8055_(blockpos2).m_60795_() && this.f_46012_.m_8055_(blockpos2.m_7495_()).m_60804_(this.f_46012_, blockpos2.m_7495_())) {
 -               this.f_46012_.m_46597_(blockpos2, BaseFireBlock.m_49245_(this.f_46012_, blockpos2));
 +               // CraftBukkit start - Ignition by explosion
-+               if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(this.f_46012_, blockpos2.m_123341_(), blockpos2.m_123342_(), blockpos2.m_123343_(), this).isCancelled()) {
++               if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockIgniteEvent(this.f_46012_, blockpos2.m_123341_(), blockpos2.m_123342_(), blockpos2.m_123343_(), this).isCancelled()) {
 +                  this.f_46012_.m_46597_(blockpos2, BaseFireBlock.m_49245_(this.f_46012_, blockpos2));
 +               }
 +               // CraftBukkit end

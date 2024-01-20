@@ -12,7 +12,7 @@
        if (!p_57469_.m_60713_(p_57466_.m_60734_())) {
 -         if (p_57467_.m_276867_(p_57468_)) {
 -            m_57433_(p_57467_, p_57468_);
-+         if (p_57467_.m_276867_(p_57468_) && org.bukkit.craftbukkit.event.CraftEventFactory.callTNTPrimeEvent(p_57467_, p_57468_, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.REDSTONE, null, null)) { // CraftBukkit - TNTPrimeEvent
++         if (p_57467_.m_276867_(p_57468_) && org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callTNTPrimeEvent(p_57467_, p_57468_, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.REDSTONE, null, null)) { // CraftBukkit - TNTPrimeEvent
 +            onCaughtFire(p_57466_, p_57467_, p_57468_, null, null);
              p_57467_.m_7471_(p_57468_, false);
           }
@@ -23,7 +23,7 @@
     public void m_6861_(BlockState p_57457_, Level p_57458_, BlockPos p_57459_, Block p_57460_, BlockPos p_57461_, boolean p_57462_) {
 -      if (p_57458_.m_276867_(p_57459_)) {
 -         m_57433_(p_57458_, p_57459_);
-+      if (p_57458_.m_276867_(p_57459_) && org.bukkit.craftbukkit.event.CraftEventFactory.callTNTPrimeEvent(p_57458_, p_57459_, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.REDSTONE, null, null)) { // CraftBukkit - TNTPrimeEvent
++      if (p_57458_.m_276867_(p_57459_) && org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callTNTPrimeEvent(p_57458_, p_57459_, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.REDSTONE, null, null)) { // CraftBukkit - TNTPrimeEvent
 +         onCaughtFire(p_57457_, p_57458_, p_57459_, null, null);
           p_57458_.m_7471_(p_57459_, false);
        }
@@ -33,7 +33,7 @@
     public void m_5707_(Level p_57445_, BlockPos p_57446_, BlockState p_57447_, Player p_57448_) {
 -      if (!p_57445_.m_5776_() && !p_57448_.m_7500_() && p_57447_.m_61143_(f_57419_)) {
 -         m_57433_(p_57445_, p_57446_);
-+      if (!p_57445_.m_5776_() && !p_57448_.m_7500_() && p_57447_.m_61143_(f_57419_) && org.bukkit.craftbukkit.event.CraftEventFactory.callTNTPrimeEvent(p_57445_, p_57446_, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.BLOCK_BREAK, p_57448_, null)) { // CraftBukkit - TNTPrimeEvent
++      if (!p_57445_.m_5776_() && !p_57448_.m_7500_() && p_57447_.m_61143_(f_57419_) && org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callTNTPrimeEvent(p_57445_, p_57446_, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.BLOCK_BREAK, p_57448_, null)) { // CraftBukkit - TNTPrimeEvent
 +         onCaughtFire(p_57447_, p_57445_, p_57446_, null, null);
        }
  
@@ -57,7 +57,7 @@
        } else {
 -         m_57436_(p_57451_, p_57452_, p_57453_);
 +         // CraftBukkit start - TNTPrimeEvent
-+         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callTNTPrimeEvent(p_57451_, p_57452_, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.PLAYER, p_57453_, null)) {
++         if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callTNTPrimeEvent(p_57451_, p_57452_, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.PLAYER, p_57453_, null)) {
 +            return InteractionResult.CONSUME;
 +         }
 +         // CraftBukkit end
@@ -71,7 +71,7 @@
           if (p_57432_.m_6060_() && p_57432_.m_142265_(p_57429_, blockpos)) {
 -            m_57436_(p_57429_, blockpos, entity instanceof LivingEntity ? (LivingEntity)entity : null);
 +            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(p_57432_, blockpos, Blocks.f_50016_.m_49966_()) || !org.bukkit.craftbukkit.event.CraftEventFactory.callTNTPrimeEvent(p_57429_, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.PROJECTILE, p_57432_, null)) {
++            if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(p_57432_, blockpos, Blocks.f_50016_.m_49966_()) || !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callTNTPrimeEvent(p_57429_, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.PROJECTILE, p_57432_, null)) {
 +               return;
 +            }
 +            // CraftBukkit end

@@ -10,7 +10,7 @@
     public final ContainerLevelAccess f_39350_;
     private final Player f_39351_;
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.inventory.CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView bukkitEntity = null;
 +   // CraftBukkit end
  
     public CraftingMenu(int p_39353_, Inventory p_39354_) {
@@ -30,7 +30,7 @@
                 }
              }
           }
-+         itemstack = org.bukkit.craftbukkit.event.CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.orElse(null) instanceof net.minecraft.world.item.crafting.RepairItemRecipe); // CraftBukkit
++         itemstack = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.orElse(null) instanceof net.minecraft.world.item.crafting.RepairItemRecipe); // CraftBukkit
  
           p_150551_.m_6836_(0, itemstack);
           p_150547_.m_150404_(0, itemstack);
@@ -49,13 +49,13 @@
 +
 +   // CraftBukkit start
 +   @Override
-+   public org.bukkit.craftbukkit.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.inventory.CraftInventoryCrafting inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryCrafting(this.f_39348_, this.f_39349_);
-+      bukkitEntity = new org.bukkit.craftbukkit.inventory.CraftInventoryView(this.f_39351_.getBukkitEntity(), inventory, this);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryCrafting inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryCrafting(this.f_39348_, this.f_39349_);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView(this.f_39351_.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

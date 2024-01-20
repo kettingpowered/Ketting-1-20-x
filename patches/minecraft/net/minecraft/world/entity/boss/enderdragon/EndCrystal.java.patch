@@ -6,7 +6,7 @@
           if (((ServerLevel)this.m_9236_()).m_8586_() != null && this.m_9236_().m_8055_(blockpos).m_60795_()) {
 -            this.m_9236_().m_46597_(blockpos, BaseFireBlock.m_49245_(this.m_9236_(), blockpos));
 +            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(this.m_9236_(), blockpos, this).isCancelled()) {
++            if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockIgniteEvent(this.m_9236_(), blockpos, this).isCancelled()) {
 +               this.m_9236_().m_46597_(blockpos, BaseFireBlock.m_49245_(this.m_9236_(), blockpos));
 +            }
 +            // CraftBukkit end
@@ -18,7 +18,7 @@
        } else {
           if (!this.m_213877_() && !this.m_9236_().f_46443_) {
 +            // CraftBukkit start - All non-living entities need this
-+            if (org.bukkit.craftbukkit.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31050_, p_31051_, false)) {
++            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31050_, p_31051_, false)) {
 +               return false;
 +            }
 +            // CraftBukkit end
@@ -27,7 +27,7 @@
                 DamageSource damagesource = p_31050_.m_7639_() != null ? this.m_269291_().m_269036_(this, p_31050_.m_7639_()) : null;
 -               this.m_9236_().m_254877_(this, damagesource, (ExplosionDamageCalculator)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), 6.0F, false, Level.ExplosionInteraction.BLOCK);
 +               // CraftBukkit start
-+               org.bukkit.event.entity.ExplosionPrimeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callExplosionPrimeEvent(this, 6.0F, false);
++               org.bukkit.event.entity.ExplosionPrimeEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callExplosionPrimeEvent(this, 6.0F, false);
 +               if (event.isCancelled()) {
 +                  this.m_146912_();
 +                  return false;

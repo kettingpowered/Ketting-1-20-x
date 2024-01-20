@@ -25,7 +25,7 @@
  
 +   // CraftBukkit start - call projectile hit event
 +   protected void preOnHit(HitResult hitResult) {
-+      org.bukkit.event.entity.ProjectileHitEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this, hitResult);
++      org.bukkit.event.entity.ProjectileHitEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callProjectileHitEvent(this, hitResult);
 +      this.hitCancelled = event != null && event.isCancelled();
 +      if (hitResult.m_6662_() == HitResult.Type.BLOCK || !this.hitCancelled) {
 +         this.m_6532_(hitResult);

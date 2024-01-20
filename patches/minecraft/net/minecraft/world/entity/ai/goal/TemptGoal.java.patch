@@ -15,11 +15,11 @@
           this.f_25925_ = this.f_25924_.m_9236_().m_45946_(this.f_148137_, this.f_25924_);
 +         // CraftBukkit start
 +         if (this.f_25925_ != null) {
-+            org.bukkit.event.entity.EntityTargetLivingEntityEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetLivingEvent(this.f_25924_, this.f_25925_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TEMPT);
++            org.bukkit.event.entity.EntityTargetLivingEntityEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTargetLivingEvent(this.f_25924_, this.f_25925_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TEMPT);
 +            if (event.isCancelled()) {
 +               return false;
 +            }
-+            this.f_25925_ = (event.getTarget() == null) ? null : ((org.bukkit.craftbukkit.entity.CraftLivingEntity) event.getTarget()).getHandle();
++            this.f_25925_ = (event.getTarget() == null) ? null : ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +         }
 +         // CraftBukkit end
           return this.f_25925_ != null;

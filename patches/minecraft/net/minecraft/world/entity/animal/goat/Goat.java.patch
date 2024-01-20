@@ -5,7 +5,7 @@
        ItemStack itemstack = p_149379_.m_21120_(p_149380_);
        if (itemstack.m_150930_(Items.f_42446_) && !this.m_6162_()) {
 +         // CraftBukkit start - Got milk?
-+         org.bukkit.event.player.PlayerBucketFillEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) p_149379_.m_9236_(), p_149379_, this.m_20183_(), this.m_20183_(), null, itemstack, Items.f_42455_, p_149380_);
++         org.bukkit.event.player.PlayerBucketFillEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) p_149379_.m_9236_(), p_149379_, this.m_20183_(), this.m_20183_(), null, itemstack, Items.f_42455_, p_149380_);
 +
 +         if (event.isCancelled()) {
 +            return InteractionResult.PASS;
@@ -13,7 +13,7 @@
 +         // CraftBukkit end
           p_149379_.m_5496_(this.m_149403_(), 1.0F, 1.0F);
 -         ItemStack itemstack1 = ItemUtils.m_41813_(itemstack, p_149379_, Items.f_42455_.m_7968_());
-+         ItemStack itemstack1 = ItemUtils.m_41813_(itemstack, p_149379_, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
++         ItemStack itemstack1 = ItemUtils.m_41813_(itemstack, p_149379_, org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
           p_149379_.m_21008_(p_149380_, itemstack1);
           return InteractionResult.m_19078_(this.m_9236_().f_46443_);
        } else {

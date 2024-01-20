@@ -6,17 +6,17 @@
  public class LecternMenu extends AbstractContainerMenu {
 +
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.inventory.CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView bukkitEntity = null;
 +   private org.bukkit.entity.Player player;
 +
 +   @Override
-+   public org.bukkit.craftbukkit.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.inventory.CraftInventoryLectern inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryLectern(this.f_39819_);
-+      bukkitEntity = new org.bukkit.craftbukkit.inventory.CraftInventoryView(this.player, inventory, this);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryLectern inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryLectern(this.f_39819_);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
@@ -52,7 +52,7 @@
                 }
  
 +               // CraftBukkit start - Event for taking the book
-+               org.bukkit.event.player.PlayerTakeLecternBookEvent event = new org.bukkit.event.player.PlayerTakeLecternBookEvent(player, ((org.bukkit.craftbukkit.inventory.CraftInventoryLectern) getBukkitView().getTopInventory()).getHolder());
++               org.bukkit.event.player.PlayerTakeLecternBookEvent event = new org.bukkit.event.player.PlayerTakeLecternBookEvent(player, ((org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryLectern) getBukkitView().getTopInventory()).getHolder());
 +               org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
 +               if (event.isCancelled()) {
 +                  return false;

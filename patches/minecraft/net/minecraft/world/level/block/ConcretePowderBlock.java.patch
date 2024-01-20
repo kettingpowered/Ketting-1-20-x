@@ -7,7 +7,7 @@
 -      if (m_52080_(p_52068_, p_52069_, p_52071_)) {
 -         p_52068_.m_7731_(p_52069_, this.f_52058_, 3);
 +      if (shouldSolidify(p_52068_, p_52069_, p_52070_, p_52071_.m_60819_())) { // Forge: Use block of falling entity instead of block at replaced position, and check if shouldSolidify with the FluidState of the replaced block
-+         org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(p_52068_, p_52069_, this.f_52058_, 3); // CraftBukkit
++         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormEvent(p_52068_, p_52069_, this.f_52058_, 3); // CraftBukkit
        }
  
     }
@@ -22,7 +22,7 @@
 +      }
 +
 +      // TODO: An event factory call for methods like this
-+      org.bukkit.craftbukkit.block.CraftBlockState blockState = org.bukkit.craftbukkit.block.CraftBlockStates.getBlockState(p_52063_.m_43725_(), blockpos);
++      org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState blockState = org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockStates.getBlockState(p_52063_.m_43725_(), blockpos);
 +      blockState.setData(this.f_52058_);
 +
 +      org.bukkit.event.block.BlockFormEvent event = new org.bukkit.event.block.BlockFormEvent(blockState.getBlock(), blockState);
@@ -72,7 +72,7 @@
 +         if (!(p_52077_ instanceof Level)) {
 +            return this.f_52058_;
 +         }
-+         org.bukkit.craftbukkit.block.CraftBlockState blockState = org.bukkit.craftbukkit.block.CraftBlockStates.getBlockState(p_52077_, p_52078_);
++         org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState blockState = org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockStates.getBlockState(p_52077_, p_52078_);
 +         blockState.setData(this.f_52058_);
 +
 +         org.bukkit.event.block.BlockFormEvent event = new org.bukkit.event.block.BlockFormEvent(blockState.getBlock(), blockState);

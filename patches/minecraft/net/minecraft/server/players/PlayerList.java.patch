@@ -31,13 +31,13 @@
 +   private final List<ServerPlayer> playersView = java.util.Collections.unmodifiableList(f_11196_);
 +
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.CraftServer cserver;
++   private org.bukkit.craftbukkit.v1_20_R1.CraftServer cserver;
 +   private final Map<String, ServerPlayer> playersByName = new java.util.HashMap<>();
  
     public PlayerList(MinecraftServer p_203842_, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_) {
-+      this.cserver = p_203842_.server = new org.bukkit.craftbukkit.CraftServer((net.minecraft.server.dedicated.DedicatedServer) p_203842_, this);
-+      p_203842_.console = org.bukkit.craftbukkit.command.ColouredConsoleSender.getInstance();
-+      p_203842_.reader.addCompleter(new org.bukkit.craftbukkit.command.ConsoleCommandCompleter(p_203842_.server));
++      this.cserver = p_203842_.server = new org.bukkit.craftbukkit.v1_20_R1.CraftServer((net.minecraft.server.dedicated.DedicatedServer) p_203842_, this);
++      p_203842_.console = org.bukkit.craftbukkit.v1_20_R1.command.ColouredConsoleSender.getInstance();
++      p_203842_.reader.addCompleter(new org.bukkit.craftbukkit.v1_20_R1.command.ConsoleCommandCompleter(p_203842_.server));
 +      // CraftBukkit end
 +
        this.f_11195_ = p_203842_;
@@ -75,7 +75,7 @@
 +      cserver.getPluginManager().callEvent(ev);
 +
 +      org.bukkit.Location loc = ev.getSpawnLocation();
-+      serverlevel1 = ((org.bukkit.craftbukkit.CraftWorld) loc.getWorld()).getHandle();
++      serverlevel1 = ((org.bukkit.craftbukkit.v1_20_R1.CraftWorld) loc.getWorld()).getHandle();
 +
 +      p_11263_.spawnIn(serverlevel1);
 +      p_11263_.f_8941_.m_9260_((ServerLevel) p_11263_.m_9236_());
@@ -112,7 +112,7 @@
 -      this.m_240416_(mutablecomponent.m_130940_(ChatFormatting.YELLOW), false);
 +      // CraftBukkit start
 +      mutablecomponent.m_130940_(ChatFormatting.YELLOW);
-+      String joinMessage = org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(mutablecomponent);
++      String joinMessage = org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage.fromComponent(mutablecomponent);
 +
        servergamepacketlistenerimpl.m_9774_(p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_(), p_11263_.m_146908_(), p_11263_.m_146909_());
        ServerStatus serverstatus = this.f_11195_.m_129928_();
@@ -129,7 +129,7 @@
 +      // this.broadcastAll(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(p_11263_))); // CraftBukkit - replaced with loop below
 +
 +      // CraftBukkit start
-+      org.bukkit.craftbukkit.entity.CraftPlayer bukkitPlayer = p_11263_.getBukkitEntity();
++      org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer bukkitPlayer = p_11263_.getBukkitEntity();
 +
 +      // Ensure that player inventory is populated with its viewer
 +      p_11263_.f_36096_.transferTo(p_11263_.f_36096_, bukkitPlayer);
@@ -144,7 +144,7 @@
 +      joinMessage = playerJoinEvent.getJoinMessage();
 +
 +      if (joinMessage != null && joinMessage.length() > 0) {
-+         for (Component line : org.bukkit.craftbukkit.util.CraftChatMessage.fromString(joinMessage)) {
++         for (Component line : org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage.fromString(joinMessage)) {
 +            f_11195_.m_6846_().m_240416_(line, false);
 +         }
 +      }
@@ -385,7 +385,7 @@
 +         }
 +
 +         // return chatmessage;
-+         event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_BANNED, org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(mutablecomponent));
++         event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_BANNED, org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage.fromComponent(mutablecomponent));
 +      } else if (!this.m_5764_(gameprofile)) {
 +         mutablecomponent = Component.m_237115_("multiplayer.disconnect.not_whitelisted");
 +         event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_WHITELIST, org.spigotmc.SpigotConfig.whitelistMessage); // Spigot
@@ -398,7 +398,7 @@
 +         }
 +
 +         // return chatmessage;
-+         event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_BANNED, org.bukkit.craftbukkit.util.CraftChatMessage.fromComponent(mutablecomponent));
++         event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_BANNED, org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage.fromComponent(mutablecomponent));
 +      } else {
 +         // return this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameprofile) ? IChatBaseComponent.translatable("multiplayer.disconnect.server_full") : null;
 +         if (this.f_11196_.size() >= this.f_11193_ && !this.m_5765_(gameprofile)) {
@@ -538,7 +538,7 @@
 +               // entityplayer1.setRespawnPosition(worldserver1.dimension(), blockposition, f, flag1, false); // CraftBukkit - not required, just copies old location into reused entity
 +               flag2 = !flag && flag3;
 +               isBedSpawn = true;
-+               location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(vec3d, worldserver1.getWorld(), f1, 0.0F);
++               location = org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation.toBukkit(vec3d, worldserver1.getWorld(), f1, 0.0F);
 +            } else if (blockpos != null) {
 +               serverplayer.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132153_, 0.0F));
 +               serverplayer.setRespawnPosition(null, null, 0f, false, false, org.bukkit.event.player.PlayerSpawnChangeEvent.Cause.RESET); // CraftBukkit - SPIGOT-5988: Clear respawn location when obstructed
@@ -548,7 +548,7 @@
 +         if (location == null) {
 +            worldserver1 = this.f_11195_.m_129783_();
 +            blockpos = serverplayer.getSpawnPoint(worldserver1);
-+            location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(blockpos, worldserver1.getWorld()).add(0.5F, 0.1F, 0.5F);
++            location = org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation.toBukkit(blockpos, worldserver1.getWorld()).add(0.5F, 0.1F, 0.5F);
 +         }
 +
 +         org.bukkit.entity.Player respawnPlayer = serverplayer.getBukkitEntity();
@@ -565,7 +565,7 @@
 +      } else {
 +         location.setWorld(level.getWorld());
        }
-+      ServerLevel serverlevel1 = ((org.bukkit.craftbukkit.CraftWorld) location.getWorld()).getHandle();
++      ServerLevel serverlevel1 = ((org.bukkit.craftbukkit.v1_20_R1.CraftWorld) location.getWorld()).getHandle();
 +      serverplayer.spawnIn(serverlevel1);
 +      serverplayer.m_146912_();
 +      serverplayer.m_20260_(false);
@@ -584,7 +584,7 @@
 -      serverplayer.f_8906_.m_9774_(serverplayer.m_20185_(), serverplayer.m_20186_(), serverplayer.m_20189_(), serverplayer.m_146908_(), serverplayer.m_146909_());
 +      serverplayer.f_8906_.m_9829_(new ClientboundSetChunkCacheRadiusPacket(serverlevel1.spigotConfig.viewDistance)); // Spigot
 +      serverplayer.f_8906_.m_9829_(new ClientboundSetSimulationDistancePacket(serverlevel1.spigotConfig.simulationDistance)); // Spigot
-+      serverplayer.f_8906_.teleport(org.bukkit.craftbukkit.util.CraftLocation.toBukkit(serverplayer.m_20182_(), serverlevel1.getWorld(), serverplayer.m_146908_(), serverplayer.m_146909_())); // CraftBukkit
++      serverplayer.f_8906_.teleport(org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation.toBukkit(serverplayer.m_20182_(), serverlevel1.getWorld(), serverplayer.m_146908_(), serverplayer.m_146909_())); // CraftBukkit
        serverplayer.f_8906_.m_9829_(new ClientboundSetDefaultSpawnPositionPacket(serverlevel1.m_220360_(), serverlevel1.m_220361_()));
        serverplayer.f_8906_.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
        serverplayer.f_8906_.m_9829_(new ClientboundSetExperiencePacket(serverplayer.f_36080_, serverplayer.f_36079_, serverplayer.f_36078_));
@@ -614,7 +614,7 @@
 +      }
 +
 +      // Fire advancement trigger
-+      serverplayer.m_9209_(((org.bukkit.craftbukkit.CraftWorld) fromWorld).getHandle());
++      serverplayer.m_9209_(((org.bukkit.craftbukkit.v1_20_R1.CraftWorld) fromWorld).getHandle());
 +
 +      // Don't fire on respawn
 +      if (fromWorld != location.getWorld()) {

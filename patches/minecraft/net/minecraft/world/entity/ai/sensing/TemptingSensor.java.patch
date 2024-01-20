@@ -7,12 +7,12 @@
 -         brain.m_21879_(MemoryModuleType.f_148196_, player);
 +
 +         // CraftBukkit start
-+         org.bukkit.event.entity.EntityTargetLivingEntityEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetLivingEvent(p_148332_, player, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TEMPT);
++         org.bukkit.event.entity.EntityTargetLivingEntityEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTargetLivingEvent(p_148332_, player, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TEMPT);
 +         if (event.isCancelled()) {
 +            return;
 +         }
 +         if (event.getTarget() instanceof org.bukkit.entity.HumanEntity) {
-+            brain.m_21879_(MemoryModuleType.f_148196_, ((org.bukkit.craftbukkit.entity.CraftHumanEntity) event.getTarget()).getHandle());
++            brain.m_21879_(MemoryModuleType.f_148196_, ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity) event.getTarget()).getHandle());
 +         } else {
 +            brain.m_21936_(MemoryModuleType.f_148196_);
 +         }

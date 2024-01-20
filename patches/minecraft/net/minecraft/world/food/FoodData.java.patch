@@ -49,7 +49,7 @@
 +         // CraftBukkit start
 +         int oldFoodLevel = f_38696_;
 +
-+         org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, foodproperties.m_38744_() + oldFoodLevel, p_38714_);
++         org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, foodproperties.m_38744_() + oldFoodLevel, p_38714_);
 +
 +         if (!event.isCancelled()) {
 +            this.m_38707_(event.getFoodLevel() - oldFoodLevel, foodproperties.m_38745_());
@@ -65,7 +65,7 @@
              this.f_38697_ = Math.max(this.f_38697_ - 1.0F, 0.0F);
           } else if (difficulty != Difficulty.PEACEFUL) {
 +            // CraftBukkit start
-+            org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, Math.max(this.f_38696_ - 1, 0));
++            org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, Math.max(this.f_38696_ - 1, 0));
 +
 +            if (!event.isCancelled()) {
 +               this.f_38696_ = event.getFoodLevel();

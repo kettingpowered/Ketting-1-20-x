@@ -6,10 +6,10 @@
           livingentity.m_8061_(equipmentslot, itemstack);
 +         // CraftBukkit start
 +         Level level = p_40399_.m_7727_();
-+         org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(level, p_40399_.m_7961_());
-+         org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack);
++         org.bukkit.block.Block block = org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(level, p_40399_.m_7961_());
++         org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(itemstack);
 +
-+         org.bukkit.event.block.BlockDispenseArmorEvent event = new org.bukkit.event.block.BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.entity.CraftLivingEntity) livingentity.getBukkitEntity());
++         org.bukkit.event.block.BlockDispenseArmorEvent event = new org.bukkit.event.block.BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity) livingentity.getBukkitEntity());
 +         if (!DispenserBlock.eventFired) {
 +            level.getCraftServer().getPluginManager().callEvent(event);
 +         }
@@ -22,7 +22,7 @@
 +         if (!event.getItem().equals(craftItem)) {
 +            p_40400_.m_41769_(1);
 +            // Chain to handler for new item
-+            ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
++            ItemStack eventStack = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.f_52661_.get(eventStack.m_41720_());
 +            if (idispensebehavior != DispenseItemBehavior.f_123393_ && idispensebehavior != ArmorItem.f_40376_) {
 +               idispensebehavior.m_6115_(p_40399_, eventStack);
@@ -30,7 +30,7 @@
 +            }
 +         }
 +
-+         livingentity.m_8061_(equipmentslot, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem()));
++         livingentity.m_8061_(equipmentslot, org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getItem()));
 +         // CraftBukkit end
           if (livingentity instanceof Mob) {
              ((Mob)livingentity).m_21409_(equipmentslot, 2.0F);

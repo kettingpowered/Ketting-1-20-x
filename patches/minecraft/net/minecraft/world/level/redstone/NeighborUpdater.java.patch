@@ -5,9 +5,9 @@
     static void m_230763_(Level p_230764_, BlockState p_230765_, BlockPos p_230766_, Block p_230767_, BlockPos p_230768_, boolean p_230769_) {
        try {
 +         // CraftBukkit start
-+         org.bukkit.craftbukkit.CraftWorld cworld = p_230764_.getWorld();
++         org.bukkit.craftbukkit.v1_20_R1.CraftWorld cworld = p_230764_.getWorld();
 +         if (cworld != null) {
-+            org.bukkit.event.block.BlockPhysicsEvent event = new org.bukkit.event.block.BlockPhysicsEvent(org.bukkit.craftbukkit.block.CraftBlock.at(p_230764_, p_230766_), org.bukkit.craftbukkit.block.data.CraftBlockData.fromData(p_230765_), org.bukkit.craftbukkit.block.CraftBlock.at(p_230764_, p_230768_));
++            org.bukkit.event.block.BlockPhysicsEvent event = new org.bukkit.event.block.BlockPhysicsEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_230764_, p_230766_), org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData.fromData(p_230765_), org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_230764_, p_230768_));
 +            p_230764_.getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (event.isCancelled()) {

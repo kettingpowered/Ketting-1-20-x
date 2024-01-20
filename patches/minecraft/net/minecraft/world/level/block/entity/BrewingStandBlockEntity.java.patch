@@ -9,11 +9,11 @@
 +   public java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
 +   private int maxStack = 64;
 +
-+   public void onOpen(org.bukkit.craftbukkit.entity.CraftHumanEntity who) {
++   public void onOpen(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
 +       transaction.add(who);
 +   }
 +
-+   public void onClose(org.bukkit.craftbukkit.entity.CraftHumanEntity who) {
++   public void onClose(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
 +       transaction.remove(who);
 +   }
 +
@@ -45,7 +45,7 @@
 -         p_155289_.f_58979_ = 20;
 -         itemstack.m_41774_(1);
 +         // CraftBukkit start
-+         org.bukkit.event.inventory.BrewingStandFuelEvent event = new org.bukkit.event.inventory.BrewingStandFuelEvent(org.bukkit.craftbukkit.block.CraftBlock.at(p_155286_, p_155287_), org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack), 20);
++         org.bukkit.event.inventory.BrewingStandFuelEvent event = new org.bukkit.event.inventory.BrewingStandFuelEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_155286_, p_155287_), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(itemstack), 20);
 +         p_155286_.getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (event.isCancelled()) {
@@ -87,7 +87,7 @@
           --p_155289_.f_58979_;
 -         p_155289_.f_58976_ = 400;
 +         // CraftBukkit start
-+         org.bukkit.event.block.BrewingStartEvent event = new org.bukkit.event.block.BrewingStartEvent(org.bukkit.craftbukkit.block.CraftBlock.at(p_155286_, p_155287_), org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack1), 400);
++         org.bukkit.event.block.BrewingStartEvent event = new org.bukkit.event.block.BrewingStartEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_155286_, p_155287_), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(itemstack1), 400);
 +         p_155286_.getCraftServer().getPluginManager().callEvent(event);
 +         p_155289_.f_58976_ = event.getTotalBrewTime(); // 400 -> event.getTotalBrewTime()
 +         // CraftBukkit end
@@ -149,10 +149,10 @@
 +      org.bukkit.inventory.InventoryHolder owner = tileentitybrewingstand != null ? tileentitybrewingstand.getOwner() : null;
 +      java.util.List<org.bukkit.inventory.ItemStack> brewResults = new java.util.ArrayList<>(3);
 +      for (int i = 0; i < 3; ++i) {
-+         brewResults.add(i, org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(PotionBrewing.m_43529_(itemstack, (ItemStack) nonnulllist.get(i))));
++         brewResults.add(i, org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(PotionBrewing.m_43529_(itemstack, (ItemStack) nonnulllist.get(i))));
 +      }
 +      if (owner != null) {
-+         org.bukkit.event.inventory.BrewEvent event = new org.bukkit.event.inventory.BrewEvent(org.bukkit.craftbukkit.block.CraftBlock.at(world, blockposition), (org.bukkit.inventory.BrewerInventory) owner.getInventory(), brewResults, tileentitybrewingstand.f_58979_);
++         org.bukkit.event.inventory.BrewEvent event = new org.bukkit.event.inventory.BrewEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(world, blockposition), (org.bukkit.inventory.BrewerInventory) owner.getInventory(), brewResults, tileentitybrewingstand.f_58979_);
 +         org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return false;
@@ -162,7 +162,7 @@
 +      for (int i = 0; i < 3; ++i) {
 +         // CraftBukkit start - validate index in case it is cleared by plugins
 +         if (i < brewResults.size()) {
-+            nonnulllist.set(i, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(brewResults.get(i)));
++            nonnulllist.set(i, org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(brewResults.get(i)));
 +         } else {
 +            nonnulllist.set(i, ItemStack.f_41583_);
 +         }

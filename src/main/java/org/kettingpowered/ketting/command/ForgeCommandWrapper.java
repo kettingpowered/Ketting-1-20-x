@@ -6,13 +6,13 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.kettingpowered.ketting.config.KettingConfig;
 
 import java.util.List;
 
-import static org.bukkit.craftbukkit.command.VanillaCommandWrapper.getListener;
+import static org.bukkit.craftbukkit.v1_20_R1.command.VanillaCommandWrapper.getListener;
 
 public class ForgeCommandWrapper extends BukkitCommand {
 

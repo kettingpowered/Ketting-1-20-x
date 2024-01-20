@@ -13,11 +13,11 @@
 +      return tag.m_128441_("Bukkit.updateLevel") && tag.m_128451_("Bukkit.updateLevel") >= level;
 +   }
 +
-+   private org.bukkit.craftbukkit.entity.CraftEntity bukkitEntity;
++   private org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity bukkitEntity;
 +
-+   public org.bukkit.craftbukkit.entity.CraftEntity getBukkitEntity() {
++   public org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity getBukkitEntity() {
 +      if (bukkitEntity == null) {
-+         bukkitEntity = org.bukkit.craftbukkit.entity.CraftEntity.getEntity(f_19853_.getCraftServer(), this);
++         bukkitEntity = org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity.getEntity(f_19853_.getCraftServer(), this);
 +      }
 +      return bukkitEntity;
 +   }
@@ -69,7 +69,7 @@
 +   public boolean lastDamageCancelled; // SPIGOT-5339, SPIGOT-6252, SPIGOT-6777: Keep track if the event was canceled
 +   public boolean persistentInvisibility = false;
 +   public BlockPos lastLavaContact;
-+   public org.spigotmc.CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getEntityTimings(this); // Spigot
++   public org.spigotmc.CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.getEntityTimings(this); // Spigot
 +   // Spigot start
 +   public final org.spigotmc.ActivationRange.ActivationType activationType = org.spigotmc.ActivationRange.initializeEntityActivationType(this);
 +   public final boolean defaultActivationState;
@@ -154,7 +154,7 @@
 +      if (p_19916_ == Float.POSITIVE_INFINITY || p_19916_ == Float.NEGATIVE_INFINITY) {
 +         if (this instanceof ServerPlayer) {
 +            this.f_19853_.getCraftServer().getLogger().warning(this.m_6302_() + " was caught trying to crash the server with an invalid yaw");
-+            ((org.bukkit.craftbukkit.entity.CraftPlayer) this.getBukkitEntity()).kickPlayer("Infinite yaw (Hacking?)");
++            ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer) this.getBukkitEntity()).kickPlayer("Infinite yaw (Hacking?)");
 +         }
 +         p_19916_ = 0;
 +      }
@@ -167,7 +167,7 @@
 +      if (p_19917_ == Float.POSITIVE_INFINITY || p_19917_ == Float.NEGATIVE_INFINITY) {
 +         if (this instanceof ServerPlayer) {
 +            this.f_19853_.getCraftServer().getLogger().warning(this.m_6302_() + " was caught trying to crash the server with an invalid pitch");
-+            ((org.bukkit.craftbukkit.entity.CraftPlayer) this.getBukkitEntity()).kickPlayer("Infinite pitch (Hacking?)");
++            ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer) this.getBukkitEntity()).kickPlayer("Infinite pitch (Hacking?)");
 +         }
 +         p_19917_ = 0;
 +      }
@@ -222,7 +222,7 @@
 +         // CraftBukkit start - Fallen in lava TODO: this event spams!
 +         if (this instanceof LivingEntity && f_19831_ <= 0) {
 +            // not on fire yet
-+            org.bukkit.block.Block damager = (lastLavaContact == null) ? null : org.bukkit.craftbukkit.block.CraftBlock.at(f_19853_, lastLavaContact);
++            org.bukkit.block.Block damager = (lastLavaContact == null) ? null : org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(f_19853_, lastLavaContact);
 +            org.bukkit.entity.Entity damagee = this.getBukkitEntity();
 +            org.bukkit.event.entity.EntityCombustEvent combustEvent = new org.bukkit.event.entity.EntityCombustByBlockEvent(damager, damagee, 15);
 +            this.f_19853_.getCraftServer().getPluginManager().callEvent(combustEvent);
@@ -234,11 +234,11 @@
 +            // This will be called every single tick the entity is in lava, so don't throw an event
 +            this.setSecondsOnFire(15, false);
 +         }
-+         org.bukkit.craftbukkit.event.CraftEventFactory.blockDamage = (lastLavaContact) == null ? null : org.bukkit.craftbukkit.block.CraftBlock.at(f_19853_, lastLavaContact);
++         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.blockDamage = (lastLavaContact) == null ? null : org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(f_19853_, lastLavaContact);
           if (this.m_6469_(this.m_269291_().m_269233_(), 4.0F)) {
              this.m_5496_(SoundEvents.f_11909_, 0.4F, 2.0F + this.f_19796_.m_188501_() * 0.4F);
           }
-+         org.bukkit.craftbukkit.event.CraftEventFactory.blockDamage = null;
++         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.blockDamage = null;
 +         // CraftBukkit end - we also don't throw an event unless the object in lava is living, to save on some event calls
  
        }
@@ -268,7 +268,7 @@
     }
  
     public void m_6478_(MoverType p_19973_, Vec3 p_19974_) {
-+      org.bukkit.craftbukkit.SpigotTimings.entityMoveTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.entityMoveTimer.startTiming(); // Spigot
        if (this.f_19794_) {
           this.m_6034_(this.m_20185_() + p_19974_.f_82479_, this.m_20186_() + p_19974_.f_82480_, this.m_20189_() + p_19974_.f_82481_);
        } else {
@@ -329,7 +329,7 @@
 +            this.f_19853_.m_46473_().m_7238_();
           }
        }
-+      org.bukkit.craftbukkit.SpigotTimings.entityMoveTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.entityMoveTimer.stopTiming(); // Spigot
     }
  
     private boolean m_285776_(BlockState p_286733_) {
@@ -660,10 +660,10 @@
 +            }
 +
 +            if (bworld == null) {
-+               bworld = ((org.bukkit.craftbukkit.CraftServer) server).getServer().m_129880_(Level.f_46428_).getWorld();
++               bworld = ((org.bukkit.craftbukkit.v1_20_R1.CraftServer) server).getServer().m_129880_(Level.f_46428_).getWorld();
 +            }
 +
-+            this.m_284535_(bworld == null ? null : ((org.bukkit.craftbukkit.CraftWorld) bworld).getHandle());
++            this.m_284535_(bworld == null ? null : ((org.bukkit.craftbukkit.v1_20_R1.CraftWorld) bworld).getHandle());
 +         }
 +         this.getBukkitEntity().readBukkitValues(p_20259_);
 +         if (p_20259_.m_128441_("Bukkit.invisible")) {
@@ -681,7 +681,7 @@
        } else {
 +         // CraftBukkit start - Capture drops for death event
 +         if (this instanceof LivingEntity && !((LivingEntity) this).forceDrops) {
-+            ((LivingEntity) this).drops.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(p_19985_));
++            ((LivingEntity) this).drops.add(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asBukkitCopy(p_19985_));
 +            return null;
 +         }
 +         // CraftBukkit end
@@ -760,7 +760,7 @@
           throw new IllegalStateException("Use x.stopRiding(y), not y.removePassenger(x)");
        } else {
 +         // CraftBukkit start
-+         org.bukkit.craftbukkit.entity.CraftEntity craft = (org.bukkit.craftbukkit.entity.CraftEntity) p_20352_.getBukkitEntity().getVehicle();
++         org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity craft = (org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity) p_20352_.getBukkitEntity().getVehicle();
 +         Entity orig = craft == null ? null : craft.getHandle();
 +         if (getBukkitEntity() instanceof org.bukkit.entity.Vehicle && p_20352_.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) {
 +            org.bukkit.event.vehicle.VehicleExitEvent event = new org.bukkit.event.vehicle.VehicleExitEvent(
@@ -771,7 +771,7 @@
 +            if (this.valid) {
 +               org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +            }
-+            org.bukkit.craftbukkit.entity.CraftEntity craftn = (org.bukkit.craftbukkit.entity.CraftEntity) p_20352_.getBukkitEntity().getVehicle();
++            org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity craftn = (org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity) p_20352_.getBukkitEntity().getVehicle();
 +            Entity n = craftn == null ? null : craftn.getHandle();
 +            if (event.isCancelled() || n != orig) {
 +               return false;
@@ -842,7 +842,7 @@
     public void m_20282_(boolean p_20283_) {
 +      // CraftBukkit start
 +      if (valid && this.m_6069_() != p_20283_ && this instanceof LivingEntity) {
-+         if (org.bukkit.craftbukkit.event.CraftEventFactory.callToggleSwimEvent((LivingEntity) this, p_20283_).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callToggleSwimEvent((LivingEntity) this, p_20283_).isCancelled()) {
 +            return;
 +         }
 +      }
@@ -930,9 +930,9 @@
 +      if (this.m_5825_()) {
 +         return;
 +      }
-+      org.bukkit.craftbukkit.event.CraftEventFactory.entityDamage = p_19928_;
++      org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = p_19928_;
 +      if (!this.m_6469_(this.m_269291_().m_269548_(), p_19928_.getDamage())) {
-+         org.bukkit.craftbukkit.event.CraftEventFactory.entityDamage = null;
++         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = null;
 +         return;
 +      }
 +      // CraftBukkit end
@@ -1077,11 +1077,11 @@
              BlockPos blockpos1 = worldborder.m_187569_(this.m_20185_() * d0, this.m_20186_(), this.m_20189_() * d0);
 -            return this.m_183318_(p_19923_, blockpos1, flag2, worldborder).map((p_258249_) -> {
 +            // CraftBukkit start
-+            org.bukkit.craftbukkit.event.CraftPortalEvent event = callPortalEvent(this, p_19923_, new Vec3(blockpos1.m_123341_(), blockpos1.m_123342_(), blockpos1.m_123343_()), org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.NETHER_PORTAL, flag2 ? 16 : 128, 16);
++            org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent event = callPortalEvent(this, p_19923_, new Vec3(blockpos1.m_123341_(), blockpos1.m_123342_(), blockpos1.m_123343_()), org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.NETHER_PORTAL, flag2 ? 16 : 128, 16);
 +            if (event == null) {
 +               return null;
 +            }
-+            final ServerLevel worldserverFinal = p_19923_ = ((org.bukkit.craftbukkit.CraftWorld) event.getTo().getWorld()).getHandle();
++            final ServerLevel worldserverFinal = p_19923_ = ((org.bukkit.craftbukkit.v1_20_R1.CraftWorld) event.getTo().getWorld()).getHandle();
 +            worldborder = worldserverFinal.m_6857_();
 +            blockpos1 = worldborder.m_187569_(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ());
 +
@@ -1107,12 +1107,12 @@
  
 -         return new PortalInfo(new Vec3((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_(), (double)blockpos.m_123343_() + 0.5D), this.m_20184_(), this.m_146908_(), this.m_146909_());
 +         // CraftBukkit start
-+         org.bukkit.craftbukkit.event.CraftPortalEvent event = callPortalEvent(this, p_19923_, new Vec3(blockpos.m_123341_() + 0.5D, blockpos.m_123342_(), blockpos.m_123343_() + 0.5D), org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.END_PORTAL, 0, 0);
++         org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent event = callPortalEvent(this, p_19923_, new Vec3(blockpos.m_123341_() + 0.5D, blockpos.m_123342_(), blockpos.m_123343_() + 0.5D), org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.END_PORTAL, 0, 0);
 +         if (event == null) {
 +            return null;
 +         }
 +
-+         return new PortalInfo(new Vec3(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ()), this.m_20184_(), this.m_146908_(), this.m_146909_(), ((org.bukkit.craftbukkit.CraftWorld) event.getTo().getWorld()).getHandle(), event);
++         return new PortalInfo(new Vec3(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ()), this.m_20184_(), this.m_146908_(), this.m_146909_(), ((org.bukkit.craftbukkit.v1_20_R1.CraftWorld) event.getTo().getWorld()).getHandle(), event);
 +         // CraftBukkit end
        }
     }
@@ -1122,17 +1122,17 @@
     }
  
 +   // CraftBukkit start
-+   protected org.bukkit.craftbukkit.event.CraftPortalEvent callPortalEvent(Entity entity, ServerLevel exitWorldServer, Vec3 exitPosition, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
++   protected org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent callPortalEvent(Entity entity, ServerLevel exitWorldServer, Vec3 exitPosition, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
 +      org.bukkit.entity.Entity bukkitEntity = entity.getBukkitEntity();
 +      org.bukkit.Location enter = bukkitEntity.getLocation();
-+      org.bukkit.Location exit = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(exitPosition, exitWorldServer.getWorld());
++      org.bukkit.Location exit = org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation.toBukkit(exitPosition, exitWorldServer.getWorld());
 +
 +      org.bukkit.event.entity.EntityPortalEvent event = new org.bukkit.event.entity.EntityPortalEvent(bukkitEntity, enter, exit, searchRadius);
 +      event.getEntity().getServer().getPluginManager().callEvent(event);
 +      if (event.isCancelled() || event.getTo() == null || event.getTo().getWorld() == null || !entity.m_6084_()) {
 +         return null;
 +      }
-+      return new org.bukkit.craftbukkit.event.CraftPortalEvent(event);
++      return new org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent(event);
 +   }
 +
     protected Optional<BlockUtil.FoundRectangle> m_183318_(ServerLevel p_185935_, BlockPos p_185936_, boolean p_185937_, WorldBorder p_185938_) {

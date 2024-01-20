@@ -25,12 +25,12 @@
 +      }
 +
 +      @Override
-+      public void onOpen(org.bukkit.craftbukkit.entity.CraftHumanEntity who) {
++      public void onOpen(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
 +         transaction.add(who);
 +      }
 +
 +      @Override
-+      public void onClose(org.bukkit.craftbukkit.entity.CraftHumanEntity who) {
++      public void onClose(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
 +         transaction.remove(who);
 +      }
 +
@@ -47,7 +47,7 @@
 +      @Override
 +      public org.bukkit.Location getLocation() {
 +         if (f_58857_ == null) return null;
-+         return org.bukkit.craftbukkit.util.CraftLocation.toBukkit(f_58858_, f_58857_.getWorld());
++         return org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation.toBukkit(f_58858_, f_58857_.getWorld());
 +      }
 +
 +      @Override
@@ -104,7 +104,7 @@
 +
 +   @Override
 +   public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return wrapper.m_81373_() != null ? wrapper.m_81373_().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.command.CraftBlockCommandSender(wrapper, this);
++      return wrapper.m_81373_() != null ? wrapper.m_81373_().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_20_R1.command.CraftBlockCommandSender(wrapper, this);
 +   }
 +
 +   @Override

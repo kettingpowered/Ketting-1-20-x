@@ -31,11 +31,11 @@
 +      return this.f_58310_;
 +   }
 +
-+   public void onOpen(org.bukkit.craftbukkit.entity.CraftHumanEntity who) {
++   public void onOpen(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
 +      transaction.add(who);
 +   }
 +
-+   public void onClose(org.bukkit.craftbukkit.entity.CraftHumanEntity who) {
++   public void onClose(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
 +      transaction.remove(who);
 +   }
 +
@@ -94,9 +94,9 @@
 -            p_155017_.f_58316_ = p_155017_.m_7743_(itemstack);
 +         if (!p_155017_.m_58425_() && p_155017_.m_155005_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
 +            // CraftBukkit start
-+            org.bukkit.craftbukkit.inventory.CraftItemStack fuel = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack);
++            org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack fuel = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(itemstack);
 +
-+            org.bukkit.event.inventory.FurnaceBurnEvent furnaceBurnEvent = new org.bukkit.event.inventory.FurnaceBurnEvent(org.bukkit.craftbukkit.block.CraftBlock.at(p_155014_, p_155015_), fuel, p_155017_.m_7743_(itemstack));
++            org.bukkit.event.inventory.FurnaceBurnEvent furnaceBurnEvent = new org.bukkit.event.inventory.FurnaceBurnEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_155014_, p_155015_), fuel, p_155017_.m_7743_(itemstack));
 +            p_155014_.getCraftServer().getPluginManager().callEvent(furnaceBurnEvent);
 +
 +            if (furnaceBurnEvent.isCancelled()) {
@@ -128,10 +128,10 @@
 +         if (p_155017_.m_58425_() && p_155017_.m_155005_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
 +            // CraftBukkit start
 +            if (recipe != null && p_155017_.f_58318_ == 0) {
-+               org.bukkit.craftbukkit.inventory.CraftItemStack source = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(p_155017_.f_58310_.get(0));
++               org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack source = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(p_155017_.f_58310_.get(0));
 +               org.bukkit.inventory.CookingRecipe<?> brecipe = (org.bukkit.inventory.CookingRecipe<?>) recipe.toBukkitRecipe();
 +
-+               org.bukkit.event.inventory.FurnaceStartSmeltEvent event = new org.bukkit.event.inventory.FurnaceStartSmeltEvent(org.bukkit.craftbukkit.block.CraftBlock.at(p_155014_, p_155015_), source, brecipe);
++               org.bukkit.event.inventory.FurnaceStartSmeltEvent event = new org.bukkit.event.inventory.FurnaceStartSmeltEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_155014_, p_155015_), source, brecipe);
 +               p_155014_.getCraftServer().getPluginManager().callEvent(event);
 +
 +               p_155017_.f_58319_ = event.getTotalCookTime();
@@ -176,10 +176,10 @@
 -         }
 +
 +         // CraftBukkit start - fire FurnaceSmeltEvent
-+         org.bukkit.craftbukkit.inventory.CraftItemStack source = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack);
-+         org.bukkit.inventory.ItemStack result = org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(itemstack1);
++         org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack source = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(itemstack);
++         org.bukkit.inventory.ItemStack result = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asBukkitCopy(itemstack1);
 +
-+         org.bukkit.event.inventory.FurnaceSmeltEvent furnaceSmeltEvent = new org.bukkit.event.inventory.FurnaceSmeltEvent(org.bukkit.craftbukkit.block.CraftBlock.at(world, blockposition), source, result);
++         org.bukkit.event.inventory.FurnaceSmeltEvent furnaceSmeltEvent = new org.bukkit.event.inventory.FurnaceSmeltEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(world, blockposition), source, result);
 +         world.getCraftServer().getPluginManager().callEvent(furnaceSmeltEvent);
 +
 +         if (furnaceSmeltEvent.isCancelled()) {
@@ -187,12 +187,12 @@
 +         }
 +
 +         result = furnaceSmeltEvent.getResult();
-+         itemstack1 = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(result);
++         itemstack1 = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(result);
 +
 +         if (!itemstack1.m_41619_()) {
 +            if (itemstack2.m_41619_()) {
 +               p_267073_.set(2, itemstack1.m_41777_());
-+            } else if (org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
++            } else if (org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
 +               itemstack2.m_41769_(itemstack1.m_41613_());
 +            } else {
 +               return false;
@@ -285,9 +285,9 @@
 +      // CraftBukkit start - fire org.bukkit.event.inventory.FurnaceExtractEvent / BlockExpEvent
 +      org.bukkit.event.block.BlockExpEvent event;
 +      if (amount != 0) {
-+         event = new org.bukkit.event.inventory.FurnaceExtractEvent((org.bukkit.entity.Player) entityhuman.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(p_154999_, blockposition), org.bukkit.craftbukkit.util.CraftMagicNumbers.getMaterial(itemstack.m_41720_()), amount, i);
++         event = new org.bukkit.event.inventory.FurnaceExtractEvent((org.bukkit.entity.Player) entityhuman.getBukkitEntity(), org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_154999_, blockposition), org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers.getMaterial(itemstack.m_41720_()), amount, i);
 +      } else {
-+         event = new org.bukkit.event.block.BlockExpEvent(org.bukkit.craftbukkit.block.CraftBlock.at(p_154999_, blockposition), i);
++         event = new org.bukkit.event.block.BlockExpEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_154999_, blockposition), i);
 +      }
 +      p_154999_.getCraftServer().getPluginManager().callEvent(event);
 +      i = event.getExpToDrop();

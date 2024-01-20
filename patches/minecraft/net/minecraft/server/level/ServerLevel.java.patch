@@ -45,7 +45,7 @@
     public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_) {
        super(p_215002_, p_215003_, p_214999_.m_206579_(), p_215004_.f_63975_(), p_214999_::m_129905_, false, p_215006_, p_215007_, p_214999_.m_213994_());
 +      convertable = p_215001_;
-+      uuid = org.bukkit.craftbukkit.util.WorldUUID.getUUID((p_215002_ instanceof net.minecraft.world.level.storage.DerivedLevelData ? p_215001_.m_197394_(p_215003_) : p_215001_.f_230867_.f_230850_()).toFile()); //Ketting
++      uuid = org.bukkit.craftbukkit.v1_20_R1.util.WorldUUID.getUUID((p_215002_ instanceof net.minecraft.world.level.storage.DerivedLevelData ? p_215001_.m_197394_(p_215003_) : p_215001_.f_230867_.f_230850_()).toFile()); //Ketting
 +      // CraftBukkit end
        this.f_8561_ = p_215009_;
        this.f_8548_ = p_214999_;
@@ -112,7 +112,7 @@
 +   public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
 +      super(p_215002_, p_215003_, p_214999_.m_206579_(), p_215004_.f_63975_(), p_214999_::m_129905_, false, p_215006_, p_215007_, p_214999_.m_213994_(), gen, biomeProvider, env);
 +      convertable = p_215001_;
-+      uuid = org.bukkit.craftbukkit.util.WorldUUID.getUUID(p_215001_.f_230867_.f_230850_().toFile());
++      uuid = org.bukkit.craftbukkit.v1_20_R1.util.WorldUUID.getUUID(p_215001_.f_230867_.f_230850_().toFile());
 +      // CraftBukkit end
 +      this.f_8561_ = p_215009_;
 +      this.f_8548_ = p_214999_;
@@ -126,7 +126,7 @@
 +      f_8549_.setWorld(this);
 +
 +      if (biomeProvider != null) {
-+         net.minecraft.world.level.biome.BiomeSource worldChunkManager = new org.bukkit.craftbukkit.generator.CustomWorldChunkManager(getWorld(), biomeProvider, f_8548_.m_206579_().m_175515_(Registries.f_256952_));
++         net.minecraft.world.level.biome.BiomeSource worldChunkManager = new org.bukkit.craftbukkit.v1_20_R1.generator.CustomWorldChunkManager(getWorld(), biomeProvider, f_8548_.m_206579_().m_175515_(Registries.f_256952_));
 +         if (chunkgenerator instanceof net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator cga) {
 +            chunkgenerator = new net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator(worldChunkManager, cga.f_64318_);
 +         } else if (chunkgenerator instanceof net.minecraft.world.level.levelgen.FlatLevelSource cpf) {
@@ -135,7 +135,7 @@
 +      }
 +
 +      if (gen != null) {
-+         chunkgenerator = new org.bukkit.craftbukkit.generator.CustomChunkGenerator(this, chunkgenerator, gen);
++         chunkgenerator = new org.bukkit.craftbukkit.v1_20_R1.generator.CustomChunkGenerator(this, chunkgenerator, gen);
 +      }
 +      // CraftBukkit end
 +      boolean flag = p_214999_.m_6365_();
@@ -315,7 +315,7 @@
 +         if (this.isAreaLoaded(blockpos2, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
           if (biome.m_47477_(this, blockpos2)) {
 -            this.m_46597_(blockpos2, Blocks.f_50126_.m_49966_());
-+            org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.f_50126_.m_49966_(), null); // CraftBukkit
++            org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.f_50126_.m_49966_(), null); // CraftBukkit
           }
  
           if (flag) {
@@ -324,11 +324,11 @@
                       BlockState blockstate1 = blockstate.m_61124_(SnowLayerBlock.f_56581_, Integer.valueOf(k + 1));
                       Block.m_49897_(blockstate, blockstate1, this, blockpos1);
 -                     this.m_46597_(blockpos1, blockstate1);
-+                     org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, blockstate1, null); // CraftBukkit
++                     org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, blockstate1, null); // CraftBukkit
                    }
                 } else {
 -                  this.m_46597_(blockpos1, Blocks.f_50125_.m_49966_());
-+                  org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.f_50125_.m_49966_(), null); // CraftBukkit
++                  org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.f_50125_.m_49966_(), null); // CraftBukkit
                 }
              }
  
@@ -556,7 +556,7 @@
        } else {
 -         return this.f_143244_.m_157533_(p_8873_);
 +         // SPIGOT-6415: Don't call spawn event when reason is null. For example when an entity teleports to a new world.
-+         if (spawnReason != null && !org.bukkit.craftbukkit.event.CraftEventFactory.doEntityAddEventCalling(this, p_8873_, spawnReason)) {
++         if (spawnReason != null && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.doEntityAddEventCalling(this, p_8873_, spawnReason)) {
 +            return false;
 +         }
 +         // CraftBukkit end
@@ -609,7 +609,7 @@
 +   }
 +
 +   public boolean strikeLightning(Entity entitylightning, org.bukkit.event.weather.LightningStrikeEvent.Cause cause) {
-+      org.bukkit.event.weather.LightningStrikeEvent lightning = org.bukkit.craftbukkit.event.CraftEventFactory.callLightningStrikeEvent((org.bukkit.entity.LightningStrike) entitylightning.getBukkitEntity(), cause);
++      org.bukkit.event.weather.LightningStrikeEvent lightning = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callLightningStrikeEvent((org.bukkit.entity.LightningStrike) entitylightning.getBukkitEntity(), cause);
 +
 +      if (lightning.isCancelled()) {
 +         return false;
@@ -811,7 +811,7 @@
 -      });
 +
 +      // CraftBukkit start
-+      org.bukkit.craftbukkit.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.util.BlockStateListPopulator(p_8618_);
++      org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator(p_8618_);
 +      BlockPos.m_121976_(i - 2, j + 1, k - 2, i + 2, j + 3, k + 2).forEach((blockposition1) -> {
 +         blockList.m_7731_(blockposition1, Blocks.f_50016_.m_49966_(), 3);
 +      });

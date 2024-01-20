@@ -6,12 +6,12 @@
                 if (villagerdata.m_35571_() != VillagerProfession.f_35585_ && villagerdata.m_35571_() != VillagerProfession.f_35596_ && p_260084_.m_7809_() == 0 && villagerdata.m_35576_() <= 1) {
 -                  p_260084_.m_34375_(p_260084_.m_7141_().m_35565_(VillagerProfession.f_35585_));
 +                  // CraftBukkit start
-+                  org.bukkit.event.entity.VillagerCareerChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callVillagerCareerChangeEvent(p_260084_, org.bukkit.craftbukkit.entity.CraftVillager.nmsToBukkitProfession(VillagerProfession.f_35585_), org.bukkit.event.entity.VillagerCareerChangeEvent.ChangeReason.LOSING_JOB);
++                  org.bukkit.event.entity.VillagerCareerChangeEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callVillagerCareerChangeEvent(p_260084_, org.bukkit.craftbukkit.v1_20_R1.entity.CraftVillager.nmsToBukkitProfession(VillagerProfession.f_35585_), org.bukkit.event.entity.VillagerCareerChangeEvent.ChangeReason.LOSING_JOB);
 +                  if (event.isCancelled()) {
 +                     return false;
 +                  }
 +
-+                  p_260084_.m_34375_(p_260084_.m_7141_().m_35565_(org.bukkit.craftbukkit.entity.CraftVillager.bukkitToNmsProfession(event.getProfession())));
++                  p_260084_.m_34375_(p_260084_.m_7141_().m_35565_(org.bukkit.craftbukkit.v1_20_R1.entity.CraftVillager.bukkitToNmsProfession(event.getProfession())));
 +                  // CraftBukkit end
                    p_260084_.m_35483_(p_260244_);
                    return true;

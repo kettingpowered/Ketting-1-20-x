@@ -21,7 +21,7 @@
 -      }).forEach(BellBlockEntity::m_58840_);
 +      }).map((entity) -> (org.bukkit.entity.LivingEntity) entity.getBukkitEntity()).collect(java.util.stream.Collectors.toCollection(java.util.ArrayList::new)); // CraftBukkit
 +
-+      org.bukkit.craftbukkit.event.CraftEventFactory.handleBellResonateEvent(p_155187_, p_155188_, bukkitLivingEntities).forEach(BellBlockEntity::m_58840_);
++      org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBellResonateEvent(p_155187_, p_155188_, bukkitLivingEntities).forEach(BellBlockEntity::m_58840_);
 +      // CraftBukkit end
     }
  

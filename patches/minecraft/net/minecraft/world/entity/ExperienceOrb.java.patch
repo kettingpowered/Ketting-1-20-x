@@ -16,8 +16,8 @@
 +      // CraftBukkit start
 +      boolean cancelled = false;
 +      if (this.f_20771_ != prevTarget) {
-+         org.bukkit.event.entity.EntityTargetLivingEntityEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetLivingEvent(this, f_20771_, (f_20771_ != null) ? org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER : org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET);
-+         LivingEntity target = (event.getTarget() == null) ? null : ((org.bukkit.craftbukkit.entity.CraftLivingEntity) event.getTarget()).getHandle();
++         org.bukkit.event.entity.EntityTargetLivingEntityEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTargetLivingEvent(this, f_20771_, (f_20771_ != null) ? org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER : org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET);
++         LivingEntity target = (event.getTarget() == null) ? null : ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +         cancelled = event.isCancelled();
 +
 +         if (cancelled) {
@@ -60,7 +60,7 @@
              int i = this.m_147092_(p_20792_, this.f_20770_);
              if (i > 0) {
 -               p_20792_.m_6756_(i);
-+               p_20792_.m_6756_(org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerExpChangeEvent(p_20792_, i).getAmount()); // CraftBukkit - this.value -> event.getAmount()
++               p_20792_.m_6756_(org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerExpChangeEvent(p_20792_, i).getAmount()); // CraftBukkit - this.value -> event.getAmount()
              }
  
              --this.f_147072_;
@@ -71,7 +71,7 @@
 -         int i = Math.min(this.m_20798_(this.f_20770_), itemstack.m_41773_());
 +         int i = Math.min((int) (this.f_20770_ * itemstack.getXpRepairRatio()), itemstack.m_41773_());
 +         // CraftBukkit start
-+         org.bukkit.event.player.PlayerItemMendEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerItemMendEvent(p_147093_, this, itemstack, entry.getKey(), i);
++         org.bukkit.event.player.PlayerItemMendEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerItemMendEvent(p_147093_, this, itemstack, entry.getKey(), i);
 +         i = event.getRepairAmount();
 +         if (event.isCancelled()) {
 +            return p_147094_;

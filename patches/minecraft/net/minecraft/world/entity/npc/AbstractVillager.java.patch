@@ -6,11 +6,11 @@
  
 -public abstract class AbstractVillager extends AgeableMob implements InventoryCarrier, Npc, Merchant {
 +public abstract class AbstractVillager extends AgeableMob implements InventoryCarrier, Npc, Merchant {// CraftBukkit start
-+   private org.bukkit.craftbukkit.inventory.CraftMerchant craftMerchant;
++   private org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMerchant craftMerchant;
 +
 +   @Override
-+   public org.bukkit.craftbukkit.inventory.CraftMerchant getCraftMerchant() {
-+      return (craftMerchant == null) ? craftMerchant = new org.bukkit.craftbukkit.inventory.CraftMerchant(this) : craftMerchant;
++   public org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMerchant getCraftMerchant() {
++      return (craftMerchant == null) ? craftMerchant = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMerchant(this) : craftMerchant;
 +   }
 +   // CraftBukkit end
     private static final EntityDataAccessor<Integer> f_35262_ = SynchedEntityData.m_135353_(AbstractVillager.class, EntityDataSerializers.f_135028_);
@@ -21,7 +21,7 @@
     @Nullable
     protected MerchantOffers f_35261_;
 -   private final SimpleContainer f_35264_ = new SimpleContainer(8);
-+   private final SimpleContainer f_35264_ = new SimpleContainer(8, (org.bukkit.craftbukkit.entity.CraftAbstractVillager) this.getBukkitEntity()); // CraftBukkit add argument
++   private final SimpleContainer f_35264_ = new SimpleContainer(8, (org.bukkit.craftbukkit.v1_20_R1.entity.CraftAbstractVillager) this.getBukkitEntity()); // CraftBukkit add argument
  
     public AbstractVillager(EntityType<? extends AbstractVillager> p_35267_, Level p_35268_) {
        super(p_35267_, p_35268_);
@@ -57,7 +57,7 @@
 +               org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +            }
 +            if (!event.isCancelled()) {
-+               p_35278_.add(org.bukkit.craftbukkit.inventory.CraftMerchantRecipe.fromBukkit(event.getRecipe()).toMinecraft());
++               p_35278_.add(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMerchantRecipe.fromBukkit(event.getRecipe()).toMinecraft());
 +            }
 +            // CraftBukkit end
           }

@@ -28,8 +28,8 @@
 +      // Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(level, d0, d1, d2) : new Boat(level, d0, d1, d2));
 +      // CraftBukkit start
 +      ItemStack itemstack1 = p_123376_.m_41620_(1);
-+      org.bukkit.block.Block block = org.bukkit.craftbukkit.block.CraftBlock.at(level, p_123375_.m_7961_());
-+      org.bukkit.craftbukkit.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack1);
++      org.bukkit.block.Block block = org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(level, p_123375_.m_7961_());
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(itemstack1);
 +
 +      org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d1, d2 + d4, d3));
 +      if (!DispenserBlock.eventFired) {
@@ -44,7 +44,7 @@
 +      if (!event.getItem().equals(craftItem)) {
 +         p_123376_.m_41769_(1);
 +         // Chain to handler for new item
-+         ItemStack eventStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem());
++         ItemStack eventStack = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +         DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.f_52661_.get(eventStack.m_41720_());
 +         if (idispensebehavior != DispenseItemBehavior.f_123393_ && idispensebehavior != this) {
 +            idispensebehavior.m_6115_(p_123375_, eventStack);

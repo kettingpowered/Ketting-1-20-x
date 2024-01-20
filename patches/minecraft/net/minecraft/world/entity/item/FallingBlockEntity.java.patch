@@ -27,7 +27,7 @@
 +   public static FallingBlockEntity fall(Level p_201972_, BlockPos p_201973_, BlockState p_201974_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
 +      // CraftBukkit end
 +      FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_201972_, (double) p_201973_.m_123341_() + 0.5D, (double) p_201973_.m_123342_(), (double) p_201973_.m_123343_() + 0.5D, p_201974_.m_61138_(BlockStateProperties.f_61362_) ? (BlockState) p_201974_.m_61124_(BlockStateProperties.f_61362_, false) : p_201974_);
-+      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(fallingblockentity, p_201973_, p_201974_.m_60819_().m_76188_())) return fallingblockentity; // CraftBukkit
++      if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(fallingblockentity, p_201973_, p_201974_.m_60819_().m_76188_())) return fallingblockentity; // CraftBukkit
 +
        p_201972_.m_7731_(p_201973_, p_201974_.m_60819_().m_76188_(), 3);
 -      p_201972_.m_7967_(fallingblockentity);
@@ -54,7 +54,7 @@
                          }
  
 +                        // CraftBukkit start
-+                        if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, this.f_31946_)) {
++                        if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, this.f_31946_)) {
 +                           this.m_146870_(); // SPIGOT-6586 called before the event in previous versions
 +                           return;
 +                        }
@@ -67,9 +67,9 @@
              DamageSource damagesource = damagesource1;
              float f = (float)Math.min(Mth.m_14143_((float)i * this.f_149641_), this.f_31940_);
              this.m_9236_().m_6249_(this, this.m_20191_(), predicate).forEach((p_149649_) -> {
-+               org.bukkit.craftbukkit.event.CraftEventFactory.entityDamage = this; // CraftBukkit
++               org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = this; // CraftBukkit
                 p_149649_.m_6469_(damagesource, f);
-+                org.bukkit.craftbukkit.event.CraftEventFactory.entityDamage = null; // CraftBukkit
++                org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = null; // CraftBukkit
              });
              boolean flag = this.f_31946_.m_204336_(BlockTags.f_13033_);
              if (flag && f > 0.0F && this.f_19796_.m_188501_() < 0.05F + (float)i * 0.05F) {

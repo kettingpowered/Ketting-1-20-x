@@ -5,17 +5,17 @@
     public static final int f_150576_ = 5;
     private final Container f_39638_;
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.inventory.CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView bukkitEntity = null;
 +   private Inventory player;
 +
 +   @Override
-+   public org.bukkit.craftbukkit.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventory(this.f_39638_);
-+      bukkitEntity = new org.bukkit.craftbukkit.inventory.CraftInventoryView(this.player.f_35978_.getBukkitEntity(), inventory, this);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory(this.f_39638_);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView(this.player.f_35978_.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

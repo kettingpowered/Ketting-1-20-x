@@ -15,7 +15,7 @@
 +         interact(p_154301_, p_154299_, p_154300_, p_154302_);
 +         // CraftBukkit start
 +         if (p_154302_ instanceof Player) {
-+            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((Player) p_154302_, org.bukkit.event.block.Action.PHYSICAL, p_154300_, null, null, null);
++            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerInteractEvent((Player) p_154302_, org.bukkit.event.block.Action.PHYSICAL, p_154300_, null, null, null);
 +            if (!event.isCancelled()) {
 +               interact(p_154299_.m_8055_(p_154300_), p_154299_, p_154300_, p_154302_); // add entity
 +            }
@@ -55,7 +55,7 @@
        m_55454_(p_55494_, p_55495_);
        if (!p_55493_.m_61143_(f_55450_)) {
 +         // CraftBukkit start
-+         if (interact$entity != null && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(interact$entity, p_55495_, p_55493_.m_61124_(RedStoneOreBlock.f_55450_, true))) {
++         if (interact$entity != null && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(interact$entity, p_55495_, p_55493_.m_61124_(RedStoneOreBlock.f_55450_, true))) {
 +            return;
 +         }
 +         // CraftBukkit end
@@ -67,7 +67,7 @@
     public void m_213898_(BlockState p_221918_, ServerLevel p_221919_, BlockPos p_221920_, RandomSource p_221921_) {
        if (p_221918_.m_61143_(f_55450_)) {
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(p_221919_, p_221920_, p_221918_.m_61124_(RedStoneOreBlock.f_55450_, false)).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockFadeEvent(p_221919_, p_221920_, p_221918_.m_61124_(RedStoneOreBlock.f_55450_, false)).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end

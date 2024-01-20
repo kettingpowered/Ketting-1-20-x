@@ -43,9 +43,9 @@
 +         if (reason == org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN) {
 +            this.m_9236_().getCraftServer().getLogger().log(java.util.logging.Level.WARNING, "Unknown target reason, please report on the issue tracker", new Exception());
 +         }
-+         org.bukkit.craftbukkit.entity.CraftLivingEntity ctarget = null;
++         org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity ctarget = null;
 +         if (p_21544_ != null) {
-+            ctarget = (org.bukkit.craftbukkit.entity.CraftLivingEntity) p_21544_.getBukkitEntity();
++            ctarget = (org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity) p_21544_.getBukkitEntity();
 +         }
 +         org.bukkit.event.entity.EntityTargetLivingEntityEvent event = new org.bukkit.event.entity.EntityTargetLivingEntityEvent(this.getBukkitEntity(), ctarget, reason);
 +         this.m_9236_().getCraftServer().getPluginManager().callEvent(event);
@@ -54,7 +54,7 @@
 +         }
 +
 +         if (event.getTarget() != null) {
-+            p_21544_ = ((org.bukkit.craftbukkit.entity.CraftLivingEntity) event.getTarget()).getHandle();
++            p_21544_ = ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +         } else {
 +            p_21544_ = null;
 +         }
@@ -177,7 +177,7 @@
 +      // CraftBukkit start
 +      boolean canPickup = flag && this.m_7252_(p_255842_);
 +      if (entity != null) {
-+         canPickup = !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(this, entity, 0, !canPickup).isCancelled();
++         canPickup = !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityPickupItemEvent(this, entity, 0, !canPickup).isCancelled();
 +      }
 +      if (canPickup) {
 +         // CraftBukkit end
@@ -242,7 +242,7 @@
           return InteractionResult.PASS;
        } else if (this.m_21524_() == p_21420_) {
 +         // CraftBukkit start - fire PlayerUnleashEntityEvent
-+         if (org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerUnleashEntityEvent(this, p_21420_, p_21421_).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerUnleashEntityEvent(this, p_21420_, p_21421_).isCancelled()) {
 +            ((net.minecraft.server.level.ServerPlayer) p_21420_).f_8906_.m_9829_(new ClientboundSetEntityLinkPacket(this, this.m_21524_()));
 +            return InteractionResult.PASS;
 +         }
@@ -255,7 +255,7 @@
        ItemStack itemstack = p_21500_.m_21120_(p_21501_);
        if (itemstack.m_150930_(Items.f_42655_) && this.m_6573_(p_21500_)) {
 +         // CraftBukkit start - fire PlayerLeashEntityEvent
-+         if (org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerLeashEntityEvent(this, p_21500_, p_21500_, p_21501_).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerLeashEntityEvent(this, p_21500_, p_21500_, p_21501_).isCancelled()) {
 +            ((net.minecraft.server.level.ServerPlayer) p_21500_).f_8906_.m_9829_(new ClientboundSetEntityLinkPacket(this, this.m_21524_()));
 +            return InteractionResult.PASS;
 +         }
@@ -285,7 +285,7 @@
  
 -            this.m_9236_().m_7967_(t);
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTransformEvent(this, t, transformReason).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTransformEvent(this, t, transformReason).isCancelled()) {
 +               return null;
 +            }
 +            this.m_9236_().addFreshEntity(t, spawnReason);

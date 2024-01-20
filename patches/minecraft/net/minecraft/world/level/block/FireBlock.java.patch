@@ -11,7 +11,7 @@
 +         if (!(p_53461_ instanceof Level)) {
 +            return Blocks.f_50016_.m_49966_();
 +         }
-+         org.bukkit.craftbukkit.block.CraftBlockState blockState = org.bukkit.craftbukkit.block.CraftBlockStates.getBlockState(p_53461_, p_53462_);
++         org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState blockState = org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockStates.getBlockState(p_53461_, p_53462_);
 +         blockState.setData(Blocks.f_50016_.m_49966_());
 +
 +         org.bukkit.event.block.BlockFadeEvent event = new org.bukkit.event.block.BlockFadeEvent(blockState.getBlock(), blockState);
@@ -105,11 +105,11 @@
 -                              p_221161_.m_7731_(blockpos$mutableblockpos, this.m_53437_(p_221161_, blockpos$mutableblockpos, j2), 3);
 +                              // CraftBukkit start - Call to stop spread of fire
 +                              if (p_221161_.m_8055_(blockpos$mutableblockpos).m_60734_() != Blocks.f_50083_) {
-+                                 if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(p_221161_, blockpos$mutableblockpos, p_221162_).isCancelled()) {
++                                 if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockIgniteEvent(p_221161_, blockpos$mutableblockpos, p_221162_).isCancelled()) {
 +                                    continue;
 +                                 }
 +
-+                                 org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_221161_, p_221162_, blockpos$mutableblockpos, this.m_53437_(p_221161_, blockpos$mutableblockpos, j2), 3); // CraftBukkit
++                                 org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_221161_, p_221162_, blockpos$mutableblockpos, this.m_53437_(p_221161_, blockpos$mutableblockpos, j2), 3); // CraftBukkit
 +                              }
 +                              // CraftBukkit end
                             }
@@ -162,7 +162,7 @@
 +               return;
 +            }
 +
-+            if (blockstate.m_60734_() instanceof TntBlock && !org.bukkit.craftbukkit.event.CraftEventFactory.callTNTPrimeEvent(p_53432_, p_53433_, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.FIRE, null, trySpread$sourceposition)) {
++            if (blockstate.m_60734_() instanceof TntBlock && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callTNTPrimeEvent(p_53432_, p_53433_, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.FIRE, null, trySpread$sourceposition)) {
 +               return;
 +            }
 +            // CraftBukkit end

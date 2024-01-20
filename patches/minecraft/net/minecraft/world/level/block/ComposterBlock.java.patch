@@ -7,8 +7,8 @@
 -         BlockState blockstate = m_269330_(p_270919_, p_270087_, p_270284_, p_270678_, p_270253_);
 +         // CraftBukkit start
 +         double rand = p_270284_.m_213780_().m_188500_();
-+         BlockState blockstate = addItem(p_270919_, p_270087_, org.bukkit.craftbukkit.util.DummyGeneratorAccess.INSTANCE, p_270678_, p_270253_, rand);
-+         if (p_270087_ == blockstate || !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(p_270919_, p_270678_, blockstate)) {
++         BlockState blockstate = addItem(p_270919_, p_270087_, org.bukkit.craftbukkit.v1_20_R1.util.DummyGeneratorAccess.INSTANCE, p_270678_, p_270253_, rand);
++         if (p_270087_ == blockstate || !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(p_270919_, p_270678_, blockstate)) {
 +            return p_270087_;
 +         }
 +         blockstate = addItem(p_270919_, p_270087_, p_270284_, p_270678_, p_270253_, rand);
@@ -22,8 +22,8 @@
     public static BlockState m_51998_(Entity p_270467_, BlockState p_51999_, Level p_52000_, BlockPos p_52001_) {
 +      // CraftBukkit start
 +      if (p_270467_ != null && !(p_270467_ instanceof Player)) {
-+         BlockState iblockdata1 = m_269590_(p_270467_, p_51999_, org.bukkit.craftbukkit.util.DummyGeneratorAccess.INSTANCE, p_52001_);
-+         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(p_270467_, p_52001_, iblockdata1)) {
++         BlockState iblockdata1 = m_269590_(p_270467_, p_51999_, org.bukkit.craftbukkit.v1_20_R1.util.DummyGeneratorAccess.INSTANCE, p_52001_);
++         if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(p_270467_, p_52001_, iblockdata1)) {
 +            return p_51999_;
 +         }
 +      }
@@ -62,7 +62,7 @@
 -      public EmptyContainer() {
 +      public EmptyContainer(LevelAccessor generatoraccess, BlockPos blockposition) {
           super(0);
-+         this.bukkitOwner = new org.bukkit.craftbukkit.inventory.CraftBlockInventoryHolder(generatoraccess, blockposition, this); // CraftBukkit
++         this.bukkitOwner = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftBlockInventoryHolder(generatoraccess, blockposition, this); // CraftBukkit
        }
  
        public int[] m_7071_(Direction p_52012_) {
@@ -70,7 +70,7 @@
  
        public InputContainer(BlockState p_52022_, LevelAccessor p_52023_, BlockPos p_52024_) {
           super(1);
-+         this.bukkitOwner = new org.bukkit.craftbukkit.inventory.CraftBlockInventoryHolder(p_52023_, p_52024_, this); // CraftBukkit
++         this.bukkitOwner = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftBlockInventoryHolder(p_52023_, p_52024_, this); // CraftBukkit
           this.f_52017_ = p_52022_;
           this.f_52018_ = p_52023_;
           this.f_52019_ = p_52024_;
@@ -78,7 +78,7 @@
           this.f_52037_ = p_52042_;
           this.f_52038_ = p_52043_;
           this.f_52039_ = p_52044_;
-+         this.bukkitOwner = new org.bukkit.craftbukkit.inventory.CraftBlockInventoryHolder(p_52043_, p_52044_, this); // CraftBukkit
++         this.bukkitOwner = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftBlockInventoryHolder(p_52043_, p_52044_, this); // CraftBukkit
        }
  
        public int m_6893_() {

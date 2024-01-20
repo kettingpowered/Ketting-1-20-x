@@ -67,7 +67,7 @@
           if (p_215121_ == ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK) {
              if (!this.f_9244_.m_7966_(this.f_9245_, p_215120_)) {
 +               // CraftBukkit start - fire PlayerInteractEvent
-+               org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent(this.f_9245_, org.bukkit.event.block.Action.LEFT_CLICK_BLOCK, p_215120_, p_215122_, this.f_9245_.m_150109_().m_36056_(), InteractionHand.MAIN_HAND);
++               org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerInteractEvent(this.f_9245_, org.bukkit.event.block.Action.LEFT_CLICK_BLOCK, p_215120_, p_215122_, this.f_9245_.m_150109_().m_36056_(), InteractionHand.MAIN_HAND);
                 this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
                 this.m_215125_(p_215120_, false, p_215124_, "may not interact");
 -               return;
@@ -80,7 +80,7 @@
 +            }
 +
 +            // CraftBukkit start
-+            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent(this.f_9245_, org.bukkit.event.block.Action.LEFT_CLICK_BLOCK, p_215120_, p_215122_, this.f_9245_.m_150109_().m_36056_(), InteractionHand.MAIN_HAND);
++            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerInteractEvent(this.f_9245_, org.bukkit.event.block.Action.LEFT_CLICK_BLOCK, p_215120_, p_215122_, this.f_9245_.m_150109_().m_36056_(), InteractionHand.MAIN_HAND);
 +            if (event.isCancelled()) {
 +               // Let the client know the block still exists
 +               this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
@@ -139,7 +139,7 @@
 +               }
 +               return;
 +            }
-+            org.bukkit.event.block.BlockDamageEvent blockEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockDamageEvent(this.f_9245_, p_215120_, this.f_9245_.m_150109_().m_36056_(), f >= 1.0f);
++            org.bukkit.event.block.BlockDamageEvent blockEvent = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockDamageEvent(this.f_9245_, p_215120_, this.f_9245_.m_150109_().m_36056_(), f >= 1.0f);
 +
 +            if (blockEvent.isCancelled()) {
 +               // Let the client know the block still exists
@@ -168,7 +168,7 @@
              this.f_9244_.m_6801_(this.f_9245_.m_19879_(), p_215120_, -1);
              this.m_215125_(p_215120_, true, p_215124_, "aborted destroying");
 +
-+            org.bukkit.craftbukkit.event.CraftEventFactory.callBlockDamageAbortEvent(this.f_9245_, p_215120_, this.f_9245_.m_150109_().m_36056_()); // CraftBukkit
++            org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockDamageAbortEvent(this.f_9245_, p_215120_, this.f_9245_.m_150109_().m_36056_()); // CraftBukkit
           }
  
        }
@@ -183,7 +183,7 @@
        BlockState blockstate = this.f_9244_.m_8055_(p_9281_);
 -      if (!this.f_9245_.m_21205_().m_41720_().m_6777_(blockstate, this.f_9244_, p_9281_, this.f_9245_)) {
 +      // CraftBukkit start - fire BlockBreakEvent
-+      destroyBlock$bblock = org.bukkit.craftbukkit.block.CraftBlock.at(f_9244_, p_9281_);
++      destroyBlock$bblock = org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(f_9244_, p_9281_);
 +      destroyBlock$event = callBukkitBlockBreakEvent(p_9281_, blockstate, destroyBlock$bblock);
 +
 +      if (destroyBlock$event.isEmpty()) {
@@ -243,7 +243,7 @@
 +            }
 +            // CraftBukkit start
 +            if (destroyBlock$event.get().isDropItems()) {
-+               org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockDropItemEvent(destroyBlock$bblock, state, this.f_9245_, f_9244_.captureDrops);
++               org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockDropItemEvent(destroyBlock$bblock, state, this.f_9245_, f_9244_.captureDrops);
 +            }
 +            f_9244_.captureDrops = null;
 +
@@ -398,7 +398,7 @@
 +            useItemOn$cancelled = true;
 +         }
 +
-+         useItemOn$event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent(p_9266_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, blockpos, p_9270_.m_82434_(), p_9268_, useItemOn$cancelled, p_9269_, p_9270_.m_82450_());
++         useItemOn$event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerInteractEvent(p_9266_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, blockpos, p_9270_.m_82434_(), p_9268_, useItemOn$cancelled, p_9269_, p_9270_.m_82450_());
 +         firedInteract = true;
 +         interactResult = useItemOn$event.useItemInHand() == org.bukkit.event.Event.Result.DENY;
 +         interactPosition = blockpos.m_7949_();

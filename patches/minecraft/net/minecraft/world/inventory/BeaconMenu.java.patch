@@ -5,7 +5,7 @@
     private final ContainerLevelAccess f_39033_;
     private final ContainerData f_39034_;
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.inventory.CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView bukkitEntity = null;
 +   private net.minecraft.world.entity.player.Inventory player;
 +   // CraftBukkit end
  
@@ -47,13 +47,13 @@
 +
 +   // CraftBukkit start
 +   @Override
-+   public org.bukkit.craftbukkit.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryBeacon(this.f_39031_);
-+      bukkitEntity = new org.bukkit.craftbukkit.inventory.CraftInventoryView(this.player.f_35978_.getBukkitEntity(), inventory, this);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryBeacon(this.f_39031_);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView(this.player.f_35978_.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

@@ -6,7 +6,7 @@
                 } else {
 +                  // CraftBukkit start
 +                  LivingEntity old = p_258796_.m_6274_().m_21952_(MemoryModuleType.f_26372_).orElse(null);
-+                  org.bukkit.event.entity.EntityTargetEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetLivingEvent(p_258796_, null, (old != null && !old.m_6084_()) ? org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_DIED : org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET);
++                  org.bukkit.event.entity.EntityTargetEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTargetLivingEvent(p_258796_, null, (old != null && !old.m_6084_()) ? org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_DIED : org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET);
 +                  if (event.isCancelled()) {
 +                     return false;
 +                  }
@@ -14,7 +14,7 @@
 +                     p_258787_.m_257971_();
 +                     return true;
 +                  }
-+                  livingentity = ((org.bukkit.craftbukkit.entity.CraftLivingEntity) event.getTarget()).getHandle();
++                  livingentity = ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +                  // CraftBukkit end
                    p_259568_.accept(p_258796_, livingentity);
                    p_258787_.m_257971_();

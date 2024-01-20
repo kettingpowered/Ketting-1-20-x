@@ -17,7 +17,7 @@
 +            // CraftBukkit start - tilt dripleaf
 +            org.bukkit.event.Cancellable cancellable;
 +            if (p_152269_ instanceof Player) {
-+               cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((Player) p_152269_, org.bukkit.event.block.Action.PHYSICAL, p_152268_, null, null, null);
++               cancellable = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerInteractEvent((Player) p_152269_, org.bukkit.event.block.Action.PHYSICAL, p_152268_, null, null, null);
 +            } else {
 +               cancellable = new org.bukkit.event.entity.EntityInteractEvent(p_152269_.getBukkitEntity(), p_152267_.getWorld().getBlockAt(p_152268_.m_123341_(), p_152268_.m_123342_(), p_152268_.m_123343_()));
 +               p_152267_.getCraftServer().getPluginManager().callEvent((org.bukkit.event.entity.EntityInteractEvent) cancellable);
@@ -72,7 +72,7 @@
 +   // CraftBukkit start
 +   private static boolean setTilt(BlockState p_152278_, Level p_152279_, BlockPos p_152280_, Tilt p_152281_, @Nullable Entity entity) {
 +      if (entity != null) {
-+         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entity, p_152280_, p_152278_.m_61124_(BigDripleafBlock.f_152201_, p_152281_))) {
++         if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(entity, p_152280_, p_152278_.m_61124_(BigDripleafBlock.f_152201_, p_152281_))) {
 +            return false;
 +         }
 +      }

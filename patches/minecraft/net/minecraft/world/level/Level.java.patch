@@ -21,7 +21,7 @@
 +   private final java.util.ArrayList<BlockEntity> pendingFreshBlockEntities = new java.util.ArrayList<>();
 +
 +   // CraftBukkit start Added the following
-+   private org.bukkit.craftbukkit.CraftWorld world;
++   private org.bukkit.craftbukkit.v1_20_R1.CraftWorld world;
 +   public boolean pvpMode;
 +   public boolean keepSpawnInMemory = true;
 +   public org.bukkit.generator.ChunkGenerator generator;
@@ -31,20 +31,20 @@
 +   public boolean preventPoiUpdated = false; // CraftBukkit - SPIGOT-5710
 +   public boolean captureBlockStates = false;
 +   public boolean captureTreeGeneration = false;
-+   public java.util.Map<BlockPos, org.bukkit.craftbukkit.block.CapturedBlockState> capturedBlockStates = new java.util.LinkedHashMap<>();
++   public java.util.Map<BlockPos, org.bukkit.craftbukkit.v1_20_R1.block.CapturedBlockState> capturedBlockStates = new java.util.LinkedHashMap<>();
 +   public java.util.Map<BlockPos, BlockEntity> capturedTileEntities = new java.util.HashMap<>();
 +   public List<net.minecraft.world.entity.item.ItemEntity> captureDrops;
 +   public final it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<org.bukkit.entity.SpawnCategory> ticksPerSpawnCategory = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
 +   public boolean populating;
 +   public final org.spigotmc.SpigotWorldConfig spigotConfig; // Spigot
 +
-+   public final org.bukkit.craftbukkit.SpigotTimings.WorldTimingsHandler timings; // Spigot
++   public final org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.WorldTimingsHandler timings; // Spigot
 +   public static BlockPos lastPhysicsProblem; // Spigot
 +   private org.spigotmc.TickLimiter entityLimiter;
 +   private org.spigotmc.TickLimiter tileLimiter;
 +   private int tileTickPosition;
 +
-+   public org.bukkit.craftbukkit.CraftWorld getWorld() {
++   public org.bukkit.craftbukkit.v1_20_R1.CraftWorld getWorld() {
 +      if (this.world == null) {
 +         if (environment == null) {
 +            environment = (org.bukkit.World.Environment) org.kettingpowered.ketting.core.Ketting.getInstance().getDimensionRegistry().get().getKey(getTypeKey());
@@ -53,29 +53,29 @@
 +            generator = this.getCraftServer().getGenerator(((net.minecraft.world.level.storage.ServerLevelData) this.m_6106_()).m_5462_());
 +
 +            if (this instanceof net.minecraft.server.level.ServerLevel srvLevel && generator != null) {
-+               org.bukkit.craftbukkit.generator.CraftWorldInfo info = new org.bukkit.craftbukkit.generator.CraftWorldInfo((net.minecraft.world.level.storage.ServerLevelData) m_6106_(), srvLevel.convertable, environment, m_6042_());
++               org.bukkit.craftbukkit.v1_20_R1.generator.CraftWorldInfo info = new org.bukkit.craftbukkit.v1_20_R1.generator.CraftWorldInfo((net.minecraft.world.level.storage.ServerLevelData) m_6106_(), srvLevel.convertable, environment, m_6042_());
 +
 +               if (biomeProvider == null)
 +                  biomeProvider = generator.getDefaultBiomeProvider(info);
 +
 +               net.minecraft.world.level.chunk.ChunkGenerator generator = srvLevel.m_7726_().m_8481_();
 +               if (biomeProvider != null) {
-+                  net.minecraft.world.level.biome.BiomeSource source = new org.bukkit.craftbukkit.generator.CustomWorldChunkManager(info, biomeProvider, srvLevel.m_9598_().m_175515_(Registries.f_256952_));
++                  net.minecraft.world.level.biome.BiomeSource source = new org.bukkit.craftbukkit.v1_20_R1.generator.CustomWorldChunkManager(info, biomeProvider, srvLevel.m_9598_().m_175515_(Registries.f_256952_));
 +                  generator.setBiomeSource(source);
 +               }
 +
-+               org.bukkit.craftbukkit.generator.CustomChunkGenerator gen = new org.bukkit.craftbukkit.generator.CustomChunkGenerator(srvLevel, generator, this.generator);
++               org.bukkit.craftbukkit.v1_20_R1.generator.CustomChunkGenerator gen = new org.bukkit.craftbukkit.v1_20_R1.generator.CustomChunkGenerator(srvLevel, generator, this.generator);
 +               srvLevel.m_7726_().setChunkGenerator(gen);
 +            }
 +         }
-+         this.world = new org.bukkit.craftbukkit.CraftWorld((net.minecraft.server.level.ServerLevel) this, generator, biomeProvider, environment);
++         this.world = new org.bukkit.craftbukkit.v1_20_R1.CraftWorld((net.minecraft.server.level.ServerLevel) this, generator, biomeProvider, environment);
 +         this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
 +      }
 +      return this.world;
 +   }
 +
-+   public org.bukkit.craftbukkit.CraftServer getCraftServer() {
-+      return (org.bukkit.craftbukkit.CraftServer) org.bukkit.Bukkit.getServer();
++   public org.bukkit.craftbukkit.v1_20_R1.CraftServer getCraftServer() {
++      return (org.bukkit.craftbukkit.v1_20_R1.CraftServer) org.bukkit.Bukkit.getServer();
 +   }
 +
 +   //Ketting start - remove abstract modifier + add default implementation
@@ -110,7 +110,7 @@
 +
 +      // CraftBukkit Ticks things
 +      for (org.bukkit.entity.SpawnCategory spawnCategory : org.bukkit.entity.SpawnCategory.values()) {
-+         if (org.bukkit.craftbukkit.util.CraftSpawnCategory.isValidForLimits(spawnCategory)) {
++         if (org.bukkit.craftbukkit.v1_20_R1.util.CraftSpawnCategory.isValidForLimits(spawnCategory)) {
 +            this.ticksPerSpawnCategory.put(spawnCategory, (long) this.getCraftServer().getTicksPerSpawns(spawnCategory));
 +         }
 +      }
@@ -159,7 +159,7 @@
 +         public void m_6313_(WorldBorder worldborder, double d0) {}
 +      });
 +      // CraftBukkit end
-+      timings = new org.bukkit.craftbukkit.SpigotTimings.WorldTimingsHandler(levelname); // Spigot - code below can generate new world and access timings
++      timings = new org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.WorldTimingsHandler(levelname); // Spigot - code below can generate new world and access timings
 +      this.entityLimiter = new org.spigotmc.TickLimiter(spigotConfig.entityMaxTickTime);
 +      this.tileLimiter = new org.spigotmc.TickLimiter(spigotConfig.tileMaxTickTime);
     }
@@ -171,9 +171,9 @@
     public boolean m_6933_(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
 +      // CraftBukkit start - tree generation
 +      if (this.captureTreeGeneration) {
-+         org.bukkit.craftbukkit.block.CapturedBlockState blockstate = capturedBlockStates.get(p_46605_);
++         org.bukkit.craftbukkit.v1_20_R1.block.CapturedBlockState blockstate = capturedBlockStates.get(p_46605_);
 +         if (blockstate == null) {
-+            blockstate = org.bukkit.craftbukkit.block.CapturedBlockState.getTreeBlockState(this, p_46605_, p_46607_);
++            blockstate = org.bukkit.craftbukkit.v1_20_R1.block.CapturedBlockState.getTreeBlockState(this, p_46605_, p_46607_);
 +            this.capturedBlockStates.put(p_46605_.m_7949_(), blockstate);
 +         }
 +         blockstate.setData(p_46606_);
@@ -199,7 +199,7 @@
 +         // CraftBukkit start - capture blockstates
 +         boolean captured = false;
 +         if (this.captureBlockStates && !this.capturedBlockStates.containsKey(p_46605_)) {
-+            org.bukkit.craftbukkit.block.CapturedBlockState blockstate = org.bukkit.craftbukkit.block.CapturedBlockState.getBlockState(this, p_46605_, p_46607_);
++            org.bukkit.craftbukkit.v1_20_R1.block.CapturedBlockState blockstate = org.bukkit.craftbukkit.v1_20_R1.block.CapturedBlockState.getBlockState(this, p_46605_, p_46607_);
 +            this.capturedBlockStates.put(p_46605_.m_7949_(), blockstate);
 +            captured = true;
 +         }
@@ -266,9 +266,9 @@
                    int i = p_46607_ & -34;
                    blockstate.m_60762_(this, p_46605_, i, p_46608_ - 1);
 +                  // CraftBukkit start
-+                  org.bukkit.craftbukkit.CraftWorld world = this.getWorld();
++                  org.bukkit.craftbukkit.v1_20_R1.CraftWorld world = this.getWorld();
 +                  if (world != null) {
-+                     org.bukkit.event.block.BlockPhysicsEvent event = new org.bukkit.event.block.BlockPhysicsEvent(world.getBlockAt(p_46605_.m_123341_(), p_46605_.m_123342_(), p_46605_.m_123343_()), org.bukkit.craftbukkit.block.data.CraftBlockData.fromData(p_46606_));
++                     org.bukkit.event.block.BlockPhysicsEvent event = new org.bukkit.event.block.BlockPhysicsEvent(world.getBlockAt(p_46605_.m_123341_(), p_46605_.m_123342_(), p_46605_.m_123343_()), org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData.fromData(p_46606_));
 +                     this.getCraftServer().getPluginManager().callEvent(event);
 +
 +                     if (event.isCancelled()) {
@@ -307,7 +307,7 @@
     public BlockState m_8055_(BlockPos p_46732_) {
 +      // CraftBukkit start - tree generation
 +      if (captureTreeGeneration) {
-+         org.bukkit.craftbukkit.block.CapturedBlockState previous = capturedBlockStates.get(p_46732_);
++         org.bukkit.craftbukkit.v1_20_R1.block.CapturedBlockState previous = capturedBlockStates.get(p_46732_);
 +         if (previous != null) {
 +            return previous.getHandle();
 +         }
@@ -392,9 +392,9 @@
     public <T extends Entity> void m_46653_(Consumer<T> p_46654_, T p_46655_) {
        try {
 +         net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackStart(p_46655_);
-+         org.bukkit.craftbukkit.SpigotTimings.tickEntityTimer.startTiming(); // Spigot
++         org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.tickEntityTimer.startTiming(); // Spigot
           p_46654_.accept(p_46655_);
-+         org.bukkit.craftbukkit.SpigotTimings.tickEntityTimer.stopTiming(); // Spigot
++         org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.tickEntityTimer.stopTiming(); // Spigot
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking entity");
           CrashReportCategory crashreportcategory = crashreport.m_127514_("Entity being ticked");

@@ -24,12 +24,12 @@
 -               itemstack1 = HopperBlockEntity.m_59326_(dispenserblockentity, container, itemstack.m_41777_().m_41620_(1), direction.m_122424_());
 -               if (itemstack1.m_41619_()) {
 +               // CraftBukkit start - Fire event when pushing items into other inventories
-+               org.bukkit.craftbukkit.inventory.CraftItemStack oitemstack = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack.m_41777_().m_41620_(1));
++               org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack oitemstack = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(itemstack.m_41777_().m_41620_(1));
 +
 +               org.bukkit.inventory.Inventory destinationInventory;
 +               // Have to special case large chests as they work oddly
 +               if (container instanceof ChestBlock.DoubleInventory) {
-+                  destinationInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((ChestBlock.DoubleInventory) container);
++                  destinationInventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryDoubleChest((ChestBlock.DoubleInventory) container);
 +               } else {
 +                  destinationInventory = container.getOwner().getInventory();
 +               }
@@ -39,7 +39,7 @@
 +               if (event.isCancelled()) {
 +                  return;
 +               }
-+               itemstack1 = HopperBlockEntity.m_59326_(dispenserblockentity, container, org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(event.getItem()), direction.m_122424_());
++               itemstack1 = HopperBlockEntity.m_59326_(dispenserblockentity, container, org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getItem()), direction.m_122424_());
 +               if (event.getItem().equals(oitemstack) && itemstack1.m_41619_()) {
 +                  // CraftBukkit end
                    itemstack1 = itemstack.m_41777_();

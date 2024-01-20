@@ -29,7 +29,7 @@
 +         final Object[] players = server.m_6846_().f_11196_.toArray();
 +         class ServerListPingEvent extends org.bukkit.event.server.ServerListPingEvent {
 +
-+            org.bukkit.craftbukkit.util.CraftIconCache icon = server.server.getServerIcon();
++            org.bukkit.craftbukkit.v1_20_R1.util.CraftIconCache icon = server.server.getServerIcon();
 +
 +            ServerListPingEvent() {
 +               super(f_10083_.hostname, ((java.net.InetSocketAddress) f_10083_.m_129523_()).getAddress(), server.m_129916_(), server.m_6846_().m_11310_());
@@ -37,10 +37,10 @@
 +
 +            @Override
 +            public void setServerIcon(org.bukkit.util.CachedServerIcon icon) {
-+               if (!(icon instanceof org.bukkit.craftbukkit.util.CraftIconCache)) {
-+                  throw new IllegalArgumentException(icon + " was not created by " + org.bukkit.craftbukkit.CraftServer.class);
++               if (!(icon instanceof org.bukkit.craftbukkit.v1_20_R1.util.CraftIconCache)) {
++                  throw new IllegalArgumentException(icon + " was not created by " + org.bukkit.craftbukkit.v1_20_R1.CraftServer.class);
 +               }
-+               this.icon = (org.bukkit.craftbukkit.util.CraftIconCache) icon;
++               this.icon = (org.bukkit.craftbukkit.v1_20_R1.util.CraftIconCache) icon;
 +            }
 +
 +            @Override
@@ -116,7 +116,7 @@
 +         ServerStatus.Players playerSample = new ServerStatus.Players(event.getMaxPlayers(), profiles.size(), (server.m_183306_()) ? java.util.Collections.emptyList() : profiles);
 +
 +         ServerStatus ping = new ServerStatus(
-+                 org.bukkit.craftbukkit.util.CraftChatMessage.fromString(event.getMotd(), true)[0],
++                 org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage.fromString(event.getMotd(), true)[0],
 +                 java.util.Optional.of(playerSample),
 +                 java.util.Optional.of(new ServerStatus.Version(server.getServerModName() + " " + server.m_7630_(), net.minecraft.SharedConstants.m_183709_().m_132495_())),
 +                 (event.icon.value != null) ? java.util.Optional.of(new ServerStatus.Favicon(event.icon.value)) : java.util.Optional.empty(),

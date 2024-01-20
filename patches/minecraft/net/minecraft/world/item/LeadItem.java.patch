@@ -24,7 +24,7 @@
                 leashfenceknotentity = LeashFenceKnotEntity.m_31844_(p_42831_, p_42832_);
 +
 +               // CraftBukkit start - fire HangingPlaceEvent
-+               org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.CraftEquipmentSlot.getHand(interactionHand);
++               org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R1.CraftEquipmentSlot.getHand(interactionHand);
 +               org.bukkit.event.hanging.HangingPlaceEvent event = new org.bukkit.event.hanging.HangingPlaceEvent((org.bukkit.entity.Hanging) leashfenceknotentity.getBukkitEntity(), p_42830_ != null ? (org.bukkit.entity.Player) p_42830_.getBukkitEntity() : null, p_42831_.getWorld().getBlockAt(i, j, k), org.bukkit.block.BlockFace.SELF, hand);
 +               p_42831_.getCraftServer().getPluginManager().callEvent(event);
 +
@@ -37,7 +37,7 @@
              }
  
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerLeashEntityEvent(mob, leashfenceknotentity, p_42830_, interactionHand).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerLeashEntityEvent(mob, leashfenceknotentity, p_42830_, interactionHand).isCancelled()) {
 +               continue;
 +            }
 +            // CraftBukkit end

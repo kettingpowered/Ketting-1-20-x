@@ -7,7 +7,7 @@
 +         // CraftBukkit start
 +         if (!this.f_60160_) {
 +            org.bukkit.block.Block block = p_60168_.getWorld().getBlockAt(p_60169_.m_123341_(), p_60169_.m_123342_(), p_60169_.m_123343_());
-+            org.bukkit.event.block.BlockPistonRetractEvent event = new org.bukkit.event.block.BlockPistonRetractEvent(block, com.google.common.collect.ImmutableList.<org.bukkit.block.Block>of(), org.bukkit.craftbukkit.block.CraftBlock.notchToBlockFace(direction));
++            org.bukkit.event.block.BlockPistonRetractEvent event = new org.bukkit.event.block.BlockPistonRetractEvent(block, com.google.common.collect.ImmutableList.<org.bukkit.block.Block>of(), org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.notchToBlockFace(direction));
 +            p_60168_.getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (event.isCancelled()) {
@@ -72,9 +72,9 @@
 +         };
 +         org.bukkit.event.block.BlockPistonEvent event;
 +         if (p_60185_) {
-+            event = new org.bukkit.event.block.BlockPistonExtendEvent(bblock, blocks, org.bukkit.craftbukkit.block.CraftBlock.notchToBlockFace(direction));
++            event = new org.bukkit.event.block.BlockPistonExtendEvent(bblock, blocks, org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.notchToBlockFace(direction));
 +         } else {
-+            event = new org.bukkit.event.block.BlockPistonRetractEvent(bblock, blocks, org.bukkit.craftbukkit.block.CraftBlock.notchToBlockFace(direction));
++            event = new org.bukkit.event.block.BlockPistonRetractEvent(bblock, blocks, org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.notchToBlockFace(direction));
 +         }
 +         p_60182_.getCraftServer().getPluginManager().callEvent(event);
 +

@@ -16,10 +16,10 @@
                 }).orElse(itemstack);
                 if (itemstack1.m_246617_(p_155307_.m_246046_())) {
 +                  // CraftBukkit start - fire BlockCookEvent
-+                  org.bukkit.craftbukkit.inventory.CraftItemStack source = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(itemstack);
-+                  org.bukkit.inventory.ItemStack result = org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(itemstack1);
++                  org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack source = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(itemstack);
++                  org.bukkit.inventory.ItemStack result = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asBukkitCopy(itemstack1);
 +
-+                  org.bukkit.event.block.BlockCookEvent blockCookEvent = new org.bukkit.event.block.BlockCookEvent(org.bukkit.craftbukkit.block.CraftBlock.at(p_155307_, p_155308_), source, result);
++                  org.bukkit.event.block.BlockCookEvent blockCookEvent = new org.bukkit.event.block.BlockCookEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_155307_, p_155308_), source, result);
 +                  p_155307_.getCraftServer().getPluginManager().callEvent(blockCookEvent);
 +
 +                  if (blockCookEvent.isCancelled()) {
@@ -27,7 +27,7 @@
 +                  }
 +
 +                  result = blockCookEvent.getResult();
-+                  itemstack1 = org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(result);
++                  itemstack1 = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(result);
 +                  // CraftBukkit end
                    Containers.m_18992_(p_155307_, (double)p_155308_.m_123341_(), (double)p_155308_.m_123342_(), (double)p_155308_.m_123343_(), itemstack1);
                    p_155310_.f_59042_.set(i, ItemStack.f_41583_);
@@ -39,7 +39,7 @@
 -            this.f_59044_[i] = p_238287_;
 +            // CraftBukkit start
 +            CampfireCookingRecipe recipe = m_59051_(p_238286_).get();
-+            org.bukkit.event.block.CampfireStartEvent event = new org.bukkit.event.block.CampfireStartEvent(org.bukkit.craftbukkit.block.CraftBlock.at(this.f_58857_,this.f_58858_), org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(p_238286_), (org.bukkit.inventory.CampfireRecipe) recipe.toBukkitRecipe());
++            org.bukkit.event.block.CampfireStartEvent event = new org.bukkit.event.block.CampfireStartEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(this.f_58857_,this.f_58858_), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(p_238286_), (org.bukkit.inventory.CampfireRecipe) recipe.toBukkitRecipe());
 +            this.f_58857_.getCraftServer().getPluginManager().callEvent(event);
 +            this.f_59044_[i] = event.getTotalCookTime(); // i -> event.getTotalCookTime()
 +            // CraftBukkit end

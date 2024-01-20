@@ -12,7 +12,7 @@
 +               net.minecraftforge.event.entity.EntityTeleportEvent.EnderPearl event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayer, this.m_20185_(), this.m_20186_(), this.m_20189_(), this, 5.0F, p_37504_);
 +               if (!event.isCanceled()) { // Don't indent to lower patch size
 +                  // CraftBukkit start - Fire PlayerTeleportEvent
-+                  org.bukkit.craftbukkit.entity.CraftPlayer player = serverplayer.getBukkitEntity();
++                  org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer player = serverplayer.getBukkitEntity();
 +                  org.bukkit.Location location = getBukkitEntity().getLocation();
 +                  location.setPitch(player.getLocation().getPitch());
 +                  location.setYaw(player.getLocation().getYaw());
@@ -36,9 +36,9 @@
 +
 +                     serverplayer.f_8906_.teleport(teleEvent.getTo());
 +                     entity.m_183634_();
-+                     org.bukkit.craftbukkit.event.CraftEventFactory.entityDamage = this;
++                     org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = this;
 +                     entity.m_6469_(this.m_269291_().m_268989_(), 5.0F);
-+                     org.bukkit.craftbukkit.event.CraftEventFactory.entityDamage = null;
++                     org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = null;
                    }
 -               }
 -
