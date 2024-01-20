@@ -1,6 +1,11 @@
 package org.kettingpowered.ketting.metrics;
 
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.forgespi.language.IModInfo;
+import org.bukkit.plugin.Plugin;
+
 import org.bukkit.Bukkit;
 import org.kettingpowered.ketting.internal.KettingConstants;
 import org.slf4j.LoggerFactory;
@@ -36,6 +41,34 @@ public final class MetricManager {
             String version = Bukkit.getVersion();
             version = version.substring(version.indexOf("MC: ") + 4, version.length() - 1);
             return version;
+        }));
+        metrics.addCustomChart(new Metrics.DrilldownPie("version", () ->{
+            Map<String, Map<String, Integer>> map = new HashMap<>();
+            map.computeIfAbsent(FMLLoader.versionInfo().mcAndForgeVersion(), (c)->new HashMap<>())
+                    .computeIfAbsent(KettingConstants.KETTING_VERSION, (c)->1);
+            return map;
+        }));
+        metrics.addCustomChart(new Metrics.DrilldownPie("mods_vs_plugins", () -> {
+            Map<String, Map<String, Integer>> map = new HashMap<>();
+
+            Map<String, Integer> modslist = new HashMap<>();
+    
+            ModList.get().getMods().stream()
+                    .filter(modinfo->!"forge".equals(modinfo.getNamespace()) && !"minecraft".equals(modinfo.getNamespace()))
+                    .map(IModInfo::getDisplayName)
+                    .forEach(name->modslist.put(name, 1));
+
+            Map<String, Integer> pluginlist = new HashMap<>();
+            for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+                if (plugin.isEnabled()) {
+                    pluginlist.put(plugin.getDescription().getName(), 1);
+                }
+            }
+
+            map.put("mods", modslist);
+            map.put("plugins", pluginlist);
+
+            return map;
         }));
         metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ?  "online": "offline"));
         metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
