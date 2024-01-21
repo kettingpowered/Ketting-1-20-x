@@ -28,7 +28,7 @@
 +   //Ketting start
 +   public void setChunkGenerator(ChunkGenerator generator) {
 +      this.generator = generator;
-+      if (generator instanceof org.bukkit.craftbukkit.generator.CustomChunkGenerator custom) {
++      if (generator instanceof org.bukkit.craftbukkit.v1_20_R3.generator.CustomChunkGenerator custom) {
 +         generator = custom.getDelegate();
 +      }
 +      if (generator instanceof NoiseBasedChunkGenerator noisebasedchunkgenerator) {
@@ -47,8 +47,8 @@
        this.level = p_214836_;
        this.generator = p_214843_;
 +      // CraftBukkit start - SPIGOT-7051: It's a rigged game! Use delegate for random state creation, otherwise it is not so random.
-+      if (p_214843_ instanceof org.bukkit.craftbukkit.generator.CustomChunkGenerator) {
-+         p_214843_ = ((org.bukkit.craftbukkit.generator.CustomChunkGenerator) p_214843_).getDelegate();
++      if (p_214843_ instanceof org.bukkit.craftbukkit.v1_20_R3.generator.CustomChunkGenerator) {
++         p_214843_ = ((org.bukkit.craftbukkit.v1_20_R3.generator.CustomChunkGenerator) p_214843_).getDelegate();
 +      }
 +      // CraftBukkit end
        RegistryAccess registryaccess = p_214836_.registryAccess();

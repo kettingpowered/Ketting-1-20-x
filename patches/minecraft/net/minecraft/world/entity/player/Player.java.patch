@@ -36,8 +36,8 @@
 +   public int oldLevel = -1;
 +
 +   @Override
-+   public org.bukkit.craftbukkit.entity.CraftHumanEntity getBukkitEntity() {
-+      return (org.bukkit.craftbukkit.entity.CraftHumanEntity) super.getBukkitEntity();
++   public org.bukkit.craftbukkit.v1_20_R3.entity.CraftHumanEntity getBukkitEntity() {
++      return (org.bukkit.craftbukkit.v1_20_R3.entity.CraftHumanEntity) super.getBukkitEntity();
 +   }
 +   // CraftBukkit end
  
@@ -493,7 +493,7 @@
 +                     // CraftBukkit start - Add Velocity Event
 +                     boolean cancelled = false;
 +                     org.bukkit.entity.Player player = (org.bukkit.entity.Player) p_36347_.getBukkitEntity();
-+                     org.bukkit.util.Vector velocity = org.bukkit.craftbukkit.util.CraftVector.toBukkit(vec3);
++                     org.bukkit.util.Vector velocity = org.bukkit.craftbukkit.v1_20_R3.util.CraftVector.toBukkit(vec3);
 +
 +                     org.bukkit.event.player.PlayerVelocityEvent event = new org.bukkit.event.player.PlayerVelocityEvent(player, velocity.clone());
 +                     this.level().getCraftServer().getPluginManager().callEvent(event);
@@ -625,7 +625,7 @@
           this.resetFallDistance();
 -         this.setSharedFlag(7, false);
 +         // CraftBukkit start
-+         if (getSharedFlag(7) && !org.bukkit.craftbukkit.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++         if (getSharedFlag(7) && !org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +            this.setSharedFlag(7, false);
 +         }
 +         // CraftBukkit end
@@ -655,7 +655,7 @@
     public void startFallFlying() {
 -      this.setSharedFlag(7, true);
 +      // CraftBukkit start
-+      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
++      if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
 +         this.setSharedFlag(7, true);
 +      } else {
 +         // SPIGOT-5542: must toggle like below
@@ -669,7 +669,7 @@
 -      this.setSharedFlag(7, true);
 -      this.setSharedFlag(7, false);
 +      // CraftBukkit start
-+      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++      if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +         this.setSharedFlag(7, true);
 +         this.setSharedFlag(7, false);
 +      }
@@ -738,7 +738,7 @@
           if (!this.level().isClientSide) {
 -            this.foodData.addExhaustion(p_36400_);
 +            // CraftBukkit start
-+            org.bukkit.event.entity.EntityExhaustionEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerExhaustionEvent(this, reason, p_36400_);
++            org.bukkit.event.entity.EntityExhaustionEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerExhaustionEvent(this, reason, p_36400_);
 +            if (!event.isCancelled()) {
 +               this.foodData.addExhaustion(event.getExhaustion());
 +            }

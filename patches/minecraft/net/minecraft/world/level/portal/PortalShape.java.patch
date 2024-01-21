@@ -13,7 +13,7 @@
     private BlockPos bottomLeft;
     private int height;
     private final int width;
-+   org.bukkit.craftbukkit.util.BlockStateListPopulator blocks; // CraftBukkit - add field
++   org.bukkit.craftbukkit.v1_20_R3.util.BlockStateListPopulator blocks; // CraftBukkit - add field
  
     public static Optional<PortalShape> findEmptyPortalShape(LevelAccessor p_77709_, BlockPos p_77710_, Direction.Axis p_77711_) {
        return findPortalShape(p_77709_, p_77710_, (p_77727_) -> {
@@ -21,7 +21,7 @@
     }
  
     public PortalShape(LevelAccessor p_77695_, BlockPos p_77696_, Direction.Axis p_77697_) {
-+      blocks = new org.bukkit.craftbukkit.util.BlockStateListPopulator(p_77695_.getMinecraftWorld()); // CraftBukkit
++      blocks = new org.bukkit.craftbukkit.v1_20_R3.util.BlockStateListPopulator(p_77695_.getMinecraftWorld()); // CraftBukkit
        this.level = p_77695_;
        this.axis = p_77697_;
        this.rightDir = p_77697_ == Direction.Axis.X ? Direction.WEST : Direction.SOUTH;
@@ -97,7 +97,7 @@
     public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_) {
 +      return createPortalInfo(p_259301_,p_259931_,p_259901_,p_259630_,p_259166_,p_260043_,p_259853_,p_259667_, null); //Ketting - keep compat (somewhat)
 +   }
-+   public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_, org.bukkit.craftbukkit.event.CraftPortalEvent portalEventInfo) { // CraftBukkit
++   public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_, org.bukkit.craftbukkit.v1_20_R3.event.CraftPortalEvent portalEventInfo) { // CraftBukkit
        BlockPos blockpos = p_259931_.minCorner;
        BlockState blockstate = p_259301_.getBlockState(blockpos);
        Direction.Axis direction$axis = blockstate.getOptionalValue(BlockStateProperties.HORIZONTAL_AXIS).orElse(Direction.Axis.X);

@@ -7,12 +7,12 @@
 -         player.getFoodData().eat(p_301046_ + 1, 1.0F);
 +         // CraftBukkit start
 +         int oldFoodLevel = player.getFoodData().foodLevel;
-+         org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(player, p_301046_ + 1 + oldFoodLevel);
++         org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callFoodLevelChangeEvent(player, p_301046_ + 1 + oldFoodLevel);
 +         if (!event.isCancelled()) {
 +            player.getFoodData().eat(event.getFoodLevel() - oldFoodLevel, 1.0F);
 +         }
 +
-+         ((org.bukkit.craftbukkit.entity.CraftPlayer) player.getBukkitEntity()).sendHealthUpdate();
++         ((org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer) player.getBukkitEntity()).sendHealthUpdate();
 +         // CraftBukkit end
        }
  

@@ -5,16 +5,16 @@
  
  public class CrafterMenu extends AbstractContainerMenu implements ContainerListener {
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.inventory.CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView bukkitEntity = null;
 +
 +   @Override
-+   public org.bukkit.craftbukkit.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView getBukkitView() {
 +       if (bukkitEntity != null) {
 +           return bukkitEntity;
 +       }
 +
-+       org.bukkit.craftbukkit.inventory.CraftInventoryCrafter inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryCrafter(this.container, this.resultContainer);
-+       bukkitEntity = new org.bukkit.craftbukkit.inventory.CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
++       org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryCrafter inventory = new org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryCrafter(this.container, this.resultContainer);
++       bukkitEntity = new org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
 +       return bukkitEntity;
 +   }
 +   // CraftBukkit end

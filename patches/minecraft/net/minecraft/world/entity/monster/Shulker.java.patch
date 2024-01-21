@@ -11,11 +11,11 @@
 +
 +               if (direction != null) {
 +                  // CraftBukkit start
-+                  org.bukkit.event.entity.EntityTeleportEvent teleportEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTeleportEvent(this, blockpos1.getX(), blockpos1.getY(), blockpos1.getZ());
++                  org.bukkit.event.entity.EntityTeleportEvent teleportEvent = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityTeleportEvent(this, blockpos1.getX(), blockpos1.getY(), blockpos1.getZ());
 +                  if (teleportEvent.isCancelled()) {
 +                     return false;
 +                  } else {
-+                     blockpos1 = org.bukkit.craftbukkit.util.CraftLocation.toBlockPosition(teleportEvent.getTo());
++                     blockpos1 = org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation.toBlockPosition(teleportEvent.getTo());
 +                  }
 +                  // CraftBukkit end
                    this.unRide();

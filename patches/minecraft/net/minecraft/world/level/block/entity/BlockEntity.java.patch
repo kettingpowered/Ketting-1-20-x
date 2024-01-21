@@ -6,10 +6,10 @@
  
 -public abstract class BlockEntity {
 +public abstract class BlockEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<BlockEntity> implements net.minecraftforge.common.extensions.IForgeBlockEntity {
-+   public org.spigotmc.CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getTileEntityTimings(this); // Spigot
++   public org.spigotmc.CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.getTileEntityTimings(this); // Spigot
 +   // CraftBukkit start - data containers
-+   private static final org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry();
-+   public org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer persistentDataContainer;
++   private static final org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataTypeRegistry();
++   public org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataContainer persistentDataContainer;
 +   // CraftBukkit end
     private static final Logger LOGGER = LogUtils.getLogger();
     private final BlockEntityType<?> type;
@@ -34,7 +34,7 @@
  
     public void load(CompoundTag p_155245_) {
 +      // CraftBukkit start - read container
-+      this.persistentDataContainer = new org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++      this.persistentDataContainer = new org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
 +
 +      net.minecraft.nbt.Tag persistentDataTag = p_155245_.get("PublicBukkitValues");
 +      if (persistentDataTag instanceof CompoundTag) {

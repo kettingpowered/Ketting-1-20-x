@@ -45,13 +45,13 @@
 +      org.bukkit.World world = generatoraccessseed.getMinecraftWorld().getWorld();
 +      // only call when a populator is present (prevents unnecessary entity conversion)
 +      if (!world.getPopulators().isEmpty()) {
-+         org.bukkit.craftbukkit.generator.CraftLimitedRegion limitedRegion = new org.bukkit.craftbukkit.generator.CraftLimitedRegion(generatoraccessseed, ichunkaccess.getPos());
++         org.bukkit.craftbukkit.v1_20_R3.generator.CraftLimitedRegion limitedRegion = new org.bukkit.craftbukkit.v1_20_R3.generator.CraftLimitedRegion(generatoraccessseed, ichunkaccess.getPos());
 +         int x = ichunkaccess.getPos().x;
 +         int z = ichunkaccess.getPos().z;
 +         for (org.bukkit.generator.BlockPopulator populator : world.getPopulators()) {
 +            WorldgenRandom seededrandom = new WorldgenRandom(new net.minecraft.world.level.levelgen.LegacyRandomSource(generatoraccessseed.getSeed()));
 +            seededrandom.setDecorationSeed(generatoraccessseed.getSeed(), x, z);
-+            populator.populate(world, new org.bukkit.craftbukkit.util.RandomSourceWrapper.RandomWrapper(seededrandom), x, z, limitedRegion);
++            populator.populate(world, new org.bukkit.craftbukkit.v1_20_R3.util.RandomSourceWrapper.RandomWrapper(seededrandom), x, z, limitedRegion);
 +         }
 +         limitedRegion.saveEntities();
 +         limitedRegion.breakLink();
@@ -68,7 +68,7 @@
        if (structurestart.isValid()) {
 +         // CraftBukkit start
 +         BoundingBox box = structurestart.getBoundingBox();
-+         org.bukkit.event.world.AsyncStructureSpawnEvent event = new org.bukkit.event.world.AsyncStructureSpawnEvent(p_223106_.level.getMinecraftWorld().getWorld(), org.bukkit.craftbukkit.generator.structure.CraftStructure.minecraftToBukkit(structure, p_223107_), new org.bukkit.util.BoundingBox(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ()), p_223112_.x, p_223112_.z);
++         org.bukkit.event.world.AsyncStructureSpawnEvent event = new org.bukkit.event.world.AsyncStructureSpawnEvent(p_223106_.level.getMinecraftWorld().getWorld(), org.bukkit.craftbukkit.v1_20_R3.generator.structure.CraftStructure.minecraftToBukkit(structure, p_223107_), new org.bukkit.util.BoundingBox(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ()), p_223112_.x, p_223112_.z);
 +         org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return true;
