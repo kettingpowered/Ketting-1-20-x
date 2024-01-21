@@ -15,7 +15,7 @@ jobs:
   create-release:
     needs: test
     runs-on: ubuntu-latest
-    if: ${{ format('refs/heads/{0}', github.event.repository.default_branch) == github.ref || 'refs/heads/dev/mc-update' == github.ref || 'refs/heads/dev/1.20.2' == github.ref}}
+    if: ${{ format('refs/heads/{0}', github.event.repository.default_branch) == github.ref || 'refs/heads/dev/mc-update' == github.ref || 'refs/heads/dev/1.20.2' == github.ref || 'refs/heads/dev/1.20.1' == github.ref}}
     #This permission is needed to push a release (and/or tags)
     permissions:
       contents: write #nessesary for tag creation and release creation
