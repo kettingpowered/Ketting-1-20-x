@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/gameevent/vibrations/VibrationSystem.java
 +++ b/net/minecraft/world/level/gameevent/vibrations/VibrationSystem.java
-@@ -184,7 +_,14 @@
+@@ -185,7 +_,14 @@
                 return false;
              } else {
                 Vec3 vec3 = optional.get();
@@ -8,7 +8,7 @@
 +               // CraftBukkit start
 +               boolean defaultCancel = !vibrationsystem$user.canReceiveVibration(p_282254_, BlockPos.containing(p_282426_), p_283599_, p_283664_);
 +               Entity entity = p_283664_.sourceEntity();
-+               org.bukkit.event.block.BlockReceiveGameEvent event = new org.bukkit.event.block.BlockReceiveGameEvent(org.bukkit.craftbukkit.v1_20_R2.CraftGameEvent.minecraftToBukkit(p_283599_), org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_282254_, BlockPos.containing(vec3)), (entity == null) ? null : entity.getBukkitEntity());
++               org.bukkit.event.block.BlockReceiveGameEvent event = new org.bukkit.event.block.BlockReceiveGameEvent(org.bukkit.craftbukkit.v1_20_R1.CraftGameEvent.minecraftToBukkit(p_283599_), org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_282254_, BlockPos.containing(vec3)), (entity == null) ? null : entity.getBukkitEntity());
 +               event.setCancelled(defaultCancel);
 +               p_282254_.getCraftServer().getPluginManager().callEvent(event);
 +               if (event.isCancelled()) {

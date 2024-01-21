@@ -1,12 +1,42 @@
 --- a/net/minecraft/network/protocol/handshake/ClientIntentionPacket.java
 +++ b/net/minecraft/network/protocol/handshake/ClientIntentionPacket.java
-@@ -8,7 +_,8 @@
-    private static final int MAX_HOST_LENGTH = 255;
+@@ -11,6 +_,7 @@
+    private final String hostName;
+    private final int port;
+    private final ConnectionProtocol intention;
++   private String fmlVersion = net.minecraftforge.network.NetworkConstants.NETVERSION;
+ 
+    public ClientIntentionPacket(String p_134726_, int p_134727_, ConnectionProtocol p_134728_) {
+       this.protocolVersion = SharedConstants.getCurrentVersion().getProtocolVersion();
+@@ -21,14 +_,19 @@
  
     public ClientIntentionPacket(FriendlyByteBuf p_179801_) {
--      this(p_179801_.readVarInt(), p_179801_.readUtf(255), p_179801_.readUnsignedShort(), ClientIntent.byId(p_179801_.readVarInt()));
-+      // Spigot - increase max hostName length
-+      this(p_179801_.readVarInt(), p_179801_.readUtf(Short.MAX_VALUE), p_179801_.readUnsignedShort(), ClientIntent.byId(p_179801_.readVarInt()));
+       this.protocolVersion = p_179801_.readVarInt();
+-      this.hostName = p_179801_.readUtf(255);
++      String hostName = p_179801_.readUtf(255);
+       this.port = p_179801_.readUnsignedShort();
+       this.intention = ConnectionProtocol.getById(p_179801_.readVarInt());
++      this.fmlVersion = net.minecraftforge.network.NetworkHooks.getFMLVersion(hostName);
++      this.hostName = hostName.split("\0")[0];
++//-      this(p_179801_.readVarInt(), p_179801_.readUtf(255), p_179801_.readUnsignedShort(), ClientIntent.byId(p_179801_.readVarInt()));
++//+      // Spigot - increase max hostName length
++//+      this(p_179801_.readVarInt(), p_179801_.readUtf(Short.MAX_VALUE), p_179801_.readUnsignedShort(), ClientIntent.byId(p_179801_.readVarInt()));
     }
  
     public void write(FriendlyByteBuf p_134737_) {
+       p_134737_.writeVarInt(this.protocolVersion);
+-      p_134737_.writeUtf(this.hostName);
++      p_134737_.writeUtf(this.hostName + "\0"+ net.minecraftforge.network.NetworkConstants.NETVERSION+"\0");
+       p_134737_.writeShort(this.port);
+       p_134737_.writeVarInt(this.intention.getId());
+    }
+@@ -51,5 +_,9 @@
+ 
+    public int getPort() {
+       return this.port;
++   }
++
++   public String getFMLVersion() {
++      return this.fmlVersion;
+    }
+ }

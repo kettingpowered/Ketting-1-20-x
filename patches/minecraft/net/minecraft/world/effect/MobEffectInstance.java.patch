@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/effect/MobEffectInstance.java
 +++ b/net/minecraft/world/effect/MobEffectInstance.java
-@@ -17,7 +_,7 @@
+@@ -15,7 +_,7 @@
  import net.minecraft.world.entity.LivingEntity;
  import org.slf4j.Logger;
  
@@ -8,8 +8,8 @@
 +public class MobEffectInstance implements Comparable<MobEffectInstance>, net.minecraftforge.common.extensions.IForgeMobEffectInstance {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final int INFINITE_DURATION = -1;
-    private static final String TAG_ID = "id";
-@@ -85,6 +_,7 @@
+    private final MobEffect effect;
+@@ -75,6 +_,7 @@
        this.ambient = p_19549_.ambient;
        this.visible = p_19549_.visible;
        this.showIcon = p_19549_.showIcon;
@@ -17,7 +17,7 @@
     }
  
     public boolean update(MobEffectInstance p_19559_) {
-@@ -149,7 +_,7 @@
+@@ -140,7 +_,7 @@
     }
  
     public MobEffect getEffect() {
@@ -26,15 +26,34 @@
     }
  
     public int getDuration() {
-@@ -274,6 +_,7 @@
+@@ -252,6 +_,7 @@
+ 
+    public CompoundTag save(CompoundTag p_19556_) {
+       p_19556_.putInt("Id", MobEffect.getId(this.getEffect()));
++      net.minecraftforge.common.ForgeHooks.saveMobEffect(p_19556_, "forge:id", this.getEffect());
+       this.writeDetailsTo(p_19556_);
+       return p_19556_;
+    }
+@@ -267,6 +_,7 @@
           this.hiddenEffect.save(compoundtag);
-          p_19568_.put("hidden_effect", compoundtag);
+          p_19568_.put("HiddenEffect", compoundtag);
        }
 +      writeCurativeItems(p_19568_);
  
        this.factorData.ifPresent((p_216903_) -> {
           MobEffectInstance.FactorData.CODEC.encodeStart(NbtOps.INSTANCE, p_216903_).resultOrPartial(LOGGER::error).ifPresent((p_216906_) -> {
-@@ -315,12 +_,38 @@
+@@ -277,8 +_,9 @@
+ 
+    @Nullable
+    public static MobEffectInstance load(CompoundTag p_19561_) {
+-      int i = p_19561_.getInt("Id");
++      int i = p_19561_.getByte("Id") & 0xFF;
+       MobEffect mobeffect = MobEffect.byId(i);
++      mobeffect = net.minecraftforge.common.ForgeHooks.loadMobEffect(p_19561_, "forge:id", mobeffect);
+       return mobeffect == null ? null : loadSpecifiedEffect(mobeffect, p_19561_);
+    }
+ 
+@@ -308,12 +_,38 @@
           optional = Optional.empty();
        }
  
@@ -45,7 +64,7 @@
     public int compareTo(MobEffectInstance p_19566_) {
        int i = 32147;
 -      return (this.getDuration() <= 32147 || p_19566_.getDuration() <= 32147) && (!this.isAmbient() || !p_19566_.isAmbient()) ? ComparisonChain.start().compareFalseFirst(this.isAmbient(), p_19566_.isAmbient()).compareFalseFirst(this.isInfiniteDuration(), p_19566_.isInfiniteDuration()).compare(this.getDuration(), p_19566_.getDuration()).compare(this.getEffect().getColor(), p_19566_.getEffect().getColor()).result() : ComparisonChain.start().compare(this.isAmbient(), p_19566_.isAmbient()).compare(this.getEffect().getColor(), p_19566_.getEffect().getColor()).result();
-+      return (this.getDuration() <= 32147 || p_19566_.getDuration() <= 32147) && (!this.isAmbient() || !p_19566_.isAmbient()) ? ComparisonChain.start().compareFalseFirst(this.isAmbient(), p_19566_.isAmbient()).compareFalseFirst(this.isInfiniteDuration(), p_19566_.isInfiniteDuration()).compare(this.getDuration(), p_19566_.getDuration()).compare(this.getEffect().getSortOrder(this), p_19566_.getEffect().getSortOrder(this)).result() : ComparisonChain.start().compare(this.isAmbient(), p_19566_.isAmbient()).compare(this.getEffect().getSortOrder(this), p_19566_.getEffect().getSortOrder(this)).result();
++      return (this.getDuration() <= 32147 || p_19566_.getDuration() <= 32147) && (!this.isAmbient() || !p_19566_.isAmbient()) ? ComparisonChain.start().compare(this.isAmbient(), p_19566_.isAmbient()).compare(this.getDuration(), p_19566_.getDuration()).compare(this.getEffect().getSortOrder(this), p_19566_.getEffect().getSortOrder(this)).result() : ComparisonChain.start().compare(this.isAmbient(), p_19566_.isAmbient()).compare(this.getEffect().getSortOrder(this), p_19566_.getEffect().getSortOrder(this)).result();
 +   }
 +
 +   //======================= FORGE START ===========================

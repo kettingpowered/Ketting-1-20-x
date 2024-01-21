@@ -1,16 +1,16 @@
 --- a/net/minecraft/client/Options.java
 +++ b/net/minecraft/client/Options.java
-@@ -507,7 +_,8 @@
+@@ -545,7 +_,8 @@
     }, new OptionInstance.LazyEnum<>(() -> {
        return Stream.concat(Stream.of(""), Minecraft.getInstance().getSoundManager().getAvailableSoundDevices().stream()).toList();
     }, (p_232011_) -> {
 -      return Minecraft.getInstance().isRunning() && p_232011_ != "" && !Minecraft.getInstance().getSoundManager().getAvailableSoundDevices().contains(p_232011_) ? Optional.empty() : Optional.of(p_232011_);
 +      // FORGE: fix incorrect string comparison - PR #8767
 +      return Minecraft.getInstance().isRunning() && (p_232011_ == null || !p_232011_.isEmpty()) && !Minecraft.getInstance().getSoundManager().getAvailableSoundDevices().contains(p_232011_) ? Optional.empty() : Optional.of(p_232011_);
-    }, Codec.STRING), "", (p_299350_) -> {
+    }, Codec.STRING), "", (p_275584_) -> {
        SoundManager soundmanager = Minecraft.getInstance().getSoundManager();
        soundmanager.reload();
-@@ -835,6 +_,7 @@
+@@ -869,6 +_,7 @@
     }
  
     public Options(Minecraft p_92138_, File p_92139_) {
@@ -18,10 +18,11 @@
        this.minecraft = p_92138_;
        this.optionsFile = new File(p_92139_, "options.txt");
        boolean flag = p_92138_.is64Bit();
-@@ -957,11 +_,20 @@
+@@ -990,11 +_,21 @@
        p_168428_.process("telemetryOptInExtra", this.telemetryOptInExtra);
        this.onboardAccessibility = p_168428_.process("onboardAccessibility", this.onboardAccessibility);
  
++      net.minecraftforge.forge.snapshots.ForgeSnapshotsMod.processOptions(p_168428_);
 +      processOptionsForge(p_168428_);
 +   }
 +   // FORGE: split off to allow reloading options after mod loading is done
@@ -41,7 +42,7 @@
           }
        }
  
-@@ -980,6 +_,9 @@
+@@ -1013,6 +_,9 @@
     }
  
     public void load() {
@@ -51,7 +52,7 @@
        try {
           if (!this.optionsFile.exists()) {
              return;
-@@ -1008,7 +_,8 @@
+@@ -1041,7 +_,8 @@
              }
           }
  
@@ -61,15 +62,15 @@
              @Nullable
              private String getValueOrNull(String p_168459_) {
                 return compoundtag1.contains(p_168459_) ? compoundtag1.getString(p_168459_) : null;
-@@ -1181,6 +_,7 @@
+@@ -1204,6 +_,7 @@
     }
  
     public void broadcastOptions() {
 +      if (net.minecraftforge.client.loading.ClientModLoader.isLoading()) return; //Don't save settings before mods add keybindigns and the like to prevent them from being deleted.
        if (this.minecraft.player != null) {
-          this.minecraft.player.connection.send(new ServerboundClientInformationPacket(this.buildPlayerInformation()));
-       }
-@@ -1239,6 +_,23 @@
+          int i = 0;
+ 
+@@ -1268,6 +_,23 @@
        }
  
        p_92146_.setSelected(set);

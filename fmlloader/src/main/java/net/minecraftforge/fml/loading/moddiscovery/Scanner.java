@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 @ApiStatus.Internal
+public //Ketting - keep compat
 class Scanner {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final ModFile fileToScan;

@@ -16,8 +16,8 @@
     }
  
     public VertexConsumer uv(float p_110805_, float p_110806_) {
--      return this.delegate.uv(this.sprite.getU(p_110805_), this.sprite.getV(p_110806_));
-+      this.delegate.uv(this.sprite.getU(p_110805_), this.sprite.getV(p_110806_));
+-      return this.delegate.uv(this.sprite.getU((double)(p_110805_ * 16.0F)), this.sprite.getV((double)(p_110806_ * 16.0F)));
++      this.delegate.uv(this.sprite.getU((double)(p_110805_ * 16.0F)), this.sprite.getV((double)(p_110806_ * 16.0F)));
 +      return this; //Forge: Fix MC-263524 not working with chained methods
     }
  

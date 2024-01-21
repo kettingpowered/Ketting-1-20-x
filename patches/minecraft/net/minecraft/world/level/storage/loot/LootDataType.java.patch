@@ -1,16 +1,54 @@
 --- a/net/minecraft/world/level/storage/loot/LootDataType.java
 +++ b/net/minecraft/world/level/storage/loot/LootDataType.java
-@@ -42,7 +_,12 @@
-       dataresult.error().ifPresent((p_297003_) -> {
-          LOGGER.error("Couldn't parse element {}:{} - {}", this.directory, p_279253_, p_297003_.message());
-       });
--      return dataresult.result();
-+      var ret = dataresult.result();
-+      if (ret.orElse(null) instanceof LootTable table) {
-+         table.setLootTableId(p_279253_);
-+         ret = Optional.ofNullable((T)net.minecraftforge.event.ForgeEventFactory.onLoadLootTable(p_279253_, table));
-+      }
-+      return ret;
+@@ -16,13 +_,13 @@
+    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final LootDataType<LootItemCondition> PREDICATE = new LootDataType<>(Deserializers.createConditionSerializer().create(), createSingleOrMultipleDeserialiser(LootItemCondition.class, LootDataManager::createComposite), "predicates", createSimpleValidator());
+    public static final LootDataType<LootItemFunction> MODIFIER = new LootDataType<>(Deserializers.createFunctionSerializer().create(), createSingleOrMultipleDeserialiser(LootItemFunction.class, LootDataManager::createComposite), "item_modifiers", createSimpleValidator());
+-   public static final LootDataType<LootTable> TABLE = new LootDataType<>(Deserializers.createLootTableSerializer().create(), createSingleDeserialiser(LootTable.class), "loot_tables", createLootTableValidator());
++   public static final LootDataType<LootTable> TABLE = new LootDataType<>(Deserializers.createLootTableSerializer().create(), net.minecraftforge.common.ForgeHooks::getLootTableDeserializer, "loot_tables", createLootTableValidator());
+    private final Gson parser;
+-   private final BiFunction<ResourceLocation, JsonElement, Optional<T>> topDeserializer;
++   private final org.apache.commons.lang3.function.TriFunction<ResourceLocation, JsonElement, net.minecraft.server.packs.resources.ResourceManager, Optional<T>> topDeserializer;
+    private final String directory;
+    private final LootDataType.Validator<T> validator;
+ 
+-   private LootDataType(Gson p_279334_, BiFunction<Gson, String, BiFunction<ResourceLocation, JsonElement, Optional<T>>> p_279478_, String p_279433_, LootDataType.Validator<T> p_279363_) {
++   private LootDataType(Gson p_279334_, BiFunction<Gson, String, org.apache.commons.lang3.function.TriFunction<ResourceLocation, JsonElement, net.minecraft.server.packs.resources.ResourceManager, Optional<T>>> p_279478_, String p_279433_, LootDataType.Validator<T> p_279363_) {
+       this.parser = p_279334_;
+       this.directory = p_279433_;
+       this.validator = p_279363_;
+@@ -41,17 +_,17 @@
+       this.validator.run(p_279366_, p_279106_, p_279124_);
+    }
+ 
+-   public Optional<T> deserialize(ResourceLocation p_279253_, JsonElement p_279330_) {
+-      return this.topDeserializer.apply(p_279253_, p_279330_);
++   public Optional<T> deserialize(ResourceLocation p_279253_, JsonElement p_279330_, net.minecraft.server.packs.resources.ResourceManager resourceManager) {
++      return this.topDeserializer.apply(p_279253_, p_279330_, resourceManager);
     }
  
     public static Stream<LootDataType<?>> values() {
+       return Stream.of(PREDICATE, MODIFIER, TABLE);
+    }
+ 
+-   private static <T> BiFunction<Gson, String, BiFunction<ResourceLocation, JsonElement, Optional<T>>> createSingleDeserialiser(Class<T> p_279251_) {
++   private static <T> BiFunction<Gson, String, org.apache.commons.lang3.function.TriFunction<ResourceLocation, JsonElement, net.minecraft.server.packs.resources.ResourceManager, Optional<T>>> createSingleDeserialiser(Class<T> p_279251_) {
+       return (p_279398_, p_279358_) -> {
+-         return (p_279297_, p_279222_) -> {
++         return (p_279297_, p_279222_, resourceManager) -> {
+             try {
+                return Optional.of(p_279398_.fromJson(p_279222_, p_279251_));
+             } catch (Exception exception) {
+@@ -62,10 +_,10 @@
+       };
+    }
+ 
+-   private static <T> BiFunction<Gson, String, BiFunction<ResourceLocation, JsonElement, Optional<T>>> createSingleOrMultipleDeserialiser(Class<T> p_279337_, Function<T[], T> p_279252_) {
++   private static <T> BiFunction<Gson, String, org.apache.commons.lang3.function.TriFunction<ResourceLocation, JsonElement, net.minecraft.server.packs.resources.ResourceManager, Optional<T>>> createSingleOrMultipleDeserialiser(Class<T> p_279337_, Function<T[], T> p_279252_) {
+       Class<T[]> oclass = (Class<T[]>)p_279337_.arrayType();
+       return (p_279462_, p_279351_) -> {
+-         return (p_279495_, p_279409_) -> {
++         return (p_279495_, p_279409_, resourceManager) -> {
+             try {
+                if (p_279409_.isJsonArray()) {
+                   T[] at = (T[])((Object[])p_279462_.fromJson(p_279409_, oclass));

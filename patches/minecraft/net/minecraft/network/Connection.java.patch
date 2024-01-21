@@ -1,9 +1,9 @@
 --- a/net/minecraft/network/Connection.java
 +++ b/net/minecraft/network/Connection.java
-@@ -82,8 +_,13 @@
+@@ -72,8 +_,13 @@
     });
     private final PacketFlow receiving;
-    private final Queue<Consumer<Connection>> pendingActions = Queues.newConcurrentLinkedQueue();
+    private final Queue<Connection.PacketHolder> queue = Queues.newConcurrentLinkedQueue();
 -   private Channel channel;
 -   private SocketAddress address;
 +   public Channel channel;
@@ -13,34 +13,42 @@
 +   public com.mojang.authlib.properties.Property[] spoofedProfile;
 +   public boolean preparing = true;
 +   // Spigot End
+    private PacketListener packetListener;
+    private Component disconnectedReason;
+    private boolean encrypted;
+@@ -86,6 +_,8 @@
+    private boolean handlingFault;
     @Nullable
-    private volatile PacketListener disconnectListener;
-    @Nullable
-@@ -102,15 +_,23 @@
     private volatile Component delayedDisconnect;
-    @Nullable
-    BandwidthDebugMonitor bandwidthDebugMonitor;
 +   private java.util.function.Consumer<Connection> activationHandler;
-+   private final net.minecraftforge.common.util.PacketLogger packetLogger;
 +   public String hostname = ""; // CraftBukkit - add field
  
     public Connection(PacketFlow p_129482_) {
        this.receiving = p_129482_;
-+      this.packetLogger = new net.minecraftforge.common.util.PacketLogger(this);
-    }
- 
-    public void channelActive(ChannelHandlerContext p_129525_) throws Exception {
+@@ -95,6 +_,11 @@
        super.channelActive(p_129525_);
        this.channel = p_129525_.channel();
        this.address = this.channel.remoteAddress();
 +      if (activationHandler != null) activationHandler.accept(this);
++
 +      // Spigot Start
 +      this.preparing = false;
 +      // Spigot End
-       if (this.delayedDisconnect != null) {
-          this.disconnect(this.delayedDisconnect);
-       }
-@@ -159,6 +_,7 @@
+ 
+       try {
+          this.setProtocol(ConnectionProtocol.HANDSHAKING);
+@@ -111,8 +_,10 @@
+    public void setProtocol(ConnectionProtocol p_129499_) {
+       this.channel.attr(ATTRIBUTE_PROTOCOL).set(p_129499_);
+       this.channel.attr(BundlerInfo.BUNDLER_PROVIDER).set(p_129499_);
++      this.channel.eventLoop().execute(()-> {
+       this.channel.config().setAutoRead(true);
+       LOGGER.debug("Enabled auto read");
++      });
+    }
+ 
+    public void channelInactive(ChannelHandlerContext p_129527_) {
+@@ -147,6 +_,7 @@
  
           }
        }
@@ -48,39 +56,7 @@
     }
  
     protected void channelRead0(ChannelHandlerContext p_129487_, Packet<?> p_129488_) {
-@@ -169,6 +_,7 @@
-          } else {
-             if (packetlistener.shouldHandleMessage(p_129488_)) {
-                try {
-+                  packetLogger.recv(p_129488_);
-                   genericsFtw(p_129488_, packetlistener);
-                } catch (RunningOnDifferentThreadException runningondifferentthreadexception) {
-                } catch (RejectedExecutionException rejectedexecutionexception) {
-@@ -237,7 +_,8 @@
-       this.runOnceConnected((p_296374_) -> {
-          p_296374_.setClientboundProtocolAfterHandshake(p_297789_);
-          this.setListener(p_298739_);
--         p_296374_.sendPacket(new ClientIntentionPacket(SharedConstants.getCurrentVersion().getProtocolVersion(), p_300730_, p_300598_, p_297789_), (PacketSendListener)null, true);
-+         // TODO: Change this to be a immediately sent login custom payload packet?
-+         p_296374_.sendPacket(new ClientIntentionPacket(SharedConstants.getCurrentVersion().getProtocolVersion(), net.minecraftforge.network.NetworkContext.enhanceHostName(p_300730_), p_300598_, p_297789_), (PacketSendListener)null, true);
-       });
-    }
- 
-@@ -289,6 +_,7 @@
- 
-    private void doSendPacket(Packet<?> p_243260_, @Nullable PacketSendListener p_243290_, boolean p_299937_) {
-       ChannelFuture channelfuture = p_299937_ ? this.channel.writeAndFlush(p_243260_) : this.channel.write(p_243260_);
-+      channelfuture.addListener(f -> packetLogger.send(p_243260_));
-       if (p_243290_ != null) {
-          channelfuture.addListener((p_243167_) -> {
-             if (p_243167_.isSuccess()) {
-@@ -395,11 +_,14 @@
-       if (this.address == null) {
-          return "local";
-       } else {
--         return p_298740_ ? this.address.toString() : "IP hidden";
-+         return p_298740_ ? net.minecraftforge.network.DualStackUtils.getAddressString(this.address) : "IP hidden";
-       }
+@@ -285,6 +_,9 @@
     }
  
     public void disconnect(Component p_129508_) {
@@ -90,24 +66,24 @@
        if (this.channel == null) {
           this.delayedDisconnect = p_129508_;
        }
-@@ -435,6 +_,8 @@
+@@ -316,6 +_,8 @@
     }
  
     public static ChannelFuture connect(InetSocketAddress p_290034_, boolean p_290035_, final Connection p_290031_) {
 +      net.minecraftforge.network.DualStackUtils.checkIPv6(p_290034_.getAddress());
-+      p_290031_.activationHandler = net.minecraftforge.network.NetworkRegistry::onConnectionStart;
++      p_290031_.activationHandler = net.minecraftforge.network.NetworkHooks::registerClientLoginChannel;
        Class<? extends SocketChannel> oclass;
-       EventLoopGroup eventloopgroup;
+       LazyLoadedValue<? extends EventLoopGroup> lazyloadedvalue;
        if (Epoll.isAvailable() && p_290035_) {
-@@ -485,6 +_,7 @@
+@@ -347,6 +_,7 @@
  
     public static Connection connectToLocalServer(SocketAddress p_129494_) {
        final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
-+      connection.activationHandler = net.minecraftforge.network.NetworkRegistry::onConnectionStart;
++      connection.activationHandler = net.minecraftforge.network.NetworkHooks::registerClientLoginChannel;
        (new Bootstrap()).group(LOCAL_WORKER_GROUP.get()).handler(new ChannelInitializer<Channel>() {
           protected void initChannel(Channel p_129557_) {
-             Connection.setInitialProtocolAttributes(p_129557_);
-@@ -581,6 +_,14 @@
+             ChannelPipeline channelpipeline = p_129557_.pipeline();
+@@ -437,6 +_,14 @@
  
     public float getAverageSentPackets() {
        return this.averageSentPackets;
@@ -117,8 +93,8 @@
 +      return this.channel;
 +   }
 +
-+   public ConnectionProtocol getProtocol() {
-+      return this.channel.attr(getProtocolKey(getSending())).get().protocol();
++   public PacketFlow getDirection() {
++      return this.receiving;
     }
  
-    public void setBandwidthLogger(SampleLogger p_300126_) {
+    static class PacketHolder {

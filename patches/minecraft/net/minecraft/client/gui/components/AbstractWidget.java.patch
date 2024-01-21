@@ -1,9 +1,22 @@
 --- a/net/minecraft/client/gui/components/AbstractWidget.java
 +++ b/net/minecraft/client/gui/components/AbstractWidget.java
-@@ -259,6 +_,19 @@
-       this.focused = p_93693_;
+@@ -234,6 +_,10 @@
+       this.width = p_93675_;
     }
  
++   public void setHeight(int value) {
++      this.height = value;
++   }
++
+    public void setAlpha(float p_93651_) {
+       this.alpha = p_93651_;
+    }
+@@ -264,6 +_,19 @@
+ 
+    public void setFocused(boolean p_93693_) {
+       this.focused = p_93693_;
++   }
++
 +   public static final int UNSET_FG_COLOR = -1;
 +   protected int packedFGColor = UNSET_FG_COLOR;
 +   public int getFGColor() {
@@ -15,8 +28,6 @@
 +   }
 +   public void clearFGColor() {
 +      this.packedFGColor = UNSET_FG_COLOR;
-+   }
-+
+    }
+ 
     public NarratableEntry.NarrationPriority narrationPriority() {
-       if (this.isFocused()) {
-          return NarratableEntry.NarrationPriority.FOCUSED;

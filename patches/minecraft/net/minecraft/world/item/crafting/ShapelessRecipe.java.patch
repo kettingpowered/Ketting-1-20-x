@@ -1,13 +1,14 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -18,13 +_,31 @@
+@@ -20,6 +_,7 @@
     final CraftingBookCategory category;
     final ItemStack result;
     final NonNullList<Ingredient> ingredients;
 +   private final boolean isSimple;
  
-    public ShapelessRecipe(String p_249640_, CraftingBookCategory p_249390_, ItemStack p_252071_, NonNullList<Ingredient> p_250689_) {
-       this.group = p_249640_;
+    public ShapelessRecipe(ResourceLocation p_251840_, String p_249640_, CraftingBookCategory p_249390_, ItemStack p_252071_, NonNullList<Ingredient> p_250689_) {
+       this.id = p_251840_;
+@@ -27,7 +_,24 @@
        this.category = p_249390_;
        this.result = p_252071_;
        this.ingredients = p_250689_;
@@ -18,22 +19,22 @@
 +   // CraftBukkit start
 +   @SuppressWarnings("unchecked")
 +   @Override
-+   public org.bukkit.inventory.ShapelessRecipe toBukkitRecipe(org.bukkit.NamespacedKey id) {
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(this.result);
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftShapelessRecipe recipe = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftShapelessRecipe(id, result, this);
++   public org.bukkit.inventory.ShapelessRecipe toBukkitRecipe() {
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(this.result);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftShapelessRecipe recipe = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftShapelessRecipe(org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(this.id), result);
 +      recipe.setGroup(this.group);
-+      recipe.setCategory(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.getCategory(this.category()));
++      recipe.setCategory(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.getCategory(this.category()));
 +
 +      for (Ingredient list : this.ingredients) {
-+         recipe.addIngredient(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(list));
++         recipe.addIngredient(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(list));
 +      }
 +      return recipe;
 +   }
 +   // CraftBukkit end
  
-    public RecipeSerializer<?> getSerializer() {
-       return RecipeSerializer.SHAPELESS_RECIPE;
-@@ -48,17 +_,20 @@
+    public ResourceLocation getId() {
+       return this.id;
+@@ -55,17 +_,20 @@
  
     public boolean matches(CraftingContainer p_44262_, Level p_44263_) {
        StackedContents stackedcontents = new StackedContents();
@@ -55,12 +56,30 @@
     }
  
     public ItemStack assemble(CraftingContainer p_44260_, RegistryAccess p_266797_) {
-@@ -88,7 +_,7 @@
-                   return "No ingredients for shapeless recipe";
-                });
-             } else {
--               return aingredient.length > 9 ? DataResult.error(() -> {
-+               return aingredient.length > ShapedRecipe.MAX_WIDTH * ShapedRecipe.MAX_HEIGHT ? DataResult.error(() -> {
-                   return "Too many ingredients for shapeless recipe";
-                }) : DataResult.success(NonNullList.of(Ingredient.EMPTY, aingredient));
+@@ -77,14 +_,15 @@
+    }
+ 
+    public static class Serializer implements RecipeSerializer<ShapelessRecipe> {
++      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shapeless");
+       public ShapelessRecipe fromJson(ResourceLocation p_44290_, JsonObject p_44291_) {
+          String s = GsonHelper.getAsString(p_44291_, "group", "");
+          CraftingBookCategory craftingbookcategory = CraftingBookCategory.CODEC.byName(GsonHelper.getAsString(p_44291_, "category", (String)null), CraftingBookCategory.MISC);
+          NonNullList<Ingredient> nonnulllist = itemsFromJson(GsonHelper.getAsJsonArray(p_44291_, "ingredients"));
+          if (nonnulllist.isEmpty()) {
+             throw new JsonParseException("No ingredients for shapeless recipe");
+-         } else if (nonnulllist.size() > 9) {
+-            throw new JsonParseException("Too many ingredients for shapeless recipe");
++         } else if (nonnulllist.size() > ShapedRecipe.MAX_WIDTH * ShapedRecipe.MAX_HEIGHT) {
++            throw new JsonParseException("Too many ingredients for shapeless recipe. The maximum is " + (ShapedRecipe.MAX_WIDTH * ShapedRecipe.MAX_HEIGHT));
+          } else {
+             ItemStack itemstack = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(p_44291_, "result"));
+             return new ShapelessRecipe(p_44290_, s, craftingbookcategory, itemstack, nonnulllist);
+@@ -96,7 +_,7 @@
+ 
+          for(int i = 0; i < p_44276_.size(); ++i) {
+             Ingredient ingredient = Ingredient.fromJson(p_44276_.get(i), false);
+-            if (!ingredient.isEmpty()) {
++            if (true || !ingredient.isEmpty()) { // FORGE: Skip checking if an ingredient is empty during shapeless recipe deserialization to prevent complex ingredients from caching tags too early. Can not be done using a config value due to sync issues.
+                nonnulllist.add(ingredient);
              }
+          }

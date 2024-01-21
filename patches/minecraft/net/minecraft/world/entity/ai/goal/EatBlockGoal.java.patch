@@ -6,7 +6,7 @@
           if (IS_TALL_GRASS.test(this.level.getBlockState(blockpos))) {
 -            if (this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
 +            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.mob) &&
-+                            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockpos, Blocks.AIR.defaultBlockState(), !this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) { // CraftBukkit
++                            org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockpos, Blocks.AIR.defaultBlockState(), !this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) { // CraftBukkit
                 this.level.destroyBlock(blockpos, false);
              }
  
@@ -16,7 +16,7 @@
              if (this.level.getBlockState(blockpos1).is(Blocks.GRASS_BLOCK)) {
 -               if (this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
 +               if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.mob) &&
-+                       org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockpos1, Blocks.AIR.defaultBlockState(), !this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) { // CraftBukkit
++                       org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockpos1, Blocks.AIR.defaultBlockState(), !this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) { // CraftBukkit
                    this.level.levelEvent(2001, blockpos1, Block.getId(Blocks.GRASS_BLOCK.defaultBlockState()));
                    this.level.setBlock(blockpos1, Blocks.DIRT.defaultBlockState(), 2);
                 }

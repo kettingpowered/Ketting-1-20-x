@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/npc/Villager.java
 +++ b/net/minecraft/world/entity/npc/Villager.java
-@@ -145,7 +_,7 @@
+@@ -144,7 +_,7 @@
     }
  
     public Brain<Villager> getBrain() {
@@ -9,7 +9,7 @@
     }
  
     protected Brain.Provider<Villager> brainProvider() {
-@@ -205,6 +_,17 @@
+@@ -204,6 +_,17 @@
        return this.assignProfessionWhenSpawned;
     }
  
@@ -27,7 +27,7 @@
     protected void customServerAiStep() {
        this.level().getProfiler().push("villagerBrain");
        this.getBrain().tick((ServerLevel)this.level(), this);
-@@ -221,7 +_,7 @@
+@@ -220,7 +_,7 @@
                 this.increaseProfessionLevelOnUpdate = false;
              }
  
@@ -36,7 +36,7 @@
           }
        }
  
-@@ -256,7 +_,7 @@
+@@ -255,7 +_,7 @@
  
     public InteractionResult mobInteract(Player p_35472_, InteractionHand p_35473_) {
        ItemStack itemstack = p_35472_.getItemInHand(p_35473_);
@@ -45,7 +45,7 @@
           if (this.isBaby()) {
              this.setUnhappy();
              return InteractionResult.sidedSuccess(this.level().isClientSide);
-@@ -332,7 +_,13 @@
+@@ -331,7 +_,13 @@
        this.updateDemand();
  
        for(MerchantOffer merchantoffer : this.getOffers()) {
@@ -60,7 +60,7 @@
        }
  
        this.resendOffersToTradingPlayer();
-@@ -387,7 +_,13 @@
+@@ -386,7 +_,13 @@
        int i = 2 - this.numberOfRestocksToday;
        if (i > 0) {
           for(MerchantOffer merchantoffer : this.getOffers()) {
@@ -75,7 +75,7 @@
           }
        }
  
-@@ -561,7 +_,7 @@
+@@ -560,7 +_,7 @@
     }
  
     public void die(DamageSource p_35419_) {
@@ -84,7 +84,7 @@
        Entity entity = p_35419_.getEntity();
        if (entity != null) {
           this.tellWitnessesThatIWasMurdered(entity);
-@@ -670,7 +_,8 @@
+@@ -669,7 +_,8 @@
     }
  
     protected Component getTypeName() {
@@ -94,7 +94,7 @@
     }
  
     public void handleEntityEvent(byte p_35391_) {
-@@ -723,7 +_,7 @@
+@@ -722,7 +_,7 @@
     }
  
     public void thunderHit(ServerLevel p_35409_, LightningBolt p_35410_) {
@@ -103,14 +103,14 @@
           LOGGER.info("Villager {} was struck by lightning {}.", this, p_35410_);
           Witch witch = EntityType.WITCH.create(p_35409_);
           if (witch != null) {
-@@ -736,7 +_,13 @@
+@@ -735,7 +_,13 @@
              }
  
              witch.setPersistenceRequired();
 -            p_35409_.addFreshEntityWithPassengers(witch);
 +         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, witch);
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTransformEvent(this, witch, org.bukkit.event.entity.EntityTransformEvent.TransformReason.LIGHTNING).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTransformEvent(this, witch, org.bukkit.event.entity.EntityTransformEvent.TransformReason.LIGHTNING).isCancelled()) {
 +               return;
 +            }
 +            p_35409_.addFreshEntityWithPassengers(witch, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
@@ -118,11 +118,11 @@
              this.releaseAllPois();
              this.discard();
           } else {
-@@ -824,7 +_,7 @@
+@@ -816,7 +_,7 @@
              return p_186293_.wantsToSpawnGolem(p_35399_);
           }).limit(5L).collect(Collectors.toList());
           if (list1.size() >= p_35400_) {
--            if (!SpawnUtil.trySpawnMob(EntityType.IRON_GOLEM, MobSpawnType.MOB_SUMMONED, p_35398_, this.blockPosition(), 10, 8, 6, SpawnUtil.Strategy.LEGACY_IRON_GOLEM).isEmpty()) {
+-            if (SpawnUtil.trySpawnMob(EntityType.IRON_GOLEM, MobSpawnType.MOB_SUMMONED, p_35398_, this.blockPosition(), 10, 8, 6, SpawnUtil.Strategy.LEGACY_IRON_GOLEM).isPresent()) {
 +            if (!SpawnUtil.trySpawnMob(EntityType.IRON_GOLEM, MobSpawnType.MOB_SUMMONED, p_35398_, this.blockPosition(), 10, 8, 6, SpawnUtil.Strategy.LEGACY_IRON_GOLEM, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE).isEmpty()) { // CraftBukkit
                 list.forEach(GolemSensor::golemDetected);
              }

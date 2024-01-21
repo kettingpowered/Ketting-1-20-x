@@ -1,0 +1,19 @@
+--- a/net/minecraft/server/packs/metadata/pack/PackMetadataSectionSerializer.java
++++ b/net/minecraft/server/packs/metadata/pack/PackMetadataSectionSerializer.java
+@@ -13,7 +_,7 @@
+          throw new JsonParseException("Invalid/missing description!");
+       } else {
+          int i = GsonHelper.getAsInt(p_10380_, "pack_format");
+-         return new PackMetadataSection(component, i);
++         return new PackMetadataSection(component, i, net.minecraftforge.common.ForgeHooks.readTypedPackFormats(p_10380_));
+       }
+    }
+ 
+@@ -21,6 +_,7 @@
+       JsonObject jsonobject = new JsonObject();
+       jsonobject.add("description", Component.Serializer.toJsonTree(p_250206_.getDescription()));
+       jsonobject.addProperty("pack_format", p_250206_.getPackFormat());
++      net.minecraftforge.common.ForgeHooks.writeTypedPackFormats(jsonobject, p_250206_);
+       return jsonobject;
+    }
+ 

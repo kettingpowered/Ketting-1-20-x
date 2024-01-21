@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/block/PitcherCropBlock.java
++++ b/net/minecraft/world/level/block/PitcherCropBlock.java
+@@ -69,7 +_,11 @@
+       if (!isLower(p_277671_)) {
+          return super.canSurvive(p_277671_, p_277477_, p_278085_);
+       } else {
+-         return this.mayPlaceOn(p_277477_.getBlockState(p_278085_.below()), p_277477_, p_278085_.below()) && sufficientLight(p_277477_, p_278085_) && (p_277671_.getValue(AGE) < 3 || isUpper(p_277477_.getBlockState(p_278085_.above())));
++         BlockPos below = p_278085_.below();
++         boolean isSoil = this.mayPlaceOn(p_277477_.getBlockState(below), p_277477_, below);
++         if (p_277671_.getBlock() == this) //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
++            isSoil = p_277477_.getBlockState(below).canSustainPlant(p_277477_, below, Direction.UP, this);
++         return isSoil && sufficientLight(p_277477_, p_278085_) && (p_277671_.getValue(AGE) < 3 || isUpper(p_277477_.getBlockState(p_278085_.above())));
+       }
+    }
+ 

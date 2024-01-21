@@ -6,9 +6,9 @@
     private boolean wasAccessibleSinceLastSave;
 +   LevelChunk currentlyLoading; // Forge: Used to bypass future chain when loading chunks.
     private CompletableFuture<Void> pendingFullStateConfirmation = CompletableFuture.completedFuture((Void)null);
-    private CompletableFuture<?> sendSync = CompletableFuture.completedFuture((Object)null);
  
-@@ -79,6 +_,20 @@
+    public ChunkHolder(ChunkPos p_142986_, int p_142987_, LevelHeightAccessor p_142988_, LevelLightEngine p_142989_, ChunkHolder.LevelChangeListener p_142990_, ChunkHolder.PlayerProvider p_142991_) {
+@@ -78,6 +_,20 @@
        this.changedBlocksPerSection = new ShortSet[p_142988_.getSectionsCount()];
     }
  
@@ -29,7 +29,7 @@
     public CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> getFutureIfPresentUnchecked(ChunkStatus p_140048_) {
        CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> completablefuture = this.futures.get(p_140048_.getIndex());
        return completablefuture == null ? UNLOADED_CHUNK_FUTURE : completablefuture;
-@@ -160,6 +_,8 @@
+@@ -150,6 +_,8 @@
        LevelChunk levelchunk = this.getTickingChunk();
        if (levelchunk != null) {
           int i = this.levelHeightAccessor.getSectionIndex(p_140057_.getY());
@@ -38,7 +38,7 @@
           if (this.changedBlocksPerSection[i] == null) {
              this.hasChangedSections = true;
              this.changedBlocksPerSection[i] = new ShortOpenHashSet();
-@@ -226,8 +_,11 @@
+@@ -216,8 +_,11 @@
                          LevelChunkSection levelchunksection = p_140055_.getSection(j);
                          ClientboundSectionBlocksUpdatePacket clientboundsectionblocksupdatepacket = new ClientboundSectionBlocksUpdatePacket(sectionpos, shortset, levelchunksection);
                          this.broadcast(list1, clientboundsectionblocksupdatepacket);
@@ -51,7 +51,7 @@
                          });
                       }
                    }
-@@ -373,6 +_,31 @@
+@@ -352,6 +_,31 @@
        boolean flag1 = ChunkLevel.isLoaded(this.ticketLevel);
        FullChunkStatus fullchunkstatus = ChunkLevel.fullStatus(this.oldTicketLevel);
        FullChunkStatus fullchunkstatus1 = ChunkLevel.fullStatus(this.ticketLevel);
@@ -83,7 +83,7 @@
        if (flag) {
           Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either = Either.right(new ChunkHolder.ChunkLoadingFailure() {
              public String toString() {
-@@ -438,6 +_,26 @@
+@@ -417,6 +_,26 @@
  
        this.onLevelChange.onLevelChange(this.pos, this::getQueueLevel, this.ticketLevel, this::setQueueLevel);
        this.oldTicketLevel = this.ticketLevel;

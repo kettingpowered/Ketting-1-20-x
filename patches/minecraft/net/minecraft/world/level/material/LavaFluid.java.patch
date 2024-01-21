@@ -7,7 +7,7 @@
 -                     p_230572_.setBlockAndUpdate(blockpos, BaseFireBlock.getState(p_230572_, blockpos));
 +                     // CraftBukkit start - Prevent lava putting something on fire
 +                     if (p_230572_.getBlockState(blockpos).getBlock() != Blocks.FIRE) {
-+                        if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(p_230572_, blockpos, p_230573_).isCancelled()) {
++                        if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockIgniteEvent(p_230572_, blockpos, p_230573_).isCancelled()) {
 +                           continue;
 +                        }
 +                     }
@@ -26,7 +26,7 @@
 +                  // CraftBukkit start - Prevent lava putting something on fire
 +                  BlockPos up = blockpos1.above();
 +                  if (p_230572_.getBlockState(up).getBlock() != Blocks.FIRE) {
-+                     if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(p_230572_, up, p_230573_).isCancelled()) {
++                     if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockIgniteEvent(p_230572_, up, p_230573_).isCancelled()) {
 +                        continue;
 +                     }
 +                  }
@@ -55,7 +55,7 @@
     }
  
 +   private boolean isFlammable(LevelReader level, BlockPos pos, Direction face) {
-+      return pos.getY() >= level.getMinBuildHeight() && pos.getY() < level.getMaxBuildHeight() && !level.hasChunkAt(pos) ? false : level.getBlockState(pos).ignitedByLava() && level.getBlockState(pos).isFlammable(level, pos, face);
++      return pos.getY() >= level.getMinBuildHeight() && pos.getY() < level.getMaxBuildHeight() && !level.hasChunkAt(pos) ? false : level.getBlockState(pos).isFlammable(level, pos, face);
 +   }
 +
     @Nullable
@@ -67,7 +67,7 @@
              if (p_76222_.getBlock() instanceof LiquidBlock) {
 -               p_76220_.setBlock(p_76221_, Blocks.STONE.defaultBlockState(), 3);
 +               // CraftBukkit start
-+               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(p_76220_.getMinecraftWorld(), p_76221_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_76220_, p_76221_, p_76221_, Blocks.STONE.defaultBlockState()), 3)) { //Ketting
++               if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormEvent(p_76220_.getMinecraftWorld(), p_76221_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_76220_, p_76221_, p_76221_, Blocks.STONE.defaultBlockState()), 3)) { //Ketting
 +                  return;
 +               }
 +               // CraftBukkit end

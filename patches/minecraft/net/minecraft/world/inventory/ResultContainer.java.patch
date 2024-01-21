@@ -2,7 +2,7 @@
 +++ b/net/minecraft/world/inventory/ResultContainer.java
 @@ -13,6 +_,39 @@
     @Nullable
-    private RecipeHolder<?> recipeUsed;
+    private Recipe<?> recipeUsed;
  
 +   // CraftBukkit start
 +   private int maxStack = MAX_STACK;
@@ -16,8 +16,8 @@
 +   }
 +
 +   // Don't need a transaction; the InventoryCrafting keeps track of it for us
-+   public void onOpen(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {}
-+   public void onClose(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {}
++   public void onOpen(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {}
++   public void onClose(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {}
 +   public java.util.List<org.bukkit.entity.HumanEntity> getViewers() {
 +      return new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
 +   }

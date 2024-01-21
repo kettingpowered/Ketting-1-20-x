@@ -14,6 +14,7 @@ import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
  * @see RegisterGuiOverlaysEvent
  */
 @FunctionalInterface
-public interface IGuiOverlay {
+public interface IGuiOverlay
+{
     void render(ForgeGui gui, GuiGraphics guiGraphics, float partialTick, int screenWidth, int screenHeight);
 }

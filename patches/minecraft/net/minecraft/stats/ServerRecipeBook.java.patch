@@ -2,10 +2,10 @@
 +++ b/net/minecraft/stats/ServerRecipeBook.java
 @@ -29,7 +_,7 @@
  
-       for(RecipeHolder<?> recipeholder : p_12792_) {
-          ResourceLocation resourcelocation = recipeholder.id();
--         if (!this.known.contains(resourcelocation) && !recipeholder.value().isSpecial()) {
-+         if (!this.known.contains(resourcelocation) && !recipeholder.value().isSpecial() && org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handlePlayerRecipeListUpdateEvent(p_12793_, resourcelocation)) { // CraftBukkit
+       for(Recipe<?> recipe : p_12792_) {
+          ResourceLocation resourcelocation = recipe.getId();
+-         if (!this.known.contains(resourcelocation) && !recipe.isSpecial()) {
++         if (!this.known.contains(resourcelocation) && !recipe.isSpecial() && org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handlePlayerRecipeListUpdateEvent(p_12793_, resourcelocation)) { // CraftBukkit
              this.add(resourcelocation);
              this.addHighlight(resourcelocation);
              list.add(resourcelocation);

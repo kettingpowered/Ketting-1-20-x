@@ -21,7 +21,6 @@ import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
@@ -336,7 +335,7 @@ public final class PluginDescriptionFile {
      * <li>An entry of this list can be referenced in {@link #getDepend()},
      *    {@link #getSoftDepend()}, and {@link #getLoadBefore()}.
      * <li><code>provides</code> must be in <a
-     *     href="https://en.wikipedia.org/wiki/YAML#Lists">YAML list
+     *     href="http://en.wikipedia.org/wiki/YAML#Lists">YAML list
      *     format</a>.
      * </ul>
      * <p>
@@ -455,7 +454,7 @@ public final class PluginDescriptionFile {
      * <li>A SpigotMC forum handle or email address is recommended.
      * <li>Is displayed when a user types <code>/version PluginName</code>
      * <li><code>authors</code> must be in <a
-     *     href="https://en.wikipedia.org/wiki/YAML#Lists">YAML list
+     *     href="http://en.wikipedia.org/wiki/YAML#Lists">YAML list
      *     format</a>.
      * </ul>
      * <p>
@@ -492,7 +491,7 @@ public final class PluginDescriptionFile {
      * <li>A SpigotMC forum handle or email address is recommended.
      * <li>Is displayed when a user types <code>/version PluginName</code>
      * <li><code>contributors</code> must be in <a
-     *     href="https://en.wikipedia.org/wiki/YAML#Lists">YAML list
+     *     href="http://en.wikipedia.org/wiki/YAML#Lists">YAML list
      *     format</a>.
      * </ul>
      * <p>
@@ -539,7 +538,7 @@ public final class PluginDescriptionFile {
      *     href=https://en.wikipedia.org/wiki/Circular_dependency>network</a>,
      *     all plugins in that network will fail.
      * <li><code>depend</code> must be in <a
-     *     href="https://en.wikipedia.org/wiki/YAML#Lists">YAML list
+     *     href="http://en.wikipedia.org/wiki/YAML#Lists">YAML list
      *     format</a>.
      * </ul>
      * <p>
@@ -571,7 +570,7 @@ public final class PluginDescriptionFile {
      *     or soft-dependending each other), it will arbitrarily choose a
      *     plugin that can be resolved when ignoring soft-dependencies.
      * <li><code>softdepend</code> must be in <a
-     *     href="https://en.wikipedia.org/wiki/YAML#Lists">YAML list
+     *     href="http://en.wikipedia.org/wiki/YAML#Lists">YAML list
      *     format</a>.
      * </ul>
      * <p>
@@ -598,7 +597,7 @@ public final class PluginDescriptionFile {
      *     specified plugin's {@link #getSoftDepend()} include {@link
      *     #getName() this plugin}.
      * <li><code>loadbefore</code> must be in <a
-     *     href="https://en.wikipedia.org/wiki/YAML#Lists">YAML list
+     *     href="http://en.wikipedia.org/wiki/YAML#Lists">YAML list
      *     format</a>.
      * </ul>
      * <p>
@@ -662,7 +661,7 @@ public final class PluginDescriptionFile {
      *     <td><code>aliases</code></td>
      *     <td>{@link PluginCommand#setAliases(List)}</td>
      *     <td>String or <a
-     *         href="https://en.wikipedia.org/wiki/YAML#Lists">List</a> of
+     *         href="http://en.wikipedia.org/wiki/YAML#Lists">List</a> of
      *         strings</td>
      *     <td>Alternative command names, with special usefulness for commands
      *         that are already registered. <i>Aliases are not effective when
@@ -810,7 +809,7 @@ public final class PluginDescriptionFile {
      *         <p>
      *         Child permissions may be defined in a number of ways:<ul>
      *         <li>Children may be defined as a <a
-     *             href="https://en.wikipedia.org/wiki/YAML#Lists">list</a> of
+     *             href="http://en.wikipedia.org/wiki/YAML#Lists">list</a> of
      *             names. Using a list will treat all children associated
      *             positively to their parent.
      *         <li>Children may be defined as a map. Each permission name maps
@@ -918,7 +917,7 @@ public final class PluginDescriptionFile {
      *     by the API, effectively discluding any derived type from any
      *     plugin's classpath.
      * <li><code>awareness</code> must be in <a
-     *     href="https://en.wikipedia.org/wiki/YAML#Lists">YAML list
+     *     href="http://en.wikipedia.org/wiki/YAML#Lists">YAML list
      *     format</a>.
      * </ul>
      * <p>
@@ -1268,9 +1267,9 @@ public final class PluginDescriptionFile {
 
     /**
      * @return internal use
-     * @apiNote Internal use
+     * @deprecated Internal use
      */
-    @ApiStatus.Internal
+    @Deprecated
     @NotNull
     public String getRawName() {
         return rawName;

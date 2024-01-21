@@ -1,16 +1,19 @@
 --- a/net/minecraft/world/entity/animal/Parrot.java
 +++ b/net/minecraft/world/entity/animal/Parrot.java
-@@ -246,7 +_,7 @@
+@@ -245,7 +_,7 @@
           }
  
           if (!this.level().isClientSide) {
 -            if (this.random.nextInt(10) == 0) {
-+            if (this.random.nextInt(10) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29414_) && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTameEvent(this, p_29414_).isCancelled()) { // CraftBukkit
++            if (this.random.nextInt(10) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29414_) && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTameEvent(this, p_29414_).isCancelled()) { // CraftBukkit
                 this.tame(p_29414_);
                 this.level().broadcastEntityEvent(this, (byte)7);
              } else {
-@@ -260,7 +_,7 @@
+@@ -257,9 +_,10 @@
+       } else if (itemstack.is(POISONOUS_FOOD)) {
+          if (!p_29414_.getAbilities().instabuild) {
              itemstack.shrink(1);
++            itemstack.shrink(1);
           }
  
 -         this.addEffect(new MobEffectInstance(MobEffects.POISON, 900));
@@ -18,7 +21,7 @@
           if (p_29414_.isCreative() || !this.isInvulnerable()) {
              this.hurt(this.damageSources().playerAttack(p_29414_), Float.MAX_VALUE);
           }
-@@ -353,7 +_,7 @@
+@@ -352,7 +_,7 @@
     }
  
     public boolean isPushable() {
@@ -27,7 +30,7 @@
     }
  
     protected void doPush(Entity p_29367_) {
-@@ -366,11 +_,14 @@
+@@ -365,11 +_,14 @@
        if (this.isInvulnerableTo(p_29378_)) {
           return false;
        } else {

@@ -1,19 +1,26 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractMinecart.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractMinecart.java
-@@ -48,7 +_,7 @@
+@@ -45,7 +_,7 @@
+ import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
- import org.joml.Vector3f;
  
 -public abstract class AbstractMinecart extends Entity {
 +public abstract class AbstractMinecart extends Entity implements net.minecraftforge.common.extensions.IForgeAbstractMinecart {
-    private static final float LOWERED_PASSENGER_ATTACHMENT_Y = 0.0F;
-    private static final float PASSENGER_ATTACHMENT_Y = 0.1875F;
     private static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(AbstractMinecart.class, EntityDataSerializers.INT);
-@@ -88,6 +_,19 @@
+    private static final EntityDataAccessor<Integer> DATA_ID_HURTDIR = SynchedEntityData.defineId(AbstractMinecart.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(AbstractMinecart.class, EntityDataSerializers.FLOAT);
+@@ -76,6 +_,7 @@
        p_38135_.put(RailShape.NORTH_WEST, Pair.of(vec3i2, vec3i));
        p_38135_.put(RailShape.NORTH_EAST, Pair.of(vec3i2, vec3i1));
     });
 +   private static net.minecraftforge.common.IMinecartCollisionHandler COLLISIONS = null;
+    private int lSteps;
+    private double lx;
+    private double ly;
+@@ -85,6 +_,18 @@
+    private double lxd;
+    private double lyd;
+    private double lzd;
 +   private boolean canBePushed = true;
 +
 +   // CraftBukkit start
@@ -29,7 +36,7 @@
  
     protected AbstractMinecart(EntityType<?> p_38087_, Level p_38088_) {
        super(p_38087_, p_38088_);
-@@ -102,6 +_,14 @@
+@@ -99,6 +_,14 @@
        this.zo = p_38094_;
     }
  
@@ -44,7 +51,7 @@
     public static AbstractMinecart createMinecart(Level p_38120_, double p_38121_, double p_38122_, double p_38123_, AbstractMinecart.Type p_38124_) {
        if (p_38124_ == AbstractMinecart.Type.CHEST) {
           return new MinecartChest(p_38120_, p_38121_, p_38122_, p_38123_);
-@@ -136,7 +_,7 @@
+@@ -133,7 +_,7 @@
     }
  
     public boolean isPushable() {
@@ -53,7 +60,7 @@
     }
  
     protected Vec3 getRelativePortalPosition(Direction.Axis p_38132_, BlockUtil.FoundRectangle p_38133_) {
-@@ -204,6 +_,19 @@
+@@ -200,6 +_,19 @@
           if (this.isInvulnerableTo(p_38117_)) {
              return false;
           } else {
@@ -73,7 +80,7 @@
              this.setHurtDir(-this.getHurtDir());
              this.setHurtTime(10);
              this.markHurt();
-@@ -211,6 +_,15 @@
+@@ -207,6 +_,15 @@
              this.gameEvent(GameEvent.ENTITY_DAMAGE, p_38117_.getEntity());
              boolean flag = p_38117_.getEntity() instanceof Player && ((Player)p_38117_.getEntity()).getAbilities().instabuild;
              if (flag || this.getDamage() > 40.0F) {
@@ -89,7 +96,7 @@
                 this.ejectPassengers();
                 if (flag && !this.hasCustomName()) {
                    this.discard();
-@@ -265,6 +_,14 @@
+@@ -261,6 +_,14 @@
     }
  
     public void tick() {
@@ -104,16 +111,16 @@
        if (this.getHurtTime() > 0) {
           this.setHurtTime(this.getHurtTime() - 1);
        }
-@@ -274,7 +_,7 @@
+@@ -270,7 +_,7 @@
        }
  
        this.checkBelowWorld();
 -      this.handleNetherPortal();
 +      // this.handleNetherPortal(); // CraftBukkit - handled in postTick
        if (this.level().isClientSide) {
-          if (this.lerpSteps > 0) {
-             this.lerpPositionAndRotationStep(this.lerpSteps, this.lerpX, this.lerpY, this.lerpZ, this.lerpYRot, this.lerpXRot);
-@@ -300,9 +_,9 @@
+          if (this.lSteps > 0) {
+             double d5 = this.getX() + (this.lx - this.getX()) / (double)this.lSteps;
+@@ -303,9 +_,9 @@
           BlockPos blockpos = new BlockPos(k, i, j);
           BlockState blockstate = this.level().getBlockState(blockpos);
           this.onRails = BaseRailBlock.isRail(blockstate);
@@ -121,11 +128,11 @@
 +         if (canUseRail() && this.onRails) {
              this.moveAlongTrack(blockpos, blockstate);
 -            if (blockstate.is(Blocks.ACTIVATOR_RAIL)) {
-+            if (blockstate.getBlock() instanceof PoweredRailBlock power && power.isActivatorRail()) {
++            if (blockstate.getBlock() instanceof PoweredRailBlock && ((PoweredRailBlock) blockstate.getBlock()).isActivatorRail()) {
                 this.activateMinecart(k, i, j, blockstate.getValue(PoweredRailBlock.POWERED));
              }
           } else {
-@@ -327,20 +_,61 @@
+@@ -330,21 +_,62 @@
           }
  
           this.setRot(this.getYRot(), this.getXRot());
@@ -137,7 +144,7 @@
 +         // CraftBukkit start
 +         org.bukkit.World bworld = this.level().getWorld();
 +         org.bukkit.Location from = new org.bukkit.Location(bworld, prevX, prevY, prevZ, prevYaw, prevPitch);
-+         org.bukkit.Location to = org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation.toBukkit(this.position(), bworld, this.getYRot(), this.getXRot());
++         org.bukkit.Location to = org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation.toBukkit(this.position(), bworld, this.getYRot(), this.getXRot());
 +         org.bukkit.entity.Vehicle vehicle = (org.bukkit.entity.Vehicle) this.getBukkitEntity();
 +
 +         this.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
@@ -149,7 +156,8 @@
 +         if (canBeRidden() && this.getDeltaMovement().horizontalDistanceSqr() > 0.01D) {
 +            List<Entity> list = this.level().getEntities(this, box, EntitySelector.pushableBy(this));
              if (!list.isEmpty()) {
-                for(Entity entity1 : list) {
+                for(int l = 0; l < list.size(); ++l) {
+                   Entity entity1 = list.get(l);
                    if (!(entity1 instanceof Player) && !(entity1 instanceof IronGolem) && !(entity1 instanceof AbstractMinecart) && !this.isVehicle() && !entity1.isPassenger()) {
 +                     // CraftBukkit start
 +                     org.bukkit.event.vehicle.VehicleEntityCollisionEvent collisionEvent = new org.bukkit.event.vehicle.VehicleEntityCollisionEvent(vehicle, entity1.getBukkitEntity());
@@ -190,7 +198,7 @@
                    entity.push(this);
                 }
              }
-@@ -357,23 +_,34 @@
+@@ -361,23 +_,34 @@
     }
  
     protected double getMaxSpeed() {
@@ -229,7 +237,7 @@
        }
  
     }
-@@ -387,18 +_,19 @@
+@@ -391,18 +_,19 @@
        d1 = (double)p_38156_.getY();
        boolean flag = false;
        boolean flag1 = false;
@@ -252,7 +260,7 @@
        switch (railshape) {
           case ASCENDING_EAST:
              this.setDeltaMovement(vec31.add(-d3, 0.0D, 0.0D));
-@@ -444,7 +_,7 @@
+@@ -448,7 +_,7 @@
           }
        }
  
@@ -261,7 +269,7 @@
           double d22 = this.getDeltaMovement().horizontalDistance();
           if (d22 < 0.03D) {
              this.setDeltaMovement(Vec3.ZERO);
-@@ -473,10 +_,7 @@
+@@ -477,10 +_,7 @@
        d0 = d23 + d4 * d14;
        d2 = d10 + d5 * d14;
        this.setPos(d0, d1, d2);
@@ -273,7 +281,7 @@
        if (vec3i.getY() != 0 && Mth.floor(this.getX()) - p_38156_.getX() == vec3i.getX() && Mth.floor(this.getZ()) - p_38156_.getZ() == vec3i.getZ()) {
           this.setPos(this.getX(), this.getY() + (double)vec3i.getY(), this.getZ());
        } else if (vec3i1.getY() != 0 && Mth.floor(this.getX()) - p_38156_.getX() == vec3i1.getX() && Mth.floor(this.getZ()) - p_38156_.getZ() == vec3i1.getZ()) {
-@@ -504,7 +_,10 @@
+@@ -508,7 +_,10 @@
           this.setDeltaMovement(d26 * (double)(j - p_38156_.getX()), vec35.y, d26 * (double)(i - p_38156_.getZ()));
        }
  
@@ -285,7 +293,7 @@
           Vec3 vec36 = this.getDeltaMovement();
           double d27 = vec36.horizontalDistance();
           if (d27 > 0.01D) {
-@@ -547,7 +_,7 @@
+@@ -551,7 +_,7 @@
     }
  
     protected void applyNaturalSlowdown() {
@@ -294,7 +302,7 @@
        Vec3 vec3 = this.getDeltaMovement();
        vec3 = vec3.multiply(d0, 0.0D, d0);
        if (this.isInWater()) {
-@@ -568,7 +_,7 @@
+@@ -572,7 +_,7 @@
  
        BlockState blockstate = this.level().getBlockState(new BlockPos(i, j, k));
        if (BaseRailBlock.isRail(blockstate)) {
@@ -303,7 +311,7 @@
           p_38098_ = (double)j;
           if (railshape.isAscending()) {
              p_38098_ = (double)(j + 1);
-@@ -607,7 +_,7 @@
+@@ -611,7 +_,7 @@
  
        BlockState blockstate = this.level().getBlockState(new BlockPos(i, j, k));
        if (BaseRailBlock.isRail(blockstate)) {
@@ -312,7 +320,7 @@
           Pair<Vec3i, Vec3i> pair = exits(railshape);
           Vec3i vec3i = pair.getFirst();
           Vec3i vec3i1 = pair.getSecond();
-@@ -669,9 +_,21 @@
+@@ -673,9 +_,21 @@
     }
  
     public void push(Entity p_38165_) {
@@ -334,7 +342,7 @@
                 double d0 = p_38165_.getX() - this.getX();
                 double d1 = p_38165_.getZ() - this.getZ();
                 double d2 = d0 * d0 + d1 * d1;
-@@ -702,11 +_,11 @@
+@@ -706,11 +_,11 @@
  
                       Vec3 vec32 = this.getDeltaMovement();
                       Vec3 vec33 = p_38165_.getDeltaMovement();
@@ -348,7 +356,7 @@
                          p_38165_.setDeltaMovement(vec33.multiply(0.2D, 1.0D, 0.2D));
                          p_38165_.push(vec32.x + d0, 0.0D, vec32.z + d1);
                          this.setDeltaMovement(vec32.multiply(0.95D, 1.0D, 0.95D));
-@@ -824,6 +_,42 @@
+@@ -810,6 +_,42 @@
        this.getEntityData().set(DATA_ID_CUSTOM_DISPLAY, p_38139_);
     }
  
@@ -391,7 +399,7 @@
     public ItemStack getPickResult() {
        Item item;
        switch (this.getMinecartType()) {
-@@ -858,4 +_,26 @@
+@@ -844,4 +_,26 @@
        HOPPER,
        COMMAND_BLOCK;
     }

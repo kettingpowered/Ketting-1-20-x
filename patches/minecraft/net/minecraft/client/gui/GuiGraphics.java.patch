@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/GuiGraphics.java
 +++ b/net/minecraft/client/gui/GuiGraphics.java
-@@ -55,7 +_,7 @@
+@@ -56,7 +_,7 @@
  import org.joml.Vector2ic;
  
  @OnlyIn(Dist.CLIENT)
@@ -9,7 +9,7 @@
     public static final float MAX_GUI_Z = 10000.0F;
     public static final float MIN_GUI_Z = -10000.0F;
     private static final int EXTRA_SPACE_AFTER_FIRST_TOOLTIP_LINE = 2;
-@@ -271,6 +_,11 @@
+@@ -270,6 +_,11 @@
     }
  
     public int drawString(Font p_283343_, @Nullable String p_281896_, int p_283569_, int p_283418_, int p_281560_, boolean p_282130_) {
@@ -21,7 +21,7 @@
        if (p_281896_ == null) {
           return 0;
        } else {
-@@ -285,6 +_,11 @@
+@@ -284,6 +_,11 @@
     }
  
     public int drawString(Font p_282636_, FormattedCharSequence p_281596_, int p_281586_, int p_282816_, int p_281743_, boolean p_282394_) {
@@ -33,7 +33,27 @@
        int i = p_282636_.drawInBatch(p_281596_, (float)p_281586_, (float)p_282816_, p_281743_, p_282394_, this.pose.last().pose(), this.bufferSource, Font.DisplayMode.NORMAL, 0, 15728880);
        this.flushIfUnmanaged();
        return i;
-@@ -511,6 +_,7 @@
+@@ -405,6 +_,10 @@
+    }
+ 
+    public void blitRepeating(ResourceLocation p_283059_, int p_283575_, int p_283192_, int p_281790_, int p_283642_, int p_282691_, int p_281912_, int p_281728_, int p_282324_) {
++      blitRepeating(p_283059_, p_283575_, p_283192_, p_281790_, p_283642_, p_282691_, p_281912_, p_281728_, p_282324_, 256, 256);
++   }
++
++   public void blitRepeating(ResourceLocation p_283059_, int p_283575_, int p_283192_, int p_281790_, int p_283642_, int p_282691_, int p_281912_, int p_281728_, int p_282324_, int textureWidth, int textureHeight) {
+       int i = p_283575_;
+ 
+       int j;
+@@ -417,7 +_,7 @@
+          for(IntIterator intiterator1 = slices(p_283642_, p_282324_); intiterator1.hasNext(); l += i1) {
+             i1 = intiterator1.nextInt();
+             int j1 = (p_282324_ - i1) / 2;
+-            this.blit(p_283059_, i, l, p_282691_ + k, p_281912_ + j1, j, i1);
++            this.blit(p_283059_, i, l, p_282691_ + k, p_281912_ + j1, j, i1, textureWidth, textureHeight);
+          }
+       }
+ 
+@@ -477,6 +_,7 @@
              crashreportcategory.setDetail("Item Type", () -> {
                 return String.valueOf((Object)p_281675_.getItem());
              });
@@ -41,7 +61,7 @@
              crashreportcategory.setDetail("Item Damage", () -> {
                 return String.valueOf(p_281675_.getDamageValue());
              });
-@@ -558,18 +_,26 @@
+@@ -524,18 +_,26 @@
           }
  
           this.pose.popPose();
@@ -72,7 +92,7 @@
        this.renderTooltipInternal(p_283128_, list, p_283678_, p_281696_, DefaultTooltipPositioner.INSTANCE);
     }
  
-@@ -578,7 +_,15 @@
+@@ -544,7 +_,15 @@
     }
  
     public void renderComponentTooltip(Font p_282739_, List<Component> p_281832_, int p_282191_, int p_282446_) {
@@ -89,7 +109,7 @@
     }
  
     public void renderTooltip(Font p_282192_, List<? extends FormattedCharSequence> p_282297_, int p_281680_, int p_283325_) {
-@@ -591,11 +_,13 @@
+@@ -557,11 +_,13 @@
  
     private void renderTooltipInternal(Font p_282675_, List<ClientTooltipComponent> p_282615_, int p_283230_, int p_283417_, ClientTooltipPositioner p_282442_) {
        if (!p_282615_.isEmpty()) {
@@ -104,7 +124,7 @@
              if (k > i) {
                 i = k;
              }
-@@ -605,20 +_,21 @@
+@@ -571,20 +_,21 @@
  
           int i2 = i;
           int j2 = j;
@@ -129,7 +149,7 @@
              k1 += clienttooltipcomponent1.getHeight() + (l1 == 0 ? 2 : 0);
           }
  
-@@ -626,7 +_,7 @@
+@@ -592,7 +_,7 @@
  
           for(int k2 = 0; k2 < p_282615_.size(); ++k2) {
              ClientTooltipComponent clienttooltipcomponent2 = p_282615_.get(k2);

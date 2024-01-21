@@ -1,16 +1,7 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -147,7 +_,7 @@
- import net.minecraft.world.scores.criteria.ObjectiveCriteria;
- import org.slf4j.Logger;
- 
--public class ServerPlayer extends Player {
-+public class ServerPlayer extends Player implements net.minecraftforge.common.extensions.IForgeServerPlayer {
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
-    private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
-@@ -243,6 +_,19 @@
-    public int containerCounter;
+@@ -245,6 +_,20 @@
+    public int latency;
     public boolean wonGame;
  
 +   // CraftBukkit start
@@ -23,16 +14,17 @@
 +   public double maxHealthCache;
 +   public boolean joining = true;
 +   public boolean sentListPacket = false;
++   public Integer clientViewDistance;
 +   public String kickLeaveMessage = null; // SPIGOT-3034: Forward leave message to PlayerQuitEvent
 +   // CraftBukkit end
 +
-    public ServerPlayer(MinecraftServer p_254143_, ServerLevel p_254435_, GameProfile p_253651_, ClientInformation p_299301_) {
+    public ServerPlayer(MinecraftServer p_254143_, ServerLevel p_254435_, GameProfile p_253651_) {
        super(p_254435_, p_254435_.getSharedSpawnPos(), p_254435_.getSharedSpawnAngle(), p_253651_);
        this.textFilter = p_254143_.createTextFilterForPlayer(this);
-@@ -253,11 +_,56 @@
+@@ -254,11 +_,56 @@
+       this.advancements = p_254143_.getPlayerList().getPlayerAdvancements(this);
        this.setMaxUpStep(1.0F);
        this.fudgeSpawnLocation(p_254435_);
-       this.updateOptions(p_299301_);
 -   }
 +
 +      // CraftBukkit start
@@ -88,7 +80,7 @@
           int i = Math.max(0, this.server.getSpawnRadius(p_9202_));
           int j = Mth.floor(p_9202_.getWorldBorder().getDistanceToBorder((double)blockpos.getX(), (double)blockpos.getZ()));
           if (j < i) {
-@@ -317,11 +_,25 @@
+@@ -318,11 +_,25 @@
        if (p_9131_.contains("recipeBook", 10)) {
           this.recipeBook.fromNbt(p_9131_.getCompound("recipeBook"), this.server.getRecipeManager());
        }
@@ -105,7 +97,7 @@
  
 +      // CraftBukkit start
 +      String spawnWorld = p_9131_.getString("SpawnWorld");
-+      org.bukkit.craftbukkit.v1_20_R2.CraftWorld oldWorld = (org.bukkit.craftbukkit.v1_20_R2.CraftWorld) org.bukkit.Bukkit.getWorld(spawnWorld);
++      org.bukkit.craftbukkit.v1_20_R1.CraftWorld oldWorld = (org.bukkit.craftbukkit.v1_20_R1.CraftWorld) org.bukkit.Bukkit.getWorld(spawnWorld);
 +      if (oldWorld != null) {
 +         this.respawnDimension = oldWorld.getHandle().dimension();
 +      }
@@ -114,7 +106,7 @@
        if (p_9131_.contains("SpawnX", 99) && p_9131_.contains("SpawnY", 99) && p_9131_.contains("SpawnZ", 99)) {
           this.respawnPosition = new BlockPos(p_9131_.getInt("SpawnX"), p_9131_.getInt("SpawnY"), p_9131_.getInt("SpawnZ"));
           this.respawnForced = p_9131_.getBoolean("SpawnForced");
-@@ -350,7 +_,21 @@
+@@ -351,7 +_,21 @@
  
        Entity entity1 = this.getRootVehicle();
        Entity entity = this.getVehicle();
@@ -137,7 +129,7 @@
           CompoundTag compoundtag1 = new CompoundTag();
           CompoundTag compoundtag2 = new CompoundTag();
           entity1.save(compoundtag2);
-@@ -371,8 +_,36 @@
+@@ -372,8 +_,36 @@
              p_9197_.put("SpawnDimension", p_248207_);
           });
        }
@@ -164,7 +156,7 @@
 +            }
 +         }
 +         if (level == null || position == null) {
-+            level = ((org.bukkit.craftbukkit.v1_20_R2.CraftWorld) org.bukkit.Bukkit.getServer().getWorlds().get(0)).getHandle();
++            level = ((org.bukkit.craftbukkit.v1_20_R1.CraftWorld) org.bukkit.Bukkit.getServer().getWorlds().get(0)).getHandle();
 +            position = Vec3.atCenterOf(level.getSharedSpawnPos());
 +         }
 +         this.setLevel(level);
@@ -176,7 +168,7 @@
  
     public void setExperiencePoints(int p_8986_) {
        float f = (float)this.getXpNeededForNextLevel();
-@@ -424,6 +_,11 @@
+@@ -425,6 +_,11 @@
     }
  
     public void tick() {
@@ -188,7 +180,7 @@
        this.gameMode.tick();
        this.wardenSpawnTracker.tick();
        --this.spawnInvulnerableTime;
-@@ -477,7 +_,7 @@
+@@ -478,7 +_,7 @@
           }
  
           if (this.getHealth() != this.lastSentHealth || this.lastSentFood != this.foodData.getFoodLevel() || this.foodData.getSaturationLevel() == 0.0F != this.lastFoodSaturationZero) {
@@ -197,7 +189,7 @@
              this.lastSentHealth = this.getHealth();
              this.lastSentFood = this.foodData.getFoodLevel();
              this.lastFoodSaturationZero = this.foodData.getSaturationLevel() == 0.0F;
-@@ -508,6 +_,12 @@
+@@ -509,6 +_,12 @@
              this.updateScoreForCriteria(ObjectiveCriteria.EXPERIENCE, Mth.ceil((float)this.lastRecordedExperience));
           }
  
@@ -210,7 +202,7 @@
           if (this.experienceLevel != this.lastRecordedLevel) {
              this.lastRecordedLevel = this.experienceLevel;
              this.updateScoreForCriteria(ObjectiveCriteria.LEVEL, Mth.ceil((float)this.lastRecordedLevel));
-@@ -522,6 +_,20 @@
+@@ -523,6 +_,20 @@
              CriteriaTriggers.LOCATION.trigger(this);
           }
  
@@ -220,18 +212,18 @@
 +         }
 +
 +         if (this.oldLevel != this.experienceLevel) {
-+            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerLevelChangeEvent(this.getBukkitEntity(), this.oldLevel, this.experienceLevel);
++            org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerLevelChangeEvent(this.getBukkitEntity(), this.oldLevel, this.experienceLevel);
 +            this.oldLevel = this.experienceLevel;
 +         }
 +
 +         if (this.getBukkitEntity().hasClientWorldBorder()) {
-+            ((org.bukkit.craftbukkit.v1_20_R2.CraftWorldBorder) this.getBukkitEntity().getWorldBorder()).getHandle().tick();
++            ((org.bukkit.craftbukkit.v1_20_R1.CraftWorldBorder) this.getBukkitEntity().getWorldBorder()).getHandle().tick();
 +         }
 +         // CraftBukkit end
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.addCategory("Player being ticked");
-@@ -562,16 +_,55 @@
+@@ -563,16 +_,55 @@
     }
  
     private void updateScoreForCriteria(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -268,7 +260,7 @@
 +      Component defaultMessage = this.getCombatTracker().getDeathMessage();
 +      String deathmessage = defaultMessage.getString();
 +      keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
-+      org.bukkit.event.entity.PlayerDeathEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerDeathEvent(this, capturedDrops, deathmessage, keepInventory); //Ketting - capturedDrops
++      org.bukkit.event.entity.PlayerDeathEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerDeathEvent(this, capturedDrops, deathmessage, keepInventory); //Ketting - capturedDrops
 +      //Ketting end
 +
 +      // SPIGOT-943 - only call if they have an inventory open
@@ -284,13 +276,13 @@
 +         if (deathMessage.equals(deathmessage)) {
 +            component = this.getCombatTracker().getDeathMessage();
 +         } else {
-+            component = org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage.fromStringOrNull(deathMessage);
++            component = org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage.fromStringOrNull(deathMessage);
 +         }
 +
           this.connection.send(new ClientboundPlayerCombatKillPacket(this.getId(), component), PacketSendListener.exceptionallySend(() -> {
              int i = 256;
              String s = component.getString(256);
-@@ -600,11 +_,21 @@
+@@ -601,11 +_,21 @@
           this.tellNeutralMobsThatIDied();
        }
  
@@ -315,7 +307,7 @@
        LivingEntity livingentity = this.getKillCredit();
        if (livingentity != null) {
           this.awardStat(Stats.ENTITY_KILLED_BY.get(livingentity.getType()));
-@@ -638,10 +_,13 @@
+@@ -639,10 +_,13 @@
           this.increaseScore(p_9051_);
           String s = this.getScoreboardName();
           String s1 = p_9050_.getScoreboardName();
@@ -331,7 +323,7 @@
           } else {
              this.awardStat(Stats.MOB_KILLS);
           }
-@@ -657,7 +_,8 @@
+@@ -658,7 +_,8 @@
        if (playerteam != null) {
           int i = playerteam.getColor().getId();
           if (i >= 0 && i < p_9127_.length) {
@@ -341,7 +333,7 @@
           }
        }
  
-@@ -700,15 +_,18 @@
+@@ -701,15 +_,18 @@
     }
  
     private boolean isPvpAllowed() {
@@ -363,7 +355,7 @@
        } else {
           return portalinfo;
        }
-@@ -716,10 +_,31 @@
+@@ -717,10 +_,31 @@
  
     @Nullable
     public Entity changeDimension(ServerLevel p_9180_) {
@@ -385,7 +377,7 @@
 +   @Nullable
 +   public Entity changeDimension(ServerLevel p_9180_, net.minecraftforge.common.util.ITeleporter teleporter, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
 +      // CraftBukkit end
-+      if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_9180_.dimension())) return null;
++      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9180_.dimension())) return null;
 +      if (this.isSleeping()) return this; // CraftBukkit - SPIGOT-3154
 +      // this.isChangingDimension = true; // CraftBukkit - Moved down and into PlayerList#changeDimension
        ServerLevel serverlevel = this.serverLevel();
@@ -397,14 +389,15 @@
           this.unRide();
           this.serverLevel().removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
           if (!this.wonGame) {
-@@ -730,71 +_,138 @@
+@@ -731,71 +_,138 @@
  
           return this;
        } else {
 +         // CraftBukkit start
 +         /*
           LevelData leveldata = p_9180_.getLevelData();
-          this.connection.send(new ClientboundRespawnPacket(this.createCommonSpawnInfo(p_9180_), (byte)3));
+-         this.connection.send(new ClientboundRespawnPacket(p_9180_.dimensionTypeId(), p_9180_.dimension(), BiomeManager.obfuscateSeed(p_9180_.getSeed()), this.gameMode.getGameModeForPlayer(), this.gameMode.getPreviousGameModeForPlayer(), p_9180_.isDebug(), p_9180_.isFlat(), (byte)3, this.getLastDeathLocation(), this.getPortalCooldown()));
++         this.connection.send(new ClientboundRespawnPacket(this.createCommonSpawnInfo(p_9180_), (byte)3));
           this.connection.send(new ClientboundChangeDifficultyPacket(leveldata.getDifficulty(), leveldata.isDifficultyLocked()));
 -         PlayerList playerlist = this.server.getPlayerList();
           playerlist.sendPlayerPermissionLevel(this);
@@ -447,21 +440,21 @@
 +
 +               // CraftBukkit start
 +               org.bukkit.Location enter = this.getBukkitEntity().getLocation();
-+               org.bukkit.Location exit = (levelRef.get() == null) ? null : org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation.toBukkit(portalinfo.pos, levelRef.get().getWorld(), portalinfo.yRot, portalinfo.xRot);
++               org.bukkit.Location exit = (levelRef.get() == null) ? null : org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation.toBukkit(portalinfo.pos, levelRef.get().getWorld(), portalinfo.yRot, portalinfo.xRot);
 +               org.bukkit.event.player.PlayerTeleportEvent tpEvent = new org.bukkit.event.player.PlayerTeleportEvent(this.getBukkitEntity(), enter, exit, cause);
 +               org.bukkit.Bukkit.getServer().getPluginManager().callEvent(tpEvent);
 +               if (tpEvent.isCancelled() || tpEvent.getTo() == null) {
 +                  return null;
 +               }
 +               exit = tpEvent.getTo();
-+               levelRef.set(((org.bukkit.craftbukkit.v1_20_R2.CraftWorld) exit.getWorld()).getHandle());
++               levelRef.set(((org.bukkit.craftbukkit.v1_20_R1.CraftWorld) exit.getWorld()).getHandle());
 +               // CraftBukkit end
 +
 +               serverlevel.getProfiler().pop();
 +               serverlevel.getProfiler().push("placing");
 +               this.isChangingDimension = true; // CraftBukkit - Set teleport invulnerability only if player changing worlds
 +
-+               this.connection.send(new ClientboundRespawnPacket(this.createCommonSpawnInfo(levelRef.get()), (byte) 3));
++               this.connection.send(new ClientboundRespawnPacket(serverlevel.dimensionTypeId(), serverlevel.dimension(), BiomeManager.obfuscateSeed(serverlevel.getSeed()), this.gameMode.getGameModeForPlayer(), this.gameMode.getPreviousGameModeForPlayer(), serverlevel.isDebug(), serverlevel.isFlat(), (byte) 3, this.getLastDeathLocation(), this.getPortalCooldown()));
 +               this.connection.send(new ClientboundChangeDifficultyPacket(this.level().getDifficulty(), this.level().getLevelData().isDifficultyLocked()));
 +
 +               playerList.sendPlayerPermissionLevel(this);
@@ -495,7 +488,7 @@
              this.lastSentExp = -1;
              this.lastSentHealth = -1.0F;
              this.lastSentFood = -1;
-+            net.minecraftforge.event.ForgeEventFactory.onPlayerChangedDimension(this, resourcekey, levelRef.get().dimension());
++            net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, resourcekey, levelRef.get().dimension());
 +
 +            // CraftBukkit start
 +            org.bukkit.event.player.PlayerChangedWorldEvent changeEvent = new org.bukkit.event.player.PlayerChangedWorldEvent(this.getBukkitEntity(), serverlevel.getWorld());
@@ -511,21 +504,21 @@
 +
 +   // CraftBukkit start
 +   @Override
-+   protected org.bukkit.craftbukkit.v1_20_R2.event.CraftPortalEvent callPortalEvent(Entity entity, ServerLevel exitWorldServer, Vec3 exitPosition, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
++   protected org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent callPortalEvent(Entity entity, ServerLevel exitWorldServer, Vec3 exitPosition, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
 +      org.bukkit.Location enter = this.getBukkitEntity().getLocation();
-+      org.bukkit.Location exit = org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation.toBukkit(exitPosition, exitWorldServer.getWorld(), getYRot(), getXRot());
++      org.bukkit.Location exit = org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation.toBukkit(exitPosition, exitWorldServer.getWorld(), getYRot(), getXRot());
 +      org.bukkit.event.player.PlayerPortalEvent event = new org.bukkit.event.player.PlayerPortalEvent(this.getBukkitEntity(), enter, exit, cause, searchRadius, true, creationRadius);
 +      org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
 +      if (event.isCancelled() || event.getTo() == null || event.getTo().getWorld() == null) {
 +         return null;
 +      }
-+      return new org.bukkit.craftbukkit.v1_20_R2.event.CraftPortalEvent(event);
++      return new org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent(event);
 +   }
 +   // CraftBukkit end
  
     private void createEndPlatform(ServerLevel p_9007_, BlockPos p_9008_) {
        BlockPos.MutableBlockPos blockpos$mutableblockpos = p_9008_.mutable();
-+      org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator(p_9007_); // CraftBukkit
++      org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator(p_9007_); // CraftBukkit
  
        for(int i = -2; i <= 2; ++i) {
           for(int j = -2; j <= 2; ++j) {
@@ -557,21 +550,21 @@
           Direction.Axis direction$axis = this.level().getBlockState(this.portalEntrancePos).getOptionalValue(NetherPortalBlock.AXIS).orElse(Direction.Axis.X);
 -         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.getPortalForcer().createPortal(p_184132_, direction$axis);
 +         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.getPortalForcer().createPortal(p_184132_, direction$axis, this, createRadius); // CraftBukkit
-          if (optional1.isEmpty()) {
+          if (!optional1.isPresent()) {
 -            LOGGER.error("Unable to create a portal, likely target out of worldborder");
 +            // LOGGER.error("Unable to create a portal, likely target out of worldborder"); // CraftBukkit
           }
  
           return optional1;
-@@ -804,12 +_,21 @@
+@@ -805,12 +_,21 @@
     public void triggerDimensionChangeTriggers(ServerLevel p_9210_) {
        ResourceKey<Level> resourcekey = p_9210_.dimension();
        ResourceKey<Level> resourcekey1 = this.level().dimension();
 -      CriteriaTriggers.CHANGED_DIMENSION.trigger(this, resourcekey, resourcekey1);
 -      if (resourcekey == Level.NETHER && resourcekey1 == Level.OVERWORLD && this.enteredNetherPosition != null) {
 +      // CraftBukkit start
-+      ResourceKey<Level> maindimensionkey = org.bukkit.craftbukkit.v1_20_R2.util.CraftDimensionUtil.getMainDimensionKey(p_9210_);
-+      ResourceKey<Level> maindimensionkey1 = org.bukkit.craftbukkit.v1_20_R2.util.CraftDimensionUtil.getMainDimensionKey(this.level());
++      ResourceKey<Level> maindimensionkey = org.bukkit.craftbukkit.v1_20_R1.util.CraftDimensionUtil.getMainDimensionKey(p_9210_);
++      ResourceKey<Level> maindimensionkey1 = org.bukkit.craftbukkit.v1_20_R1.util.CraftDimensionUtil.getMainDimensionKey(this.level());
 +
 +      CriteriaTriggers.CHANGED_DIMENSION.trigger(this, maindimensionkey, maindimensionkey1);
 +      if (maindimensionkey != resourcekey || maindimensionkey1 != resourcekey1) {
@@ -588,7 +581,7 @@
           this.enteredNetherPosition = null;
        }
  
-@@ -828,32 +_,64 @@
+@@ -829,32 +_,67 @@
        this.containerMenu.broadcastChanges();
     }
  
@@ -596,6 +589,9 @@
 -      Direction direction = this.level().getBlockState(p_9115_).getValue(HorizontalDirectionalBlock.FACING);
 +   // CraftBukkit start - moved bed result checks from below into separate method
 +   private Either<Player.BedSleepingProblem, Unit> getBedResult(BlockPos blockposition, Direction enumdirection) {
++      java.util.Optional<BlockPos> optAt = java.util.Optional.of(blockposition);
++      Player.BedSleepingProblem ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
++      if (ret != null) return Either.left(ret);
        if (!this.isSleeping() && this.isAlive()) {
 -         if (!this.level().dimensionType().natural()) {
 +         if (!this.level().dimensionType().natural() || !this.level().dimensionType().bedWorks()) {
@@ -608,8 +604,9 @@
              return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
           } else {
 -            this.setRespawnPosition(this.level().dimension(), p_9115_, this.getYRot(), false, true);
+-            if (this.level().isDay()) {
 +            this.setRespawnPosition(this.level().dimension(), blockposition, this.getYRot(), false, true, org.bukkit.event.player.PlayerSpawnChangeEvent.Cause.BED); // CraftBukkit
-             if (this.level().isDay()) {
++            if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, optAt)) {
                 return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
              } else {
                 if (!this.isCreative()) {
@@ -651,7 +648,7 @@
 +         bedResult = Either.right(Unit.INSTANCE);
 +      }
 +
-+      bedResult = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerBedEnterEvent(this, p_9115_, bedResult);
++      bedResult = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerBedEnterEvent(this, p_9115_, bedResult);
 +      if (bedResult.left().isPresent()) {
 +         return bedResult;
 +      }
@@ -662,7 +659,7 @@
                 Either<Player.BedSleepingProblem, Unit> either = super.startSleepInBed(p_9115_).ifRight((p_9029_) -> {
                    this.awardStat(Stats.SLEEP_IN_BED);
                    CriteriaTriggers.SLEPT_IN_BED.trigger(this);
-@@ -866,9 +_,8 @@
+@@ -867,9 +_,8 @@
                 return either;
              }
           }
@@ -673,7 +670,7 @@
     }
  
     public void startSleeping(BlockPos p_9190_) {
-@@ -877,6 +_,7 @@
+@@ -878,6 +_,7 @@
     }
  
     private boolean bedInRange(BlockPos p_9117_, Direction p_9118_) {
@@ -681,13 +678,13 @@
        return this.isReachableBedBlock(p_9117_) || this.isReachableBedBlock(p_9117_.relative(p_9118_.getOpposite()));
     }
  
-@@ -891,13 +_,31 @@
+@@ -892,13 +_,31 @@
     }
  
     public void stopSleepInBed(boolean p_9165_, boolean p_9166_) {
 +      if (!this.isSleeping()) return; // CraftBukkit - Can't leave bed if not in one!
 +      // CraftBukkit start - fire PlayerBedLeaveEvent
-+      org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer player = this.getBukkitEntity();
++      org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer player = this.getBukkitEntity();
 +      BlockPos bedPosition = this.getSleepingPos().orElse(null);
 +
 +      org.bukkit.block.Block bed;
@@ -714,7 +711,7 @@
        }
  
     }
-@@ -938,16 +_,46 @@
+@@ -939,16 +_,46 @@
        this.containerCounter = this.containerCounter % 100 + 1;
     }
  
@@ -745,7 +742,7 @@
 +            abstractcontainermenu.setTitle(p_9033_.getDisplayName());
 +
 +            boolean cancelled = false;
-+            abstractcontainermenu = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callInventoryOpenEvent(this, abstractcontainermenu, cancelled);
++            abstractcontainermenu = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callInventoryOpenEvent(this, abstractcontainermenu, cancelled);
 +            if (abstractcontainermenu == null && !cancelled) { // Let pre-cancelled events fall through
 +               // SPIGOT-5263 - close chest if cancelled
 +               if (p_9033_ instanceof Container) {
@@ -761,7 +758,7 @@
           if (abstractcontainermenu == null) {
              if (this.isSpectator()) {
                 this.displayClientMessage(Component.translatable("container.spectatorCantOpen").withStyle(ChatFormatting.RED), true);
-@@ -955,9 +_,13 @@
+@@ -956,9 +_,14 @@
  
              return OptionalInt.empty();
           } else {
@@ -773,11 +770,12 @@
 +            // CraftBukkit end
 +
 +            this.initMenu(abstractcontainermenu);
-+            net.minecraftforge.event.ForgeEventFactory.onPlayerOpenContainer(this, this.containerMenu);
++            //net.minecraftforge.event.ForgeEventFactory.onPlayerOpenContainer(this, this.containerMenu);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.containerMenu));
              return OptionalInt.of(this.containerCounter);
           }
        }
-@@ -968,14 +_,26 @@
+@@ -969,14 +_,26 @@
     }
  
     public void openHorseInventory(AbstractHorse p_9059_, Container p_9060_) {
@@ -789,7 +787,7 @@
        this.nextContainerCounter();
 +      AbstractContainerMenu container = new HorseInventoryMenu(this.containerCounter, this.getInventory(), p_9060_, p_9059_);
 +      container.setTitle(p_9059_.getDisplayName());
-+      container = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callInventoryOpenEvent(this, container);
++      container = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callInventoryOpenEvent(this, container);
 +
 +      if (container == null) {
 +         p_9060_.stopOpen(this);
@@ -805,27 +803,27 @@
 -      this.containerMenu = new HorseInventoryMenu(this.containerCounter, this.getInventory(), p_9060_, p_9059_);
 +      this.containerMenu = container; // CraftBukkit
        this.initMenu(this.containerMenu);
-+      net.minecraftforge.event.ForgeEventFactory.onPlayerOpenContainer(this, this.containerMenu);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.containerMenu));
     }
  
     public void openItemGui(ItemStack p_9082_, InteractionHand p_9083_) {
-@@ -994,6 +_,7 @@
+@@ -995,6 +_,7 @@
     }
  
     public void closeContainer() {
-+      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleInventoryCloseEvent(this); // CraftBukkit
++      org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleInventoryCloseEvent(this); // CraftBukkit
        this.connection.send(new ClientboundContainerClosePacket(this.containerMenu.containerId));
        this.doCloseContainer();
     }
-@@ -1001,6 +_,7 @@
+@@ -1002,6 +_,7 @@
     public void doCloseContainer() {
        this.containerMenu.removed(this);
        this.inventoryMenu.transferState(this.containerMenu);
-+      net.minecraftforge.event.ForgeEventFactory.onPlayerCloseContainer(this, this.containerMenu);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Close(this, this.containerMenu));
        this.containerMenu = this.inventoryMenu;
     }
  
-@@ -1015,6 +_,16 @@
+@@ -1016,6 +_,16 @@
           }
  
           this.jumping = p_8983_;
@@ -842,7 +840,7 @@
           this.setShiftKeyDown(p_8984_);
        }
  
-@@ -1022,14 +_,14 @@
+@@ -1023,14 +_,14 @@
  
     public void awardStat(Stat<?> p_9026_, int p_9027_) {
        this.stats.increment(this, p_9026_, p_9027_);
@@ -858,8 +856,8 @@
 +      this.level().getCraftServer().getScoreboardManager().getScoreboardScores(p_9024_, this.getScoreboardName(), Score::reset); // CraftBukkit - Get our scores instead
     }
  
-    public int awardRecipes(Collection<RecipeHolder<?>> p_9129_) {
-@@ -1074,6 +_,7 @@
+    public int awardRecipes(Collection<Recipe<?>> p_9129_) {
+@@ -1075,6 +_,7 @@
  
     public void resetSentInfo() {
        this.lastSentHealth = -1.0E8F;
@@ -867,7 +865,7 @@
     }
  
     public void displayClientMessage(Component p_9154_, boolean p_9155_) {
-@@ -1121,19 +_,36 @@
+@@ -1123,18 +_,35 @@
           this.setScore(p_9016_.getScore());
        }
  
@@ -889,7 +887,6 @@
 +      // this.recipeBook.copyOverData(p_9016_.recipeBook); // CraftBukkit
        this.seenCredits = p_9016_.seenCredits;
        this.enteredNetherPosition = p_9016_.enteredNetherPosition;
-       this.chunkTrackingView = p_9016_.chunkTrackingView;
        this.setShoulderEntityLeft(p_9016_.getShoulderEntityLeft());
        this.setShoulderEntityRight(p_9016_.getShoulderEntityRight());
        this.setLastDeathLocation(p_9016_.getLastDeathLocation());
@@ -905,7 +902,7 @@
     }
  
     protected void onEffectAdded(MobEffectInstance p_143393_, @Nullable Entity p_143394_) {
-@@ -1172,6 +_,12 @@
+@@ -1173,6 +_,12 @@
     }
  
     public boolean teleportTo(ServerLevel p_265564_, double p_265424_, double p_265680_, double p_265312_, Set<RelativeMovement> p_265192_, float p_265059_, float p_265266_) {
@@ -918,7 +915,7 @@
        ChunkPos chunkpos = new ChunkPos(BlockPos.containing(p_265424_, p_265680_, p_265312_));
        p_265564_.getChunkSource().addRegionTicket(TicketType.POST_TELEPORT, chunkpos, 1, this.getId());
        this.stopRiding();
-@@ -1180,9 +_,9 @@
+@@ -1181,9 +_,9 @@
        }
  
        if (p_265564_ == this.level()) {
@@ -930,37 +927,45 @@
        }
  
        this.setYHeadRot(p_265059_);
-@@ -1214,6 +_,7 @@
+@@ -1215,6 +_,8 @@
     }
  
     public boolean setGameMode(GameType p_143404_) {
 +      p_143404_ = net.minecraftforge.common.ForgeHooks.onChangeGameType(this, this.gameMode.getGameModeForPlayer(), p_143404_);
++      if (p_143404_ == null) return false;
        if (!this.gameMode.changeGameModeForPlayer(p_143404_)) {
           return false;
        } else {
-@@ -1275,6 +_,16 @@
+@@ -1276,12 +_,24 @@
     }
  
-    public void updateOptions(ClientInformation p_297843_) {
+    public void updateOptions(ServerboundClientInformationPacket p_9157_) {
 +      // CraftBukkit start
-+      if (getMainArm() != p_297843_.mainHand()) {
++      if (getMainArm() != p_9157_.mainHand()) {
 +         org.bukkit.event.player.PlayerChangedMainHandEvent event = new org.bukkit.event.player.PlayerChangedMainHandEvent(getBukkitEntity(), getMainArm() == HumanoidArm.LEFT ? org.bukkit.inventory.MainHand.LEFT : org.bukkit.inventory.MainHand.RIGHT);
 +         this.server.server.getPluginManager().callEvent(event);
 +      }
-+      if (!this.language.equals(p_297843_.language())) {
-+         org.bukkit.event.player.PlayerLocaleChangeEvent event = new org.bukkit.event.player.PlayerLocaleChangeEvent(getBukkitEntity(), p_297843_.language());
++      if (!this.language.equals(p_9157_.language())) {
++         org.bukkit.event.player.PlayerLocaleChangeEvent event = new org.bukkit.event.player.PlayerLocaleChangeEvent(getBukkitEntity(), p_9157_.language());
 +         this.server.server.getPluginManager().callEvent(event);
 +      }
++      this.clientViewDistance = p_9157_.viewDistance();
 +      // CraftBukkit end
-       this.language = p_297843_.language();
-       this.requestedViewDistance = p_297843_.viewDistance();
-       this.chatVisibility = p_297843_.chatVisibility();
-@@ -1348,11 +_,13 @@
+       this.chatVisibility = p_9157_.chatVisibility();
+       this.canChatColor = p_9157_.chatColors();
+       this.textFilteringEnabled = p_9157_.textFilteringEnabled();
+       this.allowsListing = p_9157_.allowsListing();
+       this.getEntityData().set(DATA_PLAYER_MODE_CUSTOMISATION, (byte)p_9157_.modelCustomisation());
+       this.getEntityData().set(DATA_PLAYER_MAIN_HAND, (byte)(p_9157_.mainHand() == HumanoidArm.LEFT ? 0 : 1));
++      this.language = p_9157_.language();
+    }
+ 
+    public boolean canChatInColor() {
+@@ -1341,11 +_,12 @@
     public void setCamera(@Nullable Entity p_9214_) {
        Entity entity = this.getCamera();
        this.camera = (Entity)(p_9214_ == null ? this : p_9214_);
-+      while (this.camera instanceof net.minecraftforge.entity.PartEntity<?> partEntity)
-+         this.camera = partEntity.getParent(); // FORGE: fix MC-46486
++      while (this.camera instanceof net.minecraftforge.entity.PartEntity<?> partEntity) this.camera = partEntity.getParent(); // FORGE: fix MC-46486
        if (entity != this.camera) {
           Level level = this.camera.level();
           if (level instanceof ServerLevel) {
@@ -970,7 +975,7 @@
           }
  
           if (p_9214_ != null) {
-@@ -1387,7 +_,11 @@
+@@ -1380,7 +_,11 @@
  
     @Nullable
     public Component getTabListDisplayName() {
@@ -983,7 +988,7 @@
     }
  
     public void swing(InteractionHand p_9031_) {
-@@ -1407,27 +_,40 @@
+@@ -1400,27 +_,39 @@
        return this.advancements;
     }
  
@@ -999,11 +1004,12 @@
 +      /* CraftBukkit start - replace with bukkit handling for multi-world
        if (p_9000_ == this.level()) {
           this.connection.teleport(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
-       } else {
-+         if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_9000_.dimension())) return;
+-      } else {
++      } else if (!net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_9000_.dimension())) {
           ServerLevel serverlevel = this.serverLevel();
           LevelData leveldata = p_9000_.getLevelData();
-          this.connection.send(new ClientboundRespawnPacket(this.createCommonSpawnInfo(p_9000_), (byte)3));
+-         this.connection.send(new ClientboundRespawnPacket(p_9000_.dimensionTypeId(), p_9000_.dimension(), BiomeManager.obfuscateSeed(p_9000_.getSeed()), this.gameMode.getGameModeForPlayer(), this.gameMode.getPreviousGameModeForPlayer(), p_9000_.isDebug(), p_9000_.isFlat(), (byte)3, this.getLastDeathLocation(), this.getPortalCooldown()));
++         this.connection.send(new ClientboundRespawnPacket(this.createCommonSpawnInfo(p_9000_), (byte)3));
           this.connection.send(new ClientboundChangeDifficultyPacket(leveldata.getDifficulty(), leveldata.isDifficultyLocked()));
           this.server.getPlayerList().sendPlayerPermissionLevel(this);
           serverlevel.removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
@@ -1017,7 +1023,7 @@
 +         this.gameMode.setLevel(p_9000_);
           this.server.getPlayerList().sendLevelInfo(this, p_9000_);
           this.server.getPlayerList().sendAllPlayerInfo(this);
-+         net.minecraftforge.event.ForgeEventFactory.onPlayerChangedDimension(this, serverlevel.dimension(), p_9000_.dimension());
++         net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, serverlevel.dimension(), p_9000_.dimension());
        }
 +      */
 +      this.getBukkitEntity().teleport(new org.bukkit.Location(p_9000_.getWorld(), p_9001_, p_9002_, p_9003_, p_9004_, p_9005_), cause);
@@ -1025,7 +1031,7 @@
  
     }
  
-@@ -1449,6 +_,35 @@
+@@ -1442,6 +_,34 @@
     }
  
     public void setRespawnPosition(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_) {
@@ -1034,11 +1040,10 @@
 +   }
 +
 +   public void setRespawnPosition(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_, org.bukkit.event.player.PlayerSpawnChangeEvent.Cause cause) {
-+      if (net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, p_9160_ == null ? Level.OVERWORLD : p_9159_, p_9160_, p_9162_))
-+         return;
++      if (net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, p_9160_ == null ? Level.OVERWORLD : p_9159_, p_9160_, p_9162_)) return;
 +
 +      ServerLevel newWorld = this.server.getLevel(p_9159_);
-+      org.bukkit.Location newSpawn = (p_9160_ != null) ? org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation.toBukkit(p_9160_, newWorld.getWorld(), p_9161_, 0) : null;
++      org.bukkit.Location newSpawn = (p_9160_ != null) ? org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation.toBukkit(p_9160_, newWorld.getWorld(), p_9161_, 0) : null;
 +
 +      org.bukkit.event.player.PlayerSpawnChangeEvent event = new org.bukkit.event.player.PlayerSpawnChangeEvent(this.getBukkitEntity(), newSpawn, p_9162_, cause);
 +      org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
@@ -1049,7 +1054,7 @@
 +      p_9162_ = event.isForced();
 +
 +      if (newSpawn != null) {
-+         p_9159_ = ((org.bukkit.craftbukkit.v1_20_R2.CraftWorld) newSpawn.getWorld()).getHandle().dimension();
++         p_9159_ = ((org.bukkit.craftbukkit.v1_20_R1.CraftWorld) newSpawn.getWorld()).getHandle().dimension();
 +         p_9160_ = BlockPos.containing(newSpawn.getX(), newSpawn.getY(), newSpawn.getZ());
 +         p_9161_ = newSpawn.getYaw();
 +      } else {
@@ -1061,20 +1066,20 @@
        if (p_9160_ != null) {
           boolean flag = p_9160_.equals(this.respawnPosition) && p_9159_.equals(this.respawnDimension);
           if (p_9163_ && !flag) {
-@@ -1493,6 +_,9 @@
+@@ -1493,6 +_,8 @@
        if (itementity == null) {
           return null;
        } else {
-+         if (captureDrops() != null)
-+            captureDrops().add(itementity);
++         if (captureDrops() != null) captureDrops().add(itementity);
 +         else
           this.level().addFreshEntity(itementity);
           ItemStack itemstack = itementity.getItem();
           if (p_9087_) {
-@@ -1507,6 +_,75 @@
+@@ -1507,6 +_,76 @@
        }
     }
  
++   private String language = "en_us";
 +   /**
 +    * Returns the language last reported by the player as their local language.
 +    * Defaults to en_us if the value is unknown.
@@ -1163,9 +1168,9 @@
     }
  
     public boolean allowsListing() {
-@@ -1636,4 +_,146 @@
-    public CommonPlayerSpawnInfo createCommonSpawnInfo(ServerLevel p_301182_) {
-       return new CommonPlayerSpawnInfo(p_301182_.dimensionTypeId(), p_301182_.dimension(), BiomeManager.obfuscateSeed(p_301182_.getSeed()), this.gameMode.getGameModeForPlayer(), this.gameMode.getPreviousGameModeForPlayer(), p_301182_.isDebug(), p_301182_.isFlat(), this.getLastDeathLocation(), this.getPortalCooldown());
+@@ -1632,4 +_,146 @@
+       }
+ 
     }
 +
 +   // CraftBukkit start - Add per-player time and weather.
@@ -1305,8 +1310,8 @@
 +   }
 +
 +   @Override
-+   public org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer getBukkitEntity() {
-+      return (org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer) super.getBukkitEntity();
++   public org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer getBukkitEntity() {
++      return (org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer) super.getBukkitEntity();
 +   }
 +   // CraftBukkit end
  }

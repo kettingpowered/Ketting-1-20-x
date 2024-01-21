@@ -29,14 +29,14 @@
        if (blockhitresult.getType() == HitResult.Type.MISS) {
           return InteractionResultHolder.pass(itemstack);
        } else if (blockhitresult.getType() != HitResult.Type.BLOCK) {
-@@ -53,14 +_,25 @@
-                Block $$10 = blockstate1.getBlock();
-                if ($$10 instanceof BucketPickup) {
-                   BucketPickup bucketpickup = (BucketPickup)$$10;
+@@ -52,14 +_,25 @@
+                BlockState blockstate1 = p_40703_.getBlockState(blockpos);
+                if (blockstate1.getBlock() instanceof BucketPickup) {
+                   BucketPickup bucketpickup = (BucketPickup)blockstate1.getBlock();
 +                  // CraftBukkit start
-+                  ItemStack dummyFluid = bucketpickup.pickupBlock(p_40704_, org.bukkit.craftbukkit.v1_20_R2.util.DummyGeneratorAccess.INSTANCE, blockpos, blockstate1);
++                  ItemStack dummyFluid = bucketpickup.pickupBlock(org.bukkit.craftbukkit.v1_20_R1.util.DummyGeneratorAccess.INSTANCE, blockpos, blockstate1);
 +                  if (dummyFluid.isEmpty()) return InteractionResultHolder.fail(itemstack); // Don't fire event if the bucket won't be filled.
-+                  org.bukkit.event.player.PlayerBucketFillEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerBucketFillEvent((net.minecraft.server.level.ServerLevel) p_40703_, p_40704_, blockpos, blockpos, blockhitresult.getDirection(), itemstack, dummyFluid.getItem(), p_40705_);
++                  org.bukkit.event.player.PlayerBucketFillEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerBucketFillEvent((net.minecraft.server.level.ServerLevel) p_40703_, p_40704_, blockpos, blockpos, blockhitresult.getDirection(), itemstack, dummyFluid.getItem(), p_40705_);
 +
 +                  if (event.isCancelled()) {
 +                     ((ServerPlayer) p_40704_).connection.send(new net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket(p_40703_, blockpos)); // SPIGOT-5163 (see PlayerInteractManager)
@@ -44,20 +44,20 @@
 +                     return InteractionResultHolder.fail(itemstack);
 +                  }
 +                  // CraftBukkit end
-                   ItemStack itemstack2 = bucketpickup.pickupBlock(p_40704_, p_40703_, blockpos, blockstate1);
-                   if (!itemstack2.isEmpty()) {
+                   ItemStack itemstack1 = bucketpickup.pickupBlock(p_40703_, blockpos, blockstate1);
+                   if (!itemstack1.isEmpty()) {
                       p_40704_.awardStat(Stats.ITEM_USED.get(this));
 -                     bucketpickup.getPickupSound().ifPresent((p_150709_) -> {
 +                     bucketpickup.getPickupSound(blockstate1).ifPresent((p_150709_) -> {
                          p_40704_.playSound(p_150709_, 1.0F, 1.0F);
                       });
                       p_40703_.gameEvent(p_40704_, GameEvent.FLUID_PICKUP, blockpos);
--                     ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, p_40704_, itemstack2);
-+                     ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, p_40704_, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
+-                     ItemStack itemstack2 = ItemUtils.createFilledResult(itemstack, p_40704_, itemstack1);
++                     ItemStack itemstack2 = ItemUtils.createFilledResult(itemstack, p_40704_, org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
                       if (!p_40703_.isClientSide) {
-                         CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)p_40704_, itemstack2);
+                         CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)p_40704_, itemstack1);
                       }
-@@ -72,8 +_,8 @@
+@@ -71,8 +_,8 @@
                 return InteractionResultHolder.fail(itemstack);
              } else {
                 BlockState blockstate = p_40703_.getBlockState(blockpos);
@@ -68,7 +68,7 @@
                    this.checkExtraContent(p_40704_, p_40703_, itemstack, blockpos2);
                    if (p_40704_ instanceof ServerPlayer) {
                       CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer)p_40704_, blockpos2, itemstack);
-@@ -98,7 +_,30 @@
+@@ -97,7 +_,30 @@
     public void checkExtraContent(@Nullable Player p_150711_, Level p_150712_, ItemStack p_150713_, BlockPos p_150714_) {
     }
  
@@ -96,18 +96,18 @@
 +   //Ketting end
 +
 +   public boolean emptyContents(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_, @Nullable ItemStack container) {
-       Fluid $$6 = this.content;
-       if ($$6 instanceof FlowingFluid flowingfluid) {
-          BlockState blockstate;
-@@ -127,8 +_,26 @@
-          }
- 
-          boolean flag1 = flag2;
+       if (!(this.content instanceof FlowingFluid)) {
+          return false;
+       } else {
+@@ -105,8 +_,26 @@
+          Block block = blockstate.getBlock();
+          boolean flag = blockstate.canBeReplaced(this.content);
+          boolean flag1 = blockstate.isAir() || flag || block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).canPlaceLiquid(p_150717_, p_150718_, blockstate, this.content);
 +
 +         // CraftBukkit start
 +         if (flag1 && p_150716_ != null && (emptyContents$clicked != null && emptyContents$direction != null && emptyContents$hand != null)) { //Ketting
 +            if (p_150717_ instanceof net.minecraft.server.level.ServerLevel level) { //Ketting
-+               org.bukkit.event.player.PlayerBucketEmptyEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerBucketEmptyEvent(level, p_150716_, p_150718_, emptyContents$clicked, emptyContents$direction, container, emptyContents$hand);
++               org.bukkit.event.player.PlayerBucketEmptyEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerBucketEmptyEvent(level, p_150716_, p_150718_, emptyContents$clicked, emptyContents$direction, container, emptyContents$hand);
 +               if (event.isCancelled()) {
 +                  ((ServerPlayer) p_150716_).connection.send(new net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket(p_150717_, p_150718_)); // SPIGOT-4238: needed when looking through entity
 +                  ((ServerPlayer) p_150716_).getBukkitEntity().updateInventory(); // SPIGOT-4541
@@ -125,18 +125,18 @@
 +            this.content.getFluidType().onVaporize(p_150716_, p_150717_, p_150718_, containedFluidStack.get());
 +            return true;
           } else if (p_150717_.dimensionType().ultraWarm() && this.content.is(FluidTags.WATER)) {
-             int l = p_150718_.getX();
-             int i = p_150718_.getY();
-@@ -141,7 +_,7 @@
+             int i = p_150718_.getX();
+             int j = p_150718_.getY();
+@@ -118,7 +_,7 @@
+             }
  
              return true;
-          } else {
--            if ($$7 instanceof LiquidBlockContainer) {
-+            if ($$7 instanceof LiquidBlockContainer liquid && liquid.canPlaceLiquid(p_150716_, p_150717_, p_150718_, blockstate, content)) {
-                LiquidBlockContainer liquidblockcontainer1 = (LiquidBlockContainer)$$7;
-                if (this.content == Fluids.WATER) {
-                   liquidblockcontainer1.placeLiquid(p_150717_, p_150718_, blockstate, flowingfluid.getSource(false));
-@@ -166,8 +_,30 @@
+-         } else if (block instanceof LiquidBlockContainer && this.content == Fluids.WATER) {
++         } else if (block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).canPlaceLiquid(p_150717_,p_150718_,blockstate,content)) {
+             ((LiquidBlockContainer)block).placeLiquid(p_150717_, p_150718_, blockstate, ((FlowingFluid)this.content).getSource(false));
+             this.playEmptySound(p_150716_, p_150717_, p_150718_);
+             return true;
+@@ -138,8 +_,31 @@
     }
  
     protected void playEmptySound(@Nullable Player p_40696_, LevelAccessor p_40697_, BlockPos p_40698_) {
@@ -164,7 +164,8 @@
 +   }
 +   //Ketting end
 +
-+   protected boolean canBlockContainFluid(Level worldIn, BlockPos posIn, BlockState blockstate) {
-+      return blockstate.getBlock() instanceof LiquidBlockContainer liquid && liquid.canPlaceLiquid(null, worldIn, posIn, blockstate, this.content);
++   protected boolean canBlockContainFluid(Level worldIn, BlockPos posIn, BlockState blockstate)
++   {
++      return blockstate.getBlock() instanceof LiquidBlockContainer && ((LiquidBlockContainer)blockstate.getBlock()).canPlaceLiquid(worldIn, posIn, blockstate, this.content);
     }
  }

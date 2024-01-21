@@ -29,11 +29,11 @@
 -         p_155409_.playSound((Player)null, p_155413_.destroyTarget.getX(), p_155413_.destroyTarget.getY(), p_155413_.destroyTarget.getZ(), SoundEvents.CONDUIT_ATTACK_TARGET, SoundSource.BLOCKS, 1.0F, 1.0F);
 -         p_155413_.destroyTarget.hurt(p_155409_.damageSources().magic(), 4.0F);
 +         // CraftBukkit start
-+         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.blockDamage = org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_155409_, p_155410_);
++         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.blockDamage = org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_155409_, p_155410_);
 +         if (p_155413_.destroyTarget.hurt(p_155409_.damageSources().magic(), 4.0F)) {
 +            p_155409_.playSound((Player) null, p_155413_.destroyTarget.getX(), p_155413_.destroyTarget.getY(), p_155413_.destroyTarget.getZ(), SoundEvents.CONDUIT_ATTACK_TARGET, SoundSource.BLOCKS, 1.0F, 1.0F);
 +         }
-+         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.blockDamage = null;
++         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.blockDamage = null;
 +         // CraftBukkit end
        }
  

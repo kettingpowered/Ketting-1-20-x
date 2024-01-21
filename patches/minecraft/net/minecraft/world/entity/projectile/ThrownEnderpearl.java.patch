@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
 +++ b/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
-@@ -45,22 +_,39 @@
+@@ -46,22 +_,39 @@
           if (entity instanceof ServerPlayer) {
              ServerPlayer serverplayer = (ServerPlayer)entity;
              if (serverplayer.connection.isAcceptingMessages() && serverplayer.level() == this.level() && !serverplayer.isSleeping()) {
@@ -12,7 +12,7 @@
 +               net.minecraftforge.event.entity.EntityTeleportEvent.EnderPearl event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayer, this.getX(), this.getY(), this.getZ(), this, 5.0F, p_37504_);
 +               if (!event.isCanceled()) { // Don't indent to lower patch size
 +                  // CraftBukkit start - Fire PlayerTeleportEvent
-+                  org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer player = serverplayer.getBukkitEntity();
++                  org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer player = serverplayer.getBukkitEntity();
 +                  org.bukkit.Location location = getBukkitEntity().getLocation();
 +                  location.setPitch(player.getLocation().getPitch());
 +                  location.setYaw(player.getLocation().getYaw());
@@ -36,9 +36,9 @@
 +
 +                     serverplayer.connection.teleport(teleEvent.getTo());
 +                     entity.resetFallDistance();
-+                     org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = this;
++                     org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = this;
 +                     entity.hurt(this.damageSources().fall(), 5.0F);
-+                     org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = null;
++                     org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = null;
                    }
 -               }
 -
@@ -55,7 +55,7 @@
              }
           } else if (entity != null) {
              entity.teleportTo(this.getX(), this.getY(), this.getZ());
-@@ -83,12 +_,12 @@
+@@ -84,12 +_,12 @@
     }
  
     @Nullable

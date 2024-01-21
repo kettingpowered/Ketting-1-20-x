@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
-@@ -8,6 +_,17 @@
+@@ -9,6 +_,17 @@
  import net.minecraft.world.level.block.DispenserBlock;
  
  public class DefaultDispenseItemBehavior implements DispenseItemBehavior {
@@ -18,13 +18,13 @@
     public final ItemStack dispense(BlockSource p_123391_, ItemStack p_123392_) {
        ItemStack itemstack = this.execute(p_123391_, p_123392_);
        this.playSound(p_123391_);
-@@ -19,14 +_,23 @@
-       Direction direction = p_301824_.state().getValue(DispenserBlock.FACING);
-       Position position = DispenserBlock.getDispensePosition(p_301824_);
+@@ -20,14 +_,23 @@
+       Direction direction = p_123385_.getBlockState().getValue(DispenserBlock.FACING);
+       Position position = DispenserBlock.getDispensePosition(p_123385_);
        ItemStack itemstack = p_123386_.split(1);
--      spawnItem(p_301824_.level(), itemstack, 6, direction, position);
+-      spawnItem(p_123385_.getLevel(), itemstack, 6, direction, position);
 +      // CraftBukkit start
-+      if (!spawnItem(p_301824_.level(), itemstack, 6, direction, p_301824_, dropper)) {
++      if (!spawnItem(p_123385_.getLevel(), itemstack, 6, direction, p_123385_, dropper)) {
 +         p_123386_.grow(1);
 +      }
 +      // CraftBukkit end
@@ -47,16 +47,16 @@
        if (p_123382_.getAxis() == Direction.Axis.Y) {
           d1 -= 0.125D;
        } else {
-@@ -36,7 +_,39 @@
+@@ -37,7 +_,39 @@
        ItemEntity itementity = new ItemEntity(p_123379_, d0, d1, d2, p_123380_);
        double d3 = p_123379_.random.nextDouble() * 0.1D + 0.2D;
        itementity.setDeltaMovement(p_123379_.random.triangle((double)p_123382_.getStepX() * d3, 0.0172275D * (double)p_123381_), p_123379_.random.triangle(0.2D, 0.0172275D * (double)p_123381_), p_123379_.random.triangle((double)p_123382_.getStepZ() * d3, 0.0172275D * (double)p_123381_));
 +
 +      // CraftBukkit start
-+      org.bukkit.block.Block block = org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_123379_, p_123383_.pos());
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(p_123380_);
++      org.bukkit.block.Block block = org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_123379_, p_123383_.getPos());
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(p_123380_);
 +
-+      org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block, craftItem.clone(), org.bukkit.craftbukkit.v1_20_R2.util.CraftVector.toBukkit(itementity.getDeltaMovement()));
++      org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block, craftItem.clone(), org.bukkit.craftbukkit.v1_20_R1.util.CraftVector.toBukkit(itementity.getDeltaMovement()));
 +      if (!DispenserBlock.eventFired) {
 +         p_123379_.getCraftServer().getPluginManager().callEvent(event);
 +      }
@@ -65,12 +65,12 @@
 +         return false;
 +      }
 +
-+      itementity.setItem(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(event.getItem()));
-+      itementity.setDeltaMovement(org.bukkit.craftbukkit.v1_20_R2.util.CraftVector.toNMS(event.getVelocity()));
++      itementity.setItem(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getItem()));
++      itementity.setDeltaMovement(org.bukkit.craftbukkit.v1_20_R1.util.CraftVector.toNMS(event.getVelocity()));
 +
 +      if (!dropper && !event.getItem().getType().equals(craftItem.getType())) {
 +         // Chain to handler for new item
-+         ItemStack eventStack = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(event.getItem());
++         ItemStack eventStack = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +         DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +         if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior.getClass() != DefaultDispenseItemBehavior.class) {
 +            idispensebehavior.dispense(p_123383_, eventStack);

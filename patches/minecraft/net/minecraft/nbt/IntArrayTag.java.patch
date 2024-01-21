@@ -1,11 +1,10 @@
 --- a/net/minecraft/nbt/IntArrayTag.java
 +++ b/net/minecraft/nbt/IntArrayTag.java
-@@ -21,6 +_,8 @@
-       private static int[] readAccounted(DataInput p_301738_, NbtAccounter p_301754_) throws IOException {
-          p_301754_.accountBytes(24L);
-          int i = p_301738_.readInt();
+@@ -13,6 +_,7 @@
+       public IntArrayTag load(DataInput p_128662_, int p_128663_, NbtAccounter p_128664_) throws IOException {
+          p_128664_.accountBytes(24L);
+          int i = p_128662_.readInt();
 +         com.google.common.base.Preconditions.checkArgument( i < 1 << 24); // Spigot
-+
-          p_301754_.accountBytes(4L, (long)i);
+          p_128664_.accountBytes(4L * (long)i);
           int[] aint = new int[i];
  

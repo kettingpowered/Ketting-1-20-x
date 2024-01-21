@@ -23,7 +23,7 @@
 +               this.renderModel(p_117119_, p_117120_, p_117123_, armoritem, model, flag, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_117121_, itemstack, p_117122_, null));
              }
  
-             ArmorTrim.getTrim(p_117121_.level().registryAccess(), itemstack, true).ifPresent((p_289638_) -> {
+             ArmorTrim.getTrim(p_117121_.level().registryAccess(), itemstack).ifPresent((p_289638_) -> {
 -               this.renderTrim(armoritem.getMaterial(), p_117119_, p_117120_, p_117123_, p_289638_, p_117124_, flag);
 +               this.renderTrim(armoritem.getMaterial(), p_117119_, p_117120_, p_117123_, p_289638_, model, flag);
              });
@@ -50,7 +50,7 @@
 +   }
 +   private void renderTrim(ArmorMaterial p_289690_, PoseStack p_289687_, MultiBufferSource p_289643_, int p_289683_, ArmorTrim p_289692_, net.minecraft.client.model.Model p_289663_, boolean p_289651_) {
        TextureAtlasSprite textureatlassprite = this.armorTrimAtlas.getSprite(p_289651_ ? p_289692_.innerTexture(p_289690_) : p_289692_.outerTexture(p_289690_));
-       VertexConsumer vertexconsumer = textureatlassprite.wrap(p_289643_.getBuffer(Sheets.armorTrimsSheet(p_289692_.pattern().value().decal())));
+       VertexConsumer vertexconsumer = textureatlassprite.wrap(p_289643_.getBuffer(Sheets.armorTrimsSheet()));
        p_289663_.renderToBuffer(p_289687_, vertexconsumer, p_289683_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
  

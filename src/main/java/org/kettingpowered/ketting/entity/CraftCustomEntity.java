@@ -1,8 +1,8 @@
 package org.kettingpowered.ketting.entity;
 
 import net.minecraft.world.entity.Entity;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 
 public class CraftCustomEntity extends CraftEntity {

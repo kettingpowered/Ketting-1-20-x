@@ -1,36 +1,36 @@
 --- a/net/minecraft/world/item/alchemy/PotionBrewing.java
 +++ b/net/minecraft/world/item/alchemy/PotionBrewing.java
-@@ -51,7 +_,7 @@
+@@ -57,7 +_,7 @@
+       int i = 0;
  
-    public static boolean isBrewablePotion(Potion p_43512_) {
-       for(PotionBrewing.Mix<Potion> mix : POTION_MIXES) {
--         if (mix.to == p_43512_) {
-+         if (mix.to.get() == p_43512_) {
+       for(int j = POTION_MIXES.size(); i < j; ++i) {
+-         if ((POTION_MIXES.get(i)).to == p_43512_) {
++         if ((POTION_MIXES.get(i)).to.get() == p_43512_) {
              return true;
           }
        }
-@@ -71,7 +_,7 @@
-       Item item = p_43520_.getItem();
+@@ -79,7 +_,7 @@
  
-       for(PotionBrewing.Mix<Item> mix : CONTAINER_MIXES) {
+       for(int j = CONTAINER_MIXES.size(); i < j; ++i) {
+          PotionBrewing.Mix<Item> mix = CONTAINER_MIXES.get(i);
 -         if (mix.from == item && mix.ingredient.test(p_43521_)) {
 +         if (mix.from.get() == item && mix.ingredient.test(p_43521_)) {
              return true;
           }
        }
-@@ -83,7 +_,7 @@
-       Potion potion = PotionUtils.getPotion(p_43525_);
+@@ -93,7 +_,7 @@
  
-       for(PotionBrewing.Mix<Potion> mix : POTION_MIXES) {
+       for(int j = POTION_MIXES.size(); i < j; ++i) {
+          PotionBrewing.Mix<Potion> mix = POTION_MIXES.get(i);
 -         if (mix.from == potion && mix.ingredient.test(p_43526_)) {
 +         if (mix.from.get() == potion && mix.ingredient.test(p_43526_)) {
              return true;
           }
        }
-@@ -97,14 +_,14 @@
-          Item item = p_43531_.getItem();
+@@ -109,8 +_,8 @@
  
-          for(PotionBrewing.Mix<Item> mix : CONTAINER_MIXES) {
+          for(int j = CONTAINER_MIXES.size(); i < j; ++i) {
+             PotionBrewing.Mix<Item> mix = CONTAINER_MIXES.get(i);
 -            if (mix.from == item && mix.ingredient.test(p_43530_)) {
 -               return PotionUtils.setPotion(new ItemStack(mix.to), potion);
 +            if (mix.from.get() == item && mix.ingredient.test(p_43530_)) {
@@ -38,7 +38,10 @@
              }
           }
  
-          for(PotionBrewing.Mix<Potion> mix1 : POTION_MIXES) {
+@@ -118,8 +_,8 @@
+ 
+          for(int k = POTION_MIXES.size(); i < k; ++i) {
+             PotionBrewing.Mix<Potion> mix1 = POTION_MIXES.get(i);
 -            if (mix1.from == potion && mix1.ingredient.test(p_43530_)) {
 -               return PotionUtils.setPotion(new ItemStack(item), mix1.to);
 +            if (mix1.from.get() == potion && mix1.ingredient.test(p_43530_)) {
@@ -46,7 +49,7 @@
              }
           }
        }
-@@ -181,7 +_,7 @@
+@@ -196,7 +_,7 @@
        } else if (!(p_43505_ instanceof PotionItem)) {
           throw new IllegalArgumentException("Expected a potion, got: " + BuiltInRegistries.ITEM.getKey(p_43505_));
        } else {
@@ -55,7 +58,7 @@
        }
     }
  
-@@ -194,18 +_,18 @@
+@@ -209,18 +_,18 @@
     }
  
     private static void addMix(Potion p_43514_, Item p_43515_, Potion p_43516_) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/ChorusFlowerBlock.java
 +++ b/net/minecraft/world/level/block/ChorusFlowerBlock.java
-@@ -50,7 +_,7 @@
+@@ -43,7 +_,7 @@
        BlockPos blockpos = p_220982_.above();
        if (p_220981_.isEmptyBlock(blockpos) && blockpos.getY() < p_220981_.getMaxBuildHeight()) {
           int i = p_220980_.getValue(AGE);
@@ -9,14 +9,14 @@
              boolean flag = false;
              boolean flag1 = false;
              BlockState blockstate = p_220981_.getBlockState(p_220982_.below());
-@@ -79,8 +_,12 @@
+@@ -72,8 +_,12 @@
              }
  
              if (flag && allNeighborsEmpty(p_220981_, blockpos, (Direction)null) && p_220981_.isEmptyBlock(p_220982_.above(2))) {
 -               p_220981_.setBlock(p_220982_, this.plant.getStateForPlacement(p_220981_, p_220982_), 2);
 -               this.placeGrownFlower(p_220981_, blockpos, i);
 +               // CraftBukkit start - add event
-+               if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_220981_, p_220982_, blockpos, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, i), 2)) {
++               if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_220981_, p_220982_, blockpos, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, i), 2)) {
 +                  p_220981_.setBlock(p_220982_, this.plant.getStateForPlacement(p_220981_, p_220982_), 2);
 +                  this.placeGrownFlower(p_220981_, blockpos, i);
 +               }
@@ -24,14 +24,14 @@
              } else if (i < 4) {
                 int l = p_220983_.nextInt(4);
                 if (flag1) {
-@@ -93,20 +_,32 @@
+@@ -86,20 +_,32 @@
                    Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(p_220983_);
                    BlockPos blockpos1 = p_220982_.relative(direction);
                    if (p_220981_.isEmptyBlock(blockpos1) && p_220981_.isEmptyBlock(blockpos1.below()) && allNeighborsEmpty(p_220981_, blockpos1, direction.getOpposite())) {
 -                     this.placeGrownFlower(p_220981_, blockpos1, i + 1);
 -                     flag2 = true;
 +                     // CraftBukkit start - add event
-+                     if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_220981_, p_220982_, blockpos1, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, i + 1), 2)) {
++                     if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_220981_, p_220982_, blockpos1, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, i + 1), 2)) {
 +                        this.placeGrownFlower(p_220981_, blockpos1, i + 1);
 +                        flag2 = true;
 +                     }
@@ -44,7 +44,7 @@
                 } else {
 -                  this.placeDeadFlower(p_220981_, p_220982_);
 +                  // CraftBukkit start - add event
-+                  if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockGrowEvent(p_220981_, p_220982_, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, 5), 2)) {
++                  if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockGrowEvent(p_220981_, p_220982_, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, 5), 2)) {
 +                     this.placeDeadFlower(p_220981_, p_220982_);
 +                  }
 +                  // CraftBukkit end
@@ -52,7 +52,7 @@
              } else {
 -               this.placeDeadFlower(p_220981_, p_220982_);
 +               // CraftBukkit start - add event
-+               if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockGrowEvent(p_220981_, p_220982_, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, 5), 2)) {
++               if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockGrowEvent(p_220981_, p_220982_, this.defaultBlockState().setValue(ChorusFlowerBlock.AGE, 5), 2)) {
 +                  this.placeDeadFlower(p_220981_, p_220982_);
 +               }
 +               // CraftBukkit end
@@ -62,12 +62,12 @@
           }
        }
     }
-@@ -221,6 +_,11 @@
+@@ -214,6 +_,11 @@
     public void onProjectileHit(Level p_51654_, BlockState p_51655_, BlockHitResult p_51656_, Projectile p_51657_) {
        BlockPos blockpos = p_51656_.getBlockPos();
        if (!p_51654_.isClientSide && p_51657_.mayInteract(p_51654_, blockpos) && p_51657_.getType().is(EntityTypeTags.IMPACT_PROJECTILES)) {
 +         // CraftBukkit
-+         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_51657_, blockpos, Blocks.AIR.defaultBlockState())) {
++         if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(p_51657_, blockpos, Blocks.AIR.defaultBlockState())) {
 +            return;
 +         }
 +         // CraftBukkit end

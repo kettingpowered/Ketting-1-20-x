@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/item/MinecartItem.java
 +++ b/net/minecraft/world/item/MinecartItem.java
-@@ -30,7 +_,7 @@
-          double d2 = vec3.z() + (double)direction.getStepZ() * 1.125D;
-          BlockPos blockpos = p_42949_.pos().relative(direction);
+@@ -28,7 +_,7 @@
+          double d2 = p_42949_.z() + (double)direction.getStepZ() * 1.125D;
+          BlockPos blockpos = p_42949_.getPos().relative(direction);
           BlockState blockstate = level.getBlockState(blockpos);
 -         RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? blockstate.getValue(((BaseRailBlock)blockstate.getBlock()).getShapeProperty()) : RailShape.NORTH_SOUTH;
 +         RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock)blockstate.getBlock()).getRailDirection(blockstate, level, blockpos, null) : RailShape.NORTH_SOUTH;
           double d3;
           if (blockstate.is(BlockTags.RAILS)) {
              if (railshape.isAscending()) {
-@@ -52,13 +_,43 @@
+@@ -50,13 +_,43 @@
              }
           }
  
@@ -17,8 +17,8 @@
 +         // CraftBukkit start
 +         // AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(level, d0, d1 + d3, d2, ((MinecartItem)p_42950_.getItem()).type);
 +         ItemStack itemstack1 = p_42950_.split(1);
-+         org.bukkit.block.Block block2 = org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(level, p_42949_.pos());
-+         org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(itemstack1);
++         org.bukkit.block.Block block2 = org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(level, p_42949_.getPos());
++         org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(itemstack1);
 +
 +         org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block2, craftItem.clone(), new org.bukkit.util.Vector(d0, d1 + d3, d2));
 +         if (!DispenserBlock.eventFired) {
@@ -33,7 +33,7 @@
 +         if (!event.getItem().equals(craftItem)) {
 +            p_42950_.grow(1);
 +            // Chain to handler for new item
-+            ItemStack eventStack = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(event.getItem());
++            ItemStack eventStack = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +            if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
 +               idispensebehavior.dispense(p_42949_, eventStack);
@@ -41,7 +41,7 @@
 +            }
 +         }
 +
-+         itemstack1 = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(event.getItem());
++         itemstack1 = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +         AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(level, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), ((MinecartItem) itemstack1.getItem()).type);
 +
           if (p_42950_.hasCustomHoverName()) {
@@ -56,7 +56,7 @@
           return p_42950_;
        }
  
-@@ -83,7 +_,7 @@
+@@ -81,7 +_,7 @@
        } else {
           ItemStack itemstack = p_42943_.getItemInHand();
           if (!level.isClientSide) {
@@ -65,13 +65,13 @@
              double d0 = 0.0D;
              if (railshape.isAscending()) {
                 d0 = 0.5D;
-@@ -94,7 +_,12 @@
+@@ -92,7 +_,12 @@
                 abstractminecart.setCustomName(itemstack.getHoverName());
              }
  
 -            level.addFreshEntity(abstractminecart);
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPlaceEvent(p_42943_, abstractminecart).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityPlaceEvent(p_42943_, abstractminecart).isCancelled()) {
 +               return InteractionResult.FAIL;
 +            }
 +            // CraftBukkit end

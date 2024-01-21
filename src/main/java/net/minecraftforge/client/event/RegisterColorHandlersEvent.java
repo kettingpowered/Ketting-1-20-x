@@ -30,9 +30,12 @@ import org.jetbrains.annotations.ApiStatus;
  * @see RegisterColorHandlersEvent.Block
  * @see RegisterColorHandlersEvent.Item
  */
-public abstract class RegisterColorHandlersEvent extends Event implements IModBusEvent {
+public abstract class RegisterColorHandlersEvent extends Event implements IModBusEvent
+{
     @ApiStatus.Internal
-    protected RegisterColorHandlersEvent() {}
+    protected RegisterColorHandlersEvent()
+    {
+    }
 
     /**
      * Fired for registering block color handlers.
@@ -42,11 +45,13 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Block extends RegisterColorHandlersEvent {
+    public static class Block extends RegisterColorHandlersEvent
+    {
         private final BlockColors blockColors;
 
         @ApiStatus.Internal
-        public Block(BlockColors blockColors) {
+        public Block(BlockColors blockColors)
+        {
             this.blockColors = blockColors;
         }
 
@@ -55,7 +60,8 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
          *
          * @see BlockColors#register(BlockColor, net.minecraft.world.level.block.Block...)
          */
-        public BlockColors getBlockColors() {
+        public BlockColors getBlockColors()
+        {
             return blockColors;
         }
 
@@ -65,8 +71,8 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
          * @param blockColor The color provider
          * @param blocks     The blocks
          */
-        @SuppressWarnings("deprecation")
-        public void register(BlockColor blockColor, net.minecraft.world.level.block.Block... blocks) {
+        public void register(BlockColor blockColor, net.minecraft.world.level.block.Block... blocks)
+        {
             blockColors.register(blockColor, blocks);
         }
     }
@@ -82,12 +88,14 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Item extends RegisterColorHandlersEvent {
+    public static class Item extends RegisterColorHandlersEvent
+    {
         private final ItemColors itemColors;
         private final BlockColors blockColors;
 
         @ApiStatus.Internal
-        public Item(ItemColors itemColors, BlockColors blockColors) {
+        public Item(ItemColors itemColors, BlockColors blockColors)
+        {
             this.itemColors = itemColors;
             this.blockColors = blockColors;
         }
@@ -97,7 +105,8 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
          *
          * @see ItemColors#register(ItemColor, ItemLike...)
          */
-        public ItemColors getItemColors() {
+        public ItemColors getItemColors()
+        {
             return itemColors;
         }
 
@@ -105,7 +114,8 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
          * {@return the block colors registry}
          * This should only be used for referencing or delegating item colors to their respective block colors.
          */
-        public BlockColors getBlockColors() {
+        public BlockColors getBlockColors()
+        {
             return blockColors;
         }
 
@@ -115,8 +125,8 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
          * @param itemColor The color provider
          * @param items     The items
          */
-        @SuppressWarnings("deprecation")
-        public void register(ItemColor itemColor, ItemLike... items) {
+        public void register(ItemColor itemColor, ItemLike... items)
+        {
             itemColors.register(itemColor, items);
         }
     }
@@ -125,16 +135,21 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
      * Allows registration of custom {@link ColorResolver} implementations to be used with
      * {@link net.minecraft.world.level.BlockAndTintGetter#getBlockTint(BlockPos, ColorResolver)}.
      */
-    public static class ColorResolvers extends RegisterColorHandlersEvent {
+    public static class ColorResolvers extends RegisterColorHandlersEvent
+    {
         private final ImmutableList.Builder<ColorResolver> builder;
 
         @ApiStatus.Internal
-        public ColorResolvers(ImmutableList.Builder<ColorResolver> builder) {
+        public ColorResolvers(ImmutableList.Builder<ColorResolver> builder)
+        {
             this.builder = builder;
         }
 
-        public void register(ColorResolver resolver) {
+        public void register(ColorResolver resolver)
+        {
             this.builder.add(resolver);
         }
+
     }
+
 }

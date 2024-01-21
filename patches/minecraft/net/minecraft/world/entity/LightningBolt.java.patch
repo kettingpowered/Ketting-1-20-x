@@ -51,7 +51,7 @@
 -            this.level().setBlockAndUpdate(blockpos, blockstate);
 -            ++this.blocksSetOnFire;
 +            // CraftBukkit start - add "!visualOnly"
-+            if (!visualOnly && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(this.level(), blockpos, this).isCancelled()) {
++            if (!visualOnly && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockIgniteEvent(this.level(), blockpos, this).isCancelled()) {
 +               this.level().setBlockAndUpdate(blockpos, blockstate);
 +               ++this.blocksSetOnFire;
 +            }
@@ -65,7 +65,7 @@
 -               this.level().setBlockAndUpdate(blockpos1, blockstate);
 -               ++this.blocksSetOnFire;
 +               // CraftBukkit start - add "!visualOnly"
-+               if (!visualOnly && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(this.level(), blockpos1, this).isCancelled()) {
++               if (!visualOnly && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockIgniteEvent(this.level(), blockpos1, this).isCancelled()) {
 +                  this.level().setBlockAndUpdate(blockpos1, blockstate);
 +                  ++this.blocksSetOnFire;
 +               }

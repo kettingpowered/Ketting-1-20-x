@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/net/minecraft/world/entity/vehicle/Boat.java
-@@ -52,7 +_,7 @@
+@@ -50,7 +_,7 @@
+ import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
- import org.joml.Vector3f;
  
 -public class Boat extends Entity implements VariantHolder<Boat.Type> {
 +public class Boat extends Entity implements net.minecraftforge.common.extensions.IForgeBoat {
     private static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ID_HURTDIR = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.FLOAT);
-@@ -91,6 +_,14 @@
+@@ -89,6 +_,14 @@
     private float bubbleAngle;
     private float bubbleAngleO;
  
@@ -24,7 +24,7 @@
     public Boat(EntityType<? extends Boat> p_38290_, Level p_38291_) {
        super(p_38290_, p_38291_);
        this.blocksBuilding = true;
-@@ -164,6 +_,18 @@
+@@ -148,6 +_,18 @@
        if (this.isInvulnerableTo(p_38319_)) {
           return false;
        } else if (!this.level().isClientSide && !this.isRemoved()) {
@@ -43,7 +43,7 @@
           this.setHurtDir(-this.getHurtDir());
           this.setHurtTime(10);
           this.setDamage(this.getDamage() + p_38320_ * 10.0F);
-@@ -171,6 +_,15 @@
+@@ -155,6 +_,15 @@
           this.gameEvent(GameEvent.ENTITY_DAMAGE, p_38319_.getEntity());
           boolean flag = p_38319_.getEntity() instanceof Player && ((Player)p_38319_.getEntity()).getAbilities().instabuild;
           if (flag || this.getDamage() > 40.0F) {
@@ -59,7 +59,7 @@
              if (!flag && this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
                 this.destroy(p_38319_);
              }
-@@ -208,9 +_,29 @@
+@@ -192,9 +_,29 @@
     public void push(Entity p_38373_) {
        if (p_38373_ instanceof Boat) {
           if (p_38373_.getBoundingBox().minY < this.getBoundingBox().maxY) {
@@ -89,7 +89,7 @@
           super.push(p_38373_);
        }
  
-@@ -293,6 +_,7 @@
+@@ -257,6 +_,7 @@
        return this.getDirection().getClockWise();
     }
  
@@ -97,7 +97,7 @@
     public void tick() {
        this.oldStatus = this.status;
        this.status = this.getStatus();
-@@ -332,6 +_,22 @@
+@@ -296,6 +_,22 @@
           this.setDeltaMovement(Vec3.ZERO);
        }
  
@@ -105,7 +105,7 @@
 +      org.bukkit.Server server = this.level().getCraftServer();
 +      org.bukkit.World bworld = this.level().getWorld();
 +
-+      org.bukkit.Location to = org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation.toBukkit(this.position(), bworld, this.getYRot(), this.getXRot());
++      org.bukkit.Location to = org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation.toBukkit(this.position(), bworld, this.getYRot(), this.getXRot());
 +      org.bukkit.entity.Vehicle vehicle = (org.bukkit.entity.Vehicle) this.getBukkitEntity();
 +
 +      server.getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
@@ -120,7 +120,7 @@
        this.tickBubbleColumn();
  
        for(int i = 0; i <= 1; ++i) {
-@@ -483,7 +_,7 @@
+@@ -455,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.set(l1, k1, i2);
                 FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
@@ -129,7 +129,7 @@
                    f = Math.max(f, fluidstate.getHeight(this.level(), blockpos$mutableblockpos));
                 }
  
-@@ -524,7 +_,7 @@
+@@ -496,7 +_,7 @@
                       blockpos$mutableblockpos.set(l1, k2, i2);
                       BlockState blockstate = this.level().getBlockState(blockpos$mutableblockpos);
                       if (!(blockstate.getBlock() instanceof WaterlilyBlock) && Shapes.joinIsNotEmpty(blockstate.getCollisionShape(this.level(), blockpos$mutableblockpos).move((double)l1, (double)k2, (double)i2), voxelshape, BooleanOp.AND)) {
@@ -138,7 +138,7 @@
                          ++k1;
                       }
                    }
-@@ -553,7 +_,7 @@
+@@ -525,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.set(k1, l1, i2);
                 FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
@@ -147,7 +147,7 @@
                    float f = (float)l1 + fluidstate.getHeight(this.level(), blockpos$mutableblockpos);
                    this.waterLevel = Math.max((double)f, this.waterLevel);
                    flag |= aabb.minY < (double)f;
-@@ -583,7 +_,7 @@
+@@ -555,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.set(k1, l1, i2);
                 FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
@@ -156,7 +156,7 @@
                    if (!fluidstate.isSource()) {
                       return Boat.Status.UNDER_FLOWING_WATER;
                    }
-@@ -769,21 +_,27 @@
+@@ -759,21 +_,27 @@
  
                 this.causeFallDamage(this.fallDistance, 1.0F, this.damageSources().fall());
                 if (!this.level().isClientSide && !this.isRemoved()) {
@@ -193,7 +193,7 @@
              this.fallDistance -= (float)p_38307_;
           }
  
-@@ -839,7 +_,7 @@
+@@ -829,7 +_,7 @@
     }
  
     protected boolean canAddPassenger(Entity p_38390_) {
@@ -202,7 +202,7 @@
     }
  
     protected int getMaxPassengers() {
-@@ -872,6 +_,16 @@
+@@ -858,6 +_,16 @@
  
     public boolean isUnderWater() {
        return this.status == Boat.Status.UNDER_WATER || this.status == Boat.Status.UNDER_FLOWING_WATER;

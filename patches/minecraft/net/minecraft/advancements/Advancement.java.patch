@@ -1,30 +1,34 @@
 --- a/net/minecraft/advancements/Advancement.java
 +++ b/net/minecraft/advancements/Advancement.java
-@@ -62,7 +_,14 @@
-       return jsonobject;
+@@ -37,6 +_,7 @@
+    private final Set<Advancement> children = Sets.newLinkedHashSet();
+    private final Component chatComponent;
+    private final boolean sendsTelemetryEvent;
++   public final org.bukkit.advancement.Advancement bukkit = new org.bukkit.craftbukkit.v1_20_R1.advancement.CraftAdvancement(this); // CraftBukkit
+ 
+    public Advancement(ResourceLocation p_286878_, @Nullable Advancement p_286496_, @Nullable DisplayInfo p_286499_, AdvancementRewards p_286389_, Map<String, Criterion> p_286635_, String[][] p_286882_, boolean p_286478_) {
+       this.id = p_286878_;
+@@ -150,7 +_,7 @@
+       return this.chatComponent;
     }
  
-+   /** @deprecated Forge: use {@linkplain #fromJson(JsonObject, DeserializationContext, net.minecraftforge.common.crafting.conditions.ICondition.IContext) overload with context}. */
-+   @Deprecated
-    public static Advancement fromJson(JsonObject p_300691_, DeserializationContext p_300053_) {
-+       return fromJson(p_300691_, p_300053_, net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
-+   }
-+
-+   public static Advancement fromJson(JsonObject p_300691_, DeserializationContext p_300053_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
-+      if ((p_300691_ = net.minecraftforge.common.ForgeHooks.readConditionalAdvancement(context, p_300691_)) == null) return null;
-       Optional<ResourceLocation> optional = p_300691_.has("parent") ? Optional.of(new ResourceLocation(GsonHelper.getAsString(p_300691_, "parent"))) : Optional.empty();
-       Optional<DisplayInfo> optional1 = p_300691_.has("display") ? Optional.of(DisplayInfo.fromJson(GsonHelper.getAsJsonObject(p_300691_, "display"))) : Optional.empty();
-       AdvancementRewards advancementrewards = p_300691_.has("rewards") ? AdvancementRewards.deserialize(GsonHelper.getAsJsonObject(p_300691_, "rewards")) : AdvancementRewards.EMPTY;
-@@ -182,7 +_,11 @@
+-   public static class Builder {
++   public static class Builder implements net.minecraftforge.common.extensions.IForgeAdvancementBuilder {
+       @Nullable
+       private ResourceLocation parentId;
+       @Nullable
+@@ -340,7 +_,14 @@
+          return "Task Advancement{parentId=" + this.parentId + ", display=" + this.display + ", rewards=" + this.rewards + ", criteria=" + this.criteria + ", requirements=" + Arrays.deepToString(this.requirements) + ", sends_telemetry_event=" + this.sendsTelemetryEvent + "}";
        }
  
-       public AdvancementHolder save(Consumer<AdvancementHolder> p_138390_, String p_138391_) {
--         AdvancementHolder advancementholder = this.build(new ResourceLocation(p_138391_));
-+          return save(p_138390_, new ResourceLocation(p_138391_));
++      /** @deprecated Forge: use {@linkplain #fromJson(JsonObject, DeserializationContext, net.minecraftforge.common.crafting.conditions.ICondition.IContext) overload with context}. */
++      @Deprecated
+       public static Advancement.Builder fromJson(JsonObject p_138381_, DeserializationContext p_138382_) {
++         return fromJson(p_138381_, p_138382_, net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
 +      }
 +
-+      public AdvancementHolder save(Consumer<AdvancementHolder> p_138390_, ResourceLocation id) {
-+         AdvancementHolder advancementholder = this.build(id);
-          p_138390_.accept(advancementholder);
-          return advancementholder;
-       }
++      public static Advancement.Builder fromJson(JsonObject p_138381_, DeserializationContext p_138382_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
++         if ((p_138381_ = net.minecraftforge.common.crafting.ConditionalAdvancement.processConditional(p_138381_, context)) == null) return null;
+          ResourceLocation resourcelocation = p_138381_.has("parent") ? new ResourceLocation(GsonHelper.getAsString(p_138381_, "parent")) : null;
+          DisplayInfo displayinfo = p_138381_.has("display") ? DisplayInfo.fromJson(GsonHelper.getAsJsonObject(p_138381_, "display")) : null;
+          AdvancementRewards advancementrewards = p_138381_.has("rewards") ? AdvancementRewards.deserialize(GsonHelper.getAsJsonObject(p_138381_, "rewards")) : AdvancementRewards.EMPTY;

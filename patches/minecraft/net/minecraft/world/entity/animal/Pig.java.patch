@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Pig.java
 +++ b/net/minecraft/world/entity/animal/Pig.java
-@@ -203,7 +_,7 @@
+@@ -201,7 +_,7 @@
     }
  
     public void thunderHit(ServerLevel p_29473_, LightningBolt p_29474_) {
@@ -9,13 +9,13 @@
           ZombifiedPiglin zombifiedpiglin = EntityType.ZOMBIFIED_PIGLIN.create(p_29473_);
           if (zombifiedpiglin != null) {
              zombifiedpiglin.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
-@@ -216,7 +_,14 @@
+@@ -214,7 +_,14 @@
              }
  
              zombifiedpiglin.setPersistenceRequired();
 -            p_29473_.addFreshEntity(zombifiedpiglin);
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPigZapEvent(this, p_29474_, zombifiedpiglin).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPigZapEvent(this, p_29474_, zombifiedpiglin).isCancelled()) {
 +               return;
 +            }
 +            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin); //Ketting

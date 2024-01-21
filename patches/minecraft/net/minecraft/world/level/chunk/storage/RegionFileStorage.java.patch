@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
-@@ -26,7 +_,7 @@
+@@ -25,7 +_,7 @@
        this.sync = p_196955_;
     }
  
@@ -9,7 +9,7 @@
        long i = ChunkPos.asLong(p_63712_.getRegionX(), p_63712_.getRegionZ());
        RegionFile regionfile = this.regionCache.getAndMoveToFirst(i);
        if (regionfile != null) {
-@@ -38,6 +_,7 @@
+@@ -37,6 +_,7 @@
  
           FileUtil.createDirectoriesSafe(this.folder);
           Path path = this.folder.resolve("r." + p_63712_.getRegionX() + "." + p_63712_.getRegionZ() + ".mca");
@@ -17,7 +17,7 @@
           RegionFile regionfile1 = new RegionFile(path, this.folder, this.sync);
           this.regionCache.putAndMoveToFirst(i, regionfile1);
           return regionfile1;
-@@ -46,7 +_,12 @@
+@@ -45,7 +_,12 @@
  
     @Nullable
     public CompoundTag read(ChunkPos p_63707_) throws IOException {
@@ -31,7 +31,7 @@
  
        try (DataInputStream datainputstream = regionfile.getChunkDataInputStream(p_63707_)) {
           return datainputstream == null ? null : NbtIo.read(datainputstream);
-@@ -54,7 +_,12 @@
+@@ -53,7 +_,12 @@
     }
  
     public void scanChunk(ChunkPos p_196957_, StreamTagVisitor p_196958_) throws IOException {
@@ -45,7 +45,7 @@
  
        try (DataInputStream datainputstream = regionfile.getChunkDataInputStream(p_196957_)) {
           if (datainputstream != null) {
-@@ -65,7 +_,7 @@
+@@ -64,7 +_,7 @@
     }
  
     protected void write(ChunkPos p_63709_, @Nullable CompoundTag p_63710_) throws IOException {

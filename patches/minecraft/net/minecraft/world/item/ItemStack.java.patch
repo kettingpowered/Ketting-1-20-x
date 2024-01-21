@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -76,12 +_,16 @@
+@@ -75,12 +_,16 @@
  import net.minecraft.world.level.block.state.pattern.BlockInWorld;
  import org.slf4j.Logger;
  
@@ -18,16 +18,7 @@
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final ItemStack EMPTY = new ItemStack((Void)null);
     public static final DecimalFormat ATTRIBUTE_MODIFIER_FORMAT = Util.make(new DecimalFormat("#.##"), (p_41704_) -> {
-@@ -106,7 +_,7 @@
-    /** @deprecated */
-    @Deprecated
-    @Nullable
--   private final Item item;
-+   private Item item;
-    @Nullable
-    private CompoundTag tag;
-    @Nullable
-@@ -120,6 +_,23 @@
+@@ -119,6 +_,23 @@
        return this.getItem().getTooltipImage(this);
     }
  
@@ -51,7 +42,7 @@
     public ItemStack(ItemLike p_41599_) {
        this(p_41599_, 1);
     }
-@@ -138,30 +_,67 @@
+@@ -137,30 +_,67 @@
     }
  
     public ItemStack(ItemLike p_41601_, int p_41602_) {
@@ -89,11 +80,11 @@
 +
 +   // Called to run this stack through the data converter to handle older storage methods and serialized items
 +   public void convertStack(int version) {
-+      if (0 < version && version < org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers.INSTANCE.getDataVersion()) {
++      if (0 < version && version < org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers.INSTANCE.getDataVersion()) {
 +         /* org.kettingpowered.ketting.core.Ketting start
 +         CompoundTag savedStack = new CompoundTag();
 +         this.save(savedStack);
-+         savedStack = (CompoundTag) net.minecraft.server.MinecraftServer.getServer().fixerUpper.update(net.minecraft.util.datafix.fixes.References.ITEM_STACK, new com.mojang.serialization.Dynamic(net.minecraft.nbt.NbtOps.INSTANCE, savedStack), version, org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers.INSTANCE.getDataVersion()).getValue();
++         savedStack = (CompoundTag) net.minecraft.server.MinecraftServer.getServer().fixerUpper.update(net.minecraft.util.datafix.fixes.References.ITEM_STACK, new com.mojang.serialization.Dynamic(net.minecraft.nbt.NbtOps.INSTANCE, savedStack), version, org.bukkit.craftbukkit.util.CraftMagicNumbers.INSTANCE.getDataVersion()).getValue();
 +         this.load(savedStack);
 +         */
 +         org.kettingpowered.ketting.core.Ketting.LOGGER.warn("Legacy ItemStack being used, updates will not applied: {}", this);
@@ -130,7 +121,7 @@
     }
  
     public static ItemStack of(CompoundTag p_41713_) {
-@@ -174,7 +_,7 @@
+@@ -173,7 +_,7 @@
     }
  
     public boolean isEmpty() {
@@ -139,7 +130,7 @@
     }
  
     public boolean isItemEnabled(FeatureFlagSet p_250869_) {
-@@ -199,7 +_,7 @@
+@@ -198,7 +_,7 @@
     }
  
     public Item getItem() {
@@ -148,7 +139,7 @@
     }
  
     public Holder<Item> getItemHolder() {
-@@ -231,6 +_,15 @@
+@@ -226,6 +_,15 @@
     }
  
     public InteractionResult useOn(UseOnContext p_41662_) {
@@ -164,7 +155,7 @@
        Player player = p_41662_.getPlayer();
        BlockPos blockpos = p_41662_.getClickedPos();
        BlockInWorld blockinworld = new BlockInWorld(p_41662_.getLevel(), blockpos, false);
-@@ -238,10 +_,189 @@
+@@ -233,10 +_,189 @@
           return InteractionResult.PASS;
        } else {
           Item item = this.getItem();
@@ -194,10 +185,10 @@
 +         this.setTagClone(oldData);
 +         if (interactionresult.consumesAction() && world.captureTreeGeneration && world.capturedBlockStates.size() > 0) {
 +            world.captureTreeGeneration = false;
-+            org.bukkit.Location location = org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation.toBukkit(blockpos, world.getWorld());
++            org.bukkit.Location location = org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation.toBukkit(blockpos, world.getWorld());
 +            org.bukkit.TreeType treeType = net.minecraft.world.level.block.SaplingBlock.treeType;
 +            net.minecraft.world.level.block.SaplingBlock.treeType = null;
-+            List<org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState> blocks = new java.util.ArrayList<>(world.capturedBlockStates.values());
++            List<org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState> blocks = new java.util.ArrayList<>(world.capturedBlockStates.values());
 +            world.capturedBlockStates.clear();
 +            org.bukkit.event.world.StructureGrowEvent structureEvent = null;
 +            if (treeType != null) {
@@ -206,7 +197,7 @@
 +               org.bukkit.Bukkit.getPluginManager().callEvent(structureEvent);
 +            }
 +
-+            org.bukkit.event.block.BlockFertilizeEvent fertilizeEvent = new org.bukkit.event.block.BlockFertilizeEvent(org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(world, blockpos), (org.bukkit.entity.Player) player.getBukkitEntity(), (List) blocks);
++            org.bukkit.event.block.BlockFertilizeEvent fertilizeEvent = new org.bukkit.event.block.BlockFertilizeEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(world, blockpos), (org.bukkit.entity.Player) player.getBukkitEntity(), (List) blocks);
 +            fertilizeEvent.setCancelled(structureEvent != null && structureEvent.isCancelled());
 +            org.bukkit.Bukkit.getPluginManager().callEvent(fertilizeEvent);
 +
@@ -216,7 +207,7 @@
 +                  this.setTag(newData);
 +                  this.setCount(newCount);
 +               }
-+               for (org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState blockstate : blocks) {
++               for (org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState blockstate : blocks) {
 +                  world.setBlock(blockstate.getPosition(),blockstate.getHandle(), blockstate.getFlag()); // SPIGOT-7248 - manual update to avoid physics where appropriate
 +               }
 +               player.awardStat(Stats.ITEM_USED.get(item)); // SPIGOT-7236 - award stat
@@ -234,9 +225,9 @@
 +            List<org.bukkit.block.BlockState> blocks = new java.util.ArrayList<>(world.capturedBlockStates.values());
 +            world.capturedBlockStates.clear();
 +            if (blocks.size() > 1) {
-+               placeEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockMultiPlaceEvent(world, player, enumhand, blocks, blockpos.getX(), blockpos.getY(), blockpos.getZ());
++               placeEvent = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockMultiPlaceEvent(world, player, enumhand, blocks, blockpos.getX(), blockpos.getY(), blockpos.getZ());
 +            } else if (blocks.size() == 1) {
-+               placeEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockPlaceEvent(world, player, enumhand, blocks.get(0), blockpos.getX(), blockpos.getY(), blockpos.getZ());
++               placeEvent = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockPlaceEvent(world, player, enumhand, blocks.get(0), blockpos.getX(), blockpos.getY(), blockpos.getZ());
 +            }
 +
 +            if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
@@ -251,7 +242,7 @@
 +               world.preventPoiUpdated = false;
 +
 +               // Brute force all possible updates
-+               BlockPos placedPos = ((org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock) placeEvent.getBlock()).getPosition();
++               BlockPos placedPos = ((org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock) placeEvent.getBlock()).getPosition();
 +               for (net.minecraft.core.Direction dir : net.minecraft.core.Direction.values()) {
 +                  ((ServerPlayer) player).connection.send(new net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket(world, placedPos.relative(dir)));
 +               }
@@ -268,9 +259,9 @@
 +               }
 +
 +               for (org.bukkit.block.BlockState blockstate : blocks) {
-+                  int updateFlag = ((org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState) blockstate).getFlag();
-+                  BlockState oldBlock = ((org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState) blockstate).getHandle();
-+                  BlockPos newblockposition = ((org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState) blockstate).getPosition();
++                  int updateFlag = ((org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState) blockstate).getFlag();
++                  BlockState oldBlock = ((org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState) blockstate).getHandle();
++                  BlockPos newblockposition = ((org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState) blockstate).getPosition();
 +                  BlockState block = world.getBlockState(newblockposition);
 +
 +                  if (!(block.getBlock() instanceof net.minecraft.world.level.block.BaseEntityBlock)) { // Containers get placed automatically
@@ -332,7 +323,7 @@
 +
 +               // SPIGOT-7315: Moved from BlockBed#setPlacedBy
 +               if (placeEvent != null && this.item instanceof BedItem) {
-+                  BlockPos position = ((org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock) placeEvent.getBlock()).getPosition();
++                  BlockPos position = ((org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock) placeEvent.getBlock()).getPosition();
 +                  BlockState blockData =  world.getBlockState(position);
 +
 +                  if (blockData.getBlock() instanceof net.minecraft.world.level.block.BedBlock) {
@@ -356,7 +347,7 @@
  
           return interactionresult;
        }
-@@ -267,11 +_,15 @@
+@@ -262,11 +_,15 @@
           p_41740_.put("tag", this.tag.copy());
        }
  
@@ -373,7 +364,7 @@
     }
  
     public boolean isStackable() {
-@@ -279,7 +_,7 @@
+@@ -274,7 +_,7 @@
     }
  
     public boolean isDamageableItem() {
@@ -382,7 +373,7 @@
           CompoundTag compoundtag = this.getTag();
           return compoundtag == null || !compoundtag.getBoolean("Unbreakable");
        } else {
-@@ -288,19 +_,19 @@
+@@ -283,19 +_,19 @@
     }
  
     public boolean isDamaged() {
@@ -406,13 +397,13 @@
     }
  
     public boolean hurt(int p_220158_, RandomSource p_220159_, @Nullable ServerPlayer p_220160_) {
-@@ -318,6 +_,21 @@
+@@ -313,6 +_,21 @@
              }
  
              p_220158_ -= j;
 +            // CraftBukkit start
 +            if (p_220160_ != null) {
-+               org.bukkit.event.player.PlayerItemDamageEvent event = new org.bukkit.event.player.PlayerItemDamageEvent(p_220160_.getBukkitEntity(), org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(this), p_220158_);
++               org.bukkit.event.player.PlayerItemDamageEvent event = new org.bukkit.event.player.PlayerItemDamageEvent(p_220160_.getBukkitEntity(), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(this), p_220158_);
 +               event.getPlayer().getServer().getPluginManager().callEvent(event);
 +
 +               if (p_220158_ != event.getDamage() || event.isCancelled()) {
@@ -428,7 +419,7 @@
              if (p_220158_ <= 0) {
                 return false;
              }
-@@ -336,9 +_,16 @@
+@@ -331,9 +_,16 @@
     public <T extends LivingEntity> void hurtAndBreak(int p_41623_, T p_41624_, Consumer<T> p_41625_) {
        if (!p_41624_.level().isClientSide && (!(p_41624_ instanceof Player) || !((Player)p_41624_).getAbilities().instabuild)) {
           if (this.isDamageableItem()) {
@@ -438,14 +429,14 @@
                 Item item = this.getItem();
 +               // CraftBukkit start - Check for item breaking
 +               if (this.count == 1 && p_41624_ instanceof Player) {
-+                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerItemBreakEvent((Player) p_41624_, this);
++                  org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerItemBreakEvent((Player) p_41624_, this);
 +               }
 +               // CraftBukkit end
 +
                 this.shrink(1);
                 if (p_41624_ instanceof Player) {
                    ((Player)p_41624_).awardStat(Stats.ITEM_BROKEN.get(item));
-@@ -388,7 +_,7 @@
+@@ -383,7 +_,7 @@
     }
  
     public boolean isCorrectToolForDrops(BlockState p_41736_) {
@@ -454,7 +445,7 @@
     }
  
     public InteractionResult interactLivingEntity(Player p_41648_, LivingEntity p_41649_, InteractionHand p_41650_) {
-@@ -399,7 +_,7 @@
+@@ -394,7 +_,7 @@
        if (this.isEmpty()) {
           return EMPTY;
        } else {
@@ -463,7 +454,7 @@
           itemstack.setPopTime(this.getPopTime());
           if (this.tag != null) {
              itemstack.tag = this.tag.copy();
-@@ -435,7 +_,7 @@
+@@ -430,7 +_,7 @@
        if (!p_150943_.is(p_150944_.getItem())) {
           return false;
        } else {
@@ -472,7 +463,7 @@
        }
     }
  
-@@ -488,6 +_,17 @@
+@@ -483,6 +_,17 @@
        return this.tag;
     }
  
@@ -490,7 +481,7 @@
     public CompoundTag getOrCreateTag() {
        if (this.tag == null) {
           this.setTag(new CompoundTag());
-@@ -527,7 +_,7 @@
+@@ -522,7 +_,7 @@
  
     public void setTag(@Nullable CompoundTag p_41752_) {
        this.tag = p_41752_;
@@ -499,7 +490,7 @@
           this.setDamageValue(this.getDamageValue());
        }
  
-@@ -588,7 +_,7 @@
+@@ -583,7 +_,7 @@
  
     public List<Component> getTooltipLines(@Nullable Player p_41652_, TooltipFlag p_41653_) {
        List<Component> list = Lists.newArrayList();
@@ -508,7 +499,7 @@
        if (this.hasCustomHoverName()) {
           mutablecomponent.withStyle(ChatFormatting.ITALIC);
        }
-@@ -735,6 +_,7 @@
+@@ -730,6 +_,7 @@
           list.add(DISABLED_ITEM_TOOLTIP);
        }
  
@@ -516,7 +507,7 @@
        return list;
     }
  
-@@ -743,7 +_,7 @@
+@@ -738,7 +_,7 @@
     }
  
     private int getHideFlags() {
@@ -525,7 +516,7 @@
     }
  
     public void hideTooltipPart(ItemStack.TooltipPart p_41655_) {
-@@ -863,9 +_,10 @@
+@@ -853,9 +_,10 @@
              }
           }
        } else {
@@ -537,7 +528,7 @@
        return multimap;
     }
  
-@@ -885,6 +_,14 @@
+@@ -875,6 +_,14 @@
        listtag.add(compoundtag);
     }
  
@@ -552,7 +543,7 @@
     public Component getDisplayName() {
        MutableComponent mutablecomponent = Component.empty().append(this.getHoverName());
        if (this.hasCustomHoverName()) {
-@@ -893,7 +_,7 @@
+@@ -883,7 +_,7 @@
  
        MutableComponent mutablecomponent1 = ComponentUtils.wrapInSquareBrackets(mutablecomponent);
        if (!this.isEmpty()) {
@@ -561,7 +552,7 @@
              return p_220170_.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(this)));
           });
        }
-@@ -945,12 +_,31 @@
+@@ -935,12 +_,31 @@
        this.getItem().onUseTick(p_41732_, p_41733_, this, p_41734_);
     }
  

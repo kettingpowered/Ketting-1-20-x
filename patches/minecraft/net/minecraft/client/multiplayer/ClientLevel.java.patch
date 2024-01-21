@@ -33,18 +33,18 @@
        p_104640_.tick();
        this.getProfiler().pop();
  
-@@ -320,8 +_,10 @@
+@@ -327,8 +_,10 @@
     }
  
-    public void addEntity(Entity p_104741_) {
+    private void addEntity(int p_104740_, Entity p_104741_) {
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinLevelEvent(p_104741_, this))) return;
-       this.removeEntity(p_104741_.getId(), Entity.RemovalReason.DISCARDED);
+       this.removeEntity(p_104740_, Entity.RemovalReason.DISCARDED);
        this.entityStorage.addEntity(p_104741_);
 +      p_104741_.onAddedToWorld();
     }
  
     public void removeEntity(int p_171643_, Entity.RemovalReason p_171644_) {
-@@ -448,6 +_,12 @@
+@@ -455,6 +_,12 @@
     }
  
     public void playSeededSound(@Nullable Player p_263381_, double p_263372_, double p_263404_, double p_263365_, Holder<SoundEvent> p_263335_, SoundSource p_263417_, float p_263416_, float p_263349_, long p_263408_) {
@@ -57,7 +57,7 @@
        if (p_263381_ == this.minecraft.player) {
           this.playSound(p_263372_, p_263404_, p_263365_, p_263335_.value(), p_263417_, p_263416_, p_263349_, false, p_263408_);
        }
-@@ -455,6 +_,12 @@
+@@ -462,6 +_,12 @@
     }
  
     public void playSeededSound(@Nullable Player p_263514_, Entity p_263536_, Holder<SoundEvent> p_263518_, SoundSource p_263487_, float p_263538_, float p_263524_, long p_263509_) {
@@ -70,7 +70,7 @@
        if (p_263514_ == this.minecraft.player) {
           this.minecraft.getSoundManager().play(new EntityBoundSoundInstance(p_263518_.value(), p_263487_, p_263538_, p_263524_, p_263536_, p_263509_));
        }
-@@ -750,6 +_,13 @@
+@@ -757,6 +_,13 @@
     public void gameEvent(GameEvent p_233639_, Vec3 p_233640_, GameEvent.Context p_233641_) {
     }
  
@@ -84,7 +84,7 @@
     protected Map<String, MapItemSavedData> getAllMapData() {
        return ImmutableMap.copyOf(this.mapData);
     }
-@@ -892,6 +_,7 @@
+@@ -899,6 +_,7 @@
        }
  
        public void setDifficulty(Difficulty p_104852_) {
@@ -92,7 +92,7 @@
           this.difficulty = p_104852_;
        }
  
-@@ -929,14 +_,46 @@
+@@ -936,14 +_,46 @@
              ClientLevel.this.players.add((AbstractClientPlayer)p_171712_);
           }
  

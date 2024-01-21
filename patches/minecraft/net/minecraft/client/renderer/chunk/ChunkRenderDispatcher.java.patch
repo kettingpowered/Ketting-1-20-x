@@ -1,0 +1,134 @@
+--- a/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
++++ b/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
+@@ -79,12 +_,15 @@
+    private Vec3 camera = Vec3.ZERO;
+ 
+    public ChunkRenderDispatcher(ClientLevel p_194405_, LevelRenderer p_194406_, Executor p_194407_, boolean p_194408_, ChunkBufferBuilderPack p_194409_) {
++      this(p_194405_, p_194406_, p_194407_, p_194408_, p_194409_, -1);
++   }
++   public ChunkRenderDispatcher(ClientLevel p_194405_, LevelRenderer p_194406_, Executor p_194407_, boolean p_194408_, ChunkBufferBuilderPack p_194409_, int countRenderBuilders) {
+       this.level = p_194405_;
+       this.renderer = p_194406_;
+       int i = Math.max(1, (int)((double)Runtime.getRuntime().maxMemory() * 0.3D) / (RenderType.chunkBufferLayers().stream().mapToInt(RenderType::bufferSize).sum() * 4) - 1);
+       int j = Runtime.getRuntime().availableProcessors();
+       int k = p_194408_ ? j : Math.min(j, 4);
+-      int l = Math.max(1, Math.min(k, i));
++      int l = countRenderBuilders < 0 ? Math.max(1, Math.min(k, i)) : countRenderBuilders;
+       this.fixedBuffers = p_194409_;
+       List<ChunkBufferBuilderPack> list = Lists.newArrayListWithExpectedSize(l);
+ 
+@@ -420,7 +_,7 @@
+          if (!chunkrenderdispatcher$compiledchunk.hasBlocks.contains(p_112810_)) {
+             return false;
+          } else {
+-            this.lastResortTransparencyTask = new ChunkRenderDispatcher.RenderChunk.ResortTransparencyTask(this.getDistToPlayerSqr(), chunkrenderdispatcher$compiledchunk);
++            this.lastResortTransparencyTask = new ChunkRenderDispatcher.RenderChunk.ResortTransparencyTask(new net.minecraft.world.level.ChunkPos(getOrigin()), this.getDistToPlayerSqr(), chunkrenderdispatcher$compiledchunk);
+             p_112811_.schedule(this.lastResortTransparencyTask);
+             return true;
+          }
+@@ -452,7 +_,7 @@
+             this.initialCompilationCancelCount.incrementAndGet();
+          }
+ 
+-         this.lastRebuildTask = new ChunkRenderDispatcher.RenderChunk.RebuildTask(this.getDistToPlayerSqr(), renderchunkregion, !flag1 || this.initialCompilationCancelCount.get() > 2);
++         this.lastRebuildTask = new ChunkRenderDispatcher.RenderChunk.RebuildTask(new net.minecraft.world.level.ChunkPos(getOrigin()), this.getDistToPlayerSqr(), renderchunkregion, flag || this.compiled.get() != ChunkRenderDispatcher.CompiledChunk.UNCOMPILED);
+          return this.lastRebuildTask;
+       }
+ 
+@@ -485,10 +_,20 @@
+          protected final double distAtCreation;
+          protected final AtomicBoolean isCancelled = new AtomicBoolean(false);
+          protected final boolean isHighPriority;
++         protected java.util.Map<net.minecraft.core.BlockPos, net.minecraftforge.client.model.data.ModelData> modelData;
+ 
+          public ChunkCompileTask(double p_194423_, boolean p_194424_) {
++            this(null, p_194423_, p_194424_);
++         }
++
++         public ChunkCompileTask(@Nullable net.minecraft.world.level.ChunkPos pos, double p_194423_, boolean p_194424_) {
+             this.distAtCreation = p_194423_;
+             this.isHighPriority = p_194424_;
++            if (pos == null) {
++               this.modelData = java.util.Collections.emptyMap();
++            } else {
++               this.modelData = net.minecraft.client.Minecraft.getInstance().level.getModelDataManager().getAt(pos);
++            }
+          }
+ 
+          public abstract CompletableFuture<ChunkRenderDispatcher.ChunkTaskResult> doTask(ChunkBufferBuilderPack p_112853_);
+@@ -500,6 +_,10 @@
+          public int compareTo(ChunkRenderDispatcher.RenderChunk.ChunkCompileTask p_112855_) {
+             return Doubles.compare(this.distAtCreation, p_112855_.distAtCreation);
+          }
++
++         public net.minecraftforge.client.model.data.ModelData getModelData(net.minecraft.core.BlockPos pos) {
++            return modelData.getOrDefault(pos, net.minecraftforge.client.model.data.ModelData.EMPTY);
++         }
+       }
+ 
+       @OnlyIn(Dist.CLIENT)
+@@ -507,8 +_,13 @@
+          @Nullable
+          protected RenderChunkRegion region;
+ 
++         @Deprecated
+          public RebuildTask(double p_194427_, @Nullable RenderChunkRegion p_194428_, boolean p_194429_) {
+-            super(p_194427_, p_194429_);
++            this(null, p_194427_, p_194428_, p_194429_);
++         }
++
++         public RebuildTask(@Nullable net.minecraft.world.level.ChunkPos pos, double p_194427_, @Nullable RenderChunkRegion p_194428_, boolean p_194429_) {
++            super(pos, p_194427_, p_194429_);
+             this.region = p_194428_;
+          }
+ 
+@@ -605,7 +_,10 @@
+                   }
+ 
+                   if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
+-                     RenderType rendertype2 = ItemBlockRenderTypes.getChunkRenderType(blockstate);
++                     var model = blockrenderdispatcher.getBlockModel(blockstate);
++                     var modelData = model.getModelData(renderchunkregion, blockpos2, blockstate, getModelData(blockpos2));
++                     randomsource.setSeed(blockstate.getSeed(blockpos2));
++                     for (RenderType rendertype2 : model.getRenderTypes(blockstate, randomsource, modelData)) {
+                      BufferBuilder bufferbuilder2 = p_234471_.builder(rendertype2);
+                      if (set.add(rendertype2)) {
+                         RenderChunk.this.beginLayer(bufferbuilder2);
+@@ -613,8 +_,9 @@
+ 
+                      posestack.pushPose();
+                      posestack.translate((float)(blockpos2.getX() & 15), (float)(blockpos2.getY() & 15), (float)(blockpos2.getZ() & 15));
+-                     blockrenderdispatcher.renderBatched(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource);
++                     blockrenderdispatcher.renderBatched(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource, modelData, rendertype2);
+                      posestack.popPose();
++                     }
+                   }
+                }
+ 
+@@ -643,10 +_,10 @@
+          private <E extends BlockEntity> void handleBlockEntity(ChunkRenderDispatcher.RenderChunk.RebuildTask.CompileResults p_234477_, E p_234478_) {
+             BlockEntityRenderer<E> blockentityrenderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(p_234478_);
+             if (blockentityrenderer != null) {
+-               p_234477_.blockEntities.add(p_234478_);
+                if (blockentityrenderer.shouldRenderOffScreen(p_234478_)) {
+                   p_234477_.globalBlockEntities.add(p_234478_);
+                }
++               else p_234477_.blockEntities.add(p_234478_); //FORGE: Fix MC-112730
+             }
+ 
+          }
+@@ -674,8 +_,13 @@
+       class ResortTransparencyTask extends ChunkRenderDispatcher.RenderChunk.ChunkCompileTask {
+          private final ChunkRenderDispatcher.CompiledChunk compiledChunk;
+ 
++         @Deprecated
+          public ResortTransparencyTask(double p_112889_, ChunkRenderDispatcher.CompiledChunk p_112890_) {
+-            super(p_112889_, true);
++            this(null, p_112889_, p_112890_);
++         }
++
++         public ResortTransparencyTask(@Nullable net.minecraft.world.level.ChunkPos pos, double p_112889_, ChunkRenderDispatcher.CompiledChunk p_112890_) {
++            super(pos, p_112889_, true);
+             this.compiledChunk = p_112890_;
+          }
+ 

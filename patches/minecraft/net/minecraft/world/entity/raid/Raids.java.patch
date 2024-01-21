@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/raid/Raids.java
 +++ b/net/minecraft/world/entity/raid/Raids.java
-@@ -119,19 +_,33 @@
+@@ -110,12 +_,16 @@
              Raid raid = this.getOrCreateRaid(p_37964_.serverLevel(), blockpos1);
              boolean flag = false;
              if (!raid.isStarted()) {
@@ -14,16 +14,16 @@
 -            } else if (raid.getBadOmenLevel() < raid.getMaxBadOmenLevel()) {
 +               // CraftBukkit start - fixed a bug with raid: players could add up Bad Omen level even when the raid had finished
 +            } else if (raid.isInProgress() && raid.getBadOmenLevel() < raid.getMaxBadOmenLevel()) {
-                flag = true;
 +               // CraftBukkit end
+                flag = true;
              } else {
                 p_37964_.removeEffect(MobEffects.BAD_OMEN);
-                p_37964_.connection.send(new ClientboundEntityEventPacket(p_37964_, (byte)43));
+@@ -123,6 +_,16 @@
              }
  
              if (flag) {
 +               // CraftBukkit start
-+               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callRaidTriggerEvent(raid, p_37964_)) {
++               if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callRaidTriggerEvent(raid, p_37964_)) {
 +                  p_37964_.removeEffect(MobEffects.BAD_OMEN);
 +                  return null;
 +               }

@@ -3,12 +3,12 @@
 @@ -90,6 +_,7 @@
        int i = this.leftPos;
        int j = this.topPos;
-       super.render(p_283479_, p_283661_, p_281248_, p_281886_);
+       this.renderBg(p_283479_, p_281886_, p_283661_, p_281248_);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ContainerScreenEvent.Render.Background(this, p_283479_, p_283661_, p_281248_));
        RenderSystem.disableDepthTest();
+       super.render(p_283479_, p_283661_, p_281248_, p_281886_);
        p_283479_.pose().pushPose();
-       p_283479_.pose().translate((float)i, (float)j, 0.0F);
-@@ -106,12 +_,13 @@
+@@ -107,12 +_,13 @@
              int l = slot.x;
              int i1 = slot.y;
              if (this.hoveredSlot.isHighlightable()) {
@@ -23,7 +23,7 @@
        ItemStack itemstack = this.draggingItem.isEmpty() ? this.menu.getCarried() : this.draggingItem;
        if (!itemstack.isEmpty()) {
           int l1 = 8;
-@@ -153,13 +_,16 @@
+@@ -149,13 +_,16 @@
     }
  
     public static void renderSlotHighlight(GuiGraphics p_283692_, int p_281453_, int p_281915_, int p_283504_) {
@@ -42,7 +42,7 @@
        }
  
     }
-@@ -172,7 +_,8 @@
+@@ -168,7 +_,8 @@
        p_282567_.pose().pushPose();
        p_282567_.pose().translate(0.0F, 0.0F, 232.0F);
        p_282567_.renderItem(p_281330_, p_281772_, p_281689_);
@@ -52,7 +52,7 @@
        p_282567_.pose().popPose();
     }
  
-@@ -274,7 +_,8 @@
+@@ -270,7 +_,8 @@
        if (super.mouseClicked(p_97748_, p_97749_, p_97750_)) {
           return true;
        } else {
@@ -62,7 +62,7 @@
           Slot slot = this.findSlot(p_97748_, p_97749_);
           long i = Util.getMillis();
           this.doubleclick = this.lastClickSlot == slot && i - this.lastClickTime < 250L && this.lastClickButton == p_97750_;
-@@ -285,6 +_,7 @@
+@@ -281,6 +_,7 @@
              int j = this.leftPos;
              int k = this.topPos;
              boolean flag1 = this.hasClickedOutside(p_97748_, p_97749_, j, k, p_97750_);
@@ -70,7 +70,7 @@
              int l = -1;
              if (slot != null) {
                 l = slot.index;
-@@ -310,7 +_,7 @@
+@@ -306,7 +_,7 @@
                    }
                 } else if (!this.isQuickCrafting) {
                    if (this.menu.getCarried().isEmpty()) {
@@ -79,7 +79,7 @@
                          this.slotClicked(slot, l, p_97750_, ClickType.CLONE);
                       } else {
                          boolean flag2 = l != -999 && (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340) || InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 344));
-@@ -334,7 +_,7 @@
+@@ -330,7 +_,7 @@
                          this.quickCraftingType = 0;
                       } else if (p_97750_ == 1) {
                          this.quickCraftingType = 1;
@@ -88,7 +88,7 @@
                          this.quickCraftingType = 2;
                       }
                    }
-@@ -403,10 +_,13 @@
+@@ -399,10 +_,13 @@
     }
  
     public boolean mouseReleased(double p_97812_, double p_97813_, int p_97814_) {
@@ -102,7 +102,7 @@
        int k = -1;
        if (slot != null) {
           k = slot.index;
-@@ -420,7 +_,7 @@
+@@ -416,7 +_,7 @@
           if (hasShiftDown()) {
              if (!this.lastQuickMoved.isEmpty()) {
                 for(Slot slot2 : this.menu.slots) {
@@ -111,7 +111,7 @@
                       this.slotClicked(slot2, slot2.index, p_97814_, ClickType.QUICK_MOVE);
                    }
                 }
-@@ -483,7 +_,7 @@
+@@ -479,7 +_,7 @@
  
              this.slotClicked((Slot)null, -999, AbstractContainerMenu.getQuickcraftMask(2, this.quickCraftingType), ClickType.QUICK_CRAFT);
           } else if (!this.menu.getCarried().isEmpty()) {
@@ -120,7 +120,7 @@
                 this.slotClicked(slot, k, p_97814_, ClickType.CLONE);
              } else {
                 boolean flag1 = k != -999 && (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340) || InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 344));
-@@ -530,34 +_,39 @@
+@@ -526,34 +_,39 @@
     }
  
     public boolean keyPressed(int p_97765_, int p_97766_, int p_97767_) {
@@ -167,7 +167,7 @@
                 this.slotClicked(this.hoveredSlot, this.hoveredSlot.index, i, ClickType.SWAP);
                 return true;
              }
-@@ -592,6 +_,18 @@
+@@ -588,6 +_,18 @@
  
     public T getMenu() {
        return this.menu;

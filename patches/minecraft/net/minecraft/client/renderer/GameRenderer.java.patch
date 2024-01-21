@@ -75,7 +75,7 @@
        }
     }
  
-@@ -908,12 +_,12 @@
+@@ -907,12 +_,12 @@
  
           Window window = this.minecraft.getWindow();
           RenderSystem.clear(256, Minecraft.ON_OSX);
@@ -90,16 +90,16 @@
           RenderSystem.applyModelViewMatrix();
           Lighting.setupFor3DItems();
           GuiGraphics guigraphics = new GuiGraphics(this.minecraft, this.renderBuffers.bufferSource());
-@@ -949,7 +_,7 @@
+@@ -948,7 +_,7 @@
              }
-          } else if (flag && this.minecraft.screen != null) {
+          } else if (this.minecraft.screen != null) {
              try {
 -               this.minecraft.screen.renderWithTooltip(guigraphics, i, j, this.minecraft.getDeltaFrameTime());
 +               net.minecraftforge.client.ForgeHooksClient.drawScreen(this.minecraft.screen, guigraphics, i, j, this.minecraft.getDeltaFrameTime());
              } catch (Throwable throwable1) {
                 CrashReport crashreport1 = CrashReport.forThrowable(throwable1, "Rendering screen");
                 CrashReportCategory crashreportcategory1 = crashreport1.addCategory("Screen render details");
-@@ -1103,12 +_,19 @@
+@@ -1099,12 +_,19 @@
        Matrix4f matrix4f = posestack.last().pose();
        this.resetProjectionMatrix(matrix4f);
        camera.setup(this.minecraft.level, (Entity)(this.minecraft.getCameraEntity() == null ? this.minecraft.player : this.minecraft.getCameraEntity()), !this.minecraft.options.getCameraType().isFirstPerson(), this.minecraft.options.getCameraType().isMirrored(), p_109090_);
@@ -115,7 +115,7 @@
        this.minecraft.levelRenderer.prepareCullFrustum(p_109092_, camera.getPosition(), this.getProjectionMatrix(Math.max(d0, (double)this.minecraft.options.fov().get().intValue())));
        this.minecraft.levelRenderer.renderLevel(p_109092_, p_109090_, p_109091_, flag, camera, this, this.lightTexture, matrix4f);
 +      this.minecraft.getProfiler().popPush("forge_render_last");
-+      net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_LEVEL.dispatch(this.minecraft.levelRenderer, posestack, matrix4f, this.minecraft.levelRenderer.getTicks(), camera, this.minecraft.levelRenderer.getFrustum());
++      net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_LEVEL, this.minecraft.levelRenderer, posestack, matrix4f, this.minecraft.levelRenderer.getTicks(), camera, this.minecraft.levelRenderer.getFrustum());
        this.minecraft.getProfiler().popPush("hand");
        if (this.renderHand) {
           RenderSystem.clear(256, Minecraft.ON_OSX);

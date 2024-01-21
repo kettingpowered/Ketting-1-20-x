@@ -10,10 +10,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.mojang.serialization.Codec;
-
-public final class ToolAction {
-    public static final Codec<ToolAction> CODEC = Codec.STRING.xmap(ToolAction::get, ToolAction::name).stable();
+@SuppressWarnings("ClassCanBeRecord")
+public final class ToolAction
+{
     private static final Map<String, ToolAction> actions = new ConcurrentHashMap<>();
 
     /**
@@ -21,26 +20,30 @@ public final class ToolAction {
      * This collection can be kept around, and will update itself in response to changes to the map.
      * See {@link ConcurrentHashMap#values()} for details.
      */
-    public static Collection<ToolAction> getActions() {
+    public static Collection<ToolAction> getActions()
+    {
         return Collections.unmodifiableCollection(actions.values());
     }
 
     /**
      * Gets or creates a new ToolAction for the given name.
      */
-    public static ToolAction get(String name) {
+    public static ToolAction get(String name)
+    {
         return actions.computeIfAbsent(name, ToolAction::new);
     }
 
     /**
      * Returns the name of this tool action
      */
-    public String name() {
+    public String name()
+    {
         return name;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "ToolAction[" + name + "]";
     }
 
@@ -49,7 +52,8 @@ public final class ToolAction {
     /**
      * Use {@link #get(String)} to get or create a ToolAction
      */
-    private ToolAction(String name) {
+    private ToolAction(String name)
+    {
         this.name = name;
     }
 }

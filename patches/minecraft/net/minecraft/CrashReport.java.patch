@@ -4,11 +4,11 @@
     public CrashReport(String p_127509_, Throwable p_127510_) {
        this.title = p_127509_;
        this.exception = p_127510_;
-+      this.systemReport.setDetail("CraftBukkit Information", new org.bukkit.craftbukkit.v1_20_R2.CraftCrashReport()); // CraftBukkit
++      this.systemReport.setDetail("CraftBukkit Information", new org.bukkit.craftbukkit.v1_20_R1.CraftCrashReport()); // CraftBukkit
     }
  
     public String getTitle() {
-@@ -57,14 +_,9 @@
+@@ -57,14 +_,8 @@
        if (this.uncategorizedStackTrace != null && this.uncategorizedStackTrace.length > 0) {
           p_127520_.append("-- Head --\n");
           p_127520_.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
@@ -20,7 +20,6 @@
 -         }
 -
 -         p_127520_.append("\n");
-+         p_127520_.append(net.minecraftforge.logging.CrashReportAnalyser.appendSuspectedMods(this.exception, this.uncategorizedStackTrace));
 +         p_127520_.append("Stacktrace:");
 +         p_127520_.append(net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(this.uncategorizedStackTrace));
        }
@@ -34,7 +33,7 @@
        this.systemReport.appendToCrashReportString(p_127520_);
     }
  
-@@ -91,18 +_,7 @@
+@@ -91,23 +_,13 @@
           throwable.setStackTrace(this.exception.getStackTrace());
        }
  
@@ -54,3 +53,9 @@
     }
  
     public String getFriendlyReport() {
+       StringBuilder stringbuilder = new StringBuilder();
+       stringbuilder.append("---- Minecraft Crash Report ----\n");
++      net.minecraftforge.logging.CrashReportExtender.addCrashReportHeader(stringbuilder, this);
+       stringbuilder.append("// ");
+       stringbuilder.append(getErrorComment());
+       stringbuilder.append("\n\n");

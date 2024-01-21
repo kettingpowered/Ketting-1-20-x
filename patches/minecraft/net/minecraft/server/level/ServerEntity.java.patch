@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
-@@ -63,8 +_,15 @@
+@@ -60,8 +_,15 @@
     private boolean wasOnGround;
     @Nullable
     private List<SynchedEntityData.DataValue<?>> trackedDataValues;
@@ -16,16 +16,16 @@
        this.level = p_8528_;
        this.broadcast = p_8532_;
        this.entity = p_8529_;
-@@ -81,7 +_,7 @@
+@@ -78,7 +_,7 @@
     public void sendChanges() {
        List<Entity> list = this.entity.getPassengers();
        if (!list.equals(this.lastPassengers)) {
 -         this.broadcast.accept(new ClientboundSetPassengersPacket(this.entity));
 +         this.broadcastAndSend(new ClientboundSetPassengersPacket(this.entity)); // CraftBukkit
-          removedPassengers(list, this.lastPassengers).forEach((p_296578_) -> {
-             if (p_296578_ instanceof ServerPlayer serverplayer1) {
+          removedPassengers(list, this.lastPassengers).forEach((p_289307_) -> {
+             if (p_289307_ instanceof ServerPlayer serverplayer1) {
                 serverplayer1.connection.teleport(serverplayer1.getX(), serverplayer1.getY(), serverplayer1.getZ(), serverplayer1.getYRot(), serverplayer1.getXRot());
-@@ -93,13 +_,17 @@
+@@ -90,13 +_,17 @@
  
        Entity $$11 = this.entity;
        if ($$11 instanceof ItemFrame itemframe) {
@@ -47,7 +47,7 @@
                       mapitemsaveddata.tickCarriedBy(serverplayer, itemstack);
                       Packet<?> packet = mapitemsaveddata.getUpdatePacket(integer, serverplayer);
                       if (packet != null) {
-@@ -203,7 +_,27 @@
+@@ -200,7 +_,27 @@
  
        ++this.tickCount;
        if (this.entity.hurtMarked) {
@@ -76,7 +76,7 @@
           this.entity.hurtMarked = false;
        }
  
-@@ -218,6 +_,7 @@
+@@ -215,6 +_,7 @@
     public void removePairing(ServerPlayer p_8535_) {
        this.entity.stopSeenByPlayer(p_8535_);
        p_8535_.connection.send(new ClientboundRemoveEntitiesPacket(this.entity.getId()));
@@ -84,7 +84,7 @@
     }
  
     public void addPairing(ServerPlayer p_8542_) {
-@@ -225,11 +_,15 @@
+@@ -222,11 +_,15 @@
        this.sendPairingData(p_8542_, list::add);
        p_8542_.connection.send(new ClientboundBundlePacket(list));
        this.entity.startSeenByPlayer(p_8542_);
@@ -101,7 +101,7 @@
        }
  
        Packet<ClientGamePacketListener> packet = this.entity.getAddEntityPacket();
-@@ -242,6 +_,13 @@
+@@ -239,6 +_,13 @@
        boolean flag = this.trackDelta;
        if (this.entity instanceof LivingEntity) {
           Collection<AttributeInstance> collection = ((LivingEntity)this.entity).getAttributes().getSyncableAttributes();
@@ -115,12 +115,12 @@
           if (!collection.isEmpty()) {
              p_289563_.accept(new ClientboundUpdateAttributesPacket(this.entity.getId(), collection));
           }
-@@ -269,7 +_,14 @@
+@@ -266,7 +_,14 @@
           if (!list.isEmpty()) {
              p_289563_.accept(new ClientboundSetEquipmentPacket(this.entity.getId(), list));
           }
 -      }
-+         ((LivingEntity) this.entity).detectEquipmentUpdatesPublic(); // CraftBukkit - SPIGOT-3789: sync again immediately after sending
++         ((LivingEntity) this.entity).detectEquipmentUpdates(); // CraftBukkit - SPIGOT-3789: sync again immediately after sending
 +      }
 +
 +      // CraftBukkit start - MC-109346: Fix for nonsensical head yaw
@@ -131,7 +131,7 @@
  
        if (!this.entity.getPassengers().isEmpty()) {
           p_289563_.accept(new ClientboundSetPassengersPacket(this.entity));
-@@ -299,6 +_,11 @@
+@@ -296,6 +_,11 @@
        if (this.entity instanceof LivingEntity) {
           Set<AttributeInstance> set = ((LivingEntity)this.entity).getAttributes().getDirtyAttributes();
           if (!set.isEmpty()) {

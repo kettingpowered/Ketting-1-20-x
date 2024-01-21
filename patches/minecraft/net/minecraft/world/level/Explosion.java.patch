@@ -45,8 +45,8 @@
 +      net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.level, this, list, f2);
        Vec3 vec3 = new Vec3(this.x, this.y, this.z);
  
-       for(Entity entity : list) {
-@@ -192,7 +_,39 @@
+       for(int k2 = 0; k2 < list.size(); ++k2) {
+@@ -193,7 +_,39 @@
                    d9 /= d13;
                    double d14 = (double)getSeenPercent(vec3, entity);
                    double d10 = (1.0D - d12) * d14;
@@ -64,7 +64,7 @@
 +                     continue;
 +                  }
 +
-+                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = source;
++                  org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = source;
 +                  entity.lastDamageCancelled = false;
 +
 +                  if (entity instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon dragon) {
@@ -79,7 +79,7 @@
 +                     entity.hurt(this.getDamageSource(), (float)((int)((d10 * d10 + d10) / 2.0D * 7.0D * (double)f2 + 1.0D)));
 +                  }
 +
-+                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = null;
++                  org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = null;
 +                  if (entity.lastDamageCancelled) { // SPIGOT-5339, SPIGOT-6252, SPIGOT-6777: Skip entity if damage event was cancelled
 +                     continue;
 +                  }
@@ -87,7 +87,7 @@
                    double d11;
                    if (entity instanceof LivingEntity) {
                       LivingEntity livingentity = (LivingEntity)entity;
-@@ -238,20 +_,76 @@
+@@ -239,20 +_,76 @@
           boolean flag1 = this.getIndirectSourceEntity() instanceof Player;
           Util.shuffle(this.toBlow, this.level.random);
  
@@ -142,7 +142,7 @@
 +            if (block instanceof net.minecraft.world.level.block.TntBlock) {
 +               Entity sourceEntity = source == null ? null : source;
 +               BlockPos sourceBlock = sourceEntity == null ? BlockPos.containing(this.x, this.y, this.z) : null;
-+               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callTNTPrimeEvent(this.level, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.EXPLOSION, sourceEntity, sourceBlock)) {
++               if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callTNTPrimeEvent(this.level, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.EXPLOSION, sourceEntity, sourceBlock)) {
 +                  this.level.sendBlockUpdated(blockpos, Blocks.AIR.defaultBlockState(), blockstate, 3); // Update the block on the client
 +                  continue;
 +               }
@@ -167,7 +167,7 @@
                       }
  
                       blockstate.spawnAfterBreak(serverlevel, blockpos, ItemStack.EMPTY, flag1);
-@@ -261,8 +_,7 @@
+@@ -262,8 +_,7 @@
                    }
                 }
  
@@ -177,20 +177,20 @@
                 this.level.getProfiler().pop();
              }
           }
-@@ -275,7 +_,11 @@
+@@ -276,7 +_,11 @@
        if (this.fire) {
           for(BlockPos blockpos2 : this.toBlow) {
              if (this.random.nextInt(3) == 0 && this.level.getBlockState(blockpos2).isAir() && this.level.getBlockState(blockpos2.below()).isSolidRender(this.level, blockpos2.below())) {
 -               this.level.setBlockAndUpdate(blockpos2, BaseFireBlock.getState(this.level, blockpos2));
 +               // CraftBukkit start - Ignition by explosion
-+               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(this.level, blockpos2.getX(), blockpos2.getY(), blockpos2.getZ(), this).isCancelled()) {
++               if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockIgniteEvent(this.level, blockpos2.getX(), blockpos2.getY(), blockpos2.getZ(), this).isCancelled()) {
 +                  this.level.setBlockAndUpdate(blockpos2, BaseFireBlock.getState(this.level, blockpos2));
 +               }
 +               // CraftBukkit end
              }
           }
        }
-@@ -287,6 +_,7 @@
+@@ -288,6 +_,7 @@
     }
  
     private static void addBlockDrops(ObjectArrayList<Pair<ItemStack, BlockPos>> p_46068_, ItemStack p_46069_, BlockPos p_46070_) {
@@ -198,7 +198,7 @@
        int i = p_46068_.size();
  
        for(int j = 0; j < i; ++j) {
-@@ -353,6 +_,15 @@
+@@ -354,6 +_,15 @@
  
     public List<BlockPos> getToBlow() {
        return this.toBlow;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/KeyboardHandler.java
 +++ b/net/minecraft/client/KeyboardHandler.java
-@@ -340,7 +_,9 @@
+@@ -329,7 +_,9 @@
              }
           }
  
@@ -11,7 +11,7 @@
              if (this.minecraft.options.keyFullscreen.matches(p_90895_, p_90896_)) {
                 this.minecraft.getWindow().toggleFullScreen();
                 this.minecraft.options.fullscreen().set(this.minecraft.getWindow().isFullscreen());
-@@ -358,6 +_,8 @@
+@@ -347,6 +_,8 @@
                 });
                 return;
              }
@@ -19,8 +19,8 @@
 +               ((KeyBindsScreen)this.minecraft.screen).selectedKey = null; //Forge: Unset pure modifiers.
           }
  
-          if (this.minecraft.getNarrator().isActive() && this.minecraft.options.narratorHotkey().get()) {
-@@ -380,11 +_,15 @@
+          if (this.minecraft.getNarrator().isActive()) {
+@@ -369,11 +_,15 @@
              Screen.wrapScreenError(() -> {
                 if (p_90897_ != 1 && p_90897_ != 2) {
                    if (p_90897_ == 0) {
@@ -38,8 +38,8 @@
                 }
  
              }, "keyPressed event handler", screen.getClass().getCanonicalName());
-@@ -443,22 +_,26 @@
-                this.minecraft.debugFpsMeterKeyPress(p_90895_ - 48);
+@@ -424,22 +_,26 @@
+                }
              }
           }
 -

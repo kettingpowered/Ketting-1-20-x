@@ -26,8 +26,8 @@
 +
 +   @Override
 +   public T create(int windowId, Inventory playerInv, net.minecraft.network.FriendlyByteBuf extraData) {
-+      if (this.constructor instanceof net.minecraftforge.network.IContainerFactory<T> ctr) {
-+         return ctr.create(windowId, playerInv, extraData);
++      if (this.constructor instanceof net.minecraftforge.network.IContainerFactory) {
++         return ((net.minecraftforge.network.IContainerFactory<T>) this.constructor).create(windowId, playerInv, extraData);
 +      }
 +      return create(windowId, playerInv);
     }

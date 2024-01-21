@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * GameRules dictate certain behavior within Minecraft itself
  * <br>
  * For more information please visit the
- * <a href="https://minecraft.wiki/w/Commands/gamerule">Minecraft
+ * <a href="https://minecraft.gamepedia.com/Commands/gamerule">Minecraft
  * Wiki</a>
  *
  * @param <T> type of rule (Boolean or Integer)
@@ -206,10 +206,6 @@ public final class GameRule<T> {
      * Whether vines will spread.
      */
     public static final GameRule<Boolean> DO_VINES_SPREAD = new GameRule<>("doVinesSpread", Boolean.class);
-    /**
-     * Whether ender pearls will vanish on player death.
-     */
-    public static final GameRule<Boolean> ENDER_PEARLS_VANISH_ON_DEATH = new GameRule<>("enderPearlsVanishOnDeath", Boolean.class);
 
     // Numerical rules
     /**

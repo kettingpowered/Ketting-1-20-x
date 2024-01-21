@@ -1,31 +1,31 @@
 --- a/net/minecraft/world/level/saveddata/maps/MapItemSavedData.java
 +++ b/net/minecraft/world/level/saveddata/maps/MapItemSavedData.java
-@@ -51,6 +_,13 @@
+@@ -50,6 +_,13 @@
     private final Map<String, MapFrame> frameMarkers = Maps.newHashMap();
     private int trackedDecorationCount;
  
 +   // CraftBukkit start
-+   public final org.bukkit.craftbukkit.v1_20_R2.map.CraftMapView mapView;
-+   private org.bukkit.craftbukkit.v1_20_R2.CraftServer server;
++   public final org.bukkit.craftbukkit.v1_20_R1.map.CraftMapView mapView;
++   private org.bukkit.craftbukkit.v1_20_R1.CraftServer server;
 +   public java.util.UUID uniqueId = null;
 +   public String id;
 +   // CraftBukkit end
 +
-    public static SavedData.Factory<MapItemSavedData> factory() {
-       return new SavedData.Factory<>(() -> {
-          throw new IllegalStateException("Should never create an empty map saved data");
-@@ -66,6 +_,10 @@
+    private MapItemSavedData(int p_164768_, int p_164769_, byte p_164770_, boolean p_164771_, boolean p_164772_, boolean p_164773_, ResourceKey<Level> p_164774_) {
+       this.scale = p_164770_;
+       this.centerX = p_164768_;
+@@ -59,6 +_,10 @@
        this.unlimitedTracking = p_164772_;
        this.locked = p_164773_;
        this.setDirty();
 +      // CraftBukkit start
-+      mapView = new org.bukkit.craftbukkit.v1_20_R2.map.CraftMapView(this);
-+      server = (org.bukkit.craftbukkit.v1_20_R2.CraftServer) org.bukkit.Bukkit.getServer();
++      mapView = new org.bukkit.craftbukkit.v1_20_R1.map.CraftMapView(this);
++      server = (org.bukkit.craftbukkit.v1_20_R1.CraftServer) org.bukkit.Bukkit.getServer();
 +      // CraftBukkit end
     }
  
     public static MapItemSavedData createFresh(double p_164781_, double p_164782_, byte p_164783_, boolean p_164784_, boolean p_164785_, ResourceKey<Level> p_164786_) {
-@@ -82,8 +_,26 @@
+@@ -75,8 +_,26 @@
     }
  
     public static MapItemSavedData load(CompoundTag p_164808_) {
@@ -39,7 +39,7 @@
 +         if (least != 0L && most != 0L) {
 +            java.util.UUID uniqueId = new java.util.UUID(most, least);
 +
-+            org.bukkit.craftbukkit.v1_20_R2.CraftWorld world = (org.bukkit.craftbukkit.v1_20_R2.CraftWorld) org.bukkit.Bukkit.getWorld(uniqueId);
++            org.bukkit.craftbukkit.v1_20_R1.CraftWorld world = (org.bukkit.craftbukkit.v1_20_R1.CraftWorld) org.bukkit.Bukkit.getWorld(uniqueId);
 +            // Check if the stored world details are correct.
 +            if (world == null) {
 +                    /* All Maps which do not have their valid world loaded are set to a dimension which hopefully won't be reached.
@@ -54,7 +54,7 @@
        });
        int i = p_164808_.getInt("xCenter");
        int j = p_164808_.getInt("zCenter");
-@@ -120,6 +_,25 @@
+@@ -113,6 +_,25 @@
        ResourceLocation.CODEC.encodeStart(NbtOps.INSTANCE, this.dimension.location()).resultOrPartial(LOGGER::error).ifPresent((p_77954_) -> {
           p_77956_.put("dimension", p_77954_);
        });
@@ -62,7 +62,7 @@
 +      if (true) {
 +         if (this.uniqueId == null) {
 +            for (org.bukkit.World world : server.getWorlds()) {
-+               org.bukkit.craftbukkit.v1_20_R2.CraftWorld cWorld = (org.bukkit.craftbukkit.v1_20_R2.CraftWorld) world;
++               org.bukkit.craftbukkit.v1_20_R1.CraftWorld cWorld = (org.bukkit.craftbukkit.v1_20_R1.CraftWorld) world;
 +               if (cWorld.getHandle().dimension() == this.dimension) {
 +                  this.uniqueId = cWorld.getUID();
 +                  break;
@@ -80,7 +80,7 @@
        p_77956_.putInt("xCenter", this.centerX);
        p_77956_.putInt("zCenter", this.centerZ);
        p_77956_.putByte("scale", this.scale);
-@@ -455,7 +_,7 @@
+@@ -448,7 +_,7 @@
           this.player = p_77970_;
        }
  
@@ -89,7 +89,7 @@
           int i = this.minDirtyX;
           int j = this.minDirtyY;
           int k = this.maxDirtyX + 1 - this.minDirtyX;
-@@ -464,7 +_,7 @@
+@@ -457,7 +_,7 @@
  
           for(int i1 = 0; i1 < k; ++i1) {
              for(int j1 = 0; j1 < l; ++j1) {
@@ -98,11 +98,11 @@
              }
           }
  
-@@ -474,17 +_,28 @@
+@@ -467,17 +_,28 @@
        @Nullable
        Packet<?> nextUpdatePacket(int p_164816_) {
           MapItemSavedData.MapPatch mapitemsaveddata$mappatch;
-+         org.bukkit.craftbukkit.v1_20_R2.map.RenderData render = MapItemSavedData.this.mapView.render((org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer) this.player.getBukkitEntity()); // CraftBukkit
++         org.bukkit.craftbukkit.v1_20_R1.map.RenderData render = MapItemSavedData.this.mapView.render((org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer) this.player.getBukkitEntity()); // CraftBukkit
 +
           if (this.dirtyData) {
              this.dirtyData = false;
@@ -122,7 +122,7 @@
 +
 +            for (org.bukkit.map.MapCursor cursor : render.cursors) {
 +               if (cursor.isVisible()) {
-+                  icons.add(new MapDecoration(MapDecoration.Type.byIcon(cursor.getRawType()), cursor.getX(), cursor.getY(), cursor.getDirection(), org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage.fromStringOrNull(cursor.getCaption())));
++                  icons.add(new MapDecoration(MapDecoration.Type.byIcon(cursor.getRawType()), cursor.getX(), cursor.getY(), cursor.getDirection(), org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage.fromStringOrNull(cursor.getCaption())));
 +               }
 +            }
 +            collection = icons;

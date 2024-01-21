@@ -26,9 +26,9 @@
              if (this.path != null) {
                 return true;
 @@ -98,6 +_,18 @@
+             this.pathedTargetY = livingentity.getY();
              this.pathedTargetZ = livingentity.getZ();
              this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
-             double d0 = this.mob.distanceToSqr(livingentity);
 +         if (this.canPenalize) {
 +            this.ticksUntilNextPathRecalculation += failedPathFindingPenalty;
 +            if (this.mob.getNavigation().getPath() != null) {

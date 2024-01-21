@@ -43,17 +43,17 @@
 +      String[] lines = new String[4];
 +
 +      for (int i = 0; i < p_277744_.size(); ++i) {
-+         lines[i] = org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage.fromComponent(p_277359_.getMessage(i, p_277396_.isTextFilteringEnabled()));
++         lines[i] = org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage.fromComponent(p_277359_.getMessage(i, p_277396_.isTextFilteringEnabled()));
 +      }
 +
-+      org.bukkit.event.block.SignChangeEvent event = new org.bukkit.event.block.SignChangeEvent(org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(this.level, this.worldPosition), player, lines.clone(), (front) ? org.bukkit.block.sign.Side.FRONT : org.bukkit.block.sign.Side.BACK);
++      org.bukkit.event.block.SignChangeEvent event = new org.bukkit.event.block.SignChangeEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(this.level, this.worldPosition), player, lines.clone(), (front) ? org.bukkit.block.sign.Side.FRONT : org.bukkit.block.sign.Side.BACK);
 +      p_277396_.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) {
 +         return originalText;
 +      }
 +
-+      Component[] components = org.bukkit.craftbukkit.v1_20_R2.block.CraftSign.sanitizeLines(event.getLines());
++      Component[] components = org.bukkit.craftbukkit.v1_20_R1.block.CraftSign.sanitizeLines(event.getLines());
 +      for (int i = 0; i < components.length; i++) {
 +         if (!java.util.Objects.equals(lines[i], event.getLine(i))) {
 +            p_277359_ = p_277359_.setMessage(i, components[i]);
@@ -69,16 +69,13 @@
     }
  
 -   private static CommandSourceStack createCommandSourceStack(@Nullable Player p_279428_, Level p_279359_, BlockPos p_279430_) {
--      String s = p_279428_ == null ? "Sign" : p_279428_.getName().getString();
--      Component component = (Component)(p_279428_ == null ? Component.literal("Sign") : p_279428_.getDisplayName());
--      return new CommandSourceStack(CommandSource.NULL, Vec3.atCenterOf(p_279430_), Vec2.ZERO, (ServerLevel)p_279359_, 2, s, component, p_279359_.getServer(), p_279428_);
 +   // CraftBukkit start
 +   @Override
 +   public void sendSystemMessage(Component ichatbasecomponent) {}
 +
 +   @Override
 +   public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return wrapper.getEntity() != null ? wrapper.getEntity().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_20_R2.command.CraftBlockCommandSender(wrapper, this);
++      return wrapper.getEntity() != null ? wrapper.getEntity().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_20_R1.command.CraftBlockCommandSender(wrapper, this);
 +   }
 +
 +   @Override
@@ -96,13 +93,15 @@
 +      return false;
 +   }
 +
-+   private CommandSourceStack createCommandSourceStack(@Nullable Player entityhuman, Level world, BlockPos blockposition) {
++   private CommandSourceStack createCommandSourceStack(@Nullable Player p_279428_, Level p_279359_, BlockPos p_279430_) {
 +      // CraftBukkit end
-+      String s = entityhuman == null ? "Sign" : entityhuman.getName().getString();
-+      Object object = entityhuman == null ? Component.literal("Sign") : entityhuman.getDisplayName();
+       String s = p_279428_ == null ? "Sign" : p_279428_.getName().getString();
+-      Component component = (Component)(p_279428_ == null ? Component.literal("Sign") : p_279428_.getDisplayName());
+-      return new CommandSourceStack(CommandSource.NULL, Vec3.atCenterOf(p_279430_), Vec2.ZERO, (ServerLevel)p_279359_, 2, s, component, p_279359_.getServer(), p_279428_);
++      Object object = p_279428_ == null ? Component.literal("Sign") : p_279428_.getDisplayName();
 +
 +      // CraftBukkit - this
-+      return new CommandSourceStack(this, Vec3.atCenterOf(blockposition), Vec2.ZERO, (ServerLevel) world, 2, s, (Component) object, world.getServer(), entityhuman);
++      return new CommandSourceStack(this, Vec3.atCenterOf(p_279430_), Vec2.ZERO, (ServerLevel) p_279359_, 2, s, (Component) object, p_279359_.getServer(), p_279428_);
     }
  
     public ClientboundBlockEntityDataPacket getUpdatePacket() {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/AreaEffectCloud.java
 +++ b/net/minecraft/world/entity/AreaEffectCloud.java
-@@ -150,6 +_,18 @@
+@@ -149,6 +_,18 @@
        this.duration = p_19735_;
     }
  
@@ -19,7 +19,7 @@
     public void tick() {
        super.tick();
        boolean flag = this.isWaiting();
-@@ -239,19 +_,35 @@
+@@ -238,19 +_,35 @@
              } else {
                 List<LivingEntity> list1 = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox());
                 if (!list1.isEmpty()) {
@@ -41,11 +41,11 @@
 +                     }
 +                  }
 +
-+                  org.bukkit.event.entity.AreaEffectCloudApplyEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callAreaEffectCloudApplyEvent(this, entities);
++                  org.bukkit.event.entity.AreaEffectCloudApplyEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callAreaEffectCloudApplyEvent(this, entities);
 +                  if (!event.isCancelled()) {
 +                     for (org.bukkit.entity.LivingEntity entity : event.getAffectedEntities()) {
-+                        if (entity instanceof org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) {
-+                           LivingEntity entityliving = ((org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) entity).getHandle();
++                        if (entity instanceof org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity) {
++                           LivingEntity entityliving = ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity) entity).getHandle();
 +                           // CraftBukkit end
 +                           this.victims.put(entityliving, this.tickCount + this.reapplicationDelay);
 +                           java.util.Iterator iterator2 = list.iterator();

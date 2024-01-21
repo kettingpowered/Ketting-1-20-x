@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
-@@ -88,6 +_,7 @@
+@@ -86,6 +_,7 @@
     private final Node[] nodes = new Node[24];
     private final int[] nodeAdjacency = new int[24];
     private final BinaryHeap openSet = new BinaryHeap();
@@ -8,7 +8,7 @@
  
     public EnderDragon(EntityType<? extends EnderDragon> p_31096_, Level p_31097_) {
        super(EntityType.ENDER_DRAGON, p_31097_);
-@@ -104,6 +_,15 @@
+@@ -102,6 +_,15 @@
        this.noPhysics = true;
        this.noCulling = true;
        this.phaseManager = new EnderDragonPhaseManager(this);
@@ -24,7 +24,7 @@
     }
  
     public void setDragonFight(EndDragonFight p_287736_) {
-@@ -159,7 +_,11 @@
+@@ -157,7 +_,11 @@
        return adouble;
     }
  
@@ -36,16 +36,16 @@
        this.processFlappingMovement();
        if (this.level().isClientSide) {
           this.setHealth(this.getHealth());
-@@ -232,7 +_,7 @@
+@@ -237,7 +_,7 @@
                 }
  
                 Vec3 vec3 = dragonphaseinstance.getFlyTargetLocation();
 -               if (vec3 != null) {
 +               if (vec3 != null && dragonphaseinstance.getPhase() != EnderDragonPhase.HOVERING) { // CraftBukkit - Don't move when hovering
-                   double d0 = vec3.x - this.getX();
-                   double d1 = vec3.y - this.getY();
-                   double d2 = vec3.z - this.getZ();
-@@ -362,7 +_,14 @@
+                   double d7 = vec3.x - this.getX();
+                   double d8 = vec3.y - this.getY();
+                   double d9 = vec3.z - this.getZ();
+@@ -367,7 +_,14 @@
           if (this.nearestCrystal.isRemoved()) {
              this.nearestCrystal = null;
           } else if (this.tickCount % 10 == 0 && this.getHealth() < this.getMaxHealth()) {
@@ -61,7 +61,7 @@
           }
        }
  
-@@ -426,6 +_,9 @@
+@@ -431,6 +_,9 @@
        int j1 = Mth.floor(p_31140_.maxZ);
        boolean flag = false;
        boolean flag1 = false;
@@ -71,7 +71,7 @@
  
        for(int k1 = i; k1 <= l; ++k1) {
           for(int l1 = j; l1 <= i1; ++l1) {
-@@ -433,8 +_,12 @@
+@@ -438,8 +_,12 @@
                 BlockPos blockpos = new BlockPos(k1, l1, i2);
                 BlockState blockstate = this.level().getBlockState(blockpos);
                 if (!blockstate.isAir() && !blockstate.is(BlockTags.DRAGON_TRANSPARENT)) {
@@ -81,12 +81,12 @@
 +                     // CraftBukkit start - Add blocks to list rather than destroying them
 +                     // flag1 = this.level().removeBlock(blockpos, false) || flag1;
 +                     flag1 = true;
-+                     destroyedBlocks.add(org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(this.level(), blockpos));
++                     destroyedBlocks.add(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(this.level(), blockpos));
 +                     // CraftBukkit end
                    } else {
                       flag = true;
                    }
-@@ -443,6 +_,51 @@
+@@ -448,6 +_,51 @@
           }
        }
  
@@ -115,7 +115,7 @@
 +               continue;
 +            }
 +
-+            org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock craftBlock = ((org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock) block);
++            org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock craftBlock = ((org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock) block);
 +            BlockPos blockpos = craftBlock.getPosition();
 +
 +            net.minecraft.world.level.block.Block nmsBlock = craftBlock.getNMS().getBlock();
@@ -138,7 +138,7 @@
        if (flag1) {
           BlockPos blockpos1 = new BlockPos(i + this.random.nextInt(l - i + 1), j + this.random.nextInt(i1 - j + 1), k + this.random.nextInt(j1 - k + 1));
           this.level().levelEvent(2008, blockpos1, 0);
-@@ -503,6 +_,21 @@
+@@ -508,6 +_,21 @@
  
     }
  
@@ -160,7 +160,7 @@
     protected void tickDeath() {
        if (this.dragonFight != null) {
           this.dragonFight.updateDragon(this);
-@@ -516,26 +_,50 @@
+@@ -521,26 +_,50 @@
           this.level().addParticle(ParticleTypes.EXPLOSION_EMITTER, this.getX() + (double)f, this.getY() + 2.0D + (double)f1, this.getZ() + (double)f2, 0.0D, 0.0D, 0.0D);
        }
  
@@ -216,7 +216,7 @@
           }
  
           if (this.dragonFight != null) {
-@@ -724,6 +_,7 @@
+@@ -729,6 +_,7 @@
        super.addAdditionalSaveData(p_31144_);
        p_31144_.putInt("DragonPhase", this.phaseManager.getCurrentPhase().getPhase().getId());
        p_31144_.putInt("DragonDeathTime", this.dragonDeathTime);
@@ -224,7 +224,7 @@
     }
  
     public void readAdditionalSaveData(CompoundTag p_31134_) {
-@@ -736,6 +_,11 @@
+@@ -741,6 +_,11 @@
           this.dragonDeathTime = p_31134_.getInt("DragonDeathTime");
        }
  
@@ -236,7 +236,7 @@
     }
  
     public void checkDespawn() {
-@@ -858,8 +_,19 @@
+@@ -863,8 +_,19 @@
        return false;
     }
  

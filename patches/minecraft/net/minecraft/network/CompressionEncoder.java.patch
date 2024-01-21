@@ -9,16 +9,16 @@
  
     public CompressionEncoder(int p_129448_) {
        this.threshold = p_129448_;
-@@ -21,6 +_,12 @@
-          VarInt.write(p_129454_, 0);
-          p_129454_.writeBytes(p_129453_);
+@@ -22,6 +_,12 @@
+          friendlybytebuf.writeVarInt(0);
+          friendlybytebuf.writeBytes(p_129453_);
        } else {
 +         if (!DISABLE_PACKET_DEBUG && i > net.minecraft.network.CompressionDecoder.MAXIMUM_UNCOMPRESSED_LENGTH) {
 +             p_129453_.markReaderIndex();
 +             LOGGER.error("Attempted to send packet over maximum protocol size: {} > {}\nData:\n{}", i, net.minecraft.network.CompressionDecoder.MAXIMUM_UNCOMPRESSED_LENGTH,
-+                     net.minecraftforge.common.util.HexDumper.dump(p_129453_));
++                     net.minecraftforge.logging.PacketDump.getContentDump(p_129453_));
 +             p_129453_.resetReaderIndex();
 +         }
           byte[] abyte = new byte[i];
           p_129453_.readBytes(abyte);
-          VarInt.write(p_129454_, abyte.length);
+          friendlybytebuf.writeVarInt(abyte.length);

@@ -1,16 +1,16 @@
 --- a/net/minecraft/world/item/crafting/CustomRecipe.java
 +++ b/net/minecraft/world/item/crafting/CustomRecipe.java
-@@ -10,6 +_,13 @@
+@@ -13,6 +_,13 @@
        this.category = p_249010_;
     }
  
 +   // CraftBukkit start
 +   @Override
-+   public org.bukkit.inventory.Recipe toBukkitRecipe(org.bukkit.NamespacedKey id) {
-+      return new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftComplexRecipe(id, this);
++   public org.bukkit.inventory.Recipe toBukkitRecipe() {
++      return new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftComplexRecipe(this);
 +   }
 +   // CraftBukkit end
 +
-    public boolean isSpecial() {
-       return true;
+    public ResourceLocation getId() {
+       return this.id;
     }

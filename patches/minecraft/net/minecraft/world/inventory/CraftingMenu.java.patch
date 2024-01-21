@@ -1,43 +1,40 @@
 --- a/net/minecraft/world/inventory/CraftingMenu.java
 +++ b/net/minecraft/world/inventory/CraftingMenu.java
-@@ -23,10 +_,13 @@
+@@ -22,10 +_,13 @@
     private static final int INV_SLOT_END = 37;
     private static final int USE_ROW_SLOT_START = 37;
     private static final int USE_ROW_SLOT_END = 46;
--   private final CraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3);
--   private final ResultContainer resultSlots = new ResultContainer();
--   private final ContainerLevelAccess access;
-+   public final TransientCraftingContainer craftSlots; // CraftBukkit
-+   public final ResultContainer resultSlots;
-+   public final ContainerLevelAccess access;
+-   public final CraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3);
++   public final CraftingContainer craftSlots; // CraftBukkit
+    public final ResultContainer resultSlots = new ResultContainer();
+    public final ContainerLevelAccess access;
     private final Player player;
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView bukkitEntity = null;
 +   // CraftBukkit end
  
     public CraftingMenu(int p_39353_, Inventory p_39354_) {
        this(p_39353_, p_39354_, ContainerLevelAccess.NULL);
-@@ -34,6 +_,11 @@
+@@ -33,6 +_,10 @@
  
     public CraftingMenu(int p_39356_, Inventory p_39357_, ContainerLevelAccess p_39358_) {
        super(MenuType.CRAFTING, p_39356_);
 +      // CraftBukkit start - Switched order of IInventory construction and stored player
-+      this.resultSlots = new ResultContainer();
 +      this.craftSlots = new TransientCraftingContainer(this, 3, 3, p_39357_.player); // CraftBukkit - pass player
-+      this.craftSlots.resultInventory = this.resultSlots;
++      ((TransientCraftingContainer)this.craftSlots).resultInventory = this.resultSlots;
 +      // CraftBukkit end
        this.access = p_39358_;
        this.player = p_39357_.player;
        this.addSlot(new ResultSlot(p_39357_.player, this.craftSlots, this.resultSlots, 0, 124, 35));
-@@ -71,6 +_,7 @@
+@@ -69,6 +_,7 @@
                 }
              }
           }
-+         itemstack = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.map(RecipeHolder::toBukkitRecipe).orElse(null) instanceof net.minecraft.world.item.crafting.RepairItemRecipe); // CraftBukkit
++         itemstack = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.orElse(null) instanceof net.minecraft.world.item.crafting.RepairItemRecipe); // CraftBukkit
  
           p_150551_.setItem(0, itemstack);
           p_150547_.setRemoteSlot(0, itemstack);
-@@ -105,6 +_,7 @@
+@@ -103,6 +_,7 @@
     }
  
     public boolean stillValid(Player p_39368_) {
@@ -45,20 +42,20 @@
        return stillValid(this.access, p_39368_, Blocks.CRAFTING_TABLE);
     }
  
-@@ -183,4 +_,17 @@
+@@ -181,4 +_,17 @@
     public boolean shouldMoveToInventory(int p_150553_) {
        return p_150553_ != this.getResultSlotIndex();
     }
 +
 +   // CraftBukkit start
 +   @Override
-+   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryCrafting inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryCrafting(this.craftSlots, this.resultSlots);
-+      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryCrafting inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryCrafting(this.craftSlots, this.resultSlots);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

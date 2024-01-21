@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/ZombieVillager.java
 +++ b/net/minecraft/world/entity/monster/ZombieVillager.java
-@@ -65,6 +_,7 @@
+@@ -62,6 +_,7 @@
     @Nullable
     private CompoundTag tradeOffers;
     private int villagerXp;
@@ -8,7 +8,7 @@
  
     public ZombieVillager(EntityType<? extends ZombieVillager> p_34368_, Level p_34369_) {
        super(p_34368_, p_34369_);
-@@ -128,13 +_,18 @@
+@@ -125,13 +_,18 @@
     public void tick() {
        if (!this.level().isClientSide && this.isAlive() && this.isConverting()) {
           int i = this.getConversionProgress();
@@ -28,7 +28,7 @@
     }
  
     public InteractionResult mobInteract(Player p_34394_, InteractionHand p_34395_) {
-@@ -174,8 +_,10 @@
+@@ -171,8 +_,10 @@
        this.conversionStarter = p_34384_;
        this.villagerConversionTime = p_34385_;
        this.getEntityData().set(DATA_CONVERTING_ID, true);
@@ -41,7 +41,7 @@
        this.level().broadcastEntityEvent(this, (byte)16);
     }
  
-@@ -191,7 +_,13 @@
+@@ -188,7 +_,13 @@
     }
  
     private void finishConversion(ServerLevel p_34399_) {
@@ -56,7 +56,7 @@
  
        for(EquipmentSlot equipmentslot : EquipmentSlot.values()) {
           ItemStack itemstack = this.getItemBySlot(equipmentslot);
-@@ -201,7 +_,9 @@
+@@ -198,7 +_,9 @@
              } else {
                 double d0 = (double)this.getEquipmentDropChance(equipmentslot);
                 if (d0 > 1.0D) {
@@ -66,7 +66,7 @@
                 }
              }
           }
-@@ -227,11 +_,11 @@
+@@ -224,11 +_,11 @@
           }
        }
  

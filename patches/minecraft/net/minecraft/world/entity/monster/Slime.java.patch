@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Slime.java
 +++ b/net/minecraft/world/entity/monster/Slime.java
-@@ -130,6 +_,8 @@
+@@ -124,6 +_,8 @@
        if (this.onGround() && !this.wasOnGround) {
           int i = this.getSize();
  
@@ -9,7 +9,7 @@
           for(int j = 0; j < i * 8; ++j) {
              float f = this.random.nextFloat() * ((float)Math.PI * 2F);
              float f1 = this.random.nextFloat() * 0.5F + 0.5F;
-@@ -190,6 +_,19 @@
+@@ -184,6 +_,19 @@
           int j = i / 2;
           int k = 2 + this.random.nextInt(3);
  
@@ -29,7 +29,7 @@
           for(int l = 0; l < k; ++l) {
              float f1 = ((float)(l % 2) - 0.5F) * f;
              float f2 = ((float)(l / 2) - 0.5F) * f;
-@@ -204,9 +_,19 @@
+@@ -198,9 +_,19 @@
                 slime.setInvulnerable(this.isInvulnerable());
                 slime.setSize(j, true);
                 slime.moveTo(this.getX() + (double)f1, this.getY() + 0.5D, this.getZ() + (double)f2, this.random.nextFloat() * 360.0F, 0.0F);
@@ -39,7 +39,7 @@
           }
 +
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTransformEvent(this, slimes, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTransformEvent(this, slimes, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
 +            super.remove(p_149847_);
 +            return;
 +         }
@@ -50,7 +50,7 @@
        }
  
        super.remove(p_149847_);
-@@ -277,7 +_,7 @@
+@@ -267,7 +_,7 @@
           }
  
           ChunkPos chunkpos = new ChunkPos(p_219116_);
@@ -59,7 +59,7 @@
           if (p_219117_.nextInt(10) == 0 && flag && p_219116_.getY() < 40) {
              return checkMobSpawnRules(p_219113_, p_219114_, p_219115_, p_219116_, p_219117_);
           }
-@@ -329,6 +_,12 @@
+@@ -319,6 +_,12 @@
     public EntityDimensions getDimensions(Pose p_33597_) {
        return super.getDimensions(p_33597_).scale(0.255F * (float)this.getSize());
     }

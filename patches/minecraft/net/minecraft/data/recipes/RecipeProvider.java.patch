@@ -1,35 +1,38 @@
 --- a/net/minecraft/data/recipes/RecipeProvider.java
 +++ b/net/minecraft/data/recipes/RecipeProvider.java
-@@ -90,10 +_,11 @@
-                throw new IllegalStateException("Duplicate recipe " + p_300066_.id());
-             } else {
-                list.add(DataProvider.saveStable(p_254020_, p_300066_.serializeRecipe(), RecipeProvider.this.recipePathProvider.json(p_300066_.id())));
--               AdvancementHolder advancementholder = p_300066_.advancement();
--               if (advancementholder != null) {
--                  JsonObject jsonobject = advancementholder.value().serializeToJson();
--                  list.add(DataProvider.saveStable(p_254020_, jsonobject, RecipeProvider.this.advancementPathProvider.json(advancementholder.id())));
-+               var advancementdata = p_300066_.advancementData();
-+               if (advancementdata != null) {
-+                  var saveAdvancementFuture = saveAdvancement(p_254020_, advancementdata.id(), advancementdata.data(), p_300066_);
-+                  if (saveAdvancementFuture != null)
-+                     list.add(saveAdvancementFuture);
-                }
- 
+@@ -89,7 +_,9 @@
+             list.add(DataProvider.saveStable(p_254020_, p_253413_.serializeRecipe(), this.recipePathProvider.json(p_253413_.getId())));
+             JsonObject jsonobject = p_253413_.serializeAdvancement();
+             if (jsonobject != null) {
+-               list.add(DataProvider.saveStable(p_254020_, jsonobject, this.advancementPathProvider.json(p_253413_.getAdvancementId())));
++               var saveAdvancementFuture = saveAdvancement(p_254020_, p_253413_, jsonobject);
++               if (saveAdvancementFuture != null)
++                  list.add(saveAdvancementFuture);
              }
-@@ -106,6 +_,16 @@
-       return CompletableFuture.allOf(list.toArray((p_253414_) -> {
-          return new CompletableFuture[p_253414_];
+ 
+          }
+@@ -99,13 +_,23 @@
        }));
-+   }
-+
+    }
+ 
 +   /**
 +    * Called every time a recipe is saved to also save the advancement JSON if it exists.
 +    *
 +    * @return A completable future that saves the advancement to disk, or null to cancel saving the advancement.
 +    */
-+   @Nullable
-+   protected CompletableFuture<?> saveAdvancement(CachedOutput output, ResourceLocation advancementId, JsonObject advancementJson, FinishedRecipe finishedRecipe) {
-+      return DataProvider.saveStable(output, advancementJson, this.advancementPathProvider.json(advancementId));
++   @org.jetbrains.annotations.Nullable
++   protected CompletableFuture<?> saveAdvancement(CachedOutput output, FinishedRecipe finishedRecipe, JsonObject advancementJson) {
++      return DataProvider.saveStable(output, advancementJson, this.advancementPathProvider.json(finishedRecipe.getAdvancementId()));
++   }
++
+    protected CompletableFuture<?> buildAdvancement(CachedOutput p_253674_, ResourceLocation p_254102_, Advancement.Builder p_253712_) {
+       return DataProvider.saveStable(p_253674_, p_253712_.serializeToJson(), this.advancementPathProvider.json(p_254102_));
     }
  
-    protected CompletableFuture<?> buildAdvancement(CachedOutput p_253674_, AdvancementHolder p_297687_) {
+    protected abstract void buildRecipes(Consumer<FinishedRecipe> p_251297_);
+ 
+-   protected static void generateForEnabledBlockFamilies(Consumer<FinishedRecipe> p_249188_, FeatureFlagSet p_251836_) {
++   protected void generateForEnabledBlockFamilies(Consumer<FinishedRecipe> p_249188_, FeatureFlagSet p_251836_) {
+       BlockFamilies.getAllFamilies().filter((p_248034_) -> {
+          return p_248034_.shouldGenerateRecipe(p_251836_);
+       }).forEach((p_176624_) -> {

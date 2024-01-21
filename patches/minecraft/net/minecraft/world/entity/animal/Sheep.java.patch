@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/entity/animal/Sheep.java
 +++ b/net/minecraft/world/entity/animal/Sheep.java
-@@ -63,7 +_,7 @@
+@@ -61,7 +_,7 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.storage.loot.BuiltInLootTables;
- import org.joml.Vector3f;
  
 -public class Sheep extends Animal implements Shearable {
 +public class Sheep extends Animal implements Shearable, net.minecraftforge.common.IForgeShearable {
     private static final int EAT_ANIMATION_TICKS = 40;
     private static final EntityDataAccessor<Byte> DATA_WOOL_ID = SynchedEntityData.defineId(Sheep.class, EntityDataSerializers.BYTE);
     private static final Map<DyeColor, ItemLike> ITEM_BY_DYE = Util.make(Maps.newEnumMap(DyeColor.class), (p_29841_) -> {
-@@ -235,7 +_,7 @@
+@@ -233,7 +_,7 @@
  
     public InteractionResult mobInteract(Player p_29853_, InteractionHand p_29854_) {
        ItemStack itemstack = p_29853_.getItemInHand(p_29854_);
@@ -18,7 +18,7 @@
           if (!this.level().isClientSide && this.readyForShearing()) {
              this.shear(SoundSource.PLAYERS);
              this.gameEvent(GameEvent.SHEAR, p_29853_);
-@@ -257,7 +_,9 @@
+@@ -255,7 +_,9 @@
        int i = 1 + this.random.nextInt(3);
  
        for(int j = 0; j < i; ++j) {
@@ -28,7 +28,7 @@
           if (itementity != null) {
              itementity.setDeltaMovement(itementity.getDeltaMovement().add((double)((this.random.nextFloat() - this.random.nextFloat()) * 0.1F), (double)(this.random.nextFloat() * 0.05F), (double)((this.random.nextFloat() - this.random.nextFloat()) * 0.1F)));
           }
-@@ -346,6 +_,12 @@
+@@ -344,6 +_,12 @@
     }
  
     public void ate() {
@@ -41,7 +41,7 @@
        super.ate();
        this.setSheared(false);
        if (this.isBaby()) {
-@@ -383,6 +_,7 @@
+@@ -381,10 +_,34 @@
        }, 2, 1);
        craftingcontainer.setItem(0, new ItemStack(DyeItem.byColor(p_29832_)));
        craftingcontainer.setItem(1, new ItemStack(DyeItem.byColor(p_29833_)));
@@ -49,10 +49,8 @@
        return craftingcontainer;
     }
  
-@@ -392,5 +_,27 @@
- 
-    protected Vector3f getPassengerAttachmentPoint(Entity p_297780_, EntityDimensions p_298437_, float p_300315_) {
-       return new Vector3f(0.0F, p_298437_.height - 0.0625F * p_300315_, 0.0F);
+    protected float getStandingEyeHeight(Pose p_29850_, EntityDimensions p_29851_) {
+       return 0.95F * p_29851_.height;
 +   }
 +
 +   @Override
@@ -60,8 +58,9 @@
 +      return readyForShearing();
 +   }
 +
++   @org.jetbrains.annotations.NotNull
 +   @Override
-+   public java.util.List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level world, BlockPos pos, int fortune) {
++   public java.util.List<ItemStack> onSheared(@Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
 +      world.playSound(null, this, SoundEvents.SHEEP_SHEAR, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, 1.0F, 1.0F);
 +      this.gameEvent(GameEvent.SHEAR, player);
 +      if (!world.isClientSide) {

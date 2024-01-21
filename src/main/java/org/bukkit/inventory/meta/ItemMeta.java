@@ -13,7 +13,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
 import org.bukkit.persistence.PersistentDataHolder;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -393,9 +392,9 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * Internal use only! Do not use under any circumstances!
      *
      * @param version version
-     * @apiNote  internal use only
+     * @deprecated internal use only
      */
-    @ApiStatus.Internal
+    @Deprecated
     void setVersion(int version);
 
     @SuppressWarnings("javadoc")

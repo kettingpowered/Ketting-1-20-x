@@ -6,7 +6,7 @@
  
 +   // CraftBukkit start - add fields
 +   public List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
-+   private net.minecraft.world.item.crafting.RecipeHolder<?> currentRecipe;
++   private net.minecraft.world.item.crafting.Recipe<?> currentRecipe;
 +   public net.minecraft.world.Container resultInventory;
 +   private Player owner;
 +   private int maxStack = MAX_STACK;
@@ -15,7 +15,7 @@
 +      return this.items;
 +   }
 +
-+   public void onOpen(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
++   public void onOpen(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
 +      transaction.add(who);
 +   }
 +
@@ -23,7 +23,7 @@
 +      return items.size() == 4 ? org.bukkit.event.inventory.InventoryType.CRAFTING : org.bukkit.event.inventory.InventoryType.WORKBENCH;
 +   }
 +
-+   public void onClose(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
++   public void onClose(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
 +      transaction.remove(who);
 +   }
 +
@@ -51,12 +51,12 @@
 +   }
 +
 +   @Override
-+   public @javax.annotation.Nullable net.minecraft.world.item.crafting.RecipeHolder<?> getCurrentRecipe() {
++   public @javax.annotation.Nullable net.minecraft.world.item.crafting.Recipe<?> getCurrentRecipe() {
 +      return currentRecipe;
 +   }
 +
 +   @Override
-+   public void setCurrentRecipe(net.minecraft.world.item.crafting.RecipeHolder<?> currentRecipe) {
++   public void setCurrentRecipe(net.minecraft.world.item.crafting.Recipe<?> currentRecipe) {
 +      this.currentRecipe = currentRecipe;
 +   }
 +

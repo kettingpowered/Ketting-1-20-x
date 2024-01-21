@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/TitleScreen.java
 +++ b/net/minecraft/client/gui/screens/TitleScreen.java
-@@ -64,6 +_,7 @@
+@@ -63,6 +_,7 @@
     @Nullable
     private TitleScreen.WarningLabel warningLabel;
     private final LogoRenderer logoRenderer;
@@ -8,7 +8,7 @@
  
     public TitleScreen() {
        this(false);
-@@ -114,11 +_,15 @@
+@@ -113,11 +_,15 @@
        int j = this.width - i - 2;
        int k = 24;
        int l = this.height / 4 + 48;
@@ -22,9 +22,9 @@
        }
 +      modUpdateNotification = net.minecraftforge.client.gui.TitleScreenModUpdateIndicator.init(this, modButton);
  
-       SpriteIconButton spriteiconbutton = this.addRenderableWidget(CommonButtons.language(20, (p_280830_) -> {
+       this.addRenderableWidget(new ImageButton(this.width / 2 - 124, l + 72 + 12, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (p_280830_) -> {
           this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager()));
-@@ -164,7 +_,7 @@
+@@ -162,7 +_,7 @@
        }).bounds(this.width / 2 - 100, p_96764_ + p_96765_ * 1, 200, 20).tooltip(tooltip).build())).active = flag;
        (this.addRenderableWidget(Button.builder(Component.translatable("menu.online"), (p_210872_) -> {
           this.realmsButtonClicked();
@@ -33,7 +33,7 @@
     }
  
     @Nullable
-@@ -248,6 +_,7 @@
+@@ -244,6 +_,7 @@
              this.warningLabel.render(p_282860_, i);
           }
  
@@ -41,7 +41,7 @@
           if (this.splash != null) {
              this.splash.render(p_282860_, this.width, this.font, i);
           }
-@@ -263,7 +_,14 @@
+@@ -259,7 +_,14 @@
              s = s + I18n.get("menu.modded");
           }
  
@@ -57,7 +57,7 @@
  
           for(GuiEventListener guieventlistener : this.children()) {
              if (guieventlistener instanceof AbstractWidget) {
-@@ -276,6 +_,7 @@
+@@ -272,6 +_,7 @@
              RenderSystem.enableDepthTest();
              this.realmsNotificationsScreen.render(p_282860_, p_281753_, p_283539_, p_282628_);
           }

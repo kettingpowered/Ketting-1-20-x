@@ -1,0 +1,55 @@
+--- a/net/minecraft/network/protocol/game/ClientboundCustomPayloadPacket.java
++++ b/net/minecraft/network/protocol/game/ClientboundCustomPayloadPacket.java
+@@ -4,7 +_,7 @@
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.resources.ResourceLocation;
+ 
+-public class ClientboundCustomPayloadPacket implements Packet<ClientGamePacketListener> {
++public class ClientboundCustomPayloadPacket implements Packet<ClientGamePacketListener>, net.minecraftforge.network.ICustomPacket<ClientboundCustomPayloadPacket> {
+    private static final int MAX_PAYLOAD_SIZE = 1048576;
+    public static final ResourceLocation BRAND = new ResourceLocation("brand");
+    public static final ResourceLocation DEBUG_PATHFINDING_PACKET = new ResourceLocation("debug/path");
+@@ -26,6 +_,7 @@
+    public static final ResourceLocation DEBUG_GAME_EVENT_LISTENER = new ResourceLocation("debug/game_event_listeners");
+    private final ResourceLocation identifier;
+    private final FriendlyByteBuf data;
++   private final boolean shouldRelease;
+ 
+    public ClientboundCustomPayloadPacket(ResourceLocation p_132034_, FriendlyByteBuf p_132035_) {
+       this.identifier = p_132034_;
+@@ -33,6 +_,7 @@
+       if (p_132035_.writerIndex() > 1048576) {
+          throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
+       }
++      this.shouldRelease = false; //We are not the owner of the buffer, don't release it, it might be reused.
+    }
+ 
+    public ClientboundCustomPayloadPacket(FriendlyByteBuf p_178836_) {
+@@ -43,15 +_,17 @@
+       } else {
+          throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
+       }
++      this.shouldRelease = true; //We are the owner of the buffer, release it when we are done.
+    }
+ 
+    public void write(FriendlyByteBuf p_132044_) {
+       p_132044_.writeResourceLocation(this.identifier);
+-      p_132044_.writeBytes(this.data.copy());
++      p_132044_.writeBytes(this.data.slice()); // Use Slice instead of copy, to not update the read index, allowing packet to be sent multiple times.
+    }
+ 
+    public void handle(ClientGamePacketListener p_132041_) {
+       p_132041_.handleCustomPayload(this);
++      if (this.shouldRelease) this.data.release(); // FORGE: Fix impl buffer leaks (MC-121884), can only be fixed partially, because else you get problems in LAN-Worlds
+    }
+ 
+    public ResourceLocation getIdentifier() {
+@@ -61,4 +_,8 @@
+    public FriendlyByteBuf getData() {
+       return new FriendlyByteBuf(this.data.copy());
+    }
++
++   @Override public int getIndex() { return Integer.MAX_VALUE; }
++   @Override public ResourceLocation getName() { return getIdentifier(); }
++   @Override public FriendlyByteBuf getInternalData() { return getData(); }
+ }

@@ -1,17 +1,17 @@
 --- a/net/minecraft/world/inventory/BeaconMenu.java
 +++ b/net/minecraft/world/inventory/BeaconMenu.java
-@@ -33,6 +_,10 @@
+@@ -31,6 +_,10 @@
     private final BeaconMenu.PaymentSlot paymentSlot;
     private final ContainerLevelAccess access;
     private final ContainerData beaconData;
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView bukkitEntity = null;
 +   private net.minecraft.world.entity.player.Inventory player;
 +   // CraftBukkit end
  
     public BeaconMenu(int p_39036_, Container p_39037_) {
        this(p_39036_, p_39037_, new SimpleContainerData(3), ContainerLevelAccess.NULL);
-@@ -40,6 +_,7 @@
+@@ -38,6 +_,7 @@
  
     public BeaconMenu(int p_39039_, Container p_39040_, ContainerData p_39041_, ContainerLevelAccess p_39042_) {
        super(MenuType.BEACON, p_39039_);
@@ -19,7 +19,7 @@
        checkContainerDataCount(p_39041_, 3);
        this.beaconData = p_39041_;
        this.access = p_39042_;
-@@ -73,6 +_,7 @@
+@@ -71,6 +_,7 @@
     }
  
     public boolean stillValid(Player p_39047_) {
@@ -27,7 +27,7 @@
        return stillValid(this.access, p_39047_, Blocks.BEACON);
     }
  
-@@ -93,10 +_,8 @@
+@@ -91,10 +_,8 @@
              }
  
              slot.onQuickCraft(itemstack1, itemstack);
@@ -40,20 +40,20 @@
           } else if (p_39052_ >= 1 && p_39052_ < 28) {
              if (!this.moveItemStackTo(itemstack1, 28, 37, false)) {
                 return ItemStack.EMPTY;
-@@ -175,4 +_,17 @@
+@@ -164,4 +_,17 @@
           return 1;
        }
     }
 +
 +   // CraftBukkit start
 +   @Override
-+   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryBeacon(this.beacon);
-+      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryBeacon(this.beacon);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

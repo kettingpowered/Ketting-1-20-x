@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/entity/animal/MushroomCow.java
 +++ b/net/minecraft/world/entity/animal/MushroomCow.java
 @@ -41,7 +_,7 @@
- import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
+ import org.apache.commons.lang3.tuple.Pair;
  
 -public class MushroomCow extends Cow implements Shearable, VariantHolder<MushroomCow.MushroomType> {
 +public class MushroomCow extends Cow implements Shearable, net.minecraftforge.common.IForgeShearable {
     private static final EntityDataAccessor<String> DATA_TYPE = SynchedEntityData.defineId(MushroomCow.class, EntityDataSerializers.STRING);
     private static final int MUTATE_CHANCE = 1024;
-    private static final String TAG_STEW_EFFECTS = "stew_effects";
-@@ -102,7 +_,7 @@
+    @Nullable
+@@ -103,7 +_,7 @@
  
           this.playSound(soundevent, 1.0F, 1.0F);
           return InteractionResult.sidedSuccess(this.level().isClientSide);
@@ -18,7 +18,7 @@
           this.shear(SoundSource.PLAYERS);
           this.gameEvent(GameEvent.SHEAR, p_28941_);
           if (!this.level().isClientSide) {
-@@ -141,13 +_,33 @@
+@@ -144,13 +_,33 @@
        }
     }
  
@@ -53,14 +53,14 @@
              cow.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
              cow.setHealth(this.getHealth());
              cow.yBodyRot = this.yBodyRot;
-@@ -161,13 +_,23 @@
+@@ -164,13 +_,23 @@
              }
  
              cow.setInvulnerable(this.isInvulnerable());
 -            this.level().addFreshEntity(cow);
 -
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTransformEvent(this, cow, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SHEARED).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTransformEvent(this, cow, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SHEARED).isCancelled()) {
 +               return java.util.Collections.emptyList();
 +            }
 +            this.level().addFreshEntity(cow, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SHEARED);
@@ -80,14 +80,30 @@
  
     }
  
-@@ -231,6 +_,11 @@
+@@ -183,6 +_,7 @@
+       p_28944_.putString("Type", this.getVariant().getSerializedName());
+       if (this.effect != null) {
+          p_28944_.putInt("EffectId", MobEffect.getId(this.effect));
++         net.minecraftforge.common.ForgeHooks.saveMobEffect(p_28944_, "forge:effect_id", this.effect);
+          p_28944_.putInt("EffectDuration", this.effectDuration);
+       }
+ 
+@@ -193,6 +_,7 @@
+       this.setVariant(MushroomCow.MushroomType.byType(p_28936_.getString("Type")));
+       if (p_28936_.contains("EffectId", 99)) {
+          this.effect = MobEffect.byId(p_28936_.getInt("EffectId"));
++         this.effect = net.minecraftforge.common.ForgeHooks.loadMobEffect(p_28936_, "forge:effect_id", this.effect);
+       }
+ 
+       if (p_28936_.contains("EffectDuration", 99)) {
+@@ -235,6 +_,11 @@
        }
  
        return mushroomcow$mushroomtype2;
 +   }
 +
 +   @Override
-+   public boolean isShearable(ItemStack item, Level world, BlockPos pos) {
++   public boolean isShearable(@org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos) {
 +      return readyForShearing();
     }
  

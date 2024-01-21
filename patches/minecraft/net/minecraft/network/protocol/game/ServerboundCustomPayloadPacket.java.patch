@@ -1,0 +1,29 @@
+--- a/net/minecraft/network/protocol/game/ServerboundCustomPayloadPacket.java
++++ b/net/minecraft/network/protocol/game/ServerboundCustomPayloadPacket.java
+@@ -5,7 +_,7 @@
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.resources.ResourceLocation;
+ 
+-public class ServerboundCustomPayloadPacket implements Packet<ServerGamePacketListener> {
++public class ServerboundCustomPayloadPacket implements Packet<ServerGamePacketListener>, net.minecraftforge.network.ICustomPacket<ServerboundCustomPayloadPacket> {
+    private static final int MAX_PAYLOAD_SIZE = 32767;
+    public static final ResourceLocation BRAND = new ResourceLocation("brand");
+    public final ResourceLocation identifier;
+@@ -28,7 +_,7 @@
+ 
+    public void write(FriendlyByteBuf p_133994_) {
+       p_133994_.writeResourceLocation(this.identifier);
+-      p_133994_.writeBytes((ByteBuf)this.data);
++      p_133994_.writeBytes((ByteBuf)this.data.slice()); // Use Slice instead of copy, to not update the read index, allowing packet to be sent multiple times.
+    }
+ 
+    public void handle(ServerGamePacketListener p_133992_) {
+@@ -43,4 +_,8 @@
+    public FriendlyByteBuf getData() {
+       return this.data;
+    }
++
++   @Override public int getIndex() { return Integer.MAX_VALUE; }
++   @Override public ResourceLocation getName() { return getIdentifier(); }
++   @org.jetbrains.annotations.Nullable @Override public FriendlyByteBuf getInternalData() { return getData(); }
+ }

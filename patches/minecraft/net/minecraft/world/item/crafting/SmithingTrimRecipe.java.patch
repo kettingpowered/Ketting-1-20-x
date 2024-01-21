@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/SmithingTrimRecipe.java
 +++ b/net/minecraft/world/item/crafting/SmithingTrimRecipe.java
-@@ -87,8 +_,15 @@
+@@ -94,8 +_,15 @@
     }
  
     public boolean isIncomplete() {
@@ -11,10 +11,10 @@
 +
 +   // CraftBukkit start
 +   @Override
-+   public org.bukkit.inventory.Recipe toBukkitRecipe(org.bukkit.NamespacedKey id) {
-+      return new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftSmithingTrimRecipe(id, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.template), org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.base), org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe.toBukkit(this.addition));
++   public org.bukkit.inventory.Recipe toBukkitRecipe() {
++      return new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftSmithingTrimRecipe(org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(this.id), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.template), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.base), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.addition));
 +   }
 +   // CraftBukkit end
  
     public static class Serializer implements RecipeSerializer<SmithingTrimRecipe> {
-       private static final Codec<SmithingTrimRecipe> CODEC = RecordCodecBuilder.create((p_297394_) -> {
+       public SmithingTrimRecipe fromJson(ResourceLocation p_267037_, JsonObject p_267004_) {

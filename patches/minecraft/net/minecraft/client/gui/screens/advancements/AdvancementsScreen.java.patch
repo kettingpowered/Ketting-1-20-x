@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/advancements/AdvancementsScreen.java
 +++ b/net/minecraft/client/gui/screens/advancements/AdvancementsScreen.java
-@@ -42,6 +_,7 @@
+@@ -41,6 +_,7 @@
     @Nullable
     private AdvancementTab selectedTab;
     private boolean isScrolling;
@@ -8,9 +8,9 @@
  
     public AdvancementsScreen(ClientAdvancements p_97340_) {
        super(GameNarrator.NO_TITLE);
-@@ -58,7 +_,15 @@
+@@ -56,7 +_,15 @@
        } else {
-          this.advancements.setSelectedTab(this.selectedTab == null ? null : this.selectedTab.getRootNode().holder(), true);
+          this.advancements.setSelectedTab(this.selectedTab == null ? null : this.selectedTab.getAdvancement(), true);
        }
 -
 +      if (this.tabs.size() > AdvancementTabType.MAX_TABS) {
@@ -25,19 +25,19 @@
     }
  
     public void removed() {
-@@ -76,7 +_,7 @@
+@@ -74,7 +_,7 @@
           int j = (this.height - 140) / 2;
  
           for(AdvancementTab advancementtab : this.tabs.values()) {
 -            if (advancementtab.isMouseOver(i, j, p_97343_, p_97344_)) {
 +            if (advancementtab.getPage() == tabPage && advancementtab.isMouseOver(i, j, p_97343_, p_97344_)) {
-                this.advancements.setSelectedTab(advancementtab.getRootNode().holder(), true);
+                this.advancements.setSelectedTab(advancementtab.getAdvancement(), true);
                 break;
              }
-@@ -100,9 +_,15 @@
+@@ -98,9 +_,15 @@
        int i = (this.width - 252) / 2;
        int j = (this.height - 140) / 2;
-       this.renderBackground(p_282589_, p_282255_, p_283354_, p_283123_);
+       this.renderBackground(p_282589_);
 +      if (maxPages != 0) {
 +         net.minecraft.network.chat.Component page = Component.literal(String.format("%d / %d", tabPage + 1, maxPages + 1));
 +         int width = this.font.width(page);
@@ -46,11 +46,11 @@
        this.renderInside(p_282589_, p_282255_, p_283354_, i, j);
        this.renderWindow(p_282589_, i, j);
        this.renderTooltips(p_282589_, p_282255_, p_283354_, i, j);
-+      this.renderables.forEach(r -> r.render(p_282589_, p_282255_, p_283354_, p_283123_));
++      super.render(p_282589_, p_282255_, p_283354_, p_283123_);
     }
  
     public boolean mouseDragged(double p_97347_, double p_97348_, int p_97349_, double p_97350_, double p_97351_) {
-@@ -146,10 +_,12 @@
+@@ -135,10 +_,12 @@
        p_283395_.blit(WINDOW_LOCATION, p_281890_, p_282532_, 0, 0, 252, 140);
        if (this.tabs.size() > 1) {
           for(AdvancementTab advancementtab : this.tabs.values()) {
@@ -63,7 +63,7 @@
              advancementtab1.drawIcon(p_283395_, p_281890_, p_282532_);
           }
        }
-@@ -169,7 +_,7 @@
+@@ -158,7 +_,7 @@
  
        if (this.tabs.size() > 1) {
           for(AdvancementTab advancementtab : this.tabs.values()) {

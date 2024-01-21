@@ -6,17 +6,17 @@
  public class GrindstoneMenu extends AbstractContainerMenu {
 +
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView bukkitEntity = null;
 +   private org.bukkit.entity.Player player;
 +
 +   @Override
-+   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryGrindstone inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryGrindstone(this.repairSlots, this.resultSlots);
-+      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player, inventory, this);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryGrindstone inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryGrindstone(this.repairSlots, this.resultSlots);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
@@ -102,12 +102,12 @@
 +      if (this.xp == Integer.MIN_VALUE)
        if (!flag) {
 -         this.resultSlots.setItem(0, ItemStack.EMPTY);
-+         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
++         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
        } else {
           boolean flag2 = !itemstack.isEmpty() && !itemstack.is(Items.ENCHANTED_BOOK) && !itemstack.isEnchanted() || !itemstack1.isEmpty() && !itemstack1.is(Items.ENCHANTED_BOOK) && !itemstack1.isEnchanted();
           if (itemstack.getCount() > 1 || itemstack1.getCount() > 1 || !flag1 && flag2) {
 -            this.resultSlots.setItem(0, ItemStack.EMPTY);
-+            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
++            org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
              this.broadcastChanges();
              return;
           }
@@ -116,7 +116,7 @@
           if (flag1) {
              if (!itemstack.is(itemstack1.getItem())) {
 -               this.resultSlots.setItem(0, ItemStack.EMPTY);
-+               org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
++               org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
                 this.broadcastChanges();
                 return;
              }
@@ -136,7 +136,7 @@
 +            if (!itemstack2.isDamageableItem() || !itemstack2.isRepairable()) {
                 if (!ItemStack.matches(itemstack, itemstack1)) {
 -                  this.resultSlots.setItem(0, ItemStack.EMPTY);
-+                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
++                  org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
                    this.broadcastChanges();
                    return;
                 }
@@ -147,9 +147,9 @@
 -         this.resultSlots.setItem(0, this.removeNonCurses(itemstack2, i, j));
 +         // Forge: Skip the repair if the result would give an item stack with a count not normally obtainable
 +         if (j > itemstack2.getMaxStackSize())
-+            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
++            org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
 +         else
-+            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), this.removeNonCurses(itemstack2, i, j)); // CraftBukkit
++            org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), this.removeNonCurses(itemstack2, i, j)); // CraftBukkit
        }
  
 +      sendAllDataToRemote(); // CraftBukkit - SPIGOT-6686: Always send completed inventory to stay in sync with client

@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/animal/camel/Camel.java
 +++ b/net/minecraft/world/entity/animal/camel/Camel.java
-@@ -302,7 +_,7 @@
+@@ -307,7 +_,7 @@
     }
  
     protected void playStepSound(BlockPos p_252056_, BlockState p_251457_) {
--      if (p_251457_.is(BlockTags.CAMEL_SAND_STEP_SOUND_BLOCKS)) {
-+      if (p_251457_.getSoundType(level(), p_252056_, this) == net.minecraft.world.level.block.SoundType.SAND) {
+-      if (p_251457_.getSoundType() == SoundType.SAND) {
++      if (p_251457_.getSoundType(level(), p_252056_, this) == SoundType.SAND) {
           this.playSound(SoundEvents.CAMEL_STEP_SAND, 1.0F, 1.0F);
        } else {
           this.playSound(SoundEvents.CAMEL_STEP, 1.0F, 1.0F);
@@ -17,4 +17,4 @@
 +      super.damageEntity0(p_250410_, p_251451_);
     }
  
-    protected Vector3f getPassengerAttachmentPoint(Entity p_298535_, EntityDimensions p_298993_, float p_301011_) {
+    protected void positionRider(Entity p_289564_, Entity.MoveFunction p_289551_) {

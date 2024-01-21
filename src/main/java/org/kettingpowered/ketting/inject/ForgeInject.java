@@ -1,10 +1,12 @@
 package org.kettingpowered.ketting.inject;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import io.izzel.arclight.api.EnumHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -12,21 +14,19 @@ import net.minecraft.world.level.block.TrappedChestBlock;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Statistic;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Biome;
-import org.bukkit.craftbukkit.v1_20_R2.CraftStatistic;
-import org.bukkit.craftbukkit.v1_20_R2.block.*;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_20_R2.block.impl.CraftFloorSign;
-import org.bukkit.craftbukkit.v1_20_R2.block.impl.CraftWallHangingSign;
-import org.bukkit.craftbukkit.v1_20_R2.block.impl.CraftWallSign;
-import org.bukkit.craftbukkit.v1_20_R2.enchantments.CraftEnchantment;
-import org.bukkit.craftbukkit.v1_20_R2.potion.CraftPotionEffectType;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R1.CraftStatistic;
+import org.bukkit.craftbukkit.v1_20_R1.block.*;
+import org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_20_R1.block.impl.CraftFloorSign;
+import org.bukkit.craftbukkit.v1_20_R1.block.impl.CraftWallHangingSign;
+import org.bukkit.craftbukkit.v1_20_R1.block.impl.CraftWallSign;
+import org.bukkit.craftbukkit.v1_20_R1.enchantments.CraftEnchantment;
+import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionEffectType;
+import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionUtil;
+import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.potion.PotionEffectType;
@@ -388,24 +388,38 @@ public class ForgeInject {
         PotionEffectType.stopAcceptingRegistrations();
         // Stage 1 complete - now to add the types to bukkit
 
+
         int ordinal = EntityType.values().length;
         List<PotionType> values = new ArrayList<>();
-        for (var entry : ForgeRegistries.POTIONS) {
-            var location = ForgeRegistries.POTIONS.getKey(entry);
-            String name = standardize(location);
+        BiMap<PotionType, String> newRegular = HashBiMap.create(CraftPotionUtil.regular);
+        for (var entry : ForgeRegistries.POTIONS.getEntries()) {
+            var location = entry.getKey().location();
+            if (location.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                continue;
+            }
+            var enumName = standardize(location);
+            var potion = entry.getValue();
+            var effect = potion.getEffects().isEmpty() ? null : potion.getEffects().get(0);
+            PotionEffectType type = null;
+            if (effect != null) type = PotionEffectType.getById(MobEffect.getId(effect.getEffect()));
+            if (type == null) type = PotionEffectType.NORMAL;
             try {
-                PotionType.valueOf(name);
-            } catch (Exception e) {
-                var potionType = EnumHelper.makeEnum(PotionType.class, name, ordinal, List.of(String.class), List.of(location.toString()));
-                ordinal++;
+                var potionType = EnumHelper.makeEnum(PotionType.class, enumName, ordinal,
+                        List.of(PotionEffectType.class, boolean.class, boolean.class),
+                        List.of(type, false, false));
                 if (potionType == null) {
-                    Ketting.LOGGER.error("Could not inject potion into Bukkit: " + name + ". " + e.getMessage());
+                    Ketting.LOGGER.error("Could not inject potion into Bukkit: " + enumName + ". PotionType is null");
                     continue;
                 }
+                ordinal++;
                 values.add(potionType);
+                newRegular.put(potionType, ForgeRegistries.POTIONS.getKey(potion).toString());
                 debug("Injecting Forge Potion into Bukkit: " + potionType.name());
+            } catch (Throwable e) {
+                Ketting.LOGGER.error("Could not inject potion into Bukkit: " + enumName + ". " + e.getMessage());
             }
         }
+        CraftPotionUtil.regular = newRegular;
         EnumHelper.addEnums(PotionType.class, values);
         debug("Injecting Forge Potion into Bukkit: DONE");
     }

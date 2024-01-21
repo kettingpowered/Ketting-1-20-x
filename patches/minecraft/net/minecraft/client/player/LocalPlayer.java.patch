@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/player/LocalPlayer.java
 +++ b/net/minecraft/client/player/LocalPlayer.java
-@@ -150,6 +_,7 @@
+@@ -151,6 +_,7 @@
     }
  
     public boolean hurt(DamageSource p_108662_, float p_108663_) {
@@ -8,7 +8,7 @@
        return false;
     }
  
-@@ -276,6 +_,7 @@
+@@ -277,6 +_,7 @@
  
     public boolean drop(boolean p_108701_) {
        ServerboundPlayerActionPacket.Action serverboundplayeractionpacket$action = p_108701_ ? ServerboundPlayerActionPacket.Action.DROP_ALL_ITEMS : ServerboundPlayerActionPacket.Action.DROP_ITEM;
@@ -16,7 +16,7 @@
        ItemStack itemstack = this.getInventory().removeFromSelected(p_108701_);
        this.connection.send(new ServerboundPlayerActionPacket(serverboundplayeractionpacket$action, BlockPos.ZERO, Direction.DOWN));
        return !itemstack.isEmpty();
-@@ -457,7 +_,14 @@
+@@ -459,7 +_,14 @@
     }
  
     public void playSound(SoundEvent p_108651_, float p_108652_, float p_108653_) {
@@ -32,15 +32,15 @@
     }
  
     public void playNotifySound(SoundEvent p_108655_, SoundSource p_108656_, float p_108657_, float p_108658_) {
-@@ -631,6 +_,7 @@
-       this.crouching = !this.getAbilities().flying && !this.isSwimming() && !this.isPassenger() && this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.CROUCHING) && (this.isShiftKeyDown() || !this.isSleeping() && !this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.STANDING));
+@@ -633,6 +_,7 @@
+       this.crouching = !this.getAbilities().flying && !this.isSwimming() && this.canEnterPose(Pose.CROUCHING) && (this.isShiftKeyDown() || !this.isSleeping() && !this.canEnterPose(Pose.STANDING));
        float f = Mth.clamp(0.3F + EnchantmentHelper.getSneakingSpeedBonus(this), 0.0F, 1.0F);
        this.input.tick(this.isMovingSlowly(), f);
 +      net.minecraftforge.client.ForgeHooksClient.onMovementInputUpdate(this, this.input);
        this.minecraft.getTutorial().onInput(this.input);
        if (this.isUsingItem() && !this.isPassenger()) {
           this.input.leftImpulse *= 0.2F;
-@@ -659,7 +_,7 @@
+@@ -661,7 +_,7 @@
        boolean flag4 = this.canStartSprinting();
        boolean flag5 = this.isPassenger() ? this.getVehicle().onGround() : this.onGround();
        boolean flag6 = !flag1 && !flag2;
@@ -49,7 +49,7 @@
           if (this.sprintTriggerTime <= 0 && !this.minecraft.options.keySprint.isDown()) {
              this.sprintTriggerTime = 7;
           } else {
-@@ -667,15 +_,15 @@
+@@ -669,15 +_,15 @@
           }
        }
  
@@ -68,7 +68,7 @@
                 this.setSprinting(false);
              }
           } else if (flag8) {
-@@ -705,14 +_,15 @@
+@@ -707,14 +_,15 @@
  
        if (this.input.jumping && !flag9 && !flag && !this.getAbilities().flying && !this.isPassenger() && !this.onClimbable()) {
           ItemStack itemstack = this.getItemBySlot(EquipmentSlot.CHEST);
@@ -87,7 +87,7 @@
        }
  
        if (this.isEyeInFluid(FluidTags.WATER)) {
-@@ -812,6 +_,7 @@
+@@ -814,6 +_,7 @@
  
     public void rideTick() {
        super.rideTick();
@@ -95,7 +95,7 @@
        this.handsBusy = false;
        Entity entity = this.getControlledVehicle();
        if (entity instanceof Boat boat) {
-@@ -1044,6 +_,18 @@
+@@ -1046,6 +_,18 @@
        } else {
           return super.getRopeHoldPosition(p_108758_);
        }

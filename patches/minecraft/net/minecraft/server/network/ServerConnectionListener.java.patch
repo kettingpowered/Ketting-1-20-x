@@ -1,21 +1,21 @@
 --- a/net/minecraft/server/network/ServerConnectionListener.java
 +++ b/net/minecraft/server/network/ServerConnectionListener.java
-@@ -49,11 +_,12 @@
+@@ -47,11 +_,12 @@
  
  public class ServerConnectionListener {
     private static final Logger LOGGER = LogUtils.getLogger();
 +   private static final int READ_TIMEOUT = Integer.parseInt(System.getProperty("forge.readTimeout", "30"));
-    public static final Supplier<NioEventLoopGroup> SERVER_EVENT_GROUP = Suppliers.memoize(() -> {
+    public static final LazyLoadedValue<NioEventLoopGroup> SERVER_EVENT_GROUP = new LazyLoadedValue<>(() -> {
 -      return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).build());
 +      return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER).build());
     });
-    public static final Supplier<EpollEventLoopGroup> SERVER_EPOLL_EVENT_GROUP = Suppliers.memoize(() -> {
+    public static final LazyLoadedValue<EpollEventLoopGroup> SERVER_EPOLL_EVENT_GROUP = new LazyLoadedValue<>(() -> {
 -      return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).build());
 +      return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER).build());
     });
     final MinecraftServer server;
     public volatile boolean running;
-@@ -66,6 +_,8 @@
+@@ -64,6 +_,8 @@
     }
  
     public void startTcpServerListener(@Nullable InetAddress p_9712_, int p_9713_) throws IOException {
@@ -23,24 +23,24 @@
 +      net.minecraftforge.network.DualStackUtils.checkIPv6(p_9712_);
        synchronized(this.channels) {
           Class<? extends ServerSocketChannel> oclass;
-          EventLoopGroup eventloopgroup;
-@@ -88,7 +_,7 @@
+          LazyLoadedValue<? extends EventLoopGroup> lazyloadedvalue;
+@@ -84,7 +_,7 @@
                 } catch (ChannelException channelexception) {
                 }
  
--               ChannelPipeline channelpipeline = p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this.getServer()));
-+               ChannelPipeline channelpipeline = p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(READ_TIMEOUT)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this.getServer()));
-                Connection.configureSerialization(channelpipeline, PacketFlow.SERVERBOUND, (BandwidthDebugMonitor)null);
+-               ChannelPipeline channelpipeline = p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this));
++               ChannelPipeline channelpipeline = p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(READ_TIMEOUT)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this));
+                Connection.configureSerialization(channelpipeline, PacketFlow.SERVERBOUND);
                 int i = ServerConnectionListener.this.server.getRateLimitPacketsPerSecond();
                 Connection connection = (Connection)(i > 0 ? new RateKickingConnection(i) : new Connection(PacketFlow.SERVERBOUND));
-@@ -96,9 +_,19 @@
-                connection.configurePacketHandler(channelpipeline);
-                connection.setListenerForServerboundHandshake(new ServerHandshakePacketListenerImpl(ServerConnectionListener.this.server, connection));
+@@ -92,9 +_,19 @@
+                channelpipeline.addLast("packet_handler", connection);
+                connection.setListener(new ServerHandshakePacketListenerImpl(ServerConnectionListener.this.server, connection));
              }
--         }).group(eventloopgroup).localAddress(p_9712_, p_9713_).bind().syncUninterruptibly());
+-         }).group(lazyloadedvalue.get()).localAddress(p_9712_, p_9713_).bind().syncUninterruptibly());
 -      }
 -   }
-+         }).group(eventloopgroup).localAddress(p_9712_, p_9713_).option(ChannelOption.AUTO_READ, false).bind().syncUninterruptibly()); // CraftBukkit
++         }).group(lazyloadedvalue.get()).localAddress(p_9712_, p_9713_).option(ChannelOption.AUTO_READ, false).bind().syncUninterruptibly()); // CraftBukkit
 +      }
 +   }
 +
@@ -56,7 +56,7 @@
  
     public SocketAddress startMemoryChannel() {
        ChannelFuture channelfuture;
-@@ -135,6 +_,13 @@
+@@ -129,6 +_,13 @@
  
     public void tick() {
        synchronized(this.connections) {
@@ -70,7 +70,7 @@
           Iterator<Connection> iterator = this.connections.iterator();
  
           while(iterator.hasNext()) {
-@@ -156,6 +_,10 @@
+@@ -150,6 +_,10 @@
                       connection.setReadOnly();
                    }
                 } else {

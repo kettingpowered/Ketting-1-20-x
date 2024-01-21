@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/Screen.java
 +++ b/net/minecraft/client/gui/screens/Screen.java
-@@ -207,7 +_,7 @@
+@@ -205,7 +_,7 @@
     }
  
     public void onClose() {
@@ -9,7 +9,7 @@
     }
  
     protected <T extends GuiEventListener & Renderable & NarratableEntry> T addRenderableWidget(T p_169406_) {
-@@ -319,7 +_,10 @@
+@@ -317,7 +_,10 @@
        this.width = p_96608_;
        this.height = p_96609_;
        if (!this.initialized) {
@@ -20,7 +20,7 @@
        } else {
           this.repositionElements();
        }
-@@ -332,7 +_,10 @@
+@@ -330,7 +_,10 @@
     protected void rebuildWidgets() {
        this.clearWidgets();
        this.clearFocus();
@@ -31,15 +31,15 @@
     }
  
     public List<? extends GuiEventListener> children() {
-@@ -354,6 +_,7 @@
-    public void renderBackground(GuiGraphics p_283688_, int p_299421_, int p_298679_, float p_297268_) {
+@@ -352,6 +_,7 @@
+    public void renderBackground(GuiGraphics p_283688_) {
        if (this.minecraft.level != null) {
-          this.renderTransparentBackground(p_283688_);
+          p_283688_.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.BackgroundRendered(this, p_283688_));
        } else {
           this.renderDirtBackground(p_283688_);
        }
-@@ -369,6 +_,7 @@
+@@ -363,6 +_,7 @@
        int i = 32;
        p_282281_.blit(BACKGROUND_LOCATION, 0, 0, 0, 0.0F, 0.0F, this.width, this.height, 32, 32);
        p_282281_.setColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -47,7 +47,7 @@
     }
  
     public boolean isPauseScreen() {
-@@ -462,6 +_,10 @@
+@@ -456,6 +_,10 @@
     public void onFilesDrop(List<Path> p_96591_) {
     }
  
@@ -58,7 +58,7 @@
     private void scheduleNarration(long p_169381_, boolean p_169382_) {
        this.nextNarrationTime = Util.getMillis() + p_169381_;
        if (p_169382_) {
-@@ -632,5 +_,13 @@
+@@ -622,5 +_,13 @@
           this.index = p_169425_;
           this.priority = p_169426_;
        }

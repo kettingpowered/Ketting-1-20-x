@@ -1,0 +1,41 @@
+--- a/net/minecraft/world/level/block/FlowerBlock.java
++++ b/net/minecraft/world/level/block/FlowerBlock.java
+@@ -15,6 +_,17 @@
+    private final MobEffect suspiciousStewEffect;
+    private final int effectDuration;
+ 
++   private final java.util.function.Supplier<MobEffect> suspiciousStewEffectSupplier;
++
++   public FlowerBlock(java.util.function.Supplier<MobEffect> effectSupplier, int p_53513_, BlockBehaviour.Properties p_53514_) {
++      super(p_53514_);
++      this.suspiciousStewEffect = null;
++      this.suspiciousStewEffectSupplier = effectSupplier;
++      this.effectDuration = p_53513_;
++   }
++
++   /** @deprecated FORGE: Use supplier version instead */
++   @Deprecated
+    public FlowerBlock(MobEffect p_53512_, int p_53513_, BlockBehaviour.Properties p_53514_) {
+       super(p_53514_);
+       this.suspiciousStewEffect = p_53512_;
+@@ -23,6 +_,7 @@
+       } else {
+          this.effectDuration = p_53513_ * 20;
+       }
++      this.suspiciousStewEffectSupplier = net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS.getDelegateOrThrow(p_53512_);
+ 
+    }
+ 
+@@ -32,10 +_,12 @@
+    }
+ 
+    public MobEffect getSuspiciousEffect() {
++      if (true) return this.suspiciousStewEffectSupplier.get();
+       return this.suspiciousStewEffect;
+    }
+ 
+    public int getEffectDuration() {
++      if (this.suspiciousStewEffect == null && !this.suspiciousStewEffectSupplier.get().isInstantenous()) return this.effectDuration * 20;
+       return this.effectDuration;
+    }
+ }

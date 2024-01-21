@@ -168,20 +168,20 @@ public class Util {
         return getArtifacts(project, cfg)
     }
 
-    static boolean checkExists(url) {
-        try {
-            def code = new URL(url).openConnection().with {
-                requestMethod = 'HEAD'
-                connect()
-                responseCode
-            }
-            return code == 200
-        } catch (Exception e) {
-            if (e.toString().contains('unable to find valid certification path to requested target'))
-                throw new RuntimeException('Failed to connect to ' + url + ': Missing certificate root authority, try updating java')
-            throw e
-        }
-    }
+	private static boolean checkExists(url) {
+		try {
+			def code = new URL(url).openConnection().with {
+				requestMethod = 'HEAD'
+				connect()
+				responseCode
+			}
+			return code == 200
+		} catch (Exception e) {
+			if (e.toString().contains('unable to find valid certification path to requested target'))
+				throw new RuntimeException('Failed to connect to ' + url + ': Missing certificate root authority, try updating java')
+			throw e
+		}
+	}
 
     static String getLatestForgeVersion(mcVersion) {
         final json = new JsonSlurper().parseText(new URL('https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json').getText('UTF-8'))

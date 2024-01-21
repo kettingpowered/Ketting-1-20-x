@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/ServerScoreboard.java
 +++ b/net/minecraft/server/ServerScoreboard.java
-@@ -165,6 +_,7 @@
+@@ -162,6 +_,7 @@
        List<Packet<?>> list = this.getStartTrackingPackets(p_136232_);
  
        for(ServerPlayer serverplayer : this.server.getPlayerList().getPlayers()) {
@@ -8,7 +8,7 @@
           for(Packet<?> packet : list) {
              serverplayer.connection.send(packet);
           }
-@@ -190,6 +_,7 @@
+@@ -187,6 +_,7 @@
        List<Packet<?>> list = this.getStopTrackingPackets(p_136236_);
  
        for(ServerPlayer serverplayer : this.server.getPlayerList().getPlayers()) {
@@ -16,8 +16,8 @@
           for(Packet<?> packet : list) {
              serverplayer.connection.send(packet);
           }
-@@ -223,6 +_,16 @@
-    private ScoreboardSaveData createData(CompoundTag p_180014_) {
+@@ -216,6 +_,16 @@
+    public ScoreboardSaveData createData(CompoundTag p_180014_) {
        return this.createData().load(p_180014_);
     }
 +

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -60,31 +_,68 @@
+@@ -60,7 +_,7 @@
     public final List<ConsoleInput> consoleInput = Collections.synchronizedList(Lists.newArrayList());
     @Nullable
     private QueryThreadGs4 queryThreadGs4;
@@ -8,14 +8,13 @@
 +   // private final RconConsoleSource rconConsoleSource; // CraftBukkit - remove field
     @Nullable
     private RconThread rconThread;
--   private final DedicatedServerSettings settings;
-+   public DedicatedServerSettings settings;
-    @Nullable
+    public DedicatedServerSettings settings;
+@@ -68,23 +_,60 @@
     private MinecraftServerGui gui;
     @Nullable
-+   public org.kettingpowered.ketting.common.betterservergui.BetterServerGUI betterGui; //Ketting
-+   @Nullable
     private final TextFilterClient textFilterClient;
++   @Nullable
++   public org.kettingpowered.ketting.common.betterservergui.BetterServerGUI betterGui; //Ketting
 +   @Nullable
 +   private net.minecraft.client.server.LanServerPinger dediLanPinger;
  
@@ -86,7 +85,7 @@
 +      for (java.util.logging.Handler handler : global.getHandlers()) {
 +         global.removeHandler(handler);
 +      }
-+      global.addHandler(new org.bukkit.craftbukkit.v1_20_R2.util.ForwardLogHandler());
++      global.addHandler(new org.bukkit.craftbukkit.v1_20_R1.util.ForwardLogHandler());
 +
 +      final org.apache.logging.log4j.core.Logger logger = ((org.apache.logging.log4j.core.Logger) org.apache.logging.log4j.LogManager.getRootLogger());
 +      for (org.apache.logging.log4j.core.Appender appender : logger.getAppenders().values()) {
@@ -95,7 +94,7 @@
 +         }
 +      }
 +
-+      // new org.bukkit.craftbukkit.v1_20_R2.util.TerminalConsoleWriterThread(System.out, this.reader).start(); //Ketting - disable for now
++      // new org.bukkit.craftbukkit.util.TerminalConsoleWriterThread(System.out, this.reader).start(); //Ketting - disable for now
 +
 +      System.setOut(org.apache.logging.log4j.io.IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.INFO).buildPrintStream());
 +      System.setErr(org.apache.logging.log4j.io.IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.WARN).buildPrintStream());
@@ -228,7 +227,7 @@
     }
  
     public void handleConsoleInputs() {
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.serverCommandTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.serverCommandTimer.startTiming(); // Spigot
        while(!this.consoleInput.isEmpty()) {
           ConsoleInput consoleinput = this.consoleInput.remove(0);
 -         this.getCommands().performPrefixedCommand(consoleinput.source, consoleinput.msg);
@@ -244,7 +243,7 @@
 +         // CraftBukkit end
        }
  
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.serverCommandTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R1.SpigotTimings.serverCommandTimer.stopTiming(); // Spigot
     }
  
     public boolean isDedicatedServer() {
@@ -260,7 +259,7 @@
 -
 +      */
 +      if (this.betterGui == null) {
-+         final org.kettingpowered.ketting.adapters.BetterServerGUI_1_20_2_Adapter adapter = new org.kettingpowered.ketting.adapters.BetterServerGUI_1_20_2_Adapter(this);
++         final org.kettingpowered.ketting.adapters.BetterServerGUIAdapterImpl adapter = new org.kettingpowered.ketting.adapters.BetterServerGUIAdapterImpl(this);
 +         this.betterGui = new org.kettingpowered.ketting.common.betterservergui.BetterServerGUI.Builder()
 +                 .setAdapter(adapter)
 +                 .build();
@@ -277,7 +276,7 @@
     }
  
     public boolean isCommandBlockEnabled() {
-@@ -478,15 +_,51 @@
+@@ -474,15 +_,51 @@
     }
  
     public String getPluginNames() {
@@ -333,7 +332,7 @@
     }
  
     public void storeUsingWhiteList(boolean p_139689_) {
-@@ -496,7 +_,12 @@
+@@ -492,7 +_,12 @@
     }
  
     public void stopServer() {
@@ -346,7 +345,7 @@
        Util.shutdownExecutors();
        SkullBlockEntity.clear();
     }
-@@ -529,4 +_,49 @@
+@@ -525,4 +_,49 @@
     public Optional<MinecraftServer.ServerResourcePackInfo> getServerResourcePack() {
        return this.settings.getProperties().serverResourcePackInfo;
     }

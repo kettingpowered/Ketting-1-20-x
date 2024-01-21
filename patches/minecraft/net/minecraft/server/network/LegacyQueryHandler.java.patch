@@ -1,48 +1,33 @@
 --- a/net/minecraft/server/network/LegacyQueryHandler.java
 +++ b/net/minecraft/server/network/LegacyQueryHandler.java
-@@ -28,9 +_,12 @@
-          if (bytebuf.readUnsignedByte() == 254) {
-             SocketAddress socketaddress = p_9686_.channel().remoteAddress();
+@@ -31,10 +_,11 @@
+             InetSocketAddress inetsocketaddress = (InetSocketAddress)p_9686_.channel().remoteAddress();
+             MinecraftServer minecraftserver = this.serverConnectionListener.getServer();
              int i = bytebuf.readableBytes();
-+            String s;
-+            org.bukkit.event.server.ServerListPingEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callServerListPingEvent(socketaddress, server.getMotd(), server.getPlayerCount(), server.getMaxPlayers()); // CraftBukkit
-+
-             if (i == 0) {
-                LOGGER.debug("Ping: (<1.3.x) from {}", (Object)socketaddress);
--               String s = createVersion0Response(this.server);
-+               s = createVersion0Response(this.server, event); // CraftBukkit
-                sendFlushAndClose(p_9686_, createLegacyDisconnectPacket(p_9686_.alloc(), s));
-             } else {
-                if (bytebuf.readUnsignedByte() != 1) {
-@@ -47,8 +_,8 @@
-                   LOGGER.debug("Ping: (1.4-1.5.x) from {}", (Object)socketaddress);
-                }
++            org.bukkit.event.server.ServerListPingEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callServerListPingEvent(minecraftserver.server, inetsocketaddress.getAddress(), minecraftserver.getMotd(), minecraftserver.getPlayerCount(), minecraftserver.getMaxPlayers()); // CraftBukkit
+             switch (i) {
+                case 0:
+                   LOGGER.debug("Ping: (<1.3.x) from {}:{}", inetsocketaddress.getAddress(), inetsocketaddress.getPort());
+-                  String s2 = String.format(Locale.ROOT, "%s\u00a7%d\u00a7%d", minecraftserver.getMotd(), minecraftserver.getPlayerCount(), minecraftserver.getMaxPlayers());
++                  String s2 = String.format(Locale.ROOT, "%s\u00a7%d\u00a7%d", event.getMotd(), event.getNumPlayers(), event.getMaxPlayers()); // CraftBukkit
+                   this.sendFlushAndClose(p_9686_, this.createReply(s2));
+                   break;
+                case 1:
+@@ -43,7 +_,7 @@
+                   }
  
--               String s1 = createVersion1Response(this.server);
--               sendFlushAndClose(p_9686_, createLegacyDisconnectPacket(p_9686_.alloc(), s1));
-+               s = createVersion1Response(this.server, event); // CraftBukkit
-+               sendFlushAndClose(p_9686_, createLegacyDisconnectPacket(p_9686_.alloc(), s));
-             }
+                   LOGGER.debug("Ping: (1.4-1.5.x) from {}:{}", inetsocketaddress.getAddress(), inetsocketaddress.getPort());
+-                  String s = String.format(Locale.ROOT, "\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, minecraftserver.getServerVersion(), minecraftserver.getMotd(), minecraftserver.getPlayerCount(), minecraftserver.getMaxPlayers());
++                  String s = String.format(Locale.ROOT, "\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, minecraftserver.getServerVersion(), event.getMotd(), event.getNumPlayers(), event.getMaxPlayers()); // CraftBukkit
+                   this.sendFlushAndClose(p_9686_, this.createReply(s));
+                   break;
+                default:
+@@ -60,7 +_,7 @@
+                   }
  
-             bytebuf.release();
-@@ -94,12 +_,16 @@
-       }
-    }
+                   LOGGER.debug("Ping: (1.6) from {}:{}", inetsocketaddress.getAddress(), inetsocketaddress.getPort());
+-                  String s1 = String.format(Locale.ROOT, "\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, minecraftserver.getServerVersion(), minecraftserver.getMotd(), minecraftserver.getPlayerCount(), minecraftserver.getMaxPlayers());
++                  String s1 = String.format(Locale.ROOT, "\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, minecraftserver.getServerVersion(), event.getMotd(), event.getNumPlayers(), event.getMaxPlayers()); // CraftBukkit
+                   ByteBuf bytebuf1 = this.createReply(s1);
  
--   private static String createVersion0Response(ServerInfo p_300881_) {
--      return String.format(Locale.ROOT, "%s\u00a7%d\u00a7%d", p_300881_.getMotd(), p_300881_.getPlayerCount(), p_300881_.getMaxPlayers());
-+   // CraftBukkit start
-+   private static String createVersion0Response(ServerInfo p_300881_, org.bukkit.event.server.ServerListPingEvent event) {
-+      return String.format(Locale.ROOT, "%s\u00a7%d\u00a7%d", event.getMotd(), event.getNumPlayers(), event.getMaxPlayers());
-+      // CraftBukkit end
-    }
- 
--   private static String createVersion1Response(ServerInfo p_297753_) {
--      return String.format(Locale.ROOT, "\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, p_297753_.getServerVersion(), p_297753_.getMotd(), p_297753_.getPlayerCount(), p_297753_.getMaxPlayers());
-+   // CraftBukkit start
-+   private static String createVersion1Response(ServerInfo p_297753_, org.bukkit.event.server.ServerListPingEvent event) {
-+      return String.format(Locale.ROOT, "\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, p_297753_.getServerVersion(), event.getMotd(), event.getNumPlayers(), event.getMaxPlayers());
-+      // CraftBukkit end
-    }
- 
-    private static void sendFlushAndClose(ChannelHandlerContext p_9681_, ByteBuf p_9682_) {
+                   try {

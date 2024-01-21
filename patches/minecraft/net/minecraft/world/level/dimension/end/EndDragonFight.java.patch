@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/net/minecraft/world/level/dimension/end/EndDragonFight.java
-@@ -454,6 +_,10 @@
+@@ -450,6 +_,10 @@
     }
  
     public void tryRespawn() {
@@ -11,7 +11,7 @@
        if (this.dragonKilled && this.respawnStage == null) {
           BlockPos blockpos = this.portalLocation;
           if (blockpos == null) {
-@@ -475,19 +_,19 @@
+@@ -471,19 +_,19 @@
           for(Direction direction : Direction.Plane.HORIZONTAL) {
              List<EndCrystal> list = this.level.getEntitiesOfClass(EndCrystal.class, new AABB(blockpos1.relative(direction, 2)));
              if (list.isEmpty()) {
@@ -35,7 +35,7 @@
        if (this.dragonKilled && this.respawnStage == null) {
           for(BlockPattern.BlockPatternMatch blockpattern$blockpatternmatch = this.findExitPortal(); blockpattern$blockpatternmatch != null; blockpattern$blockpatternmatch = this.findExitPortal()) {
              for(int i = 0; i < this.exitPortalPattern.getWidth(); ++i) {
-@@ -506,8 +_,9 @@
+@@ -502,8 +_,9 @@
           this.respawnTime = 0;
           this.spawnExitPortal(false);
           this.respawnCrystals = p_64092_;
@@ -46,7 +46,7 @@
     }
  
     public void resetSpikeCrystals() {
-@@ -517,7 +_,14 @@
+@@ -513,7 +_,14 @@
              endcrystal.setBeamTarget((BlockPos)null);
           }
        }

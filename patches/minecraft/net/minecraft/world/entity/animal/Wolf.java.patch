@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Wolf.java
 +++ b/net/minecraft/world/entity/animal/Wolf.java
-@@ -284,15 +_,19 @@
+@@ -283,15 +_,19 @@
           return false;
        } else {
           Entity entity = p_30386_.getEntity();
@@ -24,7 +24,7 @@
        }
     }
  
-@@ -309,7 +_,7 @@
+@@ -308,7 +_,7 @@
        super.setTame(p_30443_);
        if (p_30443_) {
           this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20.0D);
@@ -33,7 +33,7 @@
        } else {
           this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(8.0D);
        }
-@@ -325,11 +_,12 @@
+@@ -324,11 +_,12 @@
           return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
        } else if (this.isTame()) {
           if (this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
@@ -47,7 +47,7 @@
              return InteractionResult.SUCCESS;
           } else {
              if (item instanceof DyeItem) {
-@@ -354,7 +_,7 @@
+@@ -353,7 +_,7 @@
                 this.setOrderedToSit(!this.isOrderedToSit());
                 this.jumping = false;
                 this.navigation.stop();
@@ -56,13 +56,13 @@
                 return InteractionResult.SUCCESS;
              } else {
                 return interactionresult;
-@@ -365,10 +_,11 @@
+@@ -364,10 +_,11 @@
              itemstack.shrink(1);
           }
  
 -         if (this.random.nextInt(3) == 0) {
 +         // CraftBukkit - added event call and isCancelled check.
-+         if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_) && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTameEvent(this, p_30412_).isCancelled()) {
++         if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_) && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTameEvent(this, p_30412_).isCancelled()) {
              this.tame(p_30412_);
              this.navigation.stop();
 -            this.setTarget((LivingEntity)null);
@@ -70,7 +70,7 @@
              this.setOrderedToSit(true);
              this.level().broadcastEntityEvent(this, (byte)7);
           } else {
-@@ -404,7 +_,7 @@
+@@ -403,7 +_,7 @@
  
     public boolean isFood(ItemStack p_30440_) {
        Item item = p_30440_.getItem();

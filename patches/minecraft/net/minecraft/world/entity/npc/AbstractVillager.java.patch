@@ -6,11 +6,11 @@
  
 -public abstract class AbstractVillager extends AgeableMob implements InventoryCarrier, Npc, Merchant {
 +public abstract class AbstractVillager extends AgeableMob implements InventoryCarrier, Npc, Merchant {// CraftBukkit start
-+   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMerchant craftMerchant;
++   private org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMerchant craftMerchant;
 +
 +   @Override
-+   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMerchant getCraftMerchant() {
-+      return (craftMerchant == null) ? craftMerchant = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMerchant(this) : craftMerchant;
++   public org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMerchant getCraftMerchant() {
++      return (craftMerchant == null) ? craftMerchant = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMerchant(this) : craftMerchant;
 +   }
 +   // CraftBukkit end
     private static final EntityDataAccessor<Integer> DATA_UNHAPPY_COUNTER = SynchedEntityData.defineId(AbstractVillager.class, EntityDataSerializers.INT);
@@ -21,7 +21,7 @@
     @Nullable
     protected MerchantOffers offers;
 -   private final SimpleContainer inventory = new SimpleContainer(8);
-+   private final SimpleContainer inventory = new SimpleContainer(8, (org.bukkit.craftbukkit.v1_20_R2.entity.CraftAbstractVillager) this.getBukkitEntity()); // CraftBukkit add argument
++   private final SimpleContainer inventory = new SimpleContainer(8, (org.bukkit.craftbukkit.v1_20_R1.entity.CraftAbstractVillager) this.getBukkitEntity()); // CraftBukkit add argument
  
     public AbstractVillager(EntityType<? extends AbstractVillager> p_35267_, Level p_35268_) {
        super(p_35267_, p_35268_);
@@ -45,9 +45,9 @@
     }
  
     protected void stopTrading() {
-@@ -210,7 +_,16 @@
-       while(i < p_35280_ && !arraylist.isEmpty()) {
-          MerchantOffer merchantoffer = arraylist.remove(this.random.nextInt(arraylist.size())).getOffer(this, this.random);
+@@ -219,7 +_,16 @@
+          VillagerTrades.ItemListing villagertrades$itemlisting = p_35279_[integer];
+          MerchantOffer merchantoffer = villagertrades$itemlisting.getOffer(this, this.random);
           if (merchantoffer != null) {
 -            p_35278_.add(merchantoffer);
 +            // CraftBukkit start
@@ -57,9 +57,9 @@
 +               org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +            }
 +            if (!event.isCancelled()) {
-+               p_35278_.add(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMerchantRecipe.fromBukkit(event.getRecipe()).toMinecraft());
++               p_35278_.add(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMerchantRecipe.fromBukkit(event.getRecipe()).toMinecraft());
 +            }
 +            // CraftBukkit end
-             ++i;
           }
        }
+ 

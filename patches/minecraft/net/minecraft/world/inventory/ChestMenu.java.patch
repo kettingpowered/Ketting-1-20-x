@@ -5,25 +5,25 @@
     private final Container container;
     private final int containerRows;
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView bukkitEntity = null;
 +   private Inventory player;
 +
 +   @Override
-+   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory inventory;
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory inventory;
 +      if (this.container instanceof Inventory) {
-+         inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryPlayer((Inventory) this.container);
++         inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryPlayer((Inventory) this.container);
 +      } else if (this.container instanceof net.minecraft.world.CompoundContainer) {
-+         inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryDoubleChest((net.minecraft.world.CompoundContainer) this.container);
++         inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryDoubleChest((net.minecraft.world.CompoundContainer) this.container);
 +      } else {
-+         inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory(this.container);
++         inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory(this.container);
 +      }
 +
-+      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

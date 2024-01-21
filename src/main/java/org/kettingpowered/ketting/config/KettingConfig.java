@@ -39,7 +39,5 @@ public class KettingConfig extends AbstractConfig {
     public final BooleanValue WARN_ON_UNKNOWN_ENTITY = new BooleanValue("debug.warn_on_unknown_entity", true, "Print a warning to the console when an entity unknown to Bukkit is spawned.");
 
     public final BooleanValue OVERWRITE_FORGE_PERMISSIONS = new BooleanValue("forge.overwrite_forge_permissions", false, "--- WARNING - THIS WILL COMPLETELY DISABLE FORGE PERMISSION CHECKS ---  Overwrite Forge permissions with Bukkit permissions, makes it possible to use a permission manager plugin for modded commands. If true, Forge permissions will be set to 'forge.command.MODDEDCOMMAND' where MODDEDCOMMAND is the name of the modded command.");
-
-    public final BooleanValue CHECK_FOR_UPDATES = new BooleanValue("updates.check_for_updates", true, "Check for updates on startup.");
     //End of config values
 }

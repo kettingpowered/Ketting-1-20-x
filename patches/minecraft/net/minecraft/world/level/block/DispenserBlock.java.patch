@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/level/block/DispenserBlock.java
 +++ b/net/minecraft/world/level/block/DispenserBlock.java
-@@ -42,10 +_,11 @@
-    private static final Logger LOGGER = LogUtils.getLogger();
+@@ -40,10 +_,11 @@
+ public class DispenserBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
 -   private static final Map<Item, DispenseItemBehavior> DISPENSER_REGISTRY = Util.make(new Object2ObjectOpenHashMap<>(), (p_52723_) -> {
@@ -13,22 +13,11 @@
  
     public static void registerBehavior(ItemLike p_52673_, DispenseItemBehavior p_52674_) {
        DISPENSER_REGISTRY.put(p_52673_.asItem(), p_52674_);
-@@ -74,8 +_,8 @@
-       }
-    }
- 
--   protected void dispenseFrom(ServerLevel p_52665_, BlockState p_301828_, BlockPos p_52666_) {
--      DispenserBlockEntity dispenserblockentity = p_52665_.getBlockEntity(p_52666_, BlockEntityType.DISPENSER).orElse((DispenserBlockEntity)null);
-+   public void dispenseFrom(ServerLevel p_52665_, BlockState p_301828_, BlockPos p_52666_) {
-+      DispenserBlockEntity dispenserblockentity = p_52665_.getBlockEntity(p_52666_, BlockEntityType.DISPENSER).orElse(null);
-       if (dispenserblockentity == null) {
-          LOGGER.warn("Ignoring dispensing attempt for Dispenser without matching block entity at {}", (Object)p_52666_);
-       } else {
-@@ -88,6 +_,7 @@
-             ItemStack itemstack = dispenserblockentity.getItem(i);
-             DispenseItemBehavior dispenseitembehavior = this.getDispenseMethod(itemstack);
-             if (dispenseitembehavior != DispenseItemBehavior.NOOP) {
-+               eventFired = false; // CraftBukkit - reset event status
-                dispenserblockentity.setItem(i, dispenseitembehavior.dispense(blocksource, itemstack));
-             }
+@@ -83,6 +_,7 @@
+          ItemStack itemstack = dispenserblockentity.getItem(i);
+          DispenseItemBehavior dispenseitembehavior = this.getDispenseMethod(itemstack);
+          if (dispenseitembehavior != DispenseItemBehavior.NOOP) {
++            eventFired = false; // CraftBukkit - reset event status
+             dispenserblockentity.setItem(i, dispenseitembehavior.dispense(blocksourceimpl, itemstack));
+          }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/Ingredient.java
 +++ b/net/minecraft/world/item/crafting/Ingredient.java
-@@ -30,14 +_,25 @@
+@@ -30,12 +_,20 @@
  import net.minecraft.world.level.ItemLike;
  
  public class Ingredient implements Predicate<ItemStack> {
@@ -16,28 +16,12 @@
     public ItemStack[] itemStacks;
     @Nullable
     private IntList stackingIds;
--   public static final Codec<Ingredient> CODEC = codec(true);
--   public static final Codec<Ingredient> CODEC_NONEMPTY = codec(false);
 +   public boolean exact; // CraftBukkit
-+   /** The vanilla codec that doesn't support custom Ingredient types. */
-+   public static final Codec<Ingredient> VANILLA_CODEC = codec(true);
-+   public static final Codec<Ingredient> CODEC = net.minecraftforge.common.ForgeHooks.enhanceIngredientCodec(VANILLA_CODEC);
-+   private static final Codec<Ingredient> VANILLA_CODEC_NONEMPTY = codec(false);
-+   public static final Codec<Ingredient> CODEC_NONEMPTY = net.minecraftforge.common.ForgeHooks.enhanceIngredientCodec(VANILLA_CODEC_NONEMPTY);
 +   private int invalidationCounter;
  
     public Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
        this.values = p_43907_.toArray((p_43933_) -> {
-@@ -50,7 +_,7 @@
-    }
- 
-    public ItemStack[] getItems() {
--      if (this.itemStacks == null) {
-+      if (this.itemStacks == null || checkInvalidation()) {
-          this.itemStacks = Arrays.stream(this.values).flatMap((p_43916_) -> {
-             return p_43916_.getItems().stream();
-          }).distinct().toArray((p_43910_) -> {
-@@ -68,6 +_,15 @@
+@@ -62,6 +_,15 @@
           return p_43914_.isEmpty();
        } else {
           for(ItemStack itemstack : this.getItems()) {
@@ -53,7 +37,7 @@
              if (itemstack.is(p_43914_.getItem())) {
                 return true;
              }
-@@ -78,7 +_,8 @@
+@@ -72,7 +_,8 @@
     }
  
     public IntList getStackingIds() {
@@ -63,16 +47,19 @@
           ItemStack[] aitemstack = this.getItems();
           this.stackingIds = new IntArrayList(aitemstack.length);
  
-@@ -93,6 +_,7 @@
+@@ -87,6 +_,10 @@
     }
  
     public final void toNetwork(FriendlyByteBuf p_43924_) {
-+      if (net.minecraftforge.common.ForgeHooks.ingredientToNetwork(p_43924_, this))
++      if (!this.isVanilla()) {
++         net.minecraftforge.common.crafting.CraftingHelper.write(p_43924_, this);
++         return;
++      }
        p_43924_.writeCollection(Arrays.asList(this.getItems()), FriendlyByteBuf::writeItem);
     }
  
-@@ -113,6 +_,38 @@
-       }
+@@ -108,6 +_,38 @@
+       return this.values.length == 0;
     }
  
 +   public final boolean checkInvalidation() {
@@ -99,29 +86,51 @@
 +
 +   private final boolean isVanilla = this.getClass() == Ingredient.class;
 +   public final boolean isVanilla() {
-+      return isVanilla;
++       return isVanilla;
 +   }
 +
-+   public net.minecraftforge.common.crafting.ingredients.IIngredientSerializer<? extends Ingredient> serializer() {
-+      if (!isVanilla()) throw new IllegalStateException("Modders must implement Ingredient.codec in their custom Ingredients: " + getClass());
-+      return net.minecraftforge.common.crafting.ingredients.IIngredientSerializer.VANILLA;
++   public net.minecraftforge.common.crafting.IIngredientSerializer<? extends Ingredient> getSerializer() {
++      if (!isVanilla()) throw new IllegalStateException("Modders must implement Ingredient.getSerializer in their custom Ingredients: " + this);
++      return net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE;
 +   }
 +
     public static Ingredient fromValues(Stream<? extends Ingredient.Value> p_43939_) {
        Ingredient ingredient = new Ingredient(p_43939_);
        return ingredient.isEmpty() ? EMPTY : ingredient;
-@@ -141,7 +_,9 @@
+@@ -136,7 +_,9 @@
     }
  
     public static Ingredient fromNetwork(FriendlyByteBuf p_43941_) {
 -      return fromValues(p_43941_.<ItemStack>readList(FriendlyByteBuf::readItem).stream().map(Ingredient.ItemValue::new));
 +      var size = p_43941_.readVarInt();
-+      if (size == -1) return net.minecraftforge.common.ForgeHooks.ingredientFromNetwork(p_43941_);
++      if (size == -1) return net.minecraftforge.common.crafting.CraftingHelper.getIngredient(p_43941_.readResourceLocation(), p_43941_);
 +      return fromValues(Stream.generate(() -> new Ingredient.ItemValue(p_43941_.readItem())).limit(size));
     }
  
-    private static Codec<Ingredient> codec(boolean p_298496_) {
-@@ -207,6 +_,9 @@
+    public static Ingredient fromJson(@Nullable JsonElement p_43918_) {
+@@ -145,6 +_,8 @@
+ 
+    public static Ingredient fromJson(@Nullable JsonElement p_289022_, boolean p_288974_) {
+       if (p_289022_ != null && !p_289022_.isJsonNull()) {
++         Ingredient ret = net.minecraftforge.common.crafting.CraftingHelper.getIngredient(p_289022_, p_288974_);
++         if (ret != null) return ret;
+          if (p_289022_.isJsonObject()) {
+             return fromValues(Stream.of(valueFromJson(p_289022_.getAsJsonObject())));
+          } else if (p_289022_.isJsonArray()) {
+@@ -179,6 +_,12 @@
+       }
+    }
+ 
++   //Merges several vanilla Ingredients together. As a quirk of how the json is structured, we can't tell if its a single Ingredient type or multiple so we split per item and re-merge here.
++   //Only public for internal use, so we can access a private field in here.
++   public static Ingredient merge(Collection<Ingredient> parts) {
++      return fromValues(parts.stream().flatMap(i -> Arrays.stream(i.values)));
++   }
++
+    public static class ItemValue implements Ingredient.Value {
+       private final ItemStack item;
+ 
+@@ -211,6 +_,9 @@
              list.add(new ItemStack(holder));
           }
  
@@ -130,4 +139,4 @@
 +         }
           return list;
        }
-    }
+ 

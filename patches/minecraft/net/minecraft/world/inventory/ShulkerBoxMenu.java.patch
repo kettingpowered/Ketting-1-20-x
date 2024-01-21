@@ -5,16 +5,16 @@
     private static final int CONTAINER_SIZE = 27;
     private final Container container;
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity;
++   private org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView bukkitEntity;
 +   private Inventory player;
 +
 +   @Override
-+   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player.player.getBukkitEntity(), new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory(this.container), this);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView(this.player.player.getBukkitEntity(), new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory(this.container), this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

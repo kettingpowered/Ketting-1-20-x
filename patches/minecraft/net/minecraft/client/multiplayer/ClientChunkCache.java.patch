@@ -1,9 +1,9 @@
 --- a/net/minecraft/client/multiplayer/ClientChunkCache.java
 +++ b/net/minecraft/client/multiplayer/ClientChunkCache.java
 @@ -60,6 +_,7 @@
-          int i = this.storage.getIndex(p_298665_.x, p_298665_.z);
+          int i = this.storage.getIndex(p_104456_, p_104457_);
           LevelChunk levelchunk = this.storage.getChunk(i);
-          if (isValidChunk(levelchunk, p_298665_.x, p_298665_.z)) {
+          if (isValidChunk(levelchunk, p_104456_, p_104457_)) {
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Unload(levelchunk));
              this.storage.replace(i, levelchunk, (LevelChunk)null);
           }

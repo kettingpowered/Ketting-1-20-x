@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-@@ -137,6 +_,7 @@
+@@ -136,6 +_,7 @@
     protected int gallopSoundCounter;
     @Nullable
     private UUID owner;
@@ -8,19 +8,7 @@
  
     protected AbstractHorse(EntityType<? extends AbstractHorse> p_30531_, Level p_30532_) {
        super(p_30531_, p_30532_);
-@@ -283,6 +_,11 @@
-    }
- 
-    public boolean causeFallDamage(float p_149499_, float p_149500_, DamageSource p_149501_) {
-+      var event = net.minecraftforge.event.ForgeEventFactory.onLivingFall(this, p_149499_, p_149500_);
-+      if (event.isCanceled()) return false;
-+      p_149499_ = event.getDistance();
-+      p_149500_ = event.getDamageMultiplier();
-+
-       if (p_149499_ > 1.0F) {
-          this.playSound(SoundEvents.HORSE_LAND, 0.4F, 1.0F);
-       }
-@@ -313,7 +_,7 @@
+@@ -312,7 +_,7 @@
  
     public void createInventory() {
        SimpleContainer simplecontainer = this.inventory;
@@ -29,7 +17,7 @@
        if (simplecontainer != null) {
           simplecontainer.removeListener(this);
           int i = Math.min(simplecontainer.getContainerSize(), this.inventory.getContainerSize());
-@@ -328,6 +_,7 @@
+@@ -327,6 +_,7 @@
  
        this.inventory.addListener(this);
        this.updateContainerEquipment();
@@ -37,7 +25,7 @@
     }
  
     protected void updateContainerEquipment() {
-@@ -375,9 +_,9 @@
+@@ -374,9 +_,9 @@
     protected void playStepSound(BlockPos p_30584_, BlockState p_30585_) {
        if (!p_30585_.liquid()) {
           BlockState blockstate = this.level().getBlockState(p_30584_.above());
@@ -49,7 +37,7 @@
           }
  
           if (this.isVehicle() && this.canGallop) {
-@@ -413,7 +_,7 @@
+@@ -412,7 +_,7 @@
     }
  
     public int getMaxTemper() {
@@ -58,7 +46,7 @@
     }
  
     protected float getSoundVolume() {
-@@ -483,7 +_,7 @@
+@@ -482,7 +_,7 @@
        }
  
        if (this.getHealth() < this.getMaxHealth() && f > 0.0F) {
@@ -67,7 +55,7 @@
           flag = true;
        }
  
-@@ -555,7 +_,7 @@
+@@ -554,7 +_,7 @@
        super.aiStep();
        if (!this.level().isClientSide && this.isAlive()) {
           if (this.random.nextInt(900) == 0 && this.deathTime == 0) {
@@ -76,7 +64,7 @@
           }
  
           if (this.canEatGrass()) {
-@@ -787,6 +_,7 @@
+@@ -786,6 +_,7 @@
        this.setDeltaMovement(vec3.x, d1, vec3.z);
        this.setIsJumping(true);
        this.hasImpulse = true;
@@ -84,16 +72,18 @@
        if (p_275435_.z > 0.0D) {
           float f = Mth.sin(this.getYRot() * ((float)Math.PI / 180F));
           float f1 = Mth.cos(this.getYRot() * ((float)Math.PI / 180F));
-@@ -809,6 +_,8 @@
+@@ -806,7 +_,10 @@
+       p_30589_.putBoolean("Tame", this.isTamed());
+       if (this.getOwnerUUID() != null) {
           p_30589_.putUUID("Owner", this.getOwnerUUID());
++         p_30589_.putUUID("Owner", this.getOwnerUUID());
        }
- 
-+      p_30589_.putInt("Bukkit.MaxDomestication", this.maxDomestication); // CraftBukkit
 +
++      p_30589_.putInt("Bukkit.MaxDomestication", this.maxDomestication); // CraftBukkit
+ 
        if (!this.inventory.getItem(0).isEmpty()) {
           p_30589_.put("SaddleItem", this.inventory.getItem(0).save(new CompoundTag()));
-       }
-@@ -833,6 +_,12 @@
+@@ -832,6 +_,12 @@
           this.setOwnerUUID(uuid);
        }
  
@@ -106,7 +96,7 @@
        if (p_30565_.contains("SaddleItem", 10)) {
           ItemStack itemstack = ItemStack.of(p_30565_.getCompound("SaddleItem"));
           if (itemstack.is(Items.SADDLE)) {
-@@ -925,6 +_,17 @@
+@@ -924,6 +_,17 @@
     }
  
     public void handleStartJump(int p_30574_) {
@@ -117,14 +107,14 @@
 +      } else {
 +         power = 0.4F + 0.4F * (float) p_30574_ / 90.0F;
 +      }
-+      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callHorseJumpEvent(this, power)) {
++      if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callHorseJumpEvent(this, power)) {
 +         return;
 +      }
 +      // CraftBukkit end
        this.allowStandSliding = true;
        this.standIfPossible();
        this.playJumpSound();
-@@ -1109,6 +_,25 @@
+@@ -1120,6 +_,25 @@
  
        this.randomizeAttributes(p_30555_.getRandom());
        return super.finalizeSpawn(p_30555_, p_30556_, p_30557_, p_30558_, p_30559_);

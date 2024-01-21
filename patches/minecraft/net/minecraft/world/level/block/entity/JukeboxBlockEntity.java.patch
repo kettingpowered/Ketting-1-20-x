@@ -21,12 +21,12 @@
 +   }
 +
 +   @Override
-+   public void onOpen(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
++   public void onOpen(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
 +      transaction.add(who);
 +   }
 +
 +   @Override
-+   public void onClose(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
++   public void onClose(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
 +      transaction.remove(who);
 +   }
 +
@@ -49,7 +49,7 @@
  
     public JukeboxBlockEntity(BlockPos p_155613_, BlockState p_155614_) {
        super(BlockEntityType.JUKEBOX, p_155613_, p_155614_);
-@@ -141,7 +_,7 @@
+@@ -139,7 +_,7 @@
     }
  
     public int getMaxStackSize() {
@@ -58,7 +58,7 @@
     }
  
     public boolean stillValid(Player p_273466_) {
-@@ -187,7 +_,11 @@
+@@ -185,7 +_,11 @@
     @VisibleForTesting
     public void setRecordWithoutPlaying(ItemStack p_272693_) {
        this.items.set(0, p_272693_);

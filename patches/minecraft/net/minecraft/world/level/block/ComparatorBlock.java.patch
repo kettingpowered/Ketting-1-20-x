@@ -1,25 +1,25 @@
 --- a/net/minecraft/world/level/block/ComparatorBlock.java
 +++ b/net/minecraft/world/level/block/ComparatorBlock.java
-@@ -143,8 +_,18 @@
+@@ -138,8 +_,18 @@
           boolean flag1 = this.shouldTurnOn(p_51908_, p_51909_, p_51910_);
           boolean flag = p_51910_.getValue(POWERED);
           if (flag && !flag1) {
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callRedstoneChange(p_51908_, p_51909_, 15, 0).getNewCurrent() != 0) {
++            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callRedstoneChange(p_51908_, p_51909_, 15, 0).getNewCurrent() != 0) {
 +               return;
 +            }
 +            // CraftBukkit end
              p_51908_.setBlock(p_51909_, p_51910_.setValue(POWERED, Boolean.valueOf(false)), 2);
           } else if (!flag && flag1) {
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callRedstoneChange(p_51908_, p_51909_, 0, 15).getNewCurrent() != 15) {
++            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callRedstoneChange(p_51908_, p_51909_, 0, 15).getNewCurrent() != 15) {
 +               return;
 +            }
 +            // CraftBukkit end
              p_51908_.setBlock(p_51909_, p_51910_.setValue(POWERED, Boolean.valueOf(true)), 2);
           }
  
-@@ -169,5 +_,17 @@
+@@ -164,5 +_,17 @@
  
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_51887_) {
        p_51887_.add(FACING, MODE, POWERED);

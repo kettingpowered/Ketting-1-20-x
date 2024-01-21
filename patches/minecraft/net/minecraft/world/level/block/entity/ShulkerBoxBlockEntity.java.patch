@@ -13,11 +13,11 @@
 +      return this.itemStacks;
 +   }
 +
-+   public void onOpen(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
++   public void onOpen(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
 +      transaction.add(who);
 +   }
 +
-+   public void onClose(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
++   public void onClose(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
 +      transaction.remove(who);
 +   }
 +
@@ -37,7 +37,7 @@
  
     public ShulkerBoxBlockEntity(@Nullable DyeColor p_155666_, BlockPos p_155667_, BlockState p_155668_) {
        super(BlockEntityType.SHULKER_BOX, p_155667_, p_155668_);
-@@ -158,6 +_,7 @@
+@@ -152,6 +_,7 @@
           }
  
           ++this.openCount;
@@ -45,7 +45,7 @@
           this.level.blockEvent(this.worldPosition, this.getBlockState().getBlock(), 1, this.openCount);
           if (this.openCount == 1) {
              this.level.gameEvent(p_59692_, GameEvent.CONTAINER_OPEN, this.worldPosition);
-@@ -170,6 +_,7 @@
+@@ -164,6 +_,7 @@
     public void stopOpen(Player p_59688_) {
        if (!this.remove && !p_59688_.isSpectator()) {
           --this.openCount;
@@ -53,7 +53,7 @@
           this.level.blockEvent(this.worldPosition, this.getBlockState().getBlock(), 1, this.openCount);
           if (this.openCount <= 0) {
              this.level.gameEvent(p_59688_, GameEvent.CONTAINER_CLOSE, this.worldPosition);
-@@ -217,7 +_,7 @@
+@@ -211,7 +_,7 @@
     }
  
     public boolean canPlaceItemThroughFace(int p_59663_, ItemStack p_59664_, @Nullable Direction p_59665_) {
@@ -62,7 +62,7 @@
     }
  
     public boolean canTakeItemThroughFace(int p_59682_, ItemStack p_59683_, Direction p_59684_) {
-@@ -239,6 +_,11 @@
+@@ -233,6 +_,11 @@
  
     public boolean isClosed() {
        return this.animationStatus == ShulkerBoxBlockEntity.AnimationStatus.CLOSED;

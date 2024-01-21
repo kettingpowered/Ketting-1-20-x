@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/StonecutterMenu.java
 +++ b/net/minecraft/world/inventory/StonecutterMenu.java
-@@ -33,14 +_,23 @@
+@@ -32,14 +_,23 @@
     final Slot resultSlot;
     Runnable slotUpdateListener = () -> {
     };
@@ -12,26 +12,26 @@
 +   public final Container container;
 +   final ResultContainer resultContainer;
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView bukkitEntity = null;
 +   private org.bukkit.entity.Player player;
 +
 +   @Override
-+   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
        }
 -   };
 -   final ResultContainer resultContainer = new ResultContainer();
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryStonecutter inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryStonecutter(this.container, this.resultContainer);
-+      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player, inventory, this);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryStonecutter inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryStonecutter(this.container, this.resultContainer);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
  
     public StonecutterMenu(int p_40294_, Inventory p_40295_) {
        this(p_40294_, p_40295_, ContainerLevelAccess.NULL);
-@@ -48,6 +_,21 @@
+@@ -47,6 +_,21 @@
  
     public StonecutterMenu(int p_40297_, Inventory p_40298_, final ContainerLevelAccess p_40299_) {
        super(MenuType.STONECUTTER, p_40297_);
@@ -53,7 +53,7 @@
        this.access = p_40299_;
        this.level = p_40298_.player.level();
        this.inputSlot = this.addSlot(new Slot(this.container, 0, 20, 33));
-@@ -91,6 +_,7 @@
+@@ -90,6 +_,7 @@
        }
  
        this.addDataSlot(this.selectedRecipeIndex);
@@ -61,7 +61,7 @@
     }
  
     public int getSelectedRecipeIndex() {
-@@ -110,6 +_,7 @@
+@@ -109,6 +_,7 @@
     }
  
     public boolean stillValid(Player p_40307_) {

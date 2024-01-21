@@ -1,0 +1,21 @@
+--- a/net/minecraft/network/protocol/login/ServerboundCustomQueryPacket.java
++++ b/net/minecraft/network/protocol/login/ServerboundCustomQueryPacket.java
+@@ -4,7 +_,8 @@
+ import net.minecraft.network.FriendlyByteBuf;
+ import net.minecraft.network.protocol.Packet;
+ 
+-public class ServerboundCustomQueryPacket implements Packet<ServerLoginPacketListener> {
++public class ServerboundCustomQueryPacket implements Packet<ServerLoginPacketListener>, net.minecraftforge.network.ICustomPacket<ServerboundCustomQueryPacket>
++{
+    private static final int MAX_PAYLOAD_SIZE = 1048576;
+    private final int transactionId;
+    @Nullable
+@@ -46,4 +_,8 @@
+    public FriendlyByteBuf getData() {
+       return this.data;
+    }
++
++   @Override public int getIndex() { return getTransactionId(); }
++   @Override public net.minecraft.resources.ResourceLocation getName() { return net.minecraftforge.network.LoginWrapper.WRAPPER; }
++   @org.jetbrains.annotations.Nullable @Override public FriendlyByteBuf getInternalData() { return getData(); }
+ }

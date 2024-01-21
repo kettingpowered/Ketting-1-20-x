@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/BoneMealItem.java
 +++ b/net/minecraft/world/item/BoneMealItem.java
-@@ -31,11 +_,18 @@
+@@ -29,11 +_,18 @@
        super(p_40626_);
     }
  
@@ -18,16 +18,16 @@
 -      if (growCrop(p_40637_.getItemInHand(), level, blockpos)) {
 +      if (applyBonemeal(p_40637_.getItemInHand(), level, blockpos, p_40637_.getPlayer())) { //Ketting - pass player
           if (!level.isClientSide) {
-             p_40637_.getPlayer().gameEvent(GameEvent.ITEM_INTERACT_FINISH);
              level.levelEvent(1505, blockpos, 0);
-@@ -58,8 +_,17 @@
+          }
+@@ -54,8 +_,17 @@
        }
     }
  
 +   @Deprecated //Forge: Use Player/Hand version
     public static boolean growCrop(ItemStack p_40628_, Level p_40629_, BlockPos p_40630_) {
 +      if (p_40629_ instanceof net.minecraft.server.level.ServerLevel)
-+         return applyBonemeal(p_40628_, p_40629_, p_40630_, null);
++         return applyBonemeal(p_40628_, p_40629_, p_40630_, net.minecraftforge.common.util.FakePlayerFactory.getMinecraft((net.minecraft.server.level.ServerLevel)p_40629_));
 +      return false;
 +   }
 +
@@ -35,6 +35,6 @@
        BlockState blockstate = p_40629_.getBlockState(p_40630_);
 +      int hook = net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, p_40629_, p_40630_, blockstate, p_40628_);
 +      if (hook != 0) return hook > 0;
-       Block block = blockstate.getBlock();
-       if (block instanceof BonemealableBlock bonemealableblock) {
-          if (bonemealableblock.isValidBonemealTarget(p_40629_, p_40630_, blockstate)) {
+       if (blockstate.getBlock() instanceof BonemealableBlock) {
+          BonemealableBlock bonemealableblock = (BonemealableBlock)blockstate.getBlock();
+          if (bonemealableblock.isValidBonemealTarget(p_40629_, p_40630_, blockstate, p_40629_.isClientSide)) {

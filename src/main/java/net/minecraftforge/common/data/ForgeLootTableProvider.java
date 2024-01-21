@@ -22,13 +22,10 @@ import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.loot.CanToolPerformAction;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.ImmutableList;
 
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -40,13 +37,6 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
  * Currently used only for replacing shears item to shears_dig tool action
  */
 public final class ForgeLootTableProvider extends LootTableProvider {
-    private static final String POOLS = "f_7915" + "6_"; // LootTable.Builder.pools
-    private static final String ENTRIES = "f_7902" + "3_"; // LootPool.entries
-    private static final String CONDITIONS = "f_7902" + "4_"; // LootPool.conditions
-    private static final String CHILDREN = "f_7942" + "8_"; // CompositeEntryBase.children
-    private static final String ENTRY_CONDITION = "f_7963" + "6_"; // LootPoolEntryContainer.conditions
-    private static final String TERMS = "f_28560" + "9_"; // CompositeLootItemCondition.terms
-
     public ForgeLootTableProvider(PackOutput packOutput) {
         super(packOutput, Set.of(), VanillaLootTableProvider.create(packOutput).getTables());
     }
@@ -73,14 +63,14 @@ public final class ForgeLootTableProvider extends LootTableProvider {
     }
 
     private boolean findAndReplaceInLootTableBuilder(LootTable.Builder builder, Item from, ToolAction toolAction) {
-        ImmutableList.Builder<LootPool> lootPools = ObfuscationReflectionHelper.getPrivateValue(LootTable.Builder.class, builder, POOLS);
+        List<LootPool> lootPools = ObfuscationReflectionHelper.getPrivateValue(LootTable.Builder.class, builder, "f_7915" + "6_");
         boolean found = false;
 
         if (lootPools == null) {
-            throw new IllegalStateException(LootTable.Builder.class.getName() + " is missing field " + POOLS);
+            throw new IllegalStateException(LootTable.Builder.class.getName() + " is missing field f_7915" + "6_");
         }
 
-        for (LootPool lootPool : lootPools.build()) {
+        for (LootPool lootPool : lootPools) {
             if (findAndReplaceInLootPool(lootPool, from, toolAction)) {
                 found = true;
             }
@@ -90,40 +80,39 @@ public final class ForgeLootTableProvider extends LootTableProvider {
     }
 
     private boolean findAndReplaceInLootPool(LootPool lootPool, Item from, ToolAction toolAction) {
-        List<LootPoolEntryContainer> lootEntries = ObfuscationReflectionHelper.getPrivateValue(LootPool.class, lootPool, ENTRIES);
-        List<LootItemCondition> lootConditions = ObfuscationReflectionHelper.getPrivateValue(LootPool.class, lootPool, CONDITIONS);
+        LootPoolEntryContainer[] lootEntries = ObfuscationReflectionHelper.getPrivateValue(LootPool.class, lootPool, "f_7902" +"3_");
+        LootItemCondition[] lootConditions = ObfuscationReflectionHelper.getPrivateValue(LootPool.class, lootPool, "f_7902" + "4_");
         boolean found = false;
 
-        if (lootEntries == null)
-            throw new IllegalStateException(LootPool.class.getName() + " is missing field " + ENTRIES);
+        if (lootEntries == null) {
+            throw new IllegalStateException(LootPool.class.getName() + " is missing field f_7902" + "3_");
+        }
 
         for (LootPoolEntryContainer lootEntry : lootEntries) {
-            if (findAndReplaceInLootEntry(lootEntry, from, toolAction))
+            if (findAndReplaceInLootEntry(lootEntry, from, toolAction)) {
                 found = true;
-
+            }
             if (lootEntry instanceof CompositeEntryBase) {
-                if (findAndReplaceInParentedLootEntry((CompositeEntryBase) lootEntry, from, toolAction))
+                if (findAndReplaceInParentedLootEntry((CompositeEntryBase) lootEntry, from, toolAction)) {
                     found = true;
+                }
             }
         }
 
-        if (lootConditions == null)
-            throw new IllegalStateException(LootPool.class.getName() + " is missing field " + CONDITIONS);
-        else {
-            lootConditions = new ArrayList<>(lootConditions);
-            ObfuscationReflectionHelper.setPrivateValue(LootPool.class,  lootPool, lootConditions, CONDITIONS);
+        if (lootConditions == null) {
+            throw new IllegalStateException(LootPool.class.getName() + " is missing field f_7902" + "4_");
         }
 
-        for (int i = 0; i < lootConditions.size(); i++) {
-            LootItemCondition lootCondition = lootConditions.get(i);
-            if (lootCondition instanceof MatchTool matchTool && checkMatchTool(matchTool, from)) {
-                lootConditions.set(i, CanToolPerformAction.canToolPerformAction(toolAction).build());
+        for (int i = 0; i < lootConditions.length; i++) {
+            LootItemCondition lootCondition = lootConditions[i];
+            if (lootCondition instanceof MatchTool && checkMatchTool((MatchTool) lootCondition, from)) {
+                lootConditions[i] = CanToolPerformAction.canToolPerformAction(toolAction).build();
                 found = true;
-            } else if (lootCondition instanceof InvertedLootItemCondition inverted) {
-                LootItemCondition invLootCondition = inverted.term();
+            } else if (lootCondition instanceof InvertedLootItemCondition) {
+                LootItemCondition invLootCondition = ObfuscationReflectionHelper.getPrivateValue(InvertedLootItemCondition.class, (InvertedLootItemCondition) lootCondition, "f_8168" + "1_");
 
-                if (invLootCondition instanceof MatchTool matchTool && checkMatchTool(matchTool, from)) {
-                    lootConditions.set(i, InvertedLootItemCondition.invert(CanToolPerformAction.canToolPerformAction(toolAction)).build());
+                if (invLootCondition instanceof MatchTool && checkMatchTool((MatchTool) invLootCondition, from)) {
+                    lootConditions[i] = InvertedLootItemCondition.invert(CanToolPerformAction.canToolPerformAction(toolAction)).build();
                     found = true;
                 } else if (invLootCondition instanceof CompositeLootItemCondition compositeLootItemCondition && findAndReplaceInComposite(compositeLootItemCondition, from, toolAction)) {
                     found = true;
@@ -131,17 +120,15 @@ public final class ForgeLootTableProvider extends LootTableProvider {
             }
         }
 
-
-
         return found;
     }
 
     private boolean findAndReplaceInParentedLootEntry(CompositeEntryBase entry, Item from, ToolAction toolAction) {
-        List<LootPoolEntryContainer> lootEntries = ObfuscationReflectionHelper.getPrivateValue(CompositeEntryBase.class, entry, CHILDREN);
+        LootPoolEntryContainer[] lootEntries = ObfuscationReflectionHelper.getPrivateValue(CompositeEntryBase.class, entry, "f_7942" + "8_");
         boolean found = false;
 
         if (lootEntries == null) {
-            throw new IllegalStateException(CompositeEntryBase.class.getName() + " is missing field " + CHILDREN);
+            throw new IllegalStateException(CompositeEntryBase.class.getName() + " is missing field f_7942" + "8_");
         }
 
         for (LootPoolEntryContainer lootEntry : lootEntries) {
@@ -154,22 +141,18 @@ public final class ForgeLootTableProvider extends LootTableProvider {
     }
 
     private boolean findAndReplaceInLootEntry(LootPoolEntryContainer entry, Item from, ToolAction toolAction) {
-        List<LootItemCondition> lootConditions = ObfuscationReflectionHelper.getPrivateValue(LootPoolEntryContainer.class, entry, ENTRY_CONDITION);
+        LootItemCondition[] lootConditions = ObfuscationReflectionHelper.getPrivateValue(LootPoolEntryContainer.class, entry, "f_7963" + "6_");
         boolean found = false;
 
-        if (lootConditions == null)
+        if (lootConditions == null) {
             throw new IllegalStateException(LootPoolEntryContainer.class.getName() + " is missing field f_7963" + "6_");
-        else {
-            lootConditions = new ArrayList<>(lootConditions);
-            ObfuscationReflectionHelper.setPrivateValue(LootPoolEntryContainer.class, entry, lootConditions, ENTRY_CONDITION);
         }
 
-        for (int i = 0; i < lootConditions.size(); i++) {
-            var condition = lootConditions.get(i);
-            if (condition instanceof CompositeLootItemCondition composite && findAndReplaceInComposite(composite, from, toolAction)) {
+        for (int i = 0; i < lootConditions.length; i++) {
+            if (lootConditions[i] instanceof CompositeLootItemCondition composite && findAndReplaceInComposite(composite, from, toolAction)) {
                 found = true;
-            } else if (condition instanceof MatchTool matchTool && checkMatchTool(matchTool, from)) {
-                lootConditions.set(i, CanToolPerformAction.canToolPerformAction(toolAction).build());
+            } else if (lootConditions[i] instanceof MatchTool && checkMatchTool((MatchTool) lootConditions[i], from)) {
+                lootConditions[i] = CanToolPerformAction.canToolPerformAction(toolAction).build();
                 found = true;
             }
         }
@@ -178,19 +161,16 @@ public final class ForgeLootTableProvider extends LootTableProvider {
     }
 
     private boolean findAndReplaceInComposite(CompositeLootItemCondition alternative, Item from, ToolAction toolAction) {
-        List<LootItemCondition> lootConditions = ObfuscationReflectionHelper.getPrivateValue(CompositeLootItemCondition.class, alternative, TERMS);
+        LootItemCondition[] lootConditions = ObfuscationReflectionHelper.getPrivateValue(CompositeLootItemCondition.class, alternative, "f_28560" + "9_");
         boolean found = false;
 
-        if (lootConditions == null)
-            throw new IllegalStateException(CompositeLootItemCondition.class.getName() + " is missing field " + TERMS);
-        else {
-            lootConditions = new ArrayList<>(lootConditions);
-            ObfuscationReflectionHelper.setPrivateValue(CompositeLootItemCondition.class, alternative, lootConditions, TERMS);
+        if (lootConditions == null) {
+            throw new IllegalStateException(CompositeLootItemCondition.class.getName() + " is missing field f_28560" + "9_");
         }
 
-        for (int i = 0; i < lootConditions.size(); i++) {
-            if (lootConditions.get(i) instanceof MatchTool matchTool && checkMatchTool(matchTool, from)) {
-                lootConditions.set(i, CanToolPerformAction.canToolPerformAction(toolAction).build());
+        for (int i = 0; i < lootConditions.length; i++) {
+            if (lootConditions[i] instanceof MatchTool && checkMatchTool((MatchTool) lootConditions[i], from)) {
+                lootConditions[i] = CanToolPerformAction.canToolPerformAction(toolAction).build();
                 found = true;
             }
         }
@@ -198,8 +178,9 @@ public final class ForgeLootTableProvider extends LootTableProvider {
         return found;
     }
 
-    @SuppressWarnings("deprecation")
     private boolean checkMatchTool(MatchTool lootCondition, Item expected) {
-        return lootCondition.predicate().flatMap(ItemPredicate::items).filter(s -> s.contains(expected.builtInRegistryHolder())).isPresent();
+        ItemPredicate predicate = ObfuscationReflectionHelper.getPrivateValue(MatchTool.class, lootCondition, "f_8199" + "3_");
+        Set<Item> items = ObfuscationReflectionHelper.getPrivateValue(ItemPredicate.class, predicate, "f_15142" + "7_");
+        return items != null && items.contains(expected);
     }
 }
