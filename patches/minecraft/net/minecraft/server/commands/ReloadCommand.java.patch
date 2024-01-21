@@ -6,14 +6,14 @@
  
 +   // CraftBukkit start
 +   public static void reload(MinecraftServer minecraftserver) {
-+      PackRepository resourcepackrepository = minecraftserver.m_129891_();
-+      WorldData savedata = minecraftserver.m_129910_();
-+      Collection<String> collection = resourcepackrepository.m_10523_();
-+      Collection<String> collection1 = m_138222_(resourcepackrepository, savedata, collection);
-+      minecraftserver.m_129861_(collection1);
++      PackRepository resourcepackrepository = minecraftserver.getPackRepository();
++      WorldData savedata = minecraftserver.getWorldData();
++      Collection<String> collection = resourcepackrepository.getSelectedIds();
++      Collection<String> collection1 = discoverNewPacks(resourcepackrepository, savedata, collection);
++      minecraftserver.reloadResources(collection1);
 +   }
 +   // CraftBukkit end
 +
-    public static void m_138226_(CommandDispatcher<CommandSourceStack> p_138227_) {
-       p_138227_.register(Commands.m_82127_("reload").requires((p_138231_) -> {
-          return p_138231_.m_6761_(2);
+    public static void register(CommandDispatcher<CommandSourceStack> p_138227_) {
+       p_138227_.register(Commands.literal("reload").requires((p_138231_) -> {
+          return p_138231_.hasPermission(2);

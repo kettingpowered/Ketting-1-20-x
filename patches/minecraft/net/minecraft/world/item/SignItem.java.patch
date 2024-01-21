@@ -10,10 +10,10 @@
        super(p_43127_, p_43128_, p_43126_, Direction.DOWN);
     }
 @@ -29,7 +_,10 @@
-             Block block = p_43131_.m_8055_(p_43130_).m_60734_();
+             Block block = p_43131_.getBlockState(p_43130_).getBlock();
              if (block instanceof SignBlock) {
                 SignBlock signblock = (SignBlock)block;
--               signblock.m_276926_(p_43132_, signblockentity, true);
+-               signblock.openTextEdit(p_43132_, signblockentity, true);
 +               // CraftBukkit start - SPIGOT-4678
 +               // blocksign.openTextEdit(p_43132_, signblockentity, true);
 +               SignItem.openSign = p_43130_;

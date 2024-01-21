@@ -3,17 +3,17 @@
 @@ -29,7 +_,7 @@
  
        for(Recipe<?> recipe : p_12792_) {
-          ResourceLocation resourcelocation = recipe.m_6423_();
--         if (!this.f_12680_.contains(resourcelocation) && !recipe.m_5598_()) {
-+         if (!this.f_12680_.contains(resourcelocation) && !recipe.m_5598_() && org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handlePlayerRecipeListUpdateEvent(p_12793_, resourcelocation)) { // CraftBukkit
-             this.m_12702_(resourcelocation);
-             this.m_12719_(resourcelocation);
+          ResourceLocation resourcelocation = recipe.getId();
+-         if (!this.known.contains(resourcelocation) && !recipe.isSpecial()) {
++         if (!this.known.contains(resourcelocation) && !recipe.isSpecial() && org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handlePlayerRecipeListUpdateEvent(p_12793_, resourcelocation)) { // CraftBukkit
+             this.add(resourcelocation);
+             this.addHighlight(resourcelocation);
              list.add(resourcelocation);
 @@ -63,6 +_,7 @@
     }
  
-    private void m_12801_(ClientboundRecipePacket.State p_12802_, ServerPlayer p_12803_, List<ResourceLocation> p_12804_) {
-+      if (p_12803_.f_8906_ == null) return; // SPIGOT-4478 during PlayerLoginEvent
-       p_12803_.f_8906_.m_9829_(new ClientboundRecipePacket(p_12802_, p_12804_, Collections.emptyList(), this.m_12684_()));
+    private void sendRecipes(ClientboundRecipePacket.State p_12802_, ServerPlayer p_12803_, List<ResourceLocation> p_12804_) {
++      if (p_12803_.connection == null) return; // SPIGOT-4478 during PlayerLoginEvent
+       p_12803_.connection.send(new ClientboundRecipePacket(p_12802_, p_12804_, Collections.emptyList(), this.getBookSettings()));
     }
  

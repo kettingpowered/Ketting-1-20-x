@@ -1,8 +1,8 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
 @@ -144,6 +_,41 @@
-    private final Queue<Runnable> f_140125_ = Queues.newConcurrentLinkedQueue();
-    int f_140126_;
+    private final Queue<Runnable> unloadQueue = Queues.newConcurrentLinkedQueue();
+    int viewDistance;
  
 +   // CraftBukkit start - recursion-safe executor for Chunk loadCallback() and unloadCallback()
 +   public final CallbackExecutor callbackExecutor = new CallbackExecutor();
@@ -27,73 +27,73 @@
 +
 +   //Ketting start
 +   public void setChunkGenerator(ChunkGenerator generator) {
-+      this.f_140136_ = generator;
++      this.generator = generator;
 +      if (generator instanceof org.bukkit.craftbukkit.v1_20_R1.generator.CustomChunkGenerator custom) {
 +         generator = custom.getDelegate();
 +      }
 +      if (generator instanceof NoiseBasedChunkGenerator noisebasedchunkgenerator) {
-+         this.f_214834_ = RandomState.m_255302_(noisebasedchunkgenerator.m_224341_().m_203334_(), this.f_140133_.m_9598_().m_255025_(Registries.f_256865_), this.f_140133_.m_7328_());
++         this.randomState = RandomState.create(noisebasedchunkgenerator.generatorSettings().value(), this.level.registryAccess().lookupOrThrow(Registries.NOISE), this.level.getSeed());
 +      } else {
-+         this.f_214834_ = RandomState.m_255302_(NoiseGeneratorSettings.m_238396_(), this.f_140133_.m_9598_().m_255025_(Registries.f_256865_), this.f_140133_.m_7328_());
++         this.randomState = RandomState.create(NoiseGeneratorSettings.dummy(), this.level.registryAccess().lookupOrThrow(Registries.NOISE), this.level.getSeed());
 +      }
 +   }
 +   //Ketting end
 +
     public ChunkMap(ServerLevel p_214836_, LevelStorageSource.LevelStorageAccess p_214837_, DataFixer p_214838_, StructureTemplateManager p_214839_, Executor p_214840_, BlockableEventLoop<Runnable> p_214841_, LightChunkGetter p_214842_, ChunkGenerator p_214843_, ChunkProgressListener p_214844_, ChunkStatusUpdateListener p_214845_, Supplier<DimensionDataStorage> p_214846_, int p_214847_, boolean p_214848_) {
-       super(p_214837_.m_197394_(p_214836_.m_46472_()).resolve("region"), p_214838_, p_214848_);
-       this.f_214833_ = p_214839_;
+       super(p_214837_.getDimensionPath(p_214836_.dimension()).resolve("region"), p_214838_, p_214848_);
+       this.structureTemplateManager = p_214839_;
 @@ -151,6 +_,11 @@
-       this.f_182284_ = path.getFileName().toString();
-       this.f_140133_ = p_214836_;
-       this.f_140136_ = p_214843_;
+       this.storageName = path.getFileName().toString();
+       this.level = p_214836_;
+       this.generator = p_214843_;
 +      // CraftBukkit start - SPIGOT-7051: It's a rigged game! Use delegate for random state creation, otherwise it is not so random.
 +      if (p_214843_ instanceof org.bukkit.craftbukkit.v1_20_R1.generator.CustomChunkGenerator) {
 +         p_214843_ = ((org.bukkit.craftbukkit.v1_20_R1.generator.CustomChunkGenerator) p_214843_).getDelegate();
 +      }
 +      // CraftBukkit end
-       RegistryAccess registryaccess = p_214836_.m_9598_();
-       long i = p_214836_.m_7328_();
+       RegistryAccess registryaccess = p_214836_.registryAccess();
+       long i = p_214836_.getSeed();
        if (p_214843_ instanceof NoiseBasedChunkGenerator noisebasedchunkgenerator) {
 @@ -159,7 +_,7 @@
-          this.f_214834_ = RandomState.m_255302_(NoiseGeneratorSettings.m_238396_(), registryaccess.m_255025_(Registries.f_256865_), i);
+          this.randomState = RandomState.create(NoiseGeneratorSettings.dummy(), registryaccess.lookupOrThrow(Registries.NOISE), i);
        }
  
--      this.f_254626_ = p_214843_.m_255169_(registryaccess.m_255025_(Registries.f_256998_), this.f_214834_, i);
-+      this.f_254626_ = p_214843_.createState(registryaccess.m_255025_(Registries.f_256998_), this.f_214834_, i, p_214836_.spigotConfig); // Spigot
-       this.f_140135_ = p_214841_;
-       ProcessorMailbox<Runnable> processormailbox1 = ProcessorMailbox.m_18751_(p_214840_, "worldgen");
-       ProcessorHandle<Runnable> processorhandle = ProcessorHandle.m_18714_("main", p_214841_::m_6937_);
+-      this.chunkGeneratorState = p_214843_.createState(registryaccess.lookupOrThrow(Registries.STRUCTURE_SET), this.randomState, i);
++      this.chunkGeneratorState = p_214843_.createState(registryaccess.lookupOrThrow(Registries.STRUCTURE_SET), this.randomState, i, p_214836_.spigotConfig); // Spigot
+       this.mainThreadExecutor = p_214841_;
+       ProcessorMailbox<Runnable> processormailbox1 = ProcessorMailbox.create(p_214840_, "worldgen");
+       ProcessorHandle<Runnable> processorhandle = ProcessorHandle.of("main", p_214841_::tell);
 @@ -398,6 +_,7 @@
-             this.f_140140_ = true;
+             this.modified = true;
           }
  
-+         net.minecraftforge.event.ForgeEventFactory.fireChunkTicketLevelUpdated(this.f_140133_, p_140177_, p_140180_, p_140178_, p_140179_);
++         net.minecraftforge.event.ForgeEventFactory.fireChunkTicketLevelUpdated(this.level, p_140177_, p_140180_, p_140178_, p_140179_);
           return p_140179_;
        }
     }
 @@ -503,6 +_,7 @@
-             if (this.f_140131_.remove(p_140182_, p_140183_) && p_203002_ != null) {
+             if (this.pendingUnloads.remove(p_140182_, p_140183_) && p_203002_ != null) {
                 if (p_203002_ instanceof LevelChunk) {
-                   ((LevelChunk)p_203002_).m_62913_(false);
+                   ((LevelChunk)p_203002_).setLoaded(false);
 +                  net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Unload(p_203002_));
                 }
  
-                this.m_140258_(p_203002_);
+                this.save(p_203002_);
 @@ -685,7 +_,21 @@
  
-    private static void m_143064_(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
+    private static void postLoadProtoChunk(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
        if (!p_143066_.isEmpty()) {
--         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_));
+-         p_143065_.addWorldGenChunkEntities(EntityType.loadEntitiesRecursive(p_143066_, p_143065_));
 +         // CraftBukkit start - these are spawned serialized (DefinedStructure) and we don't call an add event below at the moment due to ordering complexities
-+         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_).filter((entity) -> {
++         p_143065_.addWorldGenChunkEntities(EntityType.loadEntitiesRecursive(p_143066_, p_143065_).filter((entity) -> {
 +            boolean needsRemoval = false;
 +            net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
-+            if (!server.m_6997_() && entity instanceof net.minecraft.world.entity.npc.Npc) {
-+               entity.m_146870_();
++            if (!server.areNpcsEnabled() && entity instanceof net.minecraft.world.entity.npc.Npc) {
++               entity.discard();
 +               needsRemoval = true;
 +            }
-+            if (!server.m_6998_() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
-+               entity.m_146870_();
++            if (!server.isSpawningAnimals() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
++               entity.discard();
 +               needsRemoval = true;
 +            }
 +            return !needsRemoval;
@@ -103,13 +103,13 @@
  
     }
 @@ -713,8 +_,14 @@
-             levelchunk.m_62952_();
-             if (this.f_140132_.add(chunkpos.m_45588_())) {
-                levelchunk.m_62913_(true);
+             levelchunk.runPostLoad();
+             if (this.entitiesInLevel.add(chunkpos.toLong())) {
+                levelchunk.setLoaded(true);
 +               try {
 +               p_140384_.currentlyLoading = levelchunk; // Forge - bypass the future chain when getChunk is called, this prevents deadlocks.
-                levelchunk.m_156369_();
-                levelchunk.m_187958_(this.f_140133_);
+                levelchunk.registerAllBlockEntitiesAfterLevelLoad();
+                levelchunk.registerTickContainerInLevel(this.level);
 +               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Load(levelchunk, !(protochunk instanceof ImposterProtoChunk)));
 +               } finally {
 +                   p_140384_.currentlyLoading = null; // Forge - Stop bypassing the future chain.
@@ -119,55 +119,55 @@
              return levelchunk;
 @@ -819,6 +_,7 @@
  
-             this.f_140133_.m_46473_().m_6174_("chunkSave");
-             CompoundTag compoundtag = ChunkSerializer.m_63454_(this.f_140133_, p_140259_);
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkDataEvent.Save(p_140259_, p_140259_.getWorldForge() != null ? p_140259_.getWorldForge() : this.f_140133_, compoundtag));
-             this.m_63502_(chunkpos, compoundtag);
-             this.m_140229_(chunkpos, chunkstatus.m_62494_());
+             this.level.getProfiler().incrementCounter("chunkSave");
+             CompoundTag compoundtag = ChunkSerializer.write(this.level, p_140259_);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkDataEvent.Save(p_140259_, p_140259_.getWorldForge() != null ? p_140259_.getWorldForge() : this.level, compoundtag));
+             this.write(chunkpos, compoundtag);
+             this.markPosition(chunkpos, chunkstatus.getChunkType());
              return true;
 @@ -889,6 +_,7 @@
  
           if (!p_183759_ && p_183758_) {
-             p_183755_.m_9088_(p_183756_);
-+            net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_183755_, p_183756_, this.f_140133_);
+             p_183755_.untrackChunk(p_183756_);
++            net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_183755_, p_183756_, this.level);
           }
  
        }
 @@ -946,21 +_,34 @@
  
-    private CompletableFuture<Optional<CompoundTag>> m_214963_(ChunkPos p_214964_) {
-       return this.m_223454_(p_214964_).thenApplyAsync((p_214907_) -> {
--         return p_214907_.map(this::m_214947_);
+    private CompletableFuture<Optional<CompoundTag>> readChunk(ChunkPos p_214964_) {
+       return this.read(p_214964_).thenApplyAsync((p_214907_) -> {
+-         return p_214907_.map(this::upgradeChunkTag);
 +         return p_214907_.map(nbt -> upgradeChunkTag(nbt, p_214964_)); // CraftBukkit
-       }, Util.m_183991_());
+       }, Util.backgroundExecutor());
     }
  
--   private CompoundTag m_214947_(CompoundTag p_214948_) {
--      return this.m_188288_(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_());
+-   private CompoundTag upgradeChunkTag(CompoundTag p_214948_) {
+-      return this.upgradeChunkTag(this.level.dimension(), this.overworldDataStorage, p_214948_, this.generator.getTypeNameForDataFixer());
 +   // CraftBukkit start
 +   private CompoundTag upgradeChunkTag(CompoundTag p_214948_, ChunkPos pos) {
-+      return this.upgradeChunkTag(Registries.m_257452_(this.f_140133_.m_46472_()), this.f_140137_, p_214948_, this.f_140136_.m_187743_(), pos, f_140133_);
++      return this.upgradeChunkTag(Registries.levelToLevelStem(this.level.dimension()), this.overworldDataStorage, p_214948_, this.generator.getTypeNameForDataFixer(), pos, level);
 +      // CraftBukkit end
     }
  
-    boolean m_183879_(ChunkPos p_183880_) {
+    boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_) {
 +      // Spigot start
 +      return anyPlayerCloseEnoughForSpawning(p_183880_, false);
 +   }
 +
 +   boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_, boolean reducedRange) {
-+      int chunkRange = f_140133_.spigotConfig.mobSpawnRange;
-+      chunkRange = (chunkRange > f_140133_.spigotConfig.viewDistance) ? (byte) f_140133_.spigotConfig.viewDistance : chunkRange;
++      int chunkRange = level.spigotConfig.mobSpawnRange;
++      chunkRange = (chunkRange > level.spigotConfig.viewDistance) ? (byte) level.spigotConfig.viewDistance : chunkRange;
 +      chunkRange = (chunkRange > 8) ? 8 : chunkRange;
 +
 +      double blockRange = (reducedRange) ? Math.pow(chunkRange << 4, 2) : 16384.0D;
 +      // Spigot end
-       long i = p_183880_.m_45588_();
-       if (!this.f_140145_.m_140847_(i)) {
+       long i = p_183880_.toLong();
+       if (!this.distanceManager.hasPlayersNearby(i)) {
           return false;
        } else {
-          for(ServerPlayer serverplayer : this.f_140149_.m_183926_(i)) {
--            if (this.m_183751_(serverplayer, p_183880_)) {
+          for(ServerPlayer serverplayer : this.playerMap.getPlayers(i)) {
+-            if (this.playerIsCloseEnoughForSpawning(serverplayer, p_183880_)) {
 +            if (this.playerIsCloseEnoughForSpawning(serverplayer, p_183880_, blockRange)) { // Spigot
                 return true;
              }
@@ -175,8 +175,8 @@
 @@ -977,7 +_,7 @@
           ImmutableList.Builder<ServerPlayer> builder = ImmutableList.builder();
  
-          for(ServerPlayer serverplayer : this.f_140149_.m_183926_(i)) {
--            if (this.m_183751_(serverplayer, p_183889_)) {
+          for(ServerPlayer serverplayer : this.playerMap.getPlayers(i)) {
+-            if (this.playerIsCloseEnoughForSpawning(serverplayer, p_183889_)) {
 +            if (this.playerIsCloseEnoughForSpawning(serverplayer, p_183889_, 16384.0D)) {
                 builder.add(serverplayer);
              }
@@ -185,12 +185,12 @@
        }
     }
  
--   private boolean m_183751_(ServerPlayer p_183752_, ChunkPos p_183753_) {
+-   private boolean playerIsCloseEnoughForSpawning(ServerPlayer p_183752_, ChunkPos p_183753_) {
 +   private boolean playerIsCloseEnoughForSpawning(ServerPlayer p_183752_, ChunkPos p_183753_, double range) { // Spigot
-       if (p_183752_.m_5833_()) {
+       if (p_183752_.isSpectator()) {
           return false;
        } else {
-          double d0 = m_140226_(p_183753_, p_183752_);
+          double d0 = euclideanDistanceSquared(p_183753_, p_183752_);
 -         return d0 < 16384.0D;
 +         return d0 < range; // Spigot
        }
@@ -199,68 +199,68 @@
 @@ -1132,9 +_,12 @@
     }
  
-    protected void m_140199_(Entity p_140200_) {
+    protected void addEntity(Entity p_140200_) {
 -      if (!(p_140200_ instanceof EnderDragonPart)) {
 +      org.spigotmc.AsyncCatcher.catchOp("entity track"); // Spigot
 +      if (!(p_140200_ instanceof net.minecraftforge.entity.PartEntity)) {
-          EntityType<?> entitytype = p_140200_.m_6095_();
-          int i = entitytype.m_20681_() * 16;
+          EntityType<?> entitytype = p_140200_.getType();
+          int i = entitytype.clientTrackingRange() * 16;
 +         i = org.spigotmc.TrackingRange.getEntityTrackingRange(p_140200_, i); // Spigot
 +
           if (i != 0) {
-             int j = entitytype.m_20682_();
-             if (this.f_140150_.containsKey(p_140200_.m_19879_())) {
+             int j = entitytype.updateInterval();
+             if (this.entityMap.containsKey(p_140200_.getId())) {
 @@ -1160,6 +_,7 @@
     }
  
-    protected void m_140331_(Entity p_140332_) {
+    protected void removeEntity(Entity p_140332_) {
 +      org.spigotmc.AsyncCatcher.catchOp("entity untrack"); // Spigot
        if (p_140332_ instanceof ServerPlayer serverplayer) {
-          this.m_140192_(serverplayer, false);
+          this.updatePlayerStatus(serverplayer, false);
  
 @@ -1282,6 +_,7 @@
           }
        }
  
-+      net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_183761_, p_183763_, this.f_140133_);
++      net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_183761_, p_183763_, this.level);
     }
  
-    protected PoiManager m_140424_() {
+    protected PoiManager getPoiManager() {
 @@ -1324,7 +_,7 @@
-       public final Set<ServerPlayerConnection> f_140475_ = Sets.newIdentityHashSet();
+       public final Set<ServerPlayerConnection> seenBy = Sets.newIdentityHashSet();
  
        public TrackedEntity(Entity p_140478_, int p_140479_, int p_140480_, boolean p_140481_) {
--         this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_);
-+         this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_, f_140475_); // CraftBukkit
-          this.f_140472_ = p_140478_;
-          this.f_140473_ = p_140479_;
-          this.f_140474_ = SectionPos.m_235861_(p_140478_);
+-         this.serverEntity = new ServerEntity(ChunkMap.this.level, p_140478_, p_140480_, p_140481_, this::broadcast);
++         this.serverEntity = new ServerEntity(ChunkMap.this.level, p_140478_, p_140480_, p_140481_, this::broadcast, seenBy); // CraftBukkit
+          this.entity = p_140478_;
+          this.range = p_140479_;
+          this.lastSectionPos = SectionPos.of(p_140478_);
 @@ -1365,6 +_,7 @@
        }
  
-       public void m_140485_(ServerPlayer p_140486_) {
+       public void removePlayer(ServerPlayer p_140486_) {
 +         org.spigotmc.AsyncCatcher.catchOp("player tracker clear"); // Spigot
-          if (this.f_140475_.remove(p_140486_.f_8906_)) {
-             this.f_140471_.m_8534_(p_140486_);
+          if (this.seenBy.remove(p_140486_.connection)) {
+             this.serverEntity.removePairing(p_140486_);
           }
 @@ -1372,12 +_,20 @@
        }
  
-       public void m_140497_(ServerPlayer p_140498_) {
+       public void updatePlayer(ServerPlayer p_140498_) {
 +         org.spigotmc.AsyncCatcher.catchOp("player tracker update"); // Spigot
-          if (p_140498_ != this.f_140472_) {
-             Vec3 vec3 = p_140498_.m_20182_().m_82546_(this.f_140472_.m_20182_());
-             double d0 = (double)Math.min(this.m_140496_(), ChunkMap.this.f_140126_ * 16);
-             double d1 = vec3.f_82479_ * vec3.f_82479_ + vec3.f_82481_ * vec3.f_82481_;
+          if (p_140498_ != this.entity) {
+             Vec3 vec3 = p_140498_.position().subtract(this.entity.position());
+             double d0 = (double)Math.min(this.getEffectiveRange(), ChunkMap.this.viewDistance * 16);
+             double d1 = vec3.x * vec3.x + vec3.z * vec3.z;
              double d2 = d0 * d0;
-             boolean flag = d1 <= d2 && this.f_140472_.m_6459_(p_140498_);
+             boolean flag = d1 <= d2 && this.entity.broadcastToPlayer(p_140498_);
 +
 +            // CraftBukkit start - respect vanish API
-+            if (!p_140498_.getBukkitEntity().canSee(this.f_140472_.getBukkitEntity())) {
++            if (!p_140498_.getBukkitEntity().canSee(this.entity.getBukkitEntity())) {
 +               flag = false;
 +            }
 +            // CraftBukkit end
 +
              if (flag) {
-                if (this.f_140475_.add(p_140498_.f_8906_)) {
-                   this.f_140471_.m_8541_(p_140498_);
+                if (this.seenBy.add(p_140498_.connection)) {
+                   this.serverEntity.addPairing(p_140498_);

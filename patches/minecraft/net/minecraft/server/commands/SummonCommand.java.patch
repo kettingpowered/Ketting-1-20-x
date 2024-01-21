@@ -1,11 +1,11 @@
 --- a/net/minecraft/server/commands/SummonCommand.java
 +++ b/net/minecraft/server/commands/SummonCommand.java
 @@ -60,7 +_,7 @@
-                ((Mob)entity).m_6518_(p_270582_.m_81372_(), p_270582_.m_81372_().m_6436_(entity.m_20183_()), MobSpawnType.COMMAND, (SpawnGroupData)null, (CompoundTag)null);
+                ((Mob)entity).finalizeSpawn(p_270582_.getLevel(), p_270582_.getLevel().getCurrentDifficultyAt(entity.blockPosition()), MobSpawnType.COMMAND, (SpawnGroupData)null, (CompoundTag)null);
              }
  
--            if (!serverlevel.m_8860_(entity)) {
+-            if (!serverlevel.tryAddFreshEntityWithPassengers(entity)) {
 +            if (!serverlevel.tryAddFreshEntityWithPassengers(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.COMMAND)) { // CraftBukkit - pass a spawn reason of "COMMAND"
-                throw f_138811_.create();
+                throw ERROR_DUPLICATE_UUID.create();
              } else {
                 return entity;

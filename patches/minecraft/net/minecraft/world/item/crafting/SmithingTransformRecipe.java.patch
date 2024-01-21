@@ -3,22 +3,22 @@
 @@ -65,8 +_,19 @@
     }
  
-    public boolean m_142505_() {
--      return Stream.of(this.f_265949_, this.f_265888_, this.f_265907_).anyMatch(Ingredient::m_43947_);
+    public boolean isIncomplete() {
+-      return Stream.of(this.template, this.base, this.addition).anyMatch(Ingredient::isEmpty);
 -   }
-+      return Stream.of(this.f_265949_, this.f_265888_, this.f_265907_).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
++      return Stream.of(this.template, this.base, this.addition).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
 +   }
 +
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.Recipe toBukkitRecipe() {
-+      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(this.f_266098_);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(this.result);
 +
-+      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftSmithingTransformRecipe recipe = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftSmithingTransformRecipe(org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(this.f_265924_), result, org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.f_265949_), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.f_265888_), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.f_265907_));
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftSmithingTransformRecipe recipe = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftSmithingTransformRecipe(org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(this.id), result, org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.template), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.base), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.addition));
 +
 +      return recipe;
 +   }
 +   // CraftBukkit end
  
     public static class Serializer implements RecipeSerializer<SmithingTransformRecipe> {
-       public SmithingTransformRecipe m_6729_(ResourceLocation p_266953_, JsonObject p_266720_) {
+       public SmithingTransformRecipe fromJson(ResourceLocation p_266953_, JsonObject p_266720_) {

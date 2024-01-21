@@ -3,18 +3,18 @@
 @@ -307,7 +_,7 @@
     }
  
-    protected void m_7355_(BlockPos p_252056_, BlockState p_251457_) {
--      if (p_251457_.m_60827_() == SoundType.f_56746_) {
-+      if (p_251457_.getSoundType(m_9236_(), p_252056_, this) == SoundType.f_56746_) {
-          this.m_5496_(SoundEvents.f_244016_, 1.0F, 1.0F);
+    protected void playStepSound(BlockPos p_252056_, BlockState p_251457_) {
+-      if (p_251457_.getSoundType() == SoundType.SAND) {
++      if (p_251457_.getSoundType(level(), p_252056_, this) == SoundType.SAND) {
+          this.playSound(SoundEvents.CAMEL_STEP_SAND, 1.0F, 1.0F);
        } else {
-          this.m_5496_(SoundEvents.f_244506_, 1.0F, 1.0F);
+          this.playSound(SoundEvents.CAMEL_STEP, 1.0F, 1.0F);
 @@ -410,7 +_,7 @@
  
-    protected void m_6475_(DamageSource p_250410_, float p_251451_) {
-       this.m_247328_();
--      super.m_6475_(p_250410_, p_251451_);
+    protected void actuallyHurt(DamageSource p_250410_, float p_251451_) {
+       this.standUpInstantly();
+-      super.actuallyHurt(p_250410_, p_251451_);
 +      super.damageEntity0(p_250410_, p_251451_);
     }
  
-    protected void m_19956_(Entity p_289564_, Entity.MoveFunction p_289551_) {
+    protected void positionRider(Entity p_289564_, Entity.MoveFunction p_289551_) {

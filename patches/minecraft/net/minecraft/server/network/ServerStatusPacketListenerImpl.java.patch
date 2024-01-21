@@ -2,37 +2,37 @@
 +++ b/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
 @@ -12,12 +_,17 @@
  public class ServerStatusPacketListenerImpl implements ServerStatusPacketListener {
-    private static final Component f_10081_ = Component.m_237115_("multiplayer.status.request_handled");
-    private final ServerStatus f_271204_;
+    private static final Component DISCONNECT_REASON = Component.translatable("multiplayer.status.request_handled");
+    private final ServerStatus status;
 +   private final @org.jetbrains.annotations.Nullable String statusCache; // FORGE: cache status JSON
-    private final Connection f_10083_;
-    private boolean f_10084_;
+    private final Connection connection;
+    private boolean hasRequestedStatus;
  
     public ServerStatusPacketListenerImpl(ServerStatus p_272864_, Connection p_273586_) {
 +      this(p_272864_, p_273586_, null);
 +   }
 +   public ServerStatusPacketListenerImpl(ServerStatus p_272864_, Connection p_273586_, @org.jetbrains.annotations.Nullable String statusCache) {
-       this.f_271204_ = p_272864_;
-       this.f_10083_ = p_273586_;
+       this.status = p_272864_;
+       this.connection = p_273586_;
 +      this.statusCache = statusCache;
     }
  
-    public void m_7026_(Component p_10091_) {
+    public void onDisconnect(Component p_10091_) {
 @@ -32,7 +_,109 @@
-          this.f_10083_.m_129507_(f_10081_);
+          this.connection.disconnect(DISCONNECT_REASON);
        } else {
-          this.f_10084_ = true;
--         this.f_10083_.m_129512_(new ClientboundStatusResponsePacket(this.f_271204_));
+          this.hasRequestedStatus = true;
+-         this.connection.send(new ClientboundStatusResponsePacket(this.status));
 +         // CraftBukkit start
 +         // this.connection.send(new ClientboundStatusResponsePacket(this.status, this.statusCache));
 +         net.minecraft.server.MinecraftServer server = net.minecraft.server.MinecraftServer.getServer();
-+         final Object[] players = server.m_6846_().f_11196_.toArray();
++         final Object[] players = server.getPlayerList().players.toArray();
 +         class ServerListPingEvent extends org.bukkit.event.server.ServerListPingEvent {
 +
 +            org.bukkit.craftbukkit.v1_20_R1.util.CraftIconCache icon = server.server.getServerIcon();
 +
 +            ServerListPingEvent() {
-+               super(f_10083_.hostname, ((java.net.InetSocketAddress) f_10083_.m_129523_()).getAddress(), server.m_129916_(), server.m_6846_().m_11310_());
++               super(connection.hostname, ((java.net.InetSocketAddress) connection.getRemoteAddress()).getAddress(), server.getMotd(), server.getPlayerList().getMaxPlayers());
 +            }
 +
 +            @Override
@@ -98,33 +98,33 @@
 +         for (Object player : players) {
 +            if (player != null) {
 +               net.minecraft.server.level.ServerPlayer entityPlayer = ((net.minecraft.server.level.ServerPlayer) player);
-+               if (entityPlayer.m_184128_()) {
-+                  profiles.add(entityPlayer.m_36316_());
++               if (entityPlayer.allowsListing()) {
++                  profiles.add(entityPlayer.getGameProfile());
 +               } else {
-+                  profiles.add(net.minecraft.server.MinecraftServer.f_195496_);
++                  profiles.add(net.minecraft.server.MinecraftServer.ANONYMOUS_PLAYER_PROFILE);
 +               }
 +            }
 +         }
 +
 +         // Spigot Start
-+         if ( !server.m_183306_() && !profiles.isEmpty() )
++         if ( !server.hidesOnlinePlayers() && !profiles.isEmpty() )
 +         {
 +            java.util.Collections.shuffle( profiles ); // This sucks, its inefficient but we have no simple way of doing it differently
 +            profiles = profiles.subList( 0, Math.min( profiles.size(), org.spigotmc.SpigotConfig.playerSample ) ); // Cap the sample to n (or less) displayed players, ie: Vanilla behaviour
 +         }
 +         // Spigot End
-+         ServerStatus.Players playerSample = new ServerStatus.Players(event.getMaxPlayers(), profiles.size(), (server.m_183306_()) ? java.util.Collections.emptyList() : profiles);
++         ServerStatus.Players playerSample = new ServerStatus.Players(event.getMaxPlayers(), profiles.size(), (server.hidesOnlinePlayers()) ? java.util.Collections.emptyList() : profiles);
 +
 +         ServerStatus ping = new ServerStatus(
 +                 org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage.fromString(event.getMotd(), true)[0],
 +                 java.util.Optional.of(playerSample),
-+                 java.util.Optional.of(new ServerStatus.Version(server.getServerModName() + " " + server.m_7630_(), net.minecraft.SharedConstants.m_183709_().m_132495_())),
++                 java.util.Optional.of(new ServerStatus.Version(server.getServerModName() + " " + server.getServerVersion(), net.minecraft.SharedConstants.getCurrentVersion().getProtocolVersion())),
 +                 (event.icon.value != null) ? java.util.Optional.of(new ServerStatus.Favicon(event.icon.value)) : java.util.Optional.empty(),
-+                 server.m_214005_(),
-+                 this.f_271204_.forgeData()
++                 server.enforceSecureProfile(),
++                 this.status.forgeData()
 +         );
 +
-+         this.f_10083_.m_129512_(new ClientboundStatusResponsePacket(ping, this.statusCache));
++         this.connection.send(new ClientboundStatusResponsePacket(ping, this.statusCache));
 +         // CraftBukkit end
        }
     }

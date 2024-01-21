@@ -19,9 +19,9 @@
 +      if (MAX_HEIGHT < height) MAX_HEIGHT = height;
 +   }
 +
-    final int f_44146_;
-    final int f_44147_;
-    final NonNullList<Ingredient> f_44148_;
+    final int width;
+    final int height;
+    final NonNullList<Ingredient> recipeItems;
 @@ -47,6 +_,68 @@
        this(p_250963_, p_250221_, p_250716_, p_251480_, p_251980_, p_252150_, p_248581_, true);
     }
@@ -29,14 +29,14 @@
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.ShapedRecipe toBukkitRecipe() {
-+      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(this.f_44149_);
-+      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftShapedRecipe recipe = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftShapedRecipe(org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(this.f_44150_), result);
-+      recipe.setGroup(this.f_44151_);
-+      recipe.setCategory(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.getCategory(this.m_245232_()));
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(this.result);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftShapedRecipe recipe = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftShapedRecipe(org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(this.id), result);
++      recipe.setGroup(this.group);
++      recipe.setCategory(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.getCategory(this.category()));
 +
-+      switch (this.f_44147_) {
++      switch (this.height) {
 +         case 1:
-+            switch (this.f_44146_) {
++            switch (this.width) {
 +               case 1:
 +                  recipe.shape("a");
 +                  break;
@@ -49,7 +49,7 @@
 +            }
 +            break;
 +         case 2:
-+            switch (this.f_44146_) {
++            switch (this.width) {
 +               case 1:
 +                  recipe.shape("a","b");
 +                  break;
@@ -62,7 +62,7 @@
 +            }
 +            break;
 +         case 3:
-+            switch (this.f_44146_) {
++            switch (this.width) {
 +               case 1:
 +                  recipe.shape("a","b","c");
 +                  break;
@@ -76,7 +76,7 @@
 +            break;
 +      }
 +      char c = 'a';
-+      for (Ingredient list : this.f_44148_) {
++      for (Ingredient list : this.recipeItems) {
 +         org.bukkit.inventory.RecipeChoice choice = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(list);
 +         if (choice != null) {
 +            recipe.setIngredient(c, choice);
@@ -88,42 +88,42 @@
 +   }
 +   // CraftBukkit end
 +
-    public ResourceLocation m_6423_() {
-       return this.f_44150_;
+    public ResourceLocation getId() {
+       return this.id;
     }
 @@ -126,10 +_,20 @@
-       return this.f_44146_;
+       return this.width;
     }
  
 +   @Override
 +   public int getRecipeWidth() {
-+      return m_44220_();
++      return getWidth();
 +   }
 +
-    public int m_44221_() {
-       return this.f_44147_;
+    public int getHeight() {
+       return this.height;
     }
  
 +   @Override
 +   public int getRecipeHeight() {
-+      return m_44221_();
++      return getHeight();
 +   }
 +
-    static NonNullList<Ingredient> m_44202_(String[] p_44203_, Map<String, Ingredient> p_44204_, int p_44205_, int p_44206_) {
-       NonNullList<Ingredient> nonnulllist = NonNullList.m_122780_(p_44205_ * p_44206_, Ingredient.f_43901_);
+    static NonNullList<Ingredient> dissolvePattern(String[] p_44203_, Map<String, Ingredient> p_44204_, int p_44205_, int p_44206_) {
+       NonNullList<Ingredient> nonnulllist = NonNullList.withSize(p_44205_ * p_44206_, Ingredient.EMPTY);
        Set<String> set = Sets.newHashSet(p_44204_.keySet());
 @@ -196,7 +_,7 @@
        return nonnulllist.isEmpty() || nonnulllist.stream().filter((p_151277_) -> {
-          return !p_151277_.m_43947_();
+          return !p_151277_.isEmpty();
        }).anyMatch((p_151273_) -> {
--         return p_151273_.m_43908_().length == 0;
+-         return p_151273_.getItems().length == 0;
 +         return net.minecraftforge.common.ForgeHooks.hasNoElements(p_151273_);
        });
     }
  
 @@ -218,15 +_,15 @@
  
-    static String[] m_44196_(JsonArray p_44197_) {
+    static String[] patternFromJson(JsonArray p_44197_) {
        String[] astring = new String[p_44197_.size()];
 -      if (astring.length > 3) {
 -         throw new JsonSyntaxException("Invalid pattern: too many rows, 3 is maximum");
@@ -133,7 +133,7 @@
           throw new JsonSyntaxException("Invalid pattern: empty pattern not allowed");
        } else {
           for(int i = 0; i < astring.length; ++i) {
-             String s = GsonHelper.m_13805_(p_44197_.get(i), "pattern[" + i + "]");
+             String s = GsonHelper.convertToString(p_44197_.get(i), "pattern[" + i + "]");
 -            if (s.length() > 3) {
 -               throw new JsonSyntaxException("Invalid pattern: too many columns, 3 is maximum");
 +            if (s.length() > MAX_WIDTH) {
@@ -144,12 +144,12 @@
 @@ -260,17 +_,7 @@
     }
  
-    public static ItemStack m_151274_(JsonObject p_151275_) {
--      Item item = m_151278_(p_151275_);
+    public static ItemStack itemStackFromJson(JsonObject p_151275_) {
+-      Item item = itemFromJson(p_151275_);
 -      if (p_151275_.has("data")) {
 -         throw new JsonParseException("Disallowed data tag found");
 -      } else {
--         int i = GsonHelper.m_13824_(p_151275_, "count", 1);
+-         int i = GsonHelper.getAsInt(p_151275_, "count", 1);
 -         if (i < 1) {
 -            throw new JsonSyntaxException("Invalid output count: " + i);
 -         } else {
@@ -159,12 +159,12 @@
 +      return net.minecraftforge.common.crafting.CraftingHelper.getItemStack(p_151275_, true, true);
     }
  
-    public static Item m_151278_(JsonObject p_151279_) {
+    public static Item itemFromJson(JsonObject p_151279_) {
 @@ -286,6 +_,7 @@
     }
  
     public static class Serializer implements RecipeSerializer<ShapedRecipe> {
 +      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shaped");
-       public ShapedRecipe m_6729_(ResourceLocation p_44236_, JsonObject p_44237_) {
-          String s = GsonHelper.m_13851_(p_44237_, "group", "");
-          CraftingBookCategory craftingbookcategory = CraftingBookCategory.f_244644_.m_262792_(GsonHelper.m_13851_(p_44237_, "category", (String)null), CraftingBookCategory.MISC);
+       public ShapedRecipe fromJson(ResourceLocation p_44236_, JsonObject p_44237_) {
+          String s = GsonHelper.getAsString(p_44237_, "group", "");
+          CraftingBookCategory craftingbookcategory = CraftingBookCategory.CODEC.byName(GsonHelper.getAsString(p_44237_, "category", (String)null), CraftingBookCategory.MISC);

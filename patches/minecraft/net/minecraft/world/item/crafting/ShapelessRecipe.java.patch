@@ -1,17 +1,17 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
 @@ -20,6 +_,7 @@
-    final CraftingBookCategory f_244076_;
-    final ItemStack f_44243_;
-    final NonNullList<Ingredient> f_44244_;
+    final CraftingBookCategory category;
+    final ItemStack result;
+    final NonNullList<Ingredient> ingredients;
 +   private final boolean isSimple;
  
     public ShapelessRecipe(ResourceLocation p_251840_, String p_249640_, CraftingBookCategory p_249390_, ItemStack p_252071_, NonNullList<Ingredient> p_250689_) {
-       this.f_44241_ = p_251840_;
+       this.id = p_251840_;
 @@ -27,7 +_,24 @@
-       this.f_244076_ = p_249390_;
-       this.f_44243_ = p_252071_;
-       this.f_44244_ = p_250689_;
+       this.category = p_249390_;
+       this.result = p_252071_;
+       this.ingredients = p_250689_;
 -   }
 +      this.isSimple = p_250689_.stream().allMatch(Ingredient::isSimple);
 +   }
@@ -20,51 +20,51 @@
 +   @SuppressWarnings("unchecked")
 +   @Override
 +   public org.bukkit.inventory.ShapelessRecipe toBukkitRecipe() {
-+      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(this.f_44243_);
-+      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftShapelessRecipe recipe = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftShapelessRecipe(org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(this.f_44241_), result);
-+      recipe.setGroup(this.f_44242_);
-+      recipe.setCategory(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.getCategory(this.m_245232_()));
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(this.result);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftShapelessRecipe recipe = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftShapelessRecipe(org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(this.id), result);
++      recipe.setGroup(this.group);
++      recipe.setCategory(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.getCategory(this.category()));
 +
-+      for (Ingredient list : this.f_44244_) {
++      for (Ingredient list : this.ingredients) {
 +         recipe.addIngredient(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(list));
 +      }
 +      return recipe;
 +   }
 +   // CraftBukkit end
  
-    public ResourceLocation m_6423_() {
-       return this.f_44241_;
+    public ResourceLocation getId() {
+       return this.id;
 @@ -55,17 +_,20 @@
  
-    public boolean m_5818_(CraftingContainer p_44262_, Level p_44263_) {
+    public boolean matches(CraftingContainer p_44262_, Level p_44263_) {
        StackedContents stackedcontents = new StackedContents();
 +      java.util.List<ItemStack> inputs = new java.util.ArrayList<>();
        int i = 0;
  
-       for(int j = 0; j < p_44262_.m_6643_(); ++j) {
-          ItemStack itemstack = p_44262_.m_8020_(j);
-          if (!itemstack.m_41619_()) {
+       for(int j = 0; j < p_44262_.getContainerSize(); ++j) {
+          ItemStack itemstack = p_44262_.getItem(j);
+          if (!itemstack.isEmpty()) {
              ++i;
 +            if (isSimple)
-             stackedcontents.m_36468_(itemstack, 1);
+             stackedcontents.accountStack(itemstack, 1);
 +            else inputs.add(itemstack);
           }
        }
  
--      return i == this.f_44244_.size() && stackedcontents.m_36475_(this, (IntList)null);
-+      return i == this.f_44244_.size() && (isSimple ? stackedcontents.m_36475_(this, (IntList)null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs,  this.f_44244_) != null);
+-      return i == this.ingredients.size() && stackedcontents.canCraft(this, (IntList)null);
++      return i == this.ingredients.size() && (isSimple ? stackedcontents.canCraft(this, (IntList)null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs,  this.ingredients) != null);
     }
  
-    public ItemStack m_5874_(CraftingContainer p_44260_, RegistryAccess p_266797_) {
+    public ItemStack assemble(CraftingContainer p_44260_, RegistryAccess p_266797_) {
 @@ -77,14 +_,15 @@
     }
  
     public static class Serializer implements RecipeSerializer<ShapelessRecipe> {
 +      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shapeless");
-       public ShapelessRecipe m_6729_(ResourceLocation p_44290_, JsonObject p_44291_) {
-          String s = GsonHelper.m_13851_(p_44291_, "group", "");
-          CraftingBookCategory craftingbookcategory = CraftingBookCategory.f_244644_.m_262792_(GsonHelper.m_13851_(p_44291_, "category", (String)null), CraftingBookCategory.MISC);
-          NonNullList<Ingredient> nonnulllist = m_44275_(GsonHelper.m_13933_(p_44291_, "ingredients"));
+       public ShapelessRecipe fromJson(ResourceLocation p_44290_, JsonObject p_44291_) {
+          String s = GsonHelper.getAsString(p_44291_, "group", "");
+          CraftingBookCategory craftingbookcategory = CraftingBookCategory.CODEC.byName(GsonHelper.getAsString(p_44291_, "category", (String)null), CraftingBookCategory.MISC);
+          NonNullList<Ingredient> nonnulllist = itemsFromJson(GsonHelper.getAsJsonArray(p_44291_, "ingredients"));
           if (nonnulllist.isEmpty()) {
              throw new JsonParseException("No ingredients for shapeless recipe");
 -         } else if (nonnulllist.size() > 9) {
@@ -72,14 +72,14 @@
 +         } else if (nonnulllist.size() > ShapedRecipe.MAX_WIDTH * ShapedRecipe.MAX_HEIGHT) {
 +            throw new JsonParseException("Too many ingredients for shapeless recipe. The maximum is " + (ShapedRecipe.MAX_WIDTH * ShapedRecipe.MAX_HEIGHT));
           } else {
-             ItemStack itemstack = ShapedRecipe.m_151274_(GsonHelper.m_13930_(p_44291_, "result"));
+             ItemStack itemstack = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(p_44291_, "result"));
              return new ShapelessRecipe(p_44290_, s, craftingbookcategory, itemstack, nonnulllist);
 @@ -96,7 +_,7 @@
  
           for(int i = 0; i < p_44276_.size(); ++i) {
-             Ingredient ingredient = Ingredient.m_288218_(p_44276_.get(i), false);
--            if (!ingredient.m_43947_()) {
-+            if (true || !ingredient.m_43947_()) { // FORGE: Skip checking if an ingredient is empty during shapeless recipe deserialization to prevent complex ingredients from caching tags too early. Can not be done using a config value due to sync issues.
+             Ingredient ingredient = Ingredient.fromJson(p_44276_.get(i), false);
+-            if (!ingredient.isEmpty()) {
++            if (true || !ingredient.isEmpty()) { // FORGE: Skip checking if an ingredient is empty during shapeless recipe deserialization to prevent complex ingredients from caching tags too early. Can not be done using a config value due to sync issues.
                 nonnulllist.add(ingredient);
              }
           }

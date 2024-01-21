@@ -2,38 +2,38 @@
 +++ b/net/minecraft/world/entity/animal/Rabbit.java
 @@ -87,7 +_,6 @@
        super(p_29656_, p_29657_);
-       this.f_21343_ = new Rabbit.RabbitJumpControl(this);
-       this.f_21342_ = new Rabbit.RabbitMoveControl(this);
--      this.m_29725_(0.0D);
+       this.jumpControl = new Rabbit.RabbitJumpControl(this);
+       this.moveControl = new Rabbit.RabbitMoveControl(this);
+-      this.setSpeedModifier(0.0D);
     }
  
-    protected void m_8099_() {
+    protected void registerGoals() {
 @@ -524,7 +_,7 @@
  
-       public boolean m_8036_() {
-          if (this.f_25600_ <= 0) {
--            if (!this.f_29778_.m_9236_().m_46469_().m_46207_(GameRules.f_46132_)) {
-+            if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_29778_.m_9236_(), this.f_29778_)) {
+       public boolean canUse() {
+          if (this.nextStartTick <= 0) {
+-            if (!this.rabbit.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++            if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.rabbit.level(), this.rabbit)) {
                 return false;
              }
  
 @@ -550,9 +_,19 @@
-             if (this.f_29780_ && block instanceof CarrotBlock) {
-                int i = blockstate.m_61143_(CarrotBlock.f_52244_);
+             if (this.canRaid && block instanceof CarrotBlock) {
+                int i = blockstate.getValue(CarrotBlock.AGE);
                 if (i == 0) {
 +                  // CraftBukkit start
-+                  if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.f_29778_, blockpos, Blocks.f_50016_.m_49966_())) {
++                  if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, blockpos, Blocks.AIR.defaultBlockState())) {
 +                     return;
 +                  }
 +                  // CraftBukkit end
-                   level.m_7731_(blockpos, Blocks.f_50016_.m_49966_(), 2);
-                   level.m_46953_(blockpos, true, this.f_29778_);
+                   level.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 2);
+                   level.destroyBlock(blockpos, true, this.rabbit);
                 } else {
 +                  // CraftBukkit start
-+                  if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.f_29778_, blockpos, blockstate.m_61124_(CarrotBlock.f_52244_, i - 1))) {
++                  if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, blockpos, blockstate.setValue(CarrotBlock.AGE, i - 1))) {
 +                     return;
 +                  }
 +                  // CraftBukkit end
-                   level.m_7731_(blockpos, blockstate.m_61124_(CarrotBlock.f_52244_, Integer.valueOf(i - 1)), 2);
-                   level.m_46796_(2001, blockpos, Block.m_49956_(blockstate));
+                   level.setBlock(blockpos, blockstate.setValue(CarrotBlock.AGE, Integer.valueOf(i - 1)), 2);
+                   level.levelEvent(2001, blockpos, Block.getId(blockstate));
                 }

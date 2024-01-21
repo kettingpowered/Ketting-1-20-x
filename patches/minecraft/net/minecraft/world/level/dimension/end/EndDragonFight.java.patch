@@ -3,17 +3,17 @@
 @@ -450,6 +_,10 @@
     }
  
-    public void m_64100_() {
+    public void tryRespawn() {
 +      tryRespawnBool();
 +   }
 +
 +   public boolean tryRespawnBool() { // CraftBukkit - return boolean
-       if (this.f_64068_ && this.f_64073_ == null) {
-          BlockPos blockpos = this.f_64072_;
+       if (this.dragonKilled && this.respawnStage == null) {
+          BlockPos blockpos = this.portalLocation;
           if (blockpos == null) {
 @@ -471,19 +_,19 @@
           for(Direction direction : Direction.Plane.HORIZONTAL) {
-             List<EndCrystal> list = this.f_64061_.m_45976_(EndCrystal.class, new AABB(blockpos1.m_5484_(direction, 2)));
+             List<EndCrystal> list = this.level.getEntitiesOfClass(EndCrystal.class, new AABB(blockpos1.relative(direction, 2)));
              if (list.isEmpty()) {
 -               return;
 +               return false; // CraftBukkit - return value
@@ -22,43 +22,43 @@
              list1.addAll(list);
           }
  
-          f_64058_.debug("Found all crystals, respawning dragon.");
--         this.m_64091_(list1);
+          LOGGER.debug("Found all crystals, respawning dragon.");
+-         this.respawnDragon(list1);
 +         return this.respawnDragon(list1); // CraftBukkit - return value
        }
 -
 +      return false; // CraftBukkit - return value
     }
  
--   private void m_64091_(List<EndCrystal> p_64092_) {
+-   private void respawnDragon(List<EndCrystal> p_64092_) {
 +   public boolean respawnDragon(List<EndCrystal> p_64092_) { // CraftBukkit - return boolean
-       if (this.f_64068_ && this.f_64073_ == null) {
-          for(BlockPattern.BlockPatternMatch blockpattern$blockpatternmatch = this.m_64105_(); blockpattern$blockpatternmatch != null; blockpattern$blockpatternmatch = this.m_64105_()) {
-             for(int i = 0; i < this.f_64063_.m_61203_(); ++i) {
+       if (this.dragonKilled && this.respawnStage == null) {
+          for(BlockPattern.BlockPatternMatch blockpattern$blockpatternmatch = this.findExitPortal(); blockpattern$blockpatternmatch != null; blockpattern$blockpatternmatch = this.findExitPortal()) {
+             for(int i = 0; i < this.exitPortalPattern.getWidth(); ++i) {
 @@ -502,8 +_,9 @@
-          this.f_64074_ = 0;
-          this.m_64093_(false);
-          this.f_64075_ = p_64092_;
+          this.respawnTime = 0;
+          this.spawnExitPortal(false);
+          this.respawnCrystals = p_64092_;
 +         return true; // CraftBukkit - return value
        }
 -
 +      return false; // CraftBukkit - return value
     }
  
-    public void m_64101_() {
+    public void resetSpikeCrystals() {
 @@ -513,7 +_,14 @@
-             endcrystal.m_31052_((BlockPos)null);
+             endcrystal.setBeamTarget((BlockPos)null);
           }
        }
 -
 +   }
 +
 +   public void addPlayer(ServerPlayer player) {
-+      this.f_64060_.m_6543_(player);
++      this.dragonEvent.addPlayer(player);
 +   }
 +
 +   public void removePlayer(ServerPlayer player) {
-+      this.f_64060_.m_6539_(player);
++      this.dragonEvent.removePlayer(player);
     }
  
     @Nullable

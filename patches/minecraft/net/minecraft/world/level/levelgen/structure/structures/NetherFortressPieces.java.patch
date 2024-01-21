@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/levelgen/structure/structures/NetherFortressPieces.java
 +++ b/net/minecraft/world/level/levelgen/structure/structures/NetherFortressPieces.java
 @@ -871,7 +_,7 @@
-          this.m_73434_(p_228362_, blockstate, 3, 8, 8, p_228366_);
-          this.m_73434_(p_228362_, Blocks.f_50198_.m_49966_().m_61124_(FenceBlock.f_52312_, Boolean.valueOf(true)), 4, 8, 8, p_228366_);
-          if (!this.f_228354_) {
--            BlockPos blockpos = this.m_163582_(3, 5, 5);
-+            BlockPos.MutableBlockPos blockpos = this.m_163582_(3, 5, 5);
-             if (p_228366_.m_71051_(blockpos)) {
-                this.f_228354_ = true;
-                p_228362_.m_7731_(blockpos, Blocks.f_50085_.m_49966_(), 2);
+          this.placeBlock(p_228362_, blockstate, 3, 8, 8, p_228366_);
+          this.placeBlock(p_228362_, Blocks.NETHER_BRICK_FENCE.defaultBlockState().setValue(FenceBlock.WEST, Boolean.valueOf(true)), 4, 8, 8, p_228366_);
+          if (!this.hasPlacedSpawner) {
+-            BlockPos blockpos = this.getWorldPos(3, 5, 5);
++            BlockPos.MutableBlockPos blockpos = this.getWorldPos(3, 5, 5);
+             if (p_228366_.isInside(blockpos)) {
+                this.hasPlacedSpawner = true;
+                p_228362_.setBlock(blockpos, Blocks.SPAWNER.defaultBlockState(), 2);

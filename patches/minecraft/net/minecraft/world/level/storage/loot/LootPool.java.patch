@@ -1,18 +1,18 @@
 --- a/net/minecraft/world/level/storage/loot/LootPool.java
 +++ b/net/minecraft/world/level/storage/loot/LootPool.java
 @@ -39,7 +_,8 @@
-    NumberProvider f_79028_;
-    NumberProvider f_79029_;
+    NumberProvider rolls;
+    NumberProvider bonusRolls;
  
 -   LootPool(LootPoolEntryContainer[] p_165128_, LootItemCondition[] p_165129_, LootItemFunction[] p_165130_, NumberProvider p_165131_, NumberProvider p_165132_) {
 +   LootPool(LootPoolEntryContainer[] p_165128_, LootItemCondition[] p_165129_, LootItemFunction[] p_165130_, NumberProvider p_165131_, NumberProvider p_165132_, @org.jetbrains.annotations.Nullable String name) {
 +      this.name = name;
-       this.f_79023_ = p_165128_;
-       this.f_79024_ = p_165129_;
-       this.f_79025_ = LootItemConditions.m_81834_(p_165129_);
+       this.entries = p_165128_;
+       this.conditions = p_165129_;
+       this.compositeCondition = LootItemConditions.andConditions(p_165129_);
 @@ -112,6 +_,23 @@
-       this.f_79028_.m_6169_(p_79052_.m_79365_(".rolls"));
-       this.f_79029_.m_6169_(p_79052_.m_79365_(".bonusRolls"));
+       this.rolls.validate(p_79052_.forChild(".rolls"));
+       this.bonusRolls.validate(p_79052_.forChild(".bonusRolls"));
     }
 +   //======================== FORGE START =============================================
 +   private boolean isFrozen = false;
@@ -26,22 +26,22 @@
 +   private final String name;
 +   @org.jetbrains.annotations.Nullable
 +   public String getName() { return this.name; }
-+   public NumberProvider getRolls()      { return this.f_79028_; }
-+   public NumberProvider getBonusRolls() { return this.f_79029_; }
-+   public void setRolls     (NumberProvider v){ checkFrozen(); this.f_79028_ = v; }
-+   public void setBonusRolls(NumberProvider v){ checkFrozen(); this.f_79029_ = v; }
++   public NumberProvider getRolls()      { return this.rolls; }
++   public NumberProvider getBonusRolls() { return this.bonusRolls; }
++   public void setRolls     (NumberProvider v){ checkFrozen(); this.rolls = v; }
++   public void setBonusRolls(NumberProvider v){ checkFrozen(); this.bonusRolls = v; }
 +   //======================== FORGE END ===============================================
  
-    public static LootPool.Builder m_79043_() {
+    public static LootPool.Builder lootPool() {
        return new LootPool.Builder();
 @@ -123,6 +_,7 @@
-       private final List<LootItemFunction> f_79069_ = Lists.newArrayList();
-       private NumberProvider f_79070_ = ConstantValue.m_165692_(1.0F);
-       private NumberProvider f_79071_ = ConstantValue.m_165692_(0.0F);
+       private final List<LootItemFunction> functions = Lists.newArrayList();
+       private NumberProvider rolls = ConstantValue.exactly(1.0F);
+       private NumberProvider bonusRolls = ConstantValue.exactly(0.0F);
 +      private String name;
  
-       public LootPool.Builder m_165133_(NumberProvider p_165134_) {
-          this.f_79070_ = p_165134_;
+       public LootPool.Builder setRolls(NumberProvider p_165134_) {
+          this.rolls = p_165134_;
 @@ -153,11 +_,16 @@
           return this;
        }
@@ -51,19 +51,19 @@
 +         return this;
 +      }
 +
-       public LootPool m_79082_() {
-          if (this.f_79070_ == null) {
+       public LootPool build() {
+          if (this.rolls == null) {
              throw new IllegalArgumentException("Rolls not set");
           } else {
--            return new LootPool(this.f_79067_.toArray(new LootPoolEntryContainer[0]), this.f_79068_.toArray(new LootItemCondition[0]), this.f_79069_.toArray(new LootItemFunction[0]), this.f_79070_, this.f_79071_);
-+            return new LootPool(this.f_79067_.toArray(new LootPoolEntryContainer[0]), this.f_79068_.toArray(new LootItemCondition[0]), this.f_79069_.toArray(new LootItemFunction[0]), this.f_79070_, this.f_79071_, name);
+-            return new LootPool(this.entries.toArray(new LootPoolEntryContainer[0]), this.conditions.toArray(new LootItemCondition[0]), this.functions.toArray(new LootItemFunction[0]), this.rolls, this.bonusRolls);
++            return new LootPool(this.entries.toArray(new LootPoolEntryContainer[0]), this.conditions.toArray(new LootItemCondition[0]), this.functions.toArray(new LootItemFunction[0]), this.rolls, this.bonusRolls, name);
           }
        }
     }
 @@ -170,11 +_,13 @@
-          LootItemFunction[] alootitemfunction = GsonHelper.m_13845_(jsonobject, "functions", new LootItemFunction[0], p_79092_, LootItemFunction[].class);
-          NumberProvider numberprovider = GsonHelper.m_13836_(jsonobject, "rolls", p_79092_, NumberProvider.class);
-          NumberProvider numberprovider1 = GsonHelper.m_13845_(jsonobject, "bonus_rolls", ConstantValue.m_165692_(0.0F), p_79092_, NumberProvider.class);
+          LootItemFunction[] alootitemfunction = GsonHelper.getAsObject(jsonobject, "functions", new LootItemFunction[0], p_79092_, LootItemFunction[].class);
+          NumberProvider numberprovider = GsonHelper.getAsObject(jsonobject, "rolls", p_79092_, NumberProvider.class);
+          NumberProvider numberprovider1 = GsonHelper.getAsObject(jsonobject, "bonus_rolls", ConstantValue.exactly(0.0F), p_79092_, NumberProvider.class);
 -         return new LootPool(alootpoolentrycontainer, alootitemcondition, alootitemfunction, numberprovider, numberprovider1);
 +         return new LootPool(alootpoolentrycontainer, alootitemcondition, alootitemfunction, numberprovider, numberprovider1, net.minecraftforge.common.ForgeHooks.readPoolName(jsonobject));
        }
@@ -72,6 +72,6 @@
           JsonObject jsonobject = new JsonObject();
 +         if (p_79094_.name != null && !p_79094_.name.startsWith("custom#"))
 +            jsonobject.add("name", p_79096_.serialize(p_79094_.name));
-          jsonobject.add("rolls", p_79096_.serialize(p_79094_.f_79028_));
-          jsonobject.add("bonus_rolls", p_79096_.serialize(p_79094_.f_79029_));
-          jsonobject.add("entries", p_79096_.serialize(p_79094_.f_79023_));
+          jsonobject.add("rolls", p_79096_.serialize(p_79094_.rolls));
+          jsonobject.add("bonus_rolls", p_79096_.serialize(p_79094_.bonusRolls));
+          jsonobject.add("entries", p_79096_.serialize(p_79094_.entries));

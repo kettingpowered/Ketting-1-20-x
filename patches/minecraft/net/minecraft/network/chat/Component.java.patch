@@ -9,7 +9,7 @@
 +
 +   // CraftBukkit start
 +   default java.util.stream.Stream<Component> stream() {
-+      return com.google.common.collect.Streams.concat(new java.util.stream.Stream[]{java.util.stream.Stream.of(this), this.m_7360_().stream().flatMap(Component::stream)});
++      return com.google.common.collect.Streams.concat(new java.util.stream.Stream[]{java.util.stream.Stream.of(this), this.getSiblings().stream().flatMap(Component::stream)});
 +   }
 +
 +   @Override
@@ -18,6 +18,6 @@
 +   }
 +   // CraftBukkit end
 +
-    Style m_7383_();
+    Style getStyle();
  
-    ComponentContents m_214077_();
+    ComponentContents getContents();

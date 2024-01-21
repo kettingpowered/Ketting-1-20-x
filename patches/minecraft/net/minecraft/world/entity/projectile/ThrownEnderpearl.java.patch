@@ -3,13 +3,13 @@
 @@ -46,22 +_,39 @@
           if (entity instanceof ServerPlayer) {
              ServerPlayer serverplayer = (ServerPlayer)entity;
-             if (serverplayer.f_8906_.m_6198_() && serverplayer.m_9236_() == this.m_9236_() && !serverplayer.m_5803_()) {
--               if (this.f_19796_.m_188501_() < 0.05F && this.m_9236_().m_46469_().m_46207_(GameRules.f_46134_)) {
--                  Endermite endermite = EntityType.f_20567_.m_20615_(this.m_9236_());
+             if (serverplayer.connection.isAcceptingMessages() && serverplayer.level() == this.level() && !serverplayer.isSleeping()) {
+-               if (this.random.nextFloat() < 0.05F && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
+-                  Endermite endermite = EntityType.ENDERMITE.create(this.level());
 -                  if (endermite != null) {
--                     endermite.m_7678_(entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), entity.m_146908_(), entity.m_146909_());
--                     this.m_9236_().m_7967_(endermite);
-+               net.minecraftforge.event.entity.EntityTeleportEvent.EnderPearl event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayer, this.m_20185_(), this.m_20186_(), this.m_20189_(), this, 5.0F, p_37504_);
+-                     endermite.moveTo(entity.getX(), entity.getY(), entity.getZ(), entity.getYRot(), entity.getXRot());
+-                     this.level().addFreshEntity(endermite);
++               net.minecraftforge.event.entity.EntityTeleportEvent.EnderPearl event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayer, this.getX(), this.getY(), this.getZ(), this, 5.0F, p_37504_);
 +               if (!event.isCanceled()) { // Don't indent to lower patch size
 +                  // CraftBukkit start - Fire PlayerTeleportEvent
 +                  org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer player = serverplayer.getBukkitEntity();
@@ -20,54 +20,54 @@
 +                  org.bukkit.event.player.PlayerTeleportEvent teleEvent = new org.bukkit.event.player.PlayerTeleportEvent(player, player.getLocation(), location, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.ENDER_PEARL);
 +                  org.bukkit.Bukkit.getPluginManager().callEvent(teleEvent);
 +
-+                  if (!teleEvent.isCancelled() && serverplayer.f_8906_.m_6198_()) {
-+                     if (this.f_19796_.m_188501_() < 0.05F && this.m_9236_().m_46469_().m_46207_(GameRules.f_46134_)) {
-+                        Endermite entityendermite = (Endermite) EntityType.f_20567_.m_20615_(this.m_9236_());
++                  if (!teleEvent.isCancelled() && serverplayer.connection.isAcceptingMessages()) {
++                     if (this.random.nextFloat() < 0.05F && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
++                        Endermite entityendermite = (Endermite) EntityType.ENDERMITE.create(this.level());
 +
 +                        if (entityendermite != null) {
-+                           entityendermite.m_7678_(entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), entity.m_146908_(), entity.m_146909_());
-+                           this.m_9236_().addFreshEntity(entityendermite, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.ENDER_PEARL);
++                           entityendermite.moveTo(entity.getX(), entity.getY(), entity.getZ(), entity.getYRot(), entity.getXRot());
++                           this.level().addFreshEntity(entityendermite, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.ENDER_PEARL);
 +                        }
 +                     }
 +
-+                     if (entity.m_20159_()) {
-+                        entity.m_8127_();
++                     if (entity.isPassenger()) {
++                        entity.stopRiding();
 +                     }
 +
-+                     serverplayer.f_8906_.teleport(teleEvent.getTo());
-+                     entity.m_183634_();
++                     serverplayer.connection.teleport(teleEvent.getTo());
++                     entity.resetFallDistance();
 +                     org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = this;
-+                     entity.m_6469_(this.m_269291_().m_268989_(), 5.0F);
++                     entity.hurt(this.damageSources().fall(), 5.0F);
 +                     org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = null;
                    }
 -               }
 -
--               if (entity.m_20159_()) {
--                  serverplayer.m_142098_(this.m_20185_(), this.m_20186_(), this.m_20189_());
+-               if (entity.isPassenger()) {
+-                  serverplayer.dismountTo(this.getX(), this.getY(), this.getZ());
 -               } else {
--                  entity.m_6021_(this.m_20185_(), this.m_20186_(), this.m_20189_());
+-                  entity.teleportTo(this.getX(), this.getY(), this.getZ());
 -               }
 -
--               entity.m_183634_();
--               entity.m_6469_(this.m_269291_().m_268989_(), 5.0F);
+-               entity.resetFallDistance();
+-               entity.hurt(this.damageSources().fall(), 5.0F);
 +                  // CraftBukkit end
 +               } //Forge: End
              }
           } else if (entity != null) {
-             entity.m_6021_(this.m_20185_(), this.m_20186_(), this.m_20189_());
+             entity.teleportTo(this.getX(), this.getY(), this.getZ());
 @@ -84,12 +_,12 @@
     }
  
     @Nullable
--   public Entity m_5489_(ServerLevel p_37506_) {
+-   public Entity changeDimension(ServerLevel p_37506_) {
 +   public Entity changeDimension(ServerLevel p_37506_, net.minecraftforge.common.util.ITeleporter teleporter) {
-       Entity entity = this.m_19749_();
--      if (entity != null && entity.m_9236_().m_46472_() != p_37506_.m_46472_()) {
-+      if (entity != null && p_37506_ != null && entity.m_9236_().m_46472_() != p_37506_.m_46472_()) { // CraftBukkit - SPIGOT-6113
-          this.m_5602_((Entity)null);
+       Entity entity = this.getOwner();
+-      if (entity != null && entity.level().dimension() != p_37506_.dimension()) {
++      if (entity != null && p_37506_ != null && entity.level().dimension() != p_37506_.dimension()) { // CraftBukkit - SPIGOT-6113
+          this.setOwner((Entity)null);
        }
  
--      return super.m_5489_(p_37506_);
+-      return super.changeDimension(p_37506_);
 +      return super.changeDimension(p_37506_, teleporter);
     }
  }

@@ -3,18 +3,18 @@
 @@ -94,8 +_,15 @@
     }
  
-    public boolean m_142505_() {
--      return Stream.of(this.f_265958_, this.f_266040_, this.f_266053_).anyMatch(Ingredient::m_43947_);
+    public boolean isIncomplete() {
+-      return Stream.of(this.template, this.base, this.addition).anyMatch(Ingredient::isEmpty);
 -   }
-+      return Stream.of(this.f_265958_, this.f_266040_, this.f_266053_).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
++      return Stream.of(this.template, this.base, this.addition).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
 +   }
 +
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.Recipe toBukkitRecipe() {
-+      return new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftSmithingTrimRecipe(org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(this.f_265885_), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.f_265958_), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.f_266040_), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.f_266053_));
++      return new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftSmithingTrimRecipe(org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(this.id), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.template), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.base), org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.addition));
 +   }
 +   // CraftBukkit end
  
     public static class Serializer implements RecipeSerializer<SmithingTrimRecipe> {
-       public SmithingTrimRecipe m_6729_(ResourceLocation p_267037_, JsonObject p_267004_) {
+       public SmithingTrimRecipe fromJson(ResourceLocation p_267037_, JsonObject p_267004_) {

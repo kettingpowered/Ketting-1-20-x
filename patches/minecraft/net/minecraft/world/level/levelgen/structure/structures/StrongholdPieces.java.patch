@@ -3,9 +3,9 @@
 @@ -703,7 +_,7 @@
           }
  
-          if (!this.f_229627_) {
--            BlockPos blockpos = this.m_163582_(5, 3, 6);
-+            BlockPos.MutableBlockPos blockpos = this.m_163582_(5, 3, 6);
-             if (p_229639_.m_71051_(blockpos)) {
-                this.f_229627_ = true;
-                p_229635_.m_7731_(blockpos, Blocks.f_50085_.m_49966_(), 2);
+          if (!this.hasPlacedSpawner) {
+-            BlockPos blockpos = this.getWorldPos(5, 3, 6);
++            BlockPos.MutableBlockPos blockpos = this.getWorldPos(5, 3, 6);
+             if (p_229639_.isInside(blockpos)) {
+                this.hasPlacedSpawner = true;
+                p_229635_.setBlock(blockpos, Blocks.SPAWNER.defaultBlockState(), 2);

@@ -2,8 +2,8 @@
 +++ b/net/minecraft/world/level/storage/DerivedLevelData.java
 @@ -14,12 +_,23 @@
  public class DerivedLevelData implements ServerLevelData {
-    private final WorldData f_78076_;
-    private final ServerLevelData f_78077_;
+    private final WorldData worldData;
+    private final ServerLevelData wrapped;
 +   //Ketting start
 +   private net.minecraft.resources.ResourceKey<net.minecraft.world.level.dimension.LevelStem> typeKey;
 +
@@ -13,36 +13,36 @@
 +   //Ketting end
  
     public DerivedLevelData(WorldData p_78079_, ServerLevelData p_78080_) {
-       this.f_78076_ = p_78079_;
-       this.f_78077_ = p_78080_;
+       this.worldData = p_78079_;
+       this.wrapped = p_78080_;
     }
  
 +   public ServerLevelData getDelegate() {
-+      return f_78077_;
++      return wrapped;
 +   }
 +
-    public int m_6789_() {
-       return this.f_78077_.m_6789_();
+    public int getXSpawn() {
+       return this.wrapped.getXSpawn();
     }
 @@ -45,7 +_,20 @@
     }
  
-    public String m_5462_() {
--      return this.f_78076_.m_5462_();
-+      if (typeKey == null || typeKey == net.minecraft.world.level.dimension.LevelStem.f_63971_) {
-+         return this.f_78077_.m_5462_();
+    public String getLevelName() {
+-      return this.worldData.getLevelName();
++      if (typeKey == null || typeKey == net.minecraft.world.level.dimension.LevelStem.OVERWORLD) {
++         return this.wrapped.getLevelName();
 +      } else {
-+         String worldName = this.f_78077_.m_5462_() + "/";
++         String worldName = this.wrapped.getLevelName() + "/";
 +         String suffix;
-+         if (typeKey == net.minecraft.world.level.dimension.LevelStem.f_63973_) {
++         if (typeKey == net.minecraft.world.level.dimension.LevelStem.END) {
 +            suffix = "DIM1";
-+         } else if (typeKey == net.minecraft.world.level.dimension.LevelStem.f_63972_) {
++         } else if (typeKey == net.minecraft.world.level.dimension.LevelStem.NETHER) {
 +            suffix = "DIM-1";
 +         } else {
-+            suffix = typeKey.m_135782_().m_135827_() + "/" + typeKey.m_135782_().m_135815_();
++            suffix = typeKey.location().getNamespace() + "/" + typeKey.location().getPath();
 +         }
 +         return worldName + suffix;
 +      }
     }
  
-    public int m_6537_() {
+    public int getClearWeatherTime() {

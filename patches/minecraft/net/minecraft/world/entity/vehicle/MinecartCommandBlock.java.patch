@@ -3,10 +3,10 @@
 @@ -78,6 +_,8 @@
     }
  
-    public InteractionResult m_6096_(Player p_38522_, InteractionHand p_38523_) {
-+      InteractionResult ret = super.m_6096_(p_38522_, p_38523_);
-+      if (ret.m_19077_()) return ret;
-       return this.f_38505_.m_45412_(p_38522_);
+    public InteractionResult interact(Player p_38522_, InteractionHand p_38523_) {
++      InteractionResult ret = super.interact(p_38522_, p_38523_);
++      if (ret.consumesAction()) return ret;
+       return this.commandBlock.usedBy(p_38522_);
     }
  
 @@ -99,6 +_,13 @@
@@ -20,6 +20,6 @@
 +      }
 +      // CraftBukkit end
 +
-       public ServerLevel m_5991_() {
-          return (ServerLevel)MinecartCommandBlock.this.m_9236_();
+       public ServerLevel getLevel() {
+          return (ServerLevel)MinecartCommandBlock.this.level();
        }

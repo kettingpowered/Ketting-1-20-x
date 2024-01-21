@@ -3,25 +3,25 @@
 @@ -47,11 +_,12 @@
  
  public class ServerConnectionListener {
-    private static final Logger f_9701_ = LogUtils.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
 +   private static final int READ_TIMEOUT = Integer.parseInt(System.getProperty("forge.readTimeout", "30"));
-    public static final LazyLoadedValue<NioEventLoopGroup> f_9698_ = new LazyLoadedValue<>(() -> {
+    public static final LazyLoadedValue<NioEventLoopGroup> SERVER_EVENT_GROUP = new LazyLoadedValue<>(() -> {
 -      return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).build());
 +      return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER).build());
     });
-    public static final LazyLoadedValue<EpollEventLoopGroup> f_9699_ = new LazyLoadedValue<>(() -> {
+    public static final LazyLoadedValue<EpollEventLoopGroup> SERVER_EPOLL_EVENT_GROUP = new LazyLoadedValue<>(() -> {
 -      return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).build());
 +      return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER).build());
     });
-    final MinecraftServer f_9702_;
-    public volatile boolean f_9700_;
+    final MinecraftServer server;
+    public volatile boolean running;
 @@ -64,6 +_,8 @@
     }
  
-    public void m_9711_(@Nullable InetAddress p_9712_, int p_9713_) throws IOException {
+    public void startTcpServerListener(@Nullable InetAddress p_9712_, int p_9713_) throws IOException {
 +      if (p_9712_ == null) p_9712_ = new java.net.InetSocketAddress(p_9713_).getAddress();
 +      net.minecraftforge.network.DualStackUtils.checkIPv6(p_9712_);
-       synchronized(this.f_9703_) {
+       synchronized(this.channels) {
           Class<? extends ServerSocketChannel> oclass;
           LazyLoadedValue<? extends EventLoopGroup> lazyloadedvalue;
 @@ -84,7 +_,7 @@
@@ -30,48 +30,48 @@
  
 -               ChannelPipeline channelpipeline = p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this));
 +               ChannelPipeline channelpipeline = p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(READ_TIMEOUT)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this));
-                Connection.m_264299_(channelpipeline, PacketFlow.SERVERBOUND);
-                int i = ServerConnectionListener.this.f_9702_.m_7032_();
+                Connection.configureSerialization(channelpipeline, PacketFlow.SERVERBOUND);
+                int i = ServerConnectionListener.this.server.getRateLimitPacketsPerSecond();
                 Connection connection = (Connection)(i > 0 ? new RateKickingConnection(i) : new Connection(PacketFlow.SERVERBOUND));
 @@ -92,9 +_,19 @@
                 channelpipeline.addLast("packet_handler", connection);
-                connection.m_129505_(new ServerHandshakePacketListenerImpl(ServerConnectionListener.this.f_9702_, connection));
+                connection.setListener(new ServerHandshakePacketListenerImpl(ServerConnectionListener.this.server, connection));
              }
--         }).group(lazyloadedvalue.m_13971_()).localAddress(p_9712_, p_9713_).bind().syncUninterruptibly());
+-         }).group(lazyloadedvalue.get()).localAddress(p_9712_, p_9713_).bind().syncUninterruptibly());
 -      }
 -   }
-+         }).group(lazyloadedvalue.m_13971_()).localAddress(p_9712_, p_9713_).option(ChannelOption.AUTO_READ, false).bind().syncUninterruptibly()); // CraftBukkit
++         }).group(lazyloadedvalue.get()).localAddress(p_9712_, p_9713_).option(ChannelOption.AUTO_READ, false).bind().syncUninterruptibly()); // CraftBukkit
 +      }
 +   }
 +
 +   // CraftBukkit start
 +   public void acceptConnections() {
-+      synchronized (this.f_9703_) {
-+         for (ChannelFuture future : this.f_9703_) {
++      synchronized (this.channels) {
++         for (ChannelFuture future : this.channels) {
 +            future.channel().config().setAutoRead(true);
 +         }
 +      }
 +   }
 +   // CraftBukkit end
  
-    public SocketAddress m_9708_() {
+    public SocketAddress startMemoryChannel() {
        ChannelFuture channelfuture;
 @@ -129,6 +_,13 @@
  
-    public void m_9721_() {
-       synchronized(this.f_9704_) {
+    public void tick() {
+       synchronized(this.connections) {
 +         // Spigot Start
 +         // This prevents players from 'gaming' the server, and strategically relogging to increase their position in the tick order
 +         if ( org.spigotmc.SpigotConfig.playerShuffle > 0 && MinecraftServer.currentTick % org.spigotmc.SpigotConfig.playerShuffle == 0 )
 +         {
-+            Collections.shuffle( this.f_9704_ );
++            Collections.shuffle( this.connections );
 +         }
 +         // Spigot End
-          Iterator<Connection> iterator = this.f_9704_.iterator();
+          Iterator<Connection> iterator = this.connections.iterator();
  
           while(iterator.hasNext()) {
 @@ -150,6 +_,10 @@
-                      connection.m_129540_();
+                      connection.setReadOnly();
                    }
                 } else {
 +                  // Spigot Start
@@ -79,5 +79,5 @@
 +                  if (connection.preparing) continue;
 +                  // Spigot End
                    iterator.remove();
-                   connection.m_129541_();
+                   connection.handleDisconnection();
                 }

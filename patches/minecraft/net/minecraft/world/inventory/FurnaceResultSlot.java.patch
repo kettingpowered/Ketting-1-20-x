@@ -2,14 +2,14 @@
 +++ b/net/minecraft/world/inventory/FurnaceResultSlot.java
 @@ -43,10 +_,11 @@
        if (player instanceof ServerPlayer serverplayer) {
-          Container container = this.f_40218_;
+          Container container = this.container;
           if (container instanceof AbstractFurnaceBlockEntity abstractfurnaceblockentity) {
--            abstractfurnaceblockentity.m_155003_(serverplayer);
-+            abstractfurnaceblockentity.awardUsedRecipesAndPopExperience(serverplayer, p_39558_, this.f_39540_); // CraftBukkit
+-            abstractfurnaceblockentity.awardUsedRecipesAndPopExperience(serverplayer);
++            abstractfurnaceblockentity.awardUsedRecipesAndPopExperience(serverplayer, p_39558_, this.removeCount); // CraftBukkit
           }
        }
  
-       this.f_39540_ = 0;
-+      net.minecraftforge.event.ForgeEventFactory.firePlayerSmeltedEvent(this.f_39539_, p_39558_);
+       this.removeCount = 0;
++      net.minecraftforge.event.ForgeEventFactory.firePlayerSmeltedEvent(this.player, p_39558_);
     }
  }

@@ -2,33 +2,33 @@
 +++ b/net/minecraft/network/Connection.java
 @@ -72,8 +_,13 @@
     });
-    private final PacketFlow f_129466_;
-    private final Queue<Connection.PacketHolder> f_129467_ = Queues.newConcurrentLinkedQueue();
--   private Channel f_129468_;
--   private SocketAddress f_129469_;
-+   public Channel f_129468_;
-+   public SocketAddress f_129469_;
+    private final PacketFlow receiving;
+    private final Queue<Connection.PacketHolder> queue = Queues.newConcurrentLinkedQueue();
+-   private Channel channel;
+-   private SocketAddress address;
++   public Channel channel;
++   public SocketAddress address;
 +   // Spigot Start
 +   public java.util.UUID spoofedUUID;
 +   public com.mojang.authlib.properties.Property[] spoofedProfile;
 +   public boolean preparing = true;
 +   // Spigot End
-    private PacketListener f_129470_;
-    private Component f_129471_;
-    private boolean f_129472_;
+    private PacketListener packetListener;
+    private Component disconnectedReason;
+    private boolean encrypted;
 @@ -86,6 +_,8 @@
-    private boolean f_129479_;
+    private boolean handlingFault;
     @Nullable
-    private volatile Component f_290021_;
+    private volatile Component delayedDisconnect;
 +   private java.util.function.Consumer<Connection> activationHandler;
 +   public String hostname = ""; // CraftBukkit - add field
  
     public Connection(PacketFlow p_129482_) {
-       this.f_129466_ = p_129482_;
+       this.receiving = p_129482_;
 @@ -95,6 +_,11 @@
        super.channelActive(p_129525_);
-       this.f_129468_ = p_129525_.channel();
-       this.f_129469_ = this.f_129468_.remoteAddress();
+       this.channel = p_129525_.channel();
+       this.address = this.channel.remoteAddress();
 +      if (activationHandler != null) activationHandler.accept(this);
 +
 +      // Spigot Start
@@ -36,14 +36,14 @@
 +      // Spigot End
  
        try {
-          this.m_129498_(ConnectionProtocol.HANDSHAKING);
+          this.setProtocol(ConnectionProtocol.HANDSHAKING);
 @@ -111,8 +_,10 @@
-    public void m_129498_(ConnectionProtocol p_129499_) {
-       this.f_129468_.attr(f_129461_).set(p_129499_);
-       this.f_129468_.attr(BundlerInfo.f_263730_).set(p_129499_);
-+      this.f_129468_.eventLoop().execute(()-> {
-       this.f_129468_.config().setAutoRead(true);
-       f_129465_.debug("Enabled auto read");
+    public void setProtocol(ConnectionProtocol p_129499_) {
+       this.channel.attr(ATTRIBUTE_PROTOCOL).set(p_129499_);
+       this.channel.attr(BundlerInfo.BUNDLER_PROVIDER).set(p_129499_);
++      this.channel.eventLoop().execute(()-> {
+       this.channel.config().setAutoRead(true);
+       LOGGER.debug("Enabled auto read");
 +      });
     }
  
@@ -59,17 +59,17 @@
 @@ -285,6 +_,9 @@
     }
  
-    public void m_129507_(Component p_129508_) {
+    public void disconnect(Component p_129508_) {
 +      // Spigot Start
 +      this.preparing = false;
 +      // Spigot End
-       if (this.f_129468_ == null) {
-          this.f_290021_ = p_129508_;
+       if (this.channel == null) {
+          this.delayedDisconnect = p_129508_;
        }
 @@ -316,6 +_,8 @@
     }
  
-    public static ChannelFuture m_290025_(InetSocketAddress p_290034_, boolean p_290035_, final Connection p_290031_) {
+    public static ChannelFuture connect(InetSocketAddress p_290034_, boolean p_290035_, final Connection p_290031_) {
 +      net.minecraftforge.network.DualStackUtils.checkIPv6(p_290034_.getAddress());
 +      p_290031_.activationHandler = net.minecraftforge.network.NetworkHooks::registerClientLoginChannel;
        Class<? extends SocketChannel> oclass;
@@ -77,24 +77,24 @@
        if (Epoll.isAvailable() && p_290035_) {
 @@ -347,6 +_,7 @@
  
-    public static Connection m_129493_(SocketAddress p_129494_) {
+    public static Connection connectToLocalServer(SocketAddress p_129494_) {
        final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
 +      connection.activationHandler = net.minecraftforge.network.NetworkHooks::registerClientLoginChannel;
-       (new Bootstrap()).group(f_129464_.m_13971_()).handler(new ChannelInitializer<Channel>() {
+       (new Bootstrap()).group(LOCAL_WORKER_GROUP.get()).handler(new ChannelInitializer<Channel>() {
           protected void initChannel(Channel p_129557_) {
              ChannelPipeline channelpipeline = p_129557_.pipeline();
 @@ -437,6 +_,14 @@
  
-    public float m_129543_() {
-       return this.f_129477_;
+    public float getAverageSentPackets() {
+       return this.averageSentPackets;
 +   }
 +
 +   public Channel channel() {
-+      return this.f_129468_;
++      return this.channel;
 +   }
 +
 +   public PacketFlow getDirection() {
-+      return this.f_129466_;
++      return this.receiving;
     }
  
     static class PacketHolder {

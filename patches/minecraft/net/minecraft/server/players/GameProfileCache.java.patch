@@ -3,48 +3,48 @@
 @@ -115,7 +_,7 @@
        Date date = calendar.getTime();
        GameProfileCache.GameProfileInfo gameprofilecache$gameprofileinfo = new GameProfileCache.GameProfileInfo(p_10992_, date);
-       this.m_10979_(gameprofilecache$gameprofileinfo);
--      this.m_11006_();
-+      if( !org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly ) this.m_11006_(); // Spigot - skip saving if disabled
+       this.safeAdd(gameprofilecache$gameprofileinfo);
+-      this.save();
++      if( !org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly ) this.save(); // Spigot - skip saving if disabled
     }
  
-    private long m_11008_() {
+    private long getNextOperation() {
 @@ -138,14 +_,14 @@
-          gameprofilecache$gameprofileinfo.m_11029_(this.m_11008_());
-          optional = Optional.of(gameprofilecache$gameprofileinfo.m_11028_());
+          gameprofilecache$gameprofileinfo.setLastAccess(this.getNextOperation());
+          optional = Optional.of(gameprofilecache$gameprofileinfo.getProfile());
        } else {
--         optional = m_10993_(this.f_10968_, s);
-+         optional = m_10993_(this.f_10968_, p_10997_); // Spigot - use correct case for offline players
+-         optional = lookupGameProfile(this.profileRepository, s);
++         optional = lookupGameProfile(this.profileRepository, p_10997_); // Spigot - use correct case for offline players
           if (optional.isPresent()) {
-             this.m_10991_(optional.get());
+             this.add(optional.get());
              flag = false;
           }
        }
  
 -      if (flag) {
 +      if (flag && !org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) { // Spigot - skip saving if disabled
-          this.m_11006_();
+          this.save();
        }
  
 @@ -210,6 +_,12 @@
-             m_10988_(p_143973_, dateformat).ifPresent(list::add);
+             readGameProfile(p_143973_, dateformat).ifPresent(list::add);
           });
        } catch (FileNotFoundException filenotfoundexception) {
 +         ;
 +      // Spigot Start
 +      } catch (com.google.gson.JsonSyntaxException | NullPointerException ex) {
-+         f_10964_.warn( "Usercache.json is corrupted or has bad formatting. Deleting it to prevent further issues." );
-+         this.f_10970_.delete();
++         LOGGER.warn( "Usercache.json is corrupted or has bad formatting. Deleting it to prevent further issues." );
++         this.file.delete();
 +      // Spigot End
        } catch (JsonParseException | IOException ioexception) {
-          f_10964_.warn("Failed to load profile cache {}", this.f_10970_, ioexception);
+          LOGGER.warn("Failed to load profile cache {}", this.file, ioexception);
        }
 @@ -220,7 +_,7 @@
-    public void m_11006_() {
+    public void save() {
        JsonArray jsonarray = new JsonArray();
-       DateFormat dateformat = m_11009_();
--      this.m_10977_(1000).forEach((p_143962_) -> {
-+      this.m_10977_(org.spigotmc.SpigotConfig.userCacheCap).forEach((p_143962_) -> { // Spigot
-          jsonarray.add(m_10981_(p_143962_, dateformat));
+       DateFormat dateformat = createDateFormat();
+-      this.getTopMRUProfiles(1000).forEach((p_143962_) -> {
++      this.getTopMRUProfiles(org.spigotmc.SpigotConfig.userCacheCap).forEach((p_143962_) -> { // Spigot
+          jsonarray.add(writeGameProfile(p_143962_, dateformat));
        });
-       String s = this.f_10969_.toJson((JsonElement)jsonarray);
+       String s = this.gson.toJson((JsonElement)jsonarray);

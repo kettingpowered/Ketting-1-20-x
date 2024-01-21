@@ -1,7 +1,7 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
 @@ -69,7 +_,7 @@
-       SharedConstants.m_142977_();
+       SharedConstants.tryDetectVersion();
        OptionParser optionparser = new OptionParser();
        OptionSpec<Void> optionspec = optionparser.accepts("nogui");
 -      OptionSpec<Void> optionspec1 = optionparser.accepts("initSettings", "Initializes 'server.properties' and 'eula.txt', then quits");
@@ -28,7 +28,7 @@
 +      //Ketting end
 +
 +      //Ketting start - Initialize Ketting
-+      org.kettingpowered.ketting.core.Ketting ketting = org.kettingpowered.ketting.core.Ketting.init(SharedConstants.m_183709_().m_132493_());
++      org.kettingpowered.ketting.core.Ketting ketting = org.kettingpowered.ketting.core.Ketting.init(SharedConstants.getCurrentVersion().getName());
 +      ketting.registerAdapter(new org.kettingpowered.ketting.adapters.ForgeAdapterImpl(), new org.kettingpowered.ketting.adapters.BukkitAdapterImpl());
 +      //Ketting end
  
@@ -54,36 +54,36 @@
 +         }
 +         // Spigot End
 +
-+         if (!eula.m_135944_() && !eulaAgreed) { // Spigot
-+            f_129670_.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
++         if (!eula.hasAgreedToEULA() && !eulaAgreed) { // Spigot
++            LOGGER.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
 +            return;
 +         }
  
           Path path = optionset.valueOf(optionspec14);
           if (path != null) {
 @@ -102,29 +_,52 @@
-             JvmProfiler.f_185340_.m_183425_(Environment.SERVER);
+             JvmProfiler.INSTANCE.start(Environment.SERVER);
           }
  
--         Bootstrap.m_135870_();
+-         Bootstrap.bootStrap();
 +         try {
-+            Bootstrap.m_135870_();
++            Bootstrap.bootStrap();
 +         } catch (org.spongepowered.asm.mixin.throwables.MixinError mixin) {
 +            org.kettingpowered.ketting.core.injectprotect.InjectProtect.onBootErrorCaught(mixin);
 +         }
 +
-          Bootstrap.m_135889_();
+          Bootstrap.validate();
 +
 +         //Ketting start - init dimension registry after bootstrap
 +         ketting.registerDimensionRegistry(new org.kettingpowered.ketting.adapters.DimensionRegistryAdapterImpl());
 +         //Ketting end
 +
-          Util.m_137584_();
+          Util.startTimerHackThread();
           Path path1 = Paths.get("server.properties");
 -         DedicatedServerSettings dedicatedserversettings = new DedicatedServerSettings(path1);
 +         if (!optionset.has(optionspec1)) net.minecraftforge.server.loading.ServerModLoader.load(); // Load mods before we load almost anything else anymore. Single spot now. Only loads if they haven't passed the initserver param
 +         DedicatedServerSettings dedicatedserversettings = new DedicatedServerSettings(optionset); // CraftBukkit - CLI argument support
-          dedicatedserversettings.m_139780_();
+          dedicatedserversettings.forceSave();
 -         Path path2 = Paths.get("eula.txt");
 -         Eula eula = new Eula(path2);
 +         org.kettingpowered.ketting.config.KettingConfig.getInstance(); // Ketting
@@ -101,35 +101,35 @@
 +            commandsConfiguration.setDefaults(org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(new java.io.InputStreamReader(Main.class.getClassLoader().getResourceAsStream("configurations/commands.yml"), com.google.common.base.Charsets.UTF_8)));
 +            commandsConfiguration.save(commandFile);
 +            // CraftBukkit end
-             f_129670_.info("Initialized '{}' and '{}'", path1.toAbsolutePath(), path2.toAbsolutePath());
+             LOGGER.info("Initialized '{}' and '{}'", path1.toAbsolutePath(), path2.toAbsolutePath());
              return;
           }
  
--         if (!eula.m_135944_()) {
--            f_129670_.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
+-         if (!eula.hasAgreedToEULA()) {
+-            LOGGER.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
 -            return;
 -         }
 -
           File file1 = new File(optionset.valueOf(optionspec9));
-          Services services = Services.m_214344_(new YggdrasilAuthenticationService(Proxy.NO_PROXY), file1);
-          String s = Optional.ofNullable(optionset.valueOf(optionspec10)).orElse(dedicatedserversettings.m_139777_().f_139741_);
+          Services services = Services.create(new YggdrasilAuthenticationService(Proxy.NO_PROXY), file1);
+          String s = Optional.ofNullable(optionset.valueOf(optionspec10)).orElse(dedicatedserversettings.getProperties().levelName);
 +         if (s == null || s.isEmpty() || new File(file1, s).getAbsolutePath().equals(new File(s).getAbsolutePath())) {
-+            f_129670_.error("Invalid world directory specified, must not be null, empty or the same directory as your universe! " + s);
++            LOGGER.error("Invalid world directory specified, must not be null, empty or the same directory as your universe! " + s);
 +            return;
 +         }
-          LevelStorageSource levelstoragesource = LevelStorageSource.m_78242_(file1.toPath());
--         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.m_289864_(s);
-+         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s, LevelStem.f_63971_);
+          LevelStorageSource levelstoragesource = LevelStorageSource.createDefault(file1.toPath());
+-         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s);
++         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s, LevelStem.OVERWORLD);
 +         levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData();
-          LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
+          LevelSummary levelsummary = levelstoragesource$levelstorageaccess.getSummary();
           if (levelsummary != null) {
-             if (levelsummary.m_193020_()) {
+             if (levelsummary.requiresManualConversion()) {
 @@ -145,11 +_,31 @@
  
-          PackRepository packrepository = ServerPacksSource.m_245786_(levelstoragesource$levelstorageaccess.m_78283_(LevelResource.f_78180_));
+          PackRepository packrepository = ServerPacksSource.createPackRepository(levelstoragesource$levelstorageaccess.getLevelPath(LevelResource.DATAPACK_DIR));
  
 +         // CraftBukkit start
-+         File bukkitDataPackFolder = new File(levelstoragesource$levelstorageaccess.m_78283_(net.minecraft.world.level.storage.LevelResource.f_78180_).toFile(), "bukkit");
++         File bukkitDataPackFolder = new File(levelstoragesource$levelstorageaccess.getLevelPath(net.minecraft.world.level.storage.LevelResource.DATAPACK_DIR).toFile(), "bukkit");
 +         if (!bukkitDataPackFolder.exists()) {
 +            bukkitDataPackFolder.mkdirs();
 +         }
@@ -138,7 +138,7 @@
 +            com.google.common.io.Files.write("{\n"
 +                    + "    \"pack\": {\n"
 +                    + "        \"description\": \"Data pack for resources provided by Bukkit plugins\",\n"
-+                    + "        \"pack_format\": " + SharedConstants.m_183709_().m_264084_(net.minecraft.server.packs.PackType.SERVER_DATA) + "\n"
++                    + "        \"pack_format\": " + SharedConstants.getCurrentVersion().getPackVersion(net.minecraft.server.packs.PackType.SERVER_DATA) + "\n"
 +                    + "    }\n"
 +                    + "}\n", mcMeta, com.google.common.base.Charsets.UTF_8);
 +         } catch (java.io.IOException ex) {
@@ -149,50 +149,50 @@
 +
           WorldStem worldstem;
           try {
-             WorldLoader.InitConfig worldloader$initconfig = m_245383_(dedicatedserversettings.m_139777_(), levelstoragesource$levelstorageaccess, flag, packrepository);
-             worldstem = Util.m_214679_((p_248086_) -> {
-                return WorldLoader.m_214362_(worldloader$initconfig, (p_248079_) -> {
+             WorldLoader.InitConfig worldloader$initconfig = loadOrCreateConfig(dedicatedserversettings.getProperties(), levelstoragesource$levelstorageaccess, flag, packrepository);
+             worldstem = Util.blockUntilDone((p_248086_) -> {
+                return WorldLoader.load(worldloader$initconfig, (p_248079_) -> {
 +                  worldLoader.set(p_248079_); // CraftBukkit
-                   Registry<LevelStem> registry = p_248079_.f_243759_().m_175515_(Registries.f_256862_);
-                   DynamicOps<Tag> dynamicops = RegistryOps.m_255058_(NbtOps.f_128958_, p_248079_.f_244104_());
-                   Pair<WorldData, WorldDimensions.Complete> pair = levelstoragesource$levelstorageaccess.m_246049_(dynamicops, p_248079_.f_244127_(), registry, p_248079_.f_244104_().m_211816_());
+                   Registry<LevelStem> registry = p_248079_.datapackDimensions().registryOrThrow(Registries.LEVEL_STEM);
+                   DynamicOps<Tag> dynamicops = RegistryOps.create(NbtOps.INSTANCE, p_248079_.datapackWorldgen());
+                   Pair<WorldData, WorldDimensions.Complete> pair = levelstoragesource$levelstorageaccess.getDataTag(dynamicops, p_248079_.dataConfiguration(), registry, p_248079_.datapackWorldgen().allRegistriesLifecycle());
 @@ -170,6 +_,8 @@
-                         worlddimensions = dedicatedserverproperties.m_246483_(p_248079_.f_244104_());
+                         worlddimensions = dedicatedserverproperties.createDimensions(p_248079_.datapackWorldgen());
                       }
  
 +                     //Forge: Do a write-read-cycle to inject modded dimensions on first start of a dedicated server into its generated world dimensions list.
-+                     worlddimensions = WorldDimensions.f_243810_.encoder().encodeStart(dynamicops, worlddimensions).flatMap((writtenPayloadWithModdedDimensions) -> WorldDimensions.f_243810_.decoder().parse(dynamicops, writtenPayloadWithModdedDimensions)).resultOrPartial(f_129670_::error).orElse(worlddimensions);
-                      WorldDimensions.Complete worlddimensions$complete = worlddimensions.m_245300_(registry);
-                      Lifecycle lifecycle = worlddimensions$complete.m_245945_().add(p_248079_.f_244104_().m_211816_());
-                      return new WorldLoader.DataLoadOutput<>(new PrimaryLevelData(levelsettings, worldoptions, worlddimensions$complete.f_244634_(), lifecycle), worlddimensions$complete.m_245593_());
++                     worlddimensions = WorldDimensions.CODEC.encoder().encodeStart(dynamicops, worlddimensions).flatMap((writtenPayloadWithModdedDimensions) -> WorldDimensions.CODEC.decoder().parse(dynamicops, writtenPayloadWithModdedDimensions)).resultOrPartial(LOGGER::error).orElse(worlddimensions);
+                      WorldDimensions.Complete worlddimensions$complete = worlddimensions.bake(registry);
+                      Lifecycle lifecycle = worlddimensions$complete.lifecycle().add(p_248079_.datapackWorldgen().allRegistriesLifecycle());
+                      return new WorldLoader.DataLoadOutput<>(new PrimaryLevelData(levelsettings, worldoptions, worlddimensions$complete.specialWorldProperty(), lifecycle), worlddimensions$complete.dimensionsRegistryAccess());
 @@ -190,22 +_,39 @@
  
-          WorldData worlddata = worldstem.f_206895_();
-          levelstoragesource$levelstorageaccess.m_78287_(registryaccess$frozen, worlddata);
--         final DedicatedServer dedicatedserver = MinecraftServer.m_129872_((p_236710_) -> {
--            DedicatedServer dedicatedserver1 = new DedicatedServer(p_236710_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), services, LoggerChunkProgressListener::new);
-+         final MinecraftServer dedicatedserver = MinecraftServer.m_129872_((p_129697_) -> {
+          WorldData worlddata = worldstem.worldData();
+          levelstoragesource$levelstorageaccess.saveDataTag(registryaccess$frozen, worlddata);
+-         final DedicatedServer dedicatedserver = MinecraftServer.spin((p_236710_) -> {
+-            DedicatedServer dedicatedserver1 = new DedicatedServer(p_236710_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.getDataFixer(), services, LoggerChunkProgressListener::new);
++         final MinecraftServer dedicatedserver = MinecraftServer.spin((p_129697_) -> {
 +            MinecraftServer dedicatedserver1;
 +            if (gametestEnabled) {
 +               net.minecraftforge.gametest.ForgeGameTestHooks.registerGametests();
-+               java.util.Collection<net.minecraft.gametest.framework.GameTestBatch> testBatches = net.minecraft.gametest.framework.GameTestRunner.m_127724_(net.minecraft.gametest.framework.GameTestRegistry.m_127658_());
++               java.util.Collection<net.minecraft.gametest.framework.GameTestBatch> testBatches = net.minecraft.gametest.framework.GameTestRunner.groupTestsIntoBatches(net.minecraft.gametest.framework.GameTestRegistry.getAllTestFunctions());
 +               net.minecraft.core.BlockPos spawnPos = optionset.valueOf(spawnPosOpt);
 +               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, testBatches, spawnPos);
 +            } else {
-+               dedicatedserver1 = new DedicatedServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), services, LoggerChunkProgressListener::new);
++               dedicatedserver1 = new DedicatedServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.getDataFixer(), services, LoggerChunkProgressListener::new);
 +            }
 +            //Ketting start - add optionset and worldloader
 +            dedicatedserver1.setBukkitOptions(optionset, worldLoader.get());
 +            //Ketting end
-             dedicatedserver1.m_236740_(optionset.has(optionspec8) ? new GameProfile((UUID)null, optionset.valueOf(optionspec8)) : null);
-             dedicatedserver1.m_129801_(optionset.valueOf(optionspec11));
-             dedicatedserver1.m_129975_(optionset.has(optionspec2));
-             dedicatedserver1.m_129948_(optionset.valueOf(optionspec12));
+             dedicatedserver1.setSingleplayerProfile(optionset.has(optionspec8) ? new GameProfile((UUID)null, optionset.valueOf(optionspec8)) : null);
+             dedicatedserver1.setPort(optionset.valueOf(optionspec11));
+             dedicatedserver1.setDemo(optionset.has(optionspec2));
+             dedicatedserver1.setId(optionset.valueOf(optionspec12));
              boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec15).contains("nogui");
 -            if (flag1 && !GraphicsEnvironment.isHeadless()) {
--               dedicatedserver1.m_139667_();
+-               dedicatedserver1.showGui();
 +            if (dedicatedserver1 instanceof DedicatedServer dedicatedServer && flag1 && !GraphicsEnvironment.isHeadless()) {
-+               dedicatedServer.m_139667_();
++               dedicatedServer.showGui();
              }
  
              return dedicatedserver1;
@@ -204,11 +204,11 @@
 +               //Ketting end
 +               // FORGE: Halting as GameTestServer will cause issues as it always calls System#exit on both crash and normal exit, so skip it
 +               if (!(dedicatedserver instanceof net.minecraft.gametest.framework.GameTestServer))
-                dedicatedserver.m_7570_(true);
+                dedicatedserver.halt(true);
 +               org.apache.logging.log4j.LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
              }
           };
-          thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_129670_));
+          thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
 @@ -215,6 +_,64 @@
        }
  
@@ -272,5 +272,5 @@
 +   }
 +   //Ketting end
  
-    private static void m_269308_(Path p_270192_) {
+    private static void writePidFile(Path p_270192_) {
        try {

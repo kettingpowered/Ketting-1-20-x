@@ -3,8 +3,8 @@
 @@ -101,7 +_,7 @@
              } else if (flag) {
                 return InteractionResult.SUCCESS;
-             } else if (!this.m_277189_(p_56281_, signblockentity) && p_56281_.m_36326_() && this.m_278656_(p_56281_, signblockentity, flag2)) {
--               this.m_276926_(p_56281_, signblockentity, flag2);
+             } else if (!this.otherPlayerIsEditingSign(p_56281_, signblockentity) && p_56281_.mayBuild() && this.hasEditableText(p_56281_, signblockentity, flag2)) {
+-               this.openTextEdit(p_56281_, signblockentity, flag2);
 +               this.openTextEdit(p_56281_, signblockentity, flag2, org.bukkit.event.player.PlayerSignOpenEvent.Cause.INTERACT); // CraftBukkit
                 return InteractionResult.SUCCESS;
              } else {
@@ -12,7 +12,7 @@
 @@ -147,6 +_,15 @@
     }
  
-    public void m_276926_(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_) {
+    public void openTextEdit(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_) {
 +      // Craftbukkit start
 +      openTextEdit(p_277738_, p_277467_, p_277771_, org.bukkit.event.player.PlayerSignOpenEvent.Cause.UNKNOWN);
 +   }
@@ -22,6 +22,6 @@
 +         return;
 +      }
 +      // Craftbukkit end
-       p_277467_.m_155713_(p_277738_.m_20148_());
-       p_277738_.m_7739_(p_277467_, p_277771_);
+       p_277467_.setAllowedPlayerEditor(p_277738_.getUUID());
+       p_277738_.openTextEdit(p_277467_, p_277771_);
     }

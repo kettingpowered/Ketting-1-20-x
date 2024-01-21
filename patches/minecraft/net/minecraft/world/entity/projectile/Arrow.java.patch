@@ -1,19 +1,16 @@
 --- a/net/minecraft/world/entity/projectile/Arrow.java
 +++ b/net/minecraft/world/entity/projectile/Arrow.java
-@@ -178,14 +_,14 @@
-       Entity entity = this.m_150173_();
- 
-       for(MobEffectInstance mobeffectinstance : this.f_36855_.m_43488_()) {
--         p_36873_.m_147207_(new MobEffectInstance(mobeffectinstance.m_19544_(), Math.max(mobeffectinstance.m_267696_((p_268168_) -> {
-+         p_36873_.addEffect(new MobEffectInstance(mobeffectinstance.m_19544_(), Math.max(mobeffectinstance.m_267696_((p_268168_) -> {
+@@ -180,12 +_,12 @@
+       for(MobEffectInstance mobeffectinstance : this.potion.getEffects()) {
+          p_36873_.addEffect(new MobEffectInstance(mobeffectinstance.getEffect(), Math.max(mobeffectinstance.mapDuration((p_268168_) -> {
              return p_268168_ / 8;
--         }), 1), mobeffectinstance.m_19564_(), mobeffectinstance.m_19571_(), mobeffectinstance.m_19572_()), entity);
-+         }), 1), mobeffectinstance.m_19564_(), mobeffectinstance.m_19571_(), mobeffectinstance.m_19572_()), entity, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); // CraftBukkit
+-         }), 1), mobeffectinstance.getAmplifier(), mobeffectinstance.isAmbient(), mobeffectinstance.isVisible()), entity);
++         }), 1), mobeffectinstance.getAmplifier(), mobeffectinstance.isAmbient(), mobeffectinstance.isVisible()), entity, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); // CraftBukkit
        }
  
-       if (!this.f_36852_.isEmpty()) {
-          for(MobEffectInstance mobeffectinstance1 : this.f_36852_) {
--            p_36873_.m_147207_(mobeffectinstance1, entity);
+       if (!this.effects.isEmpty()) {
+          for(MobEffectInstance mobeffectinstance1 : this.effects) {
+-            p_36873_.addEffect(mobeffectinstance1, entity);
 +            p_36873_.addEffect(mobeffectinstance1, entity, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); // CraftBukkit
           }
        }

@@ -1,26 +1,26 @@
 --- a/net/minecraft/world/entity/monster/Slime.java
 +++ b/net/minecraft/world/entity/monster/Slime.java
 @@ -124,6 +_,8 @@
-       if (this.m_20096_() && !this.f_33583_) {
-          int i = this.m_33632_();
+       if (this.onGround() && !this.wasOnGround) {
+          int i = this.getSize();
  
 +         // Forge: Don't spawn particles if it's handled by the implementation itself
 +         if (!spawnCustomParticles())
           for(int j = 0; j < i * 8; ++j) {
-             float f = this.f_19796_.m_188501_() * ((float)Math.PI * 2F);
-             float f1 = this.f_19796_.m_188501_() * 0.5F + 0.5F;
+             float f = this.random.nextFloat() * ((float)Math.PI * 2F);
+             float f1 = this.random.nextFloat() * 0.5F + 0.5F;
 @@ -184,6 +_,19 @@
           int j = i / 2;
-          int k = 2 + this.f_19796_.m_188503_(3);
+          int k = 2 + this.random.nextInt(3);
  
 +         // CraftBukkit start
 +         org.bukkit.event.entity.SlimeSplitEvent event = new org.bukkit.event.entity.SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), k);
-+         this.m_9236_().getCraftServer().getPluginManager().callEvent(event);
++         this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (!event.isCancelled() && event.getCount() > 0) {
 +            k = event.getCount();
 +         } else {
-+            super.m_142687_(p_149847_);
++            super.remove(p_149847_);
 +            return;
 +         }
 +         java.util.List<LivingEntity> slimes = new java.util.ArrayList<>(j);
@@ -30,38 +30,38 @@
              float f1 = ((float)(l % 2) - 0.5F) * f;
              float f2 = ((float)(l / 2) - 0.5F) * f;
 @@ -198,9 +_,19 @@
-                slime.m_20331_(this.m_20147_());
-                slime.m_7839_(j, true);
-                slime.m_7678_(this.m_20185_() + (double)f1, this.m_20186_() + 0.5D, this.m_20189_() + (double)f2, this.f_19796_.m_188501_() * 360.0F, 0.0F);
--               this.m_9236_().m_7967_(slime);
+                slime.setInvulnerable(this.isInvulnerable());
+                slime.setSize(j, true);
+                slime.moveTo(this.getX() + (double)f1, this.getY() + 0.5D, this.getZ() + (double)f2, this.random.nextFloat() * 360.0F, 0.0F);
+-               this.level().addFreshEntity(slime);
 +               slimes.add(slime); // CraftBukkit
              }
           }
 +
 +         // CraftBukkit start
 +         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTransformEvent(this, slimes, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
-+            super.m_142687_(p_149847_);
++            super.remove(p_149847_);
 +            return;
 +         }
 +         for (LivingEntity living : slimes) {
-+            this.m_9236_().addFreshEntity(living, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT); // CraftBukkit - SpawnReason
++            this.level().addFreshEntity(living, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT); // CraftBukkit - SpawnReason
 +         }
 +         // CraftBukkit end
        }
  
-       super.m_142687_(p_149847_);
+       super.remove(p_149847_);
 @@ -267,7 +_,7 @@
           }
  
           ChunkPos chunkpos = new ChunkPos(p_219116_);
--         boolean flag = WorldgenRandom.m_224681_(chunkpos.f_45578_, chunkpos.f_45579_, ((WorldGenLevel)p_219114_).m_7328_(), 987234911L).m_188503_(10) == 0;
-+         boolean flag = WorldgenRandom.m_224681_(chunkpos.f_45578_, chunkpos.f_45579_, ((WorldGenLevel)p_219114_).m_7328_(), p_219114_.getMinecraftWorld().spigotConfig.slimeSeed).m_188503_(10) == 0; // Spigot
-          if (p_219117_.m_188503_(10) == 0 && flag && p_219116_.m_123342_() < 40) {
-             return m_217057_(p_219113_, p_219114_, p_219115_, p_219116_, p_219117_);
+-         boolean flag = WorldgenRandom.seedSlimeChunk(chunkpos.x, chunkpos.z, ((WorldGenLevel)p_219114_).getSeed(), 987234911L).nextInt(10) == 0;
++         boolean flag = WorldgenRandom.seedSlimeChunk(chunkpos.x, chunkpos.z, ((WorldGenLevel)p_219114_).getSeed(), p_219114_.getMinecraftWorld().spigotConfig.slimeSeed).nextInt(10) == 0; // Spigot
+          if (p_219117_.nextInt(10) == 0 && flag && p_219116_.getY() < 40) {
+             return checkMobSpawnRules(p_219113_, p_219114_, p_219115_, p_219116_, p_219117_);
           }
 @@ -319,6 +_,12 @@
-    public EntityDimensions m_6972_(Pose p_33597_) {
-       return super.m_6972_(p_33597_).m_20388_(0.255F * (float)this.m_33632_());
+    public EntityDimensions getDimensions(Pose p_33597_) {
+       return super.getDimensions(p_33597_).scale(0.255F * (float)this.getSize());
     }
 +
 +   /**
@@ -71,4 +71,4 @@
 +   protected boolean spawnCustomParticles() { return false; }
  
     static class SlimeAttackGoal extends Goal {
-       private final Slime f_33645_;
+       private final Slime slime;

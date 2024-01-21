@@ -4,8 +4,8 @@
        }
     }
  
--   private StructureTemplate m_230377_(InputStream p_230378_) throws IOException {
-+   public StructureTemplate m_230377_(InputStream p_230378_) throws IOException {
-       CompoundTag compoundtag = NbtIo.m_128939_(p_230378_);
-       return this.m_230404_(compoundtag);
+-   private StructureTemplate readStructure(InputStream p_230378_) throws IOException {
++   public StructureTemplate readStructure(InputStream p_230378_) throws IOException {
+       CompoundTag compoundtag = NbtIo.readCompressed(p_230378_);
+       return this.readStructure(compoundtag);
     }

@@ -2,24 +2,24 @@
 +++ b/net/minecraft/world/level/storage/loot/LootDataManager.java
 @@ -53,7 +_,7 @@
           Map<ResourceLocation, JsonElement> map1 = new HashMap<>();
-          SimpleJsonResourceReloadListener.m_278771_(p_279441_, p_279205_.m_278624_(), p_279205_.m_278857_(), map1);
+          SimpleJsonResourceReloadListener.scanDirectory(p_279441_, p_279205_.directory(), p_279205_.parser(), map1);
           map1.forEach((p_279416_, p_279151_) -> {
--            p_279205_.m_278763_(p_279416_, p_279151_).ifPresent((p_279295_) -> {
+-            p_279205_.deserialize(p_279416_, p_279151_).ifPresent((p_279295_) -> {
 +            p_279205_.deserialize(p_279416_, p_279151_, p_279441_).ifPresent((p_279295_) -> {
                 map.put(p_279416_, p_279295_);
              });
           });
 @@ -88,6 +_,13 @@
-       validationcontext.m_79352_().forEach((p_279487_, p_279312_) -> {
-          f_278476_.warn("Found loot table element validation problem in {}: {}", p_279487_, p_279312_);
+       validationcontext.getProblems().forEach((p_279487_, p_279312_) -> {
+          LOGGER.warn("Found loot table element validation problem in {}: {}", p_279487_, p_279312_);
        });
 +      // CraftBukkit start
 +      map.forEach((key, lootTable) -> {
 +         if (object instanceof LootTable table) {
-+            table.craftLootTable = new org.bukkit.craftbukkit.v1_20_R1.CraftLootTable(org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(key.f_278500_()), table);
++            table.craftLootTable = new org.bukkit.craftbukkit.v1_20_R1.CraftLootTable(org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(key.location()), table);
 +         }
 +      });
 +      // CraftBukkit end
-       this.f_278415_ = map;
-       this.f_278404_ = builder1.build();
+       this.elements = map;
+       this.typeKeys = builder1.build();
     }

@@ -10,7 +10,7 @@
 +
 +   @Override
 +   public java.util.List<ItemStack> getContents() {
-+      return this.f_58591_;
++      return this.items;
 +   }
 +
 +   @Override
@@ -29,7 +29,7 @@
 +   }
 +
 +   @Override
-+   public int m_6893_() {
++   public int getMaxStackSize() {
 +      return maxStack;
 +   }
 +
@@ -38,6 +38,6 @@
 +      maxStack = i;
 +   }
 +   // CraftBukkit end
-    private NonNullList<ItemStack> f_58591_ = NonNullList.m_122780_(27, ItemStack.f_41583_);
-    public final ContainerOpenersCounter f_155050_ = new ContainerOpenersCounter() {
-       protected void m_142292_(Level p_155062_, BlockPos p_155063_, BlockState p_155064_) {
+    private NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
+    public final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
+       protected void onOpen(Level p_155062_, BlockPos p_155063_, BlockState p_155064_) {

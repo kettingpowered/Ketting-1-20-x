@@ -1,39 +1,39 @@
 --- a/net/minecraft/gametest/framework/GameTestServer.java
 +++ b/net/minecraft/gametest/framework/GameTestServer.java
 @@ -105,13 +_,30 @@
-    public boolean m_7038_() {
-       this.m_129823_(new PlayerList(this, this.m_247573_(), this.f_129745_, 1) {
+    public boolean initServer() {
+       this.setPlayerList(new PlayerList(this, this.registries(), this.playerDataStorage, 1) {
        });
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
 +      // Ketting start
 +      org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
 +      org.spigotmc.SpigotConfig.registerCommands();
-+      if (this.m_7010_() < 0) {
-+         this.m_129801_(25565);
++      if (this.getPort() < 0) {
++         this.setPort(25565);
 +      }
 +      try {
-+         this.m_129919_().m_9711_(java.net.InetAddress.getLocalHost(), this.m_7010_());
++         this.getConnection().startTcpServerListener(java.net.InetAddress.getLocalHost(), this.getPort());
 +      } catch (java.io.IOException ioexception) {
-+         f_177585_.warn("**** FAILED TO BIND TO PORT!");
-+         f_177585_.warn("The exception was: {}", (Object)ioexception.toString());
-+         f_177585_.warn("Perhaps a server is already running on that port?");
++         LOGGER.warn("**** FAILED TO BIND TO PORT!");
++         LOGGER.warn("The exception was: {}", (Object)ioexception.toString());
++         LOGGER.warn("Perhaps a server is already running on that port?");
 +         return false;
 +      }
 +      // Ketting end
-+      this.prepareLoadLevel(f_129744_.m_78277_()); //Ketting
-       this.m_130006_();
-       ServerLevel serverlevel = this.m_129783_();
-       serverlevel.m_8733_(this.f_177588_, 0.0F);
++      this.prepareLoadLevel(storageSource.getLevelId()); //Ketting
+       this.loadLevel();
+       ServerLevel serverlevel = this.overworld();
+       serverlevel.setDefaultSpawnPos(this.spawnPos, 0.0F);
        int i = 20000000;
-       serverlevel.m_8606_(20000000, 20000000, false, false);
-       f_177585_.info("Started game test server");
+       serverlevel.setWeatherParameters(20000000, 20000000, false, false);
+       LOGGER.info("Started game test server");
 -      return true;
 +      return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
     }
  
-    public void m_5705_(BooleanSupplier p_177619_) {
+    public void tickServer(BooleanSupplier p_177619_) {
 @@ -221,6 +_,13 @@
-    public boolean m_6102_() {
+    public boolean shouldInformAdmins() {
        return false;
     }
 +
@@ -44,5 +44,5 @@
 +   }
 +   // Ketting end
  
-    public boolean m_7779_(GameProfile p_177617_) {
+    public boolean isSingleplayerOwner(GameProfile p_177617_) {
        return false;

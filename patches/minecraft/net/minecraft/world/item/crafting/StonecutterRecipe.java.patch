@@ -6,24 +6,24 @@
  public class StonecutterRecipe extends SingleItemRecipe {
 +   //Ketting start
     public StonecutterRecipe(ResourceLocation p_44478_, String p_44479_, Ingredient p_44480_, ItemStack p_44481_) {
-       super(RecipeType.f_44112_, RecipeSerializer.f_44095_, p_44478_, p_44479_, p_44480_, p_44481_);
+       super(RecipeType.STONECUTTING, RecipeSerializer.STONECUTTER, p_44478_, p_44479_, p_44480_, p_44481_);
     }
 +   //Ketting end
  
-    public boolean m_5818_(Container p_44483_, Level p_44484_) {
-       return this.f_44409_.test(p_44483_.m_8020_(0));
+    public boolean matches(Container p_44483_, Level p_44484_) {
+       return this.ingredient.test(p_44483_.getItem(0));
 @@ -18,4 +_,16 @@
-    public ItemStack m_8042_() {
-       return new ItemStack(Blocks.f_50679_);
+    public ItemStack getToastSymbol() {
+       return new ItemStack(Blocks.STONECUTTER);
     }
 +
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.Recipe toBukkitRecipe() {
-+      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(this.f_44410_);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack result = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(this.result);
 +
-+      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftStonecuttingRecipe recipe = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftStonecuttingRecipe(org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(this.f_44411_), result, org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.f_44409_));
-+      recipe.setGroup(this.f_44412_);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftStonecuttingRecipe recipe = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftStonecuttingRecipe(org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(this.id), result, org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe.toBukkit(this.ingredient));
++      recipe.setGroup(this.group);
 +
 +      return recipe;
 +   }

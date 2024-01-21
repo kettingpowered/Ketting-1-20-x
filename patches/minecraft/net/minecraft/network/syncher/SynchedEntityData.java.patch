@@ -1,27 +1,27 @@
 --- a/net/minecraft/network/syncher/SynchedEntityData.java
 +++ b/net/minecraft/network/syncher/SynchedEntityData.java
 @@ -28,7 +_,7 @@
-    private static final int f_179843_ = 254;
-    private final Entity f_135344_;
-    private final Int2ObjectMap<SynchedEntityData.DataItem<?>> f_135345_ = new Int2ObjectOpenHashMap<>();
--   private final ReadWriteLock f_135346_ = new ReentrantReadWriteLock();
+    private static final int MAX_ID_VALUE = 254;
+    private final Entity entity;
+    private final Int2ObjectMap<SynchedEntityData.DataItem<?>> itemsById = new Int2ObjectOpenHashMap<>();
+-   private final ReadWriteLock lock = new ReentrantReadWriteLock();
 +   // private final ReadWriteLock lock = new ReentrantReadWriteLock(); // Spigot - not required
-    private boolean f_135348_;
+    private boolean isDirty;
  
     public SynchedEntityData(Entity p_135351_) {
 @@ -36,11 +_,13 @@
     }
  
-    public static <T> EntityDataAccessor<T> m_135353_(Class<? extends Entity> p_135354_, EntityDataSerializer<T> p_135355_) {
--      if (f_135342_.isDebugEnabled()) {
-+      if (true || f_135342_.isDebugEnabled()) { // Forge: This is very useful for mods that register keys on classes that are not their own
+    public static <T> EntityDataAccessor<T> defineId(Class<? extends Entity> p_135354_, EntityDataSerializer<T> p_135355_) {
+-      if (LOGGER.isDebugEnabled()) {
++      if (true || LOGGER.isDebugEnabled()) { // Forge: This is very useful for mods that register keys on classes that are not their own
           try {
              Class<?> oclass = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName());
              if (!oclass.equals(p_135354_)) {
--               f_135342_.debug("defineId called for: {} from {}", p_135354_, oclass, new RuntimeException());
+-               LOGGER.debug("defineId called for: {} from {}", p_135354_, oclass, new RuntimeException());
 +               // Forge: log at warn, mods should not add to classes that they don't own, and only add stacktrace when in debug is enabled as it is mostly not needed and consumes time
-+               if (f_135342_.isDebugEnabled()) f_135342_.warn("defineId called for: {} from {}", p_135354_, oclass, new RuntimeException());
-+               else f_135342_.warn("defineId called for: {} from {}", p_135354_, oclass);
++               if (LOGGER.isDebugEnabled()) LOGGER.warn("defineId called for: {} from {}", p_135354_, oclass, new RuntimeException());
++               else LOGGER.warn("defineId called for: {} from {}", p_135354_, oclass);
              }
           } catch (ClassNotFoundException classnotfoundexception) {
           }
@@ -30,108 +30,94 @@
     }
  
 +   public boolean registrationLocked; // Spigot
-    public <T> void m_135372_(EntityDataAccessor<T> p_135373_, T p_135374_) {
+    public <T> void define(EntityDataAccessor<T> p_135373_, T p_135374_) {
 +      if (this.registrationLocked) throw new IllegalStateException("Registering datawatcher object after entity initialization"); // Spigot
-       int i = p_135373_.m_135015_();
+       int i = p_135373_.getId();
        if (i > 254) {
           throw new IllegalArgumentException("Data value id is too big with " + i + "! (Max is 254)");
 @@ -87,9 +_,9 @@
  
-    private <T> void m_135385_(EntityDataAccessor<T> p_135386_, T p_135387_) {
+    private <T> void createDataItem(EntityDataAccessor<T> p_135386_, T p_135387_) {
        SynchedEntityData.DataItem<T> dataitem = new SynchedEntityData.DataItem<>(p_135386_, p_135387_);
--      this.f_135346_.writeLock().lock();
+-      this.lock.writeLock().lock();
 +      // this.lock.writeLock().lock(); // Spigot - not required
-       this.f_135345_.put(p_135386_.m_135015_(), dataitem);
--      this.f_135346_.writeLock().unlock();
+       this.itemsById.put(p_135386_.getId(), dataitem);
+-      this.lock.writeLock().unlock();
 +      // this.lock.writeLock().unlock(); // Spigot - not required
     }
  
-    public <T> boolean m_285897_(EntityDataAccessor<T> p_286294_) {
-@@ -97,21 +_,26 @@
+    public <T> boolean hasItem(EntityDataAccessor<T> p_286294_) {
+@@ -97,6 +_,8 @@
     }
  
-    private <T> SynchedEntityData.DataItem<T> m_135379_(EntityDataAccessor<T> p_135380_) {
--      this.f_135346_.readLock().lock();
+    private <T> SynchedEntityData.DataItem<T> getItem(EntityDataAccessor<T> p_135380_) {
 +      // Spigot start
 +      /*
-+      this.lock.readLock().lock();
+       this.lock.readLock().lock();
  
        SynchedEntityData.DataItem<T> dataitem;
-       try {
--         dataitem = (SynchedEntityData.DataItem<T>)this.f_135345_.get(p_135380_.m_135015_());
-+         dataitem = (SynchedEntityData.DataItem<T>)this.itemsById.get(p_135380_.getId());
-       } catch (Throwable throwable) {
--         CrashReport crashreport = CrashReport.m_127521_(throwable, "Getting synched entity data");
--         CrashReportCategory crashreportcategory = crashreport.m_127514_("Synched entity data");
--         crashreportcategory.m_128159_("Data ID", p_135380_);
-+         CrashReport crashreport = CrashReport.forThrowable(throwable, "Getting synched entity data");
-+         CrashReportCategory crashreportcategory = crashreport.addCategory("Synched entity data");
-+         crashreportcategory.setDetail("Data ID", p_135380_);
-          throw new ReportedException(crashreport);
-       } finally {
--         this.f_135346_.readLock().unlock();
-+         this.lock.readLock().unlock();
+@@ -112,6 +_,9 @@
        }
  
        return dataitem;
 +      */
-+      return (SynchedEntityData.DataItem<T>)this.f_135345_.get(p_135380_.m_135015_());
++      return (SynchedEntityData.DataItem<T>)this.itemsById.get(p_135380_.getId());
 +      // Spigot end
     }
  
-    public <T> T m_135370_(EntityDataAccessor<T> p_135371_) {
+    public <T> T get(EntityDataAccessor<T> p_135371_) {
 @@ -133,6 +_,13 @@
  
     }
  
 +   // CraftBukkit start - add method from above
 +   public <T> void markDirty(EntityDataAccessor<T> datawatcherobject) {
-+      this.m_135379_(datawatcherobject).m_135401_(true);
-+      this.f_135348_ = true;
++      this.getItem(datawatcherobject).setDirty(true);
++      this.isDirty = true;
 +   }
 +   // CraftBukkit end
 +
-    public boolean m_135352_() {
-       return this.f_135348_;
+    public boolean isDirty() {
+       return this.isDirty;
     }
 @@ -141,7 +_,7 @@
-    public List<SynchedEntityData.DataValue<?>> m_135378_() {
+    public List<SynchedEntityData.DataValue<?>> packDirty() {
        List<SynchedEntityData.DataValue<?>> list = null;
-       if (this.f_135348_) {
--         this.f_135346_.readLock().lock();
+       if (this.isDirty) {
+-         this.lock.readLock().lock();
 +         // this.lock.readLock().lock(); // Spigot - not required
  
-          for(SynchedEntityData.DataItem<?> dataitem : this.f_135345_.values()) {
-             if (dataitem.m_135406_()) {
+          for(SynchedEntityData.DataItem<?> dataitem : this.itemsById.values()) {
+             if (dataitem.isDirty()) {
 @@ -154,7 +_,7 @@
              }
           }
  
--         this.f_135346_.readLock().unlock();
+-         this.lock.readLock().unlock();
 +         // this.lock.readLock().unlock(); // Spigot - not required
        }
  
-       this.f_135348_ = false;
+       this.isDirty = false;
 @@ -164,7 +_,7 @@
     @Nullable
-    public List<SynchedEntityData.DataValue<?>> m_252804_() {
+    public List<SynchedEntityData.DataValue<?>> getNonDefaultValues() {
        List<SynchedEntityData.DataValue<?>> list = null;
--      this.f_135346_.readLock().lock();
+-      this.lock.readLock().lock();
 +      // this.lock.readLock().lock(); // Spigot - not required
  
-       for(SynchedEntityData.DataItem<?> dataitem : this.f_135345_.values()) {
-          if (!dataitem.m_252838_()) {
+       for(SynchedEntityData.DataItem<?> dataitem : this.itemsById.values()) {
+          if (!dataitem.isSetToDefault()) {
 @@ -176,12 +_,12 @@
           }
        }
  
--      this.f_135346_.readLock().unlock();
+-      this.lock.readLock().unlock();
 +      // this.lock.readLock().unlock(); // Spigot - not required
        return list;
     }
  
-    public void m_135356_(List<SynchedEntityData.DataValue<?>> p_135357_) {
--      this.f_135346_.writeLock().lock();
+    public void assignValues(List<SynchedEntityData.DataValue<?>> p_135357_) {
+-      this.lock.writeLock().lock();
 +      // this.lock.writeLock().lock(); // Spigot - not required
  
        try {
@@ -140,27 +126,27 @@
              }
           }
        } finally {
--         this.f_135346_.writeLock().unlock();
+-         this.lock.writeLock().unlock();
 +         // this.lock.writeLock().unlock(); // Spigot - not required
        }
  
-       this.f_135344_.m_269505_(p_135357_);
+       this.entity.onSyncedDataUpdated(p_135357_);
 @@ -209,6 +_,18 @@
-    public boolean m_135388_() {
-       return this.f_135345_.isEmpty();
+    public boolean isEmpty() {
+       return this.itemsById.isEmpty();
     }
 +
 +   // CraftBukkit start
 +   public void refresh(net.minecraft.server.level.ServerPlayer to) {
-+      if (!this.m_135388_()) {
-+         List<SynchedEntityData.DataValue<?>> list = this.m_252804_();
++      if (!this.isEmpty()) {
++         List<SynchedEntityData.DataValue<?>> list = this.getNonDefaultValues();
 +
 +         if (list != null) {
-+            to.f_8906_.m_9829_(new net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket(this.f_135344_.m_19879_(), list));
++            to.connection.send(new net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket(this.entity.getId(), list));
 +         }
 +      }
 +   }
 +   // CraftBukkit end
  
     public static class DataItem<T> {
-       final EntityDataAccessor<T> f_135390_;
+       final EntityDataAccessor<T> accessor;

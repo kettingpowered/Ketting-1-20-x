@@ -1,47 +1,47 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
 @@ -128,8 +_,10 @@
-    public static final int f_165685_ = 3;
-    public static final int f_165686_ = 4;
-    private final CommandDispatcher<CommandSourceStack> f_82090_ = new CommandDispatcher<>();
+    public static final int LEVEL_ADMINS = 3;
+    public static final int LEVEL_OWNERS = 4;
+    private final CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
 +   private final CommandDispatcher<CommandSourceStack> forgeDispatcher = new CommandDispatcher<>(); //Ketting
  
     public Commands(Commands.CommandSelection p_230943_, CommandBuildContext p_230944_) {
 +      this(); // CraftBukkit
-       AdvancementCommands.m_136310_(this.f_82090_);
-       AttributeCommand.m_245835_(this.f_82090_, p_230944_);
-       ExecuteCommand.m_214434_(this.f_82090_, p_230944_);
+       AdvancementCommands.register(this.dispatcher);
+       AttributeCommand.register(this.dispatcher, p_230944_);
+       ExecuteCommand.register(this.dispatcher, p_230944_);
 @@ -193,7 +_,7 @@
-          JfrCommand.m_183645_(this.f_82090_);
+          JfrCommand.register(this.dispatcher);
        }
  
--      if (SharedConstants.f_136183_) {
+-      if (SharedConstants.IS_RUNNING_IN_IDE) {
 +      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
-          TestCommand.m_127946_(this.f_82090_);
-          SpawnArmorTrimsCommand.m_266283_(this.f_82090_);
+          TestCommand.register(this.dispatcher);
+          SpawnArmorTrimsCommand.register(this.dispatcher);
        }
 @@ -218,10 +_,21 @@
-       if (p_230943_.f_82144_) {
-          PublishCommand.m_138184_(this.f_82090_);
+       if (p_230943_.includeIntegrated) {
+          PublishCommand.register(this.dispatcher);
        }
 +      net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.forgeDispatcher, p_230943_, p_230944_); //Ketting
 +      // CraftBukkit start
 +   }
  
 +   public Commands() {
-       this.f_82090_.setConsumer((p_230954_, p_230955_, p_230956_) -> {
-          p_230954_.getSource().m_81342_(p_230954_, p_230955_, p_230956_);
+       this.dispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
+          p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
        });
 +      // CraftBukkit end
 +
 +      //Ketting start
 +      this.forgeDispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
-+         p_230954_.getSource().m_81342_(p_230954_, p_230955_, p_230956_);
++         p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
 +      });
 +      //Ketting end
     }
  
-    public static <S> ParseResults<S> m_242611_(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
+    public static <S> ParseResults<S> mapSource(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
 @@ -230,12 +_,68 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }
@@ -79,7 +79,7 @@
 +      }
 +
 +      // Handle vanilla commands;
-+      if (p_230958_.m_81372_().getCraftServer().getCommandBlockOverride(args[0])) {
++      if (p_230958_.getLevel().getCraftServer().getCommandBlockOverride(args[0])) {
 +         args[0] = "minecraft:" + args[0];
 +      }
 +
@@ -92,9 +92,9 @@
 +   }
 +   // CraftBukkit end
 +
-    public int m_230957_(CommandSourceStack p_230958_, String p_230959_) {
+    public int performPrefixedCommand(CommandSourceStack p_230958_, String p_230959_) {
 -      p_230959_ = p_230959_.startsWith("/") ? p_230959_.substring(1) : p_230959_;
--      return this.m_242674_(this.f_82090_.parse(p_230959_, p_230958_), p_230959_);
+-      return this.performCommand(this.dispatcher.parse(p_230959_, p_230958_), p_230959_);
 +      // CraftBukkit start
 +      return this.performPrefixedCommand(p_230958_, p_230959_, p_230959_);
 +   }
@@ -105,19 +105,19 @@
 +      // CraftBukkit end
     }
  
-    public int m_242674_(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
+    public int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
 +      return this.performCommand(p_242844_, p_242841_, p_242841_);
 +   }
 +
 +   public int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_, String label) { // CraftBukkit
        CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
-       commandsourcestack.m_81377_().m_129905_().m_6521_(() -> {
+       commandsourcestack.getServer().getProfiler().push(() -> {
           return "/" + p_242841_;
 @@ -243,7 +_,16 @@
  
        try {
           try {
--            return this.f_82090_.execute(p_242844_);
+-            return this.dispatcher.execute(p_242844_);
 +            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(p_242844_);
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
 +               if (event.getException() instanceof Exception exception) {
@@ -129,23 +129,23 @@
 +            }
 +            return this.getCorrectDispatcher(p_242841_).unwrap().execute(event.getParseResults());
           } catch (CommandRuntimeException commandruntimeexception) {
-             commandsourcestack.m_81352_(commandruntimeexception.m_79226_());
+             commandsourcestack.sendFailure(commandruntimeexception.getComponent());
              return 0;
 @@ -252,7 +_,7 @@
              if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
                 int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
-                MutableComponent mutablecomponent1 = Component.m_237119_().m_130940_(ChatFormatting.GRAY).m_130938_((p_82134_) -> {
--                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + p_242841_));
-+                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + label)); // CraftBukkit
+                MutableComponent mutablecomponent1 = Component.empty().withStyle(ChatFormatting.GRAY).withStyle((p_82134_) -> {
+-                  return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + p_242841_));
++                  return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + label)); // CraftBukkit
                 });
                 if (j > 10) {
-                   mutablecomponent1.m_7220_(CommonComponents.f_238772_);
+                   mutablecomponent1.append(CommonComponents.ELLIPSIS);
 @@ -295,16 +_,60 @@
        }
     }
  
 +   //Ketting start - rewrite to add forge dispatcher support
-    public void m_82095_(ServerPlayer p_82096_) {
+    public void sendCommands(ServerPlayer p_82096_) {
 -      Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
 +      if ( org.spigotmc.SpigotConfig.tabComplete < 0 ) return; // Spigot
 +      // CraftBukkit start
@@ -153,19 +153,19 @@
 +      Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newIdentityHashMap(); // Use identity to prevent aliasing issues
 +
 +      RootCommandNode<SharedSuggestionProvider> vanillaRoot = new RootCommandNode<>();
-+      Commands vanillaCommands = p_82096_.f_8924_.vanillaCommandDispatcher;
-+      map.put(vanillaCommands.m_82094_().getRoot(), vanillaRoot);
++      Commands vanillaCommands = p_82096_.server.vanillaCommandDispatcher;
++      map.put(vanillaCommands.getDispatcher().getRoot(), vanillaRoot);
 +
 +      // FORGE: Use our own command node merging method to handle redirect nodes properly, see issue #7551
-+      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(vanillaCommands.m_82094_().getRoot(), vanillaRoot, map, p_82096_.m_20203_(), ctx -> 0, suggest -> SuggestionProviders.m_121664_((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
++      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(vanillaCommands.getDispatcher().getRoot(), vanillaRoot, map, p_82096_.createCommandSourceStack(), ctx -> 0, suggest -> SuggestionProviders.safelySwap((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
 +
 +      // Now build the global commands in a second pass
        RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
-       map.put(this.f_82090_.getRoot(), rootcommandnode);
--      this.m_82112_(this.f_82090_.getRoot(), rootcommandnode, p_82096_.m_20203_(), map);
--      p_82096_.f_8906_.m_9829_(new ClientboundCommandsPacket(rootcommandnode));
+       map.put(this.dispatcher.getRoot(), rootcommandnode);
+-      this.fillUsableCommands(this.dispatcher.getRoot(), rootcommandnode, p_82096_.createCommandSourceStack(), map);
+-      p_82096_.connection.send(new ClientboundCommandsPacket(rootcommandnode));
 +
-+      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.f_82090_.getRoot(), rootcommandnode, map, p_82096_.m_20203_(), ctx -> 0, suggest -> SuggestionProviders.m_121664_((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
++      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.dispatcher.getRoot(), rootcommandnode, map, p_82096_.createCommandSourceStack(), ctx -> 0, suggest -> SuggestionProviders.safelySwap((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
 +
 +      java.util.LinkedHashSet<String> set = new java.util.LinkedHashSet<>();
 +      for (CommandNode<SharedSuggestionProvider> child : rootcommandnode.getChildren()) {
@@ -186,18 +186,18 @@
 +      RootCommandNode<SharedSuggestionProvider> forgeRoot = new RootCommandNode<>();
 +      map.put(this.forgeDispatcher.getRoot(), forgeRoot);
 +
-+      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.forgeDispatcher.getRoot(), forgeRoot, map, p_82096_.m_20203_(), ctx -> 0, suggest -> SuggestionProviders.m_121664_((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
++      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.forgeDispatcher.getRoot(), forgeRoot, map, p_82096_.createCommandSourceStack(), ctx -> 0, suggest -> SuggestionProviders.safelySwap((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
 +
 +      //Add all the forge commands to the root node
 +      forgeRoot.getChildren().forEach(rootcommandnode::addChild);
 +
 +      ClientboundCommandsPacket packet = new ClientboundCommandsPacket(rootcommandnode);
 +      //Ketting TODO - ambassador support
-+      p_82096_.f_8906_.m_9829_(packet);
++      p_82096_.connection.send(packet);
     }
 +   //Ketting end
  
-    private void m_82112_(CommandNode<CommandSourceStack> p_82113_, CommandNode<SharedSuggestionProvider> p_82114_, CommandSourceStack p_82115_, Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> p_82116_) {
+    private void fillUsableCommands(CommandNode<CommandSourceStack> p_82113_, CommandNode<SharedSuggestionProvider> p_82114_, CommandSourceStack p_82115_, Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> p_82116_) {
        for(CommandNode<CommandSourceStack> commandnode : p_82113_.getChildren()) {
 +         if ( !org.spigotmc.SpigotConfig.sendNamespaced && commandnode.getName().contains( ":" ) ) continue; // Spigot
 +
@@ -207,10 +207,10 @@
 @@ -358,7 +_,44 @@
     }
  
-    public CommandDispatcher<CommandSourceStack> m_82094_() {
+    public CommandDispatcher<CommandSourceStack> getDispatcher() {
 +      if (org.kettingpowered.ketting.common.utils.DispatcherRedirector.needsRedirect())
 +         return getForgeDispatcher().unwrap();
-       return this.f_82090_;
+       return this.dispatcher;
 +   }
 +
 +   public org.kettingpowered.ketting.common.utils.Wrapper<CommandDispatcher<CommandSourceStack>> getForgeDispatcher() {
@@ -245,7 +245,7 @@
 +      if (found != null)
 +         return getForgeDispatcher();
 +
-+      return org.kettingpowered.ketting.common.utils.Wrapper.wrap(m_82094_()); //Call getDispatcher so we can still redirect if needed
++      return org.kettingpowered.ketting.common.utils.Wrapper.wrap(getDispatcher()); //Call getDispatcher so we can still redirect if needed
     }
  
     @Nullable

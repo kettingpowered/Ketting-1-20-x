@@ -3,19 +3,19 @@
 @@ -71,6 +_,9 @@
     }
  
-    public final CompoundTag m_192644_(StructurePieceSerializationContext p_192645_) {
-+      if (BuiltInRegistries.f_257014_.m_7981_(this.m_210000_()) == null) { // FORGE: Friendlier error then the Null String error below.
-+         throw new RuntimeException("StructurePiece \"" + this.getClass().getName() + "\": \"" + this.m_210000_() + "\" unregistered, serializing impossible.");
+    public final CompoundTag createTag(StructurePieceSerializationContext p_192645_) {
++      if (BuiltInRegistries.STRUCTURE_PIECE.getKey(this.getType()) == null) { // FORGE: Friendlier error then the Null String error below.
++         throw new RuntimeException("StructurePiece \"" + this.getClass().getName() + "\": \"" + this.getType() + "\" unregistered, serializing impossible.");
 +      }
        CompoundTag compoundtag = new CompoundTag();
-       compoundtag.m_128359_("id", BuiltInRegistries.f_257014_.m_7981_(this.m_210000_()).toString());
-       BoundingBox.f_162354_.encodeStart(NbtOps.f_128958_, this.f_73383_).resultOrPartial(f_163536_::error).ifPresent((p_163579_) -> {
+       compoundtag.putString("id", BuiltInRegistries.STRUCTURE_PIECE.getKey(this.getType()).toString());
+       BoundingBox.CODEC.encodeStart(NbtOps.INSTANCE, this.boundingBox).resultOrPartial(LOGGER::error).ifPresent((p_163579_) -> {
 @@ -385,7 +_,7 @@
     }
  
-    protected boolean m_226819_(WorldGenLevel p_226820_, BoundingBox p_226821_, RandomSource p_226822_, int p_226823_, int p_226824_, int p_226825_, Direction p_226826_, ResourceLocation p_226827_) {
--      BlockPos blockpos = this.m_163582_(p_226823_, p_226824_, p_226825_);
-+      BlockPos.MutableBlockPos blockpos = this.m_163582_(p_226823_, p_226824_, p_226825_);
-       if (p_226821_.m_71051_(blockpos) && !p_226820_.m_8055_(blockpos).m_60713_(Blocks.f_50061_)) {
-          this.m_73434_(p_226820_, Blocks.f_50061_.m_49966_().m_61124_(DispenserBlock.f_52659_, p_226826_), p_226823_, p_226824_, p_226825_, p_226821_);
-          BlockEntity blockentity = p_226820_.m_7702_(blockpos);
+    protected boolean createDispenser(WorldGenLevel p_226820_, BoundingBox p_226821_, RandomSource p_226822_, int p_226823_, int p_226824_, int p_226825_, Direction p_226826_, ResourceLocation p_226827_) {
+-      BlockPos blockpos = this.getWorldPos(p_226823_, p_226824_, p_226825_);
++      BlockPos.MutableBlockPos blockpos = this.getWorldPos(p_226823_, p_226824_, p_226825_);
+       if (p_226821_.isInside(blockpos) && !p_226820_.getBlockState(blockpos).is(Blocks.DISPENSER)) {
+          this.placeBlock(p_226820_, Blocks.DISPENSER.defaultBlockState().setValue(DispenserBlock.FACING, p_226826_), p_226823_, p_226824_, p_226825_, p_226821_);
+          BlockEntity blockentity = p_226820_.getBlockEntity(blockpos);

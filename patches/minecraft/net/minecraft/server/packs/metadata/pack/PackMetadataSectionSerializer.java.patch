@@ -3,7 +3,7 @@
 @@ -13,7 +_,7 @@
           throw new JsonParseException("Invalid/missing description!");
        } else {
-          int i = GsonHelper.m_13927_(p_10380_, "pack_format");
+          int i = GsonHelper.getAsInt(p_10380_, "pack_format");
 -         return new PackMetadataSection(component, i);
 +         return new PackMetadataSection(component, i, net.minecraftforge.common.ForgeHooks.readTypedPackFormats(p_10380_));
        }
@@ -11,8 +11,8 @@
  
 @@ -21,6 +_,7 @@
        JsonObject jsonobject = new JsonObject();
-       jsonobject.add("description", Component.Serializer.m_130716_(p_250206_.m_10373_()));
-       jsonobject.addProperty("pack_format", p_250206_.m_10374_());
+       jsonobject.add("description", Component.Serializer.toJsonTree(p_250206_.getDescription()));
+       jsonobject.addProperty("pack_format", p_250206_.getPackFormat());
 +      net.minecraftforge.common.ForgeHooks.writeTypedPackFormats(jsonobject, p_250206_);
        return jsonobject;
     }

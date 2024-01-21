@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/chunk/ChunkStatus.java
 +++ b/net/minecraft/world/level/chunk/ChunkStatus.java
 @@ -38,7 +_,7 @@
-    public static final ChunkStatus f_62314_ = m_62414_("empty", (ChunkStatus)null, -1, f_62327_, ChunkStatus.ChunkType.PROTOCHUNK, (p_156307_, p_156308_, p_156309_, p_156310_, p_156311_) -> {
+    public static final ChunkStatus EMPTY = registerSimple("empty", (ChunkStatus)null, -1, PRE_FEATURES, ChunkStatus.ChunkType.PROTOCHUNK, (p_156307_, p_156308_, p_156309_, p_156310_, p_156311_) -> {
     });
-    public static final ChunkStatus f_62315_ = m_280108_("structure_starts", f_62314_, 0, false, f_62327_, ChunkStatus.ChunkType.PROTOCHUNK, (p_289514_, p_289515_, p_289516_, p_289517_, p_289518_, p_289519_, p_289520_, p_289521_, p_289522_) -> {
--      if (p_289516_.m_7654_().m_129910_().m_246337_().m_247749_()) {
-+      if (p_289516_.f_8549_.m_246337_().m_247749_()) { // CraftBukkit
-          p_289517_.m_255037_(p_289516_.m_9598_(), p_289516_.m_7726_().m_255415_(), p_289516_.m_215010_(), p_289522_, p_289518_);
+    public static final ChunkStatus STRUCTURE_STARTS = register("structure_starts", EMPTY, 0, false, PRE_FEATURES, ChunkStatus.ChunkType.PROTOCHUNK, (p_289514_, p_289515_, p_289516_, p_289517_, p_289518_, p_289519_, p_289520_, p_289521_, p_289522_) -> {
+-      if (p_289516_.getServer().getWorldData().worldGenOptions().generateStructures()) {
++      if (p_289516_.serverLevelData.worldGenOptions().generateStructures()) { // CraftBukkit
+          p_289517_.createStructures(p_289516_.registryAccess(), p_289516_.getChunkSource().getGeneratorState(), p_289516_.structureManager(), p_289522_, p_289518_);
        }
  

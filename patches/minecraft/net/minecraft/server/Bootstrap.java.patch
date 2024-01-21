@@ -1,85 +1,85 @@
 --- a/net/minecraft/server/Bootstrap.java
 +++ b/net/minecraft/server/Bootstrap.java
 @@ -54,9 +_,74 @@
-                CauldronInteraction.m_175649_();
-                BuiltInRegistries.m_257498_();
-                CreativeModeTabs.m_280019_();
+                CauldronInteraction.bootStrap();
+                BuiltInRegistries.bootStrap();
+                CreativeModeTabs.validate();
 +               net.minecraftforge.registries.GameData.vanillaSnapshot();
 +               if (false) // skip redirectOutputToLog, Forge already redirects stdout and stderr output to log so that they print with more context
-                m_135890_();
-                f_285608_.set(Duration.between(instant, Instant.now()).toMillis());
+                wrapStreams();
+                bootstrapDuration.set(Duration.between(instant, Instant.now()).toMillis());
              }
 +            // CraftBukkit start - easier than fixing the decompile
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1008, "{Name:'minecraft:oak_sign',Properties:{rotation:'0'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'0'}}");
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1009, "{Name:'minecraft:oak_sign',Properties:{rotation:'1'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'1'}}");
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1010, "{Name:'minecraft:oak_sign',Properties:{rotation:'2'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'2'}}");
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1011, "{Name:'minecraft:oak_sign',Properties:{rotation:'3'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'3'}}");
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1012, "{Name:'minecraft:oak_sign',Properties:{rotation:'4'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'4'}}");
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1013, "{Name:'minecraft:oak_sign',Properties:{rotation:'5'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'5'}}");
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1014, "{Name:'minecraft:oak_sign',Properties:{rotation:'6'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'6'}}");
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1015, "{Name:'minecraft:oak_sign',Properties:{rotation:'7'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'7'}}");
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1016, "{Name:'minecraft:oak_sign',Properties:{rotation:'8'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'8'}}");
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1017, "{Name:'minecraft:oak_sign',Properties:{rotation:'9'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'9'}}");
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1018, "{Name:'minecraft:oak_sign',Properties:{rotation:'10'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'10'}}");
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1019, "{Name:'minecraft:oak_sign',Properties:{rotation:'11'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'11'}}");
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1020, "{Name:'minecraft:oak_sign',Properties:{rotation:'12'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'12'}}");
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1021, "{Name:'minecraft:oak_sign',Properties:{rotation:'13'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'13'}}");
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1022, "{Name:'minecraft:oak_sign',Properties:{rotation:'14'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'14'}}");
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1023, "{Name:'minecraft:oak_sign',Properties:{rotation:'15'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'15'}}");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(323, "minecraft:oak_sign");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1008, "{Name:'minecraft:oak_sign',Properties:{rotation:'0'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'0'}}");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1009, "{Name:'minecraft:oak_sign',Properties:{rotation:'1'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'1'}}");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1010, "{Name:'minecraft:oak_sign',Properties:{rotation:'2'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'2'}}");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1011, "{Name:'minecraft:oak_sign',Properties:{rotation:'3'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'3'}}");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1012, "{Name:'minecraft:oak_sign',Properties:{rotation:'4'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'4'}}");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1013, "{Name:'minecraft:oak_sign',Properties:{rotation:'5'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'5'}}");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1014, "{Name:'minecraft:oak_sign',Properties:{rotation:'6'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'6'}}");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1015, "{Name:'minecraft:oak_sign',Properties:{rotation:'7'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'7'}}");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1016, "{Name:'minecraft:oak_sign',Properties:{rotation:'8'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'8'}}");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1017, "{Name:'minecraft:oak_sign',Properties:{rotation:'9'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'9'}}");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1018, "{Name:'minecraft:oak_sign',Properties:{rotation:'10'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'10'}}");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1019, "{Name:'minecraft:oak_sign',Properties:{rotation:'11'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'11'}}");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1020, "{Name:'minecraft:oak_sign',Properties:{rotation:'12'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'12'}}");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1021, "{Name:'minecraft:oak_sign',Properties:{rotation:'13'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'13'}}");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1022, "{Name:'minecraft:oak_sign',Properties:{rotation:'14'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'14'}}");
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1023, "{Name:'minecraft:oak_sign',Properties:{rotation:'15'}}", "{Name:'minecraft:standing_sign',Properties:{rotation:'15'}}");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(323, "minecraft:oak_sign");
 +
-+            net.minecraft.util.datafix.fixes.BlockStateData.m_14942_(1440, "{Name:\'minecraft:portal\',Properties:{axis:\'x\'}}", new String[]{"{Name:\'minecraft:portal\',Properties:{axis:\'x\'}}"});
++            net.minecraft.util.datafix.fixes.BlockStateData.register(1440, "{Name:\'minecraft:portal\',Properties:{axis:\'x\'}}", new String[]{"{Name:\'minecraft:portal\',Properties:{axis:\'x\'}}"});
 +
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(409, "minecraft:prismarine_shard");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(410, "minecraft:prismarine_crystals");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(411, "minecraft:rabbit");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(412, "minecraft:cooked_rabbit");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(413, "minecraft:rabbit_stew");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(414, "minecraft:rabbit_foot");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(415, "minecraft:rabbit_hide");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(416, "minecraft:armor_stand");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(409, "minecraft:prismarine_shard");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(410, "minecraft:prismarine_crystals");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(411, "minecraft:rabbit");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(412, "minecraft:cooked_rabbit");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(413, "minecraft:rabbit_stew");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(414, "minecraft:rabbit_foot");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(415, "minecraft:rabbit_hide");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(416, "minecraft:armor_stand");
 +
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(423, "minecraft:mutton");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(424, "minecraft:cooked_mutton");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(425, "minecraft:banner");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(426, "minecraft:end_crystal");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(427, "minecraft:spruce_door");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(428, "minecraft:birch_door");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(429, "minecraft:jungle_door");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(430, "minecraft:acacia_door");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(431, "minecraft:dark_oak_door");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(432, "minecraft:chorus_fruit");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(433, "minecraft:chorus_fruit_popped");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(434, "minecraft:beetroot");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(435, "minecraft:beetroot_seeds");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(436, "minecraft:beetroot_soup");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(437, "minecraft:dragon_breath");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(438, "minecraft:splash_potion");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(439, "minecraft:spectral_arrow");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(440, "minecraft:tipped_arrow");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(441, "minecraft:lingering_potion");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(442, "minecraft:shield");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(443, "minecraft:elytra");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(444, "minecraft:spruce_boat");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(445, "minecraft:birch_boat");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(446, "minecraft:jungle_boat");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(447, "minecraft:acacia_boat");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(448, "minecraft:dark_oak_boat");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(449, "minecraft:totem_of_undying");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(450, "minecraft:shulker_shell");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(452, "minecraft:iron_nugget");
-+            net.minecraft.util.datafix.fixes.ItemIdFix.f_15937_.put(453, "minecraft:knowledge_book");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(423, "minecraft:mutton");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(424, "minecraft:cooked_mutton");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(425, "minecraft:banner");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(426, "minecraft:end_crystal");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(427, "minecraft:spruce_door");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(428, "minecraft:birch_door");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(429, "minecraft:jungle_door");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(430, "minecraft:acacia_door");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(431, "minecraft:dark_oak_door");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(432, "minecraft:chorus_fruit");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(433, "minecraft:chorus_fruit_popped");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(434, "minecraft:beetroot");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(435, "minecraft:beetroot_seeds");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(436, "minecraft:beetroot_soup");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(437, "minecraft:dragon_breath");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(438, "minecraft:splash_potion");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(439, "minecraft:spectral_arrow");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(440, "minecraft:tipped_arrow");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(441, "minecraft:lingering_potion");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(442, "minecraft:shield");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(443, "minecraft:elytra");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(444, "minecraft:spruce_boat");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(445, "minecraft:birch_boat");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(446, "minecraft:jungle_boat");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(447, "minecraft:acacia_boat");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(448, "minecraft:dark_oak_boat");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(449, "minecraft:totem_of_undying");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(450, "minecraft:shulker_shell");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(452, "minecraft:iron_nugget");
++            net.minecraft.util.datafix.fixes.ItemIdFix.ITEM_NAMES.put(453, "minecraft:knowledge_book");
 +
-+            net.minecraft.util.datafix.fixes.ItemSpawnEggFix.f_16031_[23] = "Arrow";
++            net.minecraft.util.datafix.fixes.ItemSpawnEggFix.ID_TO_ENTITY[23] = "Arrow";
 +            // CraftBukkit end
           }
        }
     }
 @@ -127,7 +_,6 @@
-          Commands.m_82138_();
+          Commands.validate();
        }
  
--      DefaultAttributes.m_22296_();
+-      DefaultAttributes.validate();
     }
  
-    private static void m_135890_() {
+    private static void wrapStreams() {

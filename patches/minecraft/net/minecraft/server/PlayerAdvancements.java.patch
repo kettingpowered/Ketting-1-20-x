@@ -3,40 +3,40 @@
 @@ -142,6 +_,7 @@
     }
  
-    public void m_135991_() {
+    public void save() {
 +      if (org.spigotmc.SpigotConfig.disableAdvancementSaving) return; // Spigot
        Map<ResourceLocation, AdvancementProgress> map = new LinkedHashMap<>();
  
-       for(Map.Entry<Advancement, AdvancementProgress> entry : this.f_263740_.entrySet()) {
+       for(Map.Entry<Advancement, AdvancementProgress> entry : this.progress.entrySet()) {
 @@ -167,6 +_,8 @@
     }
  
-    public boolean m_135988_(Advancement p_135989_, String p_135990_) {
+    public boolean award(Advancement p_135989_, String p_135990_) {
 +      // Forge: don't grant advancements for fake players
-+      if (this.f_135968_ instanceof net.minecraftforge.common.util.FakePlayer) return false;
++      if (this.player instanceof net.minecraftforge.common.util.FakePlayer) return false;
        boolean flag = false;
-       AdvancementProgress advancementprogress = this.m_135996_(p_135989_);
-       boolean flag1 = advancementprogress.m_8193_();
+       AdvancementProgress advancementprogress = this.getOrStartProgress(p_135989_);
+       boolean flag1 = advancementprogress.isDone();
 @@ -174,11 +_,14 @@
-          this.m_136008_(p_135989_);
-          this.f_135967_.add(p_135989_);
+          this.unregisterListeners(p_135989_);
+          this.progressChanged.add(p_135989_);
           flag = true;
-+         net.minecraftforge.event.ForgeEventFactory.onAdvancementProgressedEvent(this.f_135968_, p_135989_, advancementprogress, p_135990_, net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent.ProgressType.GRANT);
-          if (!flag1 && advancementprogress.m_8193_()) {
-+            this.f_135968_.m_9236_().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.player.PlayerAdvancementDoneEvent(this.f_135968_.getBukkitEntity(), p_135989_.bukkit)); // CraftBukkit
-             p_135989_.m_138321_().m_9989_(this.f_135968_);
-             if (p_135989_.m_138320_() != null && p_135989_.m_138320_().m_14996_() && this.f_135968_.m_9236_().m_46469_().m_46207_(GameRules.f_46153_)) {
-                this.f_135962_.m_240416_(Component.m_237110_("chat.type.advancement." + p_135989_.m_138320_().m_14992_().m_15548_(), this.f_135968_.m_5446_(), p_135989_.m_138330_()), false);
++         net.minecraftforge.event.ForgeEventFactory.onAdvancementProgressedEvent(this.player, p_135989_, advancementprogress, p_135990_, net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent.ProgressType.GRANT);
+          if (!flag1 && advancementprogress.isDone()) {
++            this.player.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.player.PlayerAdvancementDoneEvent(this.player.getBukkitEntity(), p_135989_.bukkit)); // CraftBukkit
+             p_135989_.getRewards().grant(this.player);
+             if (p_135989_.getDisplay() != null && p_135989_.getDisplay().shouldAnnounceChat() && this.player.level().getGameRules().getBoolean(GameRules.RULE_ANNOUNCE_ADVANCEMENTS)) {
+                this.playerList.broadcastSystemMessage(Component.translatable("chat.type.advancement." + p_135989_.getDisplay().getFrame().getName(), this.player.getDisplayName(), p_135989_.getChatComponent()), false);
              }
-+            net.minecraftforge.event.ForgeEventFactory.onAdvancementEarnedEvent(this.f_135968_, p_135989_);
++            net.minecraftforge.event.ForgeEventFactory.onAdvancementEarnedEvent(this.player, p_135989_);
           }
        }
  
 @@ -197,6 +_,7 @@
-          this.m_136004_(p_135999_);
-          this.f_135967_.add(p_135999_);
+          this.registerListeners(p_135999_);
+          this.progressChanged.add(p_135999_);
           flag = true;
-+         net.minecraftforge.event.ForgeEventFactory.onAdvancementProgressedEvent(this.f_135968_, p_135999_, advancementprogress, p_136000_, net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent.ProgressType.REVOKE);
++         net.minecraftforge.event.ForgeEventFactory.onAdvancementProgressedEvent(this.player, p_135999_, advancementprogress, p_136000_, net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent.ProgressType.REVOKE);
        }
  
-       if (flag1 && !advancementprogress.m_8193_()) {
+       if (flag1 && !advancementprogress.isDone()) {

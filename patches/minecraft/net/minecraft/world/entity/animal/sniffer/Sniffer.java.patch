@@ -4,32 +4,32 @@
  
     public Sniffer(EntityType<? extends Animal> p_273717_, Level p_273562_) {
        super(p_273717_, p_273562_);
--      this.f_19804_.m_135372_(f_271416_, Sniffer.State.IDLING);
--      this.f_19804_.m_135372_(f_271498_, 0);
+-      this.entityData.define(DATA_STATE, Sniffer.State.IDLING);
+-      this.entityData.define(DATA_DROP_SEED_AT_TICK, 0);
 +      //this.entityData.define(DATA_STATE, Sniffer.State.IDLING); // CraftBukkit - moved down to appropriate location
 +      //this.entityData.define(DATA_DROP_SEED_AT_TICK, 0); // CraftBukkit - moved down to appropriate location
-       this.m_21573_().m_7008_(true);
-       this.m_21441_(BlockPathTypes.WATER, -1.0F);
-       this.m_21441_(BlockPathTypes.DANGER_POWDER_SNOW, -1.0F);
-       this.m_21441_(BlockPathTypes.DAMAGE_CAUTIOUS, -1.0F);
+       this.getNavigation().setCanFloat(true);
+       this.setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
+       this.setPathfindingMalus(BlockPathTypes.DANGER_POWDER_SNOW, -1.0F);
+       this.setPathfindingMalus(BlockPathTypes.DAMAGE_CAUTIOUS, -1.0F);
     }
  
 +   // CraftBukkit start - SPIGOT-7295: moved from constructor to appropriate location
 +   @Override
-+   protected void m_8097_() {
-+      super.m_8097_();
-+      this.f_19804_.m_135372_(Sniffer.f_271416_, Sniffer.State.IDLING);
-+      this.f_19804_.m_135372_(Sniffer.f_271498_, 0);
++   protected void defineSynchedData() {
++      super.defineSynchedData();
++      this.entityData.define(Sniffer.DATA_STATE, Sniffer.State.IDLING);
++      this.entityData.define(Sniffer.DATA_DROP_SEED_AT_TICK, 0);
 +   }
 +   // CraftBukkit end
 +
-    protected float m_6431_(Pose p_272721_, EntityDimensions p_273353_) {
-       return this.m_6972_(p_272721_).f_20378_ * 0.6F;
+    protected float getStandingEyeHeight(Pose p_272721_, EntityDimensions p_273353_) {
+       return this.getDimensions(p_272721_).height * 0.6F;
     }
 @@ -257,6 +_,14 @@
  
           for(ItemStack itemstack : list) {
-             ItemEntity itementity = new ItemEntity(serverlevel, (double)blockpos.m_123341_(), (double)blockpos.m_123342_(), (double)blockpos.m_123343_(), itemstack);
+             ItemEntity itementity = new ItemEntity(serverlevel, (double)blockpos.getX(), (double)blockpos.getY(), (double)blockpos.getZ(), itemstack);
 +            // CraftBukkit start - handle EntityDropItemEvent
 +            org.bukkit.event.entity.EntityDropItemEvent event = new org.bukkit.event.entity.EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) itementity.getBukkitEntity());
 +            org.bukkit.Bukkit.getPluginManager().callEvent(event);
@@ -38,15 +38,15 @@
 +            }
 +            // CraftBukkit end
 +
-             itementity.m_32060_();
-             serverlevel.m_7967_(itementity);
+             itementity.setDefaultPickUpDelay();
+             serverlevel.addFreshEntity(itementity);
           }
 @@ -277,7 +_,7 @@
              }
  
-             if (this.f_19797_ % 10 == 0) {
--               this.m_9236_().m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), blockstate.m_60827_().m_56778_(), this.m_5720_(), 0.5F, 0.5F, false);
-+               this.m_9236_().m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), blockstate.getSoundType(m_9236_(), blockpos.m_7495_(), this).m_56778_(), this.m_5720_(), 0.5F, 0.5F, false);
+             if (this.tickCount % 10 == 0) {
+-               this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), blockstate.getSoundType().getHitSound(), this.getSoundSource(), 0.5F, 0.5F, false);
++               this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), blockstate.getSoundType(level(), blockpos.below(), this).getHitSound(), this.getSoundSource(), 0.5F, 0.5F, false);
              }
           }
        }

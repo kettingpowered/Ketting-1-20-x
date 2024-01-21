@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/entity/ai/behavior/PrepareRamNearestTarget.java
 +++ b/net/minecraft/world/entity/ai/behavior/PrepareRamNearestTarget.java
 @@ -56,6 +_,13 @@
-             return this.f_147718_.m_26885_(p_147737_, p_147789_);
+             return this.ramTargeting.test(p_147737_, p_147789_);
           });
        }).ifPresent((p_147778_) -> {
 +         // CraftBukkit start
@@ -11,6 +11,6 @@
 +         }
 +         p_147778_ = ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +         // CraftBukkit end
-          this.m_147765_(p_147737_, p_147778_);
+          this.chooseRamPosition(p_147737_, p_147778_);
        });
     }

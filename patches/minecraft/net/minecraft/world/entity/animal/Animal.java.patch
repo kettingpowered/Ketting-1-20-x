@@ -1,23 +1,23 @@
 --- a/net/minecraft/world/entity/animal/Animal.java
 +++ b/net/minecraft/world/entity/animal/Animal.java
 @@ -35,6 +_,7 @@
-    public int f_27554_;
+    public int inLove;
     @Nullable
-    public UUID f_27555_;
+    public UUID loveCause;
 +   public ItemStack breedItem; // CraftBukkit - Add breedItem variable
  
     protected Animal(EntityType<? extends Animal> p_27557_, Level p_27558_) {
        super(p_27557_, p_27558_);
 @@ -72,8 +_,13 @@
-       if (this.m_6673_(p_27567_)) {
+       if (this.isInvulnerableTo(p_27567_)) {
           return false;
        } else {
--         this.f_27554_ = 0;
--         return super.m_6469_(p_27567_, p_27568_);
+-         this.inLove = 0;
+-         return super.hurt(p_27567_, p_27568_);
 +         // CraftBukkit start
-+         boolean result = super.m_6469_(p_27567_, p_27568_);
++         boolean result = super.hurt(p_27567_, p_27568_);
 +         if (result) {
-+            this.f_27554_ = 0;
++            this.inLove = 0;
 +         }
 +         return result;
 +         // CraftBukkit end
@@ -27,47 +27,47 @@
 @@ -160,10 +_,17 @@
     }
  
-    public void m_27595_(@Nullable Player p_27596_) {
--      this.f_27554_ = 600;
+    public void setInLove(@Nullable Player p_27596_) {
+-      this.inLove = 600;
 +      // CraftBukkit start
 +      org.bukkit.event.entity.EntityEnterLoveModeEvent entityEnterLoveModeEvent = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityEnterLoveModeEvent(p_27596_, this, 600);
 +      if (entityEnterLoveModeEvent.isCancelled()) {
 +         return;
 +      }
-+      this.f_27554_ = entityEnterLoveModeEvent.getTicksInLove();
++      this.inLove = entityEnterLoveModeEvent.getTicksInLove();
 +      // CraftBukkit end
        if (p_27596_ != null) {
-          this.f_27555_ = p_27596_.m_20148_();
+          this.loveCause = p_27596_.getUUID();
        }
-+      this.breedItem = p_27596_.m_150109_().m_36056_(); // CraftBukkit
++      this.breedItem = p_27596_.getInventory().getSelected(); // CraftBukkit
  
-       this.m_9236_().m_7605_(this, (byte)18);
+       this.level().broadcastEntityEvent(this, (byte)18);
     }
 @@ -206,15 +_,43 @@
  
-    public void m_27563_(ServerLevel p_27564_, Animal p_27565_) {
-       AgeableMob ageablemob = this.m_142606_(p_27564_, p_27565_);
+    public void spawnChildFromBreeding(ServerLevel p_27564_, Animal p_27565_) {
+       AgeableMob ageablemob = this.getBreedOffspring(p_27564_, p_27565_);
 +      final net.minecraftforge.event.entity.living.BabyEntitySpawnEvent event = new net.minecraftforge.event.entity.living.BabyEntitySpawnEvent(this, p_27565_, ageablemob);
 +      final boolean cancelled = net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +      ageablemob = event.getChild();
 +      if (cancelled) {
 +         //Reset the "inLove" state for the animals
-+         this.m_146762_(6000);
-+         p_27565_.m_146762_(6000);
-+         this.m_27594_();
-+         p_27565_.m_27594_();
++         this.setAge(6000);
++         p_27565_.setAge(6000);
++         this.resetLove();
++         p_27565_.resetLove();
 +         return;
 +      }
        if (ageablemob != null) {
-          ageablemob.m_6863_(true);
-          ageablemob.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), 0.0F, 0.0F);
--         this.m_277117_(p_27564_, p_27565_, ageablemob);
--         p_27564_.m_47205_(ageablemob);
+          ageablemob.setBaby(true);
+          ageablemob.moveTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
+-         this.finalizeSpawnChildFromBreeding(p_27564_, p_27565_, ageablemob);
+-         p_27564_.addFreshEntityWithPassengers(ageablemob);
 +         // CraftBukkit start - call EntityBreedEvent
-+         ServerPlayer breeder = Optional.ofNullable(this.m_27592_()).or(() -> {
-+            return Optional.ofNullable(p_27565_.m_27592_());
++         ServerPlayer breeder = Optional.ofNullable(this.getLoveCause()).or(() -> {
++            return Optional.ofNullable(p_27565_.getLoveCause());
 +         }).orElse(null);
-+         int experience = this.m_217043_().m_188503_(7) + 1;
++         int experience = this.getRandom().nextInt(7) + 1;
 +         org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityBreedEvent(ageablemob, this, p_27565_, breeder, this.breedItem, experience);
 +         if (entityBreedEvent.isCancelled()) {
 +            return;
@@ -79,24 +79,24 @@
        }
     }
  
-    public void m_277117_(ServerLevel p_277963_, Animal p_277357_, @Nullable AgeableMob p_277516_) {
+    public void finalizeSpawnChildFromBreeding(ServerLevel p_277963_, Animal p_277357_, @Nullable AgeableMob p_277516_) {
 +      // CraftBukkit start
-+      this.finalizeSpawnChildFromBreeding(p_277963_, p_277357_, p_277516_, this.m_217043_().m_188503_(7) + 1);
++      this.finalizeSpawnChildFromBreeding(p_277963_, p_277357_, p_277516_, this.getRandom().nextInt(7) + 1);
 +   }
 +
 +   public void finalizeSpawnChildFromBreeding(ServerLevel p_277963_, Animal p_277357_, @Nullable AgeableMob p_277516_, int experience) {
 +      // CraftBukkit end
-       Optional.ofNullable(this.m_27592_()).or(() -> {
-          return Optional.ofNullable(p_277357_.m_27592_());
+       Optional.ofNullable(this.getLoveCause()).or(() -> {
+          return Optional.ofNullable(p_277357_.getLoveCause());
        }).ifPresent((p_277486_) -> {
 @@ -227,7 +_,11 @@
-       p_277357_.m_27594_();
-       p_277963_.m_7605_(this, (byte)18);
-       if (p_277963_.m_46469_().m_46207_(GameRules.f_46135_)) {
--         p_277963_.m_7967_(new ExperienceOrb(p_277963_, this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_217043_().m_188503_(7) + 1));
+       p_277357_.resetLove();
+       p_277963_.broadcastEntityEvent(this, (byte)18);
+       if (p_277963_.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
+-         p_277963_.addFreshEntity(new ExperienceOrb(p_277963_, this.getX(), this.getY(), this.getZ(), this.getRandom().nextInt(7) + 1));
 +         // CraftBukkit start - use event experience
 +         if (experience > 0) {
-+            p_277963_.m_7967_(new ExperienceOrb(p_277963_, this.m_20185_(), this.m_20186_(), this.m_20189_(), experience));
++            p_277963_.addFreshEntity(new ExperienceOrb(p_277963_, this.getX(), this.getY(), this.getZ(), experience));
 +         }
 +         // CraftBukkit end
        }

@@ -1,26 +1,26 @@
 --- a/net/minecraft/world/item/StandingAndWallBlockItem.java
 +++ b/net/minecraft/world/item/StandingAndWallBlockItem.java
 @@ -28,7 +_,7 @@
-    protected BlockState m_5965_(BlockPlaceContext p_43255_) {
-       BlockState blockstate = this.f_43246_.m_5573_(p_43255_);
+    protected BlockState getPlacementState(BlockPlaceContext p_43255_) {
+       BlockState blockstate = this.wallBlock.getStateForPlacement(p_43255_);
        BlockState blockstate1 = null;
--      LevelReader levelreader = p_43255_.m_43725_();
-+      net.minecraft.world.level.Level levelreader = p_43255_.m_43725_();
-       BlockPos blockpos = p_43255_.m_8083_();
+-      LevelReader levelreader = p_43255_.getLevel();
++      net.minecraft.world.level.Level levelreader = p_43255_.getLevel();
+       BlockPos blockpos = p_43255_.getClickedPos();
  
-       for(Direction direction : p_43255_.m_6232_()) {
+       for(Direction direction : p_43255_.getNearestLookingDirections()) {
 @@ -41,11 +_,28 @@
           }
        }
  
--      return blockstate1 != null && levelreader.m_45752_(blockstate1, blockpos, CollisionContext.m_82749_()) ? blockstate1 : null;
+-      return blockstate1 != null && levelreader.isUnobstructed(blockstate1, blockpos, CollisionContext.empty()) ? blockstate1 : null;
 +      // CraftBukkit start
 +      if (blockstate1 != null) {
-+         boolean defaultReturn = levelreader.m_45752_(blockstate1, blockpos, CollisionContext.m_82749_());
-+         org.bukkit.entity.Player player = (p_43255_.m_43723_() instanceof net.minecraft.server.level.ServerPlayer) ? (org.bukkit.entity.Player) p_43255_.m_43723_().getBukkitEntity() : null;
++         boolean defaultReturn = levelreader.isUnobstructed(blockstate1, blockpos, CollisionContext.empty());
++         org.bukkit.entity.Player player = (p_43255_.getPlayer() instanceof net.minecraft.server.level.ServerPlayer) ? (org.bukkit.entity.Player) p_43255_.getPlayer().getBukkitEntity() : null;
 +
 +         org.bukkit.event.block.BlockCanBuildEvent event = new org.bukkit.event.block.BlockCanBuildEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(levelreader, blockpos), player, org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData.fromData(blockstate1), defaultReturn);
-+         p_43255_.m_43725_().getCraftServer().getPluginManager().callEvent(event);
++         p_43255_.getLevel().getCraftServer().getPluginManager().callEvent(event);
 +
 +         return (event.isBuildable()) ? blockstate1 : null;
 +      } else {
@@ -29,13 +29,13 @@
 +      // CraftBukkit end
     }
  
-    public void m_6192_(Map<Block, Item> p_43252_, Item p_43253_) {
-       super.m_6192_(p_43252_, p_43253_);
-       p_43252_.put(this.f_43246_, p_43253_);
+    public void registerBlocks(Map<Block, Item> p_43252_, Item p_43253_) {
+       super.registerBlocks(p_43252_, p_43253_);
+       p_43252_.put(this.wallBlock, p_43253_);
 +   }
 +
 +   public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
 +      super.removeFromBlockToItemMap(blockToItemMap, itemIn);
-+      blockToItemMap.remove(this.f_43246_);
++      blockToItemMap.remove(this.wallBlock);
     }
  }

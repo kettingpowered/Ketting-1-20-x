@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/inventory/TransientCraftingContainer.java
 +++ b/net/minecraft/world/inventory/TransientCraftingContainer.java
 @@ -13,6 +_,68 @@
-    private final int f_286972_;
-    private final AbstractContainerMenu f_286998_;
+    private final int height;
+    private final AbstractContainerMenu menu;
  
 +   // CraftBukkit start - add fields
 +   public List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
@@ -12,7 +12,7 @@
 +   private int maxStack = MAX_STACK;
 +
 +   public List<ItemStack> getContents() {
-+      return this.f_286951_;
++      return this.items;
 +   }
 +
 +   public void onOpen(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
@@ -20,7 +20,7 @@
 +   }
 +
 +   public org.bukkit.event.inventory.InventoryType getInvType() {
-+      return f_286951_.size() == 4 ? org.bukkit.event.inventory.InventoryType.CRAFTING : org.bukkit.event.inventory.InventoryType.WORKBENCH;
++      return items.size() == 4 ? org.bukkit.event.inventory.InventoryType.CRAFTING : org.bukkit.event.inventory.InventoryType.WORKBENCH;
 +   }
 +
 +   public void onClose(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
@@ -36,7 +36,7 @@
 +   }
 +
 +   @Override
-+   public int m_6893_() {
++   public int getMaxStackSize() {
 +      return maxStack;
 +   }
 +
@@ -47,7 +47,7 @@
 +
 +   @Override
 +   public org.bukkit.Location getLocation() {
-+      return f_286998_ instanceof CraftingMenu ? ((CraftingMenu) f_286998_).f_39350_.getLocation() : owner.getBukkitEntity().getLocation();
++      return menu instanceof CraftingMenu ? ((CraftingMenu) menu).access.getLocation() : owner.getBukkitEntity().getLocation();
 +   }
 +
 +   @Override
@@ -67,5 +67,5 @@
 +   // CraftBukkit end
 +
     public TransientCraftingContainer(AbstractContainerMenu p_287684_, int p_287629_, int p_287593_) {
-       this(p_287684_, p_287629_, p_287593_, NonNullList.m_122780_(p_287629_ * p_287593_, ItemStack.f_41583_));
+       this(p_287684_, p_287629_, p_287593_, NonNullList.withSize(p_287629_ * p_287593_, ItemStack.EMPTY));
     }

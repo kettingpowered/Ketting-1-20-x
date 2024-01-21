@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/inventory/InventoryMenu.java
 +++ b/net/minecraft/world/inventory/InventoryMenu.java
 @@ -33,15 +_,25 @@
-    public static final ResourceLocation f_39697_ = new ResourceLocation("item/empty_armor_slot_shield");
-    static final ResourceLocation[] f_39699_ = new ResourceLocation[]{f_39696_, f_39695_, f_39694_, f_39693_};
-    private static final EquipmentSlot[] f_39700_ = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
--   private final CraftingContainer f_39701_ = new TransientCraftingContainer(this, 2, 2);
-+   private final CraftingContainer f_39701_; // CraftBukkit
-    private final ResultContainer f_39702_ = new ResultContainer();
-    public final boolean f_39698_;
-    private final Player f_39703_;
+    public static final ResourceLocation EMPTY_ARMOR_SLOT_SHIELD = new ResourceLocation("item/empty_armor_slot_shield");
+    static final ResourceLocation[] TEXTURE_EMPTY_SLOTS = new ResourceLocation[]{EMPTY_ARMOR_SLOT_BOOTS, EMPTY_ARMOR_SLOT_LEGGINGS, EMPTY_ARMOR_SLOT_CHESTPLATE, EMPTY_ARMOR_SLOT_HELMET};
+    private static final EquipmentSlot[] SLOT_IDS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+-   private final CraftingContainer craftSlots = new TransientCraftingContainer(this, 2, 2);
++   private final CraftingContainer craftSlots; // CraftBukkit
+    private final ResultContainer resultSlots = new ResultContainer();
+    public final boolean active;
+    private final Player owner;
 +   // CraftBukkit start
 +   private org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView bukkitEntity = null;
 +   private Inventory player;
@@ -16,29 +16,29 @@
  
     public InventoryMenu(Inventory p_39706_, boolean p_39707_, final Player p_39708_) {
        super((MenuType<?>)null, 0);
-       this.f_39698_ = p_39707_;
-       this.f_39703_ = p_39708_;
+       this.active = p_39707_;
+       this.owner = p_39708_;
 +      // CraftBukkit start
-+      this.f_39701_ = new TransientCraftingContainer(this, 2, 2, p_39706_.f_35978_); // CraftBukkit - pass player
-+      ((TransientCraftingContainer)this.f_39701_).resultInventory = this.f_39702_; // CraftBukkit - let InventoryCrafting know about its result slot
++      this.craftSlots = new TransientCraftingContainer(this, 2, 2, p_39706_.player); // CraftBukkit - pass player
++      ((TransientCraftingContainer)this.craftSlots).resultInventory = this.resultSlots; // CraftBukkit - let InventoryCrafting know about its result slot
 +      this.player = p_39706_; // CraftBukkit - save player
-+      setTitle(net.minecraft.network.chat.Component.m_237115_("container.crafting")); // SPIGOT-4722: Allocate title for player inventory
++      setTitle(net.minecraft.network.chat.Component.translatable("container.crafting")); // SPIGOT-4722: Allocate title for player inventory
 +      // CraftBukkit end
-       this.m_38897_(new ResultSlot(p_39706_.f_35978_, this.f_39701_, this.f_39702_, 0, 154, 28));
+       this.addSlot(new ResultSlot(p_39706_.player, this.craftSlots, this.resultSlots, 0, 154, 28));
  
        for(int i = 0; i < 2; ++i) {
 @@ -63,7 +_,7 @@
              }
  
-             public boolean m_5857_(ItemStack p_39746_) {
--               return equipmentslot == Mob.m_147233_(p_39746_);
-+               return p_39746_.canEquip(equipmentslot, f_39703_);
+             public boolean mayPlace(ItemStack p_39746_) {
+-               return equipmentslot == Mob.getEquipmentSlotForItem(p_39746_);
++               return p_39746_.canEquip(equipmentslot, owner);
              }
  
-             public boolean m_8010_(Player p_39744_) {
+             public boolean mayPickup(Player p_39744_) {
 @@ -232,4 +_,17 @@
-    public boolean m_142157_(int p_150591_) {
-       return p_150591_ != this.m_6636_();
+    public boolean shouldMoveToInventory(int p_150591_) {
+       return p_150591_ != this.getResultSlotIndex();
     }
 +
 +   // CraftBukkit start
@@ -48,8 +48,8 @@
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryCrafting inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryCrafting(this.f_39701_, this.f_39702_);
-+      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView(this.player.f_35978_.getBukkitEntity(), inventory, this);
++      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryCrafting inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryCrafting(this.craftSlots, this.resultSlots);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
