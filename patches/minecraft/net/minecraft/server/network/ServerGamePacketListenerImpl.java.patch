@@ -365,36 +365,73 @@
        int i = p_9862_.getSlot();
        if (Inventory.isHotbarSlot(i) || i == 40) {
           List<String> list = Lists.newArrayList();
-@@ -756,7 +_,7 @@
+@@ -756,7 +_,14 @@
     private void updateBookContents(List<FilteredText> p_9813_, int p_9814_) {
        ItemStack itemstack = this.player.getInventory().getItem(p_9814_);
        if (itemstack.is(Items.WRITABLE_BOOK)) {
 -         this.updateBookPages(p_9813_, UnaryOperator.identity(), itemstack);
-+         this.updateBookPages(p_9813_, UnaryOperator.identity(), itemstack.copy(), p_9814_, itemstack); // CraftBukkit
++         // Ketting
++         try{
++            // CraftBukkit
++            this.prepareUpdateBookPagesBukkit(p_9814_, itemstack);
++            this.updateBookPages(p_9813_, UnaryOperator.identity(), itemstack.copy()); 
++         }finally {
++            this.resetUpdateBookPagesBukkit();
++         }
        }
     }
  
-@@ -779,12 +_,12 @@
+@@ -777,13 +_,41 @@
+             itemstack1.addTagElement("title", StringTag.valueOf(p_215209_.raw()));
+          }
  
-          this.updateBookPages(p_215210_, (p_238206_) -> {
-             return Component.Serializer.toJson(Component.literal(p_238206_));
+-         this.updateBookPages(p_215210_, (p_238206_) -> {
+-            return Component.Serializer.toJson(Component.literal(p_238206_));
 -         }, itemstack1);
 -         this.player.getInventory().setItem(p_215211_, itemstack1);
-+         }, itemstack1, p_215211_, itemstack); // CraftBukkit
++         //Ketting
++         try{
++            // CraftBukkit
++            prepareUpdateBookPagesBukkit(p_215211_, itemstack);
++            this.updateBookPages(p_215210_, (p_238206_) -> {
++               return Component.Serializer.toJson(Component.literal(p_238206_));
++            }, itemstack1); 
++         }finally {
++            resetUpdateBookPagesBukkit();
++         }
 +         this.player.getInventory().setItem(p_215211_, itemstack); // CraftBukkit - event factory updates the hand book
        }
     }
  
--   private void updateBookPages(List<FilteredText> p_143635_, UnaryOperator<String> p_143636_, ItemStack p_143637_) {
-+   private void updateBookPages(List<FilteredText> p_143635_, UnaryOperator<String> p_143636_, ItemStack p_143637_, int slot, ItemStack handItem) { // CraftBukkit
++   // CraftBukkit
++   @Nullable private Integer updateBookPages$slot = null;
++   @Nullable private ItemStack updateBookPages$handItem = null;
++   private void prepareUpdateBookPagesBukkit(int slot, ItemStack handItem) {
++      updateBookPages$slot = slot;
++      updateBookPages$handItem = handItem;
++   }
++   private void resetUpdateBookPagesBukkit() {
++      updateBookPages$slot = null;
++      updateBookPages$handItem = null;
++   }
++   private void updateBookPagesBukkit(List<FilteredText> p_143635_, UnaryOperator<String> p_143636_, ItemStack p_143637_, int slot, ItemStack handItem) {
++      try{
++         updateBookPages$slot = slot;
++         updateBookPages$handItem = handItem;
++         updateBookPages(p_143635_, p_143636_, p_143637_);
++      }finally {
++         updateBookPages$handItem = null;
++         updateBookPages$slot = null;
++      }
++   }
+    private void updateBookPages(List<FilteredText> p_143635_, UnaryOperator<String> p_143636_, ItemStack p_143637_) {
        ListTag listtag = new ListTag();
        if (this.player.isTextFilteringEnabled()) {
-          p_143635_.stream().map((p_238209_) -> {
 @@ -809,6 +_,7 @@
        }
  
        p_143637_.addTagElement("pages", listtag);
-+      org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleEditBookEvent(player, slot, handItem, p_143637_); // CraftBukkit
++      if (updateBookPages$slot != null && updateBookPages$handItem!=null) org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleEditBookEvent(player, updateBookPages$slot, updateBookPages$handItem, p_143637_); // CraftBukkit
     }
  
     public void handleEntityTagQuery(ServerboundEntityTagQuery p_9864_) {
