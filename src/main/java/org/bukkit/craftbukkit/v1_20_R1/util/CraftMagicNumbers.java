@@ -106,7 +106,9 @@ public final class CraftMagicNumbers implements UnsafeValues {
         }
 
         for (net.minecraft.world.level.material.Fluid fluidType : BuiltInRegistries.FLUID) {
+            if (fluidType == null) continue; //Ketting in a bi-map multiple null keys are not allowed
             Fluid fluid = Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.FLUID.getKey(fluidType)));
+            if (fluid == null) continue; //Ketting in a bi-map multiple null values are not allowed
             FLUIDTYPE_FLUID.put(fluidType, fluid);
         }
 
