@@ -9,6 +9,15 @@
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final int INFINITE_DURATION = -1;
     private final MobEffect effect;
+@@ -45,7 +_,7 @@
+    }
+ 
+    public MobEffectInstance(MobEffect p_19528_, int p_19529_, int p_19530_, boolean p_19531_, boolean p_19532_, boolean p_19533_) {
+-      this(p_19528_, p_19529_, p_19530_, p_19531_, p_19532_, p_19533_, (MobEffectInstance)null, p_19528_.createFactorData());
++      this(p_19528_, p_19529_, p_19530_, p_19531_, p_19532_, p_19533_, (MobEffectInstance)null, p_19528_!=null?p_19528_.createFactorData():Optional.empty());
+    }
+ 
+    public MobEffectInstance(MobEffect p_216887_, int p_216888_, int p_216889_, boolean p_216890_, boolean p_216891_, boolean p_216892_, @Nullable MobEffectInstance p_216893_, Optional<MobEffectInstance.FactorData> p_216894_) {
 @@ -75,6 +_,7 @@
        this.ambient = p_19549_.ambient;
        this.visible = p_19549_.visible;

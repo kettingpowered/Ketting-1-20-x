@@ -123,7 +123,7 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
     }
 
     public static Profession nmsToBukkitProfession(VillagerProfession nms) {
-        return Profession.valueOf(BuiltInRegistries.VILLAGER_PROFESSION.getKey(nms).getPath().toUpperCase(Locale.ROOT));
+        return Profession.valueOf(org.kettingpowered.ketting.inject.ForgeInject.standardize(BuiltInRegistries.VILLAGER_PROFESSION.getKey(nms)));
     }
 
     public static VillagerProfession bukkitToNmsProfession(Profession bukkit) {

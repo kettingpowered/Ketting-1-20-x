@@ -1824,7 +1824,7 @@
     }
  
     public void handleClientInformation(ServerboundClientInformationPacket p_9845_) {
-@@ -1658,8 +_,49 @@
+@@ -1658,8 +_,53 @@
        this.player.updateOptions(p_9845_);
     }
  
@@ -1839,6 +1839,10 @@
 +          try {
 +              String channels = p_9860_.data.toString(com.google.common.base.Charsets.UTF_8);
 +              for (String channel : channels.split("\0")) {
++                  if (channel == null || channel.isEmpty() || channel.isBlank()){
++                     PacketUtils.LOGGER.warn("Ignoring channel \""+channel+"\" for bukkit, because it is obviously wrong");
++                     continue;
++                  }
 +                  getCraftPlayer().addChannel(channel);
 +              }
 +          } catch (Exception ex) {
