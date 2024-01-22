@@ -183,7 +183,7 @@
        if (this.isOutsideBuildHeight(p_46605_)) {
           return false;
        } else if (!this.isClientSide && this.isDebug()) {
-@@ -198,17 +_,75 @@
+@@ -198,17 +_,83 @@
        } else {
           LevelChunk levelchunk = this.getChunkAt(p_46605_);
           Block block = p_46606_.getBlock();
@@ -209,7 +209,15 @@
 +         int oldLight = old.getLightEmission(this, p_46605_);
 +         int oldOpacity = old.getLightBlock(this, p_46605_);
 +
-+         BlockState blockstate = levelchunk.setBlockState(p_46605_, p_46606_, (p_46607_ & 64) != 0, (p_46607_ & 1024) == 0); // CraftBukkit custom NO_PLACE flag
++         // CraftBukkit custom NO_PLACE flag
++         //Ketting reverse delegation because of mixins
++         BlockState blockstate;
++         try{
++            levelchunk.prepareSetBlockState((p_46607_ & 1024) == 0);
++            blockstate= levelchunk.setBlockState(p_46605_, p_46606_, (p_46607_ & 64) != 0);
++         }finally {
++            levelchunk.resetSetBlockState();
++         }
           if (blockstate == null) {
 +            if (blockSnapshot != null) this.capturedBlockSnapshots.remove(blockSnapshot);
 +            // CraftBukkit start - remove blockstate if failed (or the same)
