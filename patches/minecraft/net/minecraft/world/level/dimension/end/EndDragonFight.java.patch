@@ -11,7 +11,7 @@
        if (this.dragonKilled && this.respawnStage == null) {
           BlockPos blockpos = this.portalLocation;
           if (blockpos == null) {
-@@ -471,19 +_,19 @@
+@@ -471,19 +_,24 @@
           for(Direction direction : Direction.Plane.HORIZONTAL) {
              List<EndCrystal> list = this.level.getEntitiesOfClass(EndCrystal.class, new AABB(blockpos1.relative(direction, 2)));
              if (list.isEmpty()) {
@@ -24,25 +24,36 @@
  
           LOGGER.debug("Found all crystals, respawning dragon.");
 -         this.respawnDragon(list1);
-+         return this.respawnDragon(list1); // CraftBukkit - return value
++         this.respawnDragon(list1); // CraftBukkit - return value
++         return respawnDragon$returnValue;
        }
 -
 +      return false; // CraftBukkit - return value
     }
  
 -   private void respawnDragon(List<EndCrystal> p_64092_) {
-+   public boolean respawnDragon(List<EndCrystal> p_64092_) { // CraftBukkit - return boolean
++   // Ketting don't change the returntype
++   @org.jetbrains.annotations.ApiStatus.Internal
++   public boolean respawnDragon$returnValue = false;
++   // CraftBukkit - return boolean 
++   public void respawnDragon(List<EndCrystal> p_64092_) { 
        if (this.dragonKilled && this.respawnStage == null) {
           for(BlockPattern.BlockPatternMatch blockpattern$blockpatternmatch = this.findExitPortal(); blockpattern$blockpatternmatch != null; blockpattern$blockpatternmatch = this.findExitPortal()) {
              for(int i = 0; i < this.exitPortalPattern.getWidth(); ++i) {
-@@ -502,8 +_,9 @@
+@@ -502,8 +_,15 @@
           this.respawnTime = 0;
           this.spawnExitPortal(false);
           this.respawnCrystals = p_64092_;
-+         return true; // CraftBukkit - return value
++         // CraftBukkit - return value
++         // Ketting
++         respawnDragon$returnValue = true;
++         return; 
        }
 -
-+      return false; // CraftBukkit - return value
++      // CraftBukkit - return value
++      // Ketting
++      respawnDragon$returnValue = false;
++      return; 
     }
  
     public void resetSpikeCrystals() {
