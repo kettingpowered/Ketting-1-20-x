@@ -4,6 +4,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Stores data for health-regain events
@@ -14,10 +15,10 @@ public class EntityRegainHealthEvent extends EntityEvent implements Cancellable 
     private double amount;
     private final RegainReason regainReason;
 
-    public EntityRegainHealthEvent(@NotNull final Entity entity, final double amount, @NotNull final RegainReason regainReason) {
+    public EntityRegainHealthEvent(@NotNull final Entity entity, final double amount, @Nullable final RegainReason regainReason) {
         super(entity);
         this.amount = amount;
-        this.regainReason = regainReason;
+        this.regainReason = regainReason!=null?regainReason:RegainReason.CUSTOM;
     }
 
     /**
