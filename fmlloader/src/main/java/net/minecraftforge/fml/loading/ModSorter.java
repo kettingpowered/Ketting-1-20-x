@@ -8,6 +8,9 @@ package net.minecraftforge.fml.loading;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import com.mojang.logging.LogUtils;
+import cpw.mods.jarhandling.SecureJar;
+import net.minecraftforge.fml.loading.moddiscovery.MinecraftLocator;
+import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
@@ -19,14 +22,10 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -73,6 +72,7 @@ public class ModSorter
         }
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     private void sort()
     {
         // lambdas are identity based, so sorting them is impossible unless you hold reference to them
@@ -121,6 +121,7 @@ public class ModSorter
                 .collect(toList());
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     private void addDependency(MutableGraph<ModFileInfo> topoGraph, IModInfo.ModVersion dep)
     {
         final ModFileInfo self = (ModFileInfo)dep.getOwner().getOwningFile();
@@ -132,7 +133,6 @@ public class ModSorter
         switch (dep.getOrdering()) {
             case BEFORE -> topoGraph.putEdge(self, target);
             case AFTER -> topoGraph.putEdge(target, self);
-            default -> {}
         }
     }
 
@@ -152,13 +152,27 @@ public class ModSorter
                   ));
     }
 
-    private void detectSystemMods(final Map<String, List<ModFile>> modFilesByFirstId) {
+    private void detectSystemMods(final Map<String, List<ModFile>> modFilesByFirstId)
+    {
         // Capture system mods (ex. MC, Forge) here, so we can keep them for later
-        var systemMods = List.of("minecraft", "forge");
+        final Set<String> systemMods = new HashSet<>();
+        // The minecraft mod is always a system mod
+        systemMods.add("minecraft");
+        // Find mod file from MinecraftLocator to define the system mods
+        modFiles.stream()
+                .filter(modFile -> modFile.getProvider().getClass() == MinecraftLocator.class)
+                .map(ModFile::getSecureJar)
+                .map(SecureJar::moduleDataProvider)
+                .map(SecureJar.ModuleDataProvider::getManifest)
+                .map(Manifest::getMainAttributes)
+                .map(mf -> mf.getValue("FML-System-Mods"))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .ifPresent(value -> systemMods.addAll(Arrays.asList(value.split(","))));
         LOGGER.debug("Configured system mods: {}", systemMods);
 
         this.systemMods = new ArrayList<>();
-        for (var systemMod : systemMods) {
+        for (String systemMod : systemMods) {
             var container = modFilesByFirstId.get(systemMod);
             if (container != null && !container.isEmpty()) {
                 LOGGER.debug("Found system mod: {}", systemMod);

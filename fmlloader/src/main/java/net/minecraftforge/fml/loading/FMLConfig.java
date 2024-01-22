@@ -42,6 +42,7 @@ public class FMLConfig
         private final String entry;
         private final Object defaultValue;
         private final String comment;
+        private final Class<?> valueType;
         private final Function<Object, Object> entryFunction;
 
         ConfigValue(final String entry, final Object defaultValue, final String comment) {
@@ -51,6 +52,7 @@ public class FMLConfig
             this.entry = entry;
             this.defaultValue = defaultValue;
             this.comment = comment;
+            this.valueType = defaultValue.getClass();
             this.entryFunction = entryFunction;
         }
 

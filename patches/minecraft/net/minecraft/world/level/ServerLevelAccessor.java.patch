@@ -1,17 +1,34 @@
 --- a/net/minecraft/world/level/ServerLevelAccessor.java
 +++ b/net/minecraft/world/level/ServerLevelAccessor.java
-@@ -7,6 +_,17 @@
+@@ -6,7 +_,34 @@
+ public interface ServerLevelAccessor extends LevelAccessor {
     ServerLevel getLevel();
  
++   @org.jetbrains.annotations.ApiStatus.Internal
++   class Helper{
++      public static org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason addFreshEntityWithPassengers$reason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
++   } 
++
     default void addFreshEntityWithPassengers(Entity p_47206_) {
 -      p_47206_.getSelfAndPassengers().forEach(this::addFreshEntity);
 -   }
++      p_47206_.getSelfAndPassengers().forEach((e) -> this.addFreshEntity(e, Helper.addFreshEntityWithPassengers$reason));
 +      // CraftBukkit start
-+      this.addFreshEntityWithPassengers(p_47206_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   }
 +
-+   default void addFreshEntityWithPassengers(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
-+      entity.getSelfAndPassengers().forEach((e) -> this.addFreshEntity(e, reason));
++   default void prepareAddFreshEntityWithPassengersBukkit(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++         Helper.addFreshEntityWithPassengers$reason = reason;
++   }
++   default void resetAddFreshEntityWithPassengersBukkit() {
++         Helper.addFreshEntityWithPassengers$reason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
++   }
++   default void addFreshEntityWithPassengersBukkit(Entity p_47206_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++      try{
++         prepareAddFreshEntityWithPassengersBukkit(reason);
++         this.addFreshEntityWithPassengers(p_47206_);
++      } finally {
++         resetAddFreshEntityWithPassengersBukkit();
++      }
 +   }
 +
 +   @Override

@@ -19,9 +19,9 @@ import java.util.UUID;
 @SuppressWarnings("all")
 public class DelegateWorldInfo extends PrimaryLevelData {
 
-    private final DerivedLevelData derivedWorldInfo;
+    private final ServerLevelData derivedWorldInfo;
 
-    public DelegateWorldInfo(LevelSettings p_251081_, WorldOptions p_251666_, SpecialWorldProperty p_252268_, Lifecycle p_251714_, DerivedLevelData derivedLevelData) {
+    public DelegateWorldInfo(LevelSettings p_251081_, WorldOptions p_251666_, SpecialWorldProperty p_252268_, Lifecycle p_251714_, ServerLevelData derivedLevelData) {
         super(p_251081_, p_251666_, p_252268_, p_251714_);
         this.derivedWorldInfo = derivedLevelData;
     }
@@ -231,7 +231,7 @@ public class DelegateWorldInfo extends PrimaryLevelData {
         derivedWorldInfo.setWanderingTraderId(id);
     }
 
-    public static DelegateWorldInfo wrap(DerivedLevelData worldInfo) {
+    public static DelegateWorldInfo wrap(ServerLevelData worldInfo) {
         return new DelegateWorldInfo(worldSettings(worldInfo), generatorSettings(worldInfo), specialWorldProperty(worldInfo), lifecycle(worldInfo), worldInfo);
     }
 

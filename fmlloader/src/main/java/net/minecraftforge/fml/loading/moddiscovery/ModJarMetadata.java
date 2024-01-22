@@ -8,6 +8,8 @@ package net.minecraftforge.fml.loading.moddiscovery;
 import cpw.mods.jarhandling.JarMetadata;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.forgespi.locating.IModLocator;
+
 import java.lang.module.ModuleDescriptor;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -16,13 +18,10 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import net.minecraftforge.forgespi.locating.IModLocator;
-import org.jetbrains.annotations.ApiStatus;
-
-@ApiStatus.Internal
 public final class ModJarMetadata implements JarMetadata {
-    
-    //Ketting start - keep for compat
+    private IModFile modFile;
+    private ModuleDescriptor descriptor;
+
     // TODO: Remove helper functions to cleanup api
     @Deprecated(forRemoval = true, since="1.18")
     static Optional<IModFile> buildFile(IModLocator locator, Predicate<SecureJar> jarTest, BiPredicate<String, String> filter, Path... files) {
@@ -32,7 +31,7 @@ public final class ModJarMetadata implements JarMetadata {
     // TODO: Remove helper functions to cleanup api
     @Deprecated(forRemoval = true, since="1.18")
     static IModFile buildFile(IModLocator locator, Path... files) {
-        return buildFile(locator, j->true, null, files).orElseThrow(()->new IllegalArgumentException("Failed to find valid JAR file"));
+        return buildFile(locator, j->true, (a,b) -> true, files).orElseThrow(()->new IllegalArgumentException("Failed to find valid JAR file"));
     }
 
     // TODO: Remove helper functions to cleanup api
@@ -48,10 +47,6 @@ public final class ModJarMetadata implements JarMetadata {
             return Optional.empty();
         }
     }
-    //Ketting end
-
-    private IModFile modFile;
-    private ModuleDescriptor descriptor;
 
     ModJarMetadata() {
     }

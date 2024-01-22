@@ -394,23 +394,30 @@
        if (mobeffectinstance != null) {
           this.onEffectRemoved(mobeffectinstance);
           return true;
-@@ -1041,19 +_,57 @@
+@@ -1041,19 +_,63 @@
  
     }
  
+-   public void heal(float p_21116_) {
 +   // CraftBukkit start - Delegate so we can handle providing a reason for health being regained
-    public void heal(float p_21116_) {
-+      heal(p_21116_, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.CUSTOM);
++   // Ketting - reverse that delegation, because mixins 
++   private @Nullable org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason heal$regainReason = null;
++   public void heal(float p_21116_, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason regainReason){
++      try{
++         heal$regainReason = regainReason;
++         heal(p_21116_);
++      }finally {
++         heal$regainReason = null;
++      }
 +   }
-+
-+   public void heal(float p_21116_, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason regainReason) {
++   public void heal(float p_21116_) { 
 +      p_21116_ = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, p_21116_);
 +      if (p_21116_ <= 0) return;
 +
        float f = this.getHealth();
        if (f > 0.0F) {
 -         this.setHealth(f + p_21116_);
-+         org.bukkit.event.entity.EntityRegainHealthEvent event = new org.bukkit.event.entity.EntityRegainHealthEvent(this.getBukkitEntity(), p_21116_, regainReason);
++         org.bukkit.event.entity.EntityRegainHealthEvent event = new org.bukkit.event.entity.EntityRegainHealthEvent(this.getBukkitEntity(), p_21116_, heal$regainReason);
 +         // Suppress during worldgen
 +         if (this.valid) {
 +            this.level().getCraftServer().getPluginManager().callEvent(event);
@@ -910,7 +917,7 @@
                 }
              }
           }
-@@ -1610,8 +_,196 @@
+@@ -1610,8 +_,202 @@
        }
     }
  
@@ -1099,10 +1106,15 @@
 +      return false; // CraftBukkit
 +   }
 +
++   //Ketting - this exists, so that the compiler doesn't try to optimize the else out. If it does, some mods have a mixin error.
++   protected boolean actuallyHurt$override = true;
     protected void actuallyHurt(DamageSource p_21240_, float p_21241_) {
--      if (!this.isInvulnerableTo(p_21240_)) {
-+      damageEntity0(p_21240_, p_21241_);
-+      if (false && !this.isInvulnerableTo(p_21240_)) {
++      if (actuallyHurt$override) {
++         damageEntity0(p_21240_, p_21241_);
++         return;
++      }
++      else
+       if (!this.isInvulnerableTo(p_21240_)) {
 +         p_21241_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_21240_, p_21241_);
 +         if (p_21241_ <= 0) return;
           p_21241_ = this.getDamageAfterArmorAbsorb(p_21240_, p_21241_);

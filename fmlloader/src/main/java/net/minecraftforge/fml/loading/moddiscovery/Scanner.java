@@ -9,8 +9,6 @@ import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
-
-import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.ClassReader;
 import org.slf4j.Logger;
 
@@ -20,9 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-@ApiStatus.Internal
-public //Ketting - keep compat
-class Scanner {
+public class Scanner {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final ModFile fileToScan;
 
