@@ -2070,7 +2070,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public String getLocale() {
-        return getHandle().getLanguage();
+        return getHandle().getLocale();
     }
 
     @Override

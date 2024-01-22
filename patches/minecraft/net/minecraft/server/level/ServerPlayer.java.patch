@@ -945,7 +945,7 @@
 +         org.bukkit.event.player.PlayerChangedMainHandEvent event = new org.bukkit.event.player.PlayerChangedMainHandEvent(getBukkitEntity(), getMainArm() == HumanoidArm.LEFT ? org.bukkit.inventory.MainHand.LEFT : org.bukkit.inventory.MainHand.RIGHT);
 +         this.server.server.getPluginManager().callEvent(event);
 +      }
-+      if (!this.language.equals(p_9157_.language())) {
++      if (!this.locale.equals(p_9157_.language())) {
 +         org.bukkit.event.player.PlayerLocaleChangeEvent event = new org.bukkit.event.player.PlayerLocaleChangeEvent(getBukkitEntity(), p_9157_.language());
 +         this.server.server.getPluginManager().callEvent(event);
 +      }
@@ -957,7 +957,7 @@
        this.allowsListing = p_9157_.allowsListing();
        this.getEntityData().set(DATA_PLAYER_MODE_CUSTOMISATION, (byte)p_9157_.modelCustomisation());
        this.getEntityData().set(DATA_PLAYER_MAIN_HAND, (byte)(p_9157_.mainHand() == HumanoidArm.LEFT ? 0 : 1));
-+      this.language = p_9157_.language();
++      this.locale = p_9157_.language();
     }
  
     public boolean canChatInColor() {
@@ -1079,13 +1079,13 @@
        }
     }
  
-+   private String language = "en_us";
++   private String locale = "en_us";
 +   /**
 +    * Returns the language last reported by the player as their local language.
 +    * Defaults to en_us if the value is unknown.
 +    */
-+   public String getLanguage() {
-+      return this.language;
++   public String getLocale() {
++      return this.locale;
 +   }
 +
 +   private Component tabListHeader = Component.empty();
