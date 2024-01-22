@@ -25,6 +25,7 @@ public class Util {
             return md.digest().collect {String.format "%02x", it}.join()
         }
         File.metaClass.getSha1 = { !delegate.exists() ? null : delegate.sha1() }
+        //Ketting start
         File.metaClass.sha256 = { ->
             MessageDigest md = MessageDigest.getInstance('SHA-256')
             delegate.eachByte 4096, {bytes, size ->
@@ -33,7 +34,6 @@ public class Util {
             return md.digest().collect {String.format "%02x", it}.join()
         }
         File.metaClass.getSha256 = { !delegate.exists() ? null : delegate.sha256() }
-        //Ketting start
         File.metaClass.sha512 = { ->
             MessageDigest md = MessageDigest.getInstance('SHA3-512')
             delegate.eachByte 4096, {bytes, size ->

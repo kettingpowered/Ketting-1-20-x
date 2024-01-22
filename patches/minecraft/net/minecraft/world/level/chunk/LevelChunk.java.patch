@@ -52,23 +52,38 @@
     }
  
     public TickContainerAccess<Block> getBlockTicks() {
-@@ -208,8 +_,16 @@
+@@ -208,7 +_,30 @@
        }
     }
  
+-   @Nullable
 +   // CraftBukkit start
-    @Nullable
-+   @Override
-    public BlockState setBlockState(BlockPos p_62865_, BlockState p_62866_, boolean p_62867_) {
-+      return this.setBlockState(p_62865_, p_62866_, p_62867_, true);
++   //Ketting start - reverse delegation
++   private boolean setBlockState$doPlace = true;
++   
++   public void prepareSetBlockState(boolean doPlace){
++      setBlockState$doPlace = doPlace;
 +   }
-+
++   public void resetSetBlockState(){
++      setBlockState$doPlace = true;
++   }
++   
 +   @Nullable
 +   public BlockState setBlockState(BlockPos p_62865_, BlockState p_62866_, boolean p_62867_, boolean doPlace) {
-+      // CraftBukkit end
++      setBlockState$doPlace = doPlace;
++      try{
++         return setBlockState(p_62865_, p_62866_, p_62867_);
++      }finally {
++         setBlockState$doPlace = true; //default
++      }
++   }
++   //Ketting end
++   // CraftBukkit end
++   @Nullable
++   @Override
+    public BlockState setBlockState(BlockPos p_62865_, BlockState p_62866_, boolean p_62867_) {
        int i = p_62865_.getY();
        LevelChunkSection levelchunksection = this.getSection(this.getSectionIndex(i));
-       boolean flag = levelchunksection.hasOnlyAir();
 @@ -245,14 +_,16 @@
              boolean flag2 = blockstate.hasBlockEntity();
              if (!this.level.isClientSide) {
@@ -84,7 +99,7 @@
 -               if (!this.level.isClientSide) {
 +               // CraftBukkit - Don't place while processing the BlockPlaceEvent, unless it's a BlockContainer. Prevents blocks such as TNT from activating when cancelled.
 +               //Ketting - combine forge and bukkit snapshot caoture
-+               if (!this.level.isClientSide && doPlace && (!this.level.captureBlockSnapshots || (!this.level.captureBlockStates || block instanceof net.minecraft.world.level.block.BaseEntityBlock))) {
++               if (!this.level.isClientSide && setBlockState$doPlace && (!this.level.captureBlockSnapshots || (!this.level.captureBlockStates || block instanceof net.minecraft.world.level.block.BaseEntityBlock))) {
                    p_62866_.onPlace(this.level, p_62865_, blockstate, p_62867_);
                 }
  

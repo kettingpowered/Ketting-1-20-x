@@ -14,7 +14,7 @@ abstract class GenerateLibs extends DefaultTask {
 
     GenerateLibs(){
         outputs.upToDateWhen {false}
-        outputs.cacheIf { false }
+        outputs.cacheIf {false}
         output.convention(getProject().getLayout().getBuildDirectory().file("ketting_libraries.txt"))
     }
 

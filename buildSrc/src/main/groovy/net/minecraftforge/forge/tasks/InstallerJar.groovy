@@ -1,6 +1,5 @@
 package net.minecraftforge.forge.tasks
 
-import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.*
 import org.gradle.api.DefaultTask
@@ -26,26 +25,28 @@ abstract class InstallerJar extends Zip {
         from(installerJson, launcherJson)
 
         from(project.rootProject.file('/src/main/resources/url.png'))
-        from(project.zipTree(downloadInstaller.output)) {
-            duplicatesStrategy = 'exclude'
-        }
-        
-        if (fat.get() || offline.get()) {
-            def cfg = project.tasks.register(name + "Config", Configure)
-            cfg.get().configure {
-                parent = this
-                dependsOn(project.tasks.installerJson, project.tasks.launcherJson)
+        project.afterEvaluate {
+            from(project.zipTree(downloadInstaller.output)) {
+                duplicatesStrategy = 'exclude'
             }
-            dependsOn(cfg)
-        } else {
-            // Things we ALWAYS bundle, this just the server shim jar, because the installer spec only says to extract the file. 
-            // I should make it allow downloads but thats a spec break, and this is just a ~14KB jar
-            [
-                project.tasks.serverShimJar // Server bootstrap executable jar
-            ].forEach { packed ->
-                def path = Util.getMavenInfoFromTask(packed).path
-                from(packed) {
-                    rename { "maven/$path" }
+            
+            if (fat.get() || offline.get()) {
+                def cfg = project.tasks.register(name + "Config", Configure)
+                cfg.get().configure {
+                    parent = this
+                    dependsOn(project.tasks.installerJson, project.tasks.launcherJson)
+                }
+                dependsOn(cfg)
+            } else {
+                // Things we ALWAYS bundle, this just the server shim jar, because the installer spec only says to extract the file. 
+                // I should make it allow downloads but thats a spec break, and this is just a ~14KB jar
+                [
+                    project.tasks.serverShimJar // Server bootstrap executable jar
+                ].forEach { packed ->
+                    def path = Util.getMavenInfoFromTask(packed).path
+                    from(packed) {
+                        rename { "maven/$path" }
+                    }
                 }
             }
         }
@@ -95,7 +96,7 @@ abstract class InstallerJar extends Zip {
                 //println('')
                 def resolved = cfg.resolvedConfiguration.resolvedArtifacts
                 int found = 0
-                for (final ResolvedArtifact dep : resolved) {
+                for (var dep : resolved) {
                     def name = Util.getMavenInfoFromDep(dep).name
                     def info = deps.remove(name)
                     if (info == null) {

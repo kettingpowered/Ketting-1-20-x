@@ -9,7 +9,7 @@
     final EntityTickList entityTickList = new EntityTickList();
     public final PersistentEntitySectionManager<Entity> entityManager;
     private final GameEventDispatcher gameEventDispatcher;
-@@ -190,24 +_,54 @@
+@@ -190,24 +_,55 @@
     private final List<CustomSpawner> customSpawners;
     @Nullable
     private EndDragonFight dragonFight;
@@ -35,10 +35,10 @@
 +      return convertable.dimensionType;
 +   }
 +
-+   //Ketting start
++   //Ketting Start
 +   /**
 +    * Use bukkit version
-+    * @see #ServerLevel(MinecraftServer, Executor, LevelStorageSource.LevelStorageAccess, ServerLevelData, ResourceKey, LevelStem, ChunkProgressListener, boolean, long, List, boolean, RandomSequences, org.bukkit.World.Environment, org.bukkit.generator.ChunkGenerator, org.bukkit.generator.BiomeProvider)
++    * @see #init(MinecraftServer, Executor, LevelStorageSource.LevelStorageAccess, ServerLevelData, ResourceKey, LevelStem, ChunkProgressListener, boolean, long, List, boolean, RandomSequences, org.bukkit.World.Environment, org.bukkit.generator.ChunkGenerator, org.bukkit.generator.BiomeProvider)
 +    */
 +   @Deprecated
 +   //Ketting end
@@ -54,10 +54,11 @@
 +      if (p_215002_ instanceof net.minecraft.world.level.storage.PrimaryLevelData primary)
 +         this.serverLevelData = primary;
 +      else
-+         this.serverLevelData = org.kettingpowered.ketting.utils.DelegateWorldInfo.wrap((net.minecraft.world.level.storage.DerivedLevelData) p_215002_);
++         this.serverLevelData = org.kettingpowered.ketting.utils.DelegateWorldInfo.wrap(p_215002_);
        ChunkGenerator chunkgenerator = p_215004_.generator();
 +      // CraftBukkit start
 +      serverLevelData.setWorld(this);
++      bukkitInit(chunkgenerator);
 +      // CraftBukkit end
        boolean flag = p_214999_.forceSynchronousWrites();
        DataFixer datafixer = p_214999_.getFixerUpper();
@@ -68,7 +69,7 @@
           return p_214999_.overworld().getDataStorage();
        });
        this.chunkSource.getGeneratorState().ensureStructuresGenerated();
-@@ -222,19 +_,88 @@
+@@ -222,9 +_,9 @@
  
        long i = p_214999_.getWorldData().worldGenOptions().seed();
        this.structureCheck = new StructureCheck(this.chunkSource.chunkScanner(), this.registryAccess(), p_214999_.getStructureManager(), p_215003_, chunkgenerator, this.chunkSource.randomState(), this, chunkgenerator.getBiomeSource(), i, datafixer);
@@ -76,44 +77,18 @@
 +      this.structureManager = new StructureManager(this, this.serverLevelData.worldGenOptions(), this.structureCheck); // CraftBukkit
        if (this.dimension() == Level.END && this.dimensionTypeRegistration().is(BuiltinDimensionTypes.END)) {
 -         this.dragonFight = new EndDragonFight(this, i, p_214999_.getWorldData().endDragonFightData());
--      } else {
--         this.dragonFight = null;
--      }
--
--      this.sleepStatus = new SleepStatus();
--      this.gameEventDispatcher = new GameEventDispatcher(this);
--      this.randomSequences = Objects.requireNonNullElseGet(p_288977_, () -> {
--         return this.getDataStorage().computeIfAbsent(RandomSequences.factory(i), "random_sequences");
--      });
--   }
 +         this.dragonFight = new EndDragonFight(this, this.serverLevelData.worldGenOptions().seed(), this.serverLevelData.endDragonFightData()); // CraftBukkit
-+      } else {
-+         this.dragonFight = null;
-+      }
-+
-+      this.sleepStatus = new SleepStatus();
-+      this.gameEventDispatcher = new GameEventDispatcher(this);
-+      this.randomSequences = Objects.requireNonNullElseGet(p_288977_, () -> {
-+         return this.getDataStorage().computeIfAbsent(RandomSequences.factory(i), "random_sequences");
-+      });
+       } else {
+          this.dragonFight = null;
+       }
+@@ -234,6 +_,35 @@
+       this.randomSequences = Objects.requireNonNullElseGet(p_288977_, () -> {
+          return this.getDataStorage().computeIfAbsent(RandomSequences.factory(i), "random_sequences");
+       });
 +      this.initCapabilities();
 +   }
 +
-+   //Ketting start
-+   // Add env and gen to constructor
-+   public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
-+      super(p_215002_, p_215003_, p_214999_.registryAccess(), p_215004_.type(), p_214999_::getProfiler, false, p_215006_, p_215007_, p_214999_.getMaxChainedNeighborUpdates(), gen, biomeProvider, env);
-+      convertable = p_215001_;
-+      uuid = org.bukkit.craftbukkit.v1_20_R3.util.WorldUUID.getUUID(p_215001_.levelDirectory.path().toFile());
-+      // CraftBukkit end
-+      this.tickTime = p_215009_;
-+      this.server = p_214999_;
-+      this.customSpawners = p_215008_;
-+      if (p_215002_ instanceof net.minecraft.world.level.storage.PrimaryLevelData primary)
-+         this.serverLevelData = primary;
-+      else
-+         this.serverLevelData = org.kettingpowered.ketting.utils.DelegateWorldInfo.wrap((net.minecraft.world.level.storage.DerivedLevelData) p_215002_);
-+      ChunkGenerator chunkgenerator = p_215004_.generator();
++   private void bukkitInit(ChunkGenerator chunkgenerator){
 +      // CraftBukkit start
 +      serverLevelData.setWorld(this);
 +
@@ -126,49 +101,22 @@
 +         }
 +      }
 +
-+      if (gen != null) {
-+         chunkgenerator = new org.bukkit.craftbukkit.v1_20_R3.generator.CustomChunkGenerator(this, chunkgenerator, gen);
++      if (this.generator != null) {
++         chunkgenerator = new org.bukkit.craftbukkit.v1_20_R3.generator.CustomChunkGenerator(this, chunkgenerator, generator);
 +      }
 +      // CraftBukkit end
-+      boolean flag = p_214999_.forceSynchronousWrites();
-+      DataFixer datafixer = p_214999_.getFixerUpper();
-+      EntityPersistentStorage<Entity> entitypersistentstorage = new EntityStorage(this, p_215001_.getDimensionPath(p_215003_).resolve("entities"), datafixer, flag, p_214999_);
-+
-+      this.entityManager = new PersistentEntitySectionManager<>(Entity.class, new ServerLevel.EntityCallbacks(), entitypersistentstorage);
-+      this.chunkSource = new ServerChunkCache(this, p_215001_, datafixer, p_214999_.getStructureManager(), p_215000_, chunkgenerator, this.spigotConfig.viewDistance, this.spigotConfig.simulationDistance, flag, p_215005_, this.entityManager::updateChunkStatus, () -> { // Spigot
-+         return p_214999_.overworld().getDataStorage();
-+      });
-+      this.chunkSource.getGeneratorState().ensureStructuresGenerated();
-+      this.portalForcer = new PortalForcer(this);
-+      this.updateSkyBrightness();
-+      this.prepareWeather();
-+      this.getWorldBorder().setAbsoluteMaxSize(p_214999_.getAbsoluteMaxWorldSize());
-+      this.raids = this.getDataStorage().computeIfAbsent(Raids.factory(this), Raids.getFileId(this.dimensionTypeRegistration()));
-+      if (!p_214999_.isSingleplayer()) {
-+         p_215002_.setGameType(p_214999_.getDefaultGameType());
-+      }
-+
-+      long i = p_214999_.getWorldData().worldGenOptions().seed();
-+      this.structureCheck = new StructureCheck(this.chunkSource.chunkScanner(), this.registryAccess(), p_214999_.getStructureManager(), p_215003_, chunkgenerator, this.chunkSource.randomState(), this, chunkgenerator.getBiomeSource(), i, datafixer);
-+      this.structureCheck.setTypeKey(getTypeKey()); //Ketting
-+      this.structureManager = new StructureManager(this, this.serverLevelData.worldGenOptions(), this.structureCheck); // CraftBukkit
-+      if ((this.dimension() == Level.END && this.dimensionTypeRegistration().is(BuiltinDimensionTypes.END)) || env == org.bukkit.World.Environment.THE_END) { // CraftBukkit - Allow to create EnderDragonBattle in default and custom END
-+         this.dragonFight = new EndDragonFight(this, this.serverLevelData.worldGenOptions().seed(), this.serverLevelData.endDragonFightData()); // CraftBukkit
-+      } else {
-+         this.dragonFight = null;
-+      }
-+
-+      this.sleepStatus = new SleepStatus();
-+      this.gameEventDispatcher = new GameEventDispatcher(this);
-+      this.randomSequences = Objects.requireNonNullElseGet(p_288977_, () -> {
-+         return this.getDataStorage().computeIfAbsent(RandomSequences.factory(i), "random_sequences");
-+      });
-+      this.initCapabilities();
 +   }
-+   //Ketting end
++   
++   //Ketting start
++   // Add env and gen to constructor
++   public static ServerLevel init(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
++      init$env = env;
++      init$gen = gen;
++      init$biomeProvider = biomeProvider;
++      return new net.minecraft.server.level.ServerLevel(p_214999_, p_215000_, p_215001_, p_215002_, p_215003_, p_215004_, p_215005_, p_215006_, p_215007_, p_215008_, p_215009_, p_288977_);
+    }
  
     /** @deprecated */
-    @Deprecated
 @@ -272,13 +_,23 @@
        }
  
@@ -511,7 +459,7 @@
        Entity entity = this.getEntities().get(p_8854_.getUUID());
        if (entity != null) {
           LOGGER.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.getUUID());
-@@ -853,28 +_,56 @@
+@@ -853,28 +_,70 @@
           this.removePlayerImmediately((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -520,8 +468,19 @@
 +      p_8854_.onAddedToWorld();
     }
  
--   private boolean addEntity(Entity p_8873_) {
-+   private boolean addEntity(Entity p_8873_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++   //Ketting start - add original method back, reverse delegation so that the CB method calls the original method.
++   @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "OptionalAssignedToNull"}) //yeah, this is not really nice here, but whatever.
++   @Nullable private Optional<org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason> addEntity$spawnReason = null;
++   private boolean addEntity(Entity p_8873_, @Nullable org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++      try{
++         addEntity$spawnReason = Optional.ofNullable(spawnReason);
++         return addEntity(p_8873_);
++      } finally {
++         addEntity$spawnReason = null;
++      }
++   }
++   //Ketting end
+    private boolean addEntity(Entity p_8873_) {
 +      org.spigotmc.AsyncCatcher.catchOp("entity add"); // Spigot
        if (p_8873_.isRemoved()) {
 -         LOGGER.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.getKey(p_8873_.getType()));
@@ -530,7 +489,9 @@
        } else {
 -         return this.entityManager.addNewEntity(p_8873_);
 +         // SPIGOT-6415: Don't call spawn event when reason is null. For example when an entity teleports to a new world.
-+         if (spawnReason != null && !org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.doEntityAddEventCalling(this, p_8873_, spawnReason)) {
++         //Ketting: add original method back
++         //noinspection OptionalAssignedToNull
++         if (addEntity$spawnReason != null && !org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.doEntityAddEventCalling(this, p_8873_, addEntity$spawnReason.orElse(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CUSTOM))) {
 +            return false;
 +         }
 +         // CraftBukkit end
@@ -555,7 +516,7 @@
           return false;
        } else {
 -         this.addFreshEntityWithPassengers(p_8861_);
-+         this.addFreshEntityWithPassengers(p_8861_, reason); // CraftBukkit
++         this.addFreshEntityWithPassengersBukkit(p_8861_, reason); // CraftBukkit
           return true;
        }
     }
@@ -824,6 +785,14 @@
        return this.entityManager.getEntityGetter();
     }
  
+@@ -1475,6 +_,7 @@
+ 
+    final class EntityCallbacks implements LevelCallback<Entity> {
+       public void onCreated(Entity p_143355_) {
++         p_143355_.inWorld = true; // CraftBukkit - Mark entity as in world
+       }
+ 
+       public void onDestroyed(Entity p_143359_) {
 @@ -1490,6 +_,7 @@
        }
  

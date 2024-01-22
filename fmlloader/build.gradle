@@ -42,6 +42,7 @@ dependencies {
     testCompileOnly(libs.nulls)
     testRuntimeOnly(libs.bootstrap)
 
+    implementation libs.kettingcommon
     implementation(libs.terminalcolors)
 }
 
@@ -53,16 +54,16 @@ java {
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([
-            'Automatic-Module-Name': 'net.minecraftforge.fmlloader',
-            'Forge-Module-Layer':    'boot'
+                'Automatic-Module-Name': 'net.minecraftforge.fmlloader',
+                'Forge-Module-Layer':    'boot'
         ] as LinkedHashMap)
         attributes([
-            'Specification-Title':   'FMLLoader',
-            'Specification-Vendor':  'Forge Development LLC',
-            'Specification-Version': '1',
-            'Implementation-Title':  'FMLLoader',
-            'Implementation-Vendor': 'Forge Development LLC',
-            'Implementation-Version': FORGE_VERSION
+                'Specification-Title':   'FMLLoader',
+                'Specification-Vendor':  'Forge Development LLC',
+                'Specification-Version': '1',
+                'Implementation-Title':  'FMLLoader',
+                'Implementation-Vendor': 'Forge Development LLC',
+                'Implementation-Version': FORGE_VERSION
         ] as LinkedHashMap, 'net/minecraftforge/fml/loading/')
     }
 }
@@ -127,9 +128,9 @@ publishing {
 tasks.register('writeForgeVersionJson') {
     doLast {
         file('src/main/resources/forge_version.json').json = [
-            'forge': FORGE_VERSION,
-            'mc': MC_VERSION,
-            'mcp': MCP_VERSION
+                'forge': FORGE_VERSION,
+                'mc': MC_VERSION,
+                'mcp': MCP_VERSION
         ] as LinkedHashMap
     }
 }

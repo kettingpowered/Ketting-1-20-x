@@ -45,14 +45,13 @@ java {
 
 //Ketting Start - fix `./gradlew setup build`
 tasks.withType(JavaCompile).configureEach {
-    mustRunAfter 'extractMapped' 
+    mustRunAfter 'extractMapped'
 }
 //Ketting End - fix `./gradlew setup build`
 
 jarSigner.autoDetect('forge')
 
 applyPatches {
-    mustRunAfter genPatches
     level 'WARNING'
 }
 
@@ -93,10 +92,10 @@ ext {
 
 configurations {
     // Don't pull all libraries, if we're missing something, add it to the installer list so the installer knows to download it.
-    bootstrap  { transitive = false }
+    bootstrap  { transitive = false }        
     installer { 
         extendsFrom(bootstrap)
-        transitive = false
+        transitive = false 
     }
     kettinglauncher{
         transitive = false
@@ -910,6 +909,7 @@ tasks.register('kettingJar', Jar) {
     manifest{
         attributes 'Main-Class': 'org.kettingpowered.launcher.Main'
         attributes 'Launcher-Agent-Class': 'org.kettingpowered.launcher.Main'
+        attributes 'Automatic-Module-Name': 'org.kettingpowered.kettinglauncher'
         attributes 'Bundled': 'true'
         attributes 'MinecraftVersion': MC_VERSION
         attributes 'ForgeVersion': FORGE_VERSION
@@ -1099,7 +1099,7 @@ publishing {
             PomUtils.setGitHubDetails(pom, 'kettingpowered', 'Ketting-1-20-x')
         }
     }
-    
+
     repositories {
         maven {
             name = "GitHubPackages"

@@ -28,12 +28,14 @@ abstract class InstallerJson extends DefaultTask {
         welcome.convention("Welcome to the ${project.name.capitalize()} installer.")
         output.convention(project.layout.buildDirectory.file('libs/install_profile.json'))
         
-        [
-            project.tasks.universalJar,
-            project.tasks.serverShimJar
-        ].forEach { packed ->
-            dependsOn(packed)
-            input.from packed.archiveFile
+        project.afterEvaluate {
+            [
+                project.tasks.universalJar,
+                project.tasks.serverShimJar
+            ].forEach { packed ->
+                dependsOn(packed)
+                input.from packed.archiveFile
+            }
         }
     }
 

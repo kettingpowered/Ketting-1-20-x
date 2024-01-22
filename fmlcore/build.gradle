@@ -13,7 +13,6 @@ dependencies {
     compileOnly(libs.nulls)
 
     api(libs.eventbus)
-    api(libs.ketting)
 
     implementation(project(':fmlloader'))
     implementation(libs.commons.io)
@@ -27,16 +26,16 @@ java {
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([
-            'Automatic-Module-Name': 'net.minecraftforge.fmlcore',
-            'FMLModType': 'LIBRARY'
+                'Automatic-Module-Name': 'net.minecraftforge.fmlcore',
+                'FMLModType': 'LIBRARY'
         ] as LinkedHashMap)
         attributes([
-            'Specification-Title':      'FML',
-            'Specification-Vendor':     'Forge Development LLC',
-            'Specification-Version':    '1',
-            'Implementation-Title':     'FML',
-            'Implementation-Version':   '1.0',
-            'Implementation-Vendor':    'Forge Development LLC'
+                'Specification-Title':      'FML',
+                'Specification-Vendor':     'Forge Development LLC',
+                'Specification-Version':    '1',
+                'Implementation-Title':     'FML',
+                'Implementation-Version':   '1.0',
+                'Implementation-Vendor':    'Forge Development LLC'
         ] as LinkedHashMap, 'net/minecraftforge/fml/')
     }
 }
