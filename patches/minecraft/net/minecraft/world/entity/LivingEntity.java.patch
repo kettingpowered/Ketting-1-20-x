@@ -393,19 +393,23 @@
        if (mobeffectinstance != null) {
           this.onEffectRemoved(mobeffectinstance);
           return true;
-@@ -1015,19 +_,59 @@
+@@ -1015,19 +_,63 @@
  
     }
  
 -   public void heal(float p_21116_) {
 +   // CraftBukkit start - Delegate so we can handle providing a reason for health being regained
++   // Ketting - reverse that delegation, because mixins 
 +   private @Nullable org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason heal$regainReason = null;
 +   public void heal(float p_21116_, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason regainReason){
-+      heal$regainReason = regainReason;
-+      heal(p_21116_);
++      try{
++         heal$regainReason = regainReason;
++         heal(p_21116_);
++      }finally {
++         heal$regainReason = null;
++      }
 +   }
 +   public void heal(float p_21116_) { 
-+      heal(p_21116_, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.CUSTOM);
 +      p_21116_ = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, p_21116_);
 +      if (p_21116_ <= 0) return;
 +
