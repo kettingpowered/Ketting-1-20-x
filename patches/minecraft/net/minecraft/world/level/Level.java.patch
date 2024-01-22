@@ -9,7 +9,7 @@
     public static final Codec<ResourceKey<Level>> RESOURCE_KEY_CODEC = ResourceKey.codec(Registries.DIMENSION);
     public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("the_nether"));
-@@ -110,8 +_,108 @@
+@@ -110,8 +_,105 @@
     private final RegistryAccess registryAccess;
     private final DamageSources damageSources;
     private long subTickCount;
@@ -27,6 +27,9 @@
 +   public org.bukkit.generator.ChunkGenerator generator;
 +   public org.bukkit.World.Environment environment; //Ketting
 +   public org.bukkit.generator.BiomeProvider biomeProvider; //Ketting
++   @Nullable @org.jetbrains.annotations.ApiStatus.Internal protected static org.bukkit.World.Environment init$env = null;
++   @Nullable @org.jetbrains.annotations.ApiStatus.Internal protected static org.bukkit.generator.ChunkGenerator init$gen = null;
++   @Nullable @org.jetbrains.annotations.ApiStatus.Internal protected static org.bukkit.generator.BiomeProvider init$biomeProvider = null;
 +
 +   public boolean preventPoiUpdated = false; // CraftBukkit - SPIGOT-5710
 +   public boolean captureBlockStates = false;
@@ -82,26 +85,20 @@
 +   public ResourceKey<net.minecraft.world.level.dimension.LevelStem> getTypeKey() {
 +      return Registries.levelToLevelStem(this.dimension);
 +   }
-+   //Ketting end
-+
-+   //Ketting start
-+   protected Level(WritableLevelData p_270739_, ResourceKey<Level> p_270683_, RegistryAccess p_270200_, Holder<DimensionType> p_270240_, Supplier<ProfilerFiller> p_270692_, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider, org.bukkit.World.Environment env) {
-+      this(p_270739_, p_270683_, p_270200_, p_270240_, p_270692_, p_270904_, p_270470_, p_270248_, p_270466_);
-+
-+      this.generator = gen;
-+      this.environment = env;
-+      this.biomeProvider = biomeProvider;
++   protected void bukkitInit(){
++      this.generator = init$gen;
++      this.environment = init$env;
++      this.biomeProvider = init$biomeProvider;
++      init$gen = null;
++      init$env = null;
++      init$biomeProvider = null;
 +   }
-+
-+   /**
-+    * Use bukkit version
-+    * @see #Level(WritableLevelData, ResourceKey, RegistryAccess, Holder, Supplier, boolean, boolean, long, int, org.bukkit.generator.ChunkGenerator, org.bukkit.generator.BiomeProvider, org.bukkit.World.Environment)
-+    */
-+   String levelname = joptsimple.internal.Strings.EMPTY;
-+   @Deprecated
 +   //Ketting end
++
++   String levelname = joptsimple.internal.Strings.EMPTY;
     protected Level(WritableLevelData p_270739_, ResourceKey<Level> p_270683_, RegistryAccess p_270200_, Holder<DimensionType> p_270240_, Supplier<ProfilerFiller> p_270692_, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_) {
 +      super(Level.class);
++      bukkitInit();
 +
 +      if (p_270739_ != null)
 +         this.levelname = ((net.minecraft.world.level.storage.ServerLevelData) p_270739_).getLevelName(); //Ketting
