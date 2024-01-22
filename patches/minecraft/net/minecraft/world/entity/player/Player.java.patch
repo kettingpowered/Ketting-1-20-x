@@ -317,22 +317,27 @@
              });
              if (this.useItem.isEmpty()) {
                 if (interactionhand == InteractionHand.MAIN_HAND) {
-@@ -881,19 +_,30 @@
+@@ -881,19 +_,35 @@
        }
     }
  
 +   // CraftBukkit start
-    protected void actuallyHurt(DamageSource p_36312_, float p_36313_) {
-+      damageEntity0(p_36312_, p_36313_);
-+   }
 +   protected boolean damageEntity0(DamageSource p_36312_, float p_36313_) {
-+      if (true) {
-+         return super.damageEntity0(p_36312_, p_36313_);
++      return super.damageEntity0(p_36312_, p_36313_);
++   }
++   //Ketting start - keep original method for mixins
++   // CraftBukkit end
++   
+    protected void actuallyHurt(DamageSource p_36312_, float p_36313_) {
++      if (actuallyHurt$override) {
++         damageEntity0(p_36312_, p_36313_);
++         return;
 +      }
-+      // CraftBukkit end
++      else
++      //Ketting end - keep original method for mixins
        if (!this.isInvulnerableTo(p_36312_)) {
 +         p_36313_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_36312_, p_36313_);
-+         if (p_36313_ <= 0) return false;
++         if (p_36313_ <= 0) return;
           p_36313_ = this.getDamageAfterArmorAbsorb(p_36312_, p_36313_);
           p_36313_ = this.getDamageAfterMagicAbsorb(p_36312_, p_36313_);
           float f1 = Math.max(p_36313_ - this.getAbsorptionAmount(), 0.0F);
@@ -349,15 +354,6 @@
              this.getCombatTracker().recordDamage(p_36312_, f1);
              this.setHealth(this.getHealth() - f1);
              if (f1 < 3.4028235E37F) {
-@@ -903,6 +_,8 @@
-             this.gameEvent(GameEvent.ENTITY_DAMAGE);
-          }
-       }
-+
-+      return false; // CraftBukkit
-    }
- 
-    protected boolean onSoulSpeedBlock() {
 @@ -949,6 +_,8 @@
  
           return InteractionResult.PASS;

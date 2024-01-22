@@ -528,7 +528,7 @@
        Entity entity = this.getEntities().get(p_8854_.getUUID());
        if (entity != null) {
           LOGGER.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.getUUID().toString());
-@@ -835,28 +_,56 @@
+@@ -835,28 +_,70 @@
           this.removePlayerImmediately((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -537,8 +537,19 @@
 +      p_8854_.onAddedToWorld();
     }
  
--   private boolean addEntity(Entity p_8873_) {
-+   private boolean addEntity(Entity p_8873_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++   //Ketting start - add original method back, reverse delegation so that the CB method calls the original method.
++   @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "OptionalAssignedToNull"}) //yeah, this is not really nice here, but whatever.
++   @Nullable private Optional<org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason> addEntity$spawnReason = null;
++   private boolean addEntity(Entity p_8873_, @Nullable org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++      try{
++         addEntity$spawnReason = Optional.ofNullable(spawnReason);
++         return addEntity(p_8873_);
++      } finally {
++         addEntity$spawnReason = null;
++      }
++   }
++   //Ketting end
+    private boolean addEntity(Entity p_8873_) {
 +      org.spigotmc.AsyncCatcher.catchOp("entity add"); // Spigot
        if (p_8873_.isRemoved()) {
 -         LOGGER.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.getKey(p_8873_.getType()));
@@ -547,7 +558,9 @@
        } else {
 -         return this.entityManager.addNewEntity(p_8873_);
 +         // SPIGOT-6415: Don't call spawn event when reason is null. For example when an entity teleports to a new world.
-+         if (spawnReason != null && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.doEntityAddEventCalling(this, p_8873_, spawnReason)) {
++         //Ketting: add original method back
++         //noinspection OptionalAssignedToNull
++         if (addEntity$spawnReason != null && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.doEntityAddEventCalling(this, p_8873_, addEntity$spawnReason.orElse(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CUSTOM))) {
 +            return false;
 +         }
 +         // CraftBukkit end
