@@ -26,16 +26,16 @@ plugins {
 dependencyResolutionManagement {
     versionCatalogs {
         libs {
+            library('securejarhandler', 'cpw.mods:securejarhandler:2.1.10')
             library('forgespi', 'net.minecraftforge:forgespi:7.1.0') // Needs modlauncher
             library('bootstrap', 'cpw.mods:bootstraplauncher:1.1.2') // Needs modlauncher
             library('modlauncher', 'cpw.mods:modlauncher:10.0.9') // Needs securfemodules
-            library('securemodules', 'net.minecraftforge:securemodules:2.2.10') // Needs unsafe
-            library('unsafe', 'net.minecraftforge:unsafe:0.9.2')
-            library('accesstransformers', 'net.minecraftforge:accesstransformers:8.1.1')
+            library('unsafe', 'net.minecraftforge:unsafe:0.2.+')
+            library('accesstransformers', 'net.minecraftforge:accesstransformers:8.0.4')
             library('antlr-runtime', 'org.antlr:antlr4-runtime:4.9.1') // Needed by Access Transformer because parsing a simple text file was too complicated
-            library('coremods', 'net.minecraftforge:coremods:5.1.0')
+            library('coremods', 'net.minecraftforge:coremods:5.0.1')
             library('nashorn', 'org.openjdk.nashorn:nashorn-core:15.3') // Needed by coremods, because the JRE no longer ships JS
-            library('eventbus', 'net.minecraftforge:eventbus:6.2.0')
+            library('eventbus', 'net.minecraftforge:eventbus:6.0.5')
             library('typetools', 'net.jodah:typetools:0.6.3') // Needed by EventBus because of lambdas
             library('mergetool-api', 'net.minecraftforge:mergetool-api:1.0')
             
@@ -50,7 +50,7 @@ dependencyResolutionManagement {
             bundle('jimfs', ['guava', 'failureaccess'])
 
             // ASM it's used for so many of our hacks
-            version('asm', '9.6')
+            version('asm', '9.5')
             library('asm',          'org.ow2.asm', 'asm'         ).versionRef('asm')
             library('asm-tree',     'org.ow2.asm', 'asm-tree'    ).versionRef('asm')
             library('asm-util',     'org.ow2.asm', 'asm-util'    ).versionRef('asm')
@@ -65,7 +65,7 @@ dependencyResolutionManagement {
             bundle('night-config', ['night-config-toml', 'night-config-core'])
 
             // Jar in Jar FileSystem
-            version('jarjar', '0.3.26')
+            version('jarjar', '0.3.19')
             library('jarjar-fs',       'net.minecraftforge', 'JarJarFileSystems').versionRef('jarjar')
             library('jarjar-meta',     'net.minecraftforge', 'JarJarMetadata'   ).versionRef('jarjar')
             library('jarjar-selector', 'net.minecraftforge', 'JarJarSelector'   ).versionRef('jarjar')
@@ -114,7 +114,7 @@ dependencyResolutionManagement {
             library('oshi','com.github.oshi:oshi-core:6.4.5')
             library('gson', 'com.google.code.gson:gson:2.10.1')
             library('failureaccess', 'com.google.guava:failureaccess:1.0.1')
-            library('guava', 'com.google.guava:guava:32.1.2-jre')
+            library('guava', 'com.google.guava:guava:31.1-jre')
             library('ibm-icu4j', 'com.ibm.icu:icu4j:73.2')
             library('mojang-authlib', 'com.mojang:authlib:4.0.43')
             library('mojang-blacklist', 'com.mojang:blocklist:1.0.10')
@@ -124,7 +124,7 @@ dependencyResolutionManagement {
             library('mojang-patchy', 'com.mojang:patchy:2.2.10')
             library('mojang-text2speech', 'com.mojang:text2speech:1.17.9')
             library('commons-codec','commons-codec:commons-codec:1.16.0')
-            library('commons-io', 'commons-io:commons-io:2.13.0')
+            library('commons-io', 'commons-io:commons-io:2.11.0')
             library('commons-logging', 'commons-logging:commons-logging:1.2')
             library('netty-buffer', 'io.netty:netty-buffer:4.1.97.Final')
             library('netty-codec', 'io.netty:netty-codec:4.1.97.Final')
@@ -140,7 +140,7 @@ dependencyResolutionManagement {
             library('jna', 'net.java.dev.jna:jna:5.13.0')
             library('jopt-simple', 'net.sf.jopt-simple:jopt-simple:5.0.4')
             library('apache-commons-compress', 'org.apache.commons:commons-compress:1.22')
-            library('apache-commons', 'org.apache.commons:commons-lang3:3.13.0')
+            library('apache-commons', 'org.apache.commons:commons-lang3:3.12.0')
             library('apache-httpclient', 'org.apache.httpcomponents:httpclient:4.5.13')
             library('apache-httpcore', 'org.apache.httpcomponents:httpcore:4.4.16')
             library('log4j-api',  'org.apache.logging.log4j', 'log4j-api' ).versionRef('log4j')
