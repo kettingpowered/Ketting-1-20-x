@@ -1,0 +1,56 @@
+name: Bug report
+description: Create a report to help us improve
+#title: ''
+labels: 'bug'
+#assignees: ''
+body:
+  - type: dropdown
+    attributes:
+      label: What Minecraft Version is your Server on?
+      multiple: false
+      options:
+        - 1.20.1
+        - 1.20.2
+        - 1.20.3
+        - 1.20.4
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Full Ketting Version
+      description: The FULL Ketting Version number, that you are encountering the bug on.
+      placeholder: e.g. 1.20.1-47.2.20-0.0.3
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Description of behavior
+      description: A clear and concise description of what the bug is, what actually happens and what you expect to happen (the last one can be inferred for mixin errors and certain exceptions).
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Reproduction Steps
+      value: |
+        Steps to reproduce the behavior:
+        1. Use above Version with mod bogus with the version x.y.z 
+        2. Run the server
+        3. See the mixin error
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Logs
+      description: |
+        Please add your server's logs (just the latest logs for the initial report).
+        You can upload your server logs to https://mclo.gs or drag and drop then into the textarea below, to upload them to github.
+        https://mclo.gs will (try to) redact sensitive information (such as file paths and ip's) automatically.  
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Any other context (e.g. Screenshots or short Video clips) can be sent here for further clarification
+    validations:
+      required: false
