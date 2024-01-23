@@ -34,7 +34,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -165,10 +164,6 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
             return skinMap.keySet();
         }
 
-        @Nullable
-        public net.minecraft.client.renderer.entity.EntityRenderer<?> getEntityRenderer(net.minecraft.world.entity.EntityType<?> type){
-            return renderers.get(type);
-        }
         /**
          * Returns a player skin renderer for the given skin name.
          *

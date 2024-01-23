@@ -1824,7 +1824,7 @@
     }
  
     public void handleClientInformation(ServerboundClientInformationPacket p_9845_) {
-@@ -1658,8 +_,53 @@
+@@ -1658,8 +_,54 @@
        this.player.updateOptions(p_9845_);
     }
  
@@ -1833,7 +1833,8 @@
 +   private static final ResourceLocation CUSTOM_UNREGISTER = new ResourceLocation("unregister");
     public void handleCustomPayload(ServerboundCustomPayloadPacket p_9860_) {
 -   }
-+      net.minecraftforge.network.NetworkHooks.onCustomPayload(p_9860_, this.connection);
++      //Ketting - don't parse a packet with bukkit, if forge has already handled it.
++      if (net.minecraftforge.network.NetworkHooks.onCustomPayload(p_9860_, this.connection)) return;
 +      PacketUtils.ensureRunningOnSameThread(p_9860_, this, this.player.serverLevel());
 +      if (p_9860_.identifier.equals(CUSTOM_REGISTER)) {
 +          try {
