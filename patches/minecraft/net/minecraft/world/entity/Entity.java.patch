@@ -134,7 +134,7 @@
  
     public void setPose(Pose p_20125_) {
 +      // CraftBukkit start
-+      if (p_20125_ == this.getPose()) {
++      if (p_20125_ == this.getPose() || p_20125_.ordinal() >= org.bukkit.entity.Pose.values().length) {
 +         return;
 +      }
 +      this.level.getCraftServer().getPluginManager().callEvent(new org.bukkit.event.entity.EntityPoseChangeEvent(this.getBukkitEntity(), org.bukkit.entity.Pose.values()[p_20125_.ordinal()]));
