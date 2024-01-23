@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/chunk/LevelChunkSection.java
 +++ b/net/minecraft/world/level/chunk/LevelChunkSection.java
-@@ -22,9 +_,12 @@
+@@ -22,9 +_,15 @@
     private short tickingBlockCount;
     private short tickingFluidCount;
     private final PalettedContainer<BlockState> states;
@@ -8,6 +8,9 @@
 +   // Ketting keep original type
     private PalettedContainerRO<Holder<Biome>> biomes;
  
++   public LevelChunkSection(PalettedContainer<BlockState> p_282846_, PalettedContainer<Holder<Biome>> p_281695_) {
++      this(p_282846_, (PalettedContainerRO<Holder<Biome>>) p_281695_);
++   }
     public LevelChunkSection(PalettedContainer<BlockState> p_282846_, PalettedContainerRO<Holder<Biome>> p_281695_) {
 +      // CraftBukkit end
        this.states = p_282846_;
