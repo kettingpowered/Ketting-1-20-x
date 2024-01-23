@@ -134,10 +134,10 @@
  
     public void setPose(Pose p_20125_) {
 +      // CraftBukkit start
-+      if (p_20125_ == this.getPose() || p_20125_.ordinal() >= org.bukkit.entity.Pose.values().length) {
++      if (p_20125_ == this.getPose()) {
 +         return;
 +      }
-+      this.level.getCraftServer().getPluginManager().callEvent(new org.bukkit.event.entity.EntityPoseChangeEvent(this.getBukkitEntity(), org.bukkit.entity.Pose.values()[p_20125_.ordinal()]));
++      if (p_20125_.ordinal() < org.bukkit.entity.Pose.values().length) this.level.getCraftServer().getPluginManager().callEvent(new org.bukkit.event.entity.EntityPoseChangeEvent(this.getBukkitEntity(), org.bukkit.entity.Pose.values()[p_20125_.ordinal()]));
 +      // CraftBukkit end
        this.entityData.set(DATA_POSE, p_20125_);
     }
