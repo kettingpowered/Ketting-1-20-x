@@ -117,7 +117,6 @@ dependencies {
     bootstrap(libs.bundles.asm)   // Needed by securemodules
     
     installer(libs.bootstrap)
-    installer(libs.bootstrap.api) // Needed by securemodules
     installer(libs.accesstransformers)
     installer(libs.antlr.runtime) // Dep of AccessTransformer
     installer(libs.eventbus)
@@ -306,7 +305,7 @@ for (def run : patcher.runs + tasks.userdevConfig.runs) {
     run.args '--gameDir', '.'
     run.jvmArgs '-Djava.net.preferIPv6Addresses=system'
     run.client run.name.contains('client')
-    run.main 'net.minecraftforge.bootstrap.ForgeBootstrap'
+    run.main 'cpw.mods.bootstraplauncher.BootstrapLauncher'
 }
 
 for (def run : patcher.runs) {
@@ -415,7 +414,7 @@ tasks.register("downloadInstaller", DownloadMavenArtifact) {
     changing = true
 }
 tasks.register("downloadServerShim", DownloadMavenArtifact) {
-    artifact = libs.bootstrap.shim.get().toString()
+    artifact = libs.bootstrap.get().toString()
     changing = true
 }
 tasks.register("downloadMCPConfig", DownloadMavenArtifact) {
@@ -507,7 +506,7 @@ tasks.register('createServerShimConfig') {
     ext.output = file('build/libs/bootstrap-shim.properties')
     doLast {
         def cfg = new CleanProperties()
-        cfg."Main-Class" = 'net.minecraftforge.bootstrap.ForgeBootstrap'
+        cfg."Main-Class" = 'cpw.mods.bootstraplauncher.BootstrapLauncher'
         cfg."Java-Version" = '17'
         cfg."Arguments" = "--launchTarget forge_server"
         cfg.store(output)
@@ -628,7 +627,7 @@ tasks.register('checkJarCompatibility', CheckJarCompatibility) {
 
 tasks.register('launcherJson', LauncherJson).configure {
     json.putAll([
-        mainClass: 'net.minecraftforge.bootstrap.ForgeBootstrap',
+        mainClass: 'cpw.mods.bootstraplauncher.BootstrapLauncher',
         arguments: [
             game: [
                 '--launchTarget', 'forge_client'
