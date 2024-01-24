@@ -223,7 +223,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.addCategory("Player being ticked");
-@@ -563,16 +_,55 @@
+@@ -563,16 +_,75 @@
     }
  
     private void updateScoreForCriteria(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -234,22 +234,9 @@
        });
     }
  
-    public void die(DamageSource p_9035_) {
-       this.gameEvent(GameEvent.ENTITY_DIE);
-+      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_9035_)) return;
-       boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES);
--      if (flag) {
--         Component component = this.getCombatTracker().getDeathMessage();
-+      // CraftBukkit start - fire PlayerDeathEvent
-+      if (this.dead) {
-+         return;
-+      }
-+      boolean keepInventory = this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || this.isSpectator();
-+
-+      //Ketting start
-+      Inventory copy = new Inventory(this);
-+      copy.replaceWith(getInventory()); // Create a deep copy
-+
++   //Ketting start
++   private @Nullable org.bukkit.event.entity.PlayerDeathEvent callDeathEvent(DamageSource p_9035_,String deathmessage){
++      final boolean keepInventory = this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || this.isSpectator();
 +      if (!this.isSpectator()) {
 +         this.dropAllDeathLoot(p_9035_);
 +      }
@@ -257,11 +244,44 @@
 +      List<org.bukkit.inventory.ItemStack> capturedDrops = new java.util.ArrayList<>(this.drops);
 +      this.drops.clear();
 +
-+      Component defaultMessage = this.getCombatTracker().getDeathMessage();
-+      String deathmessage = defaultMessage.getString();
++      
 +      keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
 +      org.bukkit.event.entity.PlayerDeathEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerDeathEvent(this, capturedDrops, deathmessage, keepInventory); //Ketting - capturedDrops
++      
++      final boolean originalKeepInv = this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
++      final boolean needsSwap = originalKeepInv != event.getKeepInventory();
++      if (needsSwap) this.level().getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).set(event.getKeepInventory(), this.getServer());
++      final boolean forgeResult;
++      try{
++         forgeResult = net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_9035_);
++      }finally {
++         if (needsSwap) this.level().getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).set(originalKeepInv, this.getServer());
++      }
++      
++      return forgeResult ? null : event;
++   }
++   //Ketting end
++
+    public void die(DamageSource p_9035_) {
+       this.gameEvent(GameEvent.ENTITY_DIE);
++
++      //Ketting start
++      Inventory copy = new Inventory(this);
++      copy.replaceWith(getInventory()); // Create a deep copy
++      Component defaultMessage = this.getCombatTracker().getDeathMessage();
++      String deathmessage = defaultMessage.getString();
++      
++      org.bukkit.event.entity.PlayerDeathEvent event = callDeathEvent(p_9035_, deathmessage);
++      if (event == null) return; //This is to keep compat with forge
 +      //Ketting end
+       boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES);
+-      if (flag) {
+-         Component component = this.getCombatTracker().getDeathMessage();
++      // CraftBukkit start - fire PlayerDeathEvent
++      if (this.dead) {
++         return;
++      }
++      
 +
 +      // SPIGOT-943 - only call if they have an inventory open
 +      if (this.containerMenu != this.inventoryMenu) {
