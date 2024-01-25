@@ -27,7 +27,7 @@ import static net.minecraftforge.fml.Logging.LOADING;
 
 public class LowCodeModLanguageProvider implements IModLanguageProvider
 {
-    private record LowCodeModTarget(String modId) implements IModLanguageProvider.IModLanguageLoader
+    private record LowCodeModTarget(String modId) implements IModLanguageLoader
     {
         private static final Logger LOGGER = LogManager.getLogger();
 
