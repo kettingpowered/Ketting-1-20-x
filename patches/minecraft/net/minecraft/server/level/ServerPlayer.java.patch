@@ -967,7 +967,7 @@
 +         org.bukkit.event.player.PlayerChangedMainHandEvent event = new org.bukkit.event.player.PlayerChangedMainHandEvent(getBukkitEntity(), getMainArm() == HumanoidArm.LEFT ? org.bukkit.inventory.MainHand.LEFT : org.bukkit.inventory.MainHand.RIGHT);
 +         this.server.server.getPluginManager().callEvent(event);
 +      }
-+      if (!this.locale.equals(p_297843_.language())) {
++      if (!this.language.equals(p_297843_.language())) {
 +         org.bukkit.event.player.PlayerLocaleChangeEvent event = new org.bukkit.event.player.PlayerLocaleChangeEvent(getBukkitEntity(), p_297843_.language());
 +         this.server.server.getPluginManager().callEvent(event);
 +      }
@@ -1100,7 +1100,7 @@
 +    * Defaults to en_us if the value is unknown.
 +    */
 +   public String getLanguage() {
-+      return this.locale;
++      return this.language;
 +   }
 +
 +   private Component tabListHeader = Component.empty();
