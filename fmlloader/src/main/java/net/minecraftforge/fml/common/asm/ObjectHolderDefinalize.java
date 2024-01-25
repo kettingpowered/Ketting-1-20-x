@@ -56,7 +56,6 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
         return lst != null && lst.stream().anyMatch(n -> n.desc.equals(OBJECT_HOLDER));
     }
 
-    @SuppressWarnings("unused")
     private String getValue(List<AnnotationNode> lst)
     {
         AnnotationNode ann = lst.stream().filter(n -> n.desc.equals(OBJECT_HOLDER)).findFirst().get();

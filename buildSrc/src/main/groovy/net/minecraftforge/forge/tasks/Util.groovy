@@ -16,15 +16,16 @@ import java.util.zip.ZipInputStream
 public class Util {
     static final ASM_LEVEL = Opcodes.ASM9
 
-    static void init() {
-        File.metaClass.sha1 = { ->
-            MessageDigest md = MessageDigest.getInstance('SHA-1')
-            delegate.eachByte 4096, {bytes, size ->
-                md.update(bytes, 0, size)
-            }
-            return md.digest().collect {String.format "%02x", it}.join()
-        }
+	static void init() {
+		File.metaClass.sha1 = { ->
+			MessageDigest md = MessageDigest.getInstance('SHA-1')
+			delegate.eachByte 4096, {bytes, size ->
+				md.update(bytes, 0, size)
+			}
+			return md.digest().collect {String.format "%02x", it}.join()
+		}
         File.metaClass.getSha1 = { !delegate.exists() ? null : delegate.sha1() }
+        //Ketting start
         File.metaClass.sha256 = { ->
             MessageDigest md = MessageDigest.getInstance('SHA-256')
             delegate.eachByte 4096, {bytes, size ->
@@ -33,7 +34,6 @@ public class Util {
             return md.digest().collect {String.format "%02x", it}.join()
         }
         File.metaClass.getSha256 = { !delegate.exists() ? null : delegate.sha256() }
-        //Ketting start
         File.metaClass.sha512 = { ->
             MessageDigest md = MessageDigest.getInstance('SHA3-512')
             delegate.eachByte 4096, {bytes, size ->
@@ -44,15 +44,15 @@ public class Util {
         File.metaClass.getSha512 = { !delegate.exists() ? null : delegate.sha512() }
         //Ketting end
 
-        File.metaClass.json = { -> new JsonSlurper().parseText(delegate.text) }
+		File.metaClass.json = { -> new JsonSlurper().parseText(delegate.text) }
         File.metaClass.getJson = { return delegate.exists() ? new JsonSlurper().parse(delegate) : [:] }
         File.metaClass.setJson = { json -> delegate.text = new JsonBuilder(json).toPrettyString() }
 
-        Date.metaClass.iso8601 = { ->
-            def format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-            def result = format.format(delegate)
-            return result[0..21] + ':' + result[22..-1]
-        }
+		Date.metaClass.iso8601 = { ->
+			def format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+			def result = format.format(delegate)
+			return result[0..21] + ':' + result[22..-1]
+		}
 
         String.metaClass.rsplit = { String del, int limit = -1 ->
             def lst = new ArrayList()
@@ -65,108 +65,85 @@ public class Util {
             lst.add(0, tmp)
             return lst
         }
+	}
+
+	public static String[] getClasspath(project, libs, artifact) {
+		def ret = []
+		artifactTree(project, artifact).each { key, lib ->
+			libs[lib.name] = lib
+			if (lib.name != artifact)
+				ret.add(lib.name)
+		}
+		return ret
+	}
+
+	public static def getArtifacts(project, config, classifiers) {
+		def ret = [:]
+		config.resolvedConfiguration.resolvedArtifacts.each {
+			def art = [
+				group: it.moduleVersion.id.group,
+				name: it.moduleVersion.id.name,
+				version: it.moduleVersion.id.version,
+				classifier: it.classifier,
+				extension: it.extension,
+				file: it.file
+			]
+			def key = art.group + ':' + art.name
+			def folder = "${art.group.replace('.', '/')}/${art.name}/${art.version}/"
+			def filename = "${art.name}-${art.version}"
+			if (art.classifier != null)
+				filename += "-${art.classifier}"
+			filename += ".${art.extension}"
+			def path = "${folder}${filename}"
+			def url = "https://libraries.minecraft.net/${path}"
+			if (!checkExists(url)) {
+				url = "https://maven.minecraftforge.net/${path}"
+			}
+			ret[key] = [
+				name: "${art.group}:${art.name}:${art.version}" + (art.classifier == null ? '' : ":${art.classifier}") + (art.extension == 'jar' ? '' : "@${art.extension}"),
+				downloads: [
+					artifact: [
+						path: path,
+						url: url,
+						sha1: sha1(art.file),
+						size: art.file.length()
+					]
+				]
+			]
+		}
+		return ret
+	}
+
+    public static def getMavenPath(task) {
+        def classifier = task.archiveClassifier.get()
+        def dep = "${task.project.group}:${task.project.name}:${task.project.version}" + (classifier == '' ? '' : ':' + classifier)
+        return "${task.project.group.replace('.', '/')}/${task.project.name}/${task.project.version}/${task.project.name}-${task.project.version}".toString() + (classifier == '' ? '' : '-' + classifier) + '.jar'
     }
 
-    public static String[] getClasspath(project, libs, artifact) {
-        def ret = []
-        artifactTree(project, artifact).each { key, lib ->
-            libs[lib.name] = lib
-            if (lib.name != artifact)
-                ret.add(lib.name)
-        }
-        return ret
+    public static def getMavenDep(task) {
+        def classifier = task.archiveClassifier.get()
+        return "${task.project.group}:${task.project.name}:${task.project.version}" + (classifier == '' ? '' : ':' + classifier)
     }
 
-    public static def getArtifacts(project, config) {
-        def ret = [:]
-        config.resolvedConfiguration.resolvedArtifacts.each { dep ->
-            def info = getMavenInfoFromDep(dep)
-            def url = "https://libraries.minecraft.net/$info.path"
-            if (!checkExists(url))
-                url = "https://nexus.c0d3m4513r.com/repository/Forge/$info.path"
-            if (!checkExists(url))
-                url = "https://nexus.c0d3m4513r.com/repository/Ketting-Server-Releases/$info.path"
-            if (!checkExists(url))
-                url = "https://nexus.c0d3m4513r.com/repository/Ketting/$info.path"
-            if (!checkExists(url))
-                url = "https://nexus.c0d3m4513r.com/repository/Magma/$info.path"
+	public static def iso8601Now() { new Date().iso8601() }
 
-            ret[info.key] = [
-                name: info.name,
-                downloads: [
-                    artifact: [
-                        path: info.path,
-                        url: url,
-                        sha1: dep.file.sha1(),
-                        size: dep.file.length()
-                    ]
-                ]
-            ]
-        }
-        return ret
-    }
+	public static def sha1(file) {
+		MessageDigest md = MessageDigest.getInstance('SHA-1')
+		file.eachByte 4096, {bytes, size ->
+			md.update(bytes, 0, size)
+		}
+		return md.digest().collect {String.format "%02x", it}.join()
+	}
 
-    public static Map getMavenInfoFromDep(dep) {
-        return getMavenInfoFromMap([
-            group: dep.moduleVersion.id.group,
-            name: dep.moduleVersion.id.name,
-            version: dep.moduleVersion.id.version,
-            classifier: dep.classifier,
-            extension: dep.extension
-        ])
-    }
-    public static Map getMavenInfoFromTask(task) {
-        return getMavenInfoFromMap([
-            group: task.project.group,
-            name: task.project.name,
-            version: task.project.version,
-            classifier: task.archiveClassifier.get(),
-            extension: task.archiveExtension.get()
-        ])
-    }
-
-    private static Map getMavenInfoFromMap(art) {
-        def key = "$art.group:$art.name"
-        def name = "$art.group:$art.name:$art.version"
-        def path = "${art.group.replace('.', '/')}/$art.name/$art.version/$art.name-$art.version"
-        if (art.classifier != null) {
-            name += ":$art.classifier"
-            path += "-$art.classifier"
-        }
-        if (!'jar'.equals(art.extension)) {
-            name += "@$art.extension"
-            path += ".$art.extension"
-        } else {
-            path += ".jar"
-        }
-        return [
-            key: key,
-            name: name,
-            path: path,
-            art: art
-        ]
-    }
-
-    public static def iso8601Now() { new Date().iso8601() }
-
-    public static def sha1(file) {
-        MessageDigest md = MessageDigest.getInstance('SHA-1')
-        file.eachByte 4096, {bytes, size ->
-            md.update(bytes, 0, size)
-        }
-        return md.digest().collect {String.format "%02x", it}.join()
-    }
-
-    private static def artifactTree(project, artifact, transitive = true) {
-        if (!project.ext.has('tree_resolver'))
-            project.ext.tree_resolver = 1
-        def cfg = project.configurations.create('tree_resolver_' + project.ext.tree_resolver++)
-        cfg.transitive = transitive
-        def dep = project.dependencies.create(artifact)
-        cfg.dependencies.add(dep)
-        def files = cfg.resolve()
-        return getArtifacts(project, cfg)
-    }
+	private static def artifactTree(project, artifact) {
+		if (!project.ext.has('tree_resolver'))
+			project.ext.tree_resolver = 1
+		def cfg = project.configurations.create('tree_resolver_' + project.ext.tree_resolver++)
+		def dep = project.dependencies.create(artifact)
+		cfg.dependencies.add(dep)
+		def files = cfg.resolve()
+		return getArtifacts(project, cfg, true)
+	}
 
 	private static boolean checkExists(url) {
 		try {

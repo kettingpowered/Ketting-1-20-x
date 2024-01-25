@@ -10,6 +10,7 @@ import com.mojang.logging.LogUtils;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LogMarkers;
+import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
@@ -23,8 +24,6 @@ import org.slf4j.Logger;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,16 +36,16 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 public class ModFile implements IModFile {
-    //Ketting start - keep for compat
     // Mods either must have a mods.toml or a manifest. We can no longer just put any jar on the classpath.
     @Deprecated(forRemoval = true, since = "1.18")
     public static final Manifest DEFAULTMANIFEST;
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     static {
         DEFAULTMANIFEST = new Manifest();
         DEFAULTMANIFEST.getMainAttributes().putValue("FMLModType", "MOD");
     }
-    //Ketting end
-    private static final Logger LOGGER = LogUtils.getLogger();
+
     private final String jarVersion;
     private final ModFileFactory.ModFileInfoParser parser;
     private Map<String, Object> fileProperties;
@@ -178,13 +177,9 @@ public class ModFile implements IModFile {
     }
 
     public void identifyLanguage() {
-        var lst = new ArrayList<IModLanguageProvider>(this.modFileInfo.requiredLanguageLoaders().size());
-        var services = FMLLoader.getLanguageLoadingProvider();
-        for (var spec : this.modFileInfo.requiredLanguageLoaders()) {
-            var service = services.findLanguage(this, spec.languageName(), spec.acceptedVersions());
-            lst.add(service);
-        }
-        this.loaders = Collections.unmodifiableList(lst);
+        this.loaders = this.modFileInfo.requiredLanguageLoaders().stream()
+                .map(spec-> FMLLoader.getLanguageLoadingProvider().findLanguage(this, spec.languageName(), spec.acceptedVersions()))
+                .toList();
     }
 
     @Override
@@ -212,11 +207,8 @@ public class ModFile implements IModFile {
         this.securityStatus = status;
     }
 
-    public SecureJar.Status getSecurityStatus() {
-        return this.securityStatus;
-    }
-
-    public ArtifactVersion getJarVersion() {
+    public ArtifactVersion getJarVersion()
+    {
         return new DefaultArtifactVersion(this.jarVersion);
     }
 

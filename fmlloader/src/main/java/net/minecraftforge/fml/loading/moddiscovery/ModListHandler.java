@@ -7,6 +7,7 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.MavenCoordinateResolver;
 import org.apache.commons.lang3.tuple.Pair;
@@ -45,7 +46,7 @@ public class ModListHandler {
                         orElseGet(()->{
                             LOGGER.warn(LogMarkers.CORE, "Failed to find coordinate {}", mc);
                             return null;
-                        })).
+                })).
                 filter(Objects::nonNull).
                 collect(Collectors.toList());
 
@@ -62,19 +63,13 @@ public class ModListHandler {
             return Collections.emptyList();
         }
 
-        String extension = fileExtension(filePath);
+        String extension = FileUtils.fileExtension(filePath);
         if (Objects.equals("list",extension)) {
             return readListFile(filePath).stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
         } else {
             LOGGER.warn(LogMarkers.CORE, "Failed to read unknown file list type {} for file {}", extension, filePath);
         }
         return Collections.emptyList();
-    }
-
-    private static String fileExtension(final Path path) {
-        String fileName = path.getFileName().toString();
-        int idx = fileName.lastIndexOf('.');
-        return idx > -1 ? fileName.substring(idx+1) : "";
     }
 
     /**
