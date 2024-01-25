@@ -89,6 +89,7 @@ ext {
         rootProject.file('LICENSE.txt'),
     ]
     BUNDLED_PROJECTS = [':fmlcore', ':fmlloader', ':javafmllanguage', ':lowcodelanguage', ':mclanguage'] //Ketting
+    JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4' //Ketting
     MAVEN_PATH = "${group.replace('.', '/')}/${project.name}/${VERSION}"
 }
 
@@ -102,6 +103,7 @@ configurations {
     kettinglauncher{
         transitive = false
     }
+    moduleonly
     api.extendsFrom(installer)
 }
 
@@ -673,7 +675,12 @@ task launcherJson(type: LauncherJson) {
     }
 }
 
-task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
+task installerJson(type: InstallerJson, dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches, 'universalJar']) {
+    ext {
+        // remove :fatjar
+        BIN_PATCHER = BINPATCH_TOOL.substring(0, BINPATCH_TOOL.length() - 1 - BINPATCH_TOOL.split(':')[3].length())
+    }
+    input.from applyClientBinPatches.output, applyServerBinPatches.output, genClientBinPatches.toolJar, launcherJson.output
     icon = rootProject.file('icon.ico')
     def deps = [];
     BUNDLED_PROJECTS.each { project-> deps.addAll(project+":jar")}
@@ -681,6 +688,8 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
 
     //doFirst {
         def libs = libraries
+        def INSTALLER_TOOLS_CLASSPATH = getClasspath(project, libs, INSTALLER_TOOLS)
+        def JAR_SPLITTER_CLASSPATH = getClasspath(project, libs, JAR_SPLITTER)
         json = [
                 _comment_: launcherJson.comment,
                 spec: 1,
@@ -689,7 +698,6 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                 path: null,
                 minecraft: MC_VERSION,
                 serverJarPath: '{LIBRARY_DIR}/net/minecraft/server/{MINECRAFT_VERSION}/server-{MINECRAFT_VERSION}.jar',
-                welcome: "Welcome to the simple FML installer.",
                 data: [
                         MAPPINGS: [
                                 client: "[${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:mappings@txt]",
@@ -702,6 +710,10 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                         MERGED_MAPPINGS: [
                                 client: "[${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:mappings-merged@txt]",
                                 server: "[${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:mappings-merged@txt]"
+                        ],
+                        BINPATCH: [
+                                client: '/data/client.lzma',
+                                server: '/data/server.lzma'
                         ],
                         MC_UNPACKED: [
                                 client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:unpacked]",
@@ -731,6 +743,14 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                             client: "'${createClientSRG.output.sha1()}'",
                             server: "'${createServerSRG.output.sha1()}'"
                         ],*/
+                        PATCHED: [
+                                client: "[${project.group}:${project.name}:${project.version}:client]",
+                                server: "[${project.group}:${project.name}:${project.version}:server]"
+                        ],
+                        PATCHED_SHA: [
+                                client: "'${applyClientBinPatches.output.get().asFile.sha1()}'",
+                                server: "'${applyServerBinPatches.output.get().asFile.sha1()}'"
+                        ],
                         MCP_VERSION: [
                                 client: "'${MCP_VERSION}'",
                                 server: "'${MCP_VERSION}'"
@@ -740,7 +760,7 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                         [
                                 sides: ['server'],
                                 jar: INSTALLER_TOOLS,
-                                classpath: getClasspath(project, libs, INSTALLER_TOOLS),
+                                classpath: INSTALLER_TOOLS_CLASSPATH,
                                 args: [
                                         '--task', 'EXTRACT_FILES',
                                         '--archive', '{INSTALLER}',
@@ -748,14 +768,14 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                                         '--from', 'data/run.sh',
                                         '--to',   '{ROOT}/run.sh',
                                         '--exec', '{ROOT}/run.sh',
-                                        //'--from', "data/run_fml_${VERSION.replace('-', '_').sh",
-                                        //'--to',   '{ROOT}/run_fml_${VERSION.replace('-', '_').sh',
-                                        //'--exec', '{ROOT}/run_fml_${VERSION.replace('-', '_').sh',
+                                        //'--from', "data/run_forge_${VERSION.replace('-', '_').sh",
+                                        //'--to',   '{ROOT}/run_forge_${VERSION.replace('-', '_').sh',
+                                        //'--exec', '{ROOT}/run_forge_${VERSION.replace('-', '_').sh',
 
                                         '--from', 'data/run.bat',
                                         '--to',   '{ROOT}/run.bat',
-                                        //'--from', 'data/run_fml_${VERSION.replace('-', '_').bat',
-                                        //'--to',   '{ROOT}/run_fml_${VERSION.replace('-', '_').bat',
+                                        //'--from', 'data/run_forge_${VERSION.replace('-', '_').bat',
+                                        //'--to',   '{ROOT}/run_forge_${VERSION.replace('-', '_').bat',
 
                                         '--from',     'data/user_jvm_args.txt',
                                         '--to',       '{ROOT}/user_jvm_args.txt',
@@ -770,7 +790,7 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                         ], [
                                 sides: ['server'],
                                 jar: INSTALLER_TOOLS,
-                                classpath: getClasspath(project, libs, INSTALLER_TOOLS),
+                                classpath: INSTALLER_TOOLS_CLASSPATH,
                                 args: [
                                         '--task', 'BUNDLER_EXTRACT',
                                         '--input', '{MINECRAFT_JAR}',
@@ -780,7 +800,7 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                         ], [
                                 sides: ['server'],
                                 jar: INSTALLER_TOOLS,
-                                classpath: getClasspath(project, libs, INSTALLER_TOOLS),
+                                classpath: INSTALLER_TOOLS_CLASSPATH,
                                 args: [
                                         '--task', 'BUNDLER_EXTRACT',
                                         '--input', '{MINECRAFT_JAR}',
@@ -789,7 +809,7 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                                 ]
                         ], [
                                 jar: INSTALLER_TOOLS,
-                                classpath: getClasspath(project, libs, INSTALLER_TOOLS),
+                                classpath: INSTALLER_TOOLS_CLASSPATH,
                                 args: [
                                         '--task', 'MCP_DATA',
                                         '--input', "[${MCP_ARTIFACT.descriptor}]",
@@ -798,7 +818,7 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                                 ]
                         ], [
                                 jar: INSTALLER_TOOLS,
-                                classpath: getClasspath(project, libs, INSTALLER_TOOLS),
+                                classpath: INSTALLER_TOOLS_CLASSPATH,
                                 args: [
                                         '--task', 'DOWNLOAD_MOJMAPS',
                                         '--version', MC_VERSION,
@@ -807,7 +827,7 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                                 ]
                         ], [
                                 jar: INSTALLER_TOOLS,
-                                classpath: getClasspath(project, libs, INSTALLER_TOOLS),
+                                classpath: INSTALLER_TOOLS_CLASSPATH,
                                 args: [
                                         '--task', 'MERGE_MAPPING',
                                         '--left', '{MAPPINGS}',
@@ -818,7 +838,7 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                         ], [
                                 sides: ['client'],
                                 jar: JAR_SPLITTER,
-                                classpath: getClasspath(project, libs, JAR_SPLITTER),
+                                classpath: JAR_SPLITTER_CLASSPATH,
                                 args: [
                                         '--input', '{MINECRAFT_JAR}',
                                         '--slim',  '{MC_SLIM}',
@@ -832,7 +852,7 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                         ], [
                                 sides: ['server'],
                                 jar: JAR_SPLITTER,
-                                classpath: getClasspath(project, libs, JAR_SPLITTER),
+                                classpath: JAR_SPLITTER_CLASSPATH,
                                 args: [
                                         '--input', '{MC_UNPACKED}',
                                         '--slim',  '{MC_SLIM}',
@@ -856,11 +876,23 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                             '{MC_SRG}': '{MC_SRG_SHA}'
                         ]
                         */
+                        ], [
+                                jar: BIN_PATCHER,
+                                classpath: getClasspath(project, libs, BIN_PATCHER),
+                                args: [
+                                        '--clean', '{MC_SRG}',
+                                        '--output', '{PATCHED}',
+                                        '--apply', '{BINPATCH}'
+                                ]/*, Because Vignette is unstable, it screws with the entry order of the binpatched jar, so we can't use the hash right now
+                        // Re-enable this when https://github.com/CadixDev/Vignette/issues/1 is solved
+                        outputs: [
+                            '{PATCHED}': '{PATCHED_SHA}'
+                        ]*/
                         ]
                 ]
         ]
         getClasspath(project, libs, MCP_ARTIFACT.descriptor) //Tell it to download mcp_config
-    //}
+//    }
 }
 
 
