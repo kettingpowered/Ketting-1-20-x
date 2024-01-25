@@ -7,23 +7,45 @@ package net.minecraftforge.fml.loading.targets;
 
 import cpw.mods.jarhandling.SecureJar;
 import cpw.mods.modlauncher.api.ServiceRunner;
+import net.minecraftforge.fml.loading.FileUtils;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
-import org.jetbrains.annotations.ApiStatus;
-
-@ApiStatus.Internal
-abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
-    protected CommonDevLaunchHandler(LaunchType type, String prefix) {
-        super(type, prefix);
-    }
-
+public abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
     @Override public String getNaming() { return "mcp"; }
     @Override public boolean isProduction() { return false; }
+
+    @Override
+    public LocatedPaths getMinecraftPaths() {
+        // Minecraft is extra jar {resources} + our exploded directories in dev
+        final var mcstream = Stream.<Path>builder();
+
+        // The extra jar is on the classpath, so try and pull it out of the legacy classpath
+        var legacyCP = Objects.requireNonNull(System.getProperty("legacyClassPath"), "Missing legacyClassPath, cannot find client-extra").split(File.pathSeparator);
+        var extra = findJarOnClasspath(legacyCP, "client-extra");
+
+        // The MC code/Patcher edits are in exploded directories
+        final var modstream = Stream.<List<Path>>builder();
+        final var mods = getModClasses();
+        final var minecraft = mods.remove("minecraft");
+        if (minecraft == null)
+            throw new IllegalStateException("Could not find 'minecraft' mod paths.");
+        minecraft.stream().distinct().forEach(mcstream::add);
+        mods.values().forEach(modstream::add);
+
+        mcstream.add(extra);
+        var mcFilter = getMcFilter(extra, minecraft, modstream);
+        return new LocatedPaths(mcstream.build().toList(), mcFilter, modstream.build().toList(), getFmlStuff(legacyCP));
+    }
 
     @Override
     protected String[] preLaunch(String[] arguments, ModuleLayer layer) {
@@ -57,47 +79,24 @@ abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
         return args.getArguments();
     }
 
-    private static String getRandomNumbers(int length) {
-        // Generate a time-based random number, to mimic how n.m.client.Main works
-        return Long.toString(System.nanoTime() % (int) Math.pow(10, length));
-    }
-
-    @Override
-    protected ServiceRunner makeService(final String[] arguments, final ModuleLayer gameLayer) {
-        return super.makeService(preLaunch(arguments, gameLayer), gameLayer);
-    }
-
-    protected static String[] findClassPath() {
-        var classpath = System.getProperty("legacyClassPath");
-        if (classpath == null)
-            classpath = System.getProperty("java.class.path");
-        return classpath.split(File.pathSeparator);
+    protected List<Path> getFmlStuff(String[] classpath) {
+        // We also want the FML things, fmlcore, javafmllanguage, mclanguage, I don't like hard coding these, but hey whatever works for now.
+        return Arrays.stream(classpath)
+            .filter(e -> FileUtils.matchFileName(e, "fmlcore", "javafmllanguage", "lowcodelanguage", "mclanguage"))
+            .map(Paths::get)
+            .toList();
     }
 
     protected static Path findJarOnClasspath(String[] classpath, String match) {
-        String ret = null;
-
-        for (var entry : classpath) {
-            int idx = entry.lastIndexOf(File.separatorChar);
-            if (idx == -1) continue;
-
-            var name = entry.substring(idx + 1);
-            if (name.startsWith(match)) {
-                ret = entry;
-                break;
-            }
-        }
-
-        if (ret == null)
-            throw new IllegalStateException("Could not find " + match + " in classpath");
-
-        return Paths.get(ret);
+        return Paths.get(Arrays.stream(classpath)
+            .filter(e -> FileUtils.matchFileName(e, match))
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("Could not find " + match + " in classpath")));
     }
 
-    // TODO: [Forge][UFS][DEV] Make Forge and MC seperate sources at dev time so we don't have to filter
-    protected static Path getMinecraftOnly(Path extra, Path forge) {
-        var packages = getPackages(); // Pulled out so it is passed to the lambda as value
-        var extraPath = extra.toString().replace('\\', '/');
+    protected BiPredicate<String, String> getMcFilter(Path extra, List<Path> minecraft, Stream.Builder<List<Path>> mods) {
+        final var packages = getPackages();
+        final var extraPath = extra.toString().replace('\\', '/');
 
         // We serve everything, except for things in the forge packages.
         BiPredicate<String, String> mcFilter = (path, base) -> {
@@ -107,31 +106,34 @@ abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
                 if (path.startsWith(pkg)) return false;
             return true;
         };
-        var fs = UnionHelper.newFileSystem(mcFilter, new Path[] { forge, extra });
-        return fs.getRootDirectories().iterator().next();
-    }
 
-    // TODO: [Forge][UFS][DEV] Make Forge and MC seperate sources at dev time so we don't have to filter
-    protected static Path getForgeOnly(Path forge) {
-        var packages = getPackages(); // Pulled out so it is passed to the lambda as value
         // We need to separate out our resources/code so that we can show up as a different data pack.
         var modJar = SecureJar.from((path, base) -> {
             if (!path.endsWith(".class")) return true;
             for (var pkg : packages)
                 if (path.startsWith(pkg)) return true;
             return false;
-        }, new Path[] { forge });
-
+        }, minecraft.stream().distinct().toArray(Path[]::new));
         //modJar.getPackages().stream().sorted().forEach(System.out::println);
-        return modJar.getRootPath();
+        mods.add(List.of(modJar.getRootPath()));
+
+        return mcFilter;
     }
 
-    private static String[] getPackages() {
-        return new String[] {
-            "net/minecraftforge/",
-            "META-INF/services/",
-            "META-INF/coremods.json",
-            "META-INF/mods.toml"
-        };
+    protected String[] getPackages() {
+        return new String[]{ "net/minecraftforge/", "META-INF/services/", "META-INF/coremods.json", "META-INF/mods.toml" };
     }
+
+    private static String getRandomNumbers(int length) {
+        // Generate a time-based random number, to mimic how n.m.client.Main works
+        return Long.toString(System.nanoTime() % (int) Math.pow(10, length));
+    }
+
+    @Override
+    protected ServiceRunner makeService(final String[] arguments, final ModuleLayer gameLayer) {
+        var args = preLaunch(arguments, gameLayer);
+        return ()->devService(args, gameLayer);
+    }
+
+    abstract void devService(final String[] arguments, final ModuleLayer gameLayer) throws Throwable;
 }

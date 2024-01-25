@@ -12,9 +12,6 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.jetbrains.annotations.ApiStatus;
-
-@ApiStatus.Internal
 public class CoreModFile implements ICoreModFile {
     private final Path internalPath;
     private final ModFile file;

@@ -5,109 +5,90 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import net.minecraftforge.fml.loading.ClasspathLocatorUtils;
 import com.mojang.logging.LogUtils;
-
 import net.minecraftforge.fml.loading.LogMarkers;
-import net.minecraftforge.forgespi.locating.IModLocator;
-
-import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
+import java.util.Map;
+import java.util.stream.Stream;
 
-@ApiStatus.Internal
-public class ClasspathLocator extends AbstractModProvider implements IModLocator {
+public class ClasspathLocator extends AbstractJarFileModLocator
+{
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final Attributes.Name MOD_TYPE = new Attributes.Name("FMLModType");
+    private final List<Path> legacyClasspath = Arrays.stream(System.getProperty("legacyClassPath", "").split(File.pathSeparator)).map(Path::of).toList();
+    private boolean enabled = false;
 
     @Override
     public String name() {
-        return "classpath";
+        return "userdev classpath";
     }
 
     @Override
-    public List<ModFileOrException> scanMods() {
-        //var cl = ClassLoader.getSystemClassLoader();
-        var cl = getClass().getClassLoader();
+    public Stream<Path> scanCandidates() {
+        if (!enabled)
+            return Stream.of();
 
-        // Find 'minecraft' during dev time this is also Forge. So skip it.
-        // Can return null for dedicated server as Minecraft isn't on the classpath
-        // On the client it doesn't matter as it's the vanilla jar so wouldnt have mods.toml in it.
-        var minecraft = getPathFromResource(cl, "net/minecraft/obfuscate/DontObfuscate.class");
+        try {
+            var claimed = new ArrayList<>(legacyClasspath);
+            var paths = Stream.<Path>builder();
 
-        var claimed = new HashSet<Path>();
-        var tomls = getUrls(cl, MODS_TOML);
-        for (var url : tomls) {
-            var path = getPath(url, MODS_TOML);
-            if (!path.equals(minecraft))
-                claimed.add(path);
+            findPaths(claimed, MODS_TOML).forEach(paths::add);
+            findPaths(claimed, MANIFEST).forEach(paths::add);
+
+            return paths.build();
+        } catch (IOException e) {
+            LOGGER.error(LogMarkers.SCAN, "Error trying to find resources", e);
+            throw new RuntimeException(e);
         }
+    }
 
-        var manifests = getUrls(cl, JarFile.MANIFEST_NAME);
-        for (var url : manifests) {
-            var path = getPath(url, JarFile.MANIFEST_NAME);
-            if (claimed.contains(path))
+    private List<Path> findPaths(List<Path> claimed, String resource) throws IOException {
+        var ret = new ArrayList<Path>();
+        final Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources(resource);
+        while (resources.hasMoreElements()) {
+            URL url = resources.nextElement();
+            Path path = ClasspathLocatorUtils.findJarPathFor(resource, resource, url);
+            if (claimed.stream().anyMatch(path::equals) || !Files.exists(path) || Files.isDirectory(path))
                 continue;
-
-            try (var is = url.openStream()) {
-                var mf = new Manifest(is);
-                var type = mf.getMainAttributes().getValue(MOD_TYPE);
-                if (type != null)
-                    claimed.add(path);
-            } catch (IOException e) {
-                LOGGER.warn(LogMarkers.SCAN, "Error reading manifest from: " + url, e);
-            }
+            ret.add(path);
         }
-
-        var ret = new ArrayList<ModFileOrException>();
-        for (var path : claimed)
-            ret.add(createMod(path));
         return ret;
     }
 
-    private List<URL> getUrls(ClassLoader cl, String resource) {
+    @Override
+    public void initArguments(Map<String, ?> arguments) {
+        var launchTarget = (String) arguments.get("launchTarget");
+        enabled = launchTarget != null && launchTarget.contains("dev");
+    }
+
+    private Path findJarPathFor(final String resourceName, final String jarName, final URL resource) {
         try {
-            var lst = Collections.list(cl.getResources(resource));
-            if (LOGGER.isDebugEnabled(LogMarkers.SCAN)) {
-                Collections.sort(lst, (a, b) -> a.toString().compareTo(b.toString()));
-                LOGGER.debug(LogMarkers.SCAN, "Scanning Classloader: {} for {}", cl, resource);
-                for (var url : lst)
-                    LOGGER.debug(LogMarkers.SCAN, "\t{}", url);
+            Path path;
+            final URI uri = resource.toURI();
+            if (uri.getScheme().equals("jar") && uri.getRawSchemeSpecificPart().contains("!/")) {
+                int lastExcl = uri.getRawSchemeSpecificPart().lastIndexOf("!/");
+                path = Paths.get(new URI(uri.getRawSchemeSpecificPart().substring(0, lastExcl)));
+            } else {
+                path = Paths.get(new URI("file://"+uri.getRawSchemeSpecificPart().substring(0, uri.getRawSchemeSpecificPart().length()-resourceName.length())));
             }
-            return lst;
-        } catch (IOException e) {
-            LOGGER.warn(LogMarkers.SCAN, "Error finding resources for: " + resource, e);
-            return List.of();
+            //LOGGER.debug(CORE, "Found JAR {} at path {}", jarName, path.toString());
+            return path;
+        } catch (NullPointerException | URISyntaxException e) {
+            LOGGER.error(LogMarkers.SCAN, "Failed to find JAR for class {} - {}", resourceName, jarName);
+            throw new RuntimeException("Unable to locate "+resourceName+" - "+jarName, e);
         }
-    }
-
-    private static Path getPath(URL url, String resource) {
-        var str = url.toString();
-        int len = resource.length();
-        if ("jar".equalsIgnoreCase(url.getProtocol())) {
-            str = url.getFile();
-            len += 2;
-        }
-        str = str.substring(0, str.length() - len);
-        var path = Paths.get(URI.create(str));
-        return path;
-    }
-
-    private static Path getPathFromResource(ClassLoader cl, String resource) {
-        var url = cl.getResource(resource);
-        if (url == null)
-            return null;
-        return getPath(url, resource);
     }
 }

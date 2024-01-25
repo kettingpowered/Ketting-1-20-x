@@ -20,6 +20,8 @@ import org.objectweb.asm.tree.MethodNode;
 
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 /**
  * Modifies specified enums to allow runtime extension by making the $VALUES field non-final and
