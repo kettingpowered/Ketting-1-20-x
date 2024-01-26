@@ -1,10 +1,12 @@
 package org.bukkit.inventory;
 
 import com.google.common.base.Preconditions;
+import com.mojang.logging.LogUtils;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 /**
  * Represents a view linking two inventories and a single player (whose
@@ -15,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
  * as it should.
  */
 public abstract class InventoryView {
+    private static final Logger LOGGER = LogUtils.getLogger();
     public static final int OUTSIDE = -999;
     /**
      * Represents various extra properties of certain inventory windows.
@@ -237,8 +240,8 @@ public abstract class InventoryView {
         if (rawSlot == OUTSIDE || rawSlot == -1) {
             return null;
         }
-        Preconditions.checkArgument(rawSlot >= 0, "Negative, non outside slot %s", rawSlot);
-        Preconditions.checkArgument(rawSlot < countSlots(), "Slot %s greater than inventory slot count", rawSlot);
+        if(rawSlot < 0) LOGGER.error("Negative, non outside slot {}", rawSlot);
+        if(rawSlot >= countSlots()) LOGGER.error("Slot {} greater than inventory slot count", rawSlot);
 
         if (rawSlot < getTopInventory().getSize()) {
             return getTopInventory();
