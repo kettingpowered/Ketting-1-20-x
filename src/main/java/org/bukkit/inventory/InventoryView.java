@@ -240,8 +240,14 @@ public abstract class InventoryView {
         if (rawSlot == OUTSIDE || rawSlot == -1) {
             return null;
         }
-        if(rawSlot < 0) LOGGER.error("Negative, non outside slot {}", rawSlot);
-        if(rawSlot >= countSlots()) LOGGER.error("Slot {} greater than inventory slot count", rawSlot);
+        if(rawSlot < 0) {
+            LOGGER.error("Negative, non outside slot {}", rawSlot);
+            return null;
+        }
+        if(rawSlot >= countSlots()) {
+            LOGGER.error("Slot {} greater than inventory slot count", rawSlot);
+            return null;
+        }
 
         if (rawSlot < getTopInventory().getSize()) {
             return getTopInventory();
