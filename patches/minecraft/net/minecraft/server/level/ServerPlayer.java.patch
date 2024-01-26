@@ -223,7 +223,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.addCategory("Player being ticked");
-@@ -563,16 +_,75 @@
+@@ -563,16 +_,78 @@
     }
  
     private void updateScoreForCriteria(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -246,16 +246,21 @@
 +
 +      
 +      keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
-+      org.bukkit.event.entity.PlayerDeathEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerDeathEvent(this, capturedDrops, deathmessage, keepInventory); //Ketting - capturedDrops
++      org.bukkit.event.entity.PlayerDeathEvent event = null;
++      if (!this.dead) event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerDeathEvent(this, capturedDrops, deathmessage, keepInventory); //Ketting - capturedDrops
 +      
 +      final boolean originalKeepInv = this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
-+      final boolean needsSwap = originalKeepInv != event.getKeepInventory();
++      final boolean needsSwap = event!=null && originalKeepInv != event.getKeepInventory();
 +      if (needsSwap) this.level().getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).set(event.getKeepInventory(), this.getServer());
 +      final boolean forgeResult;
 +      try{
 +         forgeResult = net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_9035_);
 +      }finally {
 +         if (needsSwap) this.level().getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).set(originalKeepInv, this.getServer());
++      }
++      
++      if ((event == null && originalKeepInv) || (event!=null && event.getKeepInventory())) {
++         getForgeCapturesAndClear();
 +      }
 +      
 +      return forgeResult ? null : event;
@@ -266,8 +271,6 @@
        this.gameEvent(GameEvent.ENTITY_DIE);
 +
 +      //Ketting start
-+      Inventory copy = new Inventory(this);
-+      copy.replaceWith(getInventory()); // Create a deep copy
 +      Component defaultMessage = this.getCombatTracker().getDeathMessage();
 +      String deathmessage = defaultMessage.getString();
 +      
@@ -302,7 +305,7 @@
           this.connection.send(new ClientboundPlayerCombatKillPacket(this.getId(), component), PacketSendListener.exceptionallySend(() -> {
              int i = 256;
              String s = component.getString(256);
-@@ -601,11 +_,21 @@
+@@ -601,11 +_,18 @@
           this.tellNeutralMobsThatIDied();
        }
  
@@ -313,9 +316,6 @@
 +      // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
 +      if (!event.getKeepInventory()) {
 +         this.getInventory().clearContent();
-+      } else { //Ketting - if keepInventory is modified by a plugin, reset the inventory and clear the forge captures
-+         this.getInventory().replaceWith(copy);
-+         getForgeCapturesAndClear();
        }
  
 -      this.getScoreboard().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this.getScoreboardName(), Score::increment);
