@@ -676,7 +676,10 @@ task launcherJson(type: LauncherJson) {
 }
 
 task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
-
+    ext {
+        // remove :fatjar
+        BIN_PATCHER = BINPATCH_TOOL.substring(0, BINPATCH_TOOL.length() - 1 - BINPATCH_TOOL.split(':')[3].length())
+    }
 
     // Extract MCP Mappings
     dependsOn(extractMCPConfigMappings)
@@ -765,6 +768,18 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                         MCP_VERSION: [
                                 client: "'${MCP_VERSION}'",
                                 server: "'${MCP_VERSION}'"
+                        ],
+                        BINPATCH: [
+                                client: '/data/client.lzma',
+                                server: '/data/server.lzma'
+                        ],
+                        PATCHED: [
+                                client: "[${project.group}:${project.name}:${project.version}:client]",
+                                server: "[${project.group}:${project.name}:${project.version}:server]"
+                        ],
+                        PATCHED_SHA: [
+                                client: "'${applyClientBinPatches.output.get().asFile.sha1}'",
+                                server: "'${applyServerBinPatches.output.get().asFile.sha1}'"
                         ]
                 ],
                 processors: [
@@ -887,6 +902,18 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                             '{MC_SRG}': '{MC_SRG_SHA}'
                         ]
                         */
+                        ], [
+                        jar: BIN_PATCHER,
+                        classpath: getClasspath(project, libs, BIN_PATCHER),
+                        args: [
+                                '--clean', '{MC_SRG}',
+                                '--output', '{PATCHED}',
+                                '--apply', '{BINPATCH}'
+                        ]/*, Because Vignette is unstable, it screws with the entry order of the binpatched jar, so we can't use the hash right now
+                        // Re-enable this when https://github.com/CadixDev/Vignette/issues/1 is solved
+                        outputs: [
+                            '{PATCHED}': '{PATCHED_SHA}'
+                        ]*/
                         ]
                 ]
         ]
