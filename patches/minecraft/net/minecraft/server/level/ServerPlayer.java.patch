@@ -652,7 +652,7 @@
 +      }
 +   }
 +
-+   public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_9115_, boolean force) {
++   public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_9115_) {
 +      var optAt = java.util.Optional.of(p_9115_);
 +      var ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
 +      if (ret != null) return Either.left(ret);
@@ -664,7 +664,7 @@
 +         return bedResult; // return immediately if the result is not bypassable by plugins
 +      }
 +
-+      if (force) {
++      if (super.forceSleep) {
 +         bedResult = Either.right(Unit.INSTANCE);
 +      }
 +
