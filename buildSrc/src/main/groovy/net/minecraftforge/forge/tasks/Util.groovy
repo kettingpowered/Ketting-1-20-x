@@ -114,6 +114,37 @@ public class Util {
 		return ret
 	}
 
+	public static Map getMavenInfoFromDep(dep) {
+		return getMavenInfoFromMap([
+				group: dep.moduleVersion.id.group,
+				name: dep.moduleVersion.id.name,
+				version: dep.moduleVersion.id.version,
+				classifier: dep.classifier,
+				extension: dep.extension
+		])
+	}
+	private static Map getMavenInfoFromMap(art) {
+		def key = "$art.group:$art.name"
+		def name = "$art.group:$art.name:$art.version"
+		def path = "${art.group.replace('.', '/')}/$art.name/$art.version/$art.name-$art.version"
+		if (art.classifier != null) {
+			name += ":$art.classifier"
+			path += "-$art.classifier"
+		}
+		if (!'jar'.equals(art.extension)) {
+			name += "@$art.extension"
+			path += ".$art.extension"
+		} else {
+			path += ".jar"
+		}
+		return [
+				key: key,
+				name: name,
+				path: path,
+				art: art
+		]
+	}
+	
     public static def getMavenPath(task) {
         def classifier = task.archiveClassifier.get()
         def dep = "${task.project.group}:${task.project.name}:${task.project.version}" + (classifier == '' ? '' : ':' + classifier)
