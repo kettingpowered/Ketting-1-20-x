@@ -29,7 +29,9 @@ abstract class LauncherJson extends DefaultTask {
 
     LauncherJson() {
         getOutput().convention(project.layout.buildDirectory.file('version.json'))
-
+        project.BUNDLED_PROJECTS.each {item -> {
+            dependsOn(item+":jar")
+        }}
         dependsOn(':fmlloader:jar', 'universalJar')
         getInput().from(project.tasks.universalJar.archiveFile,
                 project.project(':fmlloader').jar.archiveFile,
