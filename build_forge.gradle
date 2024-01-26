@@ -676,6 +676,35 @@ task launcherJson(type: LauncherJson) {
 }
 
 task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
+
+
+    // Extract MCP Mappings
+    dependsOn(extractMCPConfigMappings)
+    input.from(extractMCPConfigMappings.output)
+    // Download Official Mappings
+    dependsOn(downloadClientMappings, downloadServerMappings)
+    input.from(downloadClientMappings.output, downloadServerMappings.output)
+    // Merge MCP and Official Mappings
+    dependsOn(mergeClientMappings, mergeServerMappings)
+    input.from(mergeClientMappings.output, mergeServerMappings.output)
+    // Get 'base' MC jar, Client is straight download, server is extracted from the bundle
+    dependsOn(downloadClientRaw, extractServer)
+    input.from(downloadClientRaw.dest, extractServer.output)
+    // Rename MC Jar
+    dependsOn(createClientSRG, createServerSRG)
+    input.from(createClientSRG.output, createServerSRG.output)
+    // Apply Binary patches to vanilla jar
+    dependsOn(applyClientBinPatches, applyServerBinPatches)
+    input.from(applyClientBinPatches.output, applyServerBinPatches.output, genClientBinPatches.toolJar)
+
+
+    dependsOn(downloadClientExtra, downloadServerExtra)
+    input.from(downloadClientExtra.output, downloadServerExtra.output)
+
+    dependsOn(downloadClientSlim, downloadServerSlim)
+    input.from(downloadClientSlim.output, downloadServerSlim.output)
+    
+    
     icon = rootProject.file('icon.ico')
     def deps = [];
     BUNDLED_PROJECTS.each { project-> deps.addAll(project+":jar")}
@@ -714,16 +743,16 @@ task installerJson(type: InstallerJson, dependsOn: 'universalJar') {
                                 server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:slim]"
                         ],
                         MC_SLIM_SHA: [
-                                client: "'${downloadClientSlim.output.get().asFile.sha1()}'",
-                                server: "'${downloadServerSlim.output.get().asFile.sha1()}'"
+                                client: "'${downloadClientSlim.output.get().asFile.sha1}'",
+                                server: "'${downloadServerSlim.output.get().asFile.sha1}'"
                         ],
                         MC_EXTRA: [
                                 client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:extra]",
                                 server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:extra]"
                         ],
                         MC_EXTRA_SHA: [
-                                client: "'${downloadClientExtra.output.get().asFile.sha1()}'",
-                                server: "'${downloadServerExtra.output.get().asFile.sha1()}'"
+                                client: "'${downloadClientExtra.output.get().asFile.sha1}'",
+                                server: "'${downloadServerExtra.output.get().asFile.sha1}'"
                         ],
                         MC_SRG: [
                                 client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:srg]",
