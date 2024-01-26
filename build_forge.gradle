@@ -969,7 +969,8 @@ tasks.named('universalJar').configure {
     jarSigner.sign(it)
 }
 
-tasks.register('installerJar', InstallerJar) {
+//Ketting - remove installerJar as it somehow bricks gradle, thank you Java, very nice
+/*tasks.register('installerJar', InstallerJar) {
     fat = !System.env.TEAMCITY_VERSION
     //offline = true
     from(EXTRA_TXTS)
@@ -983,7 +984,7 @@ tasks.register('installerJar', InstallerJar) {
         rename { 'data/server.lzma' }
     }
     jarSigner.sign(it)
-}
+}*/
 
 //Ketting start
 tasks.register('generateKettingLibraries', org.kettingpowered.task.GenerateLibs) {}
