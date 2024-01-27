@@ -3,6 +3,7 @@ import net.minecraftforge.forge.tasks.checks.CheckExcs
 import net.minecraftforge.forge.tasks.checks.CheckPatches
 import net.minecraftforge.forge.tasks.checks.CheckSAS
 import net.minecraftforge.forge.tasks.checks.CheckTask
+import org.kettingpowered.task.GenerateLibs
 
 import java.util.Date
 import java.util.LinkedHashMap
@@ -971,7 +972,8 @@ tasks.named('universalJar').configure {
     jarSigner.sign(it)
 }
 
-tasks.register('installerJar', InstallerJar) {
+//Ketting - remove installerJar as it somehow bricks gradle, thank you Java, very nice
+/*tasks.register('installerJar', InstallerJar) {
     fat = !System.env.TEAMCITY_VERSION
     //offline = true
     from(EXTRA_TXTS)
@@ -985,10 +987,10 @@ tasks.register('installerJar', InstallerJar) {
         rename { 'data/server.lzma' }
     }
     jarSigner.sign(it)
-}
+}*/
 
 //Ketting start
-tasks.register('generateKettingLibraries', org.kettingpowered.task.GenerateLibs) {}
+tasks.register('generateKettingLibraries', GenerateLibs) {}
 
 tasks.register('kettingJar', Jar) {
     archiveExtension = 'jar'
