@@ -802,33 +802,35 @@
        }
  
     }
-@@ -1747,26 +_,31 @@
+@@ -1747,27 +_,39 @@
  
     protected void removeEntitiesOnShoulder() {
        if (this.timeEntitySatOnShoulder + 20L < this.level().getGameTime()) {
--         this.respawnEntityOnShoulder(this.getShoulderEntityLeft());
--         this.setShoulderEntityLeft(new CompoundTag());
--         this.respawnEntityOnShoulder(this.getShoulderEntityRight());
--         this.setShoulderEntityRight(new CompoundTag());
++         //Ketting start - mixin inject
 +         // CraftBukkit start
-+         if (this.respawnEntityOnShoulder(this.getShoulderEntityLeft())) {
+          this.respawnEntityOnShoulder(this.getShoulderEntityLeft());
+-         this.setShoulderEntityLeft(new CompoundTag());
++         if (respawnEntityOnShoulder$return)
 +            this.setShoulderEntityLeft(new CompoundTag());
-+         }
-+         if (this.respawnEntityOnShoulder(this.getShoulderEntityRight())) {
++
+          this.respawnEntityOnShoulder(this.getShoulderEntityRight());
+-         this.setShoulderEntityRight(new CompoundTag());
++         if (respawnEntityOnShoulder$return)
 +            this.setShoulderEntityRight(new CompoundTag());
-+         }
 +         // CraftBukkit end
        }
  
     }
  
--   private void respawnEntityOnShoulder(CompoundTag p_36371_) {
-+   private boolean respawnEntityOnShoulder(CompoundTag p_36371_) { // CraftBukkit void->boolean
++   private boolean respawnEntityOnShoulder$return = false;
+    private void respawnEntityOnShoulder(CompoundTag p_36371_) {
++      respawnEntityOnShoulder$return = false; //reset
++
        if (!this.level().isClientSide && !p_36371_.isEmpty()) {
 -         EntityType.create(p_36371_, this.level()).ifPresent((p_289491_) -> {
 -            if (p_289491_ instanceof TamableAnimal) {
 -               ((TamableAnimal)p_289491_).setOwnerUUID(this.uuid);
-+         return EntityType.create(p_36371_, this.level()).map((p_296858_) -> { // CraftBukkit
++         respawnEntityOnShoulder$return = EntityType.create(p_36371_, this.level()).map((p_296858_) -> { // CraftBukkit
 +            if (p_296858_ instanceof TamableAnimal) {
 +               ((TamableAnimal)p_296858_).setOwnerUUID(this.uuid);
              }
@@ -839,12 +841,15 @@
 +            p_296858_.setPos(this.getX(), this.getY() + (double)0.7F, this.getZ());
 +            return ((ServerLevel) this.level()).addWithUUID(p_296858_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY); // CraftBukkit
 +         }).orElse(true); // CraftBukkit
++         return;
        }
  
-+      return true; // CraftBukkit
++      respawnEntityOnShoulder$return = true; // CraftBukkit
     }
++   //Ketting end
  
     public abstract boolean isSpectator();
+ 
 @@ -1790,7 +_,11 @@
     }
  
