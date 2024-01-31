@@ -79,24 +79,27 @@
                 }
  
                 this.save(p_203002_);
-@@ -685,7 +_,21 @@
+@@ -685,7 +_,24 @@
  
     private static void postLoadProtoChunk(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
        if (!p_143066_.isEmpty()) {
 -         p_143065_.addWorldGenChunkEntities(EntityType.loadEntitiesRecursive(p_143066_, p_143065_));
 +         // CraftBukkit start - these are spawned serialized (DefinedStructure) and we don't call an add event below at the moment due to ordering complexities
-+         p_143065_.addWorldGenChunkEntities(EntityType.loadEntitiesRecursive(p_143066_, p_143065_).filter((entity) -> {
-+            boolean needsRemoval = false;
-+            net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
-+            if (!server.areNpcsEnabled() && entity instanceof net.minecraft.world.entity.npc.Npc) {
-+               entity.discard();
-+               needsRemoval = true;
++         p_143065_.addWorldGenChunkEntities(EntityType.loadEntitiesRecursive(p_143066_, p_143065_).filter(new java.util.function.Predicate<Entity>() { // Ketting - Remove the lambda for fix mixin issues
++            @Override
++            public boolean test(Entity entity) {
++               boolean needsRemoval = false;
++               net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
++               if (!server.areNpcsEnabled() && entity instanceof net.minecraft.world.entity.npc.Npc) {
++                  entity.discard();
++                  needsRemoval = true;
++               }
++               if (!server.isSpawningAnimals() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
++                  entity.discard();
++                  needsRemoval = true;
++               }
++               return !needsRemoval;
 +            }
-+            if (!server.isSpawningAnimals() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
-+               entity.discard();
-+               needsRemoval = true;
-+            }
-+            return !needsRemoval;
 +         }));
 +         // CraftBukkit end
        }
@@ -133,12 +136,17 @@
           }
  
        }
-@@ -946,21 +_,34 @@
+@@ -946,21 +_,39 @@
  
     private CompletableFuture<Optional<CompoundTag>> readChunk(ChunkPos p_214964_) {
        return this.read(p_214964_).thenApplyAsync((p_214907_) -> {
 -         return p_214907_.map(this::upgradeChunkTag);
-+         return p_214907_.map(nbt -> upgradeChunkTag(nbt, p_214964_)); // CraftBukkit
++         return p_214907_.map(new java.util.function.Function<CompoundTag, CompoundTag>() { // Ketting - Remove the lambda for fix mixin issues
++            @Override
++            public CompoundTag apply(CompoundTag compoundTag) {
++               return upgradeChunkTag(compoundTag, p_214964_);
++            }
++         }); // CraftBukkit
        }, Util.backgroundExecutor());
     }
  

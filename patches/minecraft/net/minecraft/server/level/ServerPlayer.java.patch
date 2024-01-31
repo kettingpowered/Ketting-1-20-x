@@ -616,49 +616,40 @@
           this.enteredNetherPosition = null;
        }
  
-@@ -829,32 +_,67 @@
+@@ -829,19 +_,62 @@
        this.containerMenu.broadcastChanges();
     }
  
--   public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_9115_) {
--      Direction direction = this.level().getBlockState(p_9115_).getValue(HorizontalDirectionalBlock.FACING);
 +   // CraftBukkit start - moved bed result checks from below into separate method
 +   private Either<Player.BedSleepingProblem, Unit> getBedResult(BlockPos blockposition, Direction enumdirection) {
 +      java.util.Optional<BlockPos> optAt = java.util.Optional.of(blockposition);
 +      Player.BedSleepingProblem ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
 +      if (ret != null) return Either.left(ret);
-       if (!this.isSleeping() && this.isAlive()) {
--         if (!this.level().dimensionType().natural()) {
++      if (!this.isSleeping() && this.isAlive()) {
 +         if (!this.level().dimensionType().natural() || !this.level().dimensionType().bedWorks()) {
-             return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
--         } else if (!this.bedInRange(p_9115_, direction)) {
++            return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
 +         } else if (!this.bedInRange(blockposition, enumdirection)) {
-             return Either.left(Player.BedSleepingProblem.TOO_FAR_AWAY);
--         } else if (this.bedBlocked(p_9115_, direction)) {
++            return Either.left(Player.BedSleepingProblem.TOO_FAR_AWAY);
 +         } else if (this.bedBlocked(blockposition, enumdirection)) {
-             return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
-          } else {
--            this.setRespawnPosition(this.level().dimension(), p_9115_, this.getYRot(), false, true);
--            if (this.level().isDay()) {
-+            this.setRespawnPosition(this.level().dimension(), blockposition, this.getYRot(), false, true, org.bukkit.event.player.PlayerSpawnChangeEvent.Cause.BED); // CraftBukkit
++            return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
++         } else {
++            this.ketting$respawnPositionCause.set(org.bukkit.event.player.PlayerSpawnChangeEvent.Cause.BED); // Ketting // CraftBukkit
++            this.setRespawnPosition(this.level().dimension(), blockposition, this.getYRot(), false, true);
 +            if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, optAt)) {
-                return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
-             } else {
-                if (!this.isCreative()) {
-                   double d0 = 8.0D;
-                   double d1 = 5.0D;
--                  Vec3 vec3 = Vec3.atBottomCenterOf(p_9115_);
--                  List<Monster> list = this.level().getEntitiesOfClass(Monster.class, new AABB(vec3.x() - 8.0D, vec3.y() - 5.0D, vec3.z() - 8.0D, vec3.x() + 8.0D, vec3.y() + 5.0D, vec3.z() + 8.0D), (p_9062_) -> {
--                     return p_9062_.isPreventingPlayerRest(this);
++               return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
++            } else {
++               if (!this.isCreative()) {
++                  double d0 = 8.0D;
++                  double d1 = 5.0D;
 +                  Vec3 vec3d = Vec3.atBottomCenterOf(blockposition);
 +                  List<Monster> list = this.level().getEntitiesOfClass(Monster.class, new AABB(vec3d.x() - 8.0D, vec3d.y() - 5.0D, vec3d.z() - 8.0D, vec3d.x() + 8.0D, vec3d.y() + 5.0D, vec3d.z() + 8.0D), (entitymonster) -> {
 +                     return entitymonster.isPreventingPlayerRest(this);
-                   });
-                   if (!list.isEmpty()) {
-                      return Either.left(Player.BedSleepingProblem.NOT_SAFE);
-                   }
-                }
- 
++                  });
++                  if (!list.isEmpty()) {
++                     return Either.left(Player.BedSleepingProblem.NOT_SAFE);
++                  }
++               }
++
 +               return Either.right(Unit.INSTANCE);
 +            }
 +         }
@@ -667,13 +658,55 @@
 +      }
 +   }
 +
-+   public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_9115_) {
++   public Either<Player.BedSleepingProblem, Unit> bedResult;
+    public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_9115_) {
 +      var optAt = java.util.Optional.of(p_9115_);
 +      var ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
-+      if (ret != null) return Either.left(ret);
-+
-+      Direction direction = this.level().getBlockState(p_9115_).getValue(HorizontalDirectionalBlock.FACING);
-+      Either<Player.BedSleepingProblem, Unit> bedResult = this.getBedResult(p_9115_, direction);
++      if (ret != null) bedResult = Either.left(ret);
+       Direction direction = this.level().getBlockState(p_9115_).getValue(HorizontalDirectionalBlock.FACING);
+       if (!this.isSleeping() && this.isAlive()) {
+          if (!this.level().dimensionType().natural()) {
+-            return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
++            bedResult = Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
+          } else if (!this.bedInRange(p_9115_, direction)) {
+-            return Either.left(Player.BedSleepingProblem.TOO_FAR_AWAY);
++            bedResult = Either.left(Player.BedSleepingProblem.TOO_FAR_AWAY);
+          } else if (this.bedBlocked(p_9115_, direction)) {
+-            return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
++            bedResult = Either.left(Player.BedSleepingProblem.OBSTRUCTED);
+          } else {
++            this.ketting$respawnPositionCause.set(org.bukkit.event.player.PlayerSpawnChangeEvent.Cause.BED); // Ketting // CraftBukkit
+             this.setRespawnPosition(this.level().dimension(), p_9115_, this.getYRot(), false, true);
+             if (this.level().isDay()) {
+-               return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
++               bedResult = Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
+             } else {
+                if (!this.isCreative()) {
+                   double d0 = 8.0D;
+@@ -851,7 +_,7 @@
+                      return p_9062_.isPreventingPlayerRest(this);
+                   });
+                   if (!list.isEmpty()) {
+-                     return Either.left(Player.BedSleepingProblem.NOT_SAFE);
++                     bedResult = Either.left(Player.BedSleepingProblem.NOT_SAFE);
+                   }
+                }
+ 
+@@ -863,13 +_,29 @@
+                   this.displayClientMessage(Component.translatable("sleep.not_possible"), true);
+                }
+ 
+-               ((ServerLevel)this.level()).updateSleepingPlayerList();
+-               return either;
++               ((ServerLevel) this.level()).updateSleepingPlayerList();
++               bedResult = either;
+             }
+          }
+       } else {
+-         return Either.left(Player.BedSleepingProblem.OTHER_PROBLEM);
+-      }
++         bedResult = Either.left(Player.BedSleepingProblem.OTHER_PROBLEM);
++      }
 +
 +      if (bedResult.left().orElse(null) == Player.BedSleepingProblem.OTHER_PROBLEM) {
 +         return bedResult; // return immediately if the result is not bypassable by plugins
@@ -687,20 +720,8 @@
 +      if (bedResult.left().isPresent()) {
 +         return bedResult;
 +      }
-+
-+      {
-+         {
-+            {
-                Either<Player.BedSleepingProblem, Unit> either = super.startSleepInBed(p_9115_).ifRight((p_9029_) -> {
-                   this.awardStat(Stats.SLEEP_IN_BED);
-                   CriteriaTriggers.SLEPT_IN_BED.trigger(this);
-@@ -867,9 +_,8 @@
-                return either;
-             }
-          }
--      } else {
--         return Either.left(Player.BedSleepingProblem.OTHER_PROBLEM);
-       }
++      
++      return bedResult;
 +      // CraftBukkit end
     }
  
@@ -746,7 +767,7 @@
        }
  
     }
-@@ -939,16 +_,46 @@
+@@ -939,16 +_,43 @@
        this.containerCounter = this.containerCounter % 100 + 1;
     }
  
@@ -761,13 +782,10 @@
        if (p_9033_ == null) {
           return OptionalInt.empty();
        } else {
-+         // CraftBukkit start - SPIGOT-6552: Handle inventory closing in CraftEventFactory#callInventoryOpenEvent(...)
-+         /*
           if (this.containerMenu != this.inventoryMenu) {
              this.closeContainer();
++            org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleCloseInventory.set(false); // Ketting - Handle here for fix mixin issues
           }
-+         */
-+         // CraftBukkit end
  
           this.nextContainerCounter();
           AbstractContainerMenu abstractcontainermenu = p_9033_.createMenu(this.containerCounter, this.getInventory(), this);
@@ -1066,21 +1084,24 @@
  
     }
  
-@@ -1442,6 +_,34 @@
+@@ -1441,7 +_,37 @@
+       return this.respawnForced;
     }
  
-    public void setRespawnPosition(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_) {
++   public void setRespawnPosition(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_, org.bukkit.event.player.PlayerSpawnChangeEvent.Cause cause) {
 +      // CraftBukkit start
-+      this.setRespawnPosition(p_9159_, p_9160_, p_9161_, p_9162_, p_9163_, org.bukkit.event.player.PlayerSpawnChangeEvent.Cause.UNKNOWN);
++      this.ketting$respawnPositionCause.set(cause);
++      this.setRespawnPosition(p_9159_, p_9160_, p_9161_, p_9162_, p_9163_);
 +   }
 +
-+   public void setRespawnPosition(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_, org.bukkit.event.player.PlayerSpawnChangeEvent.Cause cause) {
++   private final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.player.PlayerSpawnChangeEvent.Cause> ketting$respawnPositionCause = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.player.PlayerSpawnChangeEvent.Cause.UNKNOWN);
+    public void setRespawnPosition(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_) {
 +      if (net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, p_9160_ == null ? Level.OVERWORLD : p_9159_, p_9160_, p_9162_)) return;
 +
 +      ServerLevel newWorld = this.server.getLevel(p_9159_);
 +      org.bukkit.Location newSpawn = (p_9160_ != null) ? org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation.toBukkit(p_9160_, newWorld.getWorld(), p_9161_, 0) : null;
 +
-+      org.bukkit.event.player.PlayerSpawnChangeEvent event = new org.bukkit.event.player.PlayerSpawnChangeEvent(this.getBukkitEntity(), newSpawn, p_9162_, cause);
++      org.bukkit.event.player.PlayerSpawnChangeEvent event = new org.bukkit.event.player.PlayerSpawnChangeEvent(this.getBukkitEntity(), newSpawn, p_9162_, ketting$respawnPositionCause.getAndSet(org.bukkit.event.player.PlayerSpawnChangeEvent.Cause.UNKNOWN));
 +      org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
 +      if (event.isCancelled()) {
 +         return;

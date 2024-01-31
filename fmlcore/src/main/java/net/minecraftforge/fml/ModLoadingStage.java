@@ -38,11 +38,11 @@ public enum ModLoadingStage
      */
     SIDED_SETUP,
     /**
-     * Stage for enqueuing {@link net.minecraftforge.fml.InterModComms} messages for later processing.
+     * Stage for enqueuing {@link InterModComms} messages for later processing.
      */
     ENQUEUE_IMC,
     /**
-     * Stage for processing received messages though {@link net.minecraftforge.fml.InterModComms}.
+     * Stage for processing received messages though {@link InterModComms}.
      */
     PROCESS_IMC,
     /**
