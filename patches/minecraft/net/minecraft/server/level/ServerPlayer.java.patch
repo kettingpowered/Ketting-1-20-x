@@ -409,7 +409,7 @@
           this.unRide();
           this.serverLevel().removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
           if (!this.wonGame) {
-@@ -731,71 +_,138 @@
+@@ -731,71 +_,155 @@
  
           return this;
        } else {
@@ -559,19 +559,34 @@
  
     }
  
--   protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel p_184131_, BlockPos p_184132_, boolean p_184133_, WorldBorder p_184134_) {
--      Optional<BlockUtil.FoundRectangle> optional = super.getExitPortal(p_184131_, p_184132_, p_184133_, p_184134_);
--      if (optional.isPresent()) {
-+   protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel p_184131_, BlockPos p_184132_, boolean p_184133_, WorldBorder p_184134_, int searchRadius, boolean canCreatePortal, int createRadius) { // CraftBukkit
-+      Optional<BlockUtil.FoundRectangle> optional = super.getExitPortal(p_184131_, p_184132_, p_184133_, p_184134_, searchRadius, canCreatePortal, createRadius); // CraftBukkit
-+      if (optional.isPresent() || !canCreatePortal) { // CraftBukkit
++   //Ketting start - original method
+    protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel p_184131_, BlockPos p_184132_, boolean p_184133_, WorldBorder p_184134_) {
+       Optional<BlockUtil.FoundRectangle> optional = super.getExitPortal(p_184131_, p_184132_, p_184133_, p_184134_);
+       if (optional.isPresent()) {
           return optional;
        } else {
           Direction.Axis direction$axis = this.level().getBlockState(this.portalEntrancePos).getOptionalValue(NetherPortalBlock.AXIS).orElse(Direction.Axis.X);
 -         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.getPortalForcer().createPortal(p_184132_, direction$axis);
-+         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.getPortalForcer().createPortal(p_184132_, direction$axis, this, createRadius); // CraftBukkit
-          if (!optional1.isPresent()) {
+-         if (!optional1.isPresent()) {
 -            LOGGER.error("Unable to create a portal, likely target out of worldborder");
++         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.getPortalForcer().createPortal(p_184132_, direction$axis, this, 16); // CraftBukkit
++         if (!optional1.isPresent()) {
++            // LOGGER.error("Unable to create a portal, likely target out of worldborder"); // CraftBukkit
++         }
++
++         return optional1;
++      }
++   }
++   //Ketting end
++
++   protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel p_184131_, BlockPos p_184132_, boolean p_184133_, WorldBorder p_184134_, int searchRadius, boolean canCreatePortal, int createRadius) { // CraftBukkit
++      Optional<BlockUtil.FoundRectangle> optional = super.getExitPortal(p_184131_, p_184132_, p_184133_, p_184134_, searchRadius, canCreatePortal, createRadius); // CraftBukkit
++      if (optional.isPresent() || !canCreatePortal) { // CraftBukkit
++         return optional;
++      } else {
++         Direction.Axis direction$axis = this.level().getBlockState(this.portalEntrancePos).getOptionalValue(NetherPortalBlock.AXIS).orElse(Direction.Axis.X);
++         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.getPortalForcer().createPortal(p_184132_, direction$axis, this, createRadius); // CraftBukkit
++         if (!optional1.isPresent()) {
 +            // LOGGER.error("Unable to create a portal, likely target out of worldborder"); // CraftBukkit
           }
  
