@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
@@ -1328,8 +1329,9 @@ public class CraftEventFactory {
         return callInventoryOpenEvent(player, container, false);
     }
 
+    public static AtomicBoolean handleCloseInventory= new AtomicBoolean(true);
     public static AbstractContainerMenu callInventoryOpenEvent(ServerPlayer player, AbstractContainerMenu container, boolean cancelled) {
-        if (player.containerMenu != player.inventoryMenu) { // fire INVENTORY_CLOSE if one already open
+        if (player.containerMenu != player.inventoryMenu && handleCloseInventory.getAndSet(true)) { // fire INVENTORY_CLOSE if one already open
             player.connection.handleContainerClose(new ServerboundContainerClosePacket(player.containerMenu.containerId));
         }
 
