@@ -57,7 +57,7 @@ public class CraftChunk implements Chunk {
     private static final byte[] emptyLight = new byte[2048];
 
     public CraftChunk(LevelChunk chunk) {
-        worldServer = chunk.level;
+        worldServer = chunk.levelCB;
         x = chunk.getPos().x;
         z = chunk.getPos().z;
     }
