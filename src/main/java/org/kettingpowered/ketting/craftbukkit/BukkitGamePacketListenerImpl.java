@@ -2,7 +2,9 @@ package org.kettingpowered.ketting.craftbukkit;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.PacketUtils;
+import net.minecraft.network.protocol.common.*;
 import net.minecraft.network.protocol.game.*;
+import net.minecraft.network.protocol.status.ServerboundPingRequestPacket;
 import net.minecraft.resources.ResourceLocation;
 
 public class BukkitGamePacketListenerImpl implements net.minecraft.network.protocol.game.ServerGamePacketListener {
@@ -33,9 +35,7 @@ public class BukkitGamePacketListenerImpl implements net.minecraft.network.proto
 
     @Override
     public void handleClientCommand(ServerboundClientCommandPacket p_133744_) {}
-
-    @Override
-    public void handleClientInformation(ServerboundClientInformationPacket p_133745_) {}
+    
 
     @Override
     public void handleContainerButtonClick(ServerboundContainerButtonClickPacket p_133748_) {}
@@ -51,56 +51,13 @@ public class BukkitGamePacketListenerImpl implements net.minecraft.network.proto
 
     private static final ResourceLocation CUSTOM_REGISTER = new ResourceLocation("register");
     private static final ResourceLocation CUSTOM_UNREGISTER = new ResourceLocation("unregister");
-    @Override
-    public void handleCustomPayload(ServerboundCustomPayloadPacket p_9860_) {
-        if (p_9860_.identifier.equals(CUSTOM_REGISTER)) {
-            try {
-                String channels = p_9860_.data.toString(com.google.common.base.Charsets.UTF_8);
-                for (String channel : channels.split("\0")) {
-                    if (channel == null || channel.isEmpty() || channel.isBlank()){
-                        PacketUtils.LOGGER.warn("Ignoring channel \""+channel+"\" for bukkit, because it is obviously wrong");
-                        continue;
-                    }
-                    listener.getCraftPlayer().addChannel(channel);
-                }
-            } catch (Exception ex) {
-                PacketUtils.LOGGER.error("Couldn\'t register custom payload", ex);
-                listener.disconnect("Invalid payload REGISTER!");
-            }
-        } else if (p_9860_.identifier.equals(CUSTOM_UNREGISTER)) {
-            try {
-                String channels = p_9860_.data.toString(com.google.common.base.Charsets.UTF_8);
-                for (String channel : channels.split("\0")) {
-                    listener.getCraftPlayer().removeChannel(channel);
-                }
-            } catch (Exception ex) {
-                PacketUtils.LOGGER.error("Couldn\'t unregister custom payload", ex);
-                listener.disconnect("Invalid payload UNREGISTER!");
-            }
-        } else {
-            try {
-                byte[] data = new byte[p_9860_.data.readableBytes()];
-                p_9860_.data.readBytes(data);
-                listener.cserver.getMessenger().dispatchIncomingMessage(listener.player.getBukkitEntity(), p_9860_.identifier.toString(), data);
-            } catch (Exception ex) {
-                PacketUtils.LOGGER.error("Couldn\'t dispatch custom payload", ex);
-                listener.disconnect("Invalid custom payload!");
-            }
-        }
-
-    }
 
     @Override
     public void handleInteract(ServerboundInteractPacket p_133754_) {}
 
     @Override
-    public void handleKeepAlive(ServerboundKeepAlivePacket p_133756_) {}
-
-    @Override
     public void handleMovePlayer(ServerboundMovePlayerPacket p_133758_) {}
-
-    @Override
-    public void handlePong(ServerboundPongPacket p_179536_) {}
+    
 
     @Override
     public void handlePlayerAbilities(ServerboundPlayerAbilitiesPacket p_133763_) {}
@@ -131,9 +88,6 @@ public class BukkitGamePacketListenerImpl implements net.minecraft.network.proto
 
     @Override
     public void handleTeleportToEntityPacket(ServerboundTeleportToEntityPacket p_133782_) {}
-
-    @Override
-    public void handleResourcePackResponse(ServerboundResourcePackPacket p_133770_) {}
 
     @Override
     public void handlePaddleBoat(ServerboundPaddleBoatPacket p_133760_) {}
@@ -200,4 +154,28 @@ public class BukkitGamePacketListenerImpl implements net.minecraft.network.proto
 
     @Override
     public void handleChatSessionUpdate(ServerboundChatSessionUpdatePacket p_254226_){}
+
+    @Override
+    public void handleConfigurationAcknowledged(ServerboundConfigurationAcknowledgedPacket p_298498_) {}
+
+    @Override
+    public void handleChunkBatchReceived(ServerboundChunkBatchReceivedPacket p_297801_) {}
+
+    @Override
+    public void handleKeepAlive(ServerboundKeepAlivePacket p_300190_) {}
+
+    @Override
+    public void handlePong(ServerboundPongPacket p_297980_) {}
+
+    @Override
+    public void handleCustomPayload(ServerboundCustomPayloadPacket p_297952_) {}
+
+    @Override
+    public void handleResourcePackResponse(ServerboundResourcePackPacket p_300293_) {}
+
+    @Override
+    public void handleClientInformation(ServerboundClientInformationPacket p_301286_) {}
+
+    @Override
+    public void handlePingRequest(ServerboundPingRequestPacket p_297526_) {}
 }
