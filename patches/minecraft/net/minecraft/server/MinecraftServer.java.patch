@@ -117,12 +117,12 @@
        if (profiledduration != null) {
           profiledduration.finish();
        }
-@@ -334,12 +_,16 @@
+@@ -334,12 +_,17 @@
        long j = BiomeManager.obfuscateSeed(i);
        List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(serverleveldata));
        LevelStem levelstem = registry.get(LevelStem.OVERWORLD);
--      ServerLevel serverlevel = new ServerLevel(this, this.executor, this.storageSource, serverleveldata, Level.OVERWORLD, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null);
-+      ServerLevel serverlevel = ServerLevel.init(this, this.executor, this.storageSource, serverleveldata, Level.OVERWORLD, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null, org.bukkit.World.Environment.NORMAL, this.server.getGenerator(loadLevel$worldName), this.server.getBiomeProvider(loadLevel$worldName));
++      org.kettingpowered.ketting.utils.ServerInitHelper.saveBukkitValues(serverleveldata, Level.OVERWORLD, this.server.getGenerator(loadLevel$worldName), org.bukkit.World.Environment.NORMAL, this.server.getBiomeProvider(loadLevel$worldName));
+       ServerLevel serverlevel = new ServerLevel(this, this.executor, this.storageSource, serverleveldata, Level.OVERWORLD, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null);
 +      org.kettingpowered.ketting.core.Ketting.getInstance().getDimensionRegistry().get().register(this.registryAccess().registryOrThrow(Registries.LEVEL_STEM)); //Ketting
        this.levels.put(Level.OVERWORLD, serverlevel);
        DimensionDataStorage dimensiondatastorage = serverlevel.getDataStorage();
@@ -135,7 +135,7 @@
        if (!serverleveldata.isInitialized()) {
           try {
              setInitialSpawn(serverlevel, serverleveldata, worldoptions.generateBonusChest(), flag);
-@@ -373,9 +_,49 @@
+@@ -373,9 +_,50 @@
           if (resourcekey != LevelStem.OVERWORLD) {
              ResourceKey<Level> resourcekey1 = ResourceKey.create(Registries.DIMENSION, resourcekey.location());
              DerivedLevelData derivedleveldata = new DerivedLevelData(this.worldData, serverleveldata);
@@ -173,7 +173,8 @@
 +               throw new RuntimeException(e);
 +            }
 +
-+            ServerLevel serverlevel1 = ServerLevel.init(this, this.executor, source, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false, randomsequences, (org.bukkit.World.Environment) org.kettingpowered.ketting.core.Ketting.getInstance().getDimensionRegistry().get().getKey(resourcekey), gen, biomeProvider);
++            org.kettingpowered.ketting.utils.ServerInitHelper.saveBukkitValues(derivedleveldata, resourcekey1, gen, (org.bukkit.World.Environment) org.kettingpowered.ketting.core.Ketting.getInstance().getDimensionRegistry().get().getKey(resourcekey), biomeProvider);
++            ServerLevel serverlevel1 = new ServerLevel(this, this.executor, source, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false, randomsequences);
 +
 +            if (serverlevel1.generator != null) {
 +               serverlevel1.getWorld().getPopulators().addAll(serverlevel1.generator.getDefaultPopulators(serverlevel1.getWorld()));
