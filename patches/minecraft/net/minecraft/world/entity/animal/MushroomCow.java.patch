@@ -58,13 +58,12 @@
              }
  
              cow.setInvulnerable(this.isInvulnerable());
--            this.level().addFreshEntity(cow);
--
 +            // CraftBukkit start
 +            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityTransformEvent(this, cow, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SHEARED).isCancelled()) {
 +               return java.util.Collections.emptyList();
 +            }
-+            this.level().addFreshEntity(cow, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SHEARED);
++            this.level().prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SHEARED);
+             this.level().addFreshEntity(cow);
 +            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, cow);
 +
 +            this.discard(); // CraftBukkit - from above

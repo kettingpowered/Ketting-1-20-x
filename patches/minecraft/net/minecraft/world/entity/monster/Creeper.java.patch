@@ -53,12 +53,11 @@
           areaeffectcloud.setRadius(2.5F);
           areaeffectcloud.setRadiusOnUse(-0.5F);
           areaeffectcloud.setWaitTime(10);
-@@ -246,7 +_,7 @@
+@@ -246,6 +_,7 @@
              areaeffectcloud.addEffect(new MobEffectInstance(mobeffectinstance));
           }
  
--         this.level().addFreshEntity(areaeffectcloud);
-+         this.level().addFreshEntity(areaeffectcloud, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EXPLOSION); // CraftBukkit
++         this.level().prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EXPLOSION);
+          this.level().addFreshEntity(areaeffectcloud);
        }
  
-    }

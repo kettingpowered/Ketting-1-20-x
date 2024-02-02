@@ -288,20 +288,19 @@
        if (this.isRemoved()) {
           return (T)null;
        } else {
-@@ -1206,7 +_,12 @@
+@@ -1206,6 +_,12 @@
                 }
              }
  
--            this.level().addFreshEntity(t);
 +            // CraftBukkit start
 +            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityTransformEvent(this, t, transformReason).isCancelled()) {
 +               return null;
 +            }
-+            this.level().addFreshEntity(t, spawnReason);
 +            // CraftBukkit end
++            this.level().prepareAddFreshEntity(spawnReason);
+             this.level().addFreshEntity(t);
              if (this.isPassenger()) {
                 Entity entity = this.getVehicle();
-                this.stopRiding();
 @@ -1226,7 +_,8 @@
  
        if (this.leashHolder != null) {
