@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -37,24 +_,48 @@
+@@ -37,9 +_,17 @@
     public Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> recipes = ImmutableMap.of();
     private Map<ResourceLocation, Recipe<?>> byName = ImmutableMap.of();
     private boolean hasErrors;
@@ -18,15 +18,7 @@
     }
  
     protected void apply(Map<ResourceLocation, JsonElement> p_44037_, ResourceManager p_44038_, ProfilerFiller p_44039_) {
-       this.hasErrors = false;
--      Map<RecipeType<?>, ImmutableMap.Builder<ResourceLocation, Recipe<?>>> map = Maps.newHashMap();
-+      // CraftBukkit start - SPIGOT-5667 make sure all types are populated and mutable
-+      Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> map = Maps.newHashMap();
-+      for (RecipeType<?> recipeType : BuiltInRegistries.RECIPE_TYPE) {
-+         map.put(recipeType, new java.util.HashMap<>());
-+      }
-+      // CraftBukkit end
-       ImmutableMap.Builder<ResourceLocation, Recipe<?>> builder = ImmutableMap.builder();
+@@ -49,12 +_,21 @@
  
        for(Map.Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
@@ -35,8 +27,6 @@
           try {
 -            Recipe<?> recipe = fromJson(resourcelocation, GsonHelper.convertToJsonObject(entry.getValue(), "top element"));
 -            map.computeIfAbsent(recipe.getType(), (p_44075_) -> {
--               return ImmutableMap.builder();
--            }).put(resourcelocation, recipe);
 +            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions", this.context)) {
 +               LOGGER.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
 +               continue;
@@ -46,20 +36,16 @@
 +               LOGGER.info("Skipping loading recipe {} as it's serializer returned null", resourcelocation);
 +               continue;
 +            }
-+            // CraftBukkit start
 +            (map.computeIfAbsent(recipe.getType(), (recipes) -> {
-+               return new it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<>();
-+               // CraftBukkit end
+                return ImmutableMap.builder();
+-            }).put(resourcelocation, recipe);
 +            })).put(resourcelocation, recipe);
              builder.put(resourcelocation, recipe);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
              LOGGER.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
-@@ -62,20 +_,38 @@
-       }
- 
+@@ -64,18 +_,36 @@
        this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (p_44033_) -> {
--         return p_44033_.getValue().build();
-+         return (p_44033_.getValue()); // CraftBukkit
+          return p_44033_.getValue().build();
        }));
 -      this.byName = builder.build();
 +      this.byName = Maps.newHashMap(builder.build()); // CraftBukkit
