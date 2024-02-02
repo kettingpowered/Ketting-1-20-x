@@ -9,41 +9,39 @@
           for(int j = 0; j < i * 8; ++j) {
              float f = this.random.nextFloat() * ((float)Math.PI * 2F);
              float f1 = this.random.nextFloat() * 0.5F + 0.5F;
-@@ -184,6 +_,19 @@
+@@ -175,6 +_,7 @@
+       return (EntityType<? extends Slime>)super.getType();
+    }
+ 
++   private java.util.List<LivingEntity> remove$slimes; //Ketting - mixin inject
+    public void remove(Entity.RemovalReason p_149847_) {
+       int i = this.getSize();
+       if (!this.level().isClientSide && i > 1 && this.isDeadOrDying()) {
+@@ -184,6 +_,9 @@
           int j = i / 2;
           int k = 2 + this.random.nextInt(3);
  
-+         // CraftBukkit start
-+         org.bukkit.event.entity.SlimeSplitEvent event = new org.bukkit.event.entity.SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), k);
-+         this.level().getCraftServer().getPluginManager().callEvent(event);
-+
-+         if (!event.isCancelled() && event.getCount() > 0) {
-+            k = event.getCount();
-+         } else {
-+            super.remove(p_149847_);
-+            return;
-+         }
-+         java.util.List<LivingEntity> slimes = new java.util.ArrayList<>(j);
-+         // CraftBukkit end
++         remove$slimes = removeEvent(p_149847_, j, k); //Ketting - move craftbukkit event to different method
++         if (remove$slimes == null) return; //Ketting - return if event is cancelled
 +
           for(int l = 0; l < k; ++l) {
              float f1 = ((float)(l % 2) - 0.5F) * f;
              float f2 = ((float)(l / 2) - 0.5F) * f;
-@@ -198,9 +_,20 @@
+@@ -198,14 +_,39 @@
                 slime.setInvulnerable(this.isInvulnerable());
                 slime.setSize(j, true);
                 slime.moveTo(this.getX() + (double)f1, this.getY() + 0.5D, this.getZ() + (double)f2, this.random.nextFloat() * 360.0F, 0.0F);
 -               this.level().addFreshEntity(slime);
-+               slimes.add(slime); // CraftBukkit
++               remove$slimes.add(slime); // CraftBukkit
              }
           }
 +
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTransformEvent(this, slimes, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTransformEvent(this, remove$slimes, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
 +            super.remove(p_149847_);
 +            return;
 +         }
-+         for (LivingEntity living : slimes) {
++         for (LivingEntity living : remove$slimes) {
 +            this.level().prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT);
 +            this.level().addFreshEntity(living);
 +         }
@@ -51,6 +49,25 @@
        }
  
        super.remove(p_149847_);
+    }
+ 
++   private java.util.List<LivingEntity> removeEvent(Entity.RemovalReason p_149847_, int j, int k) {
++      org.bukkit.event.entity.SlimeSplitEvent event = new org.bukkit.event.entity.SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), k);
++      this.level().getCraftServer().getPluginManager().callEvent(event);
++
++      if (!event.isCancelled() && event.getCount() > 0) {
++         k = event.getCount();
++      } else {
++         super.remove(p_149847_);
++         return null;
++      }
++      java.util.List<LivingEntity> slimes = new java.util.ArrayList<>(j);
++      return slimes;
++   }
++
+    public void push(Entity p_33636_) {
+       super.push(p_33636_);
+       if (p_33636_ instanceof IronGolem && this.isDealsDamage()) {
 @@ -267,7 +_,7 @@
           }
  
