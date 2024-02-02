@@ -77,6 +77,7 @@ import org.kettingpowered.ketting.config.KettingConfig;
 import org.kettingpowered.ketting.core.Ketting;
 import org.kettingpowered.ketting.entity.CraftCustomEntity;
 import org.kettingpowered.ketting.entity.CraftCustomMinecart;
+import org.kettingpowered.ketting.entity.CraftCustomTamable;
 import org.kettingpowered.ketting.internal.KettingConstants;
 
 public abstract class CraftEntity implements org.bukkit.entity.Entity {
@@ -137,6 +138,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                         if (entity instanceof net.minecraft.world.entity.animal.Wolf) { return new CraftWolf(server, (net.minecraft.world.entity.animal.Wolf) entity); }
                         else if (entity instanceof net.minecraft.world.entity.animal.Cat) { return new CraftCat(server, (net.minecraft.world.entity.animal.Cat) entity); }
                         else if (entity instanceof net.minecraft.world.entity.animal.Parrot) { return new CraftParrot(server, (net.minecraft.world.entity.animal.Parrot) entity); }
+                        else return new CraftCustomTamable(server, (net.minecraft.world.entity.TamableAnimal) entity); //Ketting
                     }
                     else if (entity instanceof net.minecraft.world.entity.animal.Sheep) { return new CraftSheep(server, (net.minecraft.world.entity.animal.Sheep) entity); }
                     else if (entity instanceof net.minecraft.world.entity.animal.horse.AbstractHorse) {
