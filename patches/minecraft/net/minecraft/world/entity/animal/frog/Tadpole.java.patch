@@ -8,7 +8,7 @@
           Frog frog = EntityType.FROG.create(this.level());
           if (frog != null) {
              frog.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
-@@ -208,8 +_,15 @@
+@@ -208,7 +_,15 @@
              }
  
              frog.setPersistenceRequired();
@@ -19,9 +19,8 @@
 +            }
 +            // CraftBukkit end
              this.playSound(SoundEvents.TADPOLE_GROW_UP, 0.15F, 1.0F);
--            serverlevel.addFreshEntityWithPassengers(frog);
-+            serverlevel.addFreshEntityWithPassengersBukkit(frog, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.METAMORPHOSIS); // CraftBukkit - add SpawnReason
++            serverlevel.prepareAddFreshEntityWithPassengers(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.METAMORPHOSIS);
+             serverlevel.addFreshEntityWithPassengers(frog);
 +            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, frog);
              this.discard();
           }
-       }

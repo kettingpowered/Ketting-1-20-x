@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/horse/SkeletonTrapGoal.java
 +++ b/net/minecraft/world/entity/animal/horse/SkeletonTrapGoal.java
-@@ -28,34 +_,39 @@
+@@ -28,34 +_,41 @@
  
     public void tick() {
        ServerLevel serverlevel = (ServerLevel)this.horse.level();
@@ -33,7 +33,8 @@
 +            Skeleton skeleton = this.createSkeleton(difficultyinstance, this.horse);
 +            if (skeleton != null) {
 +               skeleton.startRiding(this.horse);
-+               serverlevel.addFreshEntityWithPassengersBukkit(skeleton, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.TRAP); // CraftBukkit
++               serverlevel.prepareAddFreshEntityWithPassengers(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.TRAP);
++               serverlevel.addFreshEntityWithPassengers(skeleton);
  
 -            for(int i = 0; i < 3; ++i) {
 -               AbstractHorse abstracthorse = this.createHorse(difficultyinstance);
@@ -50,7 +51,8 @@
 +                     if (skeleton1 != null) {
 +                        skeleton1.startRiding(abstracthorse);
 +                        abstracthorse.push(this.horse.getRandom().triangle(0.0D, 1.1485D), 0.0D, this.horse.getRandom().triangle(0.0D, 1.1485D));
-+                        serverlevel.addFreshEntityWithPassengersBukkit(abstracthorse, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.JOCKEY); // CraftBukkit
++                        serverlevel.prepareAddFreshEntityWithPassengers(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.JOCKEY);
++                        serverlevel.addFreshEntityWithPassengers(abstracthorse);
 +                     }
                    }
                 }

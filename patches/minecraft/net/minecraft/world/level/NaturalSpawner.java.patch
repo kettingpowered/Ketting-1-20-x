@@ -42,18 +42,18 @@
        p_47030_.getProfiler().pop();
     }
  
-@@ -173,11 +_,16 @@
+@@ -173,11 +_,17 @@
                          mob.moveTo(d0, (double)i, d1, p_47040_.random.nextFloat() * 360.0F, 0.0F);
                          if (isValidPositionForMob(p_47040_, mob, d2)) {
                             spawngroupdata = mob.finalizeSpawn(p_47040_, p_47040_.getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.NATURAL, spawngroupdata, (CompoundTag)null);
 -                           ++j;
 -                           ++l1;
--                           p_47040_.addFreshEntityWithPassengers(mob);
--                           p_47044_.run(mob, p_47041_);
--                           if (j >= mob.getMaxSpawnClusterSize()) {
 +                           // CraftBukkit start
 +                           // SPIGOT-7045: Give ocelot babies back their special spawn reason. Note: This is the only modification required as ocelots count as monsters which means they only spawn during normal chunk ticking and do not spawn during chunk generation as starter mobs.
-+                           p_47040_.addFreshEntityWithPassengersBukkit(mob, (mob instanceof net.minecraft.world.entity.animal.Ocelot && !((org.bukkit.entity.Ageable) mob.getBukkitEntity()).isAdult()) ? org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.OCELOT_BABY : org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL);
++                           p_47040_.prepareAddFreshEntityWithPassengers((mob instanceof net.minecraft.world.entity.animal.Ocelot && !((org.bukkit.entity.Ageable) mob.getBukkitEntity()).isAdult()) ? org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.OCELOT_BABY : org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL);
+                            p_47040_.addFreshEntityWithPassengers(mob);
+-                           p_47044_.run(mob, p_47041_);
+-                           if (j >= mob.getMaxSpawnClusterSize()) {
 +                           if (!mob.isRemoved()) {
 +                              ++j;
 +                              ++l1;

@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/level/levelgen/PatrolSpawner.java
 +++ b/net/minecraft/world/level/levelgen/PatrolSpawner.java
-@@ -105,7 +_,7 @@
+@@ -105,6 +_,7 @@
  
              patrollingmonster.setPos((double)p_224534_.getX(), (double)p_224534_.getY(), (double)p_224534_.getZ());
              patrollingmonster.finalizeSpawn(p_224533_, p_224533_.getCurrentDifficultyAt(p_224534_), MobSpawnType.PATROL, (SpawnGroupData)null, (CompoundTag)null);
--            p_224533_.addFreshEntityWithPassengers(patrollingmonster);
-+            p_224533_.addFreshEntityWithPassengersBukkit(patrollingmonster, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.PATROL); // CraftBukkit
++            p_224533_.prepareAddFreshEntityWithPassengers(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.PATROL);
+             p_224533_.addFreshEntityWithPassengers(patrollingmonster);
              return true;
           } else {
-             return false;

@@ -1,39 +1,30 @@
 --- a/net/minecraft/world/level/ServerLevelAccessor.java
 +++ b/net/minecraft/world/level/ServerLevelAccessor.java
-@@ -6,7 +_,37 @@
+@@ -6,7 +_,28 @@
  public interface ServerLevelAccessor extends LevelAccessor {
     ServerLevel getLevel();
  
-+   @org.jetbrains.annotations.ApiStatus.Internal
-+   class Helper{
-+      public static org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason addFreshEntityWithPassengers$reason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
-+   } 
++   //Ketting start
++   class Reason {
++      private static org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
++   }
++
++   default void prepareAddFreshEntityWithPassengers(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++      Reason.reason = reason;
++   }
 +
     default void addFreshEntityWithPassengers(Entity p_47206_) {
 -      p_47206_.getSelfAndPassengers().forEach(this::addFreshEntity);
 -   }
-+      p_47206_.getSelfAndPassengers().forEach((e) -> {
-+         this.prepareAddFreshEntity(Helper.addFreshEntityWithPassengers$reason);
++      p_47206_.getSelfAndPassengers().forEach(e -> {
++         this.prepareAddFreshEntity(Reason.reason);
 +         this.addFreshEntity(e);
 +      });
-+      // CraftBukkit start
++      Reason.reason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
++      //Ketting end
 +   }
 +
-+   default void prepareAddFreshEntityWithPassengersBukkit(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
-+         Helper.addFreshEntityWithPassengers$reason = reason;
-+   }
-+   default void resetAddFreshEntityWithPassengersBukkit() {
-+         Helper.addFreshEntityWithPassengers$reason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
-+   }
-+   default void addFreshEntityWithPassengersBukkit(Entity p_47206_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
-+      try{
-+         prepareAddFreshEntityWithPassengersBukkit(reason);
-+         this.addFreshEntityWithPassengers(p_47206_);
-+      } finally {
-+         resetAddFreshEntityWithPassengersBukkit();
-+      }
-+   }
-+
++   // CraftBukkit start
 +   @Override
 +   default ServerLevel getMinecraftWorld() {
 +      return getLevel();
