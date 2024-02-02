@@ -8,32 +8,68 @@
     public final boolean onlineMode = this.get("online-mode", true);
     public final boolean preventProxyConnections = this.get("prevent-proxy-connections", false);
     public final String serverIp = this.get("server-ip", "");
-@@ -103,8 +_,10 @@
+@@ -103,27 +_,46 @@
     private final DedicatedServerProperties.WorldDimensionData worldDimensionData;
     public final WorldOptions worldOptions;
  
 -   public DedicatedServerProperties(Properties p_180926_) {
 -      super(p_180926_);
+-      String s = this.get("level-seed", "");
+-      boolean flag = this.get("generate-structures", true);
+-      long i = WorldOptions.parseSeed(s).orElse(WorldOptions.randomSeed());
+-      this.worldOptions = new WorldOptions(i, flag, false);
+-      this.worldDimensionData = new DedicatedServerProperties.WorldDimensionData(this.get("generator-settings", (p_211543_) -> {
+-         return GsonHelper.parse(!p_211543_.isEmpty() ? p_211543_ : "{}");
+-      }, new JsonObject()), this.get("level-type", (p_211541_) -> {
+-         return p_211541_.toLowerCase(Locale.ROOT);
+-      }, WorldPresets.NORMAL.location().toString()));
+-      this.serverResourcePackInfo = getServerPackInfo(this.get("resource-pack", ""), this.get("resource-pack-sha1", ""), this.getLegacyString("resource-pack-hash"), this.get("require-resource-pack", false), this.get("resource-pack-prompt", ""));
+-      this.initialDataPackConfiguration = getDatapackConfig(this.get("initial-enabled-packs", String.join(",", WorldDataConfiguration.DEFAULT.dataPacks().getEnabled())), this.get("initial-disabled-packs", String.join(",", WorldDataConfiguration.DEFAULT.dataPacks().getDisabled())));
+-   }
+-
+-   public static DedicatedServerProperties fromFile(Path p_180930_) {
+-      return new DedicatedServerProperties(loadFromFile(p_180930_));
+-   }
+-
+-   protected DedicatedServerProperties reload(RegistryAccess p_139761_, Properties p_139762_) {
+-      return new DedicatedServerProperties(p_139762_);
 +   // CraftBukkit start
 +   public DedicatedServerProperties(Properties properties, joptsimple.OptionSet optionset) {
 +      super(properties, optionset);
 +      // CraftBukkit end
-       String s = this.get("level-seed", "");
-       boolean flag = this.get("generate-structures", true);
-       long i = WorldOptions.parseSeed(s).orElse(WorldOptions.randomSeed());
-@@ -118,12 +_,14 @@
-       this.initialDataPackConfiguration = getDatapackConfig(this.get("initial-enabled-packs", String.join(",", WorldDataConfiguration.DEFAULT.dataPacks().getEnabled())), this.get("initial-disabled-packs", String.join(",", WorldDataConfiguration.DEFAULT.dataPacks().getDisabled())));
-    }
- 
--   public static DedicatedServerProperties fromFile(Path p_180930_) {
--      return new DedicatedServerProperties(loadFromFile(p_180930_));
++      String s = this.get("level-seed", "");
++      boolean flag = this.get("generate-structures", true);
++      long i = WorldOptions.parseSeed(s).orElse(WorldOptions.randomSeed());
++      this.worldOptions = new WorldOptions(i, flag, false);
++      this.worldDimensionData = new DedicatedServerProperties.WorldDimensionData(this.get("generator-settings", (p_211543_) -> {
++         return GsonHelper.parse(!p_211543_.isEmpty() ? p_211543_ : "{}");
++      }, new JsonObject()), this.get("level-type", (p_211541_) -> {
++         return p_211541_.toLowerCase(Locale.ROOT);
++      }, WorldPresets.NORMAL.location().toString()));
++      this.serverResourcePackInfo = getServerPackInfo(this.get("resource-pack", ""), this.get("resource-pack-sha1", ""), this.getLegacyString("resource-pack-hash"), this.get("require-resource-pack", false), this.get("resource-pack-prompt", ""));
++      this.initialDataPackConfiguration = getDatapackConfig(this.get("initial-enabled-packs", String.join(",", WorldDataConfiguration.DEFAULT.dataPacks().getEnabled())), this.get("initial-disabled-packs", String.join(",", WorldDataConfiguration.DEFAULT.dataPacks().getDisabled())));
++   }
++
++   public DedicatedServerProperties(Properties properties) {
++      super(properties);
++      String s = this.get("level-seed", "");
++      boolean flag = this.get("generate-structures", true);
++      long i = WorldOptions.parseSeed(s).orElse(WorldOptions.randomSeed());
++      this.worldOptions = new WorldOptions(i, flag, false);
++      this.worldDimensionData = new DedicatedServerProperties.WorldDimensionData(this.get("generator-settings", (p_211543_) -> {
++         return GsonHelper.parse(!p_211543_.isEmpty() ? p_211543_ : "{}");
++      }, new JsonObject()), this.get("level-type", (p_211541_) -> {
++         return p_211541_.toLowerCase(Locale.ROOT);
++      }, WorldPresets.NORMAL.location().toString()));
++      this.serverResourcePackInfo = getServerPackInfo(this.get("resource-pack", ""), this.get("resource-pack-sha1", ""), this.getLegacyString("resource-pack-hash"), this.get("require-resource-pack", false), this.get("resource-pack-prompt", ""));
++      this.initialDataPackConfiguration = getDatapackConfig(this.get("initial-enabled-packs", String.join(",", WorldDataConfiguration.DEFAULT.dataPacks().getEnabled())), this.get("initial-disabled-packs", String.join(",", WorldDataConfiguration.DEFAULT.dataPacks().getDisabled())));
++   }
++
 +   // CraftBukkit start
 +   public static DedicatedServerProperties fromFile(Path p_180930_, joptsimple.OptionSet optionset) {
 +      return new DedicatedServerProperties(loadFromFile(p_180930_), optionset);
-    }
- 
--   protected DedicatedServerProperties reload(RegistryAccess p_139761_, Properties p_139762_) {
--      return new DedicatedServerProperties(p_139762_);
++   }
++
 +   protected DedicatedServerProperties reload(RegistryAccess p_139761_, Properties p_139762_, joptsimple.OptionSet optionset) {
 +      return new DedicatedServerProperties(properties, optionset);
 +      // CraftBukkit end
