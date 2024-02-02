@@ -48,8 +48,7 @@
        }
  
        this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (p_44033_) -> {
--         return p_44033_.getValue().build();
-+         return (p_44033_.getValue()); // CraftBukkit
+          return p_44033_.getValue().build();
        }));
 -      this.byName = builder.build();
 +      this.byName = Maps.newHashMap(builder.build()); // CraftBukkit
