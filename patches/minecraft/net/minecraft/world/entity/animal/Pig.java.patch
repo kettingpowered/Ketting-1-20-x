@@ -9,19 +9,16 @@
           ZombifiedPiglin zombifiedpiglin = EntityType.ZOMBIFIED_PIGLIN.create(p_29473_);
           if (zombifiedpiglin != null) {
              zombifiedpiglin.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
-@@ -214,7 +_,14 @@
+@@ -214,6 +_,12 @@
              }
  
              zombifiedpiglin.setPersistenceRequired();
--            p_29473_.addFreshEntity(zombifiedpiglin);
 +            // CraftBukkit start
 +            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPigZapEvent(this, p_29474_, zombifiedpiglin).isCancelled()) {
 +               return;
 +            }
 +            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin); //Ketting
-+            // CraftBukkit - added a reason for spawning this creature
-+            p_29473_.addFreshEntity(zombifiedpiglin, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
-+            // CraftBukkit end
++            p_29473_.prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
+             p_29473_.addFreshEntity(zombifiedpiglin);
              this.discard();
           } else {
-             super.thunderHit(p_29473_, p_29474_);

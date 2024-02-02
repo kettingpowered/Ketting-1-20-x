@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/ServerLevelAccessor.java
 +++ b/net/minecraft/world/level/ServerLevelAccessor.java
-@@ -6,7 +_,34 @@
+@@ -6,7 +_,37 @@
  public interface ServerLevelAccessor extends LevelAccessor {
     ServerLevel getLevel();
  
@@ -12,7 +12,10 @@
     default void addFreshEntityWithPassengers(Entity p_47206_) {
 -      p_47206_.getSelfAndPassengers().forEach(this::addFreshEntity);
 -   }
-+      p_47206_.getSelfAndPassengers().forEach((e) -> this.addFreshEntity(e, Helper.addFreshEntityWithPassengers$reason));
++      p_47206_.getSelfAndPassengers().forEach((e) -> {
++         this.prepareAddFreshEntity(Helper.addFreshEntityWithPassengers$reason);
++         this.addFreshEntity(e);
++      });
 +      // CraftBukkit start
 +   }
 +

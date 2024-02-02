@@ -164,15 +164,14 @@
     }
  
     protected float getStandingEyeHeight(Pose p_34313_, EntityDimensions p_34314_) {
-@@ -438,7 +_,7 @@
+@@ -438,6 +_,7 @@
                       chicken1.finalizeSpawn(p_34297_, p_34298_, MobSpawnType.JOCKEY, (SpawnGroupData)null, (CompoundTag)null);
                       chicken1.setChickenJockey(true);
                       this.startRiding(chicken1);
--                     p_34297_.addFreshEntity(chicken1);
-+                     p_34297_.addFreshEntity(chicken1, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.MOUNT); // CraftBukkit
++                     p_34297_.prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.MOUNT);
+                      p_34297_.addFreshEntity(chicken1);
                    }
                 }
-             }
 @@ -464,7 +_,7 @@
     }
  

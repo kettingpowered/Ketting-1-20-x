@@ -223,15 +223,14 @@
           BlockPos blockpos = this.findLightningTargetAround(this.getBlockRandomPos(i, 0, j, 15));
           if (this.isRainingAt(blockpos)) {
              DifficultyInstance difficultyinstance = this.getCurrentDifficultyAt(blockpos);
-@@ -412,7 +_,7 @@
+@@ -412,6 +_,7 @@
                    skeletonhorse.setTrap(true);
                    skeletonhorse.setAge(0);
                    skeletonhorse.setPos((double)blockpos.getX(), (double)blockpos.getY(), (double)blockpos.getZ());
--                  this.addFreshEntity(skeletonhorse);
-+                  this.addFreshEntity(skeletonhorse, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING); // CraftBukkit
++                  this.prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
+                   this.addFreshEntity(skeletonhorse);
                 }
              }
- 
 @@ -420,7 +_,7 @@
              if (lightningbolt != null) {
                 lightningbolt.moveTo(Vec3.atBottomCenterOf(blockpos));
@@ -412,14 +411,27 @@
        }
  
        this.getChunkSource().getDataStorage().save();
-@@ -800,15 +_,37 @@
+@@ -799,16 +_,50 @@
+       return list.isEmpty() ? null : list.get(this.random.nextInt(list.size()));
     }
  
++   //Ketting start - move spawnreason
++   private org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason addFreshEntity$spawnReason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
++   @Override
++   public void prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++      addFreshEntity$spawnReason = spawnReason;
++   }
++
     public boolean addFreshEntity(Entity p_8837_) {
 -      return this.addEntity(p_8837_);
 +      // CraftBukkit start
-+      return this.addFreshEntity(p_8837_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++      try {
++         return this.addFreshEntity(p_8837_, addFreshEntity$spawnReason);
++      } finally {
++         addFreshEntity$spawnReason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
++      }
 +   }
++   //Ketting end
 +
 +   @Override
 +   public boolean addFreshEntity(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {

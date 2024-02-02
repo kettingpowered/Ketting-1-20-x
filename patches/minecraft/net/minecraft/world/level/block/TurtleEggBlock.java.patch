@@ -43,15 +43,14 @@
              p_222645_.removeBlock(p_222646_, false);
  
              for(int j = 0; j < p_222644_.getValue(EGGS); ++j) {
-@@ -98,7 +_,7 @@
+@@ -98,6 +_,7 @@
                    turtle.setAge(-24000);
                    turtle.setHomePos(p_222646_);
                    turtle.moveTo((double)p_222646_.getX() + 0.3D + (double)j * 0.2D, (double)p_222646_.getY(), (double)p_222646_.getZ() + 0.3D, 0.0F, 0.0F);
--                  p_222645_.addFreshEntity(turtle);
-+                  p_222645_.addFreshEntity(turtle, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG); // CraftBukkit
++                  p_222645_.prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG);
+                   p_222645_.addFreshEntity(turtle);
                 }
              }
-          }
 @@ -158,7 +_,7 @@
           if (!(p_57769_ instanceof LivingEntity)) {
              return false;

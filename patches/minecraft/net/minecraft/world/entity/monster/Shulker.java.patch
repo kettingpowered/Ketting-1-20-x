@@ -21,12 +21,11 @@
                    this.unRide();
                    this.setAttachFace(direction);
                    this.playSound(SoundEvents.SHULKER_TELEPORT, 1.0F, 1.0F);
-@@ -423,7 +_,7 @@
+@@ -423,6 +_,7 @@
              if (shulker != null) {
                 shulker.setVariant(this.getVariant());
                 shulker.moveTo(vec3);
--               this.level().addFreshEntity(shulker);
-+               this.level().addFreshEntity(shulker, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - the mysteries of life
++               this.level().prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);
+                this.level().addFreshEntity(shulker);
              }
  
-          }

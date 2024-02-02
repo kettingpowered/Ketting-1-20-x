@@ -53,18 +53,17 @@
              cow.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
              cow.setHealth(this.getHealth());
              cow.yBodyRot = this.yBodyRot;
-@@ -164,13 +_,23 @@
+@@ -164,13 +_,24 @@
              }
  
              cow.setInvulnerable(this.isInvulnerable());
--            this.level().addFreshEntity(cow);
--
 +            // CraftBukkit start
 +            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTransformEvent(this, cow, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SHEARED).isCancelled()) {
 +               return java.util.Collections.emptyList();
 +            }
-+            this.level().addFreshEntity(cow, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SHEARED);
-+
++            this.level().prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SHEARED);
+             this.level().addFreshEntity(cow);
+ 
 +            this.discard(); // CraftBukkit - from above
 +            // CraftBukkit end
 +

@@ -61,7 +61,7 @@
        return this.jukeboxPos == null || !this.jukeboxPos.closerToCenterThan(this.position(), (double)GameEvent.JUKEBOX_PLAY.getNotificationRadius()) || !this.level().getBlockState(this.jukeboxPos).is(Blocks.JUKEBOX);
     }
  
-@@ -463,16 +_,16 @@
+@@ -463,16 +_,17 @@
        return DUPLICATION_ITEM.test(p_239736_);
     }
  
@@ -73,8 +73,8 @@
           allay.setPersistenceRequired();
           allay.resetDuplicationCooldown();
           this.resetDuplicationCooldown();
--         this.level().addFreshEntity(allay);
-+         this.level().addFreshEntity(allay, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DUPLICATION); // CraftBukkit - reason for duplicated allay
++         this.level().prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DUPLICATION);
+          this.level().addFreshEntity(allay);
        }
 -
 +      return allay; // CraftBukkit

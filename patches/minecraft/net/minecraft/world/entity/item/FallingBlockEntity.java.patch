@@ -15,7 +15,7 @@
     @Nullable
     public CompoundTag blockData;
     protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData.defineId(FallingBlockEntity.class, EntityDataSerializers.BLOCK_POS);
-@@ -76,9 +_,17 @@
+@@ -76,8 +_,17 @@
     }
  
     public static FallingBlockEntity fall(Level p_201972_, BlockPos p_201973_, BlockState p_201974_) {
@@ -30,11 +30,10 @@
 +      if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(fallingblockentity, p_201973_, p_201974_.getFluidState().createLegacyBlock())) return fallingblockentity; // CraftBukkit
 +
        p_201972_.setBlock(p_201973_, p_201974_.getFluidState().createLegacyBlock(), 3);
--      p_201972_.addFreshEntity(fallingblockentity);
-+      p_201972_.addFreshEntity(fallingblockentity, spawnReason); // CraftBukkit
++      p_201972_.prepareAddFreshEntity(spawnReason);
+       p_201972_.addFreshEntity(fallingblockentity);
        return fallingblockentity;
     }
- 
 @@ -120,11 +_,11 @@
           if (!this.level().isClientSide) {
              BlockPos blockpos = this.blockPosition();

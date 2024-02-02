@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
 +++ b/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
-@@ -46,22 +_,39 @@
+@@ -46,22 +_,40 @@
           if (entity instanceof ServerPlayer) {
              ServerPlayer serverplayer = (ServerPlayer)entity;
              if (serverplayer.connection.isAcceptingMessages() && serverplayer.level() == this.level() && !serverplayer.isSleeping()) {
@@ -26,7 +26,8 @@
 +
 +                        if (entityendermite != null) {
 +                           entityendermite.moveTo(entity.getX(), entity.getY(), entity.getZ(), entity.getYRot(), entity.getXRot());
-+                           this.level().addFreshEntity(entityendermite, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.ENDER_PEARL);
++                           this.level().prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.ENDER_PEARL);
++                           this.level().addFreshEntity(entityendermite);
 +                        }
 +                     }
 +
