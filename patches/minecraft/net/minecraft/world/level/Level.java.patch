@@ -9,7 +9,7 @@
     public static final Codec<ResourceKey<Level>> RESOURCE_KEY_CODEC = ResourceKey.codec(Registries.DIMENSION);
     public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("the_nether"));
-@@ -110,8 +_,105 @@
+@@ -110,8 +_,114 @@
     private final RegistryAccess registryAccess;
     private final DamageSources damageSources;
     private long subTickCount;
@@ -98,6 +98,15 @@
 +   String levelname = joptsimple.internal.Strings.EMPTY;
     protected Level(WritableLevelData p_270739_, ResourceKey<Level> p_270683_, RegistryAccess p_270200_, Holder<DimensionType> p_270240_, Supplier<ProfilerFiller> p_270692_, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_) {
 +      super(Level.class);
++      if (p_270739_ instanceof net.minecraft.world.level.storage.ServerLevelData sld && (init$gen == null || init$env == null || init$biomeProvider == null)) {
++         Object[] values = org.kettingpowered.ketting.utils.ServerInitHelper.retrieveBukkitValues(sld, p_270683_);
++         if (values != null) {
++            init$gen = (org.bukkit.generator.ChunkGenerator) values[0];
++            init$env = (org.bukkit.World.Environment) values[1];
++            init$biomeProvider = (org.bukkit.generator.BiomeProvider) values[2];
++            org.kettingpowered.ketting.core.Ketting.LOGGER.info("Retreived bukkit values from ServerInitHelper");
++         } else org.kettingpowered.ketting.core.Ketting.LOGGER.warn("Could not retreive bukkit values from ServerInitHelper");
++      }
 +      bukkitInit();
 +
 +      if (p_270739_ != null)
