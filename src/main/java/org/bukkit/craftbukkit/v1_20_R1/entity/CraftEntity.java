@@ -76,6 +76,7 @@ import net.md_5.bungee.api.chat.BaseComponent; // Spigot
 import org.kettingpowered.ketting.config.KettingConfig;
 import org.kettingpowered.ketting.core.Ketting;
 import org.kettingpowered.ketting.entity.CraftCustomEntity;
+import org.kettingpowered.ketting.entity.CraftCustomMinecart;
 import org.kettingpowered.ketting.internal.KettingConstants;
 
 public abstract class CraftEntity implements org.bukkit.entity.Entity {
@@ -296,6 +297,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             else if (entity instanceof MinecartSpawner) { return new CraftMinecartMobSpawner(server, (MinecartSpawner) entity); }
             else if (entity instanceof Minecart) { return new CraftMinecartRideable(server, (Minecart) entity); }
             else if (entity instanceof MinecartCommandBlock) { return new CraftMinecartCommand(server, (MinecartCommandBlock) entity); }
+            else return new CraftCustomMinecart(server, (AbstractMinecart) entity); //Ketting
         } else if (entity instanceof HangingEntity) {
             if (entity instanceof Painting) { return new CraftPainting(server, (Painting) entity); }
             else if (entity instanceof ItemFrame) {
