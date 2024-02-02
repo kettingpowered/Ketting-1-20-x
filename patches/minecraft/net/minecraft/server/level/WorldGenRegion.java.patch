@@ -9,7 +9,7 @@
              BlockEntity blockentity = blockstate.hasBlockEntity() ? this.getBlockEntity(p_9550_) : null;
              Block.dropResources(blockstate, this.level, p_9550_, blockentity, p_9552_, ItemStack.EMPTY);
           }
-@@ -296,7 +_,27 @@
+@@ -296,7 +_,38 @@
        this.getChunk(p_9592_).markPosForPostprocessing(p_9592_);
     }
  
@@ -20,9 +20,20 @@
 +      this.addFreshEntity$spawnReason = reason;
 +   }
 +
++   private java.util.List<Entity> disabledEntitySpawns = new java.util.ArrayList<>();
++   @Override
++   public void disableSpawnFor(Entity entity) {
++      disabledEntitySpawns.add(entity);
++   }
++
     public boolean addFreshEntity(Entity p_9580_) {
 +      // CraftBukkit start
 +      try {
++         if (disabledEntitySpawns.contains(p_9580_)) {
++            disabledEntitySpawns.remove(p_9580_);
++            System.out.println("Tried to spawn a disabled entity: " + p_9580_.getClass().getName());
++            return false;
++         }
 +         return addFreshEntity(p_9580_, addFreshEntity$spawnReason);
 +      } finally {
 +         addFreshEntity$spawnReason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
