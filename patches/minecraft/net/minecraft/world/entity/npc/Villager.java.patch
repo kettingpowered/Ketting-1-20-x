@@ -103,21 +103,20 @@
           LOGGER.info("Villager {} was struck by lightning {}.", this, p_35410_);
           Witch witch = EntityType.WITCH.create(p_35409_);
           if (witch != null) {
-@@ -735,7 +_,13 @@
+@@ -735,6 +_,13 @@
              }
  
              witch.setPersistenceRequired();
--            p_35409_.addFreshEntityWithPassengers(witch);
 +         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, witch);
 +            // CraftBukkit start
 +            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTransformEvent(this, witch, org.bukkit.event.entity.EntityTransformEvent.TransformReason.LIGHTNING).isCancelled()) {
 +               return;
 +            }
-+            p_35409_.addFreshEntityWithPassengersBukkit(witch, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
 +            // CraftBukkit end
++            p_35409_.prepareAddFreshEntityWithPassengers(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
+             p_35409_.addFreshEntityWithPassengers(witch);
              this.releaseAllPois();
              this.discard();
-          } else {
 @@ -816,7 +_,7 @@
              return p_186293_.wantsToSpawnGolem(p_35399_);
           }).limit(5L).collect(Collectors.toList());

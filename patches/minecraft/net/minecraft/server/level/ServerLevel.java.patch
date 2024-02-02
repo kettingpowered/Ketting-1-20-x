@@ -484,7 +484,7 @@
        Entity entity = this.getEntities().get(p_8854_.getUUID());
        if (entity != null) {
           LOGGER.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.getUUID().toString());
-@@ -835,28 +_,70 @@
+@@ -835,28 +_,71 @@
           this.removePlayerImmediately((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -540,8 +540,8 @@
        if (p_8861_.getSelfAndPassengers().map(Entity::getUUID).anyMatch(this.entityManager::isLoaded)) {
           return false;
        } else {
--         this.addFreshEntityWithPassengers(p_8861_);
-+         this.addFreshEntityWithPassengersBukkit(p_8861_, reason); // CraftBukkit
++         this.prepareAddFreshEntityWithPassengers(reason);
+          this.addFreshEntityWithPassengers(p_8861_);
           return true;
        }
     }

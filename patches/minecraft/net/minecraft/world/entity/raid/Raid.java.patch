@@ -113,15 +113,14 @@
     }
  
     public void joinRaid(int p_37714_, Raider p_37715_, @Nullable BlockPos p_37716_, boolean p_37717_) {
-@@ -554,7 +_,7 @@
+@@ -554,6 +_,7 @@
              p_37715_.finalizeSpawn(this.level, this.level.getCurrentDifficultyAt(p_37716_), MobSpawnType.EVENT, (SpawnGroupData)null, (CompoundTag)null);
              p_37715_.applyRaidBuffs(p_37714_, false);
              p_37715_.setOnGround(true);
--            this.level.addFreshEntityWithPassengers(p_37715_);
-+            this.level.addFreshEntityWithPassengersBukkit(p_37715_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.RAID); // CraftBukkit
++            this.level.prepareAddFreshEntityWithPassengers(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.RAID);
+             this.level.addFreshEntityWithPassengers(p_37715_);
           }
        }
- 
 @@ -794,6 +_,12 @@
        this.heroesOfTheVillage.add(p_37727_.getUUID());
     }

@@ -82,7 +82,7 @@
  
              for(int l = 0; l < 50; ++l) {
                 int i1 = i + Mth.nextInt(this.random, 7, 40) * Mth.nextInt(this.random, -1, 1);
-@@ -290,9 +_,10 @@
+@@ -290,8 +_,10 @@
                 if (NaturalSpawner.isSpawnPositionOk(spawnplacements$type, this.level(), blockpos, entitytype) && SpawnPlacements.checkSpawnRules(entitytype, serverlevel, MobSpawnType.REINFORCEMENT, blockpos, this.level().random)) {
                    zombie.setPos((double)i1, (double)j1, (double)k1);
                    if (!this.level().hasNearbyAlivePlayer((double)i1, (double)j1, (double)k1, 7.0D) && this.level().isUnobstructed(zombie) && this.level().noCollision(zombie) && !this.level().containsAnyLiquid(zombie.getBoundingBox())) {
@@ -90,11 +90,10 @@
 +                     if (livingentity != null)
 +                     zombie.setTarget(livingentity, org.bukkit.event.entity.EntityTargetEvent.TargetReason.REINFORCEMENT_TARGET, true); // CraftBukkit
                       zombie.finalizeSpawn(serverlevel, this.level().getCurrentDifficultyAt(zombie.blockPosition()), MobSpawnType.REINFORCEMENT, (SpawnGroupData)null, (CompoundTag)null);
--                     serverlevel.addFreshEntityWithPassengers(zombie);
-+                     serverlevel.addFreshEntityWithPassengersBukkit(zombie, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.REINFORCEMENTS); // CraftBukkit
++                     serverlevel.prepareAddFreshEntityWithPassengers(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.REINFORCEMENTS);
+                      serverlevel.addFreshEntityWithPassengers(zombie);
                       this.getAttribute(Attributes.SPAWN_REINFORCEMENTS_CHANCE).addPermanentModifier(new AttributeModifier("Zombie reinforcement caller charge", (double)-0.05F, AttributeModifier.Operation.ADDITION));
                       zombie.getAttribute(Attributes.SPAWN_REINFORCEMENTS_CHANCE).addPermanentModifier(new AttributeModifier("Zombie reinforcement callee charge", (double)-0.05F, AttributeModifier.Operation.ADDITION));
-                      break;
 @@ -310,7 +_,14 @@
        if (flag) {
           float f = this.level().getCurrentDifficultyAt(this.blockPosition()).getEffectiveDifficulty();

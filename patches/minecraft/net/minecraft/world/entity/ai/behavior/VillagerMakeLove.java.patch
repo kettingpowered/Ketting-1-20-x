@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/behavior/VillagerMakeLove.java
 +++ b/net/minecraft/world/entity/ai/behavior/VillagerMakeLove.java
-@@ -110,11 +_,17 @@
+@@ -110,11 +_,18 @@
        if (villager == null) {
           return Optional.empty();
        } else {
@@ -8,7 +8,6 @@
 -         p_24658_.setAge(6000);
           villager.setAge(-24000);
           villager.moveTo(p_24657_.getX(), p_24657_.getY(), p_24657_.getZ(), 0.0F, 0.0F);
--         p_24656_.addFreshEntityWithPassengers(villager);
 +         // CraftBukkit start - call EntityBreedEvent
 +         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityBreedEvent(villager, p_24657_, p_24658_, null, null, 0).isCancelled()) {
 +            return Optional.empty();
@@ -16,7 +15,8 @@
 +         // Move age setting down
 +         p_24657_.setAge(6000);
 +         p_24658_.setAge(6000);
-+         p_24656_.addFreshEntityWithPassengersBukkit(villager, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);
++         p_24656_.prepareAddFreshEntityWithPassengers(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);
+          p_24656_.addFreshEntityWithPassengers(villager);
 +         // CraftBukkit end
           p_24656_.broadcastEntityEvent(villager, (byte)12);
           return Optional.of(villager);

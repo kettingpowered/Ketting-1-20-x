@@ -1,14 +1,13 @@
 --- a/net/minecraft/world/entity/monster/Evoker.java
 +++ b/net/minecraft/world/entity/monster/Evoker.java
-@@ -248,7 +_,7 @@
+@@ -248,6 +_,7 @@
                 vex.setOwner(Evoker.this);
                 vex.setBoundOrigin(blockpos);
                 vex.setLimitedLife(20 * (30 + Evoker.this.random.nextInt(90)));
--               serverlevel.addFreshEntityWithPassengers(vex);
-+               serverlevel.addFreshEntityWithPassengersBukkit(vex, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPELL); // CraftBukkit - Add SpawnReason
++               serverlevel.prepareAddFreshEntityWithPassengers(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPELL);
+                serverlevel.addFreshEntityWithPassengers(vex);
              }
           }
- 
 @@ -275,7 +_,7 @@
              return false;
           } else if (Evoker.this.tickCount < this.nextAttackTickCount) {

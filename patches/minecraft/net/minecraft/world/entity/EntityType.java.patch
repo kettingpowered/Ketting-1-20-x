@@ -77,7 +77,7 @@
     }
  
     public static <T extends Entity> Consumer<T> createDefaultStackConfig(ServerLevel p_263583_, ItemStack p_263568_, @Nullable Player p_263575_) {
-@@ -367,20 +_,36 @@
+@@ -367,20 +_,37 @@
     public static <T extends Entity> Consumer<T> appendCustomEntityStackConfig(Consumer<T> p_263579_, ServerLevel p_263571_, ItemStack p_263582_, @Nullable Player p_263574_) {
        CompoundTag compoundtag = p_263582_.getTag();
        return compoundtag != null ? p_263579_.andThen((p_262558_) -> {
@@ -110,8 +110,8 @@
 +      // CraftBukkit end
        T t = this.create(p_262704_, p_262603_, p_262621_, p_262672_, p_262644_, p_262690_, p_262590_);
        if (t != null) {
--         p_262704_.addFreshEntityWithPassengers(t);
-+         p_262704_.addFreshEntityWithPassengersBukkit(t, spawnReason);
++         p_262704_.prepareAddFreshEntityWithPassengers(spawnReason);
+          p_262704_.addFreshEntityWithPassengers(t);
 +         return !t.isRemoved() ? t : null; // Don't return an entity when CreatureSpawnEvent is canceled
 +         // CraftBukkit end
        }
