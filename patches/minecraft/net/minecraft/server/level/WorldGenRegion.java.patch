@@ -9,13 +9,26 @@
              BlockEntity blockentity = blockstate.hasBlockEntity() ? this.getBlockEntity(p_9550_) : null;
              Block.dropResources(blockstate, this.level, p_9550_, blockentity, p_9552_, ItemStack.EMPTY);
           }
-@@ -297,6 +_,14 @@
+@@ -296,7 +_,27 @@
+       this.getChunk(p_9592_).markPosForPostprocessing(p_9592_);
     }
  
++   //Ketting start
++   private org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason addFreshEntity$spawnReason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
++   @Override
++   public void prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++      this.addFreshEntity$spawnReason = reason;
++   }
++
     public boolean addFreshEntity(Entity p_9580_) {
 +      // CraftBukkit start
-+      return addFreshEntity(p_9580_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++      try {
++         return addFreshEntity(p_9580_, addFreshEntity$spawnReason);
++      } finally {
++         addFreshEntity$spawnReason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
++      }
 +   }
++   //Ketting end
 +
 +   public boolean addFreshEntity(Entity p_9580_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
 +      // CraftBukkit end

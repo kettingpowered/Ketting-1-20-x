@@ -79,7 +79,7 @@
           return false;
        } else {
           CompoundTag compoundtag = p_155140_.entityData.copy();
-@@ -176,6 +_,18 @@
+@@ -176,6 +_,19 @@
                 if (!entity.getType().is(EntityTypeTags.BEEHIVE_INHABITORS)) {
                    return false;
                 } else {
@@ -93,7 +93,8 @@
 +
 +                     entity.moveTo(d1, d2, d3, entity.getYRot(), entity.getXRot());
 +                  }
-+                  if (!p_155137_.addFreshEntity(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BEEHIVE)) return false; // CraftBukkit - SpawnReason, moved from below
++                  p_155137_.prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BEEHIVE);
++                  if (!p_155137_.addFreshEntity(entity)) return false; // CraftBukkit - moved from below
 +                  // CraftBukkit end
                    if (entity instanceof Bee) {
                       Bee bee = (Bee)entity;

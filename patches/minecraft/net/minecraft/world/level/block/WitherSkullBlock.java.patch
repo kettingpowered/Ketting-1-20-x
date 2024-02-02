@@ -8,7 +8,7 @@
        if (!p_58256_.isClientSide) {
           BlockState blockstate = p_58258_.getBlockState();
           boolean flag = blockstate.is(Blocks.WITHER_SKELETON_SKULL) || blockstate.is(Blocks.WITHER_SKELETON_WALL_SKULL);
-@@ -50,17 +_,22 @@
+@@ -50,17 +_,23 @@
              if (blockpattern$blockpatternmatch != null) {
                 WitherBoss witherboss = EntityType.WITHER.create(p_58256_);
                 if (witherboss != null) {
@@ -20,7 +20,8 @@
                    witherboss.makeInvulnerable();
 -
 +                  // CraftBukkit start
-+                  if (!p_58256_.addFreshEntity(witherboss, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BUILD_WITHER)) {
++                  p_58256_.prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BUILD_WITHER);
++                  if (!p_58256_.addFreshEntity(witherboss)) {
 +                     return;
 +                  }
 +                  CarvedPumpkinBlock.clearPatternBlocks(p_58256_, blockpattern$blockpatternmatch); // CraftBukkit - from above
