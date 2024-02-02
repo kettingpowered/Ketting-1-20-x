@@ -4,8 +4,8 @@
                 vex.setOwner(Evoker.this);
                 vex.setBoundOrigin(blockpos);
                 vex.setLimitedLife(20 * (30 + Evoker.this.random.nextInt(90)));
--               serverlevel.addFreshEntityWithPassengers(vex);
-+               serverlevel.addFreshEntityWithPassengersBukkit(vex, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPELL); // CraftBukkit - Add SpawnReason
++               serverlevel.prepareAddFreshEntityWithPassengers(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPELL);
+                serverlevel.addFreshEntityWithPassengers(vex);
                 serverlevel.gameEvent(GameEvent.ENTITY_PLACE, blockpos, GameEvent.Context.of(Evoker.this));
              }
           }
