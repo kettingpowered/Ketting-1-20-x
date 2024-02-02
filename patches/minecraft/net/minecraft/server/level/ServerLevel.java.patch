@@ -411,21 +411,32 @@
        }
  
        this.getChunkSource().getDataStorage().save();
-@@ -799,16 +_,50 @@
+@@ -799,16 +_,61 @@
        return list.isEmpty() ? null : list.get(this.random.nextInt(list.size()));
     }
  
-+   //Ketting start - move spawnreason
++   //Ketting start - move spawnreason, disable spawns
 +   private org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason addFreshEntity$spawnReason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
 +   @Override
 +   public void prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
 +      addFreshEntity$spawnReason = spawnReason;
 +   }
 +
++   private java.util.List<Entity> disabledEntitySpawns = new java.util.ArrayList<>();
++   @Override
++   public void disableSpawnFor(Entity entity) {
++      disabledEntitySpawns.add(entity);
++   }
++
     public boolean addFreshEntity(Entity p_8837_) {
 -      return this.addEntity(p_8837_);
 +      // CraftBukkit start
 +      try {
++         if (disabledEntitySpawns.contains(p_8837_)) {
++            disabledEntitySpawns.remove(p_8837_);
++            System.out.println("Tried to spawn a disabled entity: " + p_8837_.getClass().getName());
++            return false;
++         }
 +         return this.addFreshEntity(p_8837_, addFreshEntity$spawnReason);
 +      } finally {
 +         addFreshEntity$spawnReason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
