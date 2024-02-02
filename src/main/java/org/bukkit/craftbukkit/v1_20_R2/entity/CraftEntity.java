@@ -52,6 +52,7 @@ import org.bukkit.util.Vector;
 import org.kettingpowered.ketting.config.KettingConfig;
 import org.kettingpowered.ketting.core.Ketting;
 import org.kettingpowered.ketting.entity.CraftCustomEntity;
+import org.kettingpowered.ketting.entity.CraftCustomMinecart;
 import org.kettingpowered.ketting.internal.KettingConstants;
 
 import java.util.List;
