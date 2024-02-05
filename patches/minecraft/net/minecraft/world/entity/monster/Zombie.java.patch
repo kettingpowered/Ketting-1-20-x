@@ -17,20 +17,18 @@
        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Turtle.class, 10, true, false, Turtle.BABY_ON_LAND_SELECTOR));
     }
-@@ -192,8 +_,11 @@
+@@ -192,7 +_,10 @@
     public void tick() {
        if (!this.level().isClientSide && this.isAlive() && !this.isNoAi()) {
           if (this.isUnderWaterConverting()) {
 -            --this.conversionTime;
--            if (this.conversionTime < 0) {
 +            // CraftBukkit start - Use wall time instead of ticks for conversion
 +            int elapsedTicks = net.minecraft.server.MinecraftServer.currentTick - this.lastTick;
 +            this.conversionTime -= elapsedTicks;
 +            // CraftBukkit end
-+            if (this.conversionTime < 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.DROWNED, (timer) -> this.conversionTime = timer)) {
+             if (this.conversionTime < 0) {
                 this.doUnderWaterConversion();
              }
-          } else if (this.convertsInWater()) {
 @@ -209,6 +_,7 @@
        }
  
@@ -39,7 +37,7 @@
     }
  
     public void aiStep() {
-@@ -238,6 +_,7 @@
+@@ -238,11 +_,13 @@
     }
  
     public void startUnderWaterConversion(int p_34279_) {
@@ -47,6 +45,12 @@
        this.conversionTime = p_34279_;
        this.getEntityData().set(DATA_DROWNED_CONVERSION_ID, true);
     }
+ 
+    protected void doUnderWaterConversion() {
++      if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.DROWNED, (timer) -> this.conversionTime = timer)) return;
+       this.convertToZombieType(EntityType.DROWNED);
+       if (!this.isSilent()) {
+          this.level().levelEvent((Player)null, 1040, this.blockPosition(), 0);
 @@ -251,10 +_,15 @@
     }
  
@@ -111,16 +115,10 @@
           }
        }
  
-@@ -376,27 +_,37 @@
- 
-    public boolean killedEntity(ServerLevel p_219160_, LivingEntity p_219161_) {
-       boolean flag = super.killedEntity(p_219160_, p_219161_);
--      if ((p_219160_.getDifficulty() == Difficulty.NORMAL || p_219160_.getDifficulty() == Difficulty.HARD) && p_219161_ instanceof Villager villager) {
-+      if ((p_219160_.getDifficulty() == Difficulty.NORMAL || p_219160_.getDifficulty() == Difficulty.HARD) && p_219161_ instanceof Villager villager && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_219161_, EntityType.ZOMBIE_VILLAGER, (timer) -> {})) {
-          if (p_219160_.getDifficulty() != Difficulty.HARD && this.random.nextBoolean()) {
+@@ -381,22 +_,36 @@
              return flag;
           }
--
+ 
 -         ZombieVillager zombievillager = villager.convertTo(EntityType.ZOMBIE_VILLAGER, false);
 -         if (zombievillager != null) {
 -            zombievillager.finalizeSpawn(p_219160_, p_219160_.getCurrentDifficultyAt(zombievillager.blockPosition()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true), (CompoundTag)null);
@@ -131,7 +129,9 @@
 -            if (!this.isSilent()) {
 -               p_219160_.levelEvent((Player)null, 1026, this.blockPosition(), 0);
 -            }
--
++         if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_219161_, EntityType.ZOMBIE_VILLAGER, (timer) -> {}))
++            return flag;
+ 
 -            flag = false;
 -         }
 +         // CraftBukkit start
