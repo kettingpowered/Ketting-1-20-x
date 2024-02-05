@@ -4,8 +4,7 @@ import net.minecraftforge.forge.tasks.checks.CheckPatches
 import net.minecraftforge.forge.tasks.checks.CheckSAS
 import net.minecraftforge.forge.tasks.checks.CheckTask
 
-import java.util.Date
-import java.util.LinkedHashMap
+import java.nio.file.Files
 import net.minecraftforge.forge.tasks.*
 import static net.minecraftforge.forge.tasks.Util.*
 import net.minecraftforge.gradle.common.tasks.ApplyBinPatches
@@ -297,7 +296,7 @@ tasks.userdevConfig.configure {
     }
 }
 
-for (def run : patcher.runs + tasks.userdevConfig.runs) {
+for (def run in patcher.runs + tasks.userdevConfig.runs) {
     if (run.parents) continue // We already added this to the parent run config
     //run.property 'bsl.debug', 'true'
     run.args '--gameDir', '.'
@@ -329,7 +328,7 @@ tasks.register('downloadVersionManifest', Download) {
 tasks.register('downloadJson', Download) {
     dependsOn downloadVersionManifest
     inputs.file downloadVersionManifest.dest
-    src { downloadVersionManifest.dest.json.versions.find{ it.id == MC_VERSION }.url }
+    src { downloadVersionManifest.dest.json.versions.find { it.id == MC_VERSION }.url }
     dest file("build/versions/$MC_VERSION/version.json")
     useETag 'all'
     onlyIfModified true
@@ -369,8 +368,8 @@ tasks.register('extractInheritance', ExtractInheritance) {
     tool = INSTALLER_TOOLS + ':fatjar'
     args.add '--annotations'
     input = genJoinedBinPatches.cleanJar
-    libraries.addAll downloadLibraries.librariesOutput.map { rf -> 
-        java.nio.file.Files.readAllLines(rf.asFile.toPath()).stream().map(File::new).collect(java.util.stream.Collectors.toList()) 
+    libraries.addAll downloadLibraries.librariesOutput.map { rf ->
+        Files.readAllLines(rf.asFile.toPath()).stream().map(File::new).toList()
     }
 }
 tasks.register("findFieldInstanceChecks", FieldCompareFinder) {
@@ -397,16 +396,18 @@ tasks.register("findFinalizeSpawnTargets", BytecodePredicateFinder) {
     predicate = {
         parent, node, insn ->
             'net/minecraft/world/level/BaseSpawner' != parent.name // Ignore this class as we special case it.
-            && insn.getOpcode() == Opcodes.INVOKEVIRTUAL
-            && insn.name.equals('m_6518_')
-            && insn.desc.equals('(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/world/DifficultyInstance;Lnet/minecraft/world/entity/MobSpawnType;Lnet/minecraft/world/entity/SpawnGroupData;Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/world/entity/SpawnGroupData;')
+            && insn.getOpcode() === Opcodes.INVOKEVIRTUAL
+            && insn.name == 'm_6518_'
+            && insn.desc == '(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/world/DifficultyInstance;Lnet/minecraft/world/entity/MobSpawnType;Lnet/minecraft/world/entity/SpawnGroupData;Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/world/entity/SpawnGroupData;'
     }
 }
 tasks.register('validateDeprecations', ValidateDeprecations) {
     input = tasks.jar.archiveFile
     mcVersion = MC_VERSION
 }
-tasks.jar.finalizedBy 'validateDeprecations'
+tasks.named('jar', Jar).configure {
+    finalizedBy 'validateDeprecations'
+}
 tasks.register("downloadInstaller", DownloadMavenArtifact) {
     artifact = "net.minecraftforge:installer:2.2.+:fatjar"
     changing = true
@@ -556,7 +557,7 @@ CheckTask.registerTask(tasks, 'Excs', CheckExcs) {
 }
 
 CheckTask.registerTask(tasks, 'Patches', CheckPatches) {
-    dependsOn genPatches
+    dependsOn 'genPatches'
     patchDir = file("$rootDir/patches")
     patchesWithS2SArtifact = [
             'minecraft/net/minecraft/client/renderer/ViewArea.java.patch',
@@ -564,7 +565,7 @@ CheckTask.registerTask(tasks, 'Patches', CheckPatches) {
     ]
 }
 
-genPatches {
+tasks.named('genPatches', GeneratePatches).configure {
     finalizedBy checkAndFixPatches
     autoHeader true
     lineEnding = '\n'
@@ -573,10 +574,10 @@ genPatches {
 def baseForgeVersionProperty = project.objects.property(String)
 baseForgeVersionProperty.set(project.provider { TeamcityRequests.attemptFindBase(rootDir) ?: getLatestForgeVersion(MC_VERSION) })
 baseForgeVersionProperty.finalizeValueOnRead()
-def jarCompatibilityTaskSetup = { task ->
+final jarCompatibilityTaskSetup = { Task task ->
     task.group = 'jar compatibility'
     task.onlyIf {
-        baseForgeVersionProperty.getOrNull() != null
+        baseForgeVersionProperty.getOrNull() !== null
     }
 }
 
@@ -664,8 +665,8 @@ tasks.register('installerJson', InstallerJson) {
     input.from(applyClientBinPatches.output, applyServerBinPatches.output, genClientBinPatches.toolJar)
 
     doFirst {
-        def libs = libraries
-        def INSTALLER_TOOLS_CLASSPATH = getClasspath(project, libs, INSTALLER_TOOLS)
+        var libs = libraries
+        String[] INSTALLER_TOOLS_CLASSPATH = getClasspath(project, libs, INSTALLER_TOOLS)
         json.putAll([
             _comment: launcherJson.json._comment,
             hideExtract: true,
@@ -838,7 +839,7 @@ tasks.register('installerJson', InstallerJson) {
 
 tasks.named('universalJar').configure {
     dependsOn downloadCrowdin
-        from zipTree(downloadCrowdin.dest).matching {
+    from zipTree(downloadCrowdin.dest).matching {
         include 'assets/forge/lang/*.json'
     }
 
@@ -1122,6 +1123,6 @@ publishing {
 }
 // Make sure we run bin compat checking during local testing.
 if (!System.env.MAVEN_USER || !System.env.MAVEN_PASSWORD)
-    publish.dependsOn(':forge:checkJarCompatibility')
+    tasks.named('publish').configure { dependsOn(':forge:checkJarCompatibility') }
 
 apply from: rootProject.file('build_forge_eclipse.gradle')

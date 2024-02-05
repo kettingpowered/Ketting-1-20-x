@@ -51,7 +51,7 @@ project(':mcp') {
 
 if (System.env.TEAMCITY_VERSION) {
     //Only setup the CI environment if and only if the environment variables are set.
-    tasks.configureTeamCity {
+    tasks.named('configureTeamCity').configure {
         doLast {
             println "##teamcity[buildNumber '${project(':forge').version}']"
             println "##teamcity[setParameter name='env.PUBLISHED_JAVA_ARTIFACT_VERSION' value='${project(':forge').version}']"
