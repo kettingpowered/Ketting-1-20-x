@@ -736,6 +736,34 @@ tasks.register('installerJson', InstallerJson) {
                     jar: INSTALLER_TOOLS,
                     classpath: INSTALLER_TOOLS_CLASSPATH,
                     args: [
+                        '--task', 'EXTRACT_FILES',
+                        '--archive', '{INSTALLER}',
+
+                        '--from', 'data/README.txt',
+                        '--to', '{ROOT}/README.txt',
+
+                        '--from', 'data/run.sh',
+                        '--to', '{ROOT}/run.sh',
+                        '--exec', '{ROOT}/run.sh',
+
+                        '--from', 'data/run.bat',
+                        '--to', '{ROOT}/run.bat',
+
+                        '--from', 'data/user_jvm_args.txt',
+                        '--to', '{ROOT}/user_jvm_args.txt',
+                        '--optional', '{ROOT}/user_jvm_args.txt',
+
+                        '--from', 'data/unix_args.txt',
+                        '--to', "{ROOT}/libraries/${MAVEN_PATH}/unix_args.txt",
+
+                        '--from', 'data/win_args.txt',
+                        '--to', "{ROOT}/libraries/${MAVEN_PATH}/win_args.txt"
+                    ]
+                ], [
+                    sides: ['server'],
+                    jar: INSTALLER_TOOLS,
+                    classpath: INSTALLER_TOOLS_CLASSPATH,
+                    args: [
                         '--task', 'BUNDLER_EXTRACT',
                         '--input', '{MINECRAFT_JAR}',
                         '--output', '{ROOT}/libraries/',
@@ -898,6 +926,26 @@ tasks.named('universalJar').configure {
     from(genServerBinPatches.output) {
         rename { 'data/server.lzma' }
     }
+
+    final var argsFile = rootProject.file('server_files/args.txt')
+    final Map<String, Map<String, String>> tokens = [tokens: [SHIM_JAR_FILE: serverShimJar.archiveFileName.get()]]
+    from(argsFile) {
+        filter(tokens, ReplaceTokens)
+        into 'data'
+        rename { 'unix_args.txt' }
+    }
+    from(argsFile) {
+        filter(tokens, ReplaceTokens)
+        into 'data'
+        rename { 'win_args.txt' }
+    }
+
+    from(rootProject.file('server_files')) {
+        filter(tokens, ReplaceTokens)
+        into 'data'
+        exclude 'args.txt'
+    }
+
     jarSigner.sign(it)
 }*/
 
