@@ -105,7 +105,7 @@
        servergamepacketlistenerimpl.send(new ClientboundUpdateRecipesPacket(this.server.getRecipeManager().getRecipes()));
        servergamepacketlistenerimpl.send(new ClientboundUpdateTagsPacket(TagNetworkSerialization.serializeTagsToNetwork(this.registries)));
        this.sendPlayerPermissionLevel(p_11263_);
-@@ -197,32 +_,89 @@
+@@ -197,32 +_,88 @@
           mutablecomponent = Component.translatable("multiplayer.player.joined.renamed", p_11263_.getDisplayName(), s);
        }
  
@@ -167,16 +167,10 @@
 +      // CraftBukkit end
 +
 +      p_11263_.getEntityData().refresh(p_11263_); // CraftBukkit - BungeeCord#2321, send complete data to self on spawn
++
        this.sendLevelInfo(p_11263_, serverlevel1);
 -      serverlevel1.addNewPlayer(p_11263_);
-+      if(false){//Ketting - Todo: check correctness
-       this.server.getCustomBossEvents().onPlayerConnect(p_11263_);
-       this.server.getServerResourcePack().ifPresent((p_215606_) -> {
-          p_11263_.sendTexturePack(p_215606_.url(), p_215606_.hash(), p_215606_.isRequired(), p_215606_.prompt());
-       });
--
--      for(MobEffectInstance mobeffectinstance : p_11263_.getActiveEffects()) {
-+      }//Ketting - end
+-      this.server.getCustomBossEvents().onPlayerConnect(p_11263_);
 +
 +      // CraftBukkit start - Only add if the player wasn't moved in the event
 +      if (p_11263_.level() == serverlevel1 && !serverlevel1.players().contains(p_11263_)) {
@@ -187,6 +181,11 @@
 +      serverlevel1 = p_11263_.serverLevel(); // CraftBukkit - Update in case join event changed it
 +      // CraftBukkit end
 +
+       this.server.getServerResourcePack().ifPresent((p_215606_) -> {
+          p_11263_.sendTexturePack(p_215606_.url(), p_215606_.hash(), p_215606_.isRequired(), p_215606_.prompt());
+       });
+ 
+-      for(MobEffectInstance mobeffectinstance : p_11263_.getActiveEffects()) {
 +      for (MobEffectInstance mobeffectinstance : p_11263_.getActiveEffects()) {
           servergamepacketlistenerimpl.send(new ClientboundUpdateMobEffectPacket(p_11263_.getId(), mobeffectinstance));
        }
