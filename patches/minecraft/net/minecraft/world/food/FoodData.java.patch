@@ -68,11 +68,12 @@
        }
  
     }
-@@ -39,29 +_,41 @@
+@@ -39,29 +_,43 @@
           if (this.saturationLevel > 0.0F) {
              this.saturationLevel = Math.max(this.saturationLevel - 1.0F, 0.0F);
           } else if (difficulty != Difficulty.PEACEFUL) {
 -            this.foodLevel = Math.max(this.foodLevel - 1, 0);
++            //Ketting start - don't fire event if entity is null
 +            if (entityhuman != null) {
 +               // CraftBukkit start
 +               org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, Math.max(this.foodLevel - 1, 0));
@@ -84,6 +85,7 @@
 +               ((net.minecraft.server.level.ServerPlayer) entityhuman).connection.send(new net.minecraft.network.protocol.game.ClientboundSetHealthPacket(((net.minecraft.server.level.ServerPlayer) entityhuman).getBukkitEntity().getScaledHealth(), this.foodLevel, this.saturationLevel));
 +               // CraftBukkit end
 +            } else this.foodLevel = Math.max(this.foodLevel - 1, 0);
++            //Ketting end
           }
        }
  
