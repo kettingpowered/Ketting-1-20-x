@@ -1,10 +1,8 @@
 --- a/net/minecraft/world/entity/animal/SnowGolem.java
 +++ b/net/minecraft/world/entity/animal/SnowGolem.java
-@@ -39,8 +_,9 @@
- import net.minecraft.world.level.block.state.BlockState;
+@@ -40,7 +_,7 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  
 -public class SnowGolem extends AbstractGolem implements Shearable, RangedAttackMob {
 +public class SnowGolem extends AbstractGolem implements Shearable, RangedAttackMob, net.minecraftforge.common.IForgeShearable {
@@ -16,7 +14,7 @@
        if (!this.level().isClientSide) {
           if (this.level().getBiome(this.blockPosition()).is(BiomeTags.SNOW_GOLEM_MELTS)) {
 -            this.hurt(this.damageSources().onFire(), 1.0F);
-+            this.hurt(this.damageSources().melting, 1.0F); // CraftBukkit - DamageSource.BURN -> CraftEventFactory.MELTING
++            this.hurt(this.damageSources().melting, 1.0F); // CraftBukkit - DamageSource.BURN -> org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.MELTING
           }
  
 -         if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
@@ -32,7 +30,7 @@
 -               this.level().setBlockAndUpdate(blockpos, blockstate);
 +            if (this.level().isEmptyBlock(blockpos) && blockstate.canSurvive(this.level(), blockpos)) {
 +               // CraftBukkit start
-+               if (!CraftEventFactory.handleBlockFormEvent(this.level(), blockpos, blockstate, this)) {
++               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this.level(), blockpos, blockstate, this)) {
 +                  continue;
 +               }
 +               // CraftBukkit end

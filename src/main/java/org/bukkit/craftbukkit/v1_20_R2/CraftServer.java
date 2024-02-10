@@ -1190,7 +1190,7 @@ public final class CraftServer implements Server {
             worldKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(name.toLowerCase(java.util.Locale.ENGLISH)));
         }
 
-        ServerLevel internal = (ServerLevel) new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, getServer().progressListenerFactory.create(11),
+        ServerLevel internal = ServerLevel.init(console, console.executor, worldSession, worlddata, worldKey, worlddimension, getServer().progressListenerFactory.create(11),
                 worlddata.isDebugWorld(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true, console.overworld().getRandomSequences(), creator.environment(), generator, biomeProvider);
         internal.keepSpawnInMemory = creator.keepSpawnInMemory();
 
@@ -1383,11 +1383,6 @@ public final class CraftServer implements Server {
     private CraftingContainer createInventoryCrafting() {
         // Create a players Crafting Inventory
         AbstractContainerMenu container = new AbstractContainerMenu(null, -1) {
-            @Override
-            public InventoryView getBukkitView() {
-                return null;
-            }
-
             @Override
             public boolean stillValid(net.minecraft.world.entity.player.Player entityhuman) {
                 return false;

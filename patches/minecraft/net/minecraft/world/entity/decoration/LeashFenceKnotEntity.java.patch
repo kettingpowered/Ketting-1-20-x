@@ -1,29 +1,12 @@
 --- a/net/minecraft/world/entity/decoration/LeashFenceKnotEntity.java
 +++ b/net/minecraft/world/entity/decoration/LeashFenceKnotEntity.java
-@@ -8,6 +_,8 @@
- import net.minecraft.network.protocol.Packet;
- import net.minecraft.network.protocol.game.ClientGamePacketListener;
- import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-+import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
-+import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.sounds.SoundEvents;
- import net.minecraft.tags.BlockTags;
- import net.minecraft.world.InteractionHand;
-@@ -24,6 +_,7 @@
- import net.minecraft.world.level.gameevent.GameEvent;
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
- 
- public class LeashFenceKnotEntity extends HangingEntity {
-    public static final double OFFSET_Y = 0.375D;
 @@ -83,6 +_,12 @@
  
           for(Mob mob : list) {
              if (mob.getLeashHolder() == p_31842_) {
 +               // CraftBukkit start
-+               if (CraftEventFactory.callPlayerLeashEntityEvent(mob, this, p_31842_, p_31843_).isCancelled()) {
-+                  ((ServerPlayer) p_31842_).connection.send(new ClientboundSetEntityLinkPacket(mob, mob.getLeashHolder()));
++               if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerLeashEntityEvent(mob, this, p_31842_, p_31843_).isCancelled()) {
++                  ((net.minecraft.server.level.ServerPlayer) p_31842_).connection.send(new net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket(mob, mob.getLeashHolder()));
 +                  continue;
 +               }
 +               // CraftBukkit end
@@ -45,7 +28,7 @@
                    if (mob1.isLeashed() && mob1.getLeashHolder() == this) {
 -                     mob1.dropLeash(true, false);
 +                     // CraftBukkit start
-+                     if (CraftEventFactory.callPlayerUnleashEntityEvent(mob1, p_31842_, p_31843_).isCancelled()) {
++                     if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerUnleashEntityEvent(mob1, p_31842_, p_31843_).isCancelled()) {
 +                        die = false;
 +                        continue;
 +                     }

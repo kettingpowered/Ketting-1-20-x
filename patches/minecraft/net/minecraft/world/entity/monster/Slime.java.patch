@@ -1,26 +1,5 @@
 --- a/net/minecraft/world/entity/monster/Slime.java
 +++ b/net/minecraft/world/entity/monster/Slime.java
-@@ -1,7 +_,10 @@
- package net.minecraft.world.entity.monster;
- 
- import com.google.common.annotations.VisibleForTesting;
-+
-+import java.util.ArrayList;
- import java.util.EnumSet;
-+import java.util.List;
- import javax.annotation.Nullable;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.particles.ParticleOptions;
-@@ -42,6 +_,9 @@
- import net.minecraft.world.level.WorldGenLevel;
- import net.minecraft.world.level.levelgen.WorldgenRandom;
- import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityTransformEvent;
-+import org.bukkit.event.entity.SlimeSplitEvent;
- import org.joml.Vector3f;
- 
- public class Slime extends Mob implements Enemy {
 @@ -130,6 +_,8 @@
        if (this.onGround() && !this.wasOnGround) {
           int i = this.getSize();
@@ -35,7 +14,7 @@
           int k = 2 + this.random.nextInt(3);
  
 +         // CraftBukkit start
-+         SlimeSplitEvent event = new SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), k);
++         org.bukkit.event.entity.SlimeSplitEvent event = new org.bukkit.event.entity.SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), k);
 +         this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (!event.isCancelled() && event.getCount() > 0) {
@@ -44,7 +23,7 @@
 +            super.remove(p_149847_);
 +            return;
 +         }
-+         List<LivingEntity> slimes = new ArrayList<>(j);
++         java.util.List<LivingEntity> slimes = new java.util.ArrayList<>(j);
 +         // CraftBukkit end
 +
           for(int l = 0; l < k; ++l) {
@@ -60,7 +39,7 @@
           }
 +
 +         // CraftBukkit start
-+         if (CraftEventFactory.callEntityTransformEvent(this, slimes, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTransformEvent(this, slimes, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
 +            super.remove(p_149847_);
 +            return;
 +         }

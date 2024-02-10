@@ -56,12 +56,15 @@ abstract class InstallerJson extends DefaultTask {
         for (def child : packedDependencies.get().collect{ project.rootProject.tasks.findByPath(it) } + [project.universalJar]) {
             def dep = Util.getMavenDep(child)
             def path = Util.getMavenPath(child)
+            def url = "https://nexus.c0d3m4513r.com/repository/Forge/$path"
+            if (!Util.checkExists(url)) url = "https://nexus.c0d3m4513r.com/repository/Ketting-Server-Releases/$path"
+            if (!Util.checkExists(url)) url = "https://nexus.c0d3m4513r.com/repository/Ketting/$path"
             libs.put(dep.toString(), [
                 name: dep,
                 downloads: [
                     artifact: [
                         path: path,
-                        url: "https://nexus.c0d3m4513r.com/repository/Forge/${path}",
+                        url: url,
                         sha1: child.archiveFile.get().asFile.sha1(),
                         size: child.archiveFile.get().asFile.length()
                     ]

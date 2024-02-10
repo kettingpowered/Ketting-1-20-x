@@ -45,7 +45,7 @@ public final class MetricManager {
         metrics.addCustomChart(new Metrics.DrilldownPie("version", () ->{
             Map<String, Map<String, Integer>> map = new HashMap<>();
             map.computeIfAbsent(FMLLoader.versionInfo().mcAndForgeVersion(), (c)->new HashMap<>())
-                    .computeIfAbsent(KettingConstants.VERSION, (c)->1);
+                    .computeIfAbsent(KettingConstants.KETTING_VERSION, (c)->1);
             return map;
         }));
         metrics.addCustomChart(new Metrics.DrilldownPie("mods_vs_plugins", () -> {
@@ -64,7 +64,7 @@ public final class MetricManager {
                     pluginlist.put(plugin.getDescription().getName(), 1);
                 }
             }
-            
+
             map.put("mods", modslist);
             map.put("plugins", pluginlist);
 

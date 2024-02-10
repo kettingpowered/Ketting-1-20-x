@@ -1,24 +1,7 @@
 --- a/net/minecraft/world/entity/animal/Sheep.java
 +++ b/net/minecraft/world/entity/animal/Sheep.java
-@@ -44,10 +_,7 @@
- import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
- import net.minecraft.world.entity.item.ItemEntity;
- import net.minecraft.world.entity.player.Player;
--import net.minecraft.world.inventory.AbstractContainerMenu;
--import net.minecraft.world.inventory.CraftingContainer;
--import net.minecraft.world.inventory.MenuType;
--import net.minecraft.world.inventory.TransientCraftingContainer;
-+import net.minecraft.world.inventory.*;
- import net.minecraft.world.item.DyeColor;
- import net.minecraft.world.item.DyeItem;
- import net.minecraft.world.item.ItemStack;
-@@ -61,9 +_,12 @@
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.gameevent.GameEvent;
+@@ -63,7 +_,7 @@
  import net.minecraft.world.level.storage.loot.BuiltInLootTables;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.SheepRegrowWoolEvent;
-+import org.bukkit.inventory.InventoryView;
  import org.joml.Vector3f;
  
 -public class Sheep extends Animal implements Shearable {
@@ -50,7 +33,7 @@
  
     public void ate() {
 +      // CraftBukkit start
-+      SheepRegrowWoolEvent event = new SheepRegrowWoolEvent((org.bukkit.entity.Sheep) this.getBukkitEntity());
++      org.bukkit.event.entity.SheepRegrowWoolEvent event = new org.bukkit.event.entity.SheepRegrowWoolEvent((org.bukkit.entity.Sheep) this.getBukkitEntity());
 +      this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) return;
@@ -58,21 +41,11 @@
        super.ate();
        this.setSheared(false);
        if (this.isBaby()) {
-@@ -380,9 +_,17 @@
-          public boolean stillValid(Player p_29888_) {
-             return false;
-          }
-+
-+         // CraftBukkit start
-+         @Override
-+         public InventoryView getBukkitView() {
-+            return null; // TODO: O.O
-+         }
-+         // CraftBukkit end
+@@ -383,6 +_,7 @@
        }, 2, 1);
        craftingcontainer.setItem(0, new ItemStack(DyeItem.byColor(p_29832_)));
        craftingcontainer.setItem(1, new ItemStack(DyeItem.byColor(p_29833_)));
-+      ((TransientCraftingContainer) craftingcontainer).resultInventory = new ResultContainer(); // CraftBukkit - add result slot for event
++      ((TransientCraftingContainer) craftingcontainer).resultInventory = new net.minecraft.world.inventory.ResultContainer(); // CraftBukkit - add result slot for event
        return craftingcontainer;
     }
  

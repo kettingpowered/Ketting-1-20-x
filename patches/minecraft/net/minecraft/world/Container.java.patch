@@ -1,24 +1,5 @@
 --- a/net/minecraft/world/Container.java
 +++ b/net/minecraft/world/Container.java
-@@ -1,13 +_,18 @@
- package net.minecraft.world;
- 
-+import java.util.Collections;
- import java.util.Set;
- import java.util.function.Predicate;
- import net.minecraft.core.BlockPos;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.Item;
- import net.minecraft.world.item.ItemStack;
-+import net.minecraft.world.item.crafting.RecipeHolder;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.block.entity.BlockEntity;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
-+
-+import javax.annotation.Nullable;
- 
- public interface Container extends Clearable {
-    int LARGE_MAX_STACK_SIZE = 64;
 @@ -92,4 +_,42 @@
           return p_272670_.distanceToSqr((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) <= (double)(p_273411_ * p_273411_);
        }
@@ -27,14 +8,14 @@
 +   // CraftBukkit start
 +   java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>(); //Ketting - adding a new field like this is not ideal, but this provides the most correctness
 +   default java.util.List<ItemStack> getContents() {
-+      return Collections.emptyList();
++      return java.util.Collections.emptyList();
 +   }
 +
-+   default void onOpen(CraftHumanEntity who){
++   default void onOpen(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who){
 +      transaction.add(who);
 +   }
 +
-+   default void onClose(CraftHumanEntity who){
++   default void onClose(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who){
 +      transaction.remove(who);
 +   }
 +
@@ -42,21 +23,21 @@
 +      return transaction;
 +   }
 +
-+   default @Nullable org.bukkit.inventory.InventoryHolder getOwner(){
++   default @javax.annotation.Nullable org.bukkit.inventory.InventoryHolder getOwner(){
 +      return null;
 +   }
 +
 +   default void setMaxStackSize(int size){}
 +
-+   default @Nullable org.bukkit.Location getLocation(){
++   default @javax.annotation.Nullable org.bukkit.Location getLocation(){
 +      return null;
 +   }
 +
-+   default @Nullable RecipeHolder<?> getCurrentRecipe() {
++   default @javax.annotation.Nullable net.minecraft.world.item.crafting.RecipeHolder<?> getCurrentRecipe() {
 +      return null;
 +   }
 +
-+   default void setCurrentRecipe(RecipeHolder<?> recipe) {
++   default void setCurrentRecipe(net.minecraft.world.item.crafting.RecipeHolder<?> recipe) {
 +   }
 +
 +   int MAX_STACK = 64;

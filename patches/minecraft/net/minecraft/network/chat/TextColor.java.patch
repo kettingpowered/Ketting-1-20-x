@@ -9,16 +9,20 @@
     }));
     private static final Map<String, TextColor> NAMED_COLORS = LEGACY_FORMAT_TO_COLOR.values().stream().collect(ImmutableMap.toImmutableMap((p_237297_) -> {
        return p_237297_.name;
-@@ -28,16 +_,22 @@
+@@ -28,16 +_,26 @@
     private final int value;
     @Nullable
     private final String name;
+-
 +   // CraftBukkit start
 +   @Nullable
 +   public final ChatFormatting format;
- 
--   private TextColor(int p_131263_, String p_131264_) {
-+   private TextColor(int p_131263_, String p_131264_, ChatFormatting format) {
++   
++   @SuppressWarnings("unused") //Ketting - mixin/minecraft compat
+    private TextColor(int p_131263_, String p_131264_) {
++      this(p_131263_, p_131264_, null);
++   }
++   private TextColor(int p_131263_, String p_131264_, @Nullable ChatFormatting format) {
        this.value = p_131263_;
        this.name = p_131264_;
 +      this.format = format;

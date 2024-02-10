@@ -1,23 +1,16 @@
 --- a/net/minecraft/server/dedicated/Settings.java
 +++ b/net/minecraft/server/dedicated/Settings.java
-@@ -20,19 +_,39 @@
- import java.util.function.Supplier;
- import java.util.function.UnaryOperator;
- import javax.annotation.Nullable;
-+
-+import joptsimple.OptionSet;
- import net.minecraft.core.RegistryAccess;
- import org.slf4j.Logger;
- 
+@@ -26,13 +_,34 @@
  public abstract class Settings<T extends Settings<T>> {
     private static final Logger LOGGER = LogUtils.getLogger();
--   protected final Properties properties;
-+   public final Properties properties;
+    public final Properties properties;
 +   // CraftBukkit start
-+   private OptionSet options = null;
++   private joptsimple.OptionSet options = null;
  
--   public Settings(Properties p_139801_) {
-+   public Settings(Properties p_139801_, final OptionSet options) {
+    public Settings(Properties p_139801_) {
++      this(p_139801_, new joptsimple.OptionParser().parse());
++   }
++   public Settings(Properties p_139801_, final joptsimple.OptionSet options) {
        this.properties = p_139801_;
 +      this.options = options;
 +   }
@@ -84,12 +77,18 @@
        String s = this.getStringRaw(p_139822_);
        V v = MoreObjects.firstNonNull((V)(s != null ? p_139823_.apply(s) : null), p_139825_);
        this.properties.put(p_139822_, p_139824_.apply(v));
-@@ -171,7 +_,7 @@
+@@ -171,7 +_,13 @@
        return properties;
     }
  
 -   protected abstract T reload(RegistryAccess p_139857_, Properties p_139858_);
-+   protected abstract T reload(RegistryAccess p_139857_, Properties p_139858_, OptionSet optionset); // CraftBukkit
++   protected T reload(RegistryAccess p_139857_, Properties p_139858_){
++      return reload(p_139857_, p_139858_, new joptsimple.OptionParser().parse());
++   }
++   // CraftBukkit
++   protected T reload(RegistryAccess p_139857_, Properties p_139858_, joptsimple.OptionSet optionset){
++      throw new AbstractMethodError();
++   } 
  
     public class MutableValue<V> implements Supplier<V> {
        private final String key;

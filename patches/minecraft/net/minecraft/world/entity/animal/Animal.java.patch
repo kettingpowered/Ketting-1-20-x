@@ -1,20 +1,9 @@
 --- a/net/minecraft/world/entity/animal/Animal.java
 +++ b/net/minecraft/world/entity/animal/Animal.java
-@@ -29,12 +_,16 @@
- import net.minecraft.world.level.LevelReader;
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.pathfinder.BlockPathTypes;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityBreedEvent;
-+import org.bukkit.event.entity.EntityEnterLoveModeEvent;
- 
- public abstract class Animal extends AgeableMob {
-    protected static final int PARENT_AGE_AFTER_BREEDING = 6000;
--   private int inLove;
-+   public int inLove;
+@@ -35,6 +_,7 @@
+    public int inLove;
     @Nullable
--   private UUID loveCause;
-+   public UUID loveCause;
+    public UUID loveCause;
 +   public ItemStack breedItem; // CraftBukkit - Add breedItem variable
  
     protected Animal(EntityType<? extends Animal> p_27557_, Level p_27558_) {
@@ -41,7 +30,7 @@
     public void setInLove(@Nullable Player p_27596_) {
 -      this.inLove = 600;
 +      // CraftBukkit start
-+      EntityEnterLoveModeEvent entityEnterLoveModeEvent = CraftEventFactory.callEntityEnterLoveModeEvent(p_27596_, this, 600);
++      org.bukkit.event.entity.EntityEnterLoveModeEvent entityEnterLoveModeEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityEnterLoveModeEvent(p_27596_, this, 600);
 +      if (entityEnterLoveModeEvent.isCancelled()) {
 +         return;
 +      }
@@ -54,7 +43,7 @@
  
        this.level().broadcastEntityEvent(this, (byte)18);
     }
-@@ -202,15 +_,43 @@
+@@ -202,15 +_,48 @@
  
     public void spawnChildFromBreeding(ServerLevel p_27564_, Animal p_27565_) {
        AgeableMob ageablemob = this.getBreedOffspring(p_27564_, p_27565_);
@@ -79,13 +68,18 @@
 +            return Optional.ofNullable(p_27565_.getLoveCause());
 +         }).orElse(null);
 +         int experience = this.getRandom().nextInt(7) + 1;
-+         EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityBreedEvent(ageablemob, this, p_27565_, breeder, this.breedItem, experience);
++         org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityBreedEvent(ageablemob, this, p_27565_, breeder, this.breedItem, experience);
 +         if (entityBreedEvent.isCancelled()) {
 +            return;
 +         }
 +         experience = entityBreedEvent.getExperience();
 +         this.finalizeSpawnChildFromBreeding(p_27564_, p_27565_, ageablemob, experience);
-+         p_27564_.addFreshEntityWithPassengers(ageablemob, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);
++         try{
++            p_27564_.prepareAddFreshEntityWithPassengersBukkit(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);
++            p_27564_.addFreshEntityWithPassengers(ageablemob);
++         } finally {
++            p_27564_.resetAddFreshEntityWithPassengersBukkit();
++         }
 +         // CraftBukkit end
        }
     }

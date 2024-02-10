@@ -6,7 +6,6 @@ pluginManagement {
         //Everything below is not required, but kept for redundancy
         gradlePluginPortal()
         maven { url = 'https://maven.minecraftforge.net/' }
-        mavenLocal()
     }
 }
 
@@ -27,30 +26,31 @@ plugins {
 dependencyResolutionManagement {
     versionCatalogs {
         libs {
+            library('securejarhandler', 'cpw.mods:securejarhandler:2.1.10')
             library('forgespi', 'net.minecraftforge:forgespi:7.1.0') // Needs modlauncher
-            library('bootstrap', 'net.minecraftforge:bootstrap:1.2.0') // Needs modlauncher
-            library('modlauncher', 'net.minecraftforge:modlauncher:10.1.1') // Needs securemodules
-            library('securemodules', 'net.minecraftforge:securemodules:2.2.3') // Needs unsafe
-            library('unsafe', 'net.minecraftforge:unsafe:0.9.2')
-            library('accesstransformers', 'net.minecraftforge:accesstransformers:8.1.1')
+            library('bootstrap', 'cpw.mods:bootstraplauncher:1.1.2') // Needs modlauncher
+            library('modlauncher', 'cpw.mods:modlauncher:10.0.9') // Needs securfemodules
+            library('unsafe', 'net.minecraftforge:unsafe:0.2.+')
+            library('accesstransformers', 'net.minecraftforge:accesstransformers:8.0.4')
             library('antlr-runtime', 'org.antlr:antlr4-runtime:4.9.1') // Needed by Access Transformer because parsing a simple text file was too complicated
-            library('coremods', 'net.minecraftforge:coremods:5.1.0')
+            library('coremods', 'net.minecraftforge:coremods:5.0.1')
             library('nashorn', 'org.openjdk.nashorn:nashorn-core:15.3') // Needed by coremods, because the JRE no longer ships JS
-            library('eventbus', 'net.minecraftforge:eventbus:6.2.0')
+            library('eventbus', 'net.minecraftforge:eventbus:6.0.5')
             library('typetools', 'net.jodah:typetools:0.6.3') // Needed by EventBus because of lambdas
             library('mergetool-api', 'net.minecraftforge:mergetool-api:1.0')
             
+            
             library('mixin', 'org.spongepowered:mixin:0.8.5')
             library('nulls', 'org.jetbrains:annotations:23.0.0') // Got to have our null annotations!
-            //library('slf4j-api', 'org.slf4j:slf4j-api:1.8.0-beta4') //let's use the version, that mojang uses
+            //library('slf4j-api', 'org.slf4j:slf4j-api:2.0.7') //Kettting - let's use the version, that mojang uses
             library('maven-artifact', 'org.apache.maven:maven-artifact:3.8.5')
-            
+
             // Google's InMemory File System. Used by ForgeDev Tests for now, but could be useful for a lot of things.
             library('jimfs', 'com.google.jimfs:jimfs:1.3.0')
             bundle('jimfs', ['guava', 'failureaccess'])
-            
+
             // ASM it's used for so many of our hacks
-            version('asm', '9.6')
+            version('asm', '9.5')
             library('asm',          'org.ow2.asm', 'asm'         ).versionRef('asm')
             library('asm-tree',     'org.ow2.asm', 'asm-tree'    ).versionRef('asm')
             library('asm-util',     'org.ow2.asm', 'asm-util'    ).versionRef('asm')
@@ -58,19 +58,12 @@ dependencyResolutionManagement {
             library('asm-analysis', 'org.ow2.asm', 'asm-analysis').versionRef('asm')
             bundle('asm', ['asm', 'asm-tree', 'asm-util', 'asm-commons', 'asm-analysis'])
             
-            // Terminal Console Appender.. essentually make pretty colors in the console, but it's been a PITA
-            library('terminalconsoleappender', 'net.minecrell:terminalconsoleappender:1.2.0')
-            version('jline', '3.21.0')
-            library('jline-reader',   'org.jline', 'jline-reader'        ).versionRef('jline')
-            library('jline-terminal', 'org.jline', 'jline-terminal'      ).versionRef('jline')
-            bundle('terminalconsoleappender', ['terminalconsoleappender', 'jline-reader', 'jline-terminal'])
-            
             // The core of our configuration system, it has many flaws, but it works for the most part
             version('night-config', '3.6.4')
             library('night-config-toml', 'com.electronwill.night-config', 'toml').versionRef('night-config')
             library('night-config-core', 'com.electronwill.night-config', 'core').versionRef('night-config')
             bundle('night-config', ['night-config-toml', 'night-config-core'])
-            
+
             // Jar in Jar FileSystem
             version('jarjar', '0.3.19')
             library('jarjar-fs',       'net.minecraftforge', 'JarJarFileSystems').versionRef('jarjar')
@@ -78,13 +71,11 @@ dependencyResolutionManagement {
             library('jarjar-selector', 'net.minecraftforge', 'JarJarSelector'   ).versionRef('jarjar')
             bundle('jarjar', ['jarjar-fs', 'jarjar-selector', 'jarjar-meta'])
 
-            //Ketting libs
-            library('jline-jansi', 'org.jline', 'jline-terminal-jansi').versionRef('jline')
-            library('jansi', 'org.fusesource.jansi', 'jansi').version('1.18')
-            library('jline', 'jline', 'jline').version('2.13')
-            bundle('jline-extras', ['jline-jansi', 'jansi', 'jline']) //Apparently the order here is important, don't ask me why, magic.
-
-            library('ketting', 'org.kettingpowered', 'kettingcore').version('1.2')
+            //Ketting start - Ketting libs
+            library('ketting',        'org.kettingpowered', 'kettingcore').version('1.2')
+            library('kettingcommon',  'org.kettingpowered', 'kettingcommon').version('2.3.2')
+            library('kettinglauncher',  'org.kettingpowered', 'kettinglauncher').version('1.2.1')
+            library('terminalcolors', 'org.kettingpowered', 'terminal-colors').version('1.0.2')
 
             version('snakeyaml', '2.2')
             library('yaml', 'org.yaml', 'snakeyaml').versionRef('snakeyaml')
@@ -114,7 +105,7 @@ dependencyResolutionManagement {
                     'sqlite-jdbc',
                     'mysql-connector-j'
             ])
-            //Ketting libs
+            //Ketting end - Ketting libs
 
             // These are libraries shipped by the MC launcher, try and keep them in sync with the manifest
             // but honestly if we don't it just means we ship them as normal libraries by adding them to the installer config in the forge project
@@ -123,7 +114,7 @@ dependencyResolutionManagement {
             library('oshi','com.github.oshi:oshi-core:6.4.5')
             library('gson', 'com.google.code.gson:gson:2.10.1')
             library('failureaccess', 'com.google.guava:failureaccess:1.0.1')
-            library('guava', 'com.google.guava:guava:32.1.2-jre')
+            library('guava', 'com.google.guava:guava:31.1-jre')
             library('ibm-icu4j', 'com.ibm.icu:icu4j:73.2')
             library('mojang-authlib', 'com.mojang:authlib:5.0.47')
             library('mojang-blacklist', 'com.mojang:blocklist:1.0.10')
@@ -133,7 +124,7 @@ dependencyResolutionManagement {
             library('mojang-patchy', 'com.mojang:patchy:2.2.10')
             library('mojang-text2speech', 'com.mojang:text2speech:1.17.9')
             library('commons-codec','commons-codec:commons-codec:1.16.0')
-            library('commons-io', 'commons-io:commons-io:2.13.0')
+            library('commons-io', 'commons-io:commons-io:2.11.0')
             library('commons-logging', 'commons-logging:commons-logging:1.2')
             library('netty-buffer', 'io.netty:netty-buffer:4.1.97.Final')
             library('netty-codec', 'io.netty:netty-codec:4.1.97.Final')
@@ -141,6 +132,8 @@ dependencyResolutionManagement {
             library('netty-handler', 'io.netty:netty-handler:4.1.97.Final')
             library('netty-resolver', 'io.netty:netty-resolver:4.1.97.Final')
             library('netty-transport-classes-epoll', 'io.netty:netty-transport-classes-epoll:4.1.97.Final')
+            library('nettyTransportEpoll', 'io.netty:netty-transport-native-epoll:4.1.97.Final')
+            library('netty-transport-native-unix-common', 'io.netty:netty-transport-native-unix-common:4.1.97.Final')
             library('netty-transport', 'io.netty:netty-transport:4.1.97.Final')
             library('fastutil', 'it.unimi.dsi:fastutil:8.5.12')
             library('jna-platform', 'net.java.dev.jna:jna-platform:5.13.0')
@@ -188,6 +181,7 @@ dependencyResolutionManagement {
                     'netty-handler',
                     'netty-resolver',
                     'netty-transport-classes-epoll',
+                    'netty-transport-native-unix-common',
                     'netty-transport',
                     'fastutil',
                     'jna-platform',
@@ -223,16 +217,16 @@ include 'fmlcore'
 include 'mclanguage'
 include 'javafmllanguage'
 include 'lowcodelanguage'
-include 'kettinglauncher'
 
 include ':mcp'
-include ':forge'
-
 project(":mcp").projectDir = file("projects/mcp")
+
+include ':forge'
 project(":forge").projectDir = file("projects/ketting")
+project(':forge').buildFileName = '../../build_forge.gradle'
 
 if (!System.env.TEAMCITY_VERSION) {
-	include ':clean'
-	project(':clean').projectDir = file('projects/clean')
-	project(':clean').buildFileName = '../../build_clean.gradle'
+    include ':clean'
+    project(':clean').projectDir = file('projects/clean')
+    project(':clean').buildFileName = '../../build_clean.gradle'
 }

@@ -1,8 +1,13 @@
+import net.minecraftforge.gradleutils.PomUtils
+
 plugins {
-    id 'org.cadixdev.licenser'
     id 'java-library'
-    id 'jacoco'
+    id 'maven-publish'
+    id 'org.cadixdev.licenser'
+    id 'net.minecraftforge.gradleutils'
 }
+
+apply from: rootProject.file('build_shared.gradle')
 
 dependencies {
     compileOnly(libs.nulls)
@@ -11,22 +16,23 @@ dependencies {
 }
 
 java {
+    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
     withSourcesJar()
 }
 
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([
-            'Automatic-Module-Name': project.name.toLowerCase(),
-            'FMLModType': 'LANGPROVIDER',
+            'Automatic-Module-Name': 'net.minecraftforge.mclanguageprovider',
+            'FMLModType': 'LANGPROVIDER'
         ] as LinkedHashMap)
         attributes([
-            'Specification-Title':      'MCLanguage',
-            'Specification-Vendor':     'Forge Development LLC',
-            'Specification-Version':    '1',
-            'Implementation-Title':     'MCLanguage',
-            'Implementation-Version':   '1.0',
-            'Implementation-Vendor':    'Forge Development LLC',
+            'Specification-Title':    'MCLanguage',
+            'Specification-Vendor':   'Forge Development LLC',
+            'Specification-Version':  '1',
+            'Implementation-Title':   'MCLanguage',
+            'Implementation-Vendor':  'Forge Development LLC',
+            'Implementation-Version': '1.0'
         ] as LinkedHashMap, 'net/minecraftforge/fml/mclanguageprovider/')
     }
 }
@@ -37,9 +43,51 @@ tasks.withType(JavaCompile) {
 
 license {
     header = rootProject.file('LICENSE-header.txt')
-    include 'net/minecraftforge/'
 }
 
-publishing.publications.mavenJava(MavenPublication) {
-    from components.java
+publishing {
+    publications.register('mavenJava', MavenPublication).configure {
+        from components.java
+        artifactId = 'mclanguage'
+        pom {
+            name = project.name
+            description = 'Language provider for Ketting that provides Minecraft Itself'
+            url = "https://github.com/kettingpowered/Ketting-1-20-x"
+            developers {
+                developer {
+                    id = "justred23"
+                    name = "JustRed23"
+                }
+                developer {
+                    id = "c0d3m4513r"
+                    name = "C0D3 M4513R"
+                }
+            }
+            scm {
+                connection = "scm:git:https://github.com/kettingpowered/Ketting-1-20-x.git"
+                //developerConnection = "scm:svn:https://subversion.example.com/svn/project/trunk/"
+                url = "https://github.com/kettingpowered/Ketting-1-20-x"
+            }
+            PomUtils.setGitHubDetails(pom, 'kettingpowered', 'Ketting-1-20-x')
+        }
+    }
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/kettingpowered/Ketting-1-20-x")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+        maven {
+            name = 'kettingRepo'
+            credentials {
+                username = System.getenv("KETTINGUSERNAME")
+                password = System.getenv("KETTINGPASSWORD")
+            }
+            url = "https://nexus.c0d3m4513r.com/repository/Ketting-Server-Releases/"
+        }
+    }
 }

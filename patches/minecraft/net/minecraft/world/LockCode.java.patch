@@ -1,21 +1,6 @@
 --- a/net/minecraft/world/LockCode.java
 +++ b/net/minecraft/world/LockCode.java
-@@ -3,19 +_,33 @@
- import javax.annotation.concurrent.Immutable;
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.world.item.ItemStack;
-+import org.bukkit.ChatColor;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
- 
- @Immutable
- public class LockCode {
-    public static final LockCode NO_LOCK = new LockCode("");
-    public static final String TAG_LOCK = "Lock";
--   private final String key;
-+   public final String key;
- 
-    public LockCode(String p_19106_) {
-       this.key = p_19106_;
+@@ -15,7 +_,19 @@
     }
  
     public boolean unlocksWith(ItemStack p_19108_) {
@@ -23,12 +8,12 @@
 +      // CraftBukkit start - SPIGOT-6307: Check for color codes if the lock contains color codes
 +      if (this.key.isEmpty()) return true;
 +      if (!p_19108_.isEmpty() && p_19108_.hasCustomHoverName()) {
-+         if (this.key.indexOf(ChatColor.COLOR_CHAR) == -1) {
++         if (this.key.indexOf(org.bukkit.ChatColor.COLOR_CHAR) == -1) {
 +            // The lock key contains no color codes, so let's ignore colors in the item display name (vanilla Minecraft behavior):
 +            return this.key.equals(p_19108_.getHoverName().getString());
 +         } else {
 +            // The lock key contains color codes, so let's take them into account:
-+            return this.key.equals(CraftChatMessage.fromComponent(p_19108_.getHoverName()));
++            return this.key.equals(org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage.fromComponent(p_19108_.getHoverName()));
 +         }
 +      }
 +      return false;

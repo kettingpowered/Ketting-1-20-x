@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/level/block/SculkSensorBlock.java
 +++ b/net/minecraft/world/level/block/SculkSensorBlock.java
-@@ -39,6 +_,8 @@
- import net.minecraft.world.level.pathfinder.PathComputationType;
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.event.block.BlockRedstoneEvent;
- 
- public class SculkSensorBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
-    public static final int ACTIVE_TICKS = 30;
 @@ -88,6 +_,18 @@
  
     public void stepOn(Level p_222132_, BlockPos p_222133_, BlockState p_222134_, Entity p_222135_) {
@@ -33,7 +24,7 @@
  
     public static void deactivate(Level p_154408_, BlockPos p_154409_, BlockState p_154410_) {
 +      // CraftBukkit start
-+      BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(CraftBlock.at(p_154408_, p_154409_), p_154410_.getValue(SculkSensorBlock.POWER), 0);
++      org.bukkit.event.block.BlockRedstoneEvent eventRedstone = new org.bukkit.event.block.BlockRedstoneEvent(org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_154408_, p_154409_), p_154410_.getValue(SculkSensorBlock.POWER), 0);
 +      p_154408_.getCraftServer().getPluginManager().callEvent(eventRedstone);
 +
 +      if (eventRedstone.getNewCurrent() > 0) {
@@ -49,7 +40,7 @@
  
     public void activate(@Nullable Entity p_277529_, Level p_277340_, BlockPos p_277386_, BlockState p_277799_, int p_277993_, int p_278003_) {
 +      // CraftBukkit start
-+      BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(CraftBlock.at(p_277340_, p_277386_), p_277799_.getValue(SculkSensorBlock.POWER), p_277993_);
++      org.bukkit.event.block.BlockRedstoneEvent eventRedstone = new org.bukkit.event.block.BlockRedstoneEvent(org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_277340_, p_277386_), p_277799_.getValue(SculkSensorBlock.POWER), p_277993_);
 +      p_277340_.getCraftServer().getPluginManager().callEvent(eventRedstone);
 +
 +      if (eventRedstone.getNewCurrent() <= 0) {
@@ -72,7 +63,7 @@
 +   @Override
 +   public int getExpDrop(BlockState iblockdata, ServerLevel worldserver, BlockPos blockposition, ItemStack itemstack, boolean flag) {
 +      if (flag) {
-+         return this.tryDropExperience(worldserver, blockposition, itemstack, ConstantInt.of(5));
++         return this.tryDropExperienceInt(worldserver, blockposition, itemstack, ConstantInt.of(5));
        }
  
 +      return 0;

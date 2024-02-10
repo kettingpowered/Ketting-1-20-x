@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/portal/PortalForcer.java
 +++ b/net/minecraft/world/level/portal/PortalForcer.java
-@@ -1,6 +_,7 @@
- package net.minecraft.world.level.portal;
- 
- import java.util.Comparator;
-+import java.util.List;
- import java.util.Optional;
- import net.minecraft.BlockUtil;
- import net.minecraft.core.BlockPos;
 @@ -19,7 +_,7 @@
  import net.minecraft.world.level.border.WorldBorder;
  import net.minecraft.world.level.levelgen.Heightmap;
@@ -93,7 +85,7 @@
  
 +      // CraftBukkit start
 +      org.bukkit.World bworld = this.level.getWorld();
-+      org.bukkit.event.world.PortalCreateEvent event = new org.bukkit.event.world.PortalCreateEvent((List)blockList.getList(), bworld, (entity == null) ? null : entity.getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.NETHER_PAIR);
++      org.bukkit.event.world.PortalCreateEvent event = new org.bukkit.event.world.PortalCreateEvent((java.util.List)blockList.getList(), bworld, (entity == null) ? null : entity.getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.NETHER_PAIR);
 +
 +      this.level.getCraftServer().getPluginManager().callEvent(event);
 +      if (event.isCancelled()) {

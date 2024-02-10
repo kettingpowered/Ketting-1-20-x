@@ -1,20 +1,11 @@
 --- a/net/minecraft/world/inventory/BrewingStandMenu.java
 +++ b/net/minecraft/world/inventory/BrewingStandMenu.java
-@@ -11,6 +_,8 @@
- import net.minecraft.world.item.alchemy.Potion;
- import net.minecraft.world.item.alchemy.PotionBrewing;
- import net.minecraft.world.item.alchemy.PotionUtils;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryBrewer;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
- 
- public class BrewingStandMenu extends AbstractContainerMenu {
-    private static final int BOTTLE_SLOT_START = 0;
 @@ -27,12 +_,18 @@
     private final ContainerData brewingStandData;
     private final Slot ingredientSlot;
  
 +   // CraftBukkit start
-+   private CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity = null;
 +   private Inventory player;
 +   // CraftBukkit end
 +
@@ -75,13 +66,13 @@
 +
 +   // CraftBukkit start
 +   @Override
-+   public CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      CraftInventoryBrewer inventory = new CraftInventoryBrewer(this.brewingStand);
-+      bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryBrewer inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryBrewer(this.brewingStand);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

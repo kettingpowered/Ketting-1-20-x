@@ -1,12 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
 +++ b/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
-@@ -14,11 +_,14 @@
- import net.minecraft.world.level.Level;
- import net.minecraft.world.phys.HitResult;
- import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
- 
- public abstract class AbstractHurtingProjectile extends Projectile {
+@@ -19,6 +_,8 @@
     public double xPower;
     public double yPower;
     public double zPower;
@@ -15,7 +9,7 @@
  
     protected AbstractHurtingProjectile(EntityType<? extends AbstractHurtingProjectile> p_36833_, Level p_36834_) {
        super(p_36833_, p_36834_);
-@@ -28,7 +_,14 @@
+@@ -28,6 +_,12 @@
        this(p_36817_, p_36824_);
        this.moveTo(p_36818_, p_36819_, p_36820_, this.getYRot(), this.getXRot());
        this.reapplyPosition();
@@ -26,10 +20,8 @@
 +   public void setDirection(double p_36821_, double p_36822_, double p_36823_) {
 +      // CraftBukkit end
        double d0 = Math.sqrt(p_36821_ * p_36821_ + p_36822_ * p_36822_ + p_36823_ * p_36823_);
-+
        if (d0 != 0.0D) {
           this.xPower = p_36821_ / d0 * 0.1D;
-          this.yPower = p_36822_ / d0 * 0.1D;
 @@ -65,8 +_,14 @@
           }
  
@@ -41,7 +33,7 @@
 +
 +            // CraftBukkit start - Fire ProjectileHitEvent
 +            if (this.isRemoved()) {
-+               CraftEventFactory.callProjectileHitEvent(this, hitresult);
++               org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callProjectileHitEvent(this, hitresult);
 +            }
 +            // CraftBukkit end
           }
@@ -52,7 +44,7 @@
           if (entity != null) {
              if (!this.level().isClientSide) {
 +               // CraftBukkit start
-+               if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_36839_, p_36840_, false)) {
++               if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_36839_, p_36840_, false)) {
 +                  return false;
 +               }
 +               // CraftBukkit end

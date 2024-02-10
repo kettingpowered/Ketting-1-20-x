@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/item/FallingBlockEntity.java
 +++ b/net/minecraft/world/entity/item/FallingBlockEntity.java
-@@ -44,6 +_,7 @@
- import net.minecraft.world.phys.BlockHitResult;
- import net.minecraft.world.phys.HitResult;
- import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
- import org.slf4j.Logger;
- 
- public class FallingBlockEntity extends Entity {
 @@ -51,10 +_,10 @@
     private BlockState blockState = Blocks.SAND.defaultBlockState();
     public int time;
@@ -35,7 +27,7 @@
 +   public static FallingBlockEntity fall(Level p_201972_, BlockPos p_201973_, BlockState p_201974_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
 +      // CraftBukkit end
 +      FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_201972_, (double) p_201973_.getX() + 0.5D, (double) p_201973_.getY(), (double) p_201973_.getZ() + 0.5D, p_201974_.hasProperty(BlockStateProperties.WATERLOGGED) ? (BlockState) p_201974_.setValue(BlockStateProperties.WATERLOGGED, false) : p_201974_);
-+      if (!CraftEventFactory.callEntityChangeBlockEvent(fallingblockentity, p_201973_, p_201974_.getFluidState().createLegacyBlock())) return fallingblockentity; // CraftBukkit
++      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(fallingblockentity, p_201973_, p_201974_.getFluidState().createLegacyBlock())) return fallingblockentity; // CraftBukkit
 +
        p_201972_.setBlock(p_201973_, p_201974_.getFluidState().createLegacyBlock(), 3);
 -      p_201972_.addFreshEntity(fallingblockentity);
@@ -62,7 +54,7 @@
                          }
  
 +                        // CraftBukkit start
-+                        if (!CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, this.blockState)) {
++                        if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, this.blockState)) {
 +                           this.discard(); // SPIGOT-6586 called before the event in previous versions
 +                           return;
 +                        }
@@ -75,9 +67,9 @@
              DamageSource damagesource = damagesource1;
              float f = (float)Math.min(Mth.floor((float)i * this.fallDamagePerDistance), this.fallDamageMax);
              this.level().getEntities(this, this.getBoundingBox(), predicate).forEach((p_149649_) -> {
-+               CraftEventFactory.entityDamage = this; // CraftBukkit
++               org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = this; // CraftBukkit
                 p_149649_.hurt(damagesource, f);
-+                CraftEventFactory.entityDamage = null; // CraftBukkit
++                org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = null; // CraftBukkit
              });
              boolean flag = this.blockState.is(BlockTags.ANVIL);
              if (flag && f > 0.0F && this.random.nextFloat() < 0.05F + (float)i * 0.05F) {

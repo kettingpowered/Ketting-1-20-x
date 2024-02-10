@@ -1,11 +1,7 @@
 --- a/net/minecraft/world/entity/animal/Dolphin.java
 +++ b/net/minecraft/world/entity/animal/Dolphin.java
-@@ -60,8 +_,16 @@
- import net.minecraft.world.level.ServerLevelAccessor;
- import net.minecraft.world.level.pathfinder.PathComputationType;
+@@ -62,6 +_,12 @@
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityPotionEffectEvent;
  
  public class Dolphin extends WaterAnimal {
 +   // CraftBukkit start - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
@@ -31,7 +27,7 @@
           ItemStack itemstack = p_28357_.getItem();
           if (this.canHoldItem(itemstack)) {
 +            // CraftBukkit start - call EntityPickupItemEvent
-+            if (CraftEventFactory.callEntityPickupItemEvent(this, p_28357_, 0, false).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28357_, 0, false).isCancelled()) {
 +               return;
 +            }
 +            itemstack = p_28357_.getItem(); // CraftBukkit- update ItemStack from event
@@ -44,7 +40,7 @@
  
        public void start() {
 -         this.player.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 100), this.dolphin);
-+         this.player.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 100), this.dolphin, EntityPotionEffectEvent.Cause.DOLPHIN); // CraftBukkit
++         this.player.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 100), this.dolphin, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DOLPHIN); // CraftBukkit
        }
  
        public void stop() {
@@ -53,7 +49,7 @@
  
           if (this.player.isSwimming() && this.player.level().random.nextInt(6) == 0) {
 -            this.player.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 100), this.dolphin);
-+            this.player.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 100), this.dolphin, EntityPotionEffectEvent.Cause.DOLPHIN); // CraftBukkit
++            this.player.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 100), this.dolphin, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DOLPHIN); // CraftBukkit
           }
  
        }

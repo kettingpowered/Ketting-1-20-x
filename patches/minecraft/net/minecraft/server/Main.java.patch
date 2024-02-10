@@ -1,60 +1,5 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -1,5 +_,6 @@
- package net.minecraft.server;
- 
-+import com.google.common.base.Charsets;
- import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
- import com.mojang.datafixers.DataFixer;
- import com.mojang.datafixers.util.Pair;
-@@ -9,12 +_,15 @@
- import java.awt.GraphicsEnvironment;
- import java.io.File;
- import java.io.IOException;
-+import java.io.InputStreamReader;
- import java.io.UncheckedIOException;
- import java.net.Proxy;
- import java.nio.file.Files;
- import java.nio.file.Path;
- import java.nio.file.Paths;
-+import java.util.List;
- import java.util.Optional;
-+import java.util.concurrent.atomic.AtomicReference;
- import java.util.function.BooleanSupplier;
- import joptsimple.OptionParser;
- import joptsimple.OptionSet;
-@@ -37,6 +_,7 @@
- import net.minecraft.server.dedicated.DedicatedServerProperties;
- import net.minecraft.server.dedicated.DedicatedServerSettings;
- import net.minecraft.server.level.progress.LoggerChunkProgressListener;
-+import net.minecraft.server.packs.PackType;
- import net.minecraft.server.packs.repository.PackRepository;
- import net.minecraft.server.packs.repository.ServerPacksSource;
- import net.minecraft.util.Mth;
-@@ -52,11 +_,19 @@
- import net.minecraft.world.level.levelgen.WorldDimensions;
- import net.minecraft.world.level.levelgen.WorldOptions;
- import net.minecraft.world.level.levelgen.presets.WorldPresets;
--import net.minecraft.world.level.storage.LevelStorageSource;
--import net.minecraft.world.level.storage.LevelSummary;
--import net.minecraft.world.level.storage.PrimaryLevelData;
--import net.minecraft.world.level.storage.WorldData;
-+import net.minecraft.world.level.storage.*;
-+import org.bukkit.configuration.file.YamlConfiguration;
-+import org.fusesource.jansi.AnsiConsole;
-+import org.kettingpowered.ketting.adapters.Bukkit_1_20_2_Adapter;
-+import org.kettingpowered.ketting.adapters.DimensionRegistry_1_20_2_Adapter;
-+import org.kettingpowered.ketting.adapters.Forge_1_20_2_Adapter;
-+import org.kettingpowered.ketting.config.KettingConfig;
-+import org.kettingpowered.ketting.core.Ketting;
-+import org.kettingpowered.ketting.core.injectprotect.InjectProtect;
- import org.slf4j.Logger;
-+import org.spongepowered.asm.mixin.throwables.MixinError;
-+
-+import static java.util.Arrays.asList;
- 
- public class Main {
-    private static final Logger LOGGER = LogUtils.getLogger();
 @@ -66,7 +_,7 @@
        SharedConstants.tryDetectVersion();
        OptionParser optionparser = new OptionParser();
@@ -83,8 +28,8 @@
 +      //Ketting end
 +
 +      //Ketting start - Initialize Ketting
-+      Ketting ketting = Ketting.init(SharedConstants.getCurrentVersion().getName());
-+      ketting.registerAdapter(new Forge_1_20_2_Adapter(), new Bukkit_1_20_2_Adapter());
++      org.kettingpowered.ketting.core.Ketting ketting = org.kettingpowered.ketting.core.Ketting.init(SharedConstants.getCurrentVersion().getName());
++      ketting.registerAdapter(new org.kettingpowered.ketting.adapters.Forge_1_20_2_Adapter(), new org.kettingpowered.ketting.adapters.Bukkit_1_20_2_Adapter());
 +      //Ketting end
  
        try {
@@ -123,14 +68,14 @@
 -         Bootstrap.bootStrap();
 +         try {
 +            Bootstrap.bootStrap();
-+         } catch (MixinError mixin) {
-+            InjectProtect.onBootErrorCaught(mixin);
++         } catch (org.spongepowered.asm.mixin.throwables.MixinError mixin) {
++            org.kettingpowered.ketting.core.injectprotect.InjectProtect.onBootErrorCaught(mixin);
 +         }
 +
           Bootstrap.validate();
 +
 +         //Ketting start - init dimension registry after bootstrap
-+         ketting.registerDimensionRegistry(new DimensionRegistry_1_20_2_Adapter());
++         ketting.registerDimensionRegistry(new org.kettingpowered.ketting.adapters.DimensionRegistry_1_20_2_Adapter());
 +         //Ketting end
 +
           Util.startTimerHackThread();
@@ -141,19 +86,19 @@
           dedicatedserversettings.forceSave();
 -         Path path2 = Paths.get("eula.txt");
 -         Eula eula = new Eula(path2);
-+         KettingConfig.getInstance(); // Ketting
++         org.kettingpowered.ketting.config.KettingConfig.getInstance(); // Ketting
           if (optionset.has(optionspec1)) {
 +            // CraftBukkit start - SPIGOT-5761: Create bukkit.yml and commands.yml if not present
 +            File configFile = (File) optionset.valueOf("bukkit-settings");
-+            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(configFile);
++            org.bukkit.configuration.file.YamlConfiguration configuration = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(configFile);
 +            configuration.options().copyDefaults(true);
-+            configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(Main.class.getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
++            configuration.setDefaults(org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(new java.io.InputStreamReader(Main.class.getClassLoader().getResourceAsStream("configurations/bukkit.yml"), com.google.common.base.Charsets.UTF_8)));
 +            configuration.save(configFile);
 +
 +            File commandFile = (File) optionset.valueOf("commands-settings");
-+            YamlConfiguration commandsConfiguration = YamlConfiguration.loadConfiguration(commandFile);
++            org.bukkit.configuration.file.YamlConfiguration commandsConfiguration = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(commandFile);
 +            commandsConfiguration.options().copyDefaults(true);
-+            commandsConfiguration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(Main.class.getClassLoader().getResourceAsStream("configurations/commands.yml"), Charsets.UTF_8)));
++            commandsConfiguration.setDefaults(org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(new java.io.InputStreamReader(Main.class.getClassLoader().getResourceAsStream("configurations/commands.yml"), com.google.common.base.Charsets.UTF_8)));
 +            commandsConfiguration.save(commandFile);
 +            // CraftBukkit end
              LOGGER.info("Initialized '{}' and '{}'", path1.toAbsolutePath(), path2.toAbsolutePath());
@@ -184,7 +129,7 @@
           PackRepository packrepository = ServerPacksSource.createPackRepository(levelstoragesource$levelstorageaccess);
  
 +         // CraftBukkit start
-+         File bukkitDataPackFolder = new File(levelstoragesource$levelstorageaccess.getLevelPath(LevelResource.DATAPACK_DIR).toFile(), "bukkit");
++         File bukkitDataPackFolder = new File(levelstoragesource$levelstorageaccess.getLevelPath(net.minecraft.world.level.storage.LevelResource.DATAPACK_DIR).toFile(), "bukkit");
 +         if (!bukkitDataPackFolder.exists()) {
 +            bukkitDataPackFolder.mkdirs();
 +         }
@@ -193,13 +138,13 @@
 +            com.google.common.io.Files.write("{\n"
 +                    + "    \"pack\": {\n"
 +                    + "        \"description\": \"Data pack for resources provided by Bukkit plugins\",\n"
-+                    + "        \"pack_format\": " + SharedConstants.getCurrentVersion().getPackVersion(PackType.SERVER_DATA) + "\n"
++                    + "        \"pack_format\": " + SharedConstants.getCurrentVersion().getPackVersion(net.minecraft.server.packs.PackType.SERVER_DATA) + "\n"
 +                    + "    }\n"
 +                    + "}\n", mcMeta, com.google.common.base.Charsets.UTF_8);
 +         } catch (java.io.IOException ex) {
 +            throw new RuntimeException("Could not initialize Bukkit datapack", ex);
 +         }
-+         AtomicReference<WorldLoader.DataLoadContext> worldLoader = new AtomicReference<>();
++         java.util.concurrent.atomic.AtomicReference<WorldLoader.DataLoadContext> worldLoader = new java.util.concurrent.atomic.AtomicReference<>();
 +         // CraftBukkit end
 +
           WorldStem worldstem;
@@ -254,7 +199,7 @@
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {
 +               //Ketting start - InjectProtect
-+               InjectProtect.shutdownCalled();
++               org.kettingpowered.ketting.core.injectprotect.InjectProtect.shutdownCalled();
 +               //Ketting end
 +               // FORGE: Halting as GameTestServer will cause issues as it always calls System#exit on both crash and normal exit, so skip it
 +               if (!(dedicatedserver instanceof net.minecraft.gametest.framework.GameTestServer))
@@ -263,37 +208,38 @@
              }
           };
           thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
-@@ -211,6 +_,64 @@
+@@ -210,6 +_,64 @@
+       }
  
     }
- 
++
 +   //Ketting start - Bukkit Options
 +   private static void acceptBukkitSettings(OptionParser parser) {
-+      parser.acceptsAll(asList("nojline"), "Disables jline and emulates the vanilla console");
-+      parser.acceptsAll(asList("noconsole"), "Disables the console");
-+      parser.acceptsAll(asList("b", "bukkit-settings"), "File for bukkit settings")
++      parser.acceptsAll(java.util.Arrays.asList("nojline"), "Disables jline and emulates the vanilla console");
++      parser.acceptsAll(java.util.Arrays.asList("noconsole"), "Disables the console");
++      parser.acceptsAll(java.util.Arrays.asList("b", "bukkit-settings"), "File for bukkit settings")
 +              .withRequiredArg()
 +              .ofType(File.class)
 +              .defaultsTo(new File("bukkit.yml"))
 +              .describedAs("Yml file");
-+      parser.acceptsAll(asList("C", "commands-settings"), "File for command settings")
++      parser.acceptsAll(java.util.Arrays.asList("C", "commands-settings"), "File for command settings")
 +              .withRequiredArg()
 +              .ofType(File.class)
 +              .defaultsTo(new File("commands.yml"))
 +              .describedAs("Yml file");
 +      // Spigot Start
-+      parser.acceptsAll(asList("S", "spigot-settings"), "File for spigot settings")
++      parser.acceptsAll(java.util.Arrays.asList("S", "spigot-settings"), "File for spigot settings")
 +              .withRequiredArg()
 +              .ofType(File.class)
 +              .defaultsTo(new File("spigot.yml"))
 +              .describedAs("Yml file");
 +      // Spigot End
-+      parser.acceptsAll(asList("c", "config"), "Properties file to use")
++      parser.acceptsAll(java.util.Arrays.asList("c", "config"), "Properties file to use")
 +              .withRequiredArg()
 +              .ofType(File.class)
 +              .defaultsTo(new File("server.properties"))
 +              .describedAs("Properties file");
-+      parser.acceptsAll(asList("P", "plugins"), "Plugin directory to use")
++      parser.acceptsAll(java.util.Arrays.asList("P", "plugins"), "Plugin directory to use")
 +              .withRequiredArg()
 +              .ofType(File.class)
 +              .defaultsTo(new File("plugins"))
@@ -313,7 +259,7 @@
 +      }
 +
 +      if (org.bukkit.craftbukkit.Main.useJline) {
-+         AnsiConsole.systemInstall();
++         org.fusesource.jansi.AnsiConsole.systemInstall();
 +      } else {
 +         // This ensures the terminal literal will always match the jline implementation
 +         System.setProperty(jline.TerminalFactory.JLINE_TERMINAL, jline.UnsupportedTerminal.class.getName());
@@ -324,16 +270,6 @@
 +      }
 +   }
 +   //Ketting end
-+
+ 
     private static void writePidFile(Path p_270192_) {
        try {
-          long i = ProcessHandle.current().pid();
-@@ -236,7 +_,7 @@
-       return new WorldLoader.InitConfig(worldloader$packconfig, Commands.CommandSelection.DEDICATED, p_248563_.functionPermissionLevel);
-    }
- 
--   private static void forceUpgrade(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, Registry<LevelStem> p_250443_) {
-+   public static void forceUpgrade(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, Registry<LevelStem> p_250443_) {
-       LOGGER.info("Forcing world upgrade!");
-       WorldUpgrader worldupgrader = new WorldUpgrader(p_195489_, p_195490_, p_250443_, p_195491_);
-       Component component = null;

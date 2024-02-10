@@ -1,21 +1,15 @@
 --- a/net/minecraft/world/level/block/entity/BlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BlockEntity.java
-@@ -13,9 +_,18 @@
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.level.Level;
+@@ -15,7 +_,12 @@
  import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataContainer;
-+import org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataTypeRegistry;
-+import org.bukkit.inventory.InventoryHolder;
  import org.slf4j.Logger;
-+import org.spigotmc.CustomTimingsHandler;
  
 -public abstract class BlockEntity {
 +public abstract class BlockEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<BlockEntity> implements net.minecraftforge.common.extensions.IForgeBlockEntity {
-+   public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.getTileEntityTimings(this); // Spigot
++   public org.spigotmc.CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.getTileEntityTimings(this); // Spigot
 +   // CraftBukkit start - data containers
-+   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
-+   public CraftPersistentDataContainer persistentDataContainer;
++   private static final org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataTypeRegistry();
++   public org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataContainer persistentDataContainer;
 +   // CraftBukkit end
     private static final Logger LOGGER = LogUtils.getLogger();
     private final BlockEntityType<?> type;
@@ -40,7 +34,7 @@
  
     public void load(CompoundTag p_155245_) {
 +      // CraftBukkit start - read container
-+      this.persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++      this.persistentDataContainer = new org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
 +
 +      net.minecraft.nbt.Tag persistentDataTag = p_155245_.get("PublicBukkitValues");
 +      if (persistentDataTag instanceof CompoundTag) {
@@ -101,10 +95,10 @@
     }
 +
 +   // CraftBukkit start - add method
-+   public InventoryHolder getOwner() {
++   public org.bukkit.inventory.InventoryHolder getOwner() {
 +      if (level == null) return null;
 +      org.bukkit.block.BlockState state = level.getWorld().getBlockAt(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ()).getState();
-+      if (state instanceof InventoryHolder) return (InventoryHolder) state;
++      if (state instanceof org.bukkit.inventory.InventoryHolder) return (org.bukkit.inventory.InventoryHolder) state;
 +      return null;
 +   }
 +   // CraftBukkit end

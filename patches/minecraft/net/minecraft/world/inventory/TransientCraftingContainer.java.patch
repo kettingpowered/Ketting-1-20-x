@@ -1,32 +1,13 @@
 --- a/net/minecraft/world/inventory/TransientCraftingContainer.java
 +++ b/net/minecraft/world/inventory/TransientCraftingContainer.java
-@@ -2,16 +_,86 @@
- 
- import java.util.List;
- import net.minecraft.core.NonNullList;
-+import net.minecraft.world.Container;
- import net.minecraft.world.ContainerHelper;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.entity.player.StackedContents;
- import net.minecraft.world.item.ItemStack;
-+import net.minecraft.world.item.crafting.RecipeHolder;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
-+import org.bukkit.entity.HumanEntity;
-+import org.bukkit.event.inventory.InventoryType;
-+
-+import javax.annotation.Nullable;
- 
- public class TransientCraftingContainer implements CraftingContainer {
-    private final NonNullList<ItemStack> items;
-    private final int width;
+@@ -13,6 +_,68 @@
     private final int height;
     private final AbstractContainerMenu menu;
-+
+ 
 +   // CraftBukkit start - add fields
-+   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
-+   private RecipeHolder<?> currentRecipe;
-+   public Container resultInventory;
++   public List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
++   private net.minecraft.world.item.crafting.RecipeHolder<?> currentRecipe;
++   public net.minecraft.world.Container resultInventory;
 +   private Player owner;
 +   private int maxStack = MAX_STACK;
 +
@@ -34,19 +15,19 @@
 +      return this.items;
 +   }
 +
-+   public void onOpen(CraftHumanEntity who) {
++   public void onOpen(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
 +      transaction.add(who);
 +   }
 +
-+   public InventoryType getInvType() {
-+      return items.size() == 4 ? InventoryType.CRAFTING : InventoryType.WORKBENCH;
++   public org.bukkit.event.inventory.InventoryType getInvType() {
++      return items.size() == 4 ? org.bukkit.event.inventory.InventoryType.CRAFTING : org.bukkit.event.inventory.InventoryType.WORKBENCH;
 +   }
 +
-+   public void onClose(CraftHumanEntity who) {
++   public void onClose(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
 +      transaction.remove(who);
 +   }
 +
-+   public List<HumanEntity> getViewers() {
++   public List<org.bukkit.entity.HumanEntity> getViewers() {
 +      return transaction;
 +   }
 +
@@ -65,17 +46,17 @@
 +   }
 +
 +   @Override
-+   public Location getLocation() {
++   public org.bukkit.Location getLocation() {
 +      return menu instanceof CraftingMenu ? ((CraftingMenu) menu).access.getLocation() : owner.getBukkitEntity().getLocation();
 +   }
 +
 +   @Override
-+   public @Nullable RecipeHolder<?> getCurrentRecipe() {
++   public @javax.annotation.Nullable net.minecraft.world.item.crafting.RecipeHolder<?> getCurrentRecipe() {
 +      return currentRecipe;
 +   }
 +
 +   @Override
-+   public void setCurrentRecipe(RecipeHolder<?> currentRecipe) {
++   public void setCurrentRecipe(net.minecraft.world.item.crafting.RecipeHolder<?> currentRecipe) {
 +      this.currentRecipe = currentRecipe;
 +   }
 +
@@ -84,6 +65,7 @@
 +      this.owner = player;
 +   }
 +   // CraftBukkit end
- 
++
     public TransientCraftingContainer(AbstractContainerMenu p_287684_, int p_287629_, int p_287593_) {
        this(p_287684_, p_287629_, p_287593_, NonNullList.withSize(p_287629_ * p_287593_, ItemStack.EMPTY));
+    }

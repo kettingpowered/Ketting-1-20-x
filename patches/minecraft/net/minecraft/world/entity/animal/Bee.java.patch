@@ -1,39 +1,11 @@
 --- a/net/minecraft/world/entity/animal/Bee.java
 +++ b/net/minecraft/world/entity/animal/Bee.java
-@@ -87,6 +_,9 @@
- import net.minecraft.world.level.pathfinder.BlockPathTypes;
- import net.minecraft.world.level.pathfinder.Path;
- import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityPotionEffectEvent;
-+import org.bukkit.event.entity.EntityTargetEvent;
- 
- public class Bee extends Animal implements NeutralMob, FlyingAnimal {
-    public static final float FLAP_DEGREES_PER_TICK = 120.32113F;
-@@ -121,7 +_,7 @@
-    private float rollAmountO;
-    private int timeSinceSting;
-    int ticksWithoutNectarSinceExitingHive;
--   private int stayOutOfHiveCountdown;
-+   public int stayOutOfHiveCountdown;
-    private int numCropsGrownSincePollination;
-    private static final int COOLDOWN_BEFORE_LOCATING_NEW_HIVE = 200;
-    int remainingCooldownBeforeLocatingNewHive;
-@@ -130,7 +_,7 @@
-    @Nullable
-    BlockPos savedFlowerPos;
-    @Nullable
--   BlockPos hivePos;
-+   public BlockPos hivePos;
-    Bee.BeePollinateGoal beePollinateGoal;
-    Bee.BeeGoToHiveGoal goToHiveGoal;
-    private Bee.BeeGoToKnownFlowerGoal goToKnownFlowerGoal;
 @@ -230,7 +_,7 @@
              }
  
              if (i > 0) {
 -               ((LivingEntity)p_27722_).addEffect(new MobEffectInstance(MobEffects.POISON, i * 20, 0), this);
-+               ((LivingEntity)p_27722_).addEffect(new MobEffectInstance(MobEffects.POISON, i * 20, 0), this, EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
++               ((LivingEntity)p_27722_).addEffect(new MobEffectInstance(MobEffects.POISON, i * 20, 0), this, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
              }
           }
  
@@ -44,24 +16,6 @@
 -         return blockentity != null && blockentity.getType() == BlockEntityType.BEEHIVE;
 +         return blockentity instanceof BeehiveBlockEntity;
        }
-    }
- 
-@@ -481,7 +_,7 @@
-       return this.getFlag(8);
-    }
- 
--   void setHasNectar(boolean p_27920_) {
-+   public void setHasNectar(boolean p_27920_) {
-       if (p_27920_) {
-          this.resetTicksWithoutNectarSinceExitingHive();
-       }
-@@ -493,7 +_,7 @@
-       return this.getFlag(4);
-    }
- 
--   private void setHasStung(boolean p_27926_) {
-+   public void setHasStung(boolean p_27926_) {
-       this.setFlag(4, p_27926_);
     }
  
 @@ -600,11 +_,14 @@
@@ -125,7 +79,7 @@
                    }
  
 -                  if (blockstate1 != null) {
-+                  if (blockstate1 != null && CraftEventFactory.callEntityChangeBlockEvent(Bee.this, blockpos, blockstate1)) { // CraftBukkit
++                  if (blockstate1 != null && org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(Bee.this, blockpos, blockstate1)) { // CraftBukkit
                       Bee.this.level().levelEvent(2005, blockpos, 0);
                       Bee.this.level().setBlockAndUpdate(blockpos, blockstate1);
                       Bee.this.incrementNumCropsGrownSincePollination();
@@ -134,7 +88,7 @@
        protected void alertOther(Mob p_28035_, LivingEntity p_28036_) {
           if (p_28035_ instanceof Bee && this.mob.hasLineOfSight(p_28036_)) {
 -            p_28035_.setTarget(p_28036_);
-+            p_28035_.setTarget(p_28036_, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit - reason
++            p_28035_.setTarget(p_28036_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit - reason
           }
  
        }

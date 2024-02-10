@@ -1,16 +1,7 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractMinecart.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractMinecart.java
-@@ -46,9 +_,16 @@
- import net.minecraft.world.level.gameevent.GameEvent;
- import net.minecraft.world.phys.AABB;
+@@ -48,7 +_,7 @@
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
-+import org.bukkit.entity.Vehicle;
-+import org.bukkit.event.vehicle.VehicleDamageEvent;
-+import org.bukkit.event.vehicle.VehicleDestroyEvent;
-+import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
-+import org.bukkit.util.Vector;
  import org.joml.Vector3f;
  
 -public abstract class AbstractMinecart extends Entity {
@@ -67,10 +58,10 @@
              return false;
           } else {
 +            // CraftBukkit start - fire VehicleDamageEvent
-+            Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++            org.bukkit.entity.Vehicle vehicle = (org.bukkit.entity.Vehicle) this.getBukkitEntity();
 +            org.bukkit.entity.Entity passenger = (p_38117_.getEntity() == null) ? null : p_38117_.getEntity().getBukkitEntity();
 +
-+            VehicleDamageEvent event = new VehicleDamageEvent(vehicle, passenger, p_38118_);
++            org.bukkit.event.vehicle.VehicleDamageEvent event = new org.bukkit.event.vehicle.VehicleDamageEvent(vehicle, passenger, p_38118_);
 +            this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (event.isCancelled()) {
@@ -87,7 +78,7 @@
              boolean flag = p_38117_.getEntity() instanceof Player && ((Player)p_38117_.getEntity()).getAbilities().instabuild;
              if (flag || this.getDamage() > 40.0F) {
 +               // CraftBukkit start
-+               VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, passenger);
++               org.bukkit.event.vehicle.VehicleDestroyEvent destroyEvent = new org.bukkit.event.vehicle.VehicleDestroyEvent(vehicle, passenger);
 +               this.level().getCraftServer().getPluginManager().callEvent(destroyEvent);
 +
 +               if (destroyEvent.isCancelled()) {
@@ -145,9 +136,9 @@
 +         else                               box = this.getBoundingBox().inflate(0.2F, 0.0D, 0.2F);
 +         // CraftBukkit start
 +         org.bukkit.World bworld = this.level().getWorld();
-+         Location from = new Location(bworld, prevX, prevY, prevZ, prevYaw, prevPitch);
-+         Location to = CraftLocation.toBukkit(this.position(), bworld, this.getYRot(), this.getXRot());
-+         Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++         org.bukkit.Location from = new org.bukkit.Location(bworld, prevX, prevY, prevZ, prevYaw, prevPitch);
++         org.bukkit.Location to = org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation.toBukkit(this.position(), bworld, this.getYRot(), this.getXRot());
++         org.bukkit.entity.Vehicle vehicle = (org.bukkit.entity.Vehicle) this.getBukkitEntity();
 +
 +         this.level().getCraftServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
 +
@@ -161,7 +152,7 @@
                 for(Entity entity1 : list) {
                    if (!(entity1 instanceof Player) && !(entity1 instanceof IronGolem) && !(entity1 instanceof AbstractMinecart) && !this.isVehicle() && !entity1.isPassenger()) {
 +                     // CraftBukkit start
-+                     VehicleEntityCollisionEvent collisionEvent = new VehicleEntityCollisionEvent(vehicle, entity1.getBukkitEntity());
++                     org.bukkit.event.vehicle.VehicleEntityCollisionEvent collisionEvent = new org.bukkit.event.vehicle.VehicleEntityCollisionEvent(vehicle, entity1.getBukkitEntity());
 +                     this.level().getCraftServer().getPluginManager().callEvent(collisionEvent);
 +
 +                     if (collisionEvent.isCancelled()) {
@@ -172,7 +163,7 @@
                    } else {
 +                     // CraftBukkit start
 +                     if (!this.isPassengerOfSameVehicle(entity1)) {
-+                        VehicleEntityCollisionEvent collisionEvent = new VehicleEntityCollisionEvent(vehicle, entity1.getBukkitEntity());
++                        org.bukkit.event.vehicle.VehicleEntityCollisionEvent collisionEvent = new org.bukkit.event.vehicle.VehicleEntityCollisionEvent(vehicle, entity1.getBukkitEntity());
 +                        this.level().getCraftServer().getPluginManager().callEvent(collisionEvent);
 +
 +                        if (collisionEvent.isCancelled()) {
@@ -189,7 +180,7 @@
 +            for(Entity entity : this.level().getEntities(this, box)) {
                 if (!this.hasPassenger(entity) && entity.isPushable() && entity instanceof AbstractMinecart) {
 +                  // CraftBukkit start
-+                  VehicleEntityCollisionEvent collisionEvent = new VehicleEntityCollisionEvent(vehicle, entity.getBukkitEntity());
++                  org.bukkit.event.vehicle.VehicleEntityCollisionEvent collisionEvent = new org.bukkit.event.vehicle.VehicleEntityCollisionEvent(vehicle, entity.getBukkitEntity());
 +                  this.level().getCraftServer().getPluginManager().callEvent(collisionEvent);
 +
 +                  if (collisionEvent.isCancelled()) {
@@ -333,7 +324,7 @@
           if (!p_38165_.noPhysics && !this.noPhysics) {
              if (!this.hasPassenger(p_38165_)) {
 +               // CraftBukkit start
-+               VehicleEntityCollisionEvent collisionEvent = new VehicleEntityCollisionEvent((Vehicle) this.getBukkitEntity(), p_38165_.getBukkitEntity());
++               org.bukkit.event.vehicle.VehicleEntityCollisionEvent collisionEvent = new org.bukkit.event.vehicle.VehicleEntityCollisionEvent((org.bukkit.entity.Vehicle) this.getBukkitEntity(), p_38165_.getBukkitEntity());
 +               this.level().getCraftServer().getPluginManager().callEvent(collisionEvent);
 +
 +               if (collisionEvent.isCancelled()) {
@@ -406,21 +397,21 @@
     }
 +
 +   // CraftBukkit start - Methods for getting and setting flying and derailed velocity modifiers
-+   public Vector getFlyingVelocityMod() {
-+      return new Vector(flyingX, flyingY, flyingZ);
++   public org.bukkit.util.Vector getFlyingVelocityMod() {
++      return new org.bukkit.util.Vector(flyingX, flyingY, flyingZ);
 +   }
 +
-+   public void setFlyingVelocityMod(Vector flying) {
++   public void setFlyingVelocityMod(org.bukkit.util.Vector flying) {
 +      flyingX = flying.getX();
 +      flyingY = flying.getY();
 +      flyingZ = flying.getZ();
 +   }
 +
-+   public Vector getDerailedVelocityMod() {
-+      return new Vector(derailedX, derailedY, derailedZ);
++   public org.bukkit.util.Vector getDerailedVelocityMod() {
++      return new org.bukkit.util.Vector(derailedX, derailedY, derailedZ);
 +   }
 +
-+   public void setDerailedVelocityMod(Vector derailed) {
++   public void setDerailedVelocityMod(org.bukkit.util.Vector derailed) {
 +      derailedX = derailed.getX();
 +      derailedY = derailed.getY();
 +      derailedZ = derailed.getZ();

@@ -25,6 +25,24 @@ public class Util {
 			return md.digest().collect {String.format "%02x", it}.join()
 		}
         File.metaClass.getSha1 = { !delegate.exists() ? null : delegate.sha1() }
+        //Ketting start
+        File.metaClass.sha256 = { ->
+            MessageDigest md = MessageDigest.getInstance('SHA-256')
+            delegate.eachByte 4096, {bytes, size ->
+                md.update(bytes, 0, size)
+            }
+            return md.digest().collect {String.format "%02x", it}.join()
+        }
+        File.metaClass.getSha256 = { !delegate.exists() ? null : delegate.sha256() }
+        File.metaClass.sha512 = { ->
+            MessageDigest md = MessageDigest.getInstance('SHA3-512')
+            delegate.eachByte 4096, {bytes, size ->
+                md.update(bytes, 0, size)
+            }
+            return md.digest().collect {String.format "%02x", it}.join()
+        }
+        File.metaClass.getSha512 = { !delegate.exists() ? null : delegate.sha512() }
+        //Ketting end
 
 		File.metaClass.json = { -> new JsonSlurper().parseText(delegate.text) }
         File.metaClass.getJson = { return delegate.exists() ? new JsonSlurper().parse(delegate) : [:] }
@@ -79,7 +97,7 @@ public class Util {
 			def path = "${folder}${filename}"
 			def url = "https://libraries.minecraft.net/${path}"
 			if (!checkExists(url)) {
-				url = "https://nexus.c0d3m4513r.com/repository/Forge/${path}"
+				url = "https://maven.minecraftforge.net/${path}"
 			}
 			ret[key] = [
 				name: "${art.group}:${art.name}:${art.version}" + (art.classifier == null ? '' : ":${art.classifier}") + (art.extension == 'jar' ? '' : "@${art.extension}"),
@@ -96,6 +114,37 @@ public class Util {
 		return ret
 	}
 
+	public static Map getMavenInfoFromDep(dep) {
+		return getMavenInfoFromMap([
+				group: dep.moduleVersion.id.group,
+				name: dep.moduleVersion.id.name,
+				version: dep.moduleVersion.id.version,
+				classifier: dep.classifier,
+				extension: dep.extension
+		])
+	}
+	private static Map getMavenInfoFromMap(art) {
+		def key = "$art.group:$art.name"
+		def name = "$art.group:$art.name:$art.version"
+		def path = "${art.group.replace('.', '/')}/$art.name/$art.version/$art.name-$art.version"
+		if (art.classifier != null) {
+			name += ":$art.classifier"
+			path += "-$art.classifier"
+		}
+		if (!'jar'.equals(art.extension)) {
+			name += "@$art.extension"
+			path += ".$art.extension"
+		} else {
+			path += ".jar"
+		}
+		return [
+				key: key,
+				name: name,
+				path: path,
+				art: art
+		]
+	}
+	
     public static def getMavenPath(task) {
         def classifier = task.archiveClassifier.get()
         def dep = "${task.project.group}:${task.project.name}:${task.project.version}" + (classifier == '' ? '' : ':' + classifier)
@@ -127,20 +176,20 @@ public class Util {
 		return getArtifacts(project, cfg, true)
 	}
 
-	static boolean checkExists(url) {
-		try {
-			def code = new URL(url).openConnection().with {
-				requestMethod = 'HEAD'
-				connect()
-				responseCode
-			}
-			return code == 200
-		} catch (Exception e) {
-			if (e.toString().contains('unable to find valid certification path to requested target'))
-				throw new RuntimeException('Failed to connect to ' + url + ': Missing certificate root authority, try updating java')
-			throw e
-		}
-	}
+    static boolean checkExists(url) {
+        try {
+            def code = new URL(url).openConnection().with {
+                requestMethod = 'HEAD'
+                connect()
+                responseCode
+            }
+            return code == 200
+        } catch (Exception e) {
+            if (e.toString().contains('unable to find valid certification path to requested target'))
+                throw new RuntimeException('Failed to connect to ' + url + ': Missing certificate root authority, try updating java')
+            throw e
+        }
+    }
 
     static String getLatestForgeVersion(mcVersion) {
         final json = new JsonSlurper().parseText(new URL('https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json').getText('UTF-8'))

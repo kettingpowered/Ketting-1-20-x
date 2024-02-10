@@ -1,19 +1,5 @@
 --- a/net/minecraft/world/item/BlockItem.java
 +++ b/net/minecraft/world/item/BlockItem.java
-@@ -30,6 +_,13 @@
- import net.minecraft.world.level.gameevent.GameEvent;
- import net.minecraft.world.phys.shapes.CollisionContext;
- 
-+// CraftBukkit start
-+import net.minecraft.server.level.ServerLevel;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
-+import org.bukkit.event.block.BlockCanBuildEvent;
-+// CraftBukkit end
-+
- public class BlockItem extends Item {
-    public static final String BLOCK_ENTITY_TAG = "BlockEntityTag";
-    public static final String BLOCK_STATE_TAG = "BlockStateTag";
 @@ -63,6 +_,13 @@
              return InteractionResult.FAIL;
           } else {
@@ -34,7 +20,7 @@
                    blockstate1.getBlock().setPlacedBy(level, blockpos, blockstate1, player, itemstack);
 +                  // CraftBukkit start
 +                  if (bblockstate != null) {
-+                     org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockPlaceEvent((ServerLevel) level, player, blockplacecontext.getHand(), bblockstate, blockpos.getX(), blockpos.getY(), blockpos.getZ());
++                     org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockPlaceEvent((net.minecraft.server.level.ServerLevel) level, player, blockplacecontext.getHand(), bblockstate, blockpos.getX(), blockpos.getY(), blockpos.getZ());
 +                     if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
 +                        bblockstate.update(true, false);
 +
@@ -126,7 +112,7 @@
 +      boolean defaultReturn = (!this.mustSurvive() || p_40612_.canSurvive(p_40611_.getLevel(), p_40611_.getClickedPos())) && p_40611_.getLevel().isUnobstructed(p_40612_, p_40611_.getClickedPos(), collisioncontext);
 +      org.bukkit.entity.Player playerBukkit = (p_40611_.getPlayer() instanceof ServerPlayer) ? (org.bukkit.entity.Player) p_40611_.getPlayer().getBukkitEntity() : null;
 +
-+      BlockCanBuildEvent event = new BlockCanBuildEvent(CraftBlock.at(p_40611_.getLevel(), p_40611_.getClickedPos()), playerBukkit, CraftBlockData.fromData(p_40612_), defaultReturn);
++      org.bukkit.event.block.BlockCanBuildEvent event = new org.bukkit.event.block.BlockCanBuildEvent(org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_40611_.getLevel(), p_40611_.getClickedPos()), playerBukkit, org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData.fromData(p_40612_), defaultReturn);
 +      p_40611_.getLevel().getCraftServer().getPluginManager().callEvent(event);
 +
 +      return event.isBuildable();

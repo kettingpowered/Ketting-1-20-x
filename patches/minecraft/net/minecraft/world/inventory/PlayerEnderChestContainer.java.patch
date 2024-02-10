@@ -1,30 +1,25 @@
 --- a/net/minecraft/world/inventory/PlayerEnderChestContainer.java
 +++ b/net/minecraft/world/inventory/PlayerEnderChestContainer.java
-@@ -7,13 +_,29 @@
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
-+import org.bukkit.inventory.InventoryHolder;
- 
+@@ -11,9 +_,26 @@
  public class PlayerEnderChestContainer extends SimpleContainer {
     @Nullable
     private EnderChestBlockEntity activeChest;
--
--   public PlayerEnderChestContainer() {
 +   // CraftBukkit start
 +   private final Player owner;
 +
-+   public InventoryHolder getBukkitOwner() {
++   public org.bukkit.inventory.InventoryHolder getBukkitOwner() {
++      if (owner == null) return org.kettingpowered.ketting.craftbukkit.CraftStubInventoryHolder.INSTANCE;
 +      return owner.getBukkitEntity();
 +   }
 +
 +   @Override
-+   public Location getLocation() {
-+      return this.activeChest != null ? CraftLocation.toBukkit(this.activeChest.getBlockPos(), this.activeChest.getLevel().getWorld()) : null;
++   public org.bukkit.Location getLocation() {
++      return this.activeChest != null ? org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation.toBukkit(this.activeChest.getBlockPos(), this.activeChest.getLevel().getWorld()) : null;
 +   }
-+
+ 
+    public PlayerEnderChestContainer() {
++      this(null);//Ketting - keep compat
++   }
 +   public PlayerEnderChestContainer(Player owner) {
        super(27);
 +      this.owner = owner;

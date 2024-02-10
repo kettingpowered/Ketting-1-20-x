@@ -1,14 +1,5 @@
 --- a/net/minecraft/server/dedicated/DedicatedServerProperties.java
 +++ b/net/minecraft/server/dedicated/DedicatedServerProperties.java
-@@ -17,6 +_,8 @@
- import java.util.regex.Pattern;
- import java.util.stream.Collectors;
- import javax.annotation.Nullable;
-+
-+import joptsimple.OptionSet;
- import net.minecraft.core.Holder;
- import net.minecraft.core.Registry;
- import net.minecraft.core.RegistryAccess;
 @@ -46,6 +_,7 @@
     static final Logger LOGGER = LogUtils.getLogger();
     private static final Pattern SHA1 = Pattern.compile("^[a-fA-F0-9]{40}$");
@@ -24,7 +15,7 @@
 -   public DedicatedServerProperties(Properties p_180926_) {
 -      super(p_180926_);
 +   // CraftBukkit start
-+   public DedicatedServerProperties(Properties properties, OptionSet optionset) {
++   public DedicatedServerProperties(Properties properties, joptsimple.OptionSet optionset) {
 +      super(properties, optionset);
 +      // CraftBukkit end
        String s = this.get("level-seed", "");
@@ -37,24 +28,15 @@
 -   public static DedicatedServerProperties fromFile(Path p_180930_) {
 -      return new DedicatedServerProperties(loadFromFile(p_180930_));
 +   // CraftBukkit start
-+   public static DedicatedServerProperties fromFile(Path p_180930_, OptionSet optionset) {
++   public static DedicatedServerProperties fromFile(Path p_180930_, joptsimple.OptionSet optionset) {
 +      return new DedicatedServerProperties(loadFromFile(p_180930_), optionset);
     }
  
 -   protected DedicatedServerProperties reload(RegistryAccess p_139761_, Properties p_139762_) {
 -      return new DedicatedServerProperties(p_139762_);
-+   protected DedicatedServerProperties reload(RegistryAccess p_139761_, Properties p_139762_, OptionSet optionset) {
++   protected DedicatedServerProperties reload(RegistryAccess p_139761_, Properties p_139762_, joptsimple.OptionSet optionset) {
 +      return new DedicatedServerProperties(properties, optionset);
 +      // CraftBukkit end
     }
  
     @Nullable
-@@ -190,7 +_,7 @@
-       return this.worldDimensionData.create(p_250466_);
-    }
- 
--   static record WorldDimensionData(JsonObject generatorSettings, String levelType) {
-+   public static record WorldDimensionData(JsonObject generatorSettings, String levelType) {
-       private static final Map<String, ResourceKey<WorldPreset>> LEGACY_PRESET_NAMES = Map.of("default", WorldPresets.NORMAL, "largebiomes", WorldPresets.LARGE_BIOMES);
- 
-       public WorldDimensions create(RegistryAccess p_248812_) {

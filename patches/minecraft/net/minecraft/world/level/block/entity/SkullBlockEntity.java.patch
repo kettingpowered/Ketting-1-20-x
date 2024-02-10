@@ -1,25 +1,5 @@
 --- a/net/minecraft/world/level/block/entity/SkullBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/SkullBlockEntity.java
-@@ -37,9 +_,9 @@
- 
-    };
-    @Nullable
--   private GameProfile owner;
-+   public GameProfile owner;
-    @Nullable
--   private ResourceLocation noteBlockSound;
-+   public ResourceLocation noteBlockSound;
-    private int animationTickCount;
-    private boolean isAnimating;
- 
-@@ -148,6 +_,7 @@
-       } else {
-          if (p_298431_.contains("SkullOwner", 8)) {
-             String s = p_298431_.getString("SkullOwner");
-+
-             if (!Util.isBlank(s)) {
-                p_298431_.remove("SkullOwner");
-                resolveGameProfile(p_298431_, s);
 @@ -162,6 +_,16 @@
        String s = p_301404_.getString("SkullOwner");
        if (!Util.isBlank(s)) {
@@ -37,12 +17,3 @@
        }
  
     }
-@@ -187,7 +_,7 @@
-       }, CHECKED_MAIN_THREAD_EXECUTOR);
-    }
- 
--   private static CompletableFuture<Optional<GameProfile>> fillProfileTextures(GameProfile p_299217_) {
-+   public static CompletableFuture<Optional<GameProfile>> fillProfileTextures(GameProfile p_299217_) {
-       return hasTextures(p_299217_) ? CompletableFuture.completedFuture(Optional.of(p_299217_)) : CompletableFuture.supplyAsync(() -> {
-          MinecraftSessionService minecraftsessionservice = sessionService;
-          if (minecraftsessionservice != null) {

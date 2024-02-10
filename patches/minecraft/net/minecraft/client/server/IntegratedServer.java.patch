@@ -1,21 +1,5 @@
 --- a/net/minecraft/client/server/IntegratedServer.java
 +++ b/net/minecraft/client/server/IntegratedServer.java
-@@ -15,6 +_,7 @@
- import net.minecraft.SystemReport;
- import net.minecraft.client.Minecraft;
- import net.minecraft.client.multiplayer.ClientPacketListener;
-+import net.minecraft.commands.CommandSourceStack;
- import net.minecraft.server.MinecraftServer;
- import net.minecraft.server.Services;
- import net.minecraft.server.WorldStem;
-@@ -28,6 +_,7 @@
- import net.minecraft.world.level.storage.LevelStorageSource;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.command.CommandSender;
- import org.slf4j.Logger;
- 
- @OnlyIn(Dist.CLIENT)
 @@ -59,11 +_,13 @@
        this.setPvpAllowed(true);
        this.setFlightAllowed(true);
@@ -37,7 +21,7 @@
  
 +   // Ketting start
 +   @Override
-+   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++   public org.bukkit.command.CommandSender getBukkitSender(net.minecraft.commands.CommandSourceStack wrapper) {
 +      return null;
 +   }
 +   // Ketting end

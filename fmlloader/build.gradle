@@ -1,12 +1,14 @@
+import net.minecraftforge.gradleutils.PomUtils
+
 plugins {
-    id 'com.github.ben-manes.versions'
-    id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
-    id 'org.cadixdev.licenser'
     id 'java-library'
-    id 'jacoco'
+    id 'maven-publish'
+//    id 'org.cadixdev.licenser' //Ketting - we integrate other stuff, that is not applicable with the licensing used here
+    id 'net.minecraftforge.gradleutils'
 }
 
-dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
+apply from: rootProject.file('build_shared.gradle')
+
 configurations.forEach{ it.transitive = false }
 
 dependencies {
@@ -29,9 +31,8 @@ dependencies {
     api(libs.jarjar.meta)
 
     implementation(libs.jopt.simple)
-    implementation(libs.securemodules)
+    implementation(libs.securejarhandler)
     implementation(libs.accesstransformers)
-    implementation(libs.terminalconsoleappender)
     implementation(libs.jimfs)
 
     implementation(libs.log4j.core)
@@ -39,49 +40,100 @@ dependencies {
 
     testCompileOnly(libs.nulls)
     testRuntimeOnly(libs.bootstrap)
+
+    implementation libs.kettingcommon
+    implementation(libs.terminalcolors)
 }
 
-task sourcesJar(type: Jar) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
+    withSourcesJar()
 }
 
-ext {
-    MANIFESTS = [
-        'net/minecraftforge/fml/loading/': [
-            'Specification-Title':      'FMLLoader',
-            'Specification-Vendor':     'Forge Development LLC',
-            'Specification-Version':    '1',
-            'Implementation-Title':     'FML Loader',
-            'Implementation-Version':   '1.0',
-            'Implementation-Vendor':    'Forge'
-        ] as LinkedHashMap
-    ]
-}
-
-jar.doFirst {
-    manifest.attributes['Automatic-Module-Name'] = project.name
-    MANIFESTS.each { pkg, values ->
-        manifest.attributes(values, pkg)
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+            'Automatic-Module-Name': 'net.minecraftforge.fmlloader',
+            'Forge-Module-Layer':    'boot'
+        ] as LinkedHashMap)
+        attributes([
+            'Specification-Title':   'FMLLoader',
+            'Specification-Vendor':  'Forge Development LLC',
+            'Specification-Version': '1',
+            'Implementation-Title':  'FMLLoader',
+            'Implementation-Vendor': 'Forge Development LLC',
+            'Implementation-Version': FORGE_VERSION
+        ] as LinkedHashMap, 'net/minecraftforge/fml/loading/')
     }
 }
 
 tasks.withType(JavaCompile) {
     options.compilerArgs << '-Xlint:unchecked'
 }
-
+//Ketting start - we integrate other stuff, that is not applicable with the licensing used here
+/*
 license {
     header = rootProject.file('LICENSE-header.txt')
+}
+*/
+//Ketting end
+publishing {
+    publications.register('mavenJava', MavenPublication).configure {
+        from components.java
+        artifactId = 'fmlloader'
+        pom {
+            name = project.name
+            description = 'Modifactions to Minecraft to enable mod developers.'
+            url = "https://github.com/kettingpowered/Ketting-1-20-x"
+            developers {
+                developer {
+                    id = "justred23"
+                    name = "JustRed23"
+                }
+                developer {
+                    id = "c0d3m4513r"
+                    name = "C0D3 M4513R"
+                }
+            }
+            scm {
+                connection = "scm:git:https://github.com/kettingpowered/Ketting-1-20-x.git"
+                //developerConnection = "scm:svn:https://subversion.example.com/svn/project/trunk/"
+                url = "https://github.com/kettingpowered/Ketting-1-20-x"
+            }
+            PomUtils.setGitHubDetails(pom, 'kettingpowered', 'Ketting-1-20-x')
+        }
+    }
 
-    include 'net/minecraftforge/'
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/kettingpowered/Ketting-1-20-x")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+        maven {
+            name = 'kettingRepo'
+            credentials {
+                username = System.getenv("KETTINGUSERNAME")
+                password = System.getenv("KETTINGPASSWORD")
+            }
+            url = "https://nexus.c0d3m4513r.com/repository/Ketting-Server-Releases/"
+        }
+    }
 }
 
-artifacts {
-    archives jar
-    archives sourcesJar
+tasks.register('writeForgeVersionJson') {
+    doLast {
+        file('src/main/resources/forge_version.json').json = [
+            'forge': FORGE_VERSION,
+            'mc': MC_VERSION,
+            'mcp': MCP_VERSION
+        ] as LinkedHashMap
+    }
 }
 
-publishing.publications.mavenJava(MavenPublication) {
-    from components.java
-    artifact sourcesJar
+tasks.named('generateResources').configure {
+    dependsOn('writeForgeVersionJson')
 }

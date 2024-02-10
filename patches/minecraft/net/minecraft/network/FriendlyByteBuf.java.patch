@@ -1,10 +1,6 @@
 --- a/net/minecraft/network/FriendlyByteBuf.java
 +++ b/net/minecraft/network/FriendlyByteBuf.java
-@@ -75,10 +_,11 @@
- import net.minecraft.world.level.Level;
- import net.minecraft.world.phys.BlockHitResult;
- import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
+@@ -78,7 +_,7 @@
  import org.joml.Quaternionf;
  import org.joml.Vector3f;
  
@@ -49,7 +45,7 @@
 +         if (item.isDamageable(p_130056_) || item.shouldOverrideMultiplayerNbt()) {
 +            // Spigot start - filter
 +            p_130056_ = p_130056_.copy();
-+            CraftItemStack.setItemMeta(p_130056_, CraftItemStack.getItemMeta(p_130056_));
++            org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.setItemMeta(p_130056_, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.getItemMeta(p_130056_));
 +            // Spigot end
 +            compoundtag = limitedTag ? p_130056_.getShareTag() : p_130056_.getTag();
           }
@@ -63,7 +59,7 @@
 +         itemstack.readShareTag(this.readNbt());
 +         // CraftBukkit start
 +         if (itemstack.getTag() != null) {
-+            CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
++            org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.setItemMeta(itemstack, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.getItemMeta(itemstack));
 +         }
 +         // CraftBukkit end
           return itemstack;

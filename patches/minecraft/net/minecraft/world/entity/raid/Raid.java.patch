@@ -1,32 +1,5 @@
 --- a/net/minecraft/world/entity/raid/Raid.java
 +++ b/net/minecraft/world/entity/raid/Raid.java
-@@ -85,21 +_,21 @@
-    public static final int RAID_REMOVAL_THRESHOLD_SQR = 12544;
-    private final Map<Integer, Raider> groupToLeaderMap = Maps.newHashMap();
-    private final Map<Integer, Set<Raider>> groupRaiderMap = Maps.newHashMap();
--   private final Set<UUID> heroesOfTheVillage = Sets.newHashSet();
--   private long ticksActive;
-+   public final Set<UUID> heroesOfTheVillage = Sets.newHashSet();
-+   public long ticksActive;
-    private BlockPos center;
-    private final ServerLevel level;
-    private boolean started;
-    private final int id;
--   private float totalHealth;
--   private int badOmenLevel;
-+   public float totalHealth;
-+   public int badOmenLevel;
-    private boolean active;
-    private int groupsSpawned;
-    private final ServerBossEvent raidEvent = new ServerBossEvent(RAID_NAME_COMPONENT, BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
-    private int postRaidTicks;
-    private int raidCooldownTicks;
-    private final RandomSource random = RandomSource.create();
--   private final int numGroups;
-+   public final int numGroups;
-    private Raid.RaidStatus status;
-    private int celebrationTicks;
-    private Optional<BlockPos> waveSpawnPos = Optional.empty();
 @@ -162,6 +_,12 @@
        return this.status == Raid.RaidStatus.LOSS;
     }
@@ -146,7 +119,7 @@
              p_37715_.applyRaidBuffs(p_37714_, false);
              p_37715_.setOnGround(true);
 -            this.level.addFreshEntityWithPassengers(p_37715_);
-+            this.level.addFreshEntityWithPassengers(p_37715_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.RAID); // CraftBukkit
++            this.level.addFreshEntityWithPassengersBukkit(p_37715_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.RAID); // CraftBukkit
           }
        }
  

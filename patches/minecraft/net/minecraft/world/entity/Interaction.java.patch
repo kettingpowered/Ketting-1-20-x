@@ -1,38 +1,12 @@
 --- a/net/minecraft/world/entity/Interaction.java
 +++ b/net/minecraft/world/entity/Interaction.java
-@@ -16,10 +_,13 @@
- import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.world.InteractionHand;
- import net.minecraft.world.InteractionResult;
-+import net.minecraft.world.damagesource.DamageSource;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.material.PushReaction;
- import net.minecraft.world.phys.AABB;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityDamageEvent;
- import org.slf4j.Logger;
- 
- public class Interaction extends Entity implements Attackable, Targeting {
-@@ -33,9 +_,9 @@
-    private static final String TAG_INTERACTION = "interaction";
-    private static final String TAG_RESPONSE = "response";
-    @Nullable
--   private Interaction.PlayerAction attack;
-+   public Interaction.PlayerAction attack;
-    @Nullable
--   private Interaction.PlayerAction interaction;
-+   public Interaction.PlayerAction interaction;
- 
-    public Interaction(EntityType<?> p_273319_, Level p_272713_) {
-       super(p_273319_, p_272713_);
 @@ -121,9 +_,17 @@
  
     public boolean skipAttackInteraction(Entity p_273553_) {
        if (p_273553_ instanceof Player player) {
 +         // CraftBukkit start
-+         DamageSource source = player.damageSources().playerAttack(player);
-+         EntityDamageEvent event = CraftEventFactory.callNonLivingEntityDamageEvent(this, source, 1.0F, false);
++         net.minecraft.world.damagesource.DamageSource source = player.damageSources().playerAttack(player);
++         org.bukkit.event.entity.EntityDamageEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callNonLivingEntityDamageEvent(this, source, 1.0F, false);
 +         if (event.isCancelled()) {
 +            return true;
 +         }
@@ -45,46 +19,3 @@
           }
  
           return !this.getResponse();
-@@ -154,27 +_,27 @@
-       return this.interaction != null ? this.level().getPlayerByUUID(this.interaction.player()) : null;
-    }
- 
--   private void setWidth(float p_273385_) {
-+   public void setWidth(float p_273385_) {
-       this.entityData.set(DATA_WIDTH_ID, p_273385_);
-    }
- 
--   private float getWidth() {
-+   public float getWidth() {
-       return this.entityData.get(DATA_WIDTH_ID);
-    }
- 
--   private void setHeight(float p_273733_) {
-+   public void setHeight(float p_273733_) {
-       this.entityData.set(DATA_HEIGHT_ID, p_273733_);
-    }
- 
--   private float getHeight() {
-+   public float getHeight() {
-       return this.entityData.get(DATA_HEIGHT_ID);
-    }
- 
--   private void setResponse(boolean p_273657_) {
-+   public void setResponse(boolean p_273657_) {
-       this.entityData.set(DATA_RESPONSE_ID, p_273657_);
-    }
- 
--   private boolean getResponse() {
-+   public boolean getResponse() {
-       return this.entityData.get(DATA_RESPONSE_ID);
-    }
- 
-@@ -190,7 +_,7 @@
-       return this.getDimensions().makeBoundingBox(this.position());
-    }
- 
--   static record PlayerAction(UUID player, long timestamp) {
-+   public static record PlayerAction(UUID player, long timestamp) {
-       public static final Codec<Interaction.PlayerAction> CODEC = RecordCodecBuilder.create((p_273237_) -> {
-          return p_273237_.group(UUIDUtil.CODEC.fieldOf("player").forGetter(Interaction.PlayerAction::player), Codec.LONG.fieldOf("timestamp").forGetter(Interaction.PlayerAction::timestamp)).apply(p_273237_, Interaction.PlayerAction::new);
-       });

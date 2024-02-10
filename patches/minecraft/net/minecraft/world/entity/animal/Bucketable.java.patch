@@ -1,23 +1,5 @@
 --- a/net/minecraft/world/entity/animal/Bucketable.java
 +++ b/net/minecraft/world/entity/animal/Bucketable.java
-@@ -3,6 +_,7 @@
- import java.util.Optional;
- import net.minecraft.advancements.CriteriaTriggers;
- import net.minecraft.nbt.CompoundTag;
-+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
- import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.sounds.SoundEvent;
- import net.minecraft.world.InteractionHand;
-@@ -14,6 +_,9 @@
- import net.minecraft.world.item.ItemUtils;
- import net.minecraft.world.item.Items;
- import net.minecraft.world.level.Level;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
-+import org.bukkit.event.player.PlayerBucketEntityEvent;
- 
- public interface Bucketable {
-    boolean fromBucket();
 @@ -91,9 +_,22 @@
     static <T extends LivingEntity & Bucketable> Optional<InteractionResult> bucketMobPickup(Player p_148829_, InteractionHand p_148830_, T p_148831_) {
        ItemStack itemstack = p_148829_.getItemInHand(p_148830_);
@@ -28,11 +10,11 @@
           ItemStack itemstack1 = p_148831_.getBucketItemStack();
           p_148831_.saveToBucketTag(itemstack1);
 +
-+         PlayerBucketEntityEvent playerBucketFishEvent = CraftEventFactory.callPlayerFishBucketEvent(p_148831_, p_148829_, itemstack, itemstack1, p_148830_);
-+         itemstack1 = CraftItemStack.asNMSCopy(playerBucketFishEvent.getEntityBucket());
++         org.bukkit.event.player.PlayerBucketEntityEvent playerBucketFishEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerFishBucketEvent(p_148831_, p_148829_, itemstack, itemstack1, p_148830_);
++         itemstack1 = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(playerBucketFishEvent.getEntityBucket());
 +         if (playerBucketFishEvent.isCancelled()) {
 +            ((ServerPlayer) p_148829_).containerMenu.sendAllDataToRemote(); // We need to update inventory to resync client's bucket
-+            ((ServerPlayer) p_148829_).connection.send(new ClientboundAddEntityPacket(p_148831_)); // We need to play out these packets as the client assumes the fish is gone
++            ((ServerPlayer) p_148829_).connection.send(new net.minecraft.network.protocol.game.ClientboundAddEntityPacket(p_148831_)); // We need to play out these packets as the client assumes the fish is gone
 +            p_148831_.getEntityData().refresh((ServerPlayer) p_148829_); // Need to send data such as the display name to client
 +            return Optional.of(InteractionResult.FAIL);
 +         }

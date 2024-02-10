@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/CocoaBlock.java
 +++ b/net/minecraft/world/level/block/CocoaBlock.java
-@@ -19,6 +_,7 @@
- import net.minecraft.world.level.pathfinder.PathComputationType;
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
- 
- public class CocoaBlock extends HorizontalDirectionalBlock implements BonemealableBlock {
-    public static final int MAX_AGE = 2;
 @@ -47,10 +_,11 @@
     }
  
@@ -18,7 +10,7 @@
 -         if (i < 2) {
 -            p_221001_.setBlock(p_221002_, p_221000_.setValue(AGE, Integer.valueOf(i + 1)), 2);
 +         if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221001_, p_221002_, p_221000_, p_221001_.random.nextInt(5) == 0)) {
-+            CraftEventFactory.handleBlockGrowEvent(p_221001_, p_221002_, (BlockState) p_221000_.setValue(CocoaBlock.AGE, i + 1), 2); // CraftBukkkit
++            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockGrowEvent(p_221001_, p_221002_, (BlockState) p_221000_.setValue(CocoaBlock.AGE, i + 1), 2); // CraftBukkkit
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221001_, p_221002_, p_221000_);
           }
        }
@@ -28,7 +20,7 @@
  
     public void performBonemeal(ServerLevel p_220990_, RandomSource p_220991_, BlockPos p_220992_, BlockState p_220993_) {
 -      p_220990_.setBlock(p_220992_, p_220993_.setValue(AGE, Integer.valueOf(p_220993_.getValue(AGE) + 1)), 2);
-+      CraftEventFactory.handleBlockGrowEvent(p_220990_, p_220992_, (BlockState) p_220993_.setValue(CocoaBlock.AGE, (Integer) p_220993_.getValue(CocoaBlock.AGE) + 1), 2); // CraftBukkit
++      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockGrowEvent(p_220990_, p_220992_, (BlockState) p_220993_.setValue(CocoaBlock.AGE, (Integer) p_220993_.getValue(CocoaBlock.AGE) + 1), 2); // CraftBukkit
     }
  
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_51778_) {

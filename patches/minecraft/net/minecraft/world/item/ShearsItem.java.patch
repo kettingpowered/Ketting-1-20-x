@@ -1,19 +1,9 @@
 --- a/net/minecraft/world/item/ShearsItem.java
 +++ b/net/minecraft/world/item/ShearsItem.java
-@@ -17,6 +_,7 @@
- import net.minecraft.world.level.block.GrowingPlantHeadBlock;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.gameevent.GameEvent;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
- 
- public class ShearsItem extends Item {
-    public ShearsItem(Item.Properties p_43074_) {
-@@ -47,6 +_,39 @@
-       } else {
-          return 15.0F;
+@@ -49,6 +_,39 @@
        }
-+   }
-+
+    }
+ 
 +   @Override
 +   public net.minecraft.world.InteractionResult interactLivingEntity(ItemStack stack, net.minecraft.world.entity.player.Player playerIn, LivingEntity entity, net.minecraft.world.InteractionHand hand) {
 +      if (entity instanceof net.minecraftforge.common.IForgeShearable target) {
@@ -21,7 +11,7 @@
 +         BlockPos pos = BlockPos.containing(entity.position());
 +         if (target.isShearable(stack, entity.level(), pos)) {
 +            //Ketting start - fire shear event
-+            if (!CraftEventFactory.handlePlayerShearEntityEvent(playerIn, entity, stack, hand)) {
++            if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handlePlayerShearEntityEvent(playerIn, entity, stack, hand)) {
 +               return InteractionResult.PASS;
 +            }
 +            //Ketting end
@@ -45,6 +35,8 @@
 +   @Override
 +   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
 +      return net.minecraftforge.common.ToolActions.DEFAULT_SHEARS_ACTIONS.contains(toolAction);
-    }
- 
++   }
++
     public InteractionResult useOn(UseOnContext p_186371_) {
+       Level level = p_186371_.getLevel();
+       BlockPos blockpos = p_186371_.getClickedPos();

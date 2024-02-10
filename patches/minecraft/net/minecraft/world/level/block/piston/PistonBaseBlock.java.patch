@@ -1,26 +1,5 @@
 --- a/net/minecraft/world/level/block/piston/PistonBaseBlock.java
 +++ b/net/minecraft/world/level/block/piston/PistonBaseBlock.java
-@@ -1,7 +_,10 @@
- package net.minecraft.world.level.block.piston;
- 
-+import com.google.common.collect.ImmutableList;
- import com.google.common.collect.Lists;
- import com.google.common.collect.Maps;
-+
-+import java.util.AbstractList;
- import java.util.List;
- import java.util.Map;
- import net.minecraft.core.BlockPos;
-@@ -35,6 +_,9 @@
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.Shapes;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.event.block.BlockPistonExtendEvent;
-+import org.bukkit.event.block.BlockPistonRetractEvent;
- 
- public class PistonBaseBlock extends DirectionalBlock {
-    public static final BooleanProperty EXTENDED = BlockStateProperties.EXTENDED;
 @@ -126,6 +_,19 @@
              }
           }
@@ -28,7 +7,7 @@
 +         // CraftBukkit start
 +         if (!this.isSticky) {
 +            org.bukkit.block.Block block = p_60168_.getWorld().getBlockAt(p_60169_.getX(), p_60169_.getY(), p_60169_.getZ());
-+            BlockPistonRetractEvent event = new BlockPistonRetractEvent(block, ImmutableList.<org.bukkit.block.Block>of(), CraftBlock.notchToBlockFace(direction));
++            org.bukkit.event.block.BlockPistonRetractEvent event = new org.bukkit.event.block.BlockPistonRetractEvent(block, com.google.common.collect.ImmutableList.<org.bukkit.block.Block>of(), org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.notchToBlockFace(direction));
 +            p_60168_.getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (event.isCancelled()) {
@@ -75,7 +54,7 @@
 +         final List<BlockPos> moved = pistonstructureresolver.getToPush();
 +         final List<BlockPos> broken = pistonstructureresolver.getToDestroy();
 +
-+         List<org.bukkit.block.Block> blocks = new AbstractList<org.bukkit.block.Block>() {
++         List<org.bukkit.block.Block> blocks = new java.util.AbstractList<org.bukkit.block.Block>() {
 +
 +            @Override
 +            public int size() {
@@ -93,9 +72,9 @@
 +         };
 +         org.bukkit.event.block.BlockPistonEvent event;
 +         if (p_60185_) {
-+            event = new BlockPistonExtendEvent(bblock, blocks, CraftBlock.notchToBlockFace(direction));
++            event = new org.bukkit.event.block.BlockPistonExtendEvent(bblock, blocks, org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.notchToBlockFace(direction));
 +         } else {
-+            event = new BlockPistonRetractEvent(bblock, blocks, CraftBlock.notchToBlockFace(direction));
++            event = new org.bukkit.event.block.BlockPistonRetractEvent(bblock, blocks, org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.notchToBlockFace(direction));
 +         }
 +         p_60182_.getCraftServer().getPluginManager().callEvent(event);
 +

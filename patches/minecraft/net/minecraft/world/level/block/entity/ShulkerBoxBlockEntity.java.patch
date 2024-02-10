@@ -1,27 +1,11 @@
 --- a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
-@@ -30,6 +_,8 @@
- import net.minecraft.world.level.material.PushReaction;
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
-+import org.bukkit.entity.HumanEntity;
- 
- public class ShulkerBoxBlockEntity extends RandomizableContainerBlockEntity implements WorldlyContainer {
-    public static final int COLUMNS = 9;
-@@ -42,12 +_,42 @@
-    public static final String ITEMS_TAG = "Items";
-    private static final int[] SLOTS = IntStream.range(0, 27).toArray();
-    private NonNullList<ItemStack> itemStacks = NonNullList.withSize(27, ItemStack.EMPTY);
--   private int openCount;
-+   public int openCount;
-    private ShulkerBoxBlockEntity.AnimationStatus animationStatus = ShulkerBoxBlockEntity.AnimationStatus.CLOSED;
-    private float progress;
+@@ -48,6 +_,36 @@
     private float progressOld;
     @Nullable
     private final DyeColor color;
 +   // CraftBukkit start - add fields and methods
-+   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++   public List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
 +   private int maxStack = MAX_STACK;
 +   public boolean opened;
 +
@@ -29,15 +13,15 @@
 +      return this.itemStacks;
 +   }
 +
-+   public void onOpen(CraftHumanEntity who) {
++   public void onOpen(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
 +      transaction.add(who);
 +   }
 +
-+   public void onClose(CraftHumanEntity who) {
++   public void onClose(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
 +      transaction.remove(who);
 +   }
 +
-+   public List<HumanEntity> getViewers() {
++   public List<org.bukkit.entity.HumanEntity> getViewers() {
 +      return transaction;
 +   }
 +

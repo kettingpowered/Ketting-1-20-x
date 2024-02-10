@@ -1,16 +1,7 @@
 --- a/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/net/minecraft/world/entity/vehicle/Boat.java
-@@ -50,9 +_,16 @@
- import net.minecraft.world.phys.shapes.BooleanOp;
- import net.minecraft.world.phys.shapes.Shapes;
+@@ -52,7 +_,7 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
-+import org.bukkit.entity.Vehicle;
-+import org.bukkit.event.vehicle.VehicleDamageEvent;
-+import org.bukkit.event.vehicle.VehicleDestroyEvent;
-+import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
-+import org.bukkit.event.vehicle.VehicleMoveEvent;
  import org.joml.Vector3f;
  
 -public class Boat extends Entity implements VariantHolder<Boat.Type> {
@@ -18,15 +9,6 @@
     private static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ID_HURTDIR = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.FLOAT);
-@@ -82,7 +_,7 @@
-    private boolean inputDown;
-    private double waterLevel;
-    private float landFriction;
--   private Boat.Status status;
-+   public Boat.Status status;
-    private Boat.Status oldStatus;
-    private double lastYd;
-    private boolean isAboveBubbleColumn;
 @@ -91,6 +_,14 @@
     private float bubbleAngle;
     private float bubbleAngleO;
@@ -47,10 +29,10 @@
           return false;
        } else if (!this.level().isClientSide && !this.isRemoved()) {
 +         // CraftBukkit start
-+         Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++         org.bukkit.entity.Vehicle vehicle = (org.bukkit.entity.Vehicle) this.getBukkitEntity();
 +         org.bukkit.entity.Entity attacker = (p_38319_.getEntity() == null) ? null : p_38319_.getEntity().getBukkitEntity();
 +
-+         VehicleDamageEvent event = new VehicleDamageEvent(vehicle, attacker, (double) p_38320_);
++         org.bukkit.event.vehicle.VehicleDamageEvent event = new org.bukkit.event.vehicle.VehicleDamageEvent(vehicle, attacker, (double) p_38320_);
 +         this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (event.isCancelled()) {
@@ -66,7 +48,7 @@
           boolean flag = p_38319_.getEntity() instanceof Player && ((Player)p_38319_.getEntity()).getAbilities().instabuild;
           if (flag || this.getDamage() > 40.0F) {
 +            // CraftBukkit start
-+            VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, attacker);
++            org.bukkit.event.vehicle.VehicleDestroyEvent destroyEvent = new org.bukkit.event.vehicle.VehicleDestroyEvent(vehicle, attacker);
 +            this.level().getCraftServer().getPluginManager().callEvent(destroyEvent);
 +
 +            if (destroyEvent.isCancelled()) {
@@ -83,7 +65,7 @@
           if (p_38373_.getBoundingBox().minY < this.getBoundingBox().maxY) {
 +            // CraftBukkit start
 +            if (!this.isPassengerOfSameVehicle(p_38373_)) {
-+               VehicleEntityCollisionEvent event = new VehicleEntityCollisionEvent((Vehicle) this.getBukkitEntity(), p_38373_.getBukkitEntity());
++               org.bukkit.event.vehicle.VehicleEntityCollisionEvent event = new org.bukkit.event.vehicle.VehicleEntityCollisionEvent((org.bukkit.entity.Vehicle) this.getBukkitEntity(), p_38373_.getBukkitEntity());
 +               this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +               if (event.isCancelled()) {
@@ -96,7 +78,7 @@
        } else if (p_38373_.getBoundingBox().minY <= this.getBoundingBox().minY) {
 +         // CraftBukkit start
 +         if (!this.isPassengerOfSameVehicle(p_38373_)) {
-+            VehicleEntityCollisionEvent event = new VehicleEntityCollisionEvent((Vehicle) this.getBukkitEntity(), p_38373_.getBukkitEntity());
++            org.bukkit.event.vehicle.VehicleEntityCollisionEvent event = new org.bukkit.event.vehicle.VehicleEntityCollisionEvent((org.bukkit.entity.Vehicle) this.getBukkitEntity(), p_38373_.getBukkitEntity());
 +            this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (event.isCancelled()) {
@@ -111,7 +93,7 @@
        return this.getDirection().getClockWise();
     }
  
-+   private Location lastLocation; // CraftBukkit
++   private org.bukkit.Location lastLocation; // CraftBukkit
     public void tick() {
        this.oldStatus = this.status;
        this.status = this.getStatus();
@@ -123,13 +105,13 @@
 +      org.bukkit.Server server = this.level().getCraftServer();
 +      org.bukkit.World bworld = this.level().getWorld();
 +
-+      Location to = CraftLocation.toBukkit(this.position(), bworld, this.getYRot(), this.getXRot());
-+      Vehicle vehicle = (Vehicle) this.getBukkitEntity();
++      org.bukkit.Location to = org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation.toBukkit(this.position(), bworld, this.getYRot(), this.getXRot());
++      org.bukkit.entity.Vehicle vehicle = (org.bukkit.entity.Vehicle) this.getBukkitEntity();
 +
 +      server.getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
 +
 +      if (lastLocation != null && !lastLocation.equals(to)) {
-+         VehicleMoveEvent event = new VehicleMoveEvent(vehicle, lastLocation, to);
++         org.bukkit.event.vehicle.VehicleMoveEvent event = new org.bukkit.event.vehicle.VehicleMoveEvent(vehicle, lastLocation, to);
 +         server.getPluginManager().callEvent(event);
 +      }
 +      lastLocation = vehicle.getLocation();
@@ -184,8 +166,8 @@
 -                        this.spawnAtLocation(this.getVariant().getPlanks());
 -                     }
 +                  // CraftBukkit start
-+                  Vehicle vehicle = (Vehicle) this.getBukkitEntity();
-+                  VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, null);
++                  org.bukkit.entity.Vehicle vehicle = (org.bukkit.entity.Vehicle) this.getBukkitEntity();
++                  org.bukkit.event.vehicle.VehicleDestroyEvent destroyEvent = new org.bukkit.event.vehicle.VehicleDestroyEvent(vehicle, null);
 +                  this.level().getCraftServer().getPluginManager().callEvent(destroyEvent);
 +                  if (!destroyEvent.isCancelled()) {
 +                     this.kill();

@@ -5,6 +5,7 @@
 
 package net.minecraftforge.client.settings;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
@@ -124,6 +125,22 @@ public enum KeyModifier {
             }
         }
         return NONE;
+    }
+
+    private static final KeyModifier[] VALUES = {SHIFT, CONTROL, ALT};
+    private static final List<KeyModifier> VALUES_LIST = List.of(SHIFT, CONTROL, ALT);
+    private static final List<KeyModifier> ALL = List.of(SHIFT, CONTROL, ALT, NONE);
+    public static final List<KeyModifier> getValues(boolean includeNone) {
+        return includeNone ? ALL : VALUES_LIST;
+    }
+
+    @Nullable
+    public static KeyModifier getModifier(InputConstants.Key key) {
+        for (var modifier : VALUES) {
+            if (modifier.matches(key))
+                return modifier;
+        }
+        return null;
     }
 
     public static boolean isKeyCodeModifier(InputConstants.Key key)

@@ -26,8 +26,8 @@ abstract class SetupCheckJarCompatibility extends DefaultTask {
     @TaskAction
     void run() {
         def inputVersion = inputVersion.get()
-        def fmlLibs = project.configurations.detachedConfiguration(project.PACKED_DEPS.collect {
-            def artifactId = it.split(':')[1]
+        def fmlLibs = project.configurations.detachedConfiguration(project.BUNDLED_PROJECTS.collect {
+            def artifactId = it.split(':')[1]+":jar"
             return project.dependencies.create("net.minecraftforge:${artifactId}:${inputVersion}")
         }.toArray(Dependency[]::new))
 
