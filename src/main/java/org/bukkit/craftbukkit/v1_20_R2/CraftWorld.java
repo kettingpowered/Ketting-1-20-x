@@ -1027,7 +1027,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public void setDifficulty(Difficulty difficulty) {
-        this.getHandle().serverLevelData.setDifficulty(net.minecraft.world.Difficulty.byId(difficulty.getValue()));
+        ((net.minecraft.world.level.storage.PrimaryLevelData) this.getHandle().serverLevelData).setDifficulty(net.minecraft.world.Difficulty.byId(difficulty.getValue()));
     }
 
     @Override
@@ -1336,7 +1336,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public boolean canGenerateStructures() {
-        return world.serverLevelData.worldGenOptions().generateStructures();
+        return ((net.minecraft.world.level.storage.PrimaryLevelData) world.serverLevelData).worldGenOptions().generateStructures();
     }
 
     @Override
@@ -1346,7 +1346,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public void setHardcore(boolean hardcore) {
-        world.serverLevelData.settings.hardcore = hardcore;
+        ((net.minecraft.world.level.storage.PrimaryLevelData) world.serverLevelData).settings.hardcore = hardcore;
     }
 
     @Override
