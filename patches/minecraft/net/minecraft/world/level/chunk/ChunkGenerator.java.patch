@@ -28,7 +28,7 @@
     }
  
     public Optional<ResourceKey<Codec<? extends ChunkGenerator>>> getTypeNameForDataFixer() {
-@@ -264,106 +_,142 @@
+@@ -264,8 +_,19 @@
           return false;
        }
     }
@@ -44,204 +44,17 @@
 +   public java.util.concurrent.atomic.AtomicBoolean ketting$vanilla = new java.util.concurrent.atomic.AtomicBoolean(true); // Ketting
 +   public java.util.concurrent.atomic.AtomicBoolean ketting$onlyAddVanillaDecoration = new java.util.concurrent.atomic.AtomicBoolean(false); // Ketting
     public void applyBiomeDecoration(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_) {
--      ChunkPos chunkpos = p_223088_.getPos();
--      if (!SharedConstants.debugVoidTerrain(chunkpos)) {
--         SectionPos sectionpos = SectionPos.of(chunkpos, p_223087_.getMinSection());
--         BlockPos blockpos = sectionpos.origin();
--         Registry<Structure> registry = p_223087_.registryAccess().registryOrThrow(Registries.STRUCTURE);
--         Map<Integer, List<Structure>> map = registry.stream().collect(Collectors.groupingBy((p_223103_) -> {
--            return p_223103_.step().ordinal();
--         }));
--         List<FeatureSorter.StepFeatureData> list = this.featuresPerStep.get();
--         WorldgenRandom worldgenrandom = new WorldgenRandom(new XoroshiroRandomSource(RandomSupport.generateUniqueSeed()));
--         long i = worldgenrandom.setDecorationSeed(p_223087_.getSeed(), blockpos.getX(), blockpos.getZ());
--         Set<Holder<Biome>> set = new ObjectArraySet<>();
--         ChunkPos.rangeClosed(sectionpos.chunk(), 1).forEach((p_223093_) -> {
--            ChunkAccess chunkaccess = p_223087_.getChunk(p_223093_.x, p_223093_.z);
--
--            for(LevelChunkSection levelchunksection : chunkaccess.getSections()) {
--               levelchunksection.getBiomes().getAll(set::add);
--            }
--
--         });
--         set.retainAll(this.biomeSource.possibleBiomes());
--         int j = list.size();
--
--         try {
--            Registry<PlacedFeature> registry1 = p_223087_.registryAccess().registryOrThrow(Registries.PLACED_FEATURE);
--            int i1 = Math.max(GenerationStep.Decoration.values().length, j);
--
--            for(int k = 0; k < i1; ++k) {
--               int l = 0;
--               if (p_223089_.shouldGenerateStructures()) {
--                  for(Structure structure : map.getOrDefault(k, Collections.emptyList())) {
--                     worldgenrandom.setFeatureSeed(i, l, k);
--                     Supplier<String> supplier = () -> {
--                        return registry.getResourceKey(structure).map(Object::toString).orElseGet(structure::toString);
--                     };
--
--                     try {
--                        p_223087_.setCurrentlyGenerating(supplier);
--                        p_223089_.startsForStructure(sectionpos, structure).forEach((p_223086_) -> {
--                           p_223086_.placeInChunk(p_223087_, p_223089_, this, worldgenrandom, getWritableArea(p_223088_), chunkpos);
--                        });
--                     } catch (Exception exception) {
--                        CrashReport crashreport1 = CrashReport.forThrowable(exception, "Feature placement");
--                        crashreport1.addCategory("Feature").setDetail("Description", supplier::get);
--                        throw new ReportedException(crashreport1);
--                     }
--
--                     ++l;
--                  }
--               }
--
--               if (k < j) {
--                  IntSet intset = new IntArraySet();
--
--                  for(Holder<Biome> holder : set) {
--                     List<HolderSet<PlacedFeature>> list1 = this.generationSettingsGetter.apply(holder).features();
--                     if (k < list1.size()) {
--                        HolderSet<PlacedFeature> holderset = list1.get(k);
--                        FeatureSorter.StepFeatureData featuresorter$stepfeaturedata1 = list.get(k);
--                        holderset.stream().map(Holder::value).forEach((p_223174_) -> {
--                           intset.add(featuresorter$stepfeaturedata1.indexMapping().applyAsInt(p_223174_));
--                        });
--                     }
--                  }
--
--                  int j1 = intset.size();
--                  int[] aint = intset.toIntArray();
--                  Arrays.sort(aint);
--                  FeatureSorter.StepFeatureData featuresorter$stepfeaturedata = list.get(k);
--
--                  for(int k1 = 0; k1 < j1; ++k1) {
--                     int l1 = aint[k1];
--                     PlacedFeature placedfeature = featuresorter$stepfeaturedata.features().get(l1);
--                     Supplier<String> supplier1 = () -> {
--                        return registry1.getResourceKey(placedfeature).map(Object::toString).orElseGet(placedfeature::toString);
--                     };
--                     worldgenrandom.setFeatureSeed(i, l1, k);
--
--                     try {
--                        p_223087_.setCurrentlyGenerating(supplier1);
--                        placedfeature.placeWithBiomeCheck(p_223087_, this, worldgenrandom, blockpos);
--                     } catch (Exception exception1) {
--                        CrashReport crashreport2 = CrashReport.forThrowable(exception1, "Feature placement");
--                        crashreport2.addCategory("Feature").setDetail("Description", supplier1::get);
--                        throw new ReportedException(crashreport2);
--                     }
--                  }
--               }
--            }
--
--            p_223087_.setCurrentlyGenerating((Supplier<String>)null);
--         } catch (Exception exception2) {
--            CrashReport crashreport = CrashReport.forThrowable(exception2, "Biome decoration");
--            crashreport.addCategory("Generation").setDetail("CenterX", chunkpos.x).setDetail("CenterZ", chunkpos.z).setDetail("Seed", i);
--            throw new ReportedException(crashreport);
--         }
--      }
--   }
 +      if (ketting$vanilla.getAndSet(true)) {
-+         ChunkPos chunkpos = p_223088_.getPos();
-+         if (!SharedConstants.debugVoidTerrain(chunkpos)) {
-+            SectionPos sectionpos = SectionPos.of(chunkpos, p_223087_.getMinSection());
-+            BlockPos blockpos = sectionpos.origin();
-+            Registry<Structure> registry = p_223087_.registryAccess().registryOrThrow(Registries.STRUCTURE);
-+            Map<Integer, List<Structure>> map = registry.stream().collect(Collectors.groupingBy((p_223103_) -> {
-+               return p_223103_.step().ordinal();
-+            }));
-+            List<FeatureSorter.StepFeatureData> list = this.featuresPerStep.get();
-+            WorldgenRandom worldgenrandom = new WorldgenRandom(new XoroshiroRandomSource(RandomSupport.generateUniqueSeed()));
-+            long i = worldgenrandom.setDecorationSeed(p_223087_.getSeed(), blockpos.getX(), blockpos.getZ());
-+            Set<Holder<Biome>> set = new ObjectArraySet<>();
-+            ChunkPos.rangeClosed(sectionpos.chunk(), 1).forEach((p_223093_) -> {
-+               ChunkAccess chunkaccess = p_223087_.getChunk(p_223093_.x, p_223093_.z);
-+
-+               for(LevelChunkSection levelchunksection : chunkaccess.getSections()) {
-+                  levelchunksection.getBiomes().getAll(set::add);
-+               }
-+
-+            });
-+            set.retainAll(this.biomeSource.possibleBiomes());
-+            int j = list.size();
-+
-+            try {
-+               Registry<PlacedFeature> registry1 = p_223087_.registryAccess().registryOrThrow(Registries.PLACED_FEATURE);
-+               int i1 = Math.max(GenerationStep.Decoration.values().length, j);
-+
-+               for(int k = 0; k < i1; ++k) {
-+                  int l = 0;
-+                  if (p_223089_.shouldGenerateStructures()) {
-+                     for(Structure structure : map.getOrDefault(k, Collections.emptyList())) {
-+                        worldgenrandom.setFeatureSeed(i, l, k);
-+                        Supplier<String> supplier = () -> {
-+                           return registry.getResourceKey(structure).map(Object::toString).orElseGet(structure::toString);
-+                        };
-+
-+                        try {
-+                           p_223087_.setCurrentlyGenerating(supplier);
-+                           p_223089_.startsForStructure(sectionpos, structure).forEach((p_223086_) -> {
-+                              p_223086_.placeInChunk(p_223087_, p_223089_, this, worldgenrandom, getWritableArea(p_223088_), chunkpos);
-+                           });
-+                        } catch (Exception exception) {
-+                           CrashReport crashreport1 = CrashReport.forThrowable(exception, "Feature placement");
-+                           crashreport1.addCategory("Feature").setDetail("Description", supplier::get);
-+                           throw new ReportedException(crashreport1);
-+                        }
-+
-+                        ++l;
-+                     }
-+                  }
-+
-+                  if (k < j) {
-+                     IntSet intset = new IntArraySet();
-+
-+                     for(Holder<Biome> holder : set) {
-+                        List<HolderSet<PlacedFeature>> list1 = this.generationSettingsGetter.apply(holder).features();
-+                        if (k < list1.size()) {
-+                           HolderSet<PlacedFeature> holderset = list1.get(k);
-+                           FeatureSorter.StepFeatureData featuresorter$stepfeaturedata1 = list.get(k);
-+                           holderset.stream().map(Holder::value).forEach((p_223174_) -> {
-+                              intset.add(featuresorter$stepfeaturedata1.indexMapping().applyAsInt(p_223174_));
-+                           });
-+                        }
-+                     }
-+
-+                     int j1 = intset.size();
-+                     int[] aint = intset.toIntArray();
-+                     Arrays.sort(aint);
-+                     FeatureSorter.StepFeatureData featuresorter$stepfeaturedata = list.get(k);
-+
-+                     for(int k1 = 0; k1 < j1; ++k1) {
-+                        int l1 = aint[k1];
-+                        PlacedFeature placedfeature = featuresorter$stepfeaturedata.features().get(l1);
-+                        Supplier<String> supplier1 = () -> {
-+                           return registry1.getResourceKey(placedfeature).map(Object::toString).orElseGet(placedfeature::toString);
-+                        };
-+                        worldgenrandom.setFeatureSeed(i, l1, k);
-+
-+                        try {
-+                           p_223087_.setCurrentlyGenerating(supplier1);
-+                           placedfeature.placeWithBiomeCheck(p_223087_, this, worldgenrandom, blockpos);
-+                        } catch (Exception exception1) {
-+                           CrashReport crashreport2 = CrashReport.forThrowable(exception1, "Feature placement");
-+                           crashreport2.addCategory("Feature").setDetail("Description", supplier1::get);
-+                           throw new ReportedException(crashreport2);
-+                        }
-+                     }
-+                  }
-+               }
-+
-+               p_223087_.setCurrentlyGenerating((Supplier<String>)null);
-+            } catch (Exception exception2) {
-+               CrashReport crashreport = CrashReport.forThrowable(exception2, "Biome decoration");
-+               crashreport.addCategory("Generation").setDetail("CenterX", chunkpos.x).setDetail("CenterZ", chunkpos.z).setDetail("Seed", i);
-+               throw new ReportedException(crashreport);
-+            }
-+         }
-+         
-+         if (ketting$onlyAddVanillaDecoration.getAndSet(false)) return;
+       ChunkPos chunkpos = p_223088_.getPos();
+       if (!SharedConstants.debugVoidTerrain(chunkpos)) {
+          SectionPos sectionpos = SectionPos.of(chunkpos, p_223087_.getMinSection());
+@@ -363,7 +_,32 @@
+             throw new ReportedException(crashreport);
+          }
+       }
+-   }
++      
++      if (ketting$onlyAddVanillaDecoration.getAndSet(false)) return;
 +      }
 +
 +      org.bukkit.World world = p_223087_.getMinecraftWorld().getWorld();
