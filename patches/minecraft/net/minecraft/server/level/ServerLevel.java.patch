@@ -1,14 +1,5 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -169,7 +_,7 @@
-    final List<ServerPlayer> players = Lists.newArrayList();
-    private final ServerChunkCache chunkSource;
-    private final MinecraftServer server;
--   public final ServerLevelData serverLevelData;
-+   public final net.minecraft.world.level.storage.PrimaryLevelData serverLevelData; // CraftBukkit - type
-    final EntityTickList entityTickList = new EntityTickList();
-    public final PersistentEntitySectionManager<Entity> entityManager;
-    private final GameEventDispatcher gameEventDispatcher;
 @@ -188,24 +_,55 @@
     private final List<CustomSpawner> customSpawners;
     @Nullable
@@ -57,7 +48,7 @@
 +         this.serverLevelData = org.kettingpowered.ketting.utils.DelegateWorldInfo.wrap(p_215002_);
        ChunkGenerator chunkgenerator = p_215004_.generator();
 +      // CraftBukkit start
-+      serverLevelData.setWorld(this);
++      ((net.minecraft.world.level.storage.PrimaryLevelData) serverLevelData).setWorld(this);
 +      bukkitInit(chunkgenerator);
 +      // CraftBukkit end
        boolean flag = p_214999_.forceSynchronousWrites();
@@ -76,9 +67,9 @@
 -      this.structureManager = new StructureManager(this, p_214999_.getWorldData().worldGenOptions(), this.structureCheck);
 -      if (this.dimension() == Level.END && this.dimensionTypeRegistration().is(BuiltinDimensionTypes.END)) {
 -         this.dragonFight = new EndDragonFight(this, i, p_214999_.getWorldData().endDragonFightData());
-+      this.structureManager = new StructureManager(this, this.serverLevelData.worldGenOptions(), this.structureCheck); // CraftBukkit
++      this.structureManager = new StructureManager(this, ((net.minecraft.world.level.storage.PrimaryLevelData) this.serverLevelData).worldGenOptions(), this.structureCheck); // CraftBukkit
 +      if (this.dimension() == Level.END && this.dimensionTypeRegistration().is(BuiltinDimensionTypes.END) || init$env == org.bukkit.World.Environment.THE_END) { //// CraftBukkit - Allow to create EnderDragonBattle in default and custom END
-+         this.dragonFight = new EndDragonFight(this, this.serverLevelData.worldGenOptions().seed(), this.serverLevelData.endDragonFightData()); // CraftBukkit
++         this.dragonFight = new EndDragonFight(this, ((net.minecraft.world.level.storage.PrimaryLevelData) this.serverLevelData).worldGenOptions().seed(), ((net.minecraft.world.level.storage.PrimaryLevelData) this.serverLevelData).endDragonFightData()); // CraftBukkit
        } else {
           this.dragonFight = null;
        }
@@ -92,7 +83,7 @@
 +
 +   private void bukkitInit(ChunkGenerator chunkgenerator){
 +      // CraftBukkit start
-+      serverLevelData.setWorld(this);
++      ((net.minecraft.world.level.storage.PrimaryLevelData) serverLevelData).setWorld(this);
 +
 +      if (biomeProvider != null) {
 +         net.minecraft.world.level.biome.BiomeSource worldChunkManager = new org.bukkit.craftbukkit.v1_20_R1.generator.CustomWorldChunkManager(getWorld(), biomeProvider, server.registryAccess().registryOrThrow(Registries.BIOME));
@@ -397,8 +388,8 @@
 +         ServerLevel serverlevel = this;
 +
 +         serverLevelData.setWorldBorder(serverlevel.getWorldBorder().createSettings());
-+         serverLevelData.setCustomBossEvents(this.server.getCustomBossEvents().save());
-+         convertable.saveDataTag(this.server.registryAccess(), this.serverLevelData, this.server.getPlayerList().getSingleplayerData());
++         ((net.minecraft.world.level.storage.PrimaryLevelData) serverLevelData).setCustomBossEvents(this.server.getCustomBossEvents().save());
++         convertable.saveDataTag(this.server.registryAccess(), (net.minecraft.world.level.storage.PrimaryLevelData) this.serverLevelData, this.server.getPlayerList().getSingleplayerData());
 +         // CraftBukkit end
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Save(this));
        }
@@ -407,7 +398,7 @@
     private void saveLevelData() {
        if (this.dragonFight != null) {
 -         this.server.getWorldData().setEndDragonFightData(this.dragonFight.saveData());
-+         this.serverLevelData.setEndDragonFightData(this.dragonFight.saveData()); // CraftBukkit
++         ((net.minecraft.world.level.storage.PrimaryLevelData) this.serverLevelData).setEndDragonFightData(this.dragonFight.saveData()); // CraftBukkit
        }
  
        this.getChunkSource().getDataStorage().save();
@@ -710,7 +701,7 @@
     @Nullable
     public BlockPos findNearestMapStructure(TagKey<Structure> p_215012_, BlockPos p_215013_, int p_215014_, boolean p_215015_) {
 -      if (!this.server.getWorldData().worldGenOptions().generateStructures()) {
-+      if (!this.serverLevelData.worldGenOptions().generateStructures()) { // CraftBukkit
++      if (!((net.minecraft.world.level.storage.PrimaryLevelData) this.serverLevelData).worldGenOptions().generateStructures()) { // CraftBukkit
           return null;
        } else {
           Optional<HolderSet.Named<Structure>> optional = this.registryAccess().registryOrThrow(Registries.STRUCTURE).getTag(p_215012_);
@@ -739,12 +730,12 @@
  
     public boolean isFlat() {
 -      return this.server.getWorldData().isFlatWorld();
-+      return this.serverLevelData.isFlatWorld(); // CraftBukkit
++      return ((net.minecraft.world.level.storage.PrimaryLevelData) this.serverLevelData).isFlatWorld(); // CraftBukkit
     }
  
     public long getSeed() {
 -      return this.server.getWorldData().worldGenOptions().seed();
-+      return this.serverLevelData.worldGenOptions().seed(); // CraftBukkit
++      return ((net.minecraft.world.level.storage.PrimaryLevelData) this.serverLevelData).worldGenOptions().seed(); // CraftBukkit
     }
  
     @Nullable
