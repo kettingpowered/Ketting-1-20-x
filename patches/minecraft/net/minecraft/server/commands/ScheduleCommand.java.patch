@@ -5,7 +5,7 @@
           long i = p_138429_.getLevel().getGameTime() + (long)p_138431_;
           ResourceLocation resourcelocation = p_138430_.getFirst();
 -         TimerQueue<MinecraftServer> timerqueue = p_138429_.getServer().getWorldData().overworldData().getScheduledEvents();
-+         TimerQueue<MinecraftServer> timerqueue = p_138429_.getLevel().serverLevelData.overworldData().getScheduledEvents(); // CraftBukkit - SPIGOT-6667: Use world specific function timer
++         TimerQueue<MinecraftServer> timerqueue = ((net.minecraft.world.level.storage.PrimaryLevelData) p_138429_.getLevel().serverLevelData).overworldData().getScheduledEvents(); // CraftBukkit - SPIGOT-6667: Use world specific function timer
           p_138430_.getSecond().ifLeft((p_288541_) -> {
              String s = resourcelocation.toString();
              if (p_138432_) {
