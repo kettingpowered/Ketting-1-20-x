@@ -1690,6 +1690,7 @@ public class CraftEventFactory {
         return handleBlockFormEvent(world, pos, block, flag, null);
     }
 
+    public static AtomicBoolean handleBlockFormUpdate = new AtomicBoolean(true); // Ketting
     public static boolean handleBlockFormEvent(Level world, BlockPos pos, net.minecraft.world.level.block.state.BlockState block, int flag, @Nullable Entity entity) {
         CraftBlockState blockState = CraftBlockStates.getBlockState(world, pos, flag);
         blockState.setData(block);
@@ -1698,7 +1699,11 @@ public class CraftEventFactory {
         world.getCraftServer().getPluginManager().callEvent(event);
 
         if (!event.isCancelled()) {
-            blockState.update(true);
+            // Ketting start - Possibility to move the handle to the vanilla method
+            if (handleBlockFormUpdate.getAndSet(true)) {
+                blockState.update(true);
+            }
+            // Ketting end
         }
 
         return !event.isCancelled();

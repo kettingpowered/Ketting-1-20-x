@@ -231,27 +231,43 @@
              }
           }
        }
-@@ -430,8 +_,9 @@
+@@ -430,8 +_,14 @@
           BlockPos blockpos1 = this.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, this.getBlockRandomPos(i, 0, j, 15));
           BlockPos blockpos2 = blockpos1.below();
           Biome biome = this.getBiome(blockpos1).value();
 +         if (this.isAreaLoaded(blockpos2, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
           if (biome.shouldFreeze(this, blockpos2)) {
 -            this.setBlockAndUpdate(blockpos2, Blocks.ICE.defaultBlockState());
-+            org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.ICE.defaultBlockState(), null); // CraftBukkit
++            // Ketting start
++            org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormUpdate.set(false);
++            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormEvent(this, blockpos2, Blocks.ICE.defaultBlockState(), null))  { // CraftBukkit
++               this.setBlockAndUpdate(blockpos2, Blocks.ICE.defaultBlockState());
++            }
++            // Ketting end
           }
  
           if (flag) {
-@@ -443,10 +_,10 @@
+@@ -443,10 +_,21 @@
                    if (k < Math.min(i1, 8)) {
                       BlockState blockstate1 = blockstate.setValue(SnowLayerBlock.LAYERS, Integer.valueOf(k + 1));
                       Block.pushEntitiesUp(blockstate, blockstate1, this, blockpos1);
 -                     this.setBlockAndUpdate(blockpos1, blockstate1);
-+                     org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, blockstate1, null); // CraftBukkit
++                     
++                     // Ketting start
++                     org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormUpdate.set(false);
++                     if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, blockstate1, null))  { // CraftBukkit
++                        this.setBlockAndUpdate(blockpos2, Blocks.ICE.defaultBlockState());
++                     }
++                     // Ketting end
                    }
                 } else {
 -                  this.setBlockAndUpdate(blockpos1, Blocks.SNOW.defaultBlockState());
-+                  org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.SNOW.defaultBlockState(), null); // CraftBukkit
++                  // Ketting start
++                  org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormUpdate.set(false);
++                  if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.SNOW.defaultBlockState(), null))  { // CraftBukkit
++                     this.setBlockAndUpdate(blockpos2, Blocks.ICE.defaultBlockState());
++                  }
++                  // Ketting end
                 }
              }
  
