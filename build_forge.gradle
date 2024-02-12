@@ -132,6 +132,7 @@ dependencies {
     installer(libs.bundles.jarjar)
 
     runtimeOnly(libs.bootstrap)
+    runtimeOnly(libs.bootstrap.dev)
 
     //Ketting start
     installer(libs.kettingcore){
@@ -1178,5 +1179,3 @@ publishing {
 // Make sure we run bin compat checking during local testing.
 if (!System.env.MAVEN_USER || !System.env.MAVEN_PASSWORD)
     tasks.named('publish').configure { dependsOn(':forge:checkJarCompatibility') }
-
-apply from: rootProject.file('build_forge_eclipse.gradle')
