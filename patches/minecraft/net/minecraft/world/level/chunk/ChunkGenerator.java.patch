@@ -28,49 +28,60 @@
     }
  
     public Optional<ResourceKey<Codec<? extends ChunkGenerator>>> getTypeNameForDataFixer() {
-@@ -265,7 +_,7 @@
+@@ -264,8 +_,19 @@
+          return false;
        }
     }
- 
--   public void applyBiomeDecoration(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_) {
++   
 +   public void addVanillaDecorations(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_) { // CraftBukkit
++      // Ketting - Handle this method in the original place
++      ketting$onlyAddVanillaDecoration.set(true);
++      applyBiomeDecoration(p_223087_, p_223088_, p_223089_, true);
++      // Ketting end
++   }
+ 
++   // CraftBukkit start
++   public java.util.concurrent.atomic.AtomicBoolean ketting$vanilla = new java.util.concurrent.atomic.AtomicBoolean(true); // Ketting
++   public java.util.concurrent.atomic.AtomicBoolean ketting$onlyAddVanillaDecoration = new java.util.concurrent.atomic.AtomicBoolean(false); // Ketting
+    public void applyBiomeDecoration(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_) {
++      if (ketting$vanilla.getAndSet(true)) {
        ChunkPos chunkpos = p_223088_.getPos();
        if (!SharedConstants.debugVoidTerrain(chunkpos)) {
           SectionPos sectionpos = SectionPos.of(chunkpos, p_223087_.getMinSection());
-@@ -365,6 +_,33 @@
+@@ -363,7 +_,32 @@
+             throw new ReportedException(crashreport);
+          }
        }
-    }
- 
-+   // CraftBukkit start
-+   public void applyBiomeDecoration(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_) {
-+      applyBiomeDecoration(p_223087_, p_223088_, p_223089_, true);
-+   }
-+
-+   public void applyBiomeDecoration(WorldGenLevel generatoraccessseed, ChunkAccess ichunkaccess, StructureManager structuremanager, boolean vanilla) {
-+      if (vanilla) {
-+         addVanillaDecorations(generatoraccessseed, ichunkaccess, structuremanager);
+-   }
++      
++      if (ketting$onlyAddVanillaDecoration.getAndSet(false)) return;
 +      }
 +
-+      org.bukkit.World world = generatoraccessseed.getMinecraftWorld().getWorld();
++      org.bukkit.World world = p_223087_.getMinecraftWorld().getWorld();
 +      // only call when a populator is present (prevents unnecessary entity conversion)
 +      if (!world.getPopulators().isEmpty()) {
-+         org.bukkit.craftbukkit.v1_20_R1.generator.CraftLimitedRegion limitedRegion = new org.bukkit.craftbukkit.v1_20_R1.generator.CraftLimitedRegion(generatoraccessseed, ichunkaccess.getPos());
-+         int x = ichunkaccess.getPos().x;
-+         int z = ichunkaccess.getPos().z;
++         org.bukkit.craftbukkit.v1_20_R1.generator.CraftLimitedRegion limitedRegion = new org.bukkit.craftbukkit.v1_20_R1.generator.CraftLimitedRegion(p_223087_, p_223088_.getPos());
++         int x = p_223088_.getPos().x;
++         int z = p_223088_.getPos().z;
 +         for (org.bukkit.generator.BlockPopulator populator : world.getPopulators()) {
-+            WorldgenRandom seededrandom = new WorldgenRandom(new net.minecraft.world.level.levelgen.LegacyRandomSource(generatoraccessseed.getSeed()));
-+            seededrandom.setDecorationSeed(generatoraccessseed.getSeed(), x, z);
++            WorldgenRandom seededrandom = new WorldgenRandom(new net.minecraft.world.level.levelgen.LegacyRandomSource(p_223087_.getSeed()));
++            seededrandom.setDecorationSeed(p_223087_.getSeed(), x, z);
 +            populator.populate(world, new org.bukkit.craftbukkit.v1_20_R1.util.RandomSourceWrapper.RandomWrapper(seededrandom), x, z, limitedRegion);
 +         }
 +         limitedRegion.saveEntities();
 +         limitedRegion.breakLink();
 +      }
 +   }
-+   // CraftBukkit end
 +
++   public void applyBiomeDecoration(WorldGenLevel generatoraccessseed, ChunkAccess ichunkaccess, StructureManager structuremanager, boolean vanilla) {
++      ketting$vanilla.getAndSet(vanilla);
++      applyBiomeDecoration(generatoraccessseed, ichunkaccess, structuremanager);
++      
++   }
++   // CraftBukkit end
+ 
     private static BoundingBox getWritableArea(ChunkAccess p_187718_) {
        ChunkPos chunkpos = p_187718_.getPos();
-       int i = chunkpos.getMinBlockX();
 @@ -480,6 +_,14 @@
        Predicate<Holder<Biome>> predicate = holderset::contains;
        StructureStart structurestart = structure.generate(p_223107_, this, this.biomeSource, p_223108_, p_223109_, p_223110_, p_223112_, i, p_223111_, predicate);
