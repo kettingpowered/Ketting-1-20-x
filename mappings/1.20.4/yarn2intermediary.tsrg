@@ -15843,9 +15843,13 @@ net/minecraft/client/render/entity/CreeperEntityRenderer net/minecraft/class_887
 	scale (Lnet/minecraft/entity/mob/CreeperEntity;Lnet/minecraft/client/util/math/MatrixStack;F)V method_3900
 net/minecraft/client/render/entity/DisplayEntityRenderer net/minecraft/class_8138
 	renderDispatcher field_42525
+	getBackwardsYaw (Lnet/minecraft/client/render/Camera;)F method_52845
 	getBillboardRotation (Lnet/minecraft/entity/decoration/DisplayEntity$RenderState;Lnet/minecraft/entity/decoration/DisplayEntity;FLorg/joml/Quaternionf;)Lorg/joml/Quaternionf; method_49053
 	getData (Lnet/minecraft/entity/decoration/DisplayEntity;)Ljava/lang/Object; method_49921
+	getNegatedPitch (Lnet/minecraft/client/render/Camera;)F method_52847
 	getTexture (Lnet/minecraft/entity/decoration/DisplayEntity;)Lnet/minecraft/util/Identifier; method_49050
+	lerpPitch (Lnet/minecraft/entity/decoration/DisplayEntity;F)F method_52846
+	lerpYaw (Lnet/minecraft/entity/decoration/DisplayEntity;F)F method_52844
 	render (Lnet/minecraft/entity/decoration/DisplayEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V method_49051
 	render (Lnet/minecraft/entity/decoration/DisplayEntity;Ljava/lang/Object;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IF)V method_49052
 net/minecraft/client/render/entity/DisplayEntityRenderer$1 net/minecraft/class_8138$1
@@ -35551,8 +35555,8 @@ net/minecraft/nbt/NbtByte net/minecraft/class_2481
 	of (B)Lnet/minecraft/nbt/NbtByte; method_23233
 	of (Z)Lnet/minecraft/nbt/NbtByte; method_23234
 net/minecraft/nbt/NbtByte$1 net/minecraft/class_2481$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtByte; method_23235
-	readByte (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)B method_53887
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtByte; method_23235
+	readByte (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)B method_53887
 net/minecraft/nbt/NbtByte$Cache net/minecraft/class_2481$class_4610
 	VALUES field_21028
 net/minecraft/nbt/NbtByteArray net/minecraft/class_2479
@@ -35566,8 +35570,8 @@ net/minecraft/nbt/NbtByteArray net/minecraft/class_2479
 	set (ILnet/minecraft/nbt/NbtByte;)Lnet/minecraft/nbt/NbtByte; method_17803
 	toArray (Ljava/util/List;)[B method_10522
 net/minecraft/nbt/NbtByteArray$1 net/minecraft/class_2479$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtByteArray; method_23232
-	readByteArray (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)[B method_53886
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtByteArray; method_23232
+	readByteArray (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)[B method_53886
 net/minecraft/nbt/NbtCompound net/minecraft/class_2487
 	CODEC field_25128
 	SIZE field_41718
@@ -35614,15 +35618,15 @@ net/minecraft/nbt/NbtCompound net/minecraft/class_2487
 	putShort (Ljava/lang/String;S)V method_10575
 	putString (Ljava/lang/String;Ljava/lang/String;)V method_10582
 	putUuid (Ljava/lang/String;Ljava/util/UUID;)V method_25927
-	read (Lnet/minecraft/nbt/NbtType;Ljava/lang/String;Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtElement; method_10581
+	read (Lnet/minecraft/nbt/NbtType;Ljava/lang/String;Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtElement; method_10581
 	remove (Ljava/lang/String;)V method_10551
 	toMap ()Ljava/util/Map; method_29143
 	write (Ljava/lang/String;Lnet/minecraft/nbt/NbtElement;Ljava/io/DataOutput;)V method_10555
 net/minecraft/nbt/NbtCompound$1 net/minecraft/class_2487$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtCompound; method_23240
-	readCompound (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtCompound; method_53889
-	readString (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Ljava/lang/String; method_53907
-	scanCompound (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/scanner/NbtScanner$Result; method_53888
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtCompound; method_23240
+	readCompound (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtCompound; method_53889
+	readString (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Ljava/lang/String; method_53907
+	scanCompound (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/scanner/NbtScanner$Result; method_53888
 net/minecraft/nbt/NbtCompound$2 net/minecraft/class_2487$2
 net/minecraft/nbt/NbtCrashException net/minecraft/class_8911
 net/minecraft/nbt/NbtDouble net/minecraft/class_2489
@@ -35633,8 +35637,8 @@ net/minecraft/nbt/NbtDouble net/minecraft/class_2489
 	copy ()Lnet/minecraft/nbt/NbtDouble; method_10585
 	of (D)Lnet/minecraft/nbt/NbtDouble; method_23241
 net/minecraft/nbt/NbtDouble$1 net/minecraft/class_2489$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtDouble; method_23242
-	readDouble (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)D method_53890
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtDouble; method_23242
+	readDouble (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)D method_53890
 net/minecraft/nbt/NbtElement net/minecraft/class_2520
 	BYTE_ARRAY_TYPE field_33257
 	BYTE_TYPE field_33251
@@ -35666,7 +35670,7 @@ net/minecraft/nbt/NbtEnd net/minecraft/class_2491
 	TYPE field_21032
 	copy ()Lnet/minecraft/nbt/NbtEnd; method_10586
 net/minecraft/nbt/NbtEnd$1 net/minecraft/class_2491$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtEnd; method_23243
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtEnd; method_23243
 net/minecraft/nbt/NbtException net/minecraft/class_8909
 net/minecraft/nbt/NbtFloat net/minecraft/class_2494
 	SIZE field_41722
@@ -35676,8 +35680,8 @@ net/minecraft/nbt/NbtFloat net/minecraft/class_2494
 	copy ()Lnet/minecraft/nbt/NbtFloat; method_10587
 	of (F)Lnet/minecraft/nbt/NbtFloat; method_23244
 net/minecraft/nbt/NbtFloat$1 net/minecraft/class_2494$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtFloat; method_23245
-	readFloat (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)F method_53891
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtFloat; method_23245
+	readFloat (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)F method_53891
 net/minecraft/nbt/NbtHelper net/minecraft/class_2512
 	BLOCK_POS_COMPARATOR field_27816
 	COLON field_33228
@@ -35722,8 +35726,8 @@ net/minecraft/nbt/NbtInt net/minecraft/class_2497
 	copy ()Lnet/minecraft/nbt/NbtInt; method_10592
 	of (I)Lnet/minecraft/nbt/NbtInt; method_23247
 net/minecraft/nbt/NbtInt$1 net/minecraft/class_2497$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtInt; method_23248
-	readInt (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)I method_53893
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtInt; method_23248
+	readInt (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)I method_53893
 net/minecraft/nbt/NbtInt$Cache net/minecraft/class_2497$class_4611
 	MAX field_33197
 	MIN field_33198
@@ -35740,23 +35744,23 @@ net/minecraft/nbt/NbtIntArray net/minecraft/class_2495
 	set (ILnet/minecraft/nbt/NbtInt;)Lnet/minecraft/nbt/NbtInt; method_17806
 	toArray (Ljava/util/List;)[I method_10590
 net/minecraft/nbt/NbtIntArray$1 net/minecraft/class_2495$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtIntArray; method_23246
-	readIntArray (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)[I method_53892
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtIntArray; method_23246
+	readIntArray (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)[I method_53892
 net/minecraft/nbt/NbtIo net/minecraft/class_2507
 	OPEN_OPTIONS field_47513
 	compress (Ljava/io/OutputStream;)Ljava/io/DataOutputStream; method_54906
 	decompress (Ljava/io/InputStream;)Ljava/io/DataInputStream; method_40059
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtElement; method_52894
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtElement; method_52894
 	read (Ljava/nio/file/Path;)Lnet/minecraft/nbt/NbtCompound; method_10633
 	readCompound (Ljava/io/DataInput;)Lnet/minecraft/nbt/NbtCompound; method_10627
-	readCompound (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtCompound; method_10625
-	readCompressed (Ljava/io/InputStream;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtCompound; method_10629
-	readCompressed (Ljava/nio/file/Path;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtCompound; method_30613
-	readElement (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtElement; method_10626
-	readElement (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;B)Lnet/minecraft/nbt/NbtElement; method_52892
-	scan (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtTagSizeTracker;)V method_39855
-	scanCompressed (Ljava/io/InputStream;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtTagSizeTracker;)V method_40058
-	scanCompressed (Ljava/nio/file/Path;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtTagSizeTracker;)V method_40057
+	readCompound (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtCompound; method_10625
+	readCompressed (Ljava/io/InputStream;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtCompound; method_10629
+	readCompressed (Ljava/nio/file/Path;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtCompound; method_30613
+	readElement (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtElement; method_10626
+	readElement (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;B)Lnet/minecraft/nbt/NbtElement; method_52892
+	scan (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtSizeTracker;)V method_39855
+	scanCompressed (Ljava/io/InputStream;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtSizeTracker;)V method_40058
+	scanCompressed (Ljava/nio/file/Path;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtSizeTracker;)V method_40057
 	write (Lnet/minecraft/nbt/NbtCompound;Ljava/nio/file/Path;)V method_10630
 	write (Lnet/minecraft/nbt/NbtElement;Ljava/io/DataOutput;)V method_55324
 	writeCompound (Lnet/minecraft/nbt/NbtCompound;Ljava/io/DataOutput;)V method_10628
@@ -35788,9 +35792,9 @@ net/minecraft/nbt/NbtList net/minecraft/class_2499
 	remove (I)Lnet/minecraft/nbt/NbtElement; method_10536
 	set (ILnet/minecraft/nbt/NbtElement;)Lnet/minecraft/nbt/NbtElement; method_10606
 net/minecraft/nbt/NbtList$1 net/minecraft/class_2499$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtList; method_23249
-	readList (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtList; method_53895
-	scanList (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/scanner/NbtScanner$Result; method_53894
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtList; method_23249
+	readList (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtList; method_53895
+	scanList (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/scanner/NbtScanner$Result; method_53894
 net/minecraft/nbt/NbtList$2 net/minecraft/class_2499$2
 net/minecraft/nbt/NbtLong net/minecraft/class_2503
 	SIZE field_41727
@@ -35799,8 +35803,8 @@ net/minecraft/nbt/NbtLong net/minecraft/class_2503
 	copy ()Lnet/minecraft/nbt/NbtLong; method_10621
 	of (J)Lnet/minecraft/nbt/NbtLong; method_23251
 net/minecraft/nbt/NbtLong$1 net/minecraft/class_2503$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtLong; method_23252
-	readLong (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)J method_53897
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtLong; method_23252
+	readLong (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)J method_53897
 net/minecraft/nbt/NbtLong$Cache net/minecraft/class_2503$class_4612
 	MAX field_33202
 	MIN field_33203
@@ -35817,8 +35821,8 @@ net/minecraft/nbt/NbtLongArray net/minecraft/class_2501
 	remove (I)Lnet/minecraft/nbt/NbtLong; method_17811
 	toArray (Ljava/util/List;)[J method_10617
 net/minecraft/nbt/NbtLongArray$1 net/minecraft/class_2501$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtLongArray; method_23250
-	readLongArray (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)[J method_53896
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtLongArray; method_23250
+	readLongArray (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)[J method_53896
 net/minecraft/nbt/NbtOps net/minecraft/class_2509
 	INSTANCE field_11560
 	MARKER_KEY field_40667
@@ -35889,12 +35893,26 @@ net/minecraft/nbt/NbtShort net/minecraft/class_2516
 	copy ()Lnet/minecraft/nbt/NbtShort; method_10704
 	of (S)Lnet/minecraft/nbt/NbtShort; method_23254
 net/minecraft/nbt/NbtShort$1 net/minecraft/class_2516$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtShort; method_23255
-	readShort (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)S method_53903
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtShort; method_23255
+	readShort (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)S method_53903
 net/minecraft/nbt/NbtShort$Cache net/minecraft/class_2516$class_4613
 	MAX field_33232
 	MIN field_33233
 	VALUES field_21044
+net/minecraft/nbt/NbtSizeTracker net/minecraft/class_2505
+	DEFAULT_MAX_DEPTH field_46208
+	allocatedBytes field_11555
+	depth field_46210
+	maxBytes field_11557
+	maxDepth field_46209
+	add (J)V method_48004
+	add (JJ)V method_53908
+	getAllocatedBytes ()J method_47987
+	getDepth ()I method_53902
+	of (J)Lnet/minecraft/nbt/NbtSizeTracker; method_53899
+	ofUnlimitedBytes ()Lnet/minecraft/nbt/NbtSizeTracker; method_53898
+	popStack ()V method_53901
+	pushStack ()V method_53900
 net/minecraft/nbt/NbtSizeValidationException net/minecraft/class_8801
 net/minecraft/nbt/NbtString net/minecraft/class_2519
 	BACKSLASH field_33244
@@ -35910,35 +35928,21 @@ net/minecraft/nbt/NbtString net/minecraft/class_2519
 	of (Ljava/lang/String;)Lnet/minecraft/nbt/NbtString; method_23256
 	skip (Ljava/io/DataInput;)V method_39875
 net/minecraft/nbt/NbtString$1 net/minecraft/class_2519$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtString; method_23257
-	readString (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Ljava/lang/String; method_53904
-net/minecraft/nbt/NbtTagSizeTracker net/minecraft/class_2505
-	DEFAULT_MAX_DEPTH field_46208
-	allocatedBytes field_11555
-	depth field_46210
-	maxBytes field_11557
-	maxDepth field_46209
-	add (J)V method_48004
-	add (JJ)V method_53908
-	getAllocatedBytes ()J method_47987
-	getDepth ()I method_53902
-	of (J)Lnet/minecraft/nbt/NbtTagSizeTracker; method_53899
-	ofUnlimitedBytes ()Lnet/minecraft/nbt/NbtTagSizeTracker; method_53898
-	popStack ()V method_53901
-	pushStack ()V method_53900
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtString; method_23257
+	readString (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Ljava/lang/String; method_53904
 net/minecraft/nbt/NbtType net/minecraft/class_4614
-	accept (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtTagSizeTracker;)V method_39877
+	accept (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtSizeTracker;)V method_39877
 	createInvalid (I)Lnet/minecraft/nbt/NbtType; method_23260
-	doAccept (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/scanner/NbtScanner$Result; method_39852
+	doAccept (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/scanner/NbtScanner$Result; method_39852
 	getCommandFeedbackName ()Ljava/lang/String; method_23261
 	getCrashReportName ()Ljava/lang/String; method_23259
 	isImmutable ()Z method_23263
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtElement; method_23262
-	skip (Ljava/io/DataInput;ILnet/minecraft/nbt/NbtTagSizeTracker;)V method_39854
-	skip (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)V method_39851
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtElement; method_23262
+	skip (Ljava/io/DataInput;ILnet/minecraft/nbt/NbtSizeTracker;)V method_39854
+	skip (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)V method_39851
 net/minecraft/nbt/NbtType$1 net/minecraft/class_4614$1
 	createException ()Ljava/io/IOException; method_39878
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtEnd; method_23264
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtEnd; method_23264
 net/minecraft/nbt/NbtType$2 net/minecraft/class_4614$2
 net/minecraft/nbt/NbtType$OfFixedSize net/minecraft/class_4614$class_6839
 	getSizeInBytes ()I method_39853
@@ -36221,7 +36225,7 @@ net/minecraft/network/PacketByteBuf net/minecraft/class_2540
 	capacity (I)Lnet/minecraft/network/PacketByteBuf; method_52986
 	clear ()Lnet/minecraft/network/PacketByteBuf; method_52931
 	decode (Lcom/mojang/serialization/DynamicOps;Lcom/mojang/serialization/Codec;)Ljava/lang/Object; method_52954
-	decode (Lcom/mojang/serialization/DynamicOps;Lcom/mojang/serialization/Codec;Lnet/minecraft/nbt/NbtTagSizeTracker;)Ljava/lang/Object; method_29171
+	decode (Lcom/mojang/serialization/DynamicOps;Lcom/mojang/serialization/Codec;Lnet/minecraft/nbt/NbtSizeTracker;)Ljava/lang/Object; method_29171
 	decode (Ljava/util/function/IntFunction;)Ljava/lang/Object; method_52962
 	decodeAsJson (Lcom/mojang/serialization/Codec;)Ljava/lang/Object; method_49394
 	discardReadBytes ()Lnet/minecraft/network/PacketByteBuf; method_52936
@@ -36276,7 +36280,7 @@ net/minecraft/network/PacketByteBuf net/minecraft/class_2540
 	readMap (Ljava/util/function/IntFunction;Lnet/minecraft/network/PacketByteBuf$PacketReader;Lnet/minecraft/network/PacketByteBuf$PacketReader;)Ljava/util/Map; method_34069
 	readMap (Lnet/minecraft/network/PacketByteBuf$PacketReader;Lnet/minecraft/network/PacketByteBuf$PacketReader;)Ljava/util/Map; method_34067
 	readNbt ()Lnet/minecraft/nbt/NbtCompound; method_10798
-	readNbt (Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtElement; method_30616
+	readNbt (Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtElement; method_30616
 	readNullable (Lnet/minecraft/network/PacketByteBuf$PacketReader;)Ljava/lang/Object; method_43827
 	readOptional (Lnet/minecraft/network/PacketByteBuf$PacketReader;)Ljava/util/Optional; method_37436
 	readProperty ()Lcom/mojang/authlib/properties/Property; method_43624

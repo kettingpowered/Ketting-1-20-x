@@ -21457,13 +21457,13 @@ net/minecraft/client/render/entity/CreeperEntityRenderer fyb
 	scale (Lnet/minecraft/entity/mob/CreeperEntity;Lnet/minecraft/client/util/math/MatrixStack;F)V a
 net/minecraft/client/render/entity/DisplayEntityRenderer fyc
 	renderDispatcher a
+	getBackwardsYaw (Lnet/minecraft/client/render/Camera;)F a
 	getBillboardRotation (Lnet/minecraft/entity/decoration/DisplayEntity$RenderState;Lnet/minecraft/entity/decoration/DisplayEntity;FLorg/joml/Quaternionf;)Lorg/joml/Quaternionf; a
 	getData (Lnet/minecraft/entity/decoration/DisplayEntity;)Ljava/lang/Object; b
+	getNegatedPitch (Lnet/minecraft/client/render/Camera;)F b
 	getTexture (Lnet/minecraft/entity/decoration/DisplayEntity;)Lnet/minecraft/util/Identifier; a
-	method_52844 (Lnet/minecraft/entity/decoration/DisplayEntity;F)F a
-	method_52845 (Lnet/minecraft/client/render/Camera;)F a
-	method_52846 (Lnet/minecraft/entity/decoration/DisplayEntity;F)F b
-	method_52847 (Lnet/minecraft/client/render/Camera;)F b
+	lerpPitch (Lnet/minecraft/entity/decoration/DisplayEntity;F)F b
+	lerpYaw (Lnet/minecraft/entity/decoration/DisplayEntity;F)F a
 	render (Lnet/minecraft/entity/decoration/DisplayEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V a
 	render (Lnet/minecraft/entity/decoration/DisplayEntity;Ljava/lang/Object;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IF)V a
 net/minecraft/client/render/entity/DisplayEntityRenderer$1 fyc$1
@@ -48276,8 +48276,8 @@ net/minecraft/nbt/NbtByte net/minecraft/nbt/NBTTagByte
 	of (B)Lnet/minecraft/nbt/NbtByte; a
 	of (Z)Lnet/minecraft/nbt/NbtByte; a
 net/minecraft/nbt/NbtByte$1 sl$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtByte; a
-	readByte (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)B d
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtByte; a
+	readByte (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)B d
 net/minecraft/nbt/NbtByte$Cache sl$a
 	VALUES a
 net/minecraft/nbt/NbtByteArray net/minecraft/nbt/NBTTagByteArray
@@ -48291,8 +48291,8 @@ net/minecraft/nbt/NbtByteArray net/minecraft/nbt/NBTTagByteArray
 	set (ILnet/minecraft/nbt/NbtByte;)Lnet/minecraft/nbt/NbtByte; a
 	toArray (Ljava/util/List;)[B a
 net/minecraft/nbt/NbtByteArray$1 sk$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtByteArray; a
-	readByteArray (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)[B d
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtByteArray; a
+	readByteArray (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)[B d
 net/minecraft/nbt/NbtCompound net/minecraft/nbt/NBTTagCompound
 	CODEC a
 	SIZE c
@@ -48344,15 +48344,15 @@ net/minecraft/nbt/NbtCompound net/minecraft/nbt/NBTTagCompound
 	putShort (Ljava/lang/String;S)V a
 	putString (Ljava/lang/String;Ljava/lang/String;)V a
 	putUuid (Ljava/lang/String;Ljava/util/UUID;)V a
-	read (Lnet/minecraft/nbt/NbtType;Ljava/lang/String;Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtElement; a
+	read (Lnet/minecraft/nbt/NbtType;Ljava/lang/String;Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtElement; a
 	remove (Ljava/lang/String;)V r
 	toMap ()Ljava/util/Map; i
 	write (Ljava/lang/String;Lnet/minecraft/nbt/NbtElement;Ljava/io/DataOutput;)V a
 net/minecraft/nbt/NbtCompound$1 sn$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtCompound; a
-	readCompound (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtCompound; d
-	readString (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Ljava/lang/String; e
-	scanCompound (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/scanner/NbtScanner$Result; c
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtCompound; a
+	readCompound (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtCompound; d
+	readString (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Ljava/lang/String; e
+	scanCompound (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/scanner/NbtScanner$Result; c
 net/minecraft/nbt/NbtCompound$2 sn$2
 	field_36243 a
 	field_36244 b
@@ -48365,8 +48365,8 @@ net/minecraft/nbt/NbtDouble net/minecraft/nbt/NBTTagDouble
 	copy ()Lnet/minecraft/nbt/NbtDouble; e
 	of (D)Lnet/minecraft/nbt/NbtDouble; a
 net/minecraft/nbt/NbtDouble$1 so$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtDouble; a
-	readDouble (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)D d
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtDouble; a
+	readDouble (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)D d
 net/minecraft/nbt/NbtElement net/minecraft/nbt/NBTBase
 	BYTE_ARRAY_TYPE o
 	BYTE_TYPE i
@@ -48402,7 +48402,7 @@ net/minecraft/nbt/NbtEnd net/minecraft/nbt/NBTTagEnd
 	TYPE a
 	copy ()Lnet/minecraft/nbt/NbtEnd; e
 net/minecraft/nbt/NbtEnd$1 sp$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtEnd; a
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtEnd; a
 net/minecraft/nbt/NbtFloat net/minecraft/nbt/NBTTagFloat
 	SIZE c
 	TYPE b
@@ -48411,8 +48411,8 @@ net/minecraft/nbt/NbtFloat net/minecraft/nbt/NBTTagFloat
 	copy ()Lnet/minecraft/nbt/NbtFloat; e
 	of (F)Lnet/minecraft/nbt/NbtFloat; a
 net/minecraft/nbt/NbtFloat$1 sq$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtFloat; a
-	readFloat (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)F d
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtFloat; a
+	readFloat (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)F d
 net/minecraft/nbt/NbtHelper net/minecraft/nbt/GameProfileSerializer
 	BLOCK_POS_COMPARATOR b
 	COLON g
@@ -48472,8 +48472,8 @@ net/minecraft/nbt/NbtInt net/minecraft/nbt/NBTTagInt
 	copy ()Lnet/minecraft/nbt/NbtInt; e
 	of (I)Lnet/minecraft/nbt/NbtInt; a
 net/minecraft/nbt/NbtInt$1 ss$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtInt; a
-	readInt (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)I d
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtInt; a
+	readInt (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)I d
 net/minecraft/nbt/NbtInt$Cache ss$a
 	MAX b
 	MIN c
@@ -48490,23 +48490,23 @@ net/minecraft/nbt/NbtIntArray net/minecraft/nbt/NBTTagIntArray
 	set (ILnet/minecraft/nbt/NbtInt;)Lnet/minecraft/nbt/NbtInt; a
 	toArray (Ljava/util/List;)[I a
 net/minecraft/nbt/NbtIntArray$1 sr$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtIntArray; a
-	readIntArray (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)[I d
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtIntArray; a
+	readIntArray (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)[I d
 net/minecraft/nbt/NbtIo net/minecraft/nbt/NBTCompressedStreamTools
 	OPEN_OPTIONS a
 	compress (Ljava/io/OutputStream;)Ljava/io/DataOutputStream; a
 	decompress (Ljava/io/InputStream;)Ljava/io/DataInputStream; a
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtElement; b
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtElement; b
 	read (Ljava/nio/file/Path;)Lnet/minecraft/nbt/NbtCompound; a
 	readCompound (Ljava/io/DataInput;)Lnet/minecraft/nbt/NbtCompound; a
-	readCompound (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtCompound; a
-	readCompressed (Ljava/io/InputStream;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtCompound; a
-	readCompressed (Ljava/nio/file/Path;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtCompound; a
-	readElement (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtElement; c
-	readElement (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;B)Lnet/minecraft/nbt/NbtElement; a
-	scan (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtTagSizeTracker;)V a
-	scanCompressed (Ljava/io/InputStream;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtTagSizeTracker;)V a
-	scanCompressed (Ljava/nio/file/Path;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtTagSizeTracker;)V a
+	readCompound (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtCompound; a
+	readCompressed (Ljava/io/InputStream;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtCompound; a
+	readCompressed (Ljava/nio/file/Path;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtCompound; a
+	readElement (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtElement; c
+	readElement (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;B)Lnet/minecraft/nbt/NbtElement; a
+	scan (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtSizeTracker;)V a
+	scanCompressed (Ljava/io/InputStream;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtSizeTracker;)V a
+	scanCompressed (Ljava/nio/file/Path;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtSizeTracker;)V a
 	write (Lnet/minecraft/nbt/NbtCompound;Ljava/nio/file/Path;)V b
 	write (Lnet/minecraft/nbt/NbtElement;Ljava/io/DataOutput;)V c
 	writeCompound (Lnet/minecraft/nbt/NbtCompound;Ljava/io/DataOutput;)V a
@@ -48539,9 +48539,9 @@ net/minecraft/nbt/NbtList net/minecraft/nbt/NBTTagList
 	remove (I)Lnet/minecraft/nbt/NbtElement; method_10536
 	set (ILnet/minecraft/nbt/NbtElement;)Lnet/minecraft/nbt/NbtElement; method_10606
 net/minecraft/nbt/NbtList$1 st$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtList; a
-	readList (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtList; d
-	scanList (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/scanner/NbtScanner$Result; c
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtList; a
+	readList (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtList; d
+	scanList (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/scanner/NbtScanner$Result; c
 net/minecraft/nbt/NbtList$2 st$2
 	field_36245 a
 	field_36246 b
@@ -48552,8 +48552,8 @@ net/minecraft/nbt/NbtLong net/minecraft/nbt/NBTTagLong
 	copy ()Lnet/minecraft/nbt/NbtLong; e
 	of (J)Lnet/minecraft/nbt/NbtLong; a
 net/minecraft/nbt/NbtLong$1 sv$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtLong; a
-	readLong (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)J d
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtLong; a
+	readLong (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)J d
 net/minecraft/nbt/NbtLong$Cache sv$a
 	MAX b
 	MIN c
@@ -48570,8 +48570,8 @@ net/minecraft/nbt/NbtLongArray net/minecraft/nbt/NBTTagLongArray
 	remove (I)Lnet/minecraft/nbt/NbtLong; b
 	toArray (Ljava/util/List;)[J a
 net/minecraft/nbt/NbtLongArray$1 su$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtLongArray; a
-	readLongArray (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)[J d
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtLongArray; a
+	readLongArray (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)[J d
 net/minecraft/nbt/NbtOps net/minecraft/nbt/DynamicOpsNBT
 	INSTANCE a
 	MARKER_KEY b
@@ -48680,12 +48680,26 @@ net/minecraft/nbt/NbtShort net/minecraft/nbt/NBTTagShort
 	copy ()Lnet/minecraft/nbt/NbtShort; e
 	of (S)Lnet/minecraft/nbt/NbtShort; a
 net/minecraft/nbt/NbtShort$1 tf$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtShort; a
-	readShort (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)S d
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtShort; a
+	readShort (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)S d
 net/minecraft/nbt/NbtShort$Cache tf$a
 	MAX b
 	MIN c
 	VALUES a
+net/minecraft/nbt/NbtSizeTracker net/minecraft/nbt/NBTReadLimiter
+	DEFAULT_MAX_DEPTH a
+	allocatedBytes c
+	depth e
+	maxBytes b
+	maxDepth d
+	add (J)V b
+	add (JJ)V a
+	getAllocatedBytes ()J d
+	getDepth ()I e
+	of (J)Lnet/minecraft/nbt/NbtSizeTracker; a
+	ofUnlimitedBytes ()Lnet/minecraft/nbt/NbtSizeTracker; a
+	popStack ()V c
+	pushStack ()V b
 net/minecraft/nbt/NbtSizeValidationException net/minecraft/nbt/NbtAccounterException
 net/minecraft/nbt/NbtString net/minecraft/nbt/NBTTagString
 	BACKSLASH y
@@ -48701,36 +48715,22 @@ net/minecraft/nbt/NbtString net/minecraft/nbt/NBTTagString
 	of (Ljava/lang/String;)Lnet/minecraft/nbt/NbtString; a
 	skip (Ljava/io/DataInput;)V a
 net/minecraft/nbt/NbtString$1 ti$1
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtString; a
-	readString (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Ljava/lang/String; d
-net/minecraft/nbt/NbtTagSizeTracker net/minecraft/nbt/NBTReadLimiter
-	DEFAULT_MAX_DEPTH a
-	allocatedBytes c
-	depth e
-	maxBytes b
-	maxDepth d
-	add (J)V b
-	add (JJ)V a
-	getAllocatedBytes ()J d
-	getDepth ()I e
-	of (J)Lnet/minecraft/nbt/NbtTagSizeTracker; a
-	ofUnlimitedBytes ()Lnet/minecraft/nbt/NbtTagSizeTracker; a
-	popStack ()V c
-	pushStack ()V b
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtString; a
+	readString (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Ljava/lang/String; d
 net/minecraft/nbt/NbtType net/minecraft/nbt/NBTTagType
-	accept (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtTagSizeTracker;)V b
+	accept (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtSizeTracker;)V b
 	createInvalid (I)Lnet/minecraft/nbt/NbtType; a
-	doAccept (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/scanner/NbtScanner$Result; a
+	doAccept (Ljava/io/DataInput;Lnet/minecraft/nbt/scanner/NbtScanner;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/scanner/NbtScanner$Result; a
 	getCommandFeedbackName ()Ljava/lang/String; b
 	getCrashReportName ()Ljava/lang/String; a
 	isImmutable ()Z d
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtElement; c
-	skip (Ljava/io/DataInput;ILnet/minecraft/nbt/NbtTagSizeTracker;)V a
-	skip (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)V b
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtElement; c
+	skip (Ljava/io/DataInput;ILnet/minecraft/nbt/NbtSizeTracker;)V a
+	skip (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)V b
 net/minecraft/nbt/NbtType$1 tm$1
 	field_21047 a
 	createException ()Ljava/io/IOException; c
-	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtEnd; a
+	read (Ljava/io/DataInput;Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtEnd; a
 net/minecraft/nbt/NbtType$2 tm$2
 	field_36257 a
 net/minecraft/nbt/NbtType$OfFixedSize tm$a
@@ -49079,7 +49079,7 @@ net/minecraft/network/PacketByteBuf net/minecraft/network/PacketDataSerializer
 	capacity (I)Lnet/minecraft/network/PacketByteBuf; f
 	clear ()Lnet/minecraft/network/PacketByteBuf; D
 	decode (Lcom/mojang/serialization/DynamicOps;Lcom/mojang/serialization/Codec;)Ljava/lang/Object; a
-	decode (Lcom/mojang/serialization/DynamicOps;Lcom/mojang/serialization/Codec;Lnet/minecraft/nbt/NbtTagSizeTracker;)Ljava/lang/Object; a
+	decode (Lcom/mojang/serialization/DynamicOps;Lcom/mojang/serialization/Codec;Lnet/minecraft/nbt/NbtSizeTracker;)Ljava/lang/Object; a
 	decode (Ljava/util/function/IntFunction;)Ljava/lang/Object; a
 	decodeAsJson (Lcom/mojang/serialization/Codec;)Ljava/lang/Object; a
 	discardReadBytes ()Lnet/minecraft/network/PacketByteBuf; I
@@ -49143,7 +49143,7 @@ net/minecraft/network/PacketByteBuf net/minecraft/network/PacketDataSerializer
 	readMap (Ljava/util/function/IntFunction;Lnet/minecraft/network/PacketByteBuf$PacketReader;Lnet/minecraft/network/PacketByteBuf$PacketReader;)Ljava/util/Map; a
 	readMap (Lnet/minecraft/network/PacketByteBuf$PacketReader;Lnet/minecraft/network/PacketByteBuf$PacketReader;)Ljava/util/Map; a
 	readNbt ()Lnet/minecraft/nbt/NbtCompound; q
-	readNbt (Lnet/minecraft/nbt/NbtTagSizeTracker;)Lnet/minecraft/nbt/NbtElement; a
+	readNbt (Lnet/minecraft/nbt/NbtSizeTracker;)Lnet/minecraft/nbt/NbtElement; a
 	readNullable (Lnet/minecraft/network/PacketByteBuf$PacketReader;)Ljava/lang/Object; c
 	readOptional (Lnet/minecraft/network/PacketByteBuf$PacketReader;)Ljava/util/Optional; b
 	readProperty ()Lcom/mojang/authlib/properties/Property; C
