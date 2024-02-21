@@ -7,6 +7,7 @@ import io.izzel.arclight.api.EnumHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -91,6 +92,11 @@ public class ForgeInject {
     public static final Map<Villager.Profession, ResourceLocation> PROFESSIONS = new HashMap<>();
     public static final Map<net.minecraft.world.entity.EntityType<?>, String> ENTITY_TYPES = new ConcurrentHashMap<>();
     private static final Map<Class<?>, List<Map.Entry<Block, Material>>> MATERIALS = new ConcurrentHashMap<>();
+
+    public static EntityType getBukkitEntityType(Entity entity) {
+        EntityType type = EntityType.fromName(ENTITY_TYPES.get(entity.getType()));
+        return type == null ? EntityType.UNKNOWN : type;
+    }
 
     public static void doInjectingMagic() {
         debug("Injecting Forge Materials into Bukkit");
@@ -460,9 +466,10 @@ public class ForgeInject {
             try {
                 var bukkitType = EnumHelper.makeEnum(EntityType.class, enumName, ordinal,
                         List.of(String.class, Class.class, Integer.TYPE, Boolean.TYPE),
-                        List.of(enumName.toLowerCase(), CraftCustomEntity.class, typeId, false));
+                        List.of(enumName.toLowerCase(), org.bukkit.entity.Entity.class, typeId, false));
                 EntityType.NAME_MAP.put(enumName.toLowerCase(), bukkitType);
                 EntityType.ID_MAP.put((short) typeId, bukkitType);
+                bukkitType.createFactory(entry.getValue());
                 ordinal++;
                 values.add(bukkitType);
                 debug("Injecting Forge Entity into Bukkit: " + enumName);

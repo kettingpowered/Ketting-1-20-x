@@ -79,6 +79,7 @@ import org.kettingpowered.ketting.entity.CraftCustomEntity;
 import org.kettingpowered.ketting.entity.CraftCustomMinecart;
 import org.kettingpowered.ketting.entity.CraftCustomTamable;
 import org.kettingpowered.ketting.entity.UnknownEntity;
+import org.kettingpowered.ketting.inject.ForgeInject;
 import org.kettingpowered.ketting.internal.KettingConstants;
 
 public abstract class CraftEntity implements org.bukkit.entity.Entity {
@@ -95,7 +96,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         this.server = server;
         this.entity = entity;
         EntityType type = Registry.ENTITY_TYPE.get(CraftNamespacedKey.fromMinecraft(net.minecraft.world.entity.EntityType.getKey(entity.getType())));
-        this.entityType = (type != null) ? type : EntityType.UNKNOWN;
+        this.entityType = (type != null) ? type : ForgeInject.getBukkitEntityType(entity);
     }
 
     public static CraftEntity getEntity(CraftServer server, Entity entity) {
