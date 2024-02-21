@@ -79,6 +79,7 @@ import org.kettingpowered.ketting.entity.CraftCustomEntity;
 import org.kettingpowered.ketting.entity.CraftCustomMinecart;
 import org.kettingpowered.ketting.entity.CraftCustomTamable;
 import org.kettingpowered.ketting.entity.UnknownEntity;
+import org.kettingpowered.ketting.inject.ForgeInject;
 import org.kettingpowered.ketting.internal.KettingConstants;
 
 public abstract class CraftEntity implements org.bukkit.entity.Entity {
