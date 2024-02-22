@@ -4,10 +4,8 @@
     private static final int INV_SLOT_END = 37;
     private static final int USE_ROW_SLOT_START = 37;
     private static final int USE_ROW_SLOT_END = 46;
--   public final CraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3);
--   public final ResultContainer resultSlots = new ResultContainer();
-+   public final CraftingContainer craftSlots; // CraftBukkit
-+   public final ResultContainer resultSlots = new ResultContainer();;
+    public final CraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3);
+    public final ResultContainer resultSlots = new ResultContainer();
     public final ContainerLevelAccess access;
     private final Player player;
 +   // CraftBukkit start
@@ -20,14 +18,15 @@
  
     public CraftingMenu(int p_39356_, Inventory p_39357_, ContainerLevelAccess p_39358_) {
        super(MenuType.CRAFTING, p_39356_);
-+      // CraftBukkit start - Switched order of IInventory construction and stored player
-+//      this.resultSlots = new ResultContainer(); //Ketting - keep inline init
-+      this.craftSlots = new TransientCraftingContainer(this, 3, 3, p_39357_.player); // CraftBukkit - pass player
-+      ((TransientCraftingContainer)this.craftSlots).resultInventory = this.resultSlots;
-+      // CraftBukkit end
        this.access = p_39358_;
        this.player = p_39357_.player;
++      // CraftBukkit start - Switched order of IInventory construction and stored player
++      ((TransientCraftingContainer) this.craftSlots).setOwner(this.player);
++      ((TransientCraftingContainer) this.craftSlots).resultInventory = this.resultSlots;
++      // CraftBukkit end
        this.addSlot(new ResultSlot(p_39357_.player, this.craftSlots, this.resultSlots, 0, 124, 35));
+ 
+       for(int i = 0; i < 3; ++i) {
 @@ -71,6 +_,7 @@
                 }
              }
