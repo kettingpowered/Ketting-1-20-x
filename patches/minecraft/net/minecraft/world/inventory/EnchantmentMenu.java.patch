@@ -53,7 +53,7 @@
           }
        });
  
-@@ -79,30 +_,34 @@
+@@ -79,30 +_,43 @@
        this.addDataSlot(DataSlot.shared(this.levelClue, 0));
        this.addDataSlot(DataSlot.shared(this.levelClue, 1));
        this.addDataSlot(DataSlot.shared(this.levelClue, 2));
@@ -62,11 +62,20 @@
 +      // CraftBukkit end
     }
  
++   private boolean ketting$isEnchantable;
     public void slotsChanged(Container p_39461_) {
        if (p_39461_ == this.enchantSlots) {
           ItemStack itemstack = p_39461_.getItem(0);
 -         if (!itemstack.isEmpty() && itemstack.isEnchantable()) {
 +         if (!itemstack.isEmpty()) { // CraftBukkit - relax condition
++            // Ketting start - Fix mixin issues
++            if (itemstack.isEnchantable()) {
++               ketting$isEnchantable = true;
++            } else {
++               ketting$isEnchantable = false;
++            }
++            // Ketting end
++            
              this.access.execute((p_39485_, p_39486_) -> {
 -               int j = 0;
 +               float j = 0;
@@ -105,7 +114,7 @@
 +               }
 +
 +               org.bukkit.event.enchantment.PrepareItemEnchantEvent event = new org.bukkit.event.enchantment.PrepareItemEnchantEvent(player, this.getBukkitView(), access.getLocation().getBlock(), item, offers, (int) j); //Ketting - convert float to int
-+               event.setCancelled(!itemstack.isEnchantable());
++               event.setCancelled(!ketting$isEnchantable);
 +               p_39485_.getCraftServer().getPluginManager().callEvent(event);
 +
 +               if (event.isCancelled()) {
