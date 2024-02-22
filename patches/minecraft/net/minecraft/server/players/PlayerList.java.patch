@@ -9,16 +9,7 @@
     private final Map<UUID, ServerPlayer> playersByUUID = Maps.newHashMap();
     private final UserBanList bans = new UserBanList(USERBANLIST_FILE);
     private final IpBanList ipBans = new IpBanList(IPBANLIST_FILE);
-    private final ServerOpList ops = new ServerOpList(OPLIST_FILE);
-    private final UserWhiteList whitelist = new UserWhiteList(WHITELIST_FILE);
--   private final Map<UUID, ServerStatsCounter> stats = Maps.newHashMap();
--   private final Map<UUID, PlayerAdvancements> advancements = Maps.newHashMap();
--   private final PlayerDataStorage playerIo;
-+   // CraftBukkit start
-+   //private final Map<UUID, ServerStatsCounter> stats = Maps.newHashMap();
-+   //private final Map<UUID, PlayerAdvancements> advancements = Maps.newHashMap();
-+   // CraftBukkit end
-+   public final PlayerDataStorage playerIo;
+@@ -121,14 +_,24 @@
     private boolean doWhiteList;
     private final LayeredRegistryAccess<RegistryLayer> registries;
 -   protected final int maxPlayers;
@@ -298,13 +289,12 @@
        if (serverplayer == p_11287_) {
           this.playersByUUID.remove(uuid);
 -         this.stats.remove(uuid);
--         this.advancements.remove(uuid);
++         // CraftBukkit start
++         this.stats.remove(uuid); // Ketting
+          this.advancements.remove(uuid);
 -      }
 -
 -      this.broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(p_11287_.getUUID())));
-+         // CraftBukkit start
-+         // this.stats.remove(uuid);
-+         // this.advancements.remove(uuid);
 +         // CraftBukkit end
 +      }
 +
@@ -842,10 +832,10 @@
 -         serverstatscounter = new ServerStatsCounter(this.server, file2);
 -         this.stats.put(uuid, serverstatscounter);
 +         stats = new ServerStatsCounter(this.server, file2);
-+         // this.stats.put(uuid, stats); // CraftBukkit
        }
  
 -      return serverstatscounter;
++      this.stats.put(uuid, stats); // Ketting
 +      return stats;
     }
  
@@ -858,8 +848,9 @@
           Path path = this.server.getWorldPath(LevelResource.PLAYER_ADVANCEMENTS_DIR).resolve(uuid + ".json");
           playeradvancements = new PlayerAdvancements(this.server.getFixerUpper(), this, this.server.getAdvancements(), path, p_11297_);
 -         this.advancements.put(uuid, playeradvancements);
-+         // this.advancements.put(uuid, playeradvancements); // CraftBukkit
        }
++      
++      this.advancements.put(uuid, playeradvancements); // Ketting
  
        playeradvancements.setPlayer(p_11297_);
 @@ -826,7 +_,7 @@
