@@ -80,16 +80,11 @@
           int i = Math.max(0, this.server.getSpawnRadius(p_9202_));
           int j = Mth.floor(p_9202_.getWorldBorder().getDistanceToBorder((double)blockpos.getX(), (double)blockpos.getZ()));
           if (j < i) {
-@@ -318,11 +_,25 @@
+@@ -318,11 +_,20 @@
        if (p_9131_.contains("recipeBook", 10)) {
           this.recipeBook.fromNbt(p_9131_.getCompound("recipeBook"), this.server.getRecipeManager());
        }
 +      this.getBukkitEntity().readExtraData(p_9131_); // CraftBukkit
-+
-+      //Ketting start - load forge captures
-+      net.minecraft.nbt.ListTag forgeCaptures = p_9131_.getList("ForgeCaptures", 10);
-+      setForgeCaptures(this, forgeCaptures);
-+      //Ketting end
  
        if (this.isSleeping()) {
           this.stopSleeping();
@@ -129,20 +124,13 @@
           CompoundTag compoundtag1 = new CompoundTag();
           CompoundTag compoundtag2 = new CompoundTag();
           entity1.save(compoundtag2);
-@@ -372,8 +_,36 @@
+@@ -372,8 +_,31 @@
              p_9197_.put("SpawnDimension", p_248207_);
           });
        }
--
--   }
 +      this.getBukkitEntity().setExtraData(p_9197_); // CraftBukkit
-+
-+      //Ketting start - save forge captures
-+      Inventory forgeCaptures = getForgeCaptures();
-+      if (forgeCaptures != null) p_9197_.put("ForgeCaptures", forgeCaptures.save(new net.minecraft.nbt.ListTag()));
-+      //Ketting end
 +   }
-+
+ 
 +   // CraftBukkit start - World fallback code, either respawn location or global spawn
 +   public void spawnIn(Level level) {
 +      this.setLevel(level);
@@ -163,7 +151,7 @@
 +         this.setPos(position);
 +      }
 +      this.gameMode.setLevel((ServerLevel) level);
-+   }
+    }
 +   // CraftBukkit end
  
     public void setExperiencePoints(int p_8986_) {
@@ -223,7 +211,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.addCategory("Player being ticked");
-@@ -563,16 +_,78 @@
+@@ -563,16 +_,92 @@
     }
  
     private void updateScoreForCriteria(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -235,35 +223,49 @@
     }
  
 +   //Ketting start
++   @Nullable Boolean bukkitOnDeathKeepinv = null;
 +   private @Nullable org.bukkit.event.entity.PlayerDeathEvent callDeathEvent(DamageSource p_9035_,String deathmessage){
-+      final boolean keepInventory = this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || this.isSpectator();
-+      if (!this.isSpectator()) {
-+         this.dropAllDeathLoot(p_9035_);
-+      }
++      final boolean originalKeepInv = this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
++      final boolean keepInventory = originalKeepInv || this.isSpectator();
 +
 +      List<org.bukkit.inventory.ItemStack> capturedDrops = new java.util.ArrayList<>(this.drops);
 +      this.drops.clear();
 +
 +      
 +      keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
-+      org.bukkit.event.entity.PlayerDeathEvent event = null;
++      org.bukkit.event.entity.PlayerDeathEvent event;
 +      if (!this.dead) event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerDeathEvent(this, capturedDrops, deathmessage, keepInventory); //Ketting - capturedDrops
++      else {
++         event = new org.bukkit.event.entity.PlayerDeathEvent(this.getBukkitEntity(), capturedDrops, getExpReward(), deathmessage);
++         event.setKeepInventory(originalKeepInv);
++      }
 +      
-+      final boolean originalKeepInv = this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
-+      final boolean needsSwap = event!=null && originalKeepInv != event.getKeepInventory();
-+      if (needsSwap) this.level().getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).set(event.getKeepInventory(), this.getServer());
++      bukkitOnDeathKeepinv = event.getKeepInventory();
++      final boolean needsSwap = originalKeepInv ^ bukkitOnDeathKeepinv;
++
++      if (needsSwap) this.level().getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).set(bukkitOnDeathKeepinv, this.getServer());
 +      final boolean forgeResult;
 +      try{
 +         forgeResult = net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_9035_);
++         if (!bukkitOnDeathKeepinv) {
++            dropEquipment();
++         }
 +      }finally {
 +         if (needsSwap) this.level().getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).set(originalKeepInv, this.getServer());
 +      }
 +      
-+      if ((event == null && originalKeepInv) || (event!=null && event.getKeepInventory())) {
-+         getForgeCapturesAndClear();
-+      }
++      this.addForgeCaptures();
 +      
 +      return forgeResult ? null : event;
++   }
++   
++   private void addForgeCaptures(){
++      Inventory inv = this.getForgeCapturesAndClear();
++      if (inv != null) {
++         for (ItemStack itemStack : inv.getContents())
++            this.getInventory().add(itemStack);
++         this.getInventory().setChanged();
++      }
 +   }
 +   //Ketting end
 +
@@ -305,20 +307,18 @@
           this.connection.send(new ClientboundPlayerCombatKillPacket(this.getId(), component), PacketSendListener.exceptionallySend(() -> {
              int i = 256;
              String s = component.getString(256);
-@@ -601,11 +_,18 @@
+@@ -600,12 +_,13 @@
+       if (this.level().getGameRules().getBoolean(GameRules.RULE_FORGIVE_DEAD_PLAYERS)) {
           this.tellNeutralMobsThatIDied();
        }
- 
+-
 -      if (!this.isSpectator()) {
 -         this.dropAllDeathLoot(p_9035_);
+-      }
+-
+-      this.getScoreboard().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this.getScoreboardName(), Score::increment);
 +      // SPIGOT-5478 must be called manually now
 +      this.dropExperience();
-+      // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
-+      if (!event.getKeepInventory()) {
-+         this.getInventory().clearContent();
-       }
- 
--      this.getScoreboard().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this.getScoreboardName(), Score::increment);
 +      this.setCamera(this); // Remove spectated target
 +      // CraftBukkit end
 +
@@ -918,21 +918,16 @@
     }
  
     public void displayClientMessage(Component p_9154_, boolean p_9155_) {
-@@ -1123,18 +_,35 @@
+@@ -1115,7 +_,7 @@
+          this.experienceProgress = p_9016_.experienceProgress;
           this.setScore(p_9016_.getScore());
-       }
- 
-+      //Ketting start - copy over the forge captures
-+      Inventory forgeCaptures = p_9016_.getForgeCapturesAndClear();
-+      if (forgeCaptures != null)
-+         forgeCaptures.items.stream().filter(item -> !item.isEmpty()).forEach(item -> this.getInventory().add(item));
-+
-+      this.getInventory().setChanged();
-+      //Ketting end
-+
-       this.enchantmentSeed = p_9016_.enchantmentSeed;
-       this.enderChestInventory = p_9016_.enderChestInventory;
-       this.getEntityData().set(DATA_PLAYER_MODE_CUSTOMISATION, p_9016_.getEntityData().get(DATA_PLAYER_MODE_CUSTOMISATION));
+          this.portalEntrancePos = p_9016_.portalEntrancePos;
+-      } else if (this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || p_9016_.isSpectator()) {
++      } else if ((bukkitOnDeathKeepinv != null && bukkitOnDeathKeepinv) || bukkitOnDeathKeepinv == null && (this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || p_9016_.isSpectator())) { //ketting - handled in callDeathEvent
+          this.getInventory().replaceWith(p_9016_.getInventory());
+          this.experienceLevel = p_9016_.experienceLevel;
+          this.totalExperience = p_9016_.totalExperience;
+@@ -1129,12 +_,21 @@
        this.lastSentExp = -1;
        this.lastSentHealth = -1.0F;
        this.lastSentFood = -1;

@@ -684,27 +684,16 @@
                 this.level().addFreshEntity(itementity);
              }
           }
-@@ -1333,31 +_,92 @@
+@@ -1333,31 +_,81 @@
        }
     }
  
 +   //Ketting start - capture death drops
 +   private @Nullable net.minecraft.world.entity.player.Inventory forgeCaptures = null;
-+
-+   protected @Nullable net.minecraft.world.entity.player.Inventory getForgeCaptures() {
-+      return forgeCaptures;
-+   }
-+
 +   protected @Nullable net.minecraft.world.entity.player.Inventory getForgeCapturesAndClear() {
 +      net.minecraft.world.entity.player.Inventory temp = forgeCaptures;
 +      forgeCaptures = null;
 +      return temp;
-+   }
-+
-+   protected void setForgeCaptures(ServerPlayer player, ListTag tag) {
-+      if (forgeCaptures == null) forgeCaptures = new net.minecraft.world.entity.player.Inventory(player);
-+      else forgeCaptures.clearContent();
-+      forgeCaptures.load(tag);
 +   }
 +
     protected void dropAllDeathLoot(DamageSource p_21192_) {
