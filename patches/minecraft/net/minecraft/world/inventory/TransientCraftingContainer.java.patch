@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/TransientCraftingContainer.java
 +++ b/net/minecraft/world/inventory/TransientCraftingContainer.java
-@@ -13,6 +_,68 @@
+@@ -13,6 +_,74 @@
     private final int height;
     private final AbstractContainerMenu menu;
  
@@ -34,6 +34,12 @@
 +   public org.bukkit.inventory.InventoryHolder getOwner() {
 +      return (owner == null) ? null : owner.getBukkitEntity();
 +   }
++
++   // Ketting start - Possibility to add owner
++   public void setOwner(Player owner) {
++      this.owner = owner;
++   }
++   // Ketting end
 +
 +   @Override
 +   public int getMaxStackSize() {
