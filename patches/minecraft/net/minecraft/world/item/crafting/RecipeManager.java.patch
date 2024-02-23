@@ -43,7 +43,7 @@
              builder.put(resourcelocation, recipe);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
              LOGGER.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
-@@ -64,18 +_,36 @@
+@@ -64,18 +_,46 @@
        this.recipes = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (p_44033_) -> {
           return p_44033_.getValue().build();
        }));
@@ -55,12 +55,22 @@
 +   // CraftBukkit start
 +   public void addRecipe(Recipe<?> irecipe) {
 +      org.spigotmc.AsyncCatcher.catchOp("Recipe Add"); // Spigot
-+      Map<ResourceLocation, Recipe<?>> map = this.recipes.get(irecipe.getType()); // CraftBukkit
++      it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>> map = new it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap<>(this.recipes.get(irecipe.getType())); //Ketting - type
 +
 +      if (byName.containsKey(irecipe.getId()) || map.containsKey(irecipe.getId())) {
 +         throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.getId());
 +      } else {
-+         map.put(irecipe.getId(), irecipe); // CraftBukkit - SPIGOT-4638: last recipe gets priority
++         map.putAndMoveToFirst(irecipe.getId(), irecipe);
++
++         //Ketting start
++         //copy recipes to new map that is mutable
++         Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> newRecipes = Maps.newHashMap(this.recipes);
++         newRecipes.put(irecipe.getType(), ImmutableMap.copyOf(map));
++
++         //make the new map immutable
++         this.recipes = ImmutableMap.copyOf(newRecipes);
++         //Ketting end
++
 +         byName.put(irecipe.getId(), irecipe);
 +      }
 +   }
