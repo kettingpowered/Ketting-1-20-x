@@ -234,15 +234,14 @@
     }
  
     protected PoiManager getPoiManager() {
-@@ -1324,7 +_,7 @@
+@@ -1324,6 +_,7 @@
        public final Set<ServerPlayerConnection> seenBy = Sets.newIdentityHashSet();
  
        public TrackedEntity(Entity p_140478_, int p_140479_, int p_140480_, boolean p_140481_) {
--         this.serverEntity = new ServerEntity(ChunkMap.this.level, p_140478_, p_140480_, p_140481_, this::broadcast);
-+         this.serverEntity = new ServerEntity(ChunkMap.this.level, p_140478_, p_140480_, p_140481_, this::broadcast, seenBy); // CraftBukkit
++         ServerEntity.init$trackedPlayers = seenBy; // CraftBukkit // Ketting
+          this.serverEntity = new ServerEntity(ChunkMap.this.level, p_140478_, p_140480_, p_140481_, this::broadcast);
           this.entity = p_140478_;
           this.range = p_140479_;
-          this.lastSectionPos = SectionPos.of(p_140478_);
 @@ -1365,6 +_,7 @@
        }
  
