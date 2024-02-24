@@ -11,6 +11,7 @@ import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.loading.EarlyLoadingException;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.forgespi.locating.IModLocator;
 import net.minecraftforge.forgespi.locating.ModFileLoadingException;
 import net.minecraftforge.jarjar.selection.JarSelector;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -81,7 +82,9 @@ public class JarInJarDependencyLocator extends AbstractJarFileDependencyLocator
             final Map<String, ?> outerFsArgs = ImmutableMap.of("packagePath", pathInModFile);
             final FileSystem zipFS = FileSystems.newFileSystem(filePathUri, outerFsArgs);
             final Path pathInFS = zipFS.getPath("/");
-            return Optional.of(createMod(pathInFS).file());
+            final IModLocator.ModFileOrException mod = createMod(pathInFS);
+            if (mod == null) return Optional.empty(); //Ketting continue launching, if the modfile is a lib, that is already loaded.
+            return Optional.of(mod.file());
         }
         catch (Exception e)
         {

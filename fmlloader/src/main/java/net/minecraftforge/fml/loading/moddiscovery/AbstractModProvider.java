@@ -33,7 +33,8 @@ public abstract class AbstractModProvider implements IModProvider
     protected static final String MODS_TOML = "META-INF/mods.toml";
     protected static final String MANIFEST = "META-INF/MANIFEST.MF";
 
-    protected IModLocator.ModFileOrException createMod(Path... path) {
+    //Ketting mark as nullable for things we do not want loaded, because they already are loaded, but still continue starting.
+    protected @org.jetbrains.annotations.Nullable IModLocator.ModFileOrException createMod(Path... path) {
         var mjm = new ModJarMetadata();
         var sj = SecureJar.from(
                 Manifest::new,
@@ -41,6 +42,18 @@ public abstract class AbstractModProvider implements IModProvider
                 (root, p) -> true,
                 path
         );
+        
+        if (AbstractModProvider.class.getClassLoader() instanceof cpw.mods.cl.ModuleClassLoader mcl){
+            try{
+                Map<String, Object> test = (Map<String, Object>) org.kettingpowered.ketting.internal.hacks.Unsafe.lookup().findGetter(cpw.mods.cl.ModuleClassLoader.class, "parentLoaders", Map.class).invoke(mcl);
+                final String moduleName = sj.moduleDataProvider().name();
+                if (test.containsKey(moduleName)){
+                    LOGGER.warn("Tried to load duplicate module {}. Will ignore this module and all jarjar entries in this jar.", moduleName);
+                    return null;
+                }
+            }catch (Throwable ignored){}
+        }
+        
 
         IModFile mod;
         var type = sj.moduleDataProvider().getManifest().getMainAttributes().getValue(ModFile.TYPE);
