@@ -1,17 +1,16 @@
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
-@@ -60,8 +_,15 @@
+@@ -60,8 +_,13 @@
     private boolean wasOnGround;
     @Nullable
     private List<SynchedEntityData.DataValue<?>> trackedDataValues;
+-
 +   // CraftBukkit start
 +   private final Set<net.minecraft.server.network.ServerPlayerConnection> trackedPlayers;
- 
++   public static Set<net.minecraft.server.network.ServerPlayerConnection> init$trackedPlayers = null; // Ketting
++   
     public ServerEntity(ServerLevel p_8528_, Entity p_8529_, int p_8530_, boolean p_8531_, Consumer<Packet<?>> p_8532_) {
-+      this(p_8528_, p_8529_, p_8530_, p_8531_, p_8532_, new java.util.HashSet<>());
-+   }
-+   public ServerEntity(ServerLevel p_8528_, Entity p_8529_, int p_8530_, boolean p_8531_, Consumer<Packet<?>> p_8532_, Set<net.minecraft.server.network.ServerPlayerConnection> trackedPlayers) {
-+      this.trackedPlayers = trackedPlayers;
++      this.trackedPlayers = init$trackedPlayers == null ? new java.util.HashSet<>() : init$trackedPlayers; // Ketting
 +      // CraftBukkit end
        this.level = p_8528_;
        this.broadcast = p_8532_;
