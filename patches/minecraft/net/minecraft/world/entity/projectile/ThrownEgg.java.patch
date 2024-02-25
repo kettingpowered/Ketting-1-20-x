@@ -41,24 +41,24 @@
 -                  chicken.setAge(-24000);
 -                  chicken.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
 -                  this.level().addFreshEntity(chicken);
-+               // Ketting start - Don't delete chicken
-+               net.minecraft.world.entity.Entity entitychickencb;
++               // Ketting start - Do not delete the chicken variable
++               net.minecraft.world.entity.Entity entitychicken;
 +
 +               if (hatchingType == org.bukkit.entity.EntityType.CHICKEN) {
-+                  entitychickencb = chicken;
++                  entitychicken = chicken;
 +               } else {
-+                  entitychickencb = this.level().getWorld().createEntity(new org.bukkit.Location(this.level().getWorld(), this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F), hatchingType.getEntityClass()); // CraftBukkit
++                  entitychicken = this.level().getWorld().createEntity(new org.bukkit.Location(this.level().getWorld(), this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F), hatchingType.getEntityClass()); // CraftBukkit
 +               }
 +               // Ketting end
 +               
-+               if (entitychickencb != null) {
++               if (entitychicken != null) {
 +                  // CraftBukkit start
-+                  if (entitychickencb.getBukkitEntity() instanceof org.bukkit.entity.Ageable) {
-+                     ((org.bukkit.entity.Ageable) entitychickencb.getBukkitEntity()).setBaby();
++                  if (entitychicken.getBukkitEntity() instanceof org.bukkit.entity.Ageable) {
++                     ((org.bukkit.entity.Ageable) entitychicken.getBukkitEntity()).setBaby();
 +                  }
 +                  // CraftBukkit end
 +                  this.level().prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG); // Ketting - Add reason
-+                  this.level().addFreshEntity(entitychickencb);
++                  this.level().addFreshEntity(entitychicken);
                 }
              }
           }
