@@ -274,19 +274,19 @@
     }
  
     public GameType getDefaultGameType() {
-@@ -504,11 +_,15 @@
+@@ -504,11 +_,13 @@
           flag = true;
        }
  
-+      // CraftBukkit start - moved to WorldServer.save
-+      /*
++      // Ketting start - stay here
        ServerLevel serverlevel2 = this.overworld();
        ServerLevelData serverleveldata = this.worldData.overworldData();
        serverleveldata.setWorldBorder(serverlevel2.getWorldBorder().createSettings());
-       this.worldData.setCustomBossEvents(this.getCustomBossEvents().save());
-       this.storageSource.saveDataTag(this.registryAccess(), this.worldData, this.getPlayerList().getSingleplayerData());
-+      */
-+      // CraftBukkit end
+-      this.worldData.setCustomBossEvents(this.getCustomBossEvents().save());
+-      this.storageSource.saveDataTag(this.registryAccess(), this.worldData, this.getPlayerList().getSingleplayerData());
++      ((net.minecraft.world.level.storage.PrimaryLevelData) serverleveldata).setCustomBossEvents(this.getCustomBossEvents().save());
++      serverlevel2.convertable.saveDataTag(this.registryAccess(), (net.minecraft.world.level.storage.PrimaryLevelData) serverleveldata, this.getPlayerList().getSingleplayerData());
++      // Ketting end
        if (p_129887_) {
           for(ServerLevel serverlevel1 : this.getAllLevels()) {
              LOGGER.info("ThreadedAnvilChunkStorage ({}): All chunks are saved", (Object)serverlevel1.getChunkSource().chunkMap.getStorageName());

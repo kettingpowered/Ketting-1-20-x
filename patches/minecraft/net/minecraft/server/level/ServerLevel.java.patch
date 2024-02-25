@@ -396,17 +396,10 @@
           if (p_8644_ != null) {
              p_8644_.progressStartNoAbort(Component.translatable("menu.savingLevel"));
           }
-@@ -736,12 +_,20 @@
+@@ -736,12 +_,13 @@
              this.entityManager.autoSave();
           }
  
-+         // CraftBukkit start - moved from MinecraftServer.saveChunks
-+         ServerLevel serverlevel = this;
-+
-+         serverLevelData.setWorldBorder(serverlevel.getWorldBorder().createSettings());
-+         ((net.minecraft.world.level.storage.PrimaryLevelData) serverLevelData).setCustomBossEvents(this.server.getCustomBossEvents().save());
-+         convertable.saveDataTag(this.server.registryAccess(), (net.minecraft.world.level.storage.PrimaryLevelData) this.serverLevelData, this.server.getPlayerList().getSingleplayerData());
-+         // CraftBukkit end
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Save(this));
        }
     }
