@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ChorusFruitItem.java
 +++ b/net/minecraft/world/item/ChorusFruitItem.java
-@@ -33,8 +_,19 @@
+@@ -33,8 +_,23 @@
              }
  
              Vec3 vec3 = p_40714_.position();
@@ -9,7 +9,11 @@
 +            net.minecraftforge.event.entity.EntityTeleportEvent.ChorusFruit event = net.minecraftforge.event.ForgeEventFactory.onChorusFruitTeleport(p_40714_, d3, d4, d5);
 +            if (event.isCanceled()) return itemstack;
 +            // CraftBukkit start - handle canceled status of teleport event
-+            java.util.Optional<Boolean> status = p_40714_.randomTeleport(d3, d4, d5, true, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
++            // Ketting start - Use vanilla method for fix mixin issues
++            p_40714_.ketting$teleportCause.set(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
++            p_40714_.randomTeleport(d3, d4, d5, true);
++            java.util.Optional<Boolean> status = p_40714_.ketting$randomTeleportCB;
++            // Ketting end
 +
 +            if (!status.isPresent()) {
 +               // teleport event was canceled, no more tries
