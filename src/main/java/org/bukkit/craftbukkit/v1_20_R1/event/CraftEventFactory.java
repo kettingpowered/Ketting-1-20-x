@@ -840,6 +840,7 @@ public class CraftEventFactory {
 
     public static BlockPos sourceBlockOverride = null; // SPIGOT-7068: Add source block override, not the most elegant way but better than passing down a BlockPos up to five methods deep.
 
+    public static AtomicBoolean handleBlockSpreadUpdate = new AtomicBoolean(true); // Ketting
     public static boolean handleBlockSpreadEvent(LevelAccessor world, BlockPos source, BlockPos target, net.minecraft.world.level.block.state.BlockState block, int flag) {
         // Suppress during worldgen
         if (!(world instanceof Level)) {
@@ -854,7 +855,11 @@ public class CraftEventFactory {
         Bukkit.getPluginManager().callEvent(event);
 
         if (!event.isCancelled()) {
-            state.update(true);
+            // Ketting start - Possibility to move the handle to the vanilla method
+            if (handleBlockFormUpdate.getAndSet(true)) {
+                state.update(true);
+            }
+            // Ketting end
         }
         return !event.isCancelled();
     }

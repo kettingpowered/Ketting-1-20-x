@@ -1532,20 +1532,7 @@
              return false;
           } else {
              return item.getUseDuration(this.useItem) - this.useItemRemaining >= 5;
-@@ -3028,6 +_,12 @@
-    }
- 
-    public boolean randomTeleport(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_) {
-+      // CraftBukkit start
-+      return randomTeleport(p_20985_, p_20986_, p_20987_, p_20988_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN).orElse(false);
-+   }
-+
-+   public Optional<Boolean> randomTeleport(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
-+      // CraftBukkit end
-       double d0 = this.getX();
-       double d1 = this.getY();
-       double d2 = this.getZ();
-@@ -3050,16 +_,41 @@
+@@ -3050,15 +_,43 @@
           }
  
           if (flag1) {
@@ -1569,12 +1556,14 @@
 +                     org.bukkit.Location to = teleport.getTo();
 +                     this.teleportTo(to.getX(), to.getY(), to.getZ());
 +                  } else {
-+                     return Optional.empty();
++                     this.ketting$randomTeleportCB = Optional.empty(); // CraftBukkit // Ketting
++                     return false;
 +                  }
 +               } else {
 +                  // player teleport event is called in the underlining code
-+                  if (((ServerPlayer) this).connection.teleport(p_20985_, d3, p_20987_, this.getYRot(), this.getXRot(), java.util.Collections.emptySet(), cause)) {
-+                     return Optional.empty();
++                  if (((ServerPlayer) this).connection.teleport(p_20985_, d3, p_20987_, this.getYRot(), this.getXRot(), java.util.Collections.emptySet(), this.ketting$teleportCause.getAndSet(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN))) {
++                     this.ketting$randomTeleportCB = Optional.empty(); // CraftBukkit // Ketting
++                     return false;
 +                  }
 +               }
 +            }
@@ -1584,21 +1573,32 @@
  
        if (!flag) {
 -         this.teleportTo(d0, d1, d2);
--         return false;
 +         // this.teleportTo(d0, d1, d2); // CraftBukkit - already set the location back
-+         return  Optional.of(false); // CraftBukkit
++         this.ketting$randomTeleportCB = Optional.of(false); // CraftBukkit // Ketting
+          return false;
        } else {
           if (p_20988_) {
-             level.broadcastEntityEvent(this, (byte)46);
-@@ -3069,7 +_,7 @@
+@@ -3069,8 +_,19 @@
              ((PathfinderMob)this).getNavigation().stop();
           }
  
 -         return true;
-+         return Optional.of(true); // CraftBukkit
++         this.ketting$randomTeleportCB = Optional.of(true); // CraftBukkit // Ketting
++         return false;
        }
++   }
++
++   // Ketting start
++   public Optional<Boolean> ketting$randomTeleportCB = Optional.empty();
++   public java.util.concurrent.atomic.AtomicReference<org.bukkit.event.player.PlayerTeleportEvent.TeleportCause> ketting$teleportCause = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);
++   public Optional<Boolean> randomTeleport(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) { // CraftBukkit
++      this.ketting$teleportCause.set(cause);
++      this.randomTeleport(p_20985_, p_20986_, p_20987_, p_20988_);
++      return this.ketting$randomTeleportCB;
++      // Ketting end
     }
  
+    public boolean isAffectedByPotions() {
 @@ -3127,8 +_,8 @@
        }
  
