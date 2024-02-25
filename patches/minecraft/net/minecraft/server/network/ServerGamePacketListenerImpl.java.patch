@@ -1002,6 +1002,15 @@
     }
  
     private void handleMessageDecodeFailure(SignedMessageChain.DecodeException p_252068_) {
+@@ -1255,7 +_,7 @@
+    }
+ 
+    private ParseResults<CommandSourceStack> parseCommand(String p_242938_) {
+-      CommandDispatcher<CommandSourceStack> commanddispatcher = this.server.getCommands().getDispatcher();
++      CommandDispatcher<CommandSourceStack> commanddispatcher = this.server.getCommands().getCorrectDispatcher(p_242938_).unwrap();
+       return commanddispatcher.parse(p_242938_, this.player.createCommandSourceStack());
+    }
+ 
 @@ -1266,7 +_,7 @@
           return Optional.empty();
        } else {
