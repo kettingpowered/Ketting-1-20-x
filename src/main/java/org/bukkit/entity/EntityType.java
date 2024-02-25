@@ -349,6 +349,14 @@ public enum EntityType implements Keyed, Translatable {
         this.living = clazz != null && LivingEntity.class.isAssignableFrom(clazz);
         this.key = (name == null) ? null : NamespacedKey.minecraft(name);
     }
+    private EntityType(/*@Nullable*/ String name, /*@Nullable*/ Class<? extends Entity> clazz, int typeId, boolean independent, String modId) {
+        this.name = name;
+        this.clazz = clazz;
+        this.typeId = (short) typeId;
+        this.independent = independent;
+        this.living = clazz != null && LivingEntity.class.isAssignableFrom(clazz);
+        this.key = (name == null) ? null : new NamespacedKey(modId, name);
+    }
 
     /**
      * Gets the entity type name.

@@ -465,8 +465,8 @@ public class ForgeInject {
             int typeId = enumName.hashCode();
             try {
                 var bukkitType = EnumHelper.makeEnum(EntityType.class, enumName, ordinal,
-                        List.of(String.class, Class.class, Integer.TYPE, Boolean.TYPE),
-                        List.of(enumName.toLowerCase(), org.bukkit.entity.Entity.class, typeId, false));
+                        List.of(String.class, Class.class, Integer.TYPE, Boolean.TYPE, String.class),
+                        List.of(location.getPath(), org.bukkit.entity.Entity.class, typeId, false, location.getNamespace()));
                 EntityType.NAME_MAP.put(enumName.toLowerCase(), bukkitType);
                 EntityType.ID_MAP.put((short) typeId, bukkitType);
                 bukkitType.createFactory(entry.getValue());
