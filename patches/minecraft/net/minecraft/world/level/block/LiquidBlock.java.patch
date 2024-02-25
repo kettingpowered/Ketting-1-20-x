@@ -67,14 +67,16 @@
     private boolean shouldSpreadLiquid(Level p_54697_, BlockPos p_54698_, BlockState p_54699_) {
        if (this.fluid.is(FluidTags.LAVA)) {
           boolean flag = p_54697_.getBlockState(p_54698_.below()).is(Blocks.SOUL_SOIL);
-@@ -120,14 +_,20 @@
+@@ -120,14 +_,24 @@
              BlockPos blockpos = p_54698_.relative(direction.getOpposite());
              if (p_54697_.getFluidState(blockpos).is(FluidTags.WATER)) {
                 Block block = p_54697_.getFluidState(p_54698_).isSource() ? Blocks.OBSIDIAN : Blocks.COBBLESTONE;
 -               p_54697_.setBlockAndUpdate(p_54698_, block.defaultBlockState());
 -               this.fizz(p_54697_, p_54698_);
 +               // CraftBukkit start
++               org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormUpdate.set(false);
 +               if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormEvent(p_54697_, p_54698_, block.defaultBlockState())) {
++                  p_54697_.setBlockAndUpdate(p_54698_, block.defaultBlockState());
 +                  this.fizz(p_54697_, p_54698_);
 +               }
 +               // CraftBukkit end
@@ -85,7 +87,9 @@
 -               p_54697_.setBlockAndUpdate(p_54698_, Blocks.BASALT.defaultBlockState());
 -               this.fizz(p_54697_, p_54698_);
 +               // CraftBukkit start
++               org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormUpdate.set(false);
 +               if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormEvent(p_54697_, p_54698_, Blocks.BASALT.defaultBlockState())) {
++                  p_54697_.setBlockAndUpdate(p_54698_, Blocks.BASALT.defaultBlockState());
 +                  this.fizz(p_54697_, p_54698_);
 +               }
 +               // CraftBukkit end
