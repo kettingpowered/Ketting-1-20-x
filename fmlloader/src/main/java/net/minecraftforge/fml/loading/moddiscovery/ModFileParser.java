@@ -36,7 +36,7 @@ public class ModFileParser {
         LOGGER.debug(LogMarkers.LOADING,"Considering mod file candidate {}", modFile.getFilePath());
         final Path modsjson = modFile.findResource("META-INF", "mods.toml");
         if (!Files.exists(modsjson)) {
-            LOGGER.warn(LogMarkers.LOADING, "Mod file {} is missing mods.toml file", modFile.getFilePath());
+            if (!isDefaultMod(modFile.getFileName())) LOGGER.warn(LogMarkers.LOADING, "Mod file {} is missing mods.toml file", modFile.getFilePath()); // Ketting - Do not send if a forge default mod.
             return null;
         }
 
@@ -46,6 +46,12 @@ public class ModFileParser {
         final NightConfigWrapper configWrapper = new NightConfigWrapper(fileConfig);
         return new ModFileInfo(modFile, configWrapper, configWrapper::setFile);
     }
+
+    // Ketting start
+    public static boolean isDefaultMod(String name) {
+        return name.startsWith("fmlcore") || name.startsWith("javafmllanguage") || name.startsWith("lowcodelanguage") || name.startsWith("mclanguage");
+    }
+    // Ketting end
 
     protected static List<CoreModFile> getCoreMods(final ModFile modFile) {
         Map<String,String> coreModPaths;
