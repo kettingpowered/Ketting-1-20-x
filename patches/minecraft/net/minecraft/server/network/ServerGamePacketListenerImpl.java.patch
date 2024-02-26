@@ -857,7 +857,7 @@
  
     }
  
-@@ -1118,6 +_,13 @@
+@@ -1118,12 +_,26 @@
     }
  
     public void onDisconnect(Component p_9825_) {
@@ -870,7 +870,21 @@
 +      // CraftBukkit end
        this.chatMessageChain.close();
        LOGGER.info("{} lost connection: {}", this.player.getName().getString(), p_9825_.getString());
++      // CraftBukkit start - Replace vanilla quit message handling with our own.
++      /*
        this.server.invalidateStatus();
+       this.server.getPlayerList().broadcastSystemMessage(Component.translatable("multiplayer.player.left", this.player.getDisplayName()).withStyle(ChatFormatting.YELLOW), false);
++      */
+       this.player.disconnect();
+-      this.server.getPlayerList().remove(this.player);
++      String quitMessage = this.server.getPlayerList().removeString(this.player);
++      if ((quitMessage != null) && (quitMessage.length() > 0)) {
++          this.server.getPlayerList().broadcastMessage(org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage.fromString(quitMessage));
++      }
++      //CraftBukkit end
+       this.player.getTextFilter().leave();
+       if (this.isSingleplayerOwner()) {
+          LOGGER.info("Stopping singleplayer server as player logged out");
 @@ -1145,6 +_,14 @@
     }
  
