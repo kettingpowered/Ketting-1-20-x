@@ -367,6 +367,7 @@ public enum EntityType implements Keyed, Translatable {
     @Deprecated
     @Nullable
     public String getName() {
+        if (this.key == null || this.name == null) return null;
         if (NamespacedKey.MINECRAFT.equals(this.key.getNamespace()))
             return name;
         else return this.key.toString();
