@@ -238,8 +238,8 @@
 -         this.setBlockAndUpdate(blockpos1, Blocks.ICE.defaultBlockState());
 +         // Ketting start
 +            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormUpdate.set(false);
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos2, Blocks.ICE.defaultBlockState(), null))  { // CraftBukkit
-+               this.setBlockAndUpdate(blockpos2, Blocks.ICE.defaultBlockState());
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.ICE.defaultBlockState(), null))  { // CraftBukkit
++               this.setBlockAndUpdate(blockpos1, Blocks.ICE.defaultBlockState());
 +            }
 +            // Ketting end
        }
@@ -250,18 +250,18 @@
                    Block.pushEntitiesUp(blockstate, blockstate1, this, blockpos);
                    this.setBlockAndUpdate(blockpos, blockstate1);
 +                     // Ketting start
-+                     org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormUpdate.set(false);
++                     org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormUpdate.set(false);
 +                     if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos, blockstate1, null))  { // CraftBukkit
-+                        this.setBlockAndUpdate(blockpos2, Blocks.ICE.defaultBlockState());
++                        this.setBlockAndUpdate(blockpos1, Blocks.ICE.defaultBlockState());
 +                     }
 +                     // Ketting end
                 }
              } else {
 -               this.setBlockAndUpdate(blockpos, Blocks.SNOW.defaultBlockState());
 +               // Ketting start
-+                  org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormUpdate.set(false);
++                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormUpdate.set(false);
 +                  if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos, Blocks.SNOW.defaultBlockState(), null))  { // CraftBukkit
-+                     this.setBlockAndUpdate(blockpos2, Blocks.ICE.defaultBlockState());
++                     this.setBlockAndUpdate(blockpos1, Blocks.ICE.defaultBlockState());
 +                  }
 +                  // Ketting end
              }

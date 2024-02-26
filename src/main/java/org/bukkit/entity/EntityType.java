@@ -467,7 +467,7 @@ public enum EntityType implements Keyed, Translatable {
             if (loc == null || loc.getWorld() == null)
                 return null;
 
-            net.minecraft.world.level.Level handle = ((org.bukkit.craftbukkit.v1_20_R1.CraftWorld) loc.getWorld()).getHandle();
+            net.minecraft.world.level.Level handle = ((org.bukkit.craftbukkit.v1_20_R2.CraftWorld) loc.getWorld()).getHandle();
             net.minecraft.world.entity.Entity entity = value.create(handle);
             if (entity != null) entity.moveTo(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
             return entity;
