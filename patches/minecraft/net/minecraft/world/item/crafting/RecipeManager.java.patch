@@ -66,8 +66,8 @@
 +
 +         //Ketting start
 +         //copy recipes to new map that is mutable
-+         Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> newRecipes = Maps.newHashMap(this.recipes);
-+         newRecipes.put(irecipe.type(), ImmutableMap.copyOf(map));
++         Map<RecipeType<?>, Map<ResourceLocation, RecipeHolder<?>>> newRecipes = Maps.newHashMap(this.recipes);
++         newRecipes.put(irecipe.value().getType(), ImmutableMap.copyOf(map));
 +
 +         //make the new map immutable
 +         this.recipes = ImmutableMap.copyOf(newRecipes);
