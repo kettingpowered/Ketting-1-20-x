@@ -19,18 +19,19 @@ import net.minecraftforge.forgespi.locating.ModFileLoadingException;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.jar.Manifest;
 
 //Ketting start
-import java.util.HashMap;
 import java.nio.file.Files;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 //Ketting end
 
@@ -41,48 +42,76 @@ public abstract class AbstractModProvider implements IModProvider
     protected static final String MANIFEST = "META-INF/MANIFEST.MF";
 
     //Ketting start
-    private static boolean isExcluded(Path path, ConcurrentHashMap<String, Boolean> hm) {
+
+    /**
+     * Checks, if a given path is the name of an already present module.
+     * If so, it will mark that package (and everything below it) as excluded.
+     * else does nothing.
+     * @param path Path to check
+     * @param hm Cache
+     */
+    private static void populateIsExcludedPackage(Path path, ConcurrentHashMap<String, Boolean> hm) {
+        //this package has already been excluded
+        Boolean ret = hm.get(path.toString());
+        if (ret != null && !ret) return;
         String path_str = path.toString().replace('/', '.');
         if (path_str.endsWith(".")) path_str = path_str.substring(0, path_str.length()-1);
-        Boolean ret = hm.get(path.toString());
         //todo: not ideal, as this depends on modules naming themselves properly...
-        if ((ret != null && !ret) || parentLoaders.containsKey(path_str)) {
+        if (parentLoaders.containsKey(path_str)) {
+            hm.put(path.toString(), false);
             try (Stream<Path> walk = Files.walk(path)){
+                LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_EXCLUDES, "Marking {} as excluded.", path);
                 walk.forEach(pth -> hm.put(pth.toString(), false));
+                LOGGER.trace(LogMarkers.DYNAMIC_EXCLUDE_EXCLUDES, "hashmap after exclude: {}", hm.entrySet().stream().map(entry -> entry.getKey() + ": " + entry.getValue().toString()).collect(Collectors.joining(", ")));
             } catch (Throwable e) {
                 LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_ERRORS, "Could not mark sub-entries of {} as excluded: ", path);
             }
-            return true;
         }
-        return false;
     }
-    private static boolean anyParentExcluded(Path path, ConcurrentHashMap<String, Boolean> hm) {
-        Path path_iter = path;
-        while (path_iter != null) {
-            if (isExcluded(path_iter, hm)) {
-                return true;
-            }
-            path_iter = path_iter.getParent();
+
+    private static Optional<Boolean> shouldBeIncludedCache(Path path, ConcurrentHashMap<String, Boolean> hm){
+        final String name = path.toString();
+        //we assume, that no wrong mappings are ever put into the hashmap. Thus, all mappings should be taken to be final.
+        Boolean ret = hm.get(name);
+        if (ret != null) {
+            return Optional.of(ret);
         }
-        return false;
+
+        //if the parent is excluded, we do not need not bother checking anything else. 
+        // the file is not going to be excluded anyway
+        Path parent = path.getParent();
+        while (parent != null){
+            Boolean ret_parent = hm.get(parent.toString());
+            if (ret_parent != null && !ret_parent) {
+                LOGGER.warn(LogMarkers.DYNAMIC_EXCLUDE_ERRORS, "{} was not marked as excluded, even-though {} is.", path, parent);
+                hm.put(path.toString(), false);
+                return Optional.of(false);
+            }
+            parent = parent.getParent();
+        }
+        return Optional.empty();
+    }
+    private static boolean shouldBeIncludedFile(Path path, ConcurrentHashMap<String, Boolean> hm){
+        final String name = path.toString();
+
+        Optional<Boolean> val = shouldBeIncludedCache(path, hm);
+        if (val.isPresent()) return val.get();
+        if (!CheckIndividualFiles) return true;
+
+        boolean ret = name.startsWith("META-INF") ||
+                name.chars().filter(chr -> chr == '/').count() <= 1 ||
+                AbstractModProvider.class.getClassLoader().getResource(name) == null;
+        hm.put(name, ret);
+        return ret;
     }
     private static boolean shouldBeIncluded(Path path, ConcurrentHashMap<String, Boolean> hm){
-        //we assume, that no wrong mappings are ever put into the hashmap. Thus, all mappings should be taken to be final.
-        final String path_str = path.toString();
-        Boolean ret = hm.get(path_str);
-        if (ret != null) return ret;
-
-        //Check, if any of the super-packages are excluded.
-        if (anyParentExcluded(path, hm)) return false;
-
-        //populate caches.
-        //this will check, if any package is excluded, and mark all the sub-packages/classes also as excluded.
-        //(may end up setting keys multiple times to the same value)
-        try (Stream<Path> walk = Files.walk(path)){
-            walk.forEach(path1 -> isExcluded(path1, hm));
-        }catch (Throwable throwable){
-            LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_ERRORS, "Error whilst trying to determine include status: ", throwable);
-            return true;
+        {
+            Optional<Boolean> ret = shouldBeIncludedCache(path, hm);
+            if (ret.isPresent()) return ret.get();
+        }
+        if (!CheckIndividualFiles) return true;
+        if (Files.isRegularFile(path)){
+            return shouldBeIncludedFile(path, hm);
         }
 
         //no super-packages are excluded.
@@ -90,22 +119,9 @@ public abstract class AbstractModProvider implements IModProvider
         //we include this package, if there is any class anywhere below this package, that is included.
         try (Stream<Path> walk = Files.walk(path)){
             boolean include = walk
-                    .anyMatch(path1 -> {
-                                //return the cache value, if present.
-                                final String name = path1.toString();
-                                Boolean val = hm.get(name);
-                                if (val != null) return val;
-                                //otherwise, we have not been excluded. So check, if that class is already present in the classloader, and if not add it.
-                                boolean include_runnable = 
-                                        name.startsWith("META-INF") ||
-                                        name.chars().filter(chr -> chr == '/').count() <= 1 ||
-                                        AbstractModProvider.class.getClassLoader().getResource(name) == null;
-                                //don't update the map unconditionally at this point, because this could very well be a package.
-                                //for packages this is actually incorrect.
-                                if (name.endsWith(".class")) hm.put(name, include_runnable);
-                                return include_runnable;
-                        }
-                    );
+                    .filter(Files::isRegularFile)
+                    .anyMatch(path1->shouldBeIncludedFile(path1, hm));
+            final String path_str = path.toString();
             if (!hm.containsKey(path_str)) hm.put(path_str, include);
             return include;
         }catch (Throwable throwable){
@@ -113,7 +129,16 @@ public abstract class AbstractModProvider implements IModProvider
             return true;
         }
     }
-    
+    /**
+     * Will call {@link #shouldBeIncluded(Path, ConcurrentHashMap)} with all files as part of Cache-Population.
+     * May be VERY expensive depending on the amount of files/mods.
+     */
+    private static final boolean PrePopulateCacheFiles = Boolean.parseBoolean(System.getProperty("org.kettingpowered.ketting.dynamicExcludes.prePopulateCache"));;
+    /**
+     * When false will not check individual files for inclusion status and only go off of package excludes
+     * , which are populated by {@link #populateIsExcludedPackage(Path, ConcurrentHashMap)}.
+     */
+    private static final boolean CheckIndividualFiles = Boolean.parseBoolean(System.getProperty("org.kettingpowered.ketting.dynamicExcludes.checkIndividualFiles"));
     static {
         if (AbstractModProvider.class.getClassLoader() instanceof cpw.mods.cl.ModuleClassLoader mcl){
             Map<String, ClassLoader> loader;
@@ -126,9 +151,12 @@ public abstract class AbstractModProvider implements IModProvider
         } else {
             parentLoaders = new HashMap<>();
         }
+        if (PrePopulateCacheFiles) LOGGER.warn("The option \"org.kettingpowered.ketting.dynamicExcludes.prePopulateCache\" is experimental, because it will significantly slow down the server-startup at no cost." +
+                "If the server launches fine without that flag set, please consider removing it.");
+        if (CheckIndividualFiles) LOGGER.warn("The option \"org.kettingpowered.ketting.dynamicExcludes.checkIndividualFiles\" is experimental, because it will significantly slow down the server-startup at no cost." +
+                "If the server launches fine without that flag set, please consider removing it.");
     }
     private static final Map<String, ClassLoader> parentLoaders;
-    
     //Ketting mark as nullable for things we do not want loaded, because they already are loaded, but still continue starting.
     protected @org.jetbrains.annotations.Nullable IModLocator.ModFileOrException createMod(Path... path) {
         var mjm = new ModJarMetadata();
@@ -148,10 +176,45 @@ public abstract class AbstractModProvider implements IModProvider
         }catch (Throwable ignored){}
         
         final ConcurrentHashMap<String, Boolean> hm = new ConcurrentHashMap<>();
+
+        AtomicBoolean hmInit = new AtomicBoolean(false);
+        ForkJoinTask<?> hmInitTask = ForkJoinPool.commonPool().submit(() -> {
+            Instant start = Instant.now();
+            try (Stream<Path> walk = Files.walk(unfiltered_sj.getPath("/"))){
+                walk.filter(p->!p.toString().endsWith(".class"))
+                    .filter(Files::isDirectory)
+                    .forEach(p->populateIsExcludedPackage(p, hm));
+                hmInit.setRelease(true);
+            }catch (Throwable throwable) {
+                LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_ERRORS, "Error whilst trying to determine include status: ", throwable);
+                throw new RuntimeException(throwable);
+            }
+            
+            if (PrePopulateCacheFiles && CheckIndividualFiles){
+                try (Stream<Path> walk = Files.walk(unfiltered_sj.getPath("/"))){
+                    walk.map(p->ForkJoinPool.commonPool().submit(()->shouldBeIncluded(p, hm)).fork())
+                        .forEach(ForkJoinTask::quietlyJoin);
+                }catch (Throwable throwable) {
+                    LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_ERRORS, "Error whilst trying to determine include status: ", throwable);
+                    throw new RuntimeException(throwable);
+                }
+            }
+            LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_EXCLUDES, "Initializing excludes for {} took: {}", path, Duration.between(start, Instant.now()));
+            hmInit.setRelease(true);
+        }).fork();
+        
         var sj = SecureJar.from(
                 Manifest::new,
                 jar -> jar.moduleDataProvider().findFile(MODS_TOML).isPresent() ? mjm : JarMetadata.from(jar, path),
                 (root, p) -> {
+                    //fast path. This particularly allows for access to all files in META-INF and all top-level files 
+                    // (e.g. mixin declarations, mixin refmaps, mod icons, accesswideners, pack.mcmeta and others)
+                    // without having to wait for the cache initialization.
+                    if (root != null && (root.startsWith("META-INF") || root.chars().filter(chr -> '/' == chr).count() <= 1)) return true;
+                    if (!hmInit.get()) {
+                        LOGGER.debug("Waiting on hm init for {}", root);
+                        hmInitTask.join();
+                    }
                     boolean include = shouldBeIncluded(unfiltered_sj.getPath(root), hm);
                     if (!include) LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_EXCLUDES, "excluding class {} for mod {}", root, path);
                     return include;
