@@ -93,7 +93,8 @@ public abstract class DelegatedGeneratorAccess implements WorldGenLevel {
     }
 
     public void addFreshEntityWithPassengers(Entity arg0, CreatureSpawnEvent.SpawnReason arg1) {
-        handle.addFreshEntityWithPassengersBukkit(arg0, arg1);
+        handle.prepareAddFreshEntityWithPassengers(arg1);
+        handle.addFreshEntityWithPassengers(arg0);
     }
 
     @Override
