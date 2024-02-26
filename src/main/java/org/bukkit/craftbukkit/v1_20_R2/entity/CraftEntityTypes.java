@@ -10,6 +10,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
@@ -38,6 +39,7 @@ import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.kettingpowered.ketting.entity.CraftCustomMinecart;
+import org.kettingpowered.ketting.entity.CraftCustomTamable;
 
 public final class CraftEntityTypes {
 
@@ -261,7 +263,8 @@ public final class CraftEntityTypes {
         // None spawn able
         register(new EntityTypeData<>(EntityType.FISHING_HOOK, FishHook.class, CraftFishHook::new, null)); // Cannot spawn a fish hook
         register(new EntityTypeData<>(EntityType.PLAYER, Player.class, CraftPlayer::new, null)); // Cannot spawn a player
-        register(new EntityTypeData<>(EntityType.MINECART, Minecart.class, CraftCustomMinecart::new, null)); // Cannot spawn a player
+        register(new EntityTypeData<>(EntityType.UNKNOWN, Minecart.class, CraftCustomMinecart::new, null));
+        register(new EntityTypeData<>(EntityType.UNKNOWN, TamableAnimal.class, CraftCustomTamable::new, null));
     }
 
     private static void register(EntityTypeData<?, ?> typeData) {
