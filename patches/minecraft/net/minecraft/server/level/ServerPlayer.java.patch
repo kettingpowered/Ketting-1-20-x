@@ -574,10 +574,10 @@
        } else {
           Direction.Axis direction$axis = this.level().getBlockState(this.portalEntrancePos).getOptionalValue(NetherPortalBlock.AXIS).orElse(Direction.Axis.X);
 -         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.getPortalForcer().createPortal(p_184132_, direction$axis);
--         if (!optional1.isPresent()) {
+-         if (optional1.isEmpty()) {
 -            LOGGER.error("Unable to create a portal, likely target out of worldborder");
 +         Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.getPortalForcer().createPortal(p_184132_, direction$axis, this, 16); // CraftBukkit
-+         if (!optional1.isPresent()) {
++         if (optional1.isEmpty()) {
 +            // LOGGER.error("Unable to create a portal, likely target out of worldborder"); // CraftBukkit
 +         }
 +
