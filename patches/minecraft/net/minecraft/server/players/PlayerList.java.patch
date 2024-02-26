@@ -9,7 +9,8 @@
     private final Map<UUID, ServerPlayer> playersByUUID = Maps.newHashMap();
     private final UserBanList bans = new UserBanList(USERBANLIST_FILE);
     private final IpBanList ipBans = new IpBanList(IPBANLIST_FILE);
-@@ -121,13 +_,23 @@
+@@ -120,14 +_,24 @@
+    public final PlayerDataStorage playerIo;
     private boolean doWhiteList;
     private final LayeredRegistryAccess<RegistryLayer> registries;
 -   protected final int maxPlayers;
@@ -794,7 +795,7 @@
  
     public void broadcastSystemMessage(Component p_240618_, boolean p_240644_) {
        this.broadcastSystemMessage(p_240618_, (p_215639_) -> {
-@@ -767,34 +_,49 @@
+@@ -767,35 +_,50 @@
        return p_251384_.hasSignature() && !p_251384_.hasExpiredServer(Instant.now());
     }
  
@@ -853,6 +854,7 @@
 +      this.advancements.put(uuid, playeradvancements); // Ketting
  
        playeradvancements.setPlayer(p_11297_);
+       return playeradvancements;
 @@ -826,7 +_,7 @@
     }
  
