@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/NetherPortalBlock.java
 +++ b/net/minecraft/world/level/block/NetherPortalBlock.java
-@@ -46,13 +_,15 @@
+@@ -46,12 +_,14 @@
     }
  
     public void randomTick(BlockState p_221799_, ServerLevel p_221800_, BlockPos p_221801_, RandomSource p_221802_) {
@@ -11,13 +11,11 @@
           }
  
           if (p_221800_.getBlockState(p_221801_).isValidSpawn(p_221800_, p_221801_, EntityType.ZOMBIFIED_PIGLIN)) {
--            Entity entity = EntityType.ZOMBIFIED_PIGLIN.spawn(p_221800_, p_221801_.above(), MobSpawnType.STRUCTURE);
 +            // CraftBukkit - set spawn reason to NETHER_PORTAL
-+            Entity entity = EntityType.ZOMBIFIED_PIGLIN.spawn(p_221800_, p_221801_.above(), MobSpawnType.STRUCTURE, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NETHER_PORTAL);
-+
++            EntityType.ZOMBIFIED_PIGLIN.ketting$spawn$spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NETHER_PORTAL); //Ketting
+             Entity entity = EntityType.ZOMBIFIED_PIGLIN.spawn(p_221800_, p_221801_.above(), MobSpawnType.STRUCTURE);
              if (entity != null) {
                 entity.setPortalCooldown();
-             }
 @@ -70,6 +_,10 @@
  
     public void entityInside(BlockState p_54915_, Level p_54916_, BlockPos p_54917_, Entity p_54918_) {
