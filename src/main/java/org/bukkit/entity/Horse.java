@@ -41,7 +41,12 @@ public interface Horse extends AbstractHorse {
          * Also not really a horse :)
          */
         CAMEL,
-        ;
+        //Ketting start
+        /**
+         * A modded horse
+         */
+        MODDED;
+        //Ketting end
     }
 
     /**
