@@ -75,10 +75,7 @@ import org.bukkit.util.Vector;
 import net.md_5.bungee.api.chat.BaseComponent; // Spigot
 import org.kettingpowered.ketting.config.KettingConfig;
 import org.kettingpowered.ketting.core.Ketting;
-import org.kettingpowered.ketting.entity.CraftCustomEntity;
-import org.kettingpowered.ketting.entity.CraftCustomMinecart;
-import org.kettingpowered.ketting.entity.CraftCustomTamable;
-import org.kettingpowered.ketting.entity.UnknownEntity;
+import org.kettingpowered.ketting.entity.*;
 import org.kettingpowered.ketting.inject.ForgeInject;
 import org.kettingpowered.ketting.internal.KettingConstants;
 
@@ -149,10 +146,12 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                             else if (entity instanceof net.minecraft.world.entity.animal.horse.Mule) { return new CraftMule(server, (net.minecraft.world.entity.animal.horse.Mule) entity); }
                             else if (entity instanceof net.minecraft.world.entity.animal.horse.TraderLlama) { return new CraftTraderLlama(server, (net.minecraft.world.entity.animal.horse.TraderLlama) entity); }
                             else if (entity instanceof net.minecraft.world.entity.animal.horse.Llama) { return new CraftLlama(server, (net.minecraft.world.entity.animal.horse.Llama) entity); }
+                            else return new CraftCustomHorse.Chested(server, (net.minecraft.world.entity.animal.horse.AbstractChestedHorse) entity); //Ketting
                         } else if (entity instanceof net.minecraft.world.entity.animal.horse.Horse) { return new CraftHorse(server, (net.minecraft.world.entity.animal.horse.Horse) entity); }
                         else if (entity instanceof net.minecraft.world.entity.animal.horse.SkeletonHorse) { return new CraftSkeletonHorse(server, (net.minecraft.world.entity.animal.horse.SkeletonHorse) entity); }
                         else if (entity instanceof net.minecraft.world.entity.animal.horse.ZombieHorse) { return new CraftZombieHorse(server, (net.minecraft.world.entity.animal.horse.ZombieHorse) entity); }
                         else if (entity instanceof net.minecraft.world.entity.animal.camel.Camel) { return new CraftCamel(server, (net.minecraft.world.entity.animal.camel.Camel) entity); }
+                        else return new CraftCustomHorse(server, (net.minecraft.world.entity.animal.horse.AbstractHorse) entity); //Ketting
                     }
                     else if (entity instanceof net.minecraft.world.entity.animal.Rabbit) { return new CraftRabbit(server, (net.minecraft.world.entity.animal.Rabbit) entity); }
                     else if (entity instanceof net.minecraft.world.entity.animal.PolarBear) { return new CraftPolarBear(server, (net.minecraft.world.entity.animal.PolarBear) entity); }
