@@ -36,6 +36,7 @@ import org.bukkit.entity.minecart.SpawnerMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.kettingpowered.ketting.entity.CraftCustomHorse;
 import org.kettingpowered.ketting.entity.CraftCustomMinecart;
 import org.kettingpowered.ketting.entity.CraftCustomTamable;
 
@@ -264,6 +265,8 @@ public final class CraftEntityTypes {
         //Ketting: Todo: Proper EntityType?
         register(new EntityTypeData<>(EntityType.UNKNOWN, Minecart.class, CraftCustomMinecart::new, null));
         register(new EntityTypeData<>(EntityType.UNKNOWN, Tameable.class, CraftCustomTamable::new, null));
+        register(new EntityTypeData<AbstractHorse, net.minecraft.world.entity.animal.horse.AbstractChestedHorse>(EntityType.UNKNOWN, AbstractHorse.class, CraftCustomHorse::new, null));
+        register(new EntityTypeData<AbstractHorse, net.minecraft.world.entity.animal.horse.AbstractHorse>(EntityType.UNKNOWN, AbstractHorse.class, CraftCustomHorse::new, null));
     }
 
     private static void register(EntityTypeData<?, ?> typeData) {
