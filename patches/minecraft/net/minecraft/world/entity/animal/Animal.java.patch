@@ -43,7 +43,7 @@
  
        this.level().broadcastEntityEvent(this, (byte)18);
     }
-@@ -206,15 +_,44 @@
+@@ -206,15 +_,48 @@
  
     public void spawnChildFromBreeding(ServerLevel p_27564_, Animal p_27565_) {
        AgeableMob ageablemob = this.getBreedOffspring(p_27564_, p_27565_);
@@ -74,7 +74,11 @@
 +         experience = entityBreedEvent.getExperience();
 +         this.finalizeSpawnChildFromBreeding(p_27564_, p_27565_, ageablemob, experience);
 +         p_27564_.prepareAddFreshEntityWithPassengers(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);
++         //Ketting start - force drops, resolves issue with chicken nerf reforged
++         this.forceDrops = true;
           p_27564_.addFreshEntityWithPassengers(ageablemob);
++         this.forceDrops = false;
++         //Ketting end
 +         // CraftBukkit end
        }
     }
