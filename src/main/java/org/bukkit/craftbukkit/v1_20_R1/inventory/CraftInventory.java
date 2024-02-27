@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.logging.Level;
+
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.MerchantContainer;
@@ -21,6 +23,7 @@ import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
 import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.entity.SmokerBlockEntity;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftLegacy;
@@ -29,12 +32,16 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.kettingpowered.ketting.craftbukkit.StubNMSContainer;
 
 public class CraftInventory implements Inventory {
     protected final Container inventory;
 
     public CraftInventory(Container inventory) {
-        this.inventory = inventory;
+        if (inventory == null) {
+            Bukkit.getLogger().log(Level.SEVERE, "Attempted to create a CraftInventory with a null NMS Inventory", new NullPointerException());
+            this.inventory = StubNMSContainer.INSTANCE;
+        } else this.inventory = inventory;
     }
 
     public Container getInventory() {
