@@ -1,8 +1,10 @@
 package org.bukkit.entity;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
@@ -347,6 +349,14 @@ public enum EntityType implements Keyed, Translatable {
         this.living = clazz != null && LivingEntity.class.isAssignableFrom(clazz);
         this.key = (name == null) ? null : NamespacedKey.minecraft(name);
     }
+    private EntityType(/*@Nullable*/ String name, /*@Nullable*/ Class<? extends Entity> clazz, int typeId, boolean independent, String modId) {
+        this.name = name;
+        this.clazz = clazz;
+        this.typeId = (short) typeId;
+        this.independent = independent;
+        this.living = clazz != null && LivingEntity.class.isAssignableFrom(clazz);
+        this.key = (name == null) ? null : new NamespacedKey(modId, name);
+    }
 
     /**
      * Gets the entity type name.
@@ -357,7 +367,10 @@ public enum EntityType implements Keyed, Translatable {
     @Deprecated
     @Nullable
     public String getName() {
-        return name;
+        if (this.key == null || this.name == null) return null;
+        if (NamespacedKey.MINECRAFT.equals(this.key.getNamespace()))
+            return name;
+        else return this.key.toString();
     }
 
     @NotNull
@@ -448,4 +461,29 @@ public enum EntityType implements Keyed, Translatable {
     public boolean isEnabledByFeature(@NotNull World world) {
         return Bukkit.getDataPackManager().isEnabledByFeature(this, world);
     }
+
+    //Ketting start
+    private Function<Location, ? extends net.minecraft.world.entity.Entity> customEntityFactory;
+
+    public void createFactory(net.minecraft.world.entity.EntityType<?> value) {
+        this.customEntityFactory = (loc) -> {
+            if (loc == null || loc.getWorld() == null)
+                return null;
+
+            net.minecraft.world.level.Level handle = ((org.bukkit.craftbukkit.v1_20_R2.CraftWorld) loc.getWorld()).getHandle();
+            net.minecraft.world.entity.Entity entity = value.create(handle);
+            if (entity != null) entity.moveTo(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+            return entity;
+        };
+    }
+
+    public boolean hasCustomFactory() {
+        return customEntityFactory != null;
+    }
+
+    public net.minecraft.world.entity.Entity createEntity(Location loc) {
+        if (customEntityFactory == null) return null;
+        return customEntityFactory.apply(loc);
+    }
+    //Ketting end
 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -109,25 +_,37 @@
+@@ -109,7 +_,7 @@
     private static final int SEND_PLAYER_INFO_INTERVAL = 600;
     private static final SimpleDateFormat BAN_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
     private final MinecraftServer server;
@@ -9,16 +9,8 @@
     private final Map<UUID, ServerPlayer> playersByUUID = Maps.newHashMap();
     private final UserBanList bans = new UserBanList(USERBANLIST_FILE);
     private final IpBanList ipBans = new IpBanList(IPBANLIST_FILE);
-    private final ServerOpList ops = new ServerOpList(OPLIST_FILE);
-    private final UserWhiteList whitelist = new UserWhiteList(WHITELIST_FILE);
--   private final Map<UUID, ServerStatsCounter> stats = Maps.newHashMap();
--   private final Map<UUID, PlayerAdvancements> advancements = Maps.newHashMap();
--   private final PlayerDataStorage playerIo;
-+   // CraftBukkit start
-+   //private final Map<UUID, ServerStatsCounter> stats = Maps.newHashMap();
-+   //private final Map<UUID, PlayerAdvancements> advancements = Maps.newHashMap();
-+   // CraftBukkit end
-+   public final PlayerDataStorage playerIo;
+@@ -120,14 +_,24 @@
+    public final PlayerDataStorage playerIo;
     private boolean doWhiteList;
     private final LayeredRegistryAccess<RegistryLayer> registries;
 -   protected final int maxPlayers;
@@ -298,13 +290,12 @@
        if (serverplayer == p_11287_) {
           this.playersByUUID.remove(uuid);
 -         this.stats.remove(uuid);
--         this.advancements.remove(uuid);
++         // CraftBukkit start
++         this.stats.remove(uuid); // Ketting
+          this.advancements.remove(uuid);
 -      }
 -
 -      this.broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(p_11287_.getUUID())));
-+         // CraftBukkit start
-+         // this.stats.remove(uuid);
-+         // this.advancements.remove(uuid);
 +         // CraftBukkit end
 +      }
 +
@@ -804,7 +795,7 @@
  
     public void broadcastSystemMessage(Component p_240618_, boolean p_240644_) {
        this.broadcastSystemMessage(p_240618_, (p_215639_) -> {
-@@ -767,34 +_,48 @@
+@@ -767,35 +_,50 @@
        return p_251384_.hasSignature() && !p_251384_.hasExpiredServer(Instant.now());
     }
  
@@ -842,10 +833,10 @@
 -         serverstatscounter = new ServerStatsCounter(this.server, file2);
 -         this.stats.put(uuid, serverstatscounter);
 +         stats = new ServerStatsCounter(this.server, file2);
-+         // this.stats.put(uuid, stats); // CraftBukkit
        }
  
 -      return serverstatscounter;
++      this.stats.put(uuid, stats); // Ketting
 +      return stats;
     }
  
@@ -858,10 +849,12 @@
           Path path = this.server.getWorldPath(LevelResource.PLAYER_ADVANCEMENTS_DIR).resolve(uuid + ".json");
           playeradvancements = new PlayerAdvancements(this.server.getFixerUpper(), this, this.server.getAdvancements(), path, p_11297_);
 -         this.advancements.put(uuid, playeradvancements);
-+         // this.advancements.put(uuid, playeradvancements); // CraftBukkit
        }
++      
++      this.advancements.put(uuid, playeradvancements); // Ketting
  
        playeradvancements.setPlayer(p_11297_);
+       return playeradvancements;
 @@ -826,7 +_,7 @@
     }
  

@@ -4,10 +4,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import java.util.Collection;
 import java.util.Collections;
+
+import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 public abstract class MusicInstrument implements Keyed {
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     public static final MusicInstrument PONDER = getInstrument("ponder_goat_horn");
     public static final MusicInstrument SING = getInstrument("sing_goat_horn");
@@ -48,7 +52,10 @@ public abstract class MusicInstrument implements Keyed {
         NamespacedKey namespacedKey = NamespacedKey.minecraft(key);
         MusicInstrument instrument = Registry.INSTRUMENT.get(namespacedKey);
 
-        Preconditions.checkNotNull(instrument, "No MusicInstrument found for %s. This is a bug.", namespacedKey);
+        if(instrument==null) {
+            LOGGER.error("No MusicInstrument found for {}. This is a bug. Returning first MusicInstrument instead.", namespacedKey);
+            return Registry.INSTRUMENT.iterator().next();
+        }
 
         return instrument;
     }

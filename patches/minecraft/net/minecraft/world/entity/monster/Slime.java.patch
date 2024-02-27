@@ -9,47 +9,74 @@
           for(int j = 0; j < i * 8; ++j) {
              float f = this.random.nextFloat() * ((float)Math.PI * 2F);
              float f1 = this.random.nextFloat() * 0.5F + 0.5F;
-@@ -190,6 +_,19 @@
+@@ -181,6 +_,9 @@
+       return (EntityType<? extends Slime>)super.getType();
+    }
+ 
++   //Ketting start - mixin inject
++   private java.util.List<LivingEntity> remove$slimes;
++   private Object newK;
+    public void remove(Entity.RemovalReason p_149847_) {
+       int i = this.getSize();
+       if (!this.level().isClientSide && i > 1 && this.isDeadOrDying()) {
+@@ -190,6 +_,13 @@
           int j = i / 2;
           int k = 2 + this.random.nextInt(3);
  
-+         // CraftBukkit start
-+         org.bukkit.event.entity.SlimeSplitEvent event = new org.bukkit.event.entity.SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), k);
-+         this.level().getCraftServer().getPluginManager().callEvent(event);
-+
-+         if (!event.isCancelled() && event.getCount() > 0) {
-+            k = event.getCount();
-+         } else {
-+            super.remove(p_149847_);
-+            return;
-+         }
-+         java.util.List<LivingEntity> slimes = new java.util.ArrayList<>(j);
-+         // CraftBukkit end
++         //Ketting start
++         newK = removeEvent(p_149847_, k);
++         if (newK == null) return;
++         k = (int) newK;
++         remove$slimes = new java.util.ArrayList<>(j);
++         //Ketting end
 +
           for(int l = 0; l < k; ++l) {
              float f1 = ((float)(l % 2) - 0.5F) * f;
              float f2 = ((float)(l / 2) - 0.5F) * f;
-@@ -204,9 +_,19 @@
+@@ -204,14 +_,43 @@
                 slime.setInvulnerable(this.isInvulnerable());
                 slime.setSize(j, true);
                 slime.moveTo(this.getX() + (double)f1, this.getY() + 0.5D, this.getZ() + (double)f2, this.random.nextFloat() * 360.0F, 0.0F);
--               this.level().addFreshEntity(slime);
-+               slimes.add(slime); // CraftBukkit
++               remove$slimes.add(slime); // CraftBukkit
++               this.level().disableSpawnFor(slime); //Ketting - spawning is handled in removeSpawnNewSlimes
+                this.level().addFreshEntity(slime);
              }
           }
 +
-+         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTransformEvent(this, slimes, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
-+            super.remove(p_149847_);
-+            return;
-+         }
-+         for (LivingEntity living : slimes) {
-+            this.level().addFreshEntity(living, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT); // CraftBukkit - SpawnReason
-+         }
-+         // CraftBukkit end
++         removeSpawnNewSlimes(p_149847_);
        }
  
        super.remove(p_149847_);
+    }
+ 
++   private Object removeEvent(Entity.RemovalReason p_149847_, int k) {
++      org.bukkit.event.entity.SlimeSplitEvent event = new org.bukkit.event.entity.SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), k);
++      this.level().getCraftServer().getPluginManager().callEvent(event);
++
++      if (!event.isCancelled() && event.getCount() > 0) {
++         k = event.getCount();
++      } else {
++         super.remove(p_149847_);
++         return null;
++      }
++      return k;
++   }
++
++   private void removeSpawnNewSlimes(Entity.RemovalReason p_149847_) {
++      if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTransformEvent(this, remove$slimes, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
++         super.remove(p_149847_);
++         return;
++      }
++      for (LivingEntity living : remove$slimes) {
++         this.level().prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT);
++         this.level().addFreshEntity(living);
++      }
++   }
++   //Ketting end
++
+    public void push(Entity p_33636_) {
+       super.push(p_33636_);
+       if (p_33636_ instanceof IronGolem && this.isDealsDamage()) {
 @@ -277,7 +_,7 @@
           }
  

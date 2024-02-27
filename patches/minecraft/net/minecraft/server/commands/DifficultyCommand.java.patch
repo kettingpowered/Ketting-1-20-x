@@ -11,7 +11,7 @@
           throw ERROR_ALREADY_DIFFICULT.create(p_136946_.getKey());
        } else {
 -         minecraftserver.setDifficulty(p_136946_, true);
-+         level.serverLevelData.setDifficulty(p_136946_); // CraftBukkit
++         ((net.minecraft.world.level.storage.PrimaryLevelData) level.serverLevelData).setDifficulty(p_136946_); // CraftBukkit
           p_136945_.sendSuccess(() -> {
              return Component.translatable("commands.difficulty.success", p_136946_.getDisplayName());
           }, true);

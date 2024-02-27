@@ -1,11 +1,6 @@
 --- a/net/minecraft/world/inventory/InventoryMenu.java
 +++ b/net/minecraft/world/inventory/InventoryMenu.java
-@@ -33,15 +_,26 @@
-    public static final ResourceLocation EMPTY_ARMOR_SLOT_SHIELD = new ResourceLocation("item/empty_armor_slot_shield");
-    static final ResourceLocation[] TEXTURE_EMPTY_SLOTS = new ResourceLocation[]{EMPTY_ARMOR_SLOT_BOOTS, EMPTY_ARMOR_SLOT_LEGGINGS, EMPTY_ARMOR_SLOT_CHESTPLATE, EMPTY_ARMOR_SLOT_HELMET};
-    private static final EquipmentSlot[] SLOT_IDS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
--   private final CraftingContainer craftSlots = new TransientCraftingContainer(this, 2, 2);
-+   private final CraftingContainer craftSlots; // CraftBukkit
+@@ -37,11 +_,21 @@
     private final ResultContainer resultSlots = new ResultContainer();
     public final boolean active;
     private final Player owner;
@@ -19,9 +14,8 @@
        this.active = p_39707_;
        this.owner = p_39708_;
 +      // CraftBukkit start
-+//      this.resultSlots = new ResultContainer(); // CraftBukkit - moved to before InventoryCrafting construction //Ketting - don't.
-+      this.craftSlots = new TransientCraftingContainer(this, 2, 2, p_39706_.player); // CraftBukkit - pass player
-+      ((TransientCraftingContainer)this.craftSlots).resultInventory = this.resultSlots; // CraftBukkit - let InventoryCrafting know about its result slot
++      ((TransientCraftingContainer) this.craftSlots).setOwner(p_39708_); // CraftBukkit - pass player
++      ((TransientCraftingContainer) this.craftSlots).resultInventory = this.resultSlots; // CraftBukkit - let InventoryCrafting know about its result slot
 +      this.player = p_39706_; // CraftBukkit - save player
 +      setTitle(net.minecraft.network.chat.Component.translatable("container.crafting")); // SPIGOT-4722: Allocate title for player inventory
 +      // CraftBukkit end

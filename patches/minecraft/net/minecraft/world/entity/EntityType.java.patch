@@ -77,7 +77,7 @@
     }
  
     public static <T extends Entity> Consumer<T> createDefaultStackConfig(ServerLevel p_263583_, ItemStack p_263568_, @Nullable Player p_263575_) {
-@@ -368,20 +_,36 @@
+@@ -368,20 +_,38 @@
     public static <T extends Entity> Consumer<T> appendCustomEntityStackConfig(Consumer<T> p_263579_, ServerLevel p_263571_, ItemStack p_263582_, @Nullable Player p_263574_) {
        CompoundTag compoundtag = p_263582_.getTag();
        return compoundtag != null ? p_263579_.andThen((p_262558_) -> {
@@ -86,6 +86,7 @@
        }) : p_263579_;
     }
  
++   public java.util.concurrent.atomic.AtomicReference<org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason> ketting$spawn$spawnReason = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
     @Nullable
     public T spawn(ServerLevel p_262634_, BlockPos p_262707_, MobSpawnType p_262597_) {
 -      return this.spawn(p_262634_, (CompoundTag)null, (Consumer<T>)null, p_262707_, p_262597_, false, false);
@@ -94,7 +95,7 @@
 -   @Nullable
 -   public T spawn(ServerLevel p_262704_, @Nullable CompoundTag p_262603_, @Nullable Consumer<T> p_262621_, BlockPos p_262672_, MobSpawnType p_262644_, boolean p_262690_, boolean p_262590_) {
 +      // CraftBukkit start
-+      return this.spawn(p_262634_, p_262707_, p_262597_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++      return this.spawn(p_262634_, p_262707_, p_262597_, ketting$spawn$spawnReason.getAndSet(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT));
 +   }
 +
 +   @Nullable
@@ -114,8 +115,8 @@
 +      // CraftBukkit end
        T t = this.create(p_262704_, p_262603_, p_262621_, p_262672_, p_262644_, p_262690_, p_262590_);
        if (t != null) {
--         p_262704_.addFreshEntityWithPassengers(t);
-+         p_262704_.addFreshEntityWithPassengersBukkit(t, spawnReason);
++         p_262704_.prepareAddFreshEntityWithPassengers(spawnReason);
+          p_262704_.addFreshEntityWithPassengers(t);
 +         return !t.isRemoved() ? t : null; // Don't return an entity when CreatureSpawnEvent is canceled
 +         // CraftBukkit end
        }

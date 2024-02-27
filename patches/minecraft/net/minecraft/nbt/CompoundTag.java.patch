@@ -11,11 +11,12 @@
     public static final Codec<CompoundTag> CODEC = Codec.PASSTHROUGH.comapFlatMap((p_274781_) -> {
        Tag tag = p_274781_.convert(NbtOps.INSTANCE).getValue();
        return tag instanceof CompoundTag ? DataResult.success((CompoundTag)tag) : DataResult.error(() -> {
-@@ -204,6 +_,7 @@
+@@ -204,6 +_,8 @@
  
     @Nullable
     public Tag put(String p_128366_, Tag p_128367_) {
-+      if (p_128367_ == null) throw new IllegalArgumentException("Invalid null NBT value with key " + p_128366_);
++      if (p_128367_ == null && org.kettingpowered.ketting.config.KettingConfig.getInstance().WARN_ON_NULL_NBT.getValue())
++         org.kettingpowered.ketting.core.Ketting.LOGGER.warn("Tried to add null tag with key " + p_128366_ + " to CompoundTag", new IllegalArgumentException("Invalid null NBT value with key " + p_128366_));
        return this.tags.put(p_128366_, p_128367_);
     }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/CarvedPumpkinBlock.java
 +++ b/net/minecraft/world/level/block/CarvedPumpkinBlock.java
-@@ -72,10 +_,14 @@
+@@ -72,10 +_,15 @@
     }
  
     private static void spawnGolemInWorld(Level p_249110_, BlockPattern.BlockPatternMatch p_251293_, Entity p_251251_, BlockPos p_251189_) {
@@ -10,7 +10,8 @@
 -      p_249110_.addFreshEntity(p_251251_);
 -
 +      // CraftBukkit start
-+      if (!p_249110_.addFreshEntity(p_251251_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM)) {
++      p_249110_.prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM);
++      if (!p_249110_.addFreshEntity(p_251251_)) {
 +         return;
 +      }
 +      clearPatternBlocks(p_249110_, p_251293_); // CraftBukkit - from above
