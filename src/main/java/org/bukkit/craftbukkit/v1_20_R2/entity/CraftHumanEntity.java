@@ -274,7 +274,14 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     @Override
     public InventoryView getOpenInventory() {
-        return getHandle().containerMenu.getBukkitView();
+        //Ketting start
+        try {
+            org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(getHandle());
+            return getHandle().containerMenu.getBukkitView();
+        } finally {
+            org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner();
+        }
+        //Ketting end
     }
 
     @Override

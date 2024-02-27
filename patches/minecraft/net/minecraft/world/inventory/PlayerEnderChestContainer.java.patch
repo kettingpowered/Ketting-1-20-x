@@ -1,13 +1,14 @@
 --- a/net/minecraft/world/inventory/PlayerEnderChestContainer.java
 +++ b/net/minecraft/world/inventory/PlayerEnderChestContainer.java
-@@ -11,9 +_,26 @@
+@@ -11,9 +_,27 @@
  public class PlayerEnderChestContainer extends SimpleContainer {
     @Nullable
     private EnderChestBlockEntity activeChest;
 +   // CraftBukkit start
-+   private final Player owner;
++   private Player owner; //Ketting - not final
 +
 +   public org.bukkit.inventory.InventoryHolder getBukkitOwner() {
++      if (owner == null) owner = org.kettingpowered.ketting.utils.InventoryViewHelper.getContainerOwner();
 +      if (owner == null) return org.kettingpowered.ketting.craftbukkit.CraftStubInventoryHolder.INSTANCE;
 +      return owner.getBukkitEntity();
 +   }
