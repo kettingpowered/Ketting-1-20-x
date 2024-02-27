@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -60,6 +_,32 @@
+@@ -60,6 +_,35 @@
     private ContainerSynchronizer synchronizer;
     private boolean suppressRemoteUpdates;
  
@@ -8,8 +8,11 @@
 +   public boolean checkReachable = true;
 +
 +   //Ketting start
++   private @Nullable org.bukkit.inventory.InventoryView bukkitView;
 +   public org.bukkit.inventory.InventoryView getBukkitView(){
-+      return org.kettingpowered.ketting.craftbukkit.CraftStubInventoryView.INSTANCE;
++      if (bukkitView == null)
++         bukkitView = org.kettingpowered.ketting.utils.InventoryViewHelper.createView(this);
++      return bukkitView;
 +   }
 +   //Ketting End
 +   public void transferTo(AbstractContainerMenu other, org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity player) {

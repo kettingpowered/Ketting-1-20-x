@@ -767,7 +767,7 @@
        }
  
     }
-@@ -939,16 +_,43 @@
+@@ -939,16 +_,47 @@
        this.containerCounter = this.containerCounter % 100 + 1;
     }
  
@@ -795,7 +795,11 @@
 +            abstractcontainermenu.setTitle(p_9033_.getDisplayName());
 +
 +            boolean cancelled = false;
++            //Ketting start
++            org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(this);
 +            abstractcontainermenu = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callInventoryOpenEvent(this, abstractcontainermenu, cancelled);
++            org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner();
++            //Ketting end
 +            if (abstractcontainermenu == null && !cancelled) { // Let pre-cancelled events fall through
 +               // SPIGOT-5263 - close chest if cancelled
 +               if (p_9033_ instanceof Container) {
@@ -860,16 +864,19 @@
     }
  
     public void openItemGui(ItemStack p_9082_, InteractionHand p_9083_) {
-@@ -995,6 +_,7 @@
+@@ -1000,8 +_,18 @@
     }
  
-    public void closeContainer() {
-+      org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleInventoryCloseEvent(this); // CraftBukkit
-       this.connection.send(new ClientboundContainerClosePacket(this.containerMenu.containerId));
-       this.doCloseContainer();
-    }
-@@ -1002,6 +_,7 @@
     public void doCloseContainer() {
++      //Ketting start - fix inventory closing
++      if (this.containerMenu != this.inventoryMenu) {
++         Player old = org.kettingpowered.ketting.utils.InventoryViewHelper.getContainerOwner();
++         org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(this);
++         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleInventoryCloseEvent(this);
++         org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(old);
++      }
++      //Ketting end
++
        this.containerMenu.removed(this);
        this.inventoryMenu.transferState(this.containerMenu);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Close(this, this.containerMenu));

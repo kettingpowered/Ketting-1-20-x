@@ -1443,7 +1443,7 @@
              this.player.containerMenu.sendAllDataToRemote();
           } else if (!this.player.containerMenu.stillValid(this.player)) {
              LOGGER.debug("Player {} interacted with invalid menu {}", this.player, this.player.containerMenu);
-@@ -1532,8 +_,284 @@
+@@ -1532,8 +_,288 @@
              } else {
                 boolean flag = p_9856_.getStateId() != this.player.containerMenu.getStateId();
                 this.player.containerMenu.suppressRemoteUpdates();
@@ -1454,7 +1454,11 @@
 +                  return;
 +               }
 +
++               //Ketting start
++               org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(this.player);
 +               org.bukkit.inventory.InventoryView inventory = this.player.containerMenu.getBukkitView();
++               org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner();
++               //Ketting end
 +               org.bukkit.event.inventory.InventoryType.SlotType type = inventory.getSlotType(p_9856_.getSlotNum());
 +
 +               org.bukkit.event.inventory.InventoryClickEvent event;
