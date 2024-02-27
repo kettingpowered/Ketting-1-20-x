@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/ai/goal/TemptGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/TemptGoal.java
+@@ -5,7 +_,6 @@
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.PathfinderMob;
+ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+-import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.crafting.Ingredient;
+ 
+ public class TemptGoal extends Goal {
 @@ -19,7 +_,7 @@
     private double pRotX;
     private double pRotY;
@@ -15,11 +23,11 @@
           this.player = this.mob.level().getNearestPlayer(this.targetingConditions, this.mob);
 +         // CraftBukkit start
 +         if (this.player != null) {
-+            org.bukkit.event.entity.EntityTargetLivingEntityEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityTargetLivingEvent(this.mob, this.player, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TEMPT);
++            org.bukkit.event.entity.EntityTargetLivingEntityEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTargetLivingEvent(this.mob, this.player, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TEMPT);
 +            if (event.isCancelled()) {
 +               return false;
 +            }
-+            this.player = (event.getTarget() == null) ? null : ((org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity) event.getTarget()).getHandle();
++            this.player = (event.getTarget() == null) ? null : ((org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +         }
 +         // CraftBukkit end
           return this.player != null;

@@ -12,11 +12,11 @@
 +      return this.itemStacks;
 +   }
 +
-+   public void onOpen(org.bukkit.craftbukkit.v1_20_R3.entity.CraftHumanEntity who) {
++   public void onOpen(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
 +      transaction.add(who);
 +   }
 +
-+   public void onClose(org.bukkit.craftbukkit.v1_20_R3.entity.CraftHumanEntity who) {
++   public void onClose(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
 +      transaction.remove(who);
 +      merchant.setTradingPlayer(null); // SPIGOT-4860
 +   }
@@ -35,7 +35,7 @@
 +   }
 +
 +   public org.bukkit.inventory.InventoryHolder getOwner() {
-+      return (merchant instanceof net.minecraft.world.entity.npc.AbstractVillager) ? (org.bukkit.craftbukkit.v1_20_R3.entity.CraftAbstractVillager) ((net.minecraft.world.entity.npc.AbstractVillager) this.merchant).getBukkitEntity() : null;
++      return (merchant instanceof net.minecraft.world.entity.npc.AbstractVillager) ? (org.bukkit.craftbukkit.v1_20_R2.entity.CraftAbstractVillager) ((net.minecraft.world.entity.npc.AbstractVillager) this.merchant).getBukkitEntity() : null;
 +   }
 +
 +   @Override

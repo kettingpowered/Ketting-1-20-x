@@ -64,7 +64,7 @@
 +                        continue;
 +                     }
 +
-+                     org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.entityDamage = source;
++                     org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = source;
 +                     entity.lastDamageCancelled = false;
 +
 +                     if (entity instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon dragon) {
@@ -79,7 +79,7 @@
 +                        entity.hurt(this.damageSource, this.damageCalculator.getEntityDamageAmount(this, entity));
 +                     }
 +
-+                     org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.entityDamage = null;
++                     org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = null;
 +                     if (entity.lastDamageCancelled) { // SPIGOT-5339, SPIGOT-6252, SPIGOT-6777: Skip entity if damage event was cancelled
 +                        continue;
 +                     }
@@ -140,7 +140,7 @@
 +            if (block instanceof net.minecraft.world.level.block.TntBlock) {
 +                Entity sourceEntity = source == null ? null : source;
 +               BlockPos sourceBlock = sourceEntity == null ? BlockPos.containing(this.x, this.y, this.z) : null;
-+                if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callTNTPrimeEvent(this.level, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.EXPLOSION, sourceEntity, sourceBlock)) {
++                if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callTNTPrimeEvent(this.level, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.EXPLOSION, sourceEntity, sourceBlock)) {
 +                    this.level.sendBlockUpdated(blockpos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), iblockdata, 3); // Update the block on the client
 +                    continue;
 +                }
@@ -156,7 +156,7 @@
              if (this.random.nextInt(3) == 0 && this.level.getBlockState(blockpos1).isAir() && this.level.getBlockState(blockpos1.below()).isSolidRender(this.level, blockpos1.below())) {
 -               this.level.setBlockAndUpdate(blockpos1, BaseFireBlock.getState(this.level, blockpos1));
 +               // CraftBukkit start - Ignition by explosion
-+               if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockIgniteEvent(this.level, blockpos1, this).isCancelled()) {
++               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(this.level, blockpos1, this).isCancelled()) {
 +                  this.level.setBlockAndUpdate(blockpos1, BaseFireBlock.getState(this.level, blockpos1));
 +               }
 +               // CraftBukkit end

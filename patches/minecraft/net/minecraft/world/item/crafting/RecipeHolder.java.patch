@@ -5,7 +5,7 @@
  
  public record RecipeHolder<T extends Recipe<?>>(ResourceLocation id, T value) {
 +   public final @org.jetbrains.annotations.Nullable org.bukkit.inventory.Recipe toBukkitRecipe() {
-+      return this.value.toBukkitRecipe(org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey.fromMinecraft(this.id));
++      return this.value.toBukkitRecipe(org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey.fromMinecraft(this.id));
 +   }
 +   // CraftBukkit end
 +

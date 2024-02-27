@@ -18,7 +18,7 @@
     public final int[] enchantClue = new int[]{-1, -1, -1};
     public final int[] levelClue = new int[]{-1, -1, -1};
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity = null;
 +   private org.bukkit.entity.Player player;
 +   // CraftBukkit end
  
@@ -97,10 +97,10 @@
                 }
  
 +               // CraftBukkit start
-+               org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack item = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asCraftMirror(itemstack);
++               org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack item = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(itemstack);
 +               org.bukkit.enchantments.EnchantmentOffer[] offers = new org.bukkit.enchantments.EnchantmentOffer[3];
 +               for (int m = 0; m < 3; ++m) {
-+                  org.bukkit.enchantments.Enchantment enchantment = (this.enchantClue[m] >= 0) ? org.bukkit.enchantments.Enchantment.getByKey(org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey.fromMinecraft(BuiltInRegistries.ENCHANTMENT.getKey(BuiltInRegistries.ENCHANTMENT.byId(this.enchantClue[m])))) : null;
++                  org.bukkit.enchantments.Enchantment enchantment = (this.enchantClue[m] >= 0) ? org.bukkit.enchantments.Enchantment.getByKey(org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey.fromMinecraft(BuiltInRegistries.ENCHANTMENT.getKey(BuiltInRegistries.ENCHANTMENT.byId(this.enchantClue[m])))) : null;
 +                  offers[m] = (enchantment != null) ? new org.bukkit.enchantments.EnchantmentOffer(enchantment, this.levelClue[m], this.costs[m]) : null;
 +               }
 +
@@ -121,7 +121,7 @@
 +                  org.bukkit.enchantments.EnchantmentOffer offer = event.getOffers()[o];
 +                  if (offer != null) {
 +                     this.costs[o] = offer.getCost();
-+                     this.enchantClue[o] = BuiltInRegistries.ENCHANTMENT.getId(BuiltInRegistries.ENCHANTMENT.get(org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey.toMinecraft(offer.getEnchantment().getKey())));
++                     this.enchantClue[o] = BuiltInRegistries.ENCHANTMENT.getId(BuiltInRegistries.ENCHANTMENT.get(org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey.toMinecraft(offer.getEnchantment().getKey())));
 +                     this.levelClue[o] = offer.getEnchantmentLevel();
 +                  } else {
 +                     this.costs[o] = 0;
@@ -146,11 +146,11 @@
 +                  // p_39465_.onEnchantmentPerformed(itemstack, i); // Moved down
 +                  java.util.Map<org.bukkit.enchantments.Enchantment, Integer> enchants = new java.util.HashMap<org.bukkit.enchantments.Enchantment, Integer>();
 +                  for (EnchantmentInstance instance : list) {
-+                     enchants.put(org.bukkit.enchantments.Enchantment.getByKey(org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey.fromMinecraft(BuiltInRegistries.ENCHANTMENT.getKey(instance.enchantment))), instance.level);
++                     enchants.put(org.bukkit.enchantments.Enchantment.getByKey(org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey.fromMinecraft(BuiltInRegistries.ENCHANTMENT.getKey(instance.enchantment))), instance.level);
 +                  }
-+                  org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack item = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asCraftMirror(itemstack2);
++                  org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack item = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(itemstack2);
 +
-+                  org.bukkit.enchantments.Enchantment hintedEnchantment = org.bukkit.enchantments.Enchantment.getByKey(org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey.fromMinecraft(BuiltInRegistries.ENCHANTMENT.getKey(net.minecraft.world.item.enchantment.Enchantment.byId(enchantClue[p_39466_]))));
++                  org.bukkit.enchantments.Enchantment hintedEnchantment = org.bukkit.enchantments.Enchantment.getByKey(org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey.fromMinecraft(BuiltInRegistries.ENCHANTMENT.getKey(net.minecraft.world.item.enchantment.Enchantment.byId(enchantClue[p_39466_]))));
 +                  int hintedEnchantmentLevel = levelClue[p_39466_];
 +                  org.bukkit.event.enchantment.EnchantItemEvent event = new org.bukkit.event.enchantment.EnchantItemEvent((org.bukkit.entity.Player) p_39465_.getBukkitEntity(), this.getBukkitView(), access.getLocation().getBlock(), item, this.costs[p_39466_], enchants, hintedEnchantment, hintedEnchantmentLevel, p_39466_);
 +                  p_296875_.getCraftServer().getPluginManager().callEvent(event);
@@ -177,7 +177,7 @@
 +                     try {
 +                        if (flag) {
 +                           org.bukkit.NamespacedKey enchantId = entry.getKey().getKey();
-+                           net.minecraft.world.item.enchantment.Enchantment nms = BuiltInRegistries.ENCHANTMENT.get(org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey.toMinecraft(enchantId));
++                           net.minecraft.world.item.enchantment.Enchantment nms = BuiltInRegistries.ENCHANTMENT.get(org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey.toMinecraft(enchantId));
 +                           if (nms == null) {
 +                              continue;
 +                           }
@@ -223,13 +223,13 @@
 +
 +   // CraftBukkit start
 +   @Override
-+   public org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryEnchanting inventory = new org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryEnchanting(this.enchantSlots);
-+      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView(this.player, inventory, this);
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryEnchanting inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryEnchanting(this.enchantSlots);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

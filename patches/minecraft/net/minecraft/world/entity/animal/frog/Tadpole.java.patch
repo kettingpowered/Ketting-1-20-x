@@ -8,12 +8,12 @@
           Frog frog = EntityType.FROG.create(this.level());
           if (frog != null) {
              frog.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
-@@ -208,7 +_,15 @@
+@@ -208,8 +_,16 @@
              }
  
              frog.setPersistenceRequired();
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityTransformEvent(this, frog, org.bukkit.event.entity.EntityTransformEvent.TransformReason.METAMORPHOSIS).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTransformEvent(this, frog, org.bukkit.event.entity.EntityTransformEvent.TransformReason.METAMORPHOSIS).isCancelled()) {
 +               this.setAge(0); // Sets the age to 0 for avoid a loop if the event is canceled
 +               return;
 +            }
@@ -24,3 +24,4 @@
 +            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, frog);
              this.discard();
           }
+       }

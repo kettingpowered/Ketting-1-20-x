@@ -1,7 +1,31 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -110,7 +_,8 @@
- import net.minecraft.world.scores.Team;
+@@ -70,7 +_,6 @@
+ import net.minecraft.world.entity.ai.attributes.Attributes;
+ import net.minecraft.world.entity.animal.Parrot;
+ import net.minecraft.world.entity.animal.horse.AbstractHorse;
+-import net.minecraft.world.entity.boss.EnderDragonPart;
+ import net.minecraft.world.entity.decoration.ArmorStand;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.monster.warden.WardenSpawnTracker;
+@@ -80,12 +_,10 @@
+ import net.minecraft.world.inventory.ClickAction;
+ import net.minecraft.world.inventory.InventoryMenu;
+ import net.minecraft.world.inventory.PlayerEnderChestContainer;
+-import net.minecraft.world.item.ElytraItem;
+ import net.minecraft.world.item.ItemCooldowns;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.item.ProjectileWeaponItem;
+-import net.minecraft.world.item.SwordItem;
+ import net.minecraft.world.item.crafting.RecipeHolder;
+ import net.minecraft.world.item.enchantment.EnchantmentHelper;
+ import net.minecraft.world.item.trading.MerchantOffers;
+@@ -107,10 +_,10 @@
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.scores.PlayerTeam;
+ import net.minecraft.world.scores.Scoreboard;
+-import net.minecraft.world.scores.Team;
  import org.slf4j.Logger;
  
 -public abstract class Player extends LivingEntity {
@@ -36,8 +60,8 @@
 +   public int oldLevel = -1;
 +
 +   @Override
-+   public org.bukkit.craftbukkit.v1_20_R3.entity.CraftHumanEntity getBukkitEntity() {
-+      return (org.bukkit.craftbukkit.v1_20_R3.entity.CraftHumanEntity) super.getBukkitEntity();
++   public org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity getBukkitEntity() {
++      return (org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity) super.getBukkitEntity();
 +   }
 +   // CraftBukkit end
  
@@ -486,7 +510,7 @@
 +                     // CraftBukkit start - Add Velocity Event
 +                     boolean cancelled = false;
 +                     org.bukkit.entity.Player player = (org.bukkit.entity.Player) p_36347_.getBukkitEntity();
-+                     org.bukkit.util.Vector velocity = org.bukkit.craftbukkit.v1_20_R3.util.CraftVector.toBukkit(vec3);
++                     org.bukkit.util.Vector velocity = org.bukkit.craftbukkit.v1_20_R2.util.CraftVector.toBukkit(vec3);
 +
 +                     org.bukkit.event.player.PlayerVelocityEvent event = new org.bukkit.event.player.PlayerVelocityEvent(player, velocity.clone());
 +                     this.level().getCraftServer().getPluginManager().callEvent(event);
@@ -618,7 +642,7 @@
           this.resetFallDistance();
 -         this.setSharedFlag(7, false);
 +         // CraftBukkit start
-+         if (getSharedFlag(7) && !org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++         if (getSharedFlag(7) && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +            this.setSharedFlag(7, false);
 +         }
 +         // CraftBukkit end
@@ -648,7 +672,7 @@
     public void startFallFlying() {
 -      this.setSharedFlag(7, true);
 +      // CraftBukkit start
-+      if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
++      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
 +         this.setSharedFlag(7, true);
 +      } else {
 +         // SPIGOT-5542: must toggle like below
@@ -662,7 +686,7 @@
 -      this.setSharedFlag(7, true);
 -      this.setSharedFlag(7, false);
 +      // CraftBukkit start
-+      if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +         this.setSharedFlag(7, true);
 +         this.setSharedFlag(7, false);
 +      }
@@ -731,7 +755,7 @@
           if (!this.level().isClientSide) {
 -            this.foodData.addExhaustion(p_36400_);
 +            // CraftBukkit start
-+            org.bukkit.event.entity.EntityExhaustionEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerExhaustionEvent(this, reason, p_36400_);
++            org.bukkit.event.entity.EntityExhaustionEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerExhaustionEvent(this, reason, p_36400_);
 +            if (!event.isCancelled()) {
 +               this.foodData.addExhaustion(event.getExhaustion());
 +            }

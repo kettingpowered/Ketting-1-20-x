@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/animal/Rabbit.java
 +++ b/net/minecraft/world/entity/animal/Rabbit.java
+@@ -53,7 +_,6 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.item.crafting.Ingredient;
+-import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.LevelReader;
 @@ -88,7 +_,6 @@
        super(p_29656_, p_29657_);
        this.jumpControl = new Rabbit.RabbitJumpControl(this);
@@ -22,7 +30,7 @@
                 int i = blockstate.getValue(CarrotBlock.AGE);
                 if (i == 0) {
 +                  // CraftBukkit start
-+                  if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, blockpos, Blocks.AIR.defaultBlockState())) {
++                  if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, blockpos, Blocks.AIR.defaultBlockState())) {
 +                     return;
 +                  }
 +                  // CraftBukkit end
@@ -30,7 +38,7 @@
                    level.destroyBlock(blockpos, true, this.rabbit);
                 } else {
 +                  // CraftBukkit start
-+                  if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, blockpos, blockstate.setValue(CarrotBlock.AGE, i - 1))) {
++                  if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.rabbit, blockpos, blockstate.setValue(CarrotBlock.AGE, i - 1))) {
 +                     return;
 +                  }
 +                  // CraftBukkit end

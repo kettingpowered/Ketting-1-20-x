@@ -6,7 +6,7 @@
     private boolean removeWaterBreadthFirstSearch(Level p_56808_, BlockPos p_56809_) {
 -      return BlockPos.breadthFirstTraversal(p_56809_, 6, 65, (p_277519_, p_277492_) -> {
 +      BlockState spongeState = p_56808_.getBlockState(p_56809_);
-+      org.bukkit.craftbukkit.v1_20_R3.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.v1_20_R3.util.BlockStateListPopulator(p_56808_); // CraftBukkit - Use BlockStateListPopulator
++      org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator(p_56808_); // CraftBukkit - Use BlockStateListPopulator
 +      BlockPos.breadthFirstTraversal(p_56809_, 6, 65, (blockposition1, consumer) -> {
           for(Direction direction : ALL_DIRECTIONS) {
 -            p_277492_.accept(p_277519_.relative(direction));
@@ -59,7 +59,7 @@
 -      }) > 1;
 +      });
 +      // CraftBukkit start
-+      java.util.List<org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockState> blocks = blockList.getList(); // Is a clone
++      java.util.List<org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState> blocks = blockList.getList(); // Is a clone
 +      if (!blocks.isEmpty()) {
 +         final org.bukkit.block.Block bblock = p_56808_.getWorld().getBlockAt(p_56809_.getX(), p_56809_.getY(), p_56809_.getZ());
 +
@@ -70,7 +70,7 @@
 +            return false;
 +         }
 +
-+         for (org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockState block : blocks) {
++         for (org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState block : blocks) {
 +            BlockPos blockposition1 = block.getPosition();
 +            BlockState iblockdata = p_56808_.getBlockState(blockposition1);
 +            FluidState fluid = p_56808_.getFluidState(blockposition1);

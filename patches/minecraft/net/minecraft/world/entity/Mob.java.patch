@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
+@@ -63,7 +_,6 @@
+ import net.minecraft.world.item.SpawnEggItem;
+ import net.minecraft.world.item.SwordItem;
+ import net.minecraft.world.item.enchantment.EnchantmentHelper;
+-import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.LevelReader;
 @@ -118,6 +_,11 @@
     private CompoundTag leashInfoTag;
     private BlockPos restrictCenter = BlockPos.ZERO;
@@ -43,9 +51,9 @@
 +         if (reason == org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN) {
 +            this.level().getCraftServer().getLogger().log(java.util.logging.Level.WARNING, "Unknown target reason, please report on the issue tracker", new Exception());
 +         }
-+         org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity ctarget = null;
++         org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity ctarget = null;
 +         if (p_21544_ != null) {
-+            ctarget = (org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity) p_21544_.getBukkitEntity();
++            ctarget = (org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) p_21544_.getBukkitEntity();
 +         }
 +         org.bukkit.event.entity.EntityTargetLivingEntityEvent event = new org.bukkit.event.entity.EntityTargetLivingEntityEvent(this.getBukkitEntity(), ctarget, reason);
 +         this.level().getCraftServer().getPluginManager().callEvent(event);
@@ -54,7 +62,7 @@
 +         }
 +
 +         if (event.getTarget() != null) {
-+            p_21544_ = ((org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity) event.getTarget()).getHandle();
++            p_21544_ = ((org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +         } else {
 +            p_21544_ = null;
 +         }
@@ -186,7 +194,7 @@
 +      // CraftBukkit start
 +      boolean canPickup = flag && this.canHoldItem(p_255842_);
 +      if (entity != null) {
-+         canPickup = !org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityPickupItemEvent(this, entity, 0, !canPickup).isCancelled();
++         canPickup = !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPickupItemEvent(this, entity, 0, !canPickup).isCancelled();
 +      }
 +      if (canPickup) {
 +         // CraftBukkit end
@@ -251,7 +259,7 @@
           return InteractionResult.PASS;
        } else if (this.getLeashHolder() == p_21420_) {
 +         // CraftBukkit start - fire PlayerUnleashEntityEvent
-+         if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerUnleashEntityEvent(this, p_21420_, p_21421_).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerUnleashEntityEvent(this, p_21420_, p_21421_).isCancelled()) {
 +            ((net.minecraft.server.level.ServerPlayer) p_21420_).connection.send(new ClientboundSetEntityLinkPacket(this, this.getLeashHolder()));
 +            return InteractionResult.PASS;
 +         }
@@ -264,7 +272,7 @@
        ItemStack itemstack = p_21500_.getItemInHand(p_21501_);
        if (itemstack.is(Items.LEAD) && this.canBeLeashed(p_21500_)) {
 +         // CraftBukkit start - fire PlayerLeashEntityEvent
-+         if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerLeashEntityEvent(this, p_21500_, p_21500_, p_21501_).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerLeashEntityEvent(this, p_21500_, p_21500_, p_21501_).isCancelled()) {
 +            ((net.minecraft.server.level.ServerPlayer) p_21500_).connection.send(new ClientboundSetEntityLinkPacket(this, this.getLeashHolder()));
 +            return InteractionResult.PASS;
 +         }
@@ -293,7 +301,7 @@
              }
  
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityTransformEvent(this, t, transformReason).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTransformEvent(this, t, transformReason).isCancelled()) {
 +               return null;
 +            }
 +            // CraftBukkit end

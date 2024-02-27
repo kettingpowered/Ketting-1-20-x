@@ -14,7 +14,7 @@
        if (this.cursors.size() < 32) {
 +         // CraftBukkit start
 +         if (!isWorldGeneration()) { // CraftBukkit - SPIGOT-7475: Don't call event during world generation
-+            org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock bukkitBlock = org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock.at(level, p_222261_.pos);
++            org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock bukkitBlock = org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(level, p_222261_.pos);
 +            org.bukkit.event.block.SculkBloomEvent event = new org.bukkit.event.block.SculkBloomEvent(bukkitBlock, p_222261_.getCharge());
 +            org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +            if (event.isCancelled()) {

@@ -5,7 +5,7 @@
        int i = p_251754_.getNotificationRadius();
        BlockPos blockpos = BlockPos.containing(p_250613_);
 +      // CraftBukkit start
-+      org.bukkit.event.world.GenericGameEvent event = new org.bukkit.event.world.GenericGameEvent(org.bukkit.craftbukkit.v1_20_R3.CraftGameEvent.minecraftToBukkit(p_251754_), org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation.toBukkit(blockpos, level.getWorld()), (p_251777_.sourceEntity() == null) ? null : p_251777_.sourceEntity().getBukkitEntity(), i, !org.bukkit.Bukkit.isPrimaryThread());
++      org.bukkit.event.world.GenericGameEvent event = new org.bukkit.event.world.GenericGameEvent(org.bukkit.craftbukkit.v1_20_R2.CraftGameEvent.minecraftToBukkit(p_251754_), org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation.toBukkit(blockpos, level.getWorld()), (p_251777_.sourceEntity() == null) ? null : p_251777_.sourceEntity().getBukkitEntity(), i, !org.bukkit.Bukkit.isPrimaryThread());
 +      level.getCraftServer().getPluginManager().callEvent(event);
 +      if (event.isCancelled()) {
 +         return;

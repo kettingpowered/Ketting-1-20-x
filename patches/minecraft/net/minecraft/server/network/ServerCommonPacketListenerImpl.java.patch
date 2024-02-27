@@ -18,11 +18,11 @@
 +      this.cserver = p_299469_.server;
 +   }
 +   protected final net.minecraft.server.level.ServerPlayer player;
-+   protected final org.bukkit.craftbukkit.v1_20_R3.CraftServer cserver;
++   protected final org.bukkit.craftbukkit.v1_20_R2.CraftServer cserver;
 +   public boolean processedDisconnect;
 +
-+   public org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer getCraftPlayer() {
-+      return (this.player == null) ? null : (org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer) this.player.getBukkitEntity();
++   public org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer getCraftPlayer() {
++      return (this.player == null) ? null : (org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer) this.player.getBukkitEntity();
 +      // CraftBukkit end
     }
  
@@ -79,7 +79,7 @@
 +      if (p_300325_ == null || this.processedDisconnect) { // Spigot
 +         return;
 +      } else if (p_300325_ instanceof net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket packet) {
-+         this.player.compassTarget = org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation.toBukkit(packet.pos, this.getCraftPlayer().getWorld());
++         this.player.compassTarget = org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation.toBukkit(packet.pos, this.getCraftPlayer().getWorld());
 +      }
 +      // CraftBukkit end
        boolean flag = !this.suspendFlushingOnServerThread || !this.server.isSameThread();
@@ -93,7 +93,7 @@
     public void disconnect(Component p_299122_) {
 -      this.connection.send(new ClientboundDisconnectPacket(p_299122_), PacketSendListener.thenRun(() -> {
 -         this.connection.disconnect(p_299122_);
-+      disconnect(org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage.fromComponent(p_299122_));
++      disconnect(org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage.fromComponent(p_299122_));
 +   }
 +   // CraftBukkit end
 +
@@ -103,7 +103,7 @@
 +         return;
 +      }
 +      if (!this.cserver.isPrimaryThread()) {
-+         org.bukkit.craftbukkit.v1_20_R3.util.Waitable waitable = new org.bukkit.craftbukkit.v1_20_R3.util.Waitable() {
++         org.bukkit.craftbukkit.v1_20_R2.util.Waitable waitable = new org.bukkit.craftbukkit.v1_20_R2.util.Waitable() {
 +            @Override
 +            protected Object evaluate() {
 +               ServerCommonPacketListenerImpl.this.disconnect(s);
@@ -137,7 +137,7 @@
 +      }
 +      this.player.kickLeaveMessage = event.getLeaveMessage(); // CraftBukkit - SPIGOT-3034: Forward leave message to PlayerQuitEvent
 +      // Send the possibly modified leave message
-+      final Component ichatbasecomponent = org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage.fromString(event.getReason(), true)[0];
++      final Component ichatbasecomponent = org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage.fromString(event.getReason(), true)[0];
 +      // CraftBukkit end
 +
 +      this.connection.send(new ClientboundDisconnectPacket(ichatbasecomponent), PacketSendListener.thenRun(() -> {

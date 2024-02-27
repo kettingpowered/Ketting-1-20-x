@@ -32,11 +32,11 @@
 +      return this.items;
 +   }
 +
-+   public void onOpen(org.bukkit.craftbukkit.v1_20_R3.entity.CraftHumanEntity who) {
++   public void onOpen(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
 +      transaction.add(who);
 +   }
 +
-+   public void onClose(org.bukkit.craftbukkit.v1_20_R3.entity.CraftHumanEntity who) {
++   public void onClose(org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity who) {
 +      transaction.remove(who);
 +   }
 +
@@ -95,9 +95,9 @@
 -            p_155017_.litTime = p_155017_.getBurnDuration(itemstack);
 +         if (!p_155017_.isLit() && p_155017_.canBurn(p_155014_.registryAccess(), recipeholder, p_155017_.items, i)) {
 +            // CraftBukkit start
-+            org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack fuel = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asCraftMirror(itemstack);
++            org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack fuel = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(itemstack);
 +
-+            org.bukkit.event.inventory.FurnaceBurnEvent furnaceBurnEvent = new org.bukkit.event.inventory.FurnaceBurnEvent(org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock.at(p_155014_, p_155015_), fuel, p_155017_.getBurnDuration(itemstack));
++            org.bukkit.event.inventory.FurnaceBurnEvent furnaceBurnEvent = new org.bukkit.event.inventory.FurnaceBurnEvent(org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_155014_, p_155015_), fuel, p_155017_.getBurnDuration(itemstack));
 +            p_155014_.getCraftServer().getPluginManager().callEvent(furnaceBurnEvent);
 +
 +            if (furnaceBurnEvent.isCancelled()) {
@@ -129,10 +129,10 @@
 +         if (p_155017_.isLit() && p_155017_.canBurn(p_155014_.registryAccess(), recipeholder, p_155017_.items, i)) {
 +            // CraftBukkit start
 +            if (recipeholder != null && p_155017_.cookingProgress == 0) {
-+               org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack source = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asCraftMirror(p_155017_.items.get(0));
++               org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack source = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(p_155017_.items.get(0));
 +               org.bukkit.inventory.CookingRecipe<?> recipe = (org.bukkit.inventory.CookingRecipe<?>) recipeholder.toBukkitRecipe();
 +
-+               org.bukkit.event.inventory.FurnaceStartSmeltEvent event = new org.bukkit.event.inventory.FurnaceStartSmeltEvent(org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock.at(p_155014_, p_155015_), source, recipe);
++               org.bukkit.event.inventory.FurnaceStartSmeltEvent event = new org.bukkit.event.inventory.FurnaceStartSmeltEvent(org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_155014_, p_155015_), source, recipe);
 +               p_155014_.getCraftServer().getPluginManager().callEvent(event);
 +
 +               p_155017_.cookingTotalTime = event.getTotalCookTime();
@@ -172,10 +172,10 @@
           ItemStack itemstack2 = p_267073_.get(2);
 +
 +         // CraftBukkit start - fire FurnaceSmeltEvent
-+         org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack source = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asCraftMirror(itemstack);
-+         org.bukkit.inventory.ItemStack result = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asBukkitCopy(itemstack1);
++         org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack source = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(itemstack);
++         org.bukkit.inventory.ItemStack result = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asBukkitCopy(itemstack1);
 +
-+         org.bukkit.event.inventory.FurnaceSmeltEvent furnaceSmeltEvent = new org.bukkit.event.inventory.FurnaceSmeltEvent(org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock.at(world, blockposition), source, result);
++         org.bukkit.event.inventory.FurnaceSmeltEvent furnaceSmeltEvent = new org.bukkit.event.inventory.FurnaceSmeltEvent(org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(world, blockposition), source, result);
 +         world.getCraftServer().getPluginManager().callEvent(furnaceSmeltEvent);
 +
 +         if (furnaceSmeltEvent.isCancelled()) {
@@ -183,12 +183,12 @@
 +         }
 +
 +         result = furnaceSmeltEvent.getResult();
-+         itemstack1 = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asNMSCopy(result);
++         itemstack1 = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(result);
 +
 +         if (!itemstack1.isEmpty()) {
 +            if (itemstack2.isEmpty()) {
 +               p_267073_.set(2, itemstack1.copy());
-+            } else if (org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
++            } else if (org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
 +               itemstack2.grow(itemstack1.getCount());
 +            } else {
 +               return false;
@@ -286,9 +286,9 @@
 +      // CraftBukkit start - fire org.bukkit.event.inventory.FurnaceExtractEvent / BlockExpEvent
 +      org.bukkit.event.block.BlockExpEvent event;
 +      if (amount != 0) {
-+         event = new org.bukkit.event.inventory.FurnaceExtractEvent((org.bukkit.entity.Player) entityhuman.getBukkitEntity(), org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock.at(p_154999_, blockposition), org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers.getMaterial(itemstack.getItem()), amount, i);
++         event = new org.bukkit.event.inventory.FurnaceExtractEvent((org.bukkit.entity.Player) entityhuman.getBukkitEntity(), org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_154999_, blockposition), org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers.getMaterial(itemstack.getItem()), amount, i);
 +      } else {
-+         event = new org.bukkit.event.block.BlockExpEvent(org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock.at(p_154999_, blockposition), i);
++         event = new org.bukkit.event.block.BlockExpEvent(org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_154999_, blockposition), i);
 +      }
 +      p_154999_.getCraftServer().getPluginManager().callEvent(event);
 +      i = event.getExpToDrop();

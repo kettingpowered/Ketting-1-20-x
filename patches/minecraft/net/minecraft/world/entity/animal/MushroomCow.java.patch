@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/animal/MushroomCow.java
 +++ b/net/minecraft/world/entity/animal/MushroomCow.java
+@@ -26,7 +_,6 @@
+ import net.minecraft.world.entity.LightningBolt;
+ import net.minecraft.world.entity.MobSpawnType;
+ import net.minecraft.world.entity.Shearable;
+-import net.minecraft.world.entity.VariantHolder;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
 @@ -41,7 +_,7 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
@@ -54,16 +62,17 @@
              cow.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
              cow.setHealth(this.getHealth());
              cow.yBodyRot = this.yBodyRot;
-@@ -161,12 +_,25 @@
+@@ -161,15 +_,28 @@
              }
  
              cow.setInvulnerable(this.isInvulnerable());
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityTransformEvent(this, cow, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SHEARED).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTransformEvent(this, cow, org.bukkit.event.entity.EntityTransformEvent.TransformReason.SHEARED).isCancelled()) {
 +               return java.util.Collections.emptyList();
 +            }
 +            this.level().prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SHEARED);
              this.level().addFreshEntity(cow);
+-
 +            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, cow);
 +
 +            this.discard(); // CraftBukkit - from above
@@ -80,7 +89,10 @@
 +      return java.util.Collections.emptyList();
  
     }
++
  
+    public boolean readyForShearing() {
+       return this.isAlive() && !this.isBaby();
 @@ -231,6 +_,11 @@
        }
  
