@@ -5,13 +5,13 @@
     private boolean canRestock;
  
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView bukkitEntity = null;
 +   private Inventory player;
 +
 +   @Override
-+   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity == null) {
-+         bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player.player.getBukkitEntity(), new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryMerchant(trader, tradeContainer), this);
++         bukkitEntity = new org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView(this.player.player.getBukkitEntity(), new org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryMerchant(trader, tradeContainer), this);
 +      }
 +      return bukkitEntity;
 +   }

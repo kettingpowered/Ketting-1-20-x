@@ -43,17 +43,17 @@
 +      String[] lines = new String[4];
 +
 +      for (int i = 0; i < p_277744_.size(); ++i) {
-+         lines[i] = org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage.fromComponent(p_277359_.getMessage(i, p_277396_.isTextFilteringEnabled()));
++         lines[i] = org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage.fromComponent(p_277359_.getMessage(i, p_277396_.isTextFilteringEnabled()));
 +      }
 +
-+      org.bukkit.event.block.SignChangeEvent event = new org.bukkit.event.block.SignChangeEvent(org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(this.level, this.worldPosition), player, lines.clone(), (front) ? org.bukkit.block.sign.Side.FRONT : org.bukkit.block.sign.Side.BACK);
++      org.bukkit.event.block.SignChangeEvent event = new org.bukkit.event.block.SignChangeEvent(org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock.at(this.level, this.worldPosition), player, lines.clone(), (front) ? org.bukkit.block.sign.Side.FRONT : org.bukkit.block.sign.Side.BACK);
 +      p_277396_.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) {
 +         return originalText;
 +      }
 +
-+      Component[] components = org.bukkit.craftbukkit.v1_20_R2.block.CraftSign.sanitizeLines(event.getLines());
++      Component[] components = org.bukkit.craftbukkit.v1_20_R3.block.CraftSign.sanitizeLines(event.getLines());
 +      for (int i = 0; i < components.length; i++) {
 +         if (!java.util.Objects.equals(lines[i], event.getLine(i))) {
 +            p_277359_ = p_277359_.setMessage(i, components[i]);
@@ -78,7 +78,7 @@
 +
 +   @Override
 +   public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return wrapper.getEntity() != null ? wrapper.getEntity().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_20_R2.command.CraftBlockCommandSender(wrapper, this);
++      return wrapper.getEntity() != null ? wrapper.getEntity().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_20_R3.command.CraftBlockCommandSender(wrapper, this);
 +   }
 +
 +   @Override

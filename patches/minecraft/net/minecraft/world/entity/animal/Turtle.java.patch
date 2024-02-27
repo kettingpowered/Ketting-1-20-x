@@ -14,9 +14,9 @@
     }
  
     public void thunderHit(ServerLevel p_30140_, LightningBolt p_30141_) {
-+      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = p_30141_; // CraftBukkit
++      org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.entityDamage = p_30141_; // CraftBukkit
        this.hurt(this.damageSources().lightningBolt(), Float.MAX_VALUE);
-+      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = null; // CraftBukkit
++      org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.entityDamage = null; // CraftBukkit
     }
  
     protected Vector3f getPassengerAttachmentPoint(Entity p_297922_, EntityDimensions p_299342_, float p_297986_) {
@@ -29,7 +29,7 @@
 -               BlockState blockstate = Blocks.TURTLE_EGG.defaultBlockState().setValue(TurtleEggBlock.EGGS, Integer.valueOf(this.turtle.random.nextInt(4) + 1));
 -               level.setBlock(blockpos1, blockstate, 3);
 -               level.gameEvent(GameEvent.BLOCK_PLACE, blockpos1, GameEvent.Context.of(this.turtle, blockstate));
-+               if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.turtle, this.blockPos.above(), (BlockState) Blocks.TURTLE_EGG.defaultBlockState().setValue(TurtleEggBlock.EGGS, this.turtle.random.nextInt(4) + 1))) { // CraftBukkit
++               if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(this.turtle, this.blockPos.above(), (BlockState) Blocks.TURTLE_EGG.defaultBlockState().setValue(TurtleEggBlock.EGGS, this.turtle.random.nextInt(4) + 1))) { // CraftBukkit
 +                  level.playSound((Player) null, blockpos, SoundEvents.TURTLE_LAY_EGG, SoundSource.BLOCKS, 0.3F, 0.9F + level.random.nextFloat() * 0.2F);
 +                  BlockPos blockpos1 = this.blockPos.above();
 +                  BlockState blockstate = Blocks.TURTLE_EGG.defaultBlockState().setValue(TurtleEggBlock.EGGS, Integer.valueOf(this.turtle.random.nextInt(4) + 1));

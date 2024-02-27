@@ -138,6 +138,9 @@ public class BukkitGamePacketListenerImpl implements net.minecraft.network.proto
     public void handleEntityTagQuery(ServerboundEntityTagQuery p_133753_) {}
 
     @Override
+    public void handleContainerSlotStateChanged(ServerboundContainerSlotStateChangedPacket p_311148_) {}
+
+    @Override
     public void handleBlockEntityTagQuery(ServerboundBlockEntityTagQuery p_133741_) {}
 
     @Override

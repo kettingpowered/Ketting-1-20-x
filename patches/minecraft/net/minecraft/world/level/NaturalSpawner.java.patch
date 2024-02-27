@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/NaturalSpawner.java
 +++ b/net/minecraft/world/level/NaturalSpawner.java
+@@ -42,7 +_,6 @@
+ import net.minecraft.world.level.levelgen.Heightmap;
+ import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
+ import net.minecraft.world.level.levelgen.structure.Structure;
+-import net.minecraft.world.level.levelgen.structure.structures.NetherFortressStructure;
+ import net.minecraft.world.level.material.FluidState;
+ import net.minecraft.world.level.pathfinder.PathComputationType;
+ import net.minecraft.world.phys.Vec3;
 @@ -74,7 +_,7 @@
              }
           }
@@ -22,8 +30,8 @@
 +         // CraftBukkit start - Use per-world spawn limits
 +         boolean spawnThisTick = true;
 +         int limit = mobcategory.getMaxInstancesPerChunk();
-+         org.bukkit.entity.SpawnCategory spawnCategory = org.bukkit.craftbukkit.v1_20_R2.util.CraftSpawnCategory.toBukkit(mobcategory);
-+         if (org.bukkit.craftbukkit.v1_20_R2.util.CraftSpawnCategory.isValidForLimits(spawnCategory)) {
++         org.bukkit.entity.SpawnCategory spawnCategory = org.bukkit.craftbukkit.v1_20_R3.util.CraftSpawnCategory.toBukkit(mobcategory);
++         if (org.bukkit.craftbukkit.v1_20_R3.util.CraftSpawnCategory.isValidForLimits(spawnCategory)) {
 +            spawnThisTick = p_47030_.ticksPerSpawnCategory.getLong(spawnCategory) != 0 && worlddata.getGameTime() % p_47030_.ticksPerSpawnCategory.getLong(spawnCategory) == 0;
 +            limit = p_47030_.getWorld().getSpawnLimit(spawnCategory);
 +         }

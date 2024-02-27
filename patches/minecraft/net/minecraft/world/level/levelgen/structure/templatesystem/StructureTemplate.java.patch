@@ -12,8 +12,8 @@
     private String author = "?";
  
 +   // CraftBukkit start - data containers
-+   private static final org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataTypeRegistry();
-+   public org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++   private static final org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataTypeRegistry();
++   public org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
 +   // CraftBukkit end
 +
     public Vec3i getSize() {
@@ -34,8 +34,8 @@
 +         // CraftBukkit start
 +         // We only want the TransformerGeneratorAccess at certain locations because in here are many "block update" calls that shouldn't be transformed
 +         ServerLevelAccessor wrappedAccess = p_230329_;
-+         org.bukkit.craftbukkit.v1_20_R2.util.CraftStructureTransformer structureTransformer = null;
-+         if (wrappedAccess instanceof org.bukkit.craftbukkit.v1_20_R2.util.TransformerGeneratorAccess transformerAccess) {
++         org.bukkit.craftbukkit.v1_20_R3.util.CraftStructureTransformer structureTransformer = null;
++         if (wrappedAccess instanceof org.bukkit.craftbukkit.v1_20_R3.util.TransformerGeneratorAccess transformerAccess) {
 +            p_230329_ = transformerAccess.getHandle();
 +            structureTransformer = transformerAccess.getStructureTransformer();
 +            // The structureTransformer is not needed if we can not transform blocks therefore we can save a little bit of performance doing this
@@ -62,16 +62,16 @@
                    }
 +                  // CraftBukkit start
 +                  if (structureTransformer != null) {
-+                     org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState craftBlockState = (org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState) org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockStates.getBlockState(blockpos, blockstate, null);
-+                     if (structuretemplate$structureblockinfo.nbt != null && craftBlockState instanceof org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockEntityState<?> entityState) {
++                     org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockState craftBlockState = (org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockState) org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockStates.getBlockState(blockpos, blockstate, null);
++                     if (structuretemplate$structureblockinfo.nbt != null && craftBlockState instanceof org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockEntityState<?> entityState) {
 +                        entityState.loadData(structuretemplate$structureblockinfo.nbt);
-+                        if (craftBlockState instanceof org.bukkit.craftbukkit.v1_20_R2.block.CraftLootable<?> craftLootable) {
++                        if (craftBlockState instanceof org.bukkit.craftbukkit.v1_20_R3.block.CraftLootable<?> craftLootable) {
 +                           craftLootable.setSeed(p_230333_.nextLong());
 +                        }
 +                     }
 +                     craftBlockState = structureTransformer.transformCraftState(craftBlockState);
 +                     blockstate = craftBlockState.getHandle();
-+                     structuretemplate$structureblockinfo = new StructureTemplate.StructureBlockInfo(blockpos, blockstate, (craftBlockState instanceof org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockEntityState<?> craftBlockEntityState ? craftBlockEntityState.getSnapshotNBT() : null));
++                     structuretemplate$structureblockinfo = new StructureTemplate.StructureBlockInfo(blockpos, blockstate, (craftBlockState instanceof org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockEntityState<?> craftBlockEntityState ? craftBlockEntityState.getSnapshotNBT() : null));
 +                  }
 +                  // CraftBukkit end
  

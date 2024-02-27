@@ -7,8 +7,8 @@
 -         BlockState blockstate = addItem(p_270919_, p_270087_, p_270284_, p_270678_, p_270253_);
 +         // CraftBukkit start
 +         double rand = p_270284_.getRandom().nextDouble();
-+         BlockState blockstate = addItem(p_270919_, p_270087_, org.bukkit.craftbukkit.v1_20_R2.util.DummyGeneratorAccess.INSTANCE, p_270678_, p_270253_, rand);
-+         if (p_270087_ == blockstate || !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_270919_, p_270678_, blockstate)) {
++         BlockState blockstate = addItem(p_270919_, p_270087_, org.bukkit.craftbukkit.v1_20_R3.util.DummyGeneratorAccess.INSTANCE, p_270678_, p_270253_, rand);
++         if (p_270087_ == blockstate || !org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(p_270919_, p_270678_, blockstate)) {
 +            return p_270087_;
 +         }
 +         blockstate = addItem(p_270919_, p_270087_, p_270284_, p_270678_, p_270253_, rand);
@@ -22,8 +22,8 @@
     public static BlockState extractProduce(Entity p_270467_, BlockState p_51999_, Level p_52000_, BlockPos p_52001_) {
 +      // CraftBukkit start
 +      if (p_270467_ != null && !(p_270467_ instanceof Player)) {
-+         BlockState iblockdata1 = empty(p_270467_, p_51999_, org.bukkit.craftbukkit.v1_20_R2.util.DummyGeneratorAccess.INSTANCE, p_52001_);
-+         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_270467_, p_52001_, iblockdata1)) {
++         BlockState iblockdata1 = empty(p_270467_, p_51999_, org.bukkit.craftbukkit.v1_20_R3.util.DummyGeneratorAccess.INSTANCE, p_52001_);
++         if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(p_270467_, p_52001_, iblockdata1)) {
 +            return p_51999_;
 +         }
 +      }
@@ -62,7 +62,7 @@
 -      public EmptyContainer() {
 +      public EmptyContainer(LevelAccessor generatoraccess, BlockPos blockposition) {
           super(0);
-+         this.bukkitOwner = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftBlockInventoryHolder(generatoraccess, blockposition, this); // CraftBukkit
++         this.bukkitOwner = new org.bukkit.craftbukkit.v1_20_R3.inventory.CraftBlockInventoryHolder(generatoraccess, blockposition, this); // CraftBukkit
        }
  
        public int[] getSlotsForFace(Direction p_52012_) {
@@ -70,7 +70,7 @@
  
        public InputContainer(BlockState p_52022_, LevelAccessor p_52023_, BlockPos p_52024_) {
           super(1);
-+         this.bukkitOwner = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftBlockInventoryHolder(p_52023_, p_52024_, this); // CraftBukkit
++         this.bukkitOwner = new org.bukkit.craftbukkit.v1_20_R3.inventory.CraftBlockInventoryHolder(p_52023_, p_52024_, this); // CraftBukkit
           this.state = p_52022_;
           this.level = p_52023_;
           this.pos = p_52024_;
@@ -78,7 +78,7 @@
           this.state = p_52042_;
           this.level = p_52043_;
           this.pos = p_52044_;
-+         this.bukkitOwner = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftBlockInventoryHolder(p_52043_, p_52044_, this); // CraftBukkit
++         this.bukkitOwner = new org.bukkit.craftbukkit.v1_20_R3.inventory.CraftBlockInventoryHolder(p_52043_, p_52044_, this); // CraftBukkit
        }
  
        public int getMaxStackSize() {

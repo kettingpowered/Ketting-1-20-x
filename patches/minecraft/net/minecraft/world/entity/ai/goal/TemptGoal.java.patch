@@ -18,11 +18,11 @@
 +         this.bukkitPlayer = this.player;
 +         // CraftBukkit start
 +         if (this.bukkitPlayer != null) {
-+            org.bukkit.event.entity.EntityTargetLivingEntityEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTargetLivingEvent(this.mob, this.bukkitPlayer, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TEMPT);
++            org.bukkit.event.entity.EntityTargetLivingEntityEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityTargetLivingEvent(this.mob, this.bukkitPlayer, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TEMPT);
 +            if (event.isCancelled()) {
 +               return false;
 +            }
-+            this.bukkitPlayer = (event.getTarget() == null) ? null : ((org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) event.getTarget()).getHandle();
++            this.bukkitPlayer = (event.getTarget() == null) ? null : ((org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +         }
 +         // CraftBukkit end
 +         return this.bukkitPlayer != null;

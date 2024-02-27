@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/npc/Villager.java
 +++ b/net/minecraft/world/entity/npc/Villager.java
+@@ -20,7 +_,6 @@
+ import net.minecraft.core.GlobalPos;
+ import net.minecraft.core.Holder;
+ import net.minecraft.core.particles.ParticleTypes;
+-import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.nbt.ListTag;
+ import net.minecraft.nbt.NbtOps;
 @@ -145,7 +_,7 @@
     }
  
@@ -109,7 +117,7 @@
              witch.setPersistenceRequired();
 +            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, witch);
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTransformEvent(this, witch, org.bukkit.event.entity.EntityTransformEvent.TransformReason.LIGHTNING).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityTransformEvent(this, witch, org.bukkit.event.entity.EntityTransformEvent.TransformReason.LIGHTNING).isCancelled()) {
 +               return;
 +            }
 +            // CraftBukkit end

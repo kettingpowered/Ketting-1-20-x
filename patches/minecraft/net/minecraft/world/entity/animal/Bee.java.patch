@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/animal/Bee.java
 +++ b/net/minecraft/world/entity/animal/Bee.java
+@@ -79,7 +_,6 @@
+ import net.minecraft.world.level.block.SweetBerryBushBlock;
+ import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
+ import net.minecraft.world.level.block.entity.BlockEntity;
+-import net.minecraft.world.level.block.entity.BlockEntityType;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 @@ -180,11 +_,11 @@
  
     public void addAdditionalSaveData(CompoundTag p_27823_) {
@@ -93,7 +101,7 @@
                    }
  
 -                  if (blockstate1 != null) {
-+                  if (blockstate1 != null && org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(Bee.this, blockpos, blockstate1)) { // CraftBukkit
++                  if (blockstate1 != null && org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(Bee.this, blockpos, blockstate1)) { // CraftBukkit
                       Bee.this.level().levelEvent(2005, blockpos, 0);
                       Bee.this.level().setBlockAndUpdate(blockpos, blockstate1);
                       Bee.this.incrementNumCropsGrownSincePollination();

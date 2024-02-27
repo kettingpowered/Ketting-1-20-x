@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/BambooStalkBlock.java
 +++ b/net/minecraft/world/level/block/BambooStalkBlock.java
+@@ -8,7 +_,6 @@
+ import net.minecraft.tags.BlockTags;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.world.entity.player.Player;
+-import net.minecraft.world.item.SwordItem;
+ import net.minecraft.world.item.context.BlockPlaceContext;
+ import net.minecraft.world.level.BlockGetter;
+ import net.minecraft.world.level.Level;
 @@ -27,7 +_,7 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -70,7 +78,7 @@
 -      p_262076_.setBlock(p_262109_.above(), this.defaultBlockState().setValue(AGE, Integer.valueOf(i)).setValue(LEAVES, bambooleaves).setValue(STAGE, Integer.valueOf(j)), 3);
 +
 +      // CraftBukkit start
-+      if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_262076_, p_262109_, p_262109_.above(), (BlockState) ((BlockState) ((BlockState) this.defaultBlockState().setValue(BambooStalkBlock.AGE, i)).setValue(BambooStalkBlock.LEAVES, bambooleaves)).setValue(BambooStalkBlock.STAGE, j), 3)) {
++      if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockSpreadEvent(p_262076_, p_262109_, p_262109_.above(), (BlockState) ((BlockState) ((BlockState) this.defaultBlockState().setValue(BambooStalkBlock.AGE, i)).setValue(BambooStalkBlock.LEAVES, bambooleaves)).setValue(BambooStalkBlock.STAGE, j), 3)) {
 +         if (shouldUpdateOthers) {
 +            p_262076_.setBlock(p_262109_.below(), blockstate.setValue(LEAVES, BambooLeaves.SMALL), 3);
 +            p_262076_.setBlock(blockpos, blockstate1.setValue(LEAVES, BambooLeaves.NONE), 3);

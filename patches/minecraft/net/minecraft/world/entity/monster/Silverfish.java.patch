@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/monster/Silverfish.java
 +++ b/net/minecraft/world/entity/monster/Silverfish.java
+@@ -25,7 +_,6 @@
+ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+ import net.minecraft.world.entity.player.Player;
+-import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.LevelReader;
 @@ -141,7 +_,7 @@
              return false;
           } else {
@@ -14,7 +22,7 @@
              BlockState blockstate = levelaccessor.getBlockState(blockpos);
              if (InfestedBlock.isCompatibleHostBlock(blockstate)) {
 +               // CraftBukkit start
-+               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockpos, InfestedBlock.infestedStateByHost(blockstate))) {
++               if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockpos, InfestedBlock.infestedStateByHost(blockstate))) {
 +                  return;
 +               }
 +               // CraftBukkit end
@@ -27,7 +35,7 @@
                       if (block instanceof InfestedBlock) {
 -                        if (level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
 +                        // CraftBukkit start
-+                        if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.silverfish, blockpos1, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
++                        if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(this.silverfish, blockpos1, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
 +                           continue;
 +                        }
 +                        // CraftBukkit end

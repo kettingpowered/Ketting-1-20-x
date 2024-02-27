@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/net/minecraft/world/entity/monster/EnderMan.java
+@@ -56,7 +_,6 @@
+ import net.minecraft.world.item.alchemy.Potions;
+ import net.minecraft.world.item.enchantment.Enchantments;
+ import net.minecraft.world.level.ClipContext;
+-import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.Blocks;
 @@ -110,8 +_,20 @@
        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 40.0D).add(Attributes.MOVEMENT_SPEED, (double)0.3F).add(Attributes.ATTACK_DAMAGE, 7.0D).add(Attributes.FOLLOW_RANGE, 64.0D);
     }
@@ -69,7 +77,7 @@
 -               level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this.enderman, blockstate2));
 -               this.enderman.setCarriedBlock((BlockState)null);
 +            if (this.canPlaceBlock(level, blockpos, blockstate2, blockstate, blockstate1, blockpos1) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(enderman, net.minecraftforge.common.util.BlockSnapshot.create(level.dimension(), level, blockpos1), net.minecraft.core.Direction.UP)) {
-+               if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, blockstate2)) { // CraftBukkit - Place event
++               if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, blockstate2)) { // CraftBukkit - Place event
 +                  level.setBlock(blockpos, blockstate2, 3);
 +                  level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this.enderman, blockstate2));
 +                  this.enderman.setCarriedBlock((BlockState) null);
@@ -101,7 +109,7 @@
 -            level.removeBlock(blockpos, false);
 -            level.gameEvent(GameEvent.BLOCK_DESTROY, blockpos, GameEvent.Context.of(this.enderman, blockstate));
 -            this.enderman.setCarriedBlock(blockstate.getBlock().defaultBlockState());
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, Blocks.AIR.defaultBlockState())) { // CraftBukkit - Place event
++            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, Blocks.AIR.defaultBlockState())) { // CraftBukkit - Place event
 +               level.removeBlock(blockpos, false);
 +               level.gameEvent(GameEvent.BLOCK_DESTROY, blockpos, GameEvent.Context.of(this.enderman, blockstate));
 +               this.enderman.setCarriedBlock(blockstate.getBlock().defaultBlockState());

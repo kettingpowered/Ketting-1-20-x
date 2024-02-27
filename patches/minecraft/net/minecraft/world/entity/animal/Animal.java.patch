@@ -30,7 +30,7 @@
     public void setInLove(@Nullable Player p_27596_) {
 -      this.inLove = 600;
 +      // CraftBukkit start
-+      org.bukkit.event.entity.EntityEnterLoveModeEvent entityEnterLoveModeEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityEnterLoveModeEvent(p_27596_, this, 600);
++      org.bukkit.event.entity.EntityEnterLoveModeEvent entityEnterLoveModeEvent = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityEnterLoveModeEvent(p_27596_, this, 600);
 +      if (entityEnterLoveModeEvent.isCancelled()) {
 +         return;
 +      }
@@ -67,7 +67,7 @@
 +            return Optional.ofNullable(p_27565_.getLoveCause());
 +         }).orElse(null);
 +         int experience = this.getRandom().nextInt(7) + 1;
-+         org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityBreedEvent(ageablemob, this, p_27565_, breeder, this.breedItem, experience);
++         org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityBreedEvent(ageablemob, this, p_27565_, breeder, this.breedItem, experience);
 +         if (entityBreedEvent.isCancelled()) {
 +            return;
 +         }

@@ -57,7 +57,7 @@
 +         // CraftBukkit start
 +         int oldFoodLevel = foodLevel;
 +
-+         org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, foodproperties.getNutrition() + oldFoodLevel, p_38714_);
++         org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, foodproperties.getNutrition() + oldFoodLevel, p_38714_);
 +
 +         if (!event.isCancelled()) {
 +            this.eat(event.getFoodLevel() - oldFoodLevel, foodproperties.getSaturationModifier());
@@ -76,7 +76,7 @@
 +            //Ketting start - don't fire event if entity is null
 +            if (entityhuman != null) {
 +               // CraftBukkit start
-+               org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, Math.max(this.foodLevel - 1, 0));
++               org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, Math.max(this.foodLevel - 1, 0));
 +
 +               if (!event.isCancelled()) {
 +                  this.foodLevel = event.getFoodLevel();

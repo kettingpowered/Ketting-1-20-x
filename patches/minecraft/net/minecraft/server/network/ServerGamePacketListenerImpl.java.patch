@@ -58,7 +58,7 @@
 +   // CraftBukkit end
  
     public void tick() {
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.playerConnectionTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.playerConnectionTimer.startTiming(); // Spigot
        if (this.ackBlockChangesUpTo > -1) {
           this.send(new ClientboundBlockChangedAckPacket(this.ackBlockChangesUpTo));
           this.ackBlockChangesUpTo = -1;
@@ -83,7 +83,7 @@
 +         this.player.resetLastActionTime(); // CraftBukkit - SPIGOT-854
           this.disconnect(Component.translatable("multiplayer.disconnect.idling"));
        }
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.playerConnectionTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.playerConnectionTimer.stopTiming(); // Spigot
  
     }
  
@@ -248,7 +248,7 @@
        AbstractContainerMenu abstractcontainermenu = this.player.containerMenu;
        if (abstractcontainermenu instanceof MerchantMenu merchantmenu) {
 +         // CraftBukkit start
-+         final org.bukkit.event.inventory.TradeSelectEvent tradeSelectEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callTradeSelectEvent(this.player, i, merchantmenu);
++         final org.bukkit.event.inventory.TradeSelectEvent tradeSelectEvent = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callTradeSelectEvent(this.player, i, merchantmenu);
 +         if (tradeSelectEvent.isCancelled()) {
 +            this.player.getBukkitEntity().updateInventory();
 +            return;
@@ -338,7 +338,7 @@
        }
  
        p_143637_.addTagElement("pages", listtag);
-+      if (updateBookPages$slot != null && updateBookPages$handItem!=null) org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleEditBookEvent(player, updateBookPages$slot, updateBookPages$handItem, p_143637_); // CraftBukkit
++      if (updateBookPages$slot != null && updateBookPages$handItem!=null) org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleEditBookEvent(player, updateBookPages$slot, updateBookPages$handItem, p_143637_); // CraftBukkit
     }
  
     public void handleEntityTagQuery(ServerboundEntityTagQuery p_9864_) {
@@ -620,18 +620,18 @@
 +               var event = net.minecraftforge.event.ForgeEventFactory.onLivingSwapHandItems(this.player);
 +               if (event.isCanceled()) return;
 +
-+               org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack mainHand = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(event.getItemSwappedToMainHand());
-+               org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack offHand = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(event.getItemSwappedToOffHand());
++               org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack mainHand = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asCraftMirror(event.getItemSwappedToMainHand());
++               org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack offHand = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asCraftMirror(event.getItemSwappedToOffHand());
 +               org.bukkit.event.player.PlayerSwapHandItemsEvent swapItemsEvent = new org.bukkit.event.player.PlayerSwapHandItemsEvent(getCraftPlayer(), mainHand.clone(), offHand.clone());
 +
 +               this.cserver.getPluginManager().callEvent(swapItemsEvent);
 +               if (swapItemsEvent.isCancelled()) return;
 +
 +               if (swapItemsEvent.getOffHandItem().equals(offHand)) this.player.setItemInHand(InteractionHand.OFF_HAND, event.getItemSwappedToOffHand());
-+               else this.player.setItemInHand(InteractionHand.OFF_HAND, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(swapItemsEvent.getOffHandItem()));
++               else this.player.setItemInHand(InteractionHand.OFF_HAND, org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asNMSCopy(swapItemsEvent.getOffHandItem()));
 +
 +               if (swapItemsEvent.getMainHandItem().equals(mainHand)) this.player.setItemInHand(InteractionHand.MAIN_HAND, event.getItemSwappedToMainHand());
-+               else this.player.setItemInHand(InteractionHand.MAIN_HAND, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(swapItemsEvent.getMainHandItem()));
++               else this.player.setItemInHand(InteractionHand.MAIN_HAND, org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asNMSCopy(swapItemsEvent.getMainHandItem()));
 +               //Ketting end
 +
                 this.player.stopUsingItem();
@@ -740,14 +740,14 @@
 +
 +         boolean cancelled;
 +         if (hitresult == null || hitresult.getType() != BlockHitResult.Type.BLOCK) {
-+            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent(this.player, org.bukkit.event.block.Action.RIGHT_CLICK_AIR, itemstack, interactionhand);
++            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerInteractEvent(this.player, org.bukkit.event.block.Action.RIGHT_CLICK_AIR, itemstack, interactionhand);
 +            cancelled = event.useItemInHand() == org.bukkit.event.Event.Result.DENY;
 +         } else {
 +            BlockHitResult hitresultblock = (BlockHitResult) hitresult;
 +            if (player.gameMode.firedInteract && player.gameMode.interactPosition.equals(hitresultblock.getBlockPos()) && player.gameMode.interactHand == interactionhand && ItemStack.isSameItemSameTags(player.gameMode.interactItemStack, itemstack)) {
 +               cancelled = player.gameMode.interactResult;
 +            } else {
-+               org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent(player, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, hitresultblock.getBlockPos(), hitresultblock.getDirection(), itemstack, true, interactionhand, hitresultblock.getLocation());
++               org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerInteractEvent(player, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, hitresultblock.getBlockPos(), hitresultblock.getDirection(), itemstack, true, interactionhand, hitresultblock.getLocation());
 +               cancelled = event.useItemInHand() == org.bukkit.event.Event.Result.DENY;
 +            }
 +            player.gameMode.firedInteract = false;
@@ -802,7 +802,7 @@
 -      this.server.getPlayerList().remove(this.player);
 +      String quitMessage = this.server.getPlayerList().remove_string(this.player);
 +      if ((quitMessage != null) && (quitMessage.length() > 0)) {
-+         this.server.getPlayerList().broadcastMessage(org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage.fromString(quitMessage));
++         this.server.getPlayerList().broadcastMessage(org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage.fromString(quitMessage));
 +      }
 +      // CraftBukkit end
        this.player.getTextFilter().leave();
@@ -891,7 +891,7 @@
 +      String command = "/" + p_251139_.command();
 +      LOGGER.info(this.player.getScoreboardName() + " issued server command: " + command);
 +
-+      org.bukkit.event.player.PlayerCommandPreprocessEvent event = new org.bukkit.event.player.PlayerCommandPreprocessEvent(getCraftPlayer(), command, new org.bukkit.craftbukkit.v1_20_R2.util.LazyPlayerSet(server));
++      org.bukkit.event.player.PlayerCommandPreprocessEvent event = new org.bukkit.event.player.PlayerCommandPreprocessEvent(getCraftPlayer(), command, new org.bukkit.craftbukkit.v1_20_R3.util.LazyPlayerSet(server));
 +      this.cserver.getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) {
@@ -918,7 +918,7 @@
     }
  
     private void handleMessageDecodeFailure(SignedMessageChain.DecodeException p_252068_) {
-@@ -1223,7 +_,7 @@
+@@ -1223,13 +_,13 @@
     }
  
     private ParseResults<CommandSourceStack> parseCommand(String p_242938_) {
@@ -926,8 +926,6 @@
 +      CommandDispatcher<CommandSourceStack> commanddispatcher = this.server.getCommands().getCorrectDispatcher(p_242938_).unwrap();
        return commanddispatcher.parse(p_242938_, this.player.createCommandSourceStack());
     }
- 
-@@ -1229,7 +_,7 @@
  
     private Optional<LastSeenMessages> tryHandleChat(LastSeenMessages.Update p_249613_) {
        Optional<LastSeenMessages> optional = this.unpackAndApplyLastSeen(p_249613_);
@@ -941,7 +939,7 @@
     }
  
 +   //Ketting start - keep compat (anonymous classes will make the compat checker give wrong output)
-+   private class Waitable extends org.bukkit.craftbukkit.v1_20_R2.util.Waitable<java.lang.Object>{
++   private class Waitable extends org.bukkit.craftbukkit.v1_20_R3.util.Waitable<java.lang.Object>{
 +      final org.bukkit.event.player.PlayerChatEvent queueEvent;
 +      final String originalFormat;
 +      final String originalMessage;
@@ -962,7 +960,7 @@
 +         }
 +
 +         String message = String.format(queueEvent.getFormat(), queueEvent.getPlayer().getDisplayName(), queueEvent.getMessage());
-+         if (((org.bukkit.craftbukkit.v1_20_R2.util.LazyPlayerSet) queueEvent.getRecipients()).isLazy()) {
++         if (((org.bukkit.craftbukkit.v1_20_R3.util.LazyPlayerSet) queueEvent.getRecipients()).isLazy()) {
 +            if (!org.spigotmc.SpigotConfig.bungee && originalFormat.equals(queueEvent.getFormat()) && originalMessage.equals(queueEvent.getMessage()) && queueEvent.getPlayer().getName().equalsIgnoreCase(queueEvent.getPlayer().getDisplayName())) { // Spigot
 +               ServerGamePacketListenerImpl.this.server.getPlayerList().broadcastChatMessage(original, ServerGamePacketListenerImpl.this.player, ChatType.bind(ChatType.CHAT, (Entity) ServerGamePacketListenerImpl.this.player));
 +               return null;
@@ -996,7 +994,7 @@
 +         // Do nothing, this is coming from a plugin
 +      } else {
 +         org.bukkit.entity.Player player = this.getCraftPlayer();
-+         org.bukkit.event.player.AsyncPlayerChatEvent event = new org.bukkit.event.player.AsyncPlayerChatEvent(async, player, s, new org.bukkit.craftbukkit.v1_20_R2.util.LazyPlayerSet(server));
++         org.bukkit.event.player.AsyncPlayerChatEvent event = new org.bukkit.event.player.AsyncPlayerChatEvent(async, player, s, new org.bukkit.craftbukkit.v1_20_R3.util.LazyPlayerSet(server));
 +         String originalFormat = event.getFormat(), originalMessage = event.getMessage();
 +         this.cserver.getPluginManager().callEvent(event);
 +
@@ -1004,7 +1002,7 @@
 +            // Evil plugins still listening to deprecated event
 +            final org.bukkit.event.player.PlayerChatEvent queueEvent = new org.bukkit.event.player.PlayerChatEvent(player, event.getMessage(), event.getFormat(), event.getRecipients());
 +            queueEvent.setCancelled(event.isCancelled());
-+            final org.bukkit.craftbukkit.v1_20_R2.util.Waitable<?> waitable = new Waitable(queueEvent, originalFormat, originalMessage, original); //Ketting - keep compat (anonymous classes will make the compat checker give wrong output)
++            final org.bukkit.craftbukkit.v1_20_R3.util.Waitable<?> waitable = new Waitable(queueEvent, originalFormat, originalMessage, original); //Ketting - keep compat (anonymous classes will make the compat checker give wrong output)
 +            if (async) {
 +               server.processQueue.add(waitable);
 +            } else {
@@ -1023,7 +1021,7 @@
 +            }
 +
 +            s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
-+            if (((org.bukkit.craftbukkit.v1_20_R2.util.LazyPlayerSet) event.getRecipients()).isLazy()) {
++            if (((org.bukkit.craftbukkit.v1_20_R3.util.LazyPlayerSet) event.getRecipients()).isLazy()) {
 +               if (!org.spigotmc.SpigotConfig.bungee && originalFormat.equals(event.getFormat()) && originalMessage.equals(event.getMessage()) && event.getPlayer().getName().equalsIgnoreCase(event.getPlayer().getDisplayName())) { // Spigot
 +                  ServerGamePacketListenerImpl.this.server.getPlayerList().broadcastChatMessage(original, ServerGamePacketListenerImpl.this.player, ChatType.bind(ChatType.CHAT, (Entity) ServerGamePacketListenerImpl.this.player));
 +                  return;
@@ -1043,17 +1041,17 @@
 +   }
 +
 +   private void handleCommand(String s) {
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.playerCommandTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.playerCommandTimer.startTiming(); // Spigot
 +      if ( org.spigotmc.SpigotConfig.logCommands ) // Spigot
 +         this.LOGGER.info(this.player.getScoreboardName() + " issued server command: " + s);
 +
-+      org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer player = this.getCraftPlayer();
++      org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer player = this.getCraftPlayer();
 +
-+      org.bukkit.event.player.PlayerCommandPreprocessEvent event = new org.bukkit.event.player.PlayerCommandPreprocessEvent(player, s, new org.bukkit.craftbukkit.v1_20_R2.util.LazyPlayerSet(server));
++      org.bukkit.event.player.PlayerCommandPreprocessEvent event = new org.bukkit.event.player.PlayerCommandPreprocessEvent(player, s, new org.bukkit.craftbukkit.v1_20_R3.util.LazyPlayerSet(server));
 +      this.cserver.getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) {
-+         org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.playerCommandTimer.stopTiming(); // Spigot
++         org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.playerCommandTimer.stopTiming(); // Spigot
 +         return;
 +      }
 +
@@ -1066,7 +1064,7 @@
 +         java.util.logging.Logger.getLogger(ServerGamePacketListenerImpl.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 +         return;
 +      } finally {
-+         org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.playerCommandTimer.stopTiming(); // Spigot
++         org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.playerCommandTimer.stopTiming(); // Spigot
 +      }
 +   }
 +   // CraftBukkit end
@@ -1136,11 +1134,11 @@
 +      // SPIGOT-5607: Only call interact event if no block or entity is being clicked. Use bukkit ray trace method, because it handles blocks and entities at the same time
 +      // SPIGOT-7429: Make sure to call org.bukkit.event.player.PlayerInteractEvent for spectators and non-pickable entities
 +      org.bukkit.util.RayTraceResult result = this.player.level().getWorld().rayTrace(origin, origin.getDirection(), d3, org.bukkit.FluidCollisionMode.NEVER, false, 0.1, entity -> {
-+         Entity handle = ((org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity) entity).getHandle();
++         Entity handle = ((org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity) entity).getHandle();
 +         return entity != this.player.getBukkitEntity() && this.player.getBukkitEntity().canSee(entity) && !handle.isSpectator() && handle.isPickable() && !handle.isPassengerOfSameVehicle(player);
 +      });
 +      if (result == null) {
-+         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent(this.player, org.bukkit.event.block.Action.LEFT_CLICK_AIR, this.player.getInventory().getSelected(), InteractionHand.MAIN_HAND);
++         org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerInteractEvent(this.player, org.bukkit.event.block.Action.LEFT_CLICK_AIR, this.player.getInventory().getSelected(), InteractionHand.MAIN_HAND);
 +      }
 +
 +      // Arm swing animation
@@ -1335,7 +1333,7 @@
        PacketUtils.ensureRunningOnSameThread(p_9858_, this, this.player.serverLevel());
 +
 +      if (this.player.isImmobile()) return; // CraftBukkit
-+      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleInventoryCloseEvent(this.player); // CraftBukkit
++      org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleInventoryCloseEvent(this.player); // CraftBukkit
 +
        this.player.doCloseContainer();
     }
@@ -1528,7 +1526,7 @@
 +                        ItemStack cursor = this.player.containerMenu.getCarried();
 +                        action = org.bukkit.event.inventory.InventoryAction.NOTHING;
 +                        // Quick check for if we have any of the item
-+                        if (inventory.getTopInventory().contains(org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers.getMaterial(cursor.getItem())) || inventory.getBottomInventory().contains(org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers.getMaterial(cursor.getItem()))) {
++                        if (inventory.getTopInventory().contains(org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers.getMaterial(cursor.getItem())) || inventory.getBottomInventory().contains(org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers.getMaterial(cursor.getItem()))) {
 +                           action = org.bukkit.event.inventory.InventoryAction.COLLECT_TO_CURSOR;
 +                        }
 +                     }
@@ -1646,14 +1644,14 @@
 -            this.server.getRecipeManager().byKey(p_9882_.getRecipe()).ifPresent((p_296595_) -> {
 -               ((RecipeBookMenu)this.player.containerMenu).handlePlacement(p_9882_.isShiftDown(), p_296595_, this.player);
 +            // CraftBukkit start - implement PlayerRecipeBookClickEvent
-+            org.bukkit.inventory.Recipe recipe = this.cserver.getRecipe(org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey.fromMinecraft(p_9882_.getRecipe()));
++            org.bukkit.inventory.Recipe recipe = this.cserver.getRecipe(org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey.fromMinecraft(p_9882_.getRecipe()));
 +            if (recipe == null) {
 +               return;
 +            }
-+            org.bukkit.event.player.PlayerRecipeBookClickEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callRecipeBookClickEvent(this.player, recipe, p_9882_.isShiftDown());
++            org.bukkit.event.player.PlayerRecipeBookClickEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callRecipeBookClickEvent(this.player, recipe, p_9882_.isShiftDown());
 +
 +            // Cast to keyed should be safe as the recipe will never be a MerchantRecipe.
-+            this.server.getRecipeManager().byKey(org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey.toMinecraft(((org.bukkit.Keyed) event.getRecipe()).getKey())).ifPresent((p_296595_) -> {
++            this.server.getRecipeManager().byKey(org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey.toMinecraft(((org.bukkit.Keyed) event.getRecipe()).getKey())).ifPresent((p_296595_) -> {
 +               ((RecipeBookMenu)this.player.containerMenu).handlePlacement(event.isShiftClick(), p_296595_, this.player);
              });
 +            // CraftBukkit end
@@ -1683,7 +1681,7 @@
 +         if (flag || (flag1 && !ItemStack.matches(this.player.inventoryMenu.getSlot(p_9915_.getSlotNum()).getItem(), p_9915_.getItem()))) { // Insist on valid slot
 +            // CraftBukkit start - Call click event
 +            org.bukkit.inventory.InventoryView inventory = this.player.inventoryMenu.getBukkitView();
-+            org.bukkit.inventory.ItemStack item = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asBukkitCopy(p_9915_.getItem());
++            org.bukkit.inventory.ItemStack item = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asBukkitCopy(p_9915_.getItem());
 +
 +            org.bukkit.event.inventory.InventoryType.SlotType type = org.bukkit.event.inventory.InventoryType.SlotType.QUICKBAR;
 +            if (flag) {
@@ -1698,7 +1696,7 @@
 +            org.bukkit.event.inventory.InventoryCreativeEvent event = new org.bukkit.event.inventory.InventoryCreativeEvent(inventory, type, flag ? -999 : p_9915_.getSlotNum(), item);
 +            cserver.getPluginManager().callEvent(event);
 +
-+            itemstack = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(event.getCursor());
++            itemstack = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asNMSCopy(event.getCursor());
 +
 +            switch (event.getResult()) {
 +               case ALLOW:
