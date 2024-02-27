@@ -666,7 +666,7 @@
 +   }
 +
 +   public Either<Player.BedSleepingProblem, Unit> bedResult;
-    public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_9115_, boolean force) {
+    public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_9115_) {
 +      var optAt = java.util.Optional.of(p_9115_);
 +      var ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
 +      if (ret != null) bedResult = Either.left(ret);
@@ -690,7 +690,7 @@
              } else {
                 if (!this.isCreative()) {
                    double d0 = 8.0D;
-@@ -850,7 +_,7 @@
+@@ -855,7 +_,7 @@
                       return p_9062_.isPreventingPlayerRest(this);
                    });
                    if (!list.isEmpty()) {
@@ -699,7 +699,7 @@
                    }
                 }
  
-@@ -863,12 +_,26 @@
+@@ -868,12 +_,22 @@
                 }
  
                 ((ServerLevel)this.level()).updateSleepingPlayerList();
@@ -715,10 +715,6 @@
 +
 +      if (bedResult.left().orElse(null) == Player.BedSleepingProblem.OTHER_PROBLEM) {
 +         return bedResult; // return immediately if the result is not bypassable by plugins
-+      }
-+
-+      if (force) {
-+         bedResult = Either.right(Unit.INSTANCE);
 +      }
 +
 +      bedResult = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerBedEnterEvent(this, p_9115_, bedResult);
