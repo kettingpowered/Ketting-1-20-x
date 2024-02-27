@@ -263,35 +263,121 @@
           this.setLeashedTo(p_21500_, true);
           itemstack.shrink(1);
           return InteractionResult.sidedSuccess(this.level().isClientSide);
-@@ -1165,8 +_,15 @@
+@@ -1165,52 +_,76 @@
        return this.restrictRadius != -1.0F;
     }
  
 +   // CraftBukkit start
++   //Ketting start - move back to original method
++   private org.bukkit.event.entity.EntityTransformEvent.TransformReason convertTo$transformReason = org.bukkit.event.entity.EntityTransformEvent.TransformReason.UNKNOWN;
++   private org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason convertTo$spawnReason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
     @Nullable
     public <T extends Mob> T convertTo(EntityType<T> p_21407_, boolean p_21408_) {
-+      return this.convertTo(p_21407_, p_21408_, org.bukkit.event.entity.EntityTransformEvent.TransformReason.UNKNOWN, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
-+   }
+-      if (this.isRemoved()) {
+-         return (T)null;
+-      } else {
+-         T t = p_21407_.create(this.level());
+-         if (t == null) {
+-            return (T)null;
++      try {
++         if (this.isRemoved()) {
++            return (T) null;
+          } else {
+-            t.copyPosition(this);
+-            t.setBaby(this.isBaby());
+-            t.setNoAi(this.isNoAi());
+-            if (this.hasCustomName()) {
+-               t.setCustomName(this.getCustomName());
+-               t.setCustomNameVisible(this.isCustomNameVisible());
+-            }
+-
+-            if (this.isPersistenceRequired()) {
+-               t.setPersistenceRequired();
+-            }
+-
+-            t.setInvulnerable(this.isInvulnerable());
+-            if (p_21408_) {
+-               t.setCanPickUpLoot(this.canPickUpLoot());
+-
+-               for(EquipmentSlot equipmentslot : EquipmentSlot.values()) {
+-                  ItemStack itemstack = this.getItemBySlot(equipmentslot);
+-                  if (!itemstack.isEmpty()) {
+-                     t.setItemSlot(equipmentslot, itemstack.copyAndClear());
+-                     t.setDropChance(equipmentslot, this.getEquipmentDropChance(equipmentslot));
++            T t = p_21407_.create(this.level());
++            if (t == null) {
++               return (T) null;
++            } else {
++               t.copyPosition(this);
++               t.setBaby(this.isBaby());
++               t.setNoAi(this.isNoAi());
++               if (this.hasCustomName()) {
++                  t.setCustomName(this.getCustomName());
++                  t.setCustomNameVisible(this.isCustomNameVisible());
++               }
++
++               if (this.isPersistenceRequired()) {
++                  t.setPersistenceRequired();
++               }
++
++               t.setInvulnerable(this.isInvulnerable());
++               if (p_21408_) {
++                  t.setCanPickUpLoot(this.canPickUpLoot());
++
++                  for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
++                     ItemStack itemstack = this.getItemBySlot(equipmentslot);
++                     if (!itemstack.isEmpty()) {
++                        t.setItemSlot(equipmentslot, itemstack.copyAndClear());
++                        t.setDropChance(equipmentslot, this.getEquipmentDropChance(equipmentslot));
++                     }
+                   }
+                }
+-            }
+-
+-            this.level().addFreshEntity(t);
+-            if (this.isPassenger()) {
+-               Entity entity = this.getVehicle();
+-               this.stopRiding();
+-               t.startRiding(entity, true);
+-            }
+-
+-            this.discard();
+-            return t;
++
++               // CraftBukkit start
++               if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTransformEvent(this, t, convertTo$transformReason).isCancelled()) {
++                  return null;
++               }
++               // CraftBukkit end
++               this.level().prepareAddFreshEntity(convertTo$spawnReason);
++               this.level().addFreshEntity(t);
++               if (this.isPassenger()) {
++                  Entity entity = this.getVehicle();
++                  this.stopRiding();
++                  t.startRiding(entity, true);
++               }
++
++               this.discard();
++               return t;
++            }
+          }
++      } finally {
++         //reset
++         convertTo$transformReason = org.bukkit.event.entity.EntityTransformEvent.TransformReason.UNKNOWN;
++         convertTo$spawnReason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
+       }
+    }
 +
 +   @Nullable
 +   public <T extends Mob> T convertTo(EntityType<T> p_21407_, boolean p_21408_, org.bukkit.event.entity.EntityTransformEvent.TransformReason transformReason, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
-+      // CraftBukkit end
-       if (this.isRemoved()) {
-          return (T)null;
-       } else {
-@@ -1199,6 +_,12 @@
-                }
-             }
++      convertTo$spawnReason = spawnReason;
++      convertTo$transformReason = transformReason;
++      return convertTo(p_21407_, p_21408_);
++   }
++   //Ketting end
  
-+            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTransformEvent(this, t, transformReason).isCancelled()) {
-+               return null;
-+            }
-+            // CraftBukkit end
-+            this.level().prepareAddFreshEntity(spawnReason);
-             this.level().addFreshEntity(t);
-             if (this.isPassenger()) {
-                Entity entity = this.getVehicle();
+    protected void tickLeash() {
+       if (this.leashInfoTag != null) {
 @@ -1219,6 +_,7 @@
  
        if (this.leashHolder != null) {
