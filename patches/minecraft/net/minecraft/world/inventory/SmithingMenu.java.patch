@@ -12,10 +12,12 @@
        this(p_40245_, p_40246_, ContainerLevelAccess.NULL);
 @@ -89,14 +_,16 @@
     public void createResult() {
++      org.bukkit.event.inventory.PrepareSmithingEvent event; // Ketting
        List<RecipeHolder<SmithingRecipe>> list = this.level.getRecipeManager().getRecipesFor(RecipeType.SMITHING, this.inputSlots, this.level);
        if (list.isEmpty()) {
 -         this.resultSlots.setItem(0, ItemStack.EMPTY);
-+         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
++         event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
++         this.resultSlots.setItem(0, org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getResult())); // Ketting
        } else {
           RecipeHolder<SmithingRecipe> recipeholder = list.get(0);
           ItemStack itemstack = recipeholder.value().assemble(this.inputSlots, this.level.registryAccess());
@@ -24,8 +26,9 @@
              this.resultSlots.setRecipeUsed(recipeholder);
 -            this.resultSlots.setItem(0, itemstack);
 +            // CraftBukkit start
-+            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack);
++            event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack);
 +            // CraftBukkit end
++            this.resultSlots.setItem(0, org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getResult())); // Ketting
           }
        }
  
