@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -60,6 +_,35 @@
+@@ -60,6 +_,37 @@
     private ContainerSynchronizer synchronizer;
     private boolean suppressRemoteUpdates;
  
@@ -24,8 +24,10 @@
 +   }
 +   private net.minecraft.network.chat.Component title;
 +   public final net.minecraft.network.chat.Component getTitle() {
-+      com.google.common.base.Preconditions.checkState(this.title != null, "Title not set");
-+      return this.title;
++      // Ketting start
++      //com.google.common.base.Preconditions.checkState(this.title != null, "Title not set");
++      return this.title == null ? net.minecraft.network.chat.Component.empty() : this.title;
++      // Ketting end
 +   }
 +   public final void setTitle(net.minecraft.network.chat.Component title) {
 +      com.google.common.base.Preconditions.checkState(this.title == null, "Title already set");
