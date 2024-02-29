@@ -86,7 +86,7 @@
        ContainerHelper.saveAllItems(p_187452_, this.items);
        CompoundTag compoundtag = new CompoundTag();
        this.recipesUsed.forEach((p_187449_, p_187450_) -> {
-@@ -249,28 +_,52 @@
+@@ -249,28 +_,56 @@
           }
  
           int i = p_155017_.getMaxStackSize();
@@ -142,7 +142,11 @@
                 p_155017_.cookingProgress = 0;
                 p_155017_.cookingTotalTime = getTotalCookTime(p_155014_, p_155017_);
 -               if (burn(p_155014_.registryAccess(), recipe, p_155017_.items, i)) {
-+               if (burn(p_155017_.level, p_155017_.worldPosition, p_155014_.registryAccess(), recipe, p_155017_.items, i)) { // CraftBukkit
++               // Ketting start
++               ketting$world = p_155017_.level;
++               ketting$blockposition = p_155017_.worldPosition;
++               // Ketting end
++               if (p_155017_.burn(p_155014_.registryAccess(), recipe, p_155017_.items, i)) {
                    p_155017_.setRecipeUsed(recipe);
                 }
  
@@ -159,12 +163,16 @@
              }
           }
        } else {
-@@ -317,16 +_,44 @@
+@@ -317,16 +_,51 @@
        }
     }
  
 -   private static boolean burn(RegistryAccess p_266740_, @Nullable Recipe<?> p_266780_, NonNullList<ItemStack> p_267073_, int p_267157_) {
-+   private static boolean burn(Level world, BlockPos blockposition, RegistryAccess p_266740_, @Nullable Recipe<?> p_266780_, NonNullList<ItemStack> p_267073_, int p_267157_) { // CraftBukkit
++   // Ketting start
++   private static Level ketting$world;
++   private static BlockPos ketting$blockposition;
++   // Ketting end
++   private boolean burn(RegistryAccess p_266740_, @Nullable Recipe<?> p_266780_, NonNullList<ItemStack> p_267073_, int p_267157_) {
        if (p_266780_ != null && canBurn(p_266740_, p_266780_, p_267073_, p_267157_)) {
           ItemStack itemstack = p_267073_.get(0);
           ItemStack itemstack1 = p_266780_.getResultItem(p_266740_);
@@ -174,14 +182,17 @@
 +         org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack source = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(itemstack);
 +         org.bukkit.inventory.ItemStack result = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asBukkitCopy(itemstack1);
 +
-+         org.bukkit.event.inventory.FurnaceSmeltEvent furnaceSmeltEvent = new org.bukkit.event.inventory.FurnaceSmeltEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(world, blockposition), source, result);
-+         world.getCraftServer().getPluginManager().callEvent(furnaceSmeltEvent);
++         if (ketting$world != null && ketting$blockposition != null) { // Ketting
++            org.bukkit.event.inventory.FurnaceSmeltEvent furnaceSmeltEvent = new org.bukkit.event.inventory.FurnaceSmeltEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(ketting$world, ketting$blockposition), source, result);
++            ketting$world.getCraftServer().getPluginManager().callEvent(furnaceSmeltEvent);
 +
-+         if (furnaceSmeltEvent.isCancelled()) {
-+            return false;
++            if (furnaceSmeltEvent.isCancelled()) {
++               return false;
++            }
++
++            result = furnaceSmeltEvent.getResult();
 +         }
-+
-+         result = furnaceSmeltEvent.getResult();
++         
 +         itemstack1 = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(result);
 +
 +         if (!itemstack1.isEmpty()) {
