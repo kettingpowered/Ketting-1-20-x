@@ -870,8 +870,8 @@
     public void doCloseContainer() {
 +      //Ketting start - fix inventory closing
 +      if (this.containerMenu != this.inventoryMenu) {
-+         Player old = org.kettingpowered.ketting.utils.InventoryViewHelper.getContainerOwner();
 +         org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(this);
++         Player old = org.kettingpowered.ketting.utils.InventoryViewHelper.getContainerOwner();
 +         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleInventoryCloseEvent(this);
 +         org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(old);
 +      }
