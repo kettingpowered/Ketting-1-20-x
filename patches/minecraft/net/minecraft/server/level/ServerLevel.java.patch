@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -188,24 +_,55 @@
+@@ -188,24 +_,56 @@
     private final List<CustomSpawner> customSpawners;
     @Nullable
     private EndDragonFight dragonFight;
@@ -35,6 +35,7 @@
 +   //Ketting end
     public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_) {
        super(p_215002_, p_215003_, p_214999_.registryAccess(), p_215004_.type(), p_214999_::getProfiler, false, p_215006_, p_215007_, p_214999_.getMaxChainedNeighborUpdates());
++      this.pvpMode = p_214999_.isPvpAllowed();
 +      convertable = p_215001_;
 +      uuid = org.bukkit.craftbukkit.v1_20_R1.util.WorldUUID.getUUID((p_215002_ instanceof net.minecraft.world.level.storage.DerivedLevelData ? p_215001_.levelDirectory.path() : p_215001_.getDimensionPath(p_215003_)).toFile()); //Ketting
 +      // CraftBukkit end
