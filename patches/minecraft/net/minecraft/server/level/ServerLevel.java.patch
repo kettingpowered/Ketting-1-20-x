@@ -446,7 +446,7 @@
 +
 +   @Override
 +   public boolean addFreshEntity(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
-+      return this.addEntity(entity, reason);
++      return this.addEntityCB(entity, reason);
 +      // CraftBukkit end
     }
  
@@ -457,7 +457,7 @@
 +   }
 +
 +   public boolean addWithUUID(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
-+      return this.addEntity(entity, reason);
++      return this.addEntityCB(entity, reason);
 +      // CraftBukkit end
     }
  
@@ -471,7 +471,7 @@
 +   }
 +
 +   public void addDuringTeleport(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
-+      this.addEntity(entity, reason);
++      this.addEntityCB(entity, reason);
 +      // CraftBukkit end
     }
  
@@ -484,7 +484,7 @@
        Entity entity = this.getEntities().get(p_8854_.getUUID());
        if (entity != null) {
           LOGGER.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.getUUID().toString());
-@@ -835,28 +_,71 @@
+@@ -835,28 +_,70 @@
           this.removePlayerImmediately((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -496,7 +496,7 @@
 +   //Ketting start - add original method back, reverse delegation so that the CB method calls the original method.
 +   @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "OptionalAssignedToNull"}) //yeah, this is not really nice here, but whatever.
 +   @Nullable private Optional<org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason> addEntity$spawnReason = null;
-+   private boolean addEntity(Entity p_8873_, @Nullable org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++   private boolean addEntityCB(Entity p_8873_, @Nullable org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
 +      try{
 +         addEntity$spawnReason = Optional.ofNullable(spawnReason);
 +         return addEntity(p_8873_);
@@ -506,7 +506,6 @@
 +   }
 +   //Ketting end
     private boolean addEntity(Entity p_8873_) {
-+      org.spigotmc.AsyncCatcher.catchOp("entity add"); // Spigot
        if (p_8873_.isRemoved()) {
 -         LOGGER.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.getKey(p_8873_.getType()));
 +         // LOGGER.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.getKey(p_8873_.getType())); // CraftBukkit
