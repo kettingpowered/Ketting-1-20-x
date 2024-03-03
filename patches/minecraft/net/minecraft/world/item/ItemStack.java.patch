@@ -155,7 +155,7 @@
        Player player = p_41662_.getPlayer();
        BlockPos blockpos = p_41662_.getClickedPos();
        BlockInWorld blockinworld = new BlockInWorld(p_41662_.getLevel(), blockpos, false);
-@@ -233,10 +_,189 @@
+@@ -233,10 +_,190 @@
           return InteractionResult.PASS;
        } else {
           Item item = this.getItem();
@@ -208,7 +208,8 @@
 +                  this.setCount(newCount);
 +               }
 +               for (org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState blockstate : blocks) {
-+                  world.setBlock(blockstate.getPosition(),blockstate.getHandle(), blockstate.getFlag()); // SPIGOT-7248 - manual update to avoid physics where appropriate
++                  blockstate.update(true); //Ketting
++                  //world.setBlock(blockstate.getPosition(),blockstate.getHandle(), blockstate.getFlag()); // SPIGOT-7248 - manual update to avoid physics where appropriate
 +               }
 +               player.awardStat(Stats.ITEM_USED.get(item)); // SPIGOT-7236 - award stat
 +            }
