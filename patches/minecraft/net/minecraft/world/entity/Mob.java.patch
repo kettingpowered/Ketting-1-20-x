@@ -25,7 +25,7 @@
     protected void registerGoals() {
     }
  
-@@ -229,7 +_,43 @@
+@@ -229,7 +_,42 @@
     }
  
     public void setTarget(@Nullable LivingEntity p_21544_) {
@@ -42,8 +42,7 @@
 +         if (reason == org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN) {
 +            net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, p_21544_, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
 +            if(!changeTargetEvent.isCanceled()) {
-+               this.target = changeTargetEvent.getNewTarget();
-+               return true;
++               p_21544_ = changeTargetEvent.getNewTarget();
 +            }
 +         }
 +         org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity ctarget = null;
