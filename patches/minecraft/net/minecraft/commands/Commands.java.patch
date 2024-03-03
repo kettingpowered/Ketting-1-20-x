@@ -42,7 +42,7 @@
     }
  
     public static <S> ParseResults<S> mapSource(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
-@@ -230,12 +_,68 @@
+@@ -230,11 +_,64 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }
  
@@ -95,6 +95,8 @@
     public int performPrefixedCommand(CommandSourceStack p_230958_, String p_230959_) {
 -      p_230959_ = p_230959_.startsWith("/") ? p_230959_.substring(1) : p_230959_;
 -      return this.performCommand(this.dispatcher.parse(p_230959_, p_230958_), p_230959_);
+-   }
+-
 +      // CraftBukkit start
 +      return this.performPrefixedCommand(p_230958_, p_230959_, p_230959_);
 +   }
@@ -103,16 +105,12 @@
 +      s = s.startsWith("/") ? s.substring(1) : s;
 +      return this.performCommand(this.getCorrectDispatcher(s).unwrap().parse(s, commandlistenerwrapper), s, label);
 +      // CraftBukkit end
-    }
- 
-    public int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
-+      return this.performCommand(p_242844_, p_242841_, p_242841_);
 +   }
 +
-+   public int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_, String label) { // CraftBukkit
++   private String ketting$label = null;  // Ketting
+    public int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
        CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
        commandsourcestack.getServer().getProfiler().push(() -> {
-          return "/" + p_242841_;
 @@ -243,7 +_,16 @@
  
        try {
@@ -136,14 +134,24 @@
                 int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
                 MutableComponent mutablecomponent1 = Component.empty().withStyle(ChatFormatting.GRAY).withStyle((p_82134_) -> {
 -                  return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + p_242841_));
-+                  return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + label)); // CraftBukkit
++                  return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + (ketting$label == null ? p_242841_ : ketting$label))); // CraftBukkit
                 });
                 if (j > 10) {
                    mutablecomponent1.append(CommonComponents.ELLIPSIS);
-@@ -295,16 +_,60 @@
+@@ -291,20 +_,70 @@
+ 
+          return 0;
+       } finally {
++         ketting$label = null;
+          commandsourcestack.getServer().getProfiler().pop();
        }
     }
  
++   public int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_, String label) { // CraftBukkit
++      this.ketting$label = label;
++      return this.performCommand(p_242844_, p_242841_, p_242841_);
++   }
++
 +   //Ketting start - rewrite to add forge dispatcher support
     public void sendCommands(ServerPlayer p_82096_) {
 -      Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();

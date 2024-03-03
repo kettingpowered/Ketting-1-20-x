@@ -123,10 +123,10 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
     }
 
     public static Profession nmsToBukkitProfession(VillagerProfession nms) {
-        return Profession.valueOf(org.kettingpowered.ketting.inject.ForgeInject.standardize(BuiltInRegistries.VILLAGER_PROFESSION.getKey(nms)));
+        return BuiltInRegistries.VILLAGER_PROFESSION.getKey(nms).getNamespace().equals(org.bukkit.NamespacedKey.MINECRAFT) ? Profession.valueOf(BuiltInRegistries.VILLAGER_PROFESSION.getKey(nms).getPath().toUpperCase(Locale.ROOT)) : Profession.valueOf(org.kettingpowered.ketting.inject.ForgeInject.standardize(BuiltInRegistries.VILLAGER_PROFESSION.getKey(nms)));
     }
 
     public static VillagerProfession bukkitToNmsProfession(Profession bukkit) {
-        return BuiltInRegistries.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(bukkit.getKey()));
+        return !org.kettingpowered.ketting.inject.ForgeInject.PROFESSIONS.containsKey(bukkit) ? BuiltInRegistries.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(bukkit.getKey())) : net.minecraftforge.registries.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(org.kettingpowered.ketting.inject.ForgeInject.PROFESSIONS.get(bukkit));
     }
 }
