@@ -29,7 +29,6 @@
     }
  
     public void setTarget(@Nullable LivingEntity p_21544_) {
--      this.target = p_21544_;
 +      // CraftBukkit start - fire event
 +      setTarget(p_21544_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN, true);
 +   }
@@ -41,7 +40,11 @@
 +            reason = getTarget().isAlive() ? org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET : org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_DIED;
 +         }
 +         if (reason == org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN) {
-+            this.level().getCraftServer().getLogger().log(java.util.logging.Level.WARNING, "Unknown target reason, please report on the issue tracker", new Exception());
++            net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, p_21544_, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
++            if(!changeTargetEvent.isCanceled()) {
++               this.target = changeTargetEvent.getNewTarget();
++               return true;
++            }
 +         }
 +         org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity ctarget = null;
 +         if (p_21544_ != null) {
@@ -60,12 +63,8 @@
 +         }
 +      }
 +
-+      net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, p_21544_, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
-+      if(!changeTargetEvent.isCanceled()) {
-+         this.target = changeTargetEvent.getNewTarget();
-+         return true;
-+      }
-+      return false;
+       this.target = p_21544_;
++      return true;
 +      // CraftBukkit end
     }
  
