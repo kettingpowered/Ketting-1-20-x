@@ -26,7 +26,6 @@
 [![craftbukkit-version][]][craftbukkit-commit]
 [![spigot-version][]][spigot-commit]
 
-
 # Ketting
 
 Ketting is a fork of [MinecraftForge](https://github.com/MinecraftForge/MinecraftForge/)
