@@ -9,12 +9,14 @@
     public static final MenuType<ChestMenu> GENERIC_9x1 = register("generic_9x1", ChestMenu::oneRow);
     public static final MenuType<ChestMenu> GENERIC_9x2 = register("generic_9x2", ChestMenu::twoRows);
     public static final MenuType<ChestMenu> GENERIC_9x3 = register("generic_9x3", ChestMenu::threeRows);
-@@ -26,7 +_,7 @@
+@@ -26,7 +_,9 @@
     public static final MenuType<GrindstoneMenu> GRINDSTONE = register("grindstone", GrindstoneMenu::new);
     public static final MenuType<HopperMenu> HOPPER = register("hopper", HopperMenu::new);
     public static final MenuType<LecternMenu> LECTERN = register("lectern", (p_39992_, p_39993_) -> {
 -      return new LecternMenu(p_39992_);
-+      return new LecternMenu(p_39992_, p_39993_); // CraftBukkit
++      LecternMenu menu = new LecternMenu(p_39992_);
++      menu.player = (org.bukkit.entity.Player) p_39993_.player.getBukkitEntity(); // CraftBukkit
++      return menu;
     });
     public static final MenuType<LoomMenu> LOOM = register("loom", LoomMenu::new);
     public static final MenuType<MerchantMenu> MERCHANT = register("merchant", MerchantMenu::new);
