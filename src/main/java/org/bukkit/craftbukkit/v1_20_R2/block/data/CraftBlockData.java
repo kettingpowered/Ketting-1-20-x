@@ -43,6 +43,7 @@ import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.kettingpowered.ketting.core.Ketting;
 
 public class CraftBlockData implements BlockData {
 
@@ -196,6 +197,19 @@ public class CraftBlockData implements BlockData {
         return this.state.getValue(ibs);
     }
 
+    //Ketting start
+    protected <T extends Comparable<T>> T getOrFallback(Property<T> ibs, Property<T> fallback) {
+        if (this.state.hasProperty(ibs)) {
+            return get(ibs);
+        } else if (this.state.hasProperty(fallback)) {
+            return this.state.getValue(fallback);
+        } else {
+            Ketting.LOGGER.warn("Failed to fallback to property " + ibs.getName() + ", the class probably doesn't support it", new UnsupportedOperationException("Unable to get BlockState property"));
+            return null;
+        }
+    }
+    //Ketting end
+
     /**
      * Set the specified state's value.
      *
@@ -209,6 +223,18 @@ public class CraftBlockData implements BlockData {
         this.parsedStates = null;
         this.state = this.state.setValue(ibs, v);
     }
+
+    //Ketting start
+    public <T extends Comparable<T>, V extends T> void setOrFallback(Property<T> ibs, Property<T> fallback, V v) {
+        if (this.state.hasProperty(ibs)) {
+            set(ibs, v);
+        } else if (this.state.hasProperty(fallback)) {
+            this.state = this.state.setValue(fallback, v);
+        } else {
+            Ketting.LOGGER.warn("Failed to fallback to property " + ibs.getName() + ", the class probably doesn't support it", new UnsupportedOperationException("Unable to set BlockState property"));
+        }
+    }
+    //Ketting end
 
     @Override
     public String getAsString() {
