@@ -137,12 +137,14 @@
     }
  
     public boolean onlyOpCanSetNbt() {
-@@ -210,7 +_,7 @@
+@@ -210,7 +_,9 @@
     }
  
     public AbstractContainerMenu createMenu(int p_59562_, Inventory p_59563_, Player p_59564_) {
 -      return new LecternMenu(p_59562_, this.bookAccess, this.dataAccess);
-+      return new LecternMenu(p_59562_, this.bookAccess, this.dataAccess, p_59563_); // CraftBukkit
++      LecternMenu menu = new LecternMenu(p_59562_, this.bookAccess, this.dataAccess);
++      menu.player = (org.bukkit.entity.Player) p_59563_.player.getBukkitEntity(); // CraftBukkit
++      return menu;
     }
  
     public Component getDisplayName() {
