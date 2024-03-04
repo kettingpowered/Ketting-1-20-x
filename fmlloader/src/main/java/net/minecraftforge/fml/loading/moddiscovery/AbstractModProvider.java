@@ -18,6 +18,7 @@ import net.minecraftforge.forgespi.locating.IModProvider;
 import net.minecraftforge.forgespi.locating.ModFileLoadingException;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
@@ -61,7 +62,23 @@ public abstract class AbstractModProvider implements IModProvider
             hm.put(path.toString(), false);
             try (Stream<Path> walk = Files.walk(path)){
                 LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_EXCLUDES, "Marking {} as excluded.", path);
-                walk.forEach(pth -> hm.put(pth.toString(), false));
+                //filter to dir's here, so that individual class-changes are ignored.
+                // We really only care about package correctness here, because modules.
+                walk.filter(Files::isDirectory) 
+                        .forEach(dir -> {
+                            boolean included = AbstractModProvider.class.getClassLoader().getResource(dir.toString()) == null;
+                            //sometimes modules include other modules, which are subpathed. e.g. org.joml and org.joml.primitives
+                            //if org.joml is present, org.joml.primitives would always get (wrongly) excluded without this check.
+                            if (included){
+                                LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_EXCLUDES, "Including {} instead, as that path is not found in the main ClassLoader.", dir);
+                            }
+                            try (Stream<Path> walk2 = Files.walk(dir)){
+                                walk2.filter(Files::isRegularFile)
+                                        .forEach(pth->hm.put(pth.toString(), included));
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
                 LOGGER.trace(LogMarkers.DYNAMIC_EXCLUDE_EXCLUDES, "hashmap after exclude: {}", hm.entrySet().stream().map(entry -> entry.getKey() + ": " + entry.getValue().toString()).collect(Collectors.joining(", ")));
             } catch (Throwable e) {
                 LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_ERRORS, "Could not mark sub-entries of {} as excluded: ", path);
@@ -80,14 +97,14 @@ public abstract class AbstractModProvider implements IModProvider
         //if the parent is excluded, we do not need not bother checking anything else. 
         // the file is not going to be excluded anyway
         Path parent = path.getParent();
-        while (parent != null){
+        if (parent != null){
             Boolean ret_parent = hm.get(parent.toString());
             if (ret_parent != null && !ret_parent) {
                 LOGGER.warn(LogMarkers.DYNAMIC_EXCLUDE_ERRORS, "{} was not marked as excluded, even-though {} is.", path, parent);
                 hm.put(path.toString(), false);
                 return Optional.of(false);
             }
-            parent = parent.getParent();
+            //parent = parent.getParent();
         }
         return Optional.empty();
     }
