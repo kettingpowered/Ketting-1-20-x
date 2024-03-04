@@ -26,24 +26,6 @@
 [![craftbukkit-version][]][craftbukkit-commit]
 [![spigot-version][]][spigot-commit]
 
-at commit (done): 4649f7af
-maybe todo commits for build/fmlloader system until 1.20.1:
-- e34090c8
-- e00de1a3
-- 2332ecf9
-- 9cd73c84
-- ab544a78
-- aff05a4c
-- 374dbc7a
-- 05c88ae3
-- 516b35ce
-- af6e8482
-- 1f59b3f9
-- 3edefbe3
-
-unreverted commits:
-- dd139115
-
 # Ketting
 
 Ketting is a fork of [MinecraftForge](https://github.com/MinecraftForge/MinecraftForge/)
