@@ -20,14 +20,16 @@
           TestCommand.register(this.dispatcher);
           SpawnArmorTrimsCommand.register(this.dispatcher);
        }
-@@ -218,10 +_,21 @@
-       if (p_230943_.includeIntegrated) {
+@@ -219,9 +_,23 @@
           PublishCommand.register(this.dispatcher);
        }
+ 
++      org.kettingpowered.ketting.command.RoutableCommandDispatcher.setFallback(this.dispatcher); //Ketting
++
 +      net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.forgeDispatcher, p_230943_, p_230944_); //Ketting
 +      // CraftBukkit start
 +   }
- 
++
 +   public Commands() {
        this.dispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
           p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
