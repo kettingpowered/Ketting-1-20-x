@@ -24,10 +24,13 @@
        if (p_230943_.includeIntegrated) {
           PublishCommand.register(this.dispatcher);
        }
+ 
++      org.kettingpowered.ketting.command.RoutableCommandDispatcher.setFallback(this.dispatcher); //Ketting
++
 +      net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.forgeDispatcher, p_230943_, p_230944_); //Ketting
 +      // CraftBukkit start
 +   }
- 
++
 +   public Commands() {
        this.dispatcher.setConsumer(ExecutionCommandSource.resultConsumer());
 +      // CraftBukkit end
