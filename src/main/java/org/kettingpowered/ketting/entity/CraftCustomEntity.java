@@ -1,5 +1,6 @@
 package org.kettingpowered.ketting.entity;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
@@ -33,7 +34,8 @@ public class CraftCustomEntity extends CraftEntity {
 
     @Override
     public String getCustomName() {
-        String name = this.getHandle().getCustomName().getString();
-        return name == null || name.length() == 0 ? this.entity.getName().getString() : name;
+        Component component = this.getHandle().getCustomName();
+        if (component == null || component.getString().isEmpty()) return this.entity.getName().getString();
+        return component.getString();
     }
 }

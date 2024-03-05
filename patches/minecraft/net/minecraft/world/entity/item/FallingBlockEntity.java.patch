@@ -15,25 +15,32 @@
     @Nullable
     public CompoundTag blockData;
     protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData.defineId(FallingBlockEntity.class, EntityDataSerializers.BLOCK_POS);
-@@ -76,8 +_,17 @@
+@@ -75,11 +_,24 @@
+       this.setStartPos(this.blockPosition());
     }
  
++   private static java.util.concurrent.atomic.AtomicReference<org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason> ketting$spawnReason = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT); // Ketting
     public static FallingBlockEntity fall(Level p_201972_, BlockPos p_201973_, BlockState p_201974_) {
 -      FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_201972_, (double)p_201973_.getX() + 0.5D, (double)p_201973_.getY(), (double)p_201973_.getZ() + 0.5D, p_201974_.hasProperty(BlockStateProperties.WATERLOGGED) ? p_201974_.setValue(BlockStateProperties.WATERLOGGED, Boolean.valueOf(false)) : p_201974_);
-+      // CraftBukkit start
-+      return fall(p_201972_, p_201973_, p_201974_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
-+   }
-+
-+   public static FallingBlockEntity fall(Level p_201972_, BlockPos p_201973_, BlockState p_201974_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
-+      // CraftBukkit end
 +      FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_201972_, (double) p_201973_.getX() + 0.5D, (double) p_201973_.getY(), (double) p_201973_.getZ() + 0.5D, p_201974_.hasProperty(BlockStateProperties.WATERLOGGED) ? (BlockState) p_201974_.setValue(BlockStateProperties.WATERLOGGED, false) : p_201974_);
 +      if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(fallingblockentity, p_201973_, p_201974_.getFluidState().createLegacyBlock())) return fallingblockentity; // CraftBukkit
 +
        p_201972_.setBlock(p_201973_, p_201974_.getFluidState().createLegacyBlock(), 3);
-+      p_201972_.prepareAddFreshEntity(spawnReason);
++      p_201972_.prepareAddFreshEntity(ketting$spawnReason.getAndSet(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT)); // Ketting
        p_201972_.addFreshEntity(fallingblockentity);
        return fallingblockentity;
++      
++      
++   }
++   
++   // CraftBukkit start
++   public static FallingBlockEntity fall(Level p_201972_, BlockPos p_201973_, BlockState p_201974_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++      // CraftBukkit end
++      ketting$spawnReason.set(spawnReason); // Ketting
++      return fall(p_201972_, p_201973_, p_201974_);
     }
+ 
+    public boolean isAttackable() {
 @@ -120,11 +_,11 @@
           if (!this.level().isClientSide) {
              BlockPos blockpos = this.blockPosition();
