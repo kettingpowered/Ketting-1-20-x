@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -80,13 +_,51 @@
+@@ -80,13 +_,52 @@
        OptionSpec<Void> optionspec12 = optionparser.accepts("jfrProfile");
        OptionSpec<Path> optionspec13 = optionparser.accepts("pidFile").withRequiredArg().withValuesConvertedBy(new PathConverter());
        OptionSpec<String> optionspec14 = optionparser.nonOptions();
@@ -21,6 +21,7 @@
 +      //Ketting start - Initialize Ketting
 +      org.kettingpowered.ketting.core.Ketting ketting = org.kettingpowered.ketting.core.Ketting.init(SharedConstants.getCurrentVersion().getName());
 +      ketting.registerAdapter(new org.kettingpowered.ketting.adapters.ForgeAdapterImpl(), new org.kettingpowered.ketting.adapters.BukkitAdapterImpl());
++      org.kettingpowered.ketting.common.betterui.BetterUI.name = org.kettingpowered.ketting.internal.KettingConstants.NAME;
 +      //Ketting end
  
        try {
