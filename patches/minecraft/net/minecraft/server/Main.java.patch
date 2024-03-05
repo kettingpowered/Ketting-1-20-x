@@ -9,7 +9,7 @@
        OptionSpec<Void> optionspec2 = optionparser.accepts("demo");
        OptionSpec<Void> optionspec3 = optionparser.accepts("bonusChest");
        OptionSpec<Void> optionspec4 = optionparser.accepts("forceUpgrade");
-@@ -84,13 +_,51 @@
+@@ -84,13 +_,52 @@
        OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
        OptionSpec<Path> optionspec14 = optionparser.accepts("pidFile").withRequiredArg().withValuesConvertedBy(new PathConverter());
        OptionSpec<String> optionspec15 = optionparser.nonOptions();
@@ -30,6 +30,7 @@
 +      //Ketting start - Initialize Ketting
 +      org.kettingpowered.ketting.core.Ketting ketting = org.kettingpowered.ketting.core.Ketting.init(SharedConstants.getCurrentVersion().getName());
 +      ketting.registerAdapter(new org.kettingpowered.ketting.adapters.ForgeAdapterImpl(), new org.kettingpowered.ketting.adapters.BukkitAdapterImpl());
++      org.kettingpowered.ketting.common.betterui.BetterUI.name = org.kettingpowered.ketting.internal.KettingConstants.NAME;
 +      //Ketting end
  
        try {
