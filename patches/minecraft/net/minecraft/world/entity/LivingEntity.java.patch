@@ -872,21 +872,15 @@
              this.playSound(soundtype.getFallSound(), soundtype.getVolume() * 0.5F, soundtype.getPitch() * 0.75F);
           }
  
-@@ -1528,6 +_,8 @@
-       return Mth.floor(this.getAttributeValue(Attributes.ARMOR));
-    }
- 
-+   protected void hurtArmor$ignore(DamageSource p_21122_, float p_21123_) {
-+   }
-    protected void hurtArmor(DamageSource p_21122_, float p_21123_) {
-    }
- 
-@@ -1539,7 +_,7 @@
+@@ -1539,7 +_,11 @@
  
     protected float getDamageAfterArmorAbsorb(DamageSource p_21162_, float p_21163_) {
        if (!p_21162_.is(DamageTypeTags.BYPASSES_ARMOR)) {
--         this.hurtArmor(p_21162_, p_21163_);
-+         this.hurtArmor$ignore(p_21162_, p_21163_); //Ketting
++         //Ketting start - ignore damage
++         org.kettingpowered.ketting.utils.ArmorUtil.addIgnoreArmorDamage(p_21162_);
+          this.hurtArmor(p_21162_, p_21163_);
++         org.kettingpowered.ketting.utils.ArmorUtil.removeIgnoreArmorDamage(p_21162_);
++         //Ketting end
           p_21163_ = CombatRules.getDamageAfterAbsorb(p_21163_, (float)this.getArmorValue(), (float)this.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
        }
  

@@ -121,3 +121,11 @@
              crashreportcategory.setDetail("Item ID", Item.getId(p_36042_.getItem()));
              crashreportcategory.setDetail("Item data", p_36042_.getDamageValue());
              crashreportcategory.setDetail("Item name", () -> {
+@@ -487,6 +_,7 @@
+    }
+ 
+    public void hurtArmor(DamageSource p_150073_, float p_150074_, int[] p_150075_) {
++      if (org.kettingpowered.ketting.utils.ArmorUtil.shouldIgnoreArmorDamage(p_150073_)) return; //Ketting
+       if (!(p_150074_ <= 0.0F)) {
+          p_150074_ /= 4.0F;
+          if (p_150074_ < 1.0F) {
