@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/LecternMenu.java
 +++ b/net/minecraft/world/inventory/LecternMenu.java
-@@ -6,6 +_,22 @@
+@@ -6,6 +_,24 @@
  import net.minecraft.world.item.ItemStack;
  
  public class LecternMenu extends AbstractContainerMenu {
@@ -14,6 +14,8 @@
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
++
++      if (this.player == null) this.player = org.kettingpowered.ketting.utils.InventoryViewHelper.getCraftContainerOwner();
 +
 +      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryLectern inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryLectern(this.lectern);
 +      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView(this.player, inventory, this);

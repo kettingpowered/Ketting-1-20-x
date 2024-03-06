@@ -4,6 +4,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView;
 import org.bukkit.inventory.Inventory;
@@ -23,6 +24,12 @@ public final class InventoryViewHelper {
 
     public static Player getContainerOwner() {
         return containerOwner;
+    }
+
+    public static CraftPlayer getCraftContainerOwner() {
+        if (containerOwner == null)
+            return null;
+        return (CraftPlayer) containerOwner.getBukkitEntity();
     }
 
     public static void clearContainerOwner() {
