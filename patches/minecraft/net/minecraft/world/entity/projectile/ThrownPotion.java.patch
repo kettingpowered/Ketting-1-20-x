@@ -1,26 +1,16 @@
 --- a/net/minecraft/world/entity/projectile/ThrownPotion.java
 +++ b/net/minecraft/world/entity/projectile/ThrownPotion.java
-@@ -88,11 +_,11 @@
+@@ -88,7 +_,7 @@
           boolean flag = potion == Potions.WATER && list.isEmpty();
           if (flag) {
              this.applyWater();
 -         } else if (!list.isEmpty()) {
 +         } else if (true || !list.isEmpty()) { // CraftBukkit - Call event even if no effects to apply
              if (this.isLingering()) {
--               this.makeAreaOfEffectCloud(itemstack, potion);
-+               this.makeAreaOfEffectCloud(itemstack, potion, p_37543_); // CraftBukkit - Pass HitResult
+                this.makeAreaOfEffectCloud(itemstack, potion);
              } else {
--               this.applySplash(list, p_37543_.getType() == HitResult.Type.ENTITY ? ((EntityHitResult)p_37543_).getEntity() : null);
-+               this.applySplash(list, p_37543_.getType() == HitResult.Type.ENTITY ? ((EntityHitResult) p_37543_).getEntity() : null, p_37543_); // CraftBukkit - Pass HitResult
-             }
-          }
- 
-@@ -124,45 +_,72 @@
- 
-    }
- 
--   private void applySplash(List<MobEffectInstance> p_37548_, @Nullable Entity p_37549_) {
-+   private void applySplash(List<MobEffectInstance> p_37548_, @Nullable Entity p_37549_, HitResult position) { // CraftBukkit - Pass MovingObjectPosition
+@@ -127,39 +_,65 @@
+    private void applySplash(List<MobEffectInstance> p_37548_, @Nullable Entity p_37549_) {
        AABB aabb = this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
        List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class, aabb);
 +      java.util.Map<org.bukkit.entity.LivingEntity, Double> affected = new java.util.HashMap<org.bukkit.entity.LivingEntity, Double>(); // CraftBukkit
@@ -109,12 +99,7 @@
 +      }
     }
  
--   private void makeAreaOfEffectCloud(ItemStack p_37538_, Potion p_37539_) {
-+
-+   private void makeAreaOfEffectCloud(ItemStack p_37538_, Potion p_37539_, HitResult position) { // CraftBukkit - Pass MovingObjectPosition
-       AreaEffectCloud areaeffectcloud = new AreaEffectCloud(this.level(), this.getX(), this.getY(), this.getZ());
-       Entity entity = this.getOwner();
-       if (entity instanceof LivingEntity) {
+    private void makeAreaOfEffectCloud(ItemStack p_37538_, Potion p_37539_) {
 @@ -184,7 +_,14 @@
           areaeffectcloud.setFixedColor(compoundtag.getInt("CustomPotionColor"));
        }
