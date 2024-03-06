@@ -430,7 +430,7 @@
 +         PlayerList playerList = this.server.getPlayerList();
 +         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_9180_, this::findDimensionEntryPoint);
 +
-+         java.util.concurrent.atomic.AtomicReference<ServerLevel> levelRef = new java.util.concurrent.atomic.AtomicReference<>(p_9180_);
++         java.util.concurrent.atomic.AtomicReference<ServerLevel> levelRef = new java.util.concurrent.atomic.AtomicReference<>(serverlevel);
 +
           if (portalinfo != null) {
 -            serverlevel.getProfiler().push("moving");
@@ -448,19 +448,19 @@
 -            p_9180_.addDuringPortalTeleport(this);
 -            serverlevel.getProfiler().pop();
 -            this.triggerDimensionChangeTriggers(serverlevel);
-+            Entity e = teleporter.placeEntity(this, serverlevel, levelRef.get(), this.getYRot(), spawnPortal -> {//Forge: Start vanilla logic
-+               serverlevel.getProfiler().push("moving");
-+               levelRef.set(portalinfo.world); // CraftBukkit
++            levelRef.set(portalinfo.world); // CraftBukkit
++            Entity e = teleporter.placeEntity(this, levelRef.get(), p_9180_, this.getYRot(), spawnPortal -> {//Forge: Start vanilla logic
++               levelRef.get().getProfiler().push("moving");
 +               if (levelRef.get() == null) { } else // CraftBukkit - empty to fall through to null to event
-+                  if (resourcekey == Level.OVERWORLD && levelRef.get().dimension() == Level.NETHER) {
++                  if (resourcekey == Level.OVERWORLD && p_9180_.dimension() == Level.NETHER) {
 +                     this.enteredNetherPosition = this.position();
-+                  } else if ((spawnPortal || (portalinfo.portalEventInfo != null && portalinfo.portalEventInfo.getCanCreatePortal())) && levelRef.get().dimension() == Level.END) { //Ketting - combine bukkit and forge logic
-+                     this.createEndPlatform(levelRef.get(), BlockPos.containing(portalinfo.pos));
++                  } else if ((spawnPortal || (portalinfo.portalEventInfo != null && portalinfo.portalEventInfo.getCanCreatePortal())) && p_9180_.dimension() == Level.END) { //Ketting - combine bukkit and forge logic
++                     this.createEndPlatform(p_9180_, BlockPos.containing(portalinfo.pos));
 +                  }
 +
 +               // CraftBukkit start
 +               org.bukkit.Location enter = this.getBukkitEntity().getLocation();
-+               org.bukkit.Location exit = (levelRef.get() == null) ? null : org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation.toBukkit(portalinfo.pos, levelRef.get().getWorld(), portalinfo.yRot, portalinfo.xRot);
++               org.bukkit.Location exit = (levelRef.get() == null) ? null : org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation.toBukkit(portalinfo.pos, p_9180_.getWorld(), portalinfo.yRot, portalinfo.xRot);
 +               org.bukkit.event.player.PlayerTeleportEvent tpEvent = new org.bukkit.event.player.PlayerTeleportEvent(this.getBukkitEntity(), enter, exit, cause);
 +               org.bukkit.Bukkit.getServer().getPluginManager().callEvent(tpEvent);
 +               if (tpEvent.isCancelled() || tpEvent.getTo() == null) {
@@ -470,24 +470,24 @@
 +               levelRef.set(((org.bukkit.craftbukkit.v1_20_R1.CraftWorld) exit.getWorld()).getHandle());
 +               // CraftBukkit end
 +
-+               serverlevel.getProfiler().pop();
-+               serverlevel.getProfiler().push("placing");
++               levelRef.get().getProfiler().pop();
++               levelRef.get().getProfiler().push("placing");
 +               this.isChangingDimension = true; // CraftBukkit - Set teleport invulnerability only if player changing worlds
 +
-+               this.connection.send(new ClientboundRespawnPacket(serverlevel.dimensionTypeId(), serverlevel.dimension(), BiomeManager.obfuscateSeed(serverlevel.getSeed()), this.gameMode.getGameModeForPlayer(), this.gameMode.getPreviousGameModeForPlayer(), serverlevel.isDebug(), serverlevel.isFlat(), (byte) 3, this.getLastDeathLocation(), this.getPortalCooldown()));
-+               this.connection.send(new ClientboundChangeDifficultyPacket(this.level().getDifficulty(), this.level().getLevelData().isDifficultyLocked()));
++               this.connection.send(new ClientboundRespawnPacket(levelRef.get().dimensionTypeId(), levelRef.get().dimension(), BiomeManager.obfuscateSeed(levelRef.get().getSeed()), this.gameMode.getGameModeForPlayer(), this.gameMode.getPreviousGameModeForPlayer(), levelRef.get().isDebug(), levelRef.get().isFlat(), (byte) 3, this.getLastDeathLocation(), this.getPortalCooldown()));
++               this.connection.send(new ClientboundChangeDifficultyPacket(levelRef.get().getDifficulty(), levelRef.get().getLevelData().isDifficultyLocked()));
 +
 +               playerList.sendPlayerPermissionLevel(this);
-+               serverlevel.removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
-+               this.unsetRemoved();
++               levelRef.get().removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
++               this.revive();
 +
 +               // CraftBukkit end
-+               this.setServerLevel(levelRef.get());
++               this.setServerLevel(p_9180_);
++               p_9180_.addDuringPortalTeleport(this);
 +               this.connection.teleport(exit); // CraftBukkit - use internal teleport without event
 +               this.connection.resetPosition();
-+               levelRef.get().addDuringPortalTeleport(this);
-+               serverlevel.getProfiler().pop();
-+               this.triggerDimensionChangeTriggers(serverlevel);
++               levelRef.get().getProfiler().pop();
++               this.triggerDimensionChangeTriggers(levelRef.get());
 +               return this;//forge: this is part of the ITeleporter patch
 +            });//Forge: End vanilla logic
 +
@@ -495,7 +495,7 @@
              this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
 -            playerlist.sendLevelInfo(this, p_9180_);
 -            playerlist.sendAllPlayerInfo(this);
-+            playerList.sendLevelInfo(this, levelRef.get());
++            playerList.sendLevelInfo(this, p_9180_);
 +            playerList.sendAllPlayerInfo(this);
  
              for(MobEffectInstance mobeffectinstance : this.getActiveEffects()) {
@@ -503,15 +503,15 @@
              }
  
 -            this.connection.send(new ClientboundLevelEventPacket(1032, BlockPos.ZERO, 0, false));
-+            if (teleporter.playTeleportSound(this, serverlevel, levelRef.get()))
++            if (teleporter.playTeleportSound(this, levelRef.get(), p_9180_))
 +               this.connection.send(new ClientboundLevelEventPacket(1032, BlockPos.ZERO, 0, false));
              this.lastSentExp = -1;
              this.lastSentHealth = -1.0F;
              this.lastSentFood = -1;
-+            net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, resourcekey, levelRef.get().dimension());
++            net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, resourcekey, p_9180_.dimension());
 +
 +            // CraftBukkit start
-+            org.bukkit.event.player.PlayerChangedWorldEvent changeEvent = new org.bukkit.event.player.PlayerChangedWorldEvent(this.getBukkitEntity(), serverlevel.getWorld());
++            org.bukkit.event.player.PlayerChangedWorldEvent changeEvent = new org.bukkit.event.player.PlayerChangedWorldEvent(this.getBukkitEntity(), levelRef.get().getWorld());
 +            this.level().getCraftServer().getPluginManager().callEvent(changeEvent);
 +            // CraftBukkit end
 +         } else {
