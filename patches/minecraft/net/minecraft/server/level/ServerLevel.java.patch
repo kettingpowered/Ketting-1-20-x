@@ -148,7 +148,7 @@
        if (!this.isDebug()) {
           long k = this.getGameTime();
           profilerfiller.push("blockTicks");
-@@ -296,31 +_,37 @@
+@@ -296,31 +_,38 @@
           this.fluidTicks.tick(k, 65536, this::tickFluid);
           profilerfiller.pop();
        }
@@ -165,7 +165,8 @@
        this.handlingTick = false;
        profilerfiller.pop();
 -      boolean flag = !this.players.isEmpty() || !this.getForcedChunks().isEmpty();
-+      boolean flag = true || !this.players.isEmpty() || net.minecraftforge.common.world.ForgeChunkManager.hasForcedChunks(this); //Forge: Replace vanilla's has forced chunk check with forge's that checks both the vanilla and forge added ones // CraftBukkit - this prevents entity cleanup, other issues on servers with no players
++      boolean flag = !this.players.isEmpty() || net.minecraftforge.common.world.ForgeChunkManager.hasForcedChunks(this); //Forge: Replace vanilla's has forced chunk check with forge's that checks both the vanilla and forge added ones
++      flag = true; // CraftBukkit - this prevents entity cleanup, other issues on servers with no players //Ketting - move true to new line, prevent mixin issue
        if (flag) {
           this.resetEmptyTime();
        }
