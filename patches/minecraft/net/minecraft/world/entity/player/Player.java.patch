@@ -317,7 +317,7 @@
              });
              if (this.useItem.isEmpty()) {
                 if (interactionhand == InteractionHand.MAIN_HAND) {
-@@ -881,19 +_,35 @@
+@@ -881,18 +_,35 @@
        }
     }
  
@@ -349,11 +349,10 @@
           }
  
           if (f1 != 0.0F) {
--            this.causeFoodExhaustion(p_36312_.getFoodExhaustion());
-+            this.causeFoodExhaustion(p_36312_.getFoodExhaustion(), org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.DAMAGED); // CraftBukkit - EntityExhaustionEvent
++            this.setFoodExhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.DAMAGED);
+             this.causeFoodExhaustion(p_36312_.getFoodExhaustion());
              this.getCombatTracker().recordDamage(p_36312_, f1);
              this.setHealth(this.getHealth() - f1);
-             if (f1 < 3.4028235E37F) {
 @@ -949,6 +_,8 @@
  
           return InteractionResult.PASS;
@@ -540,12 +539,13 @@
                       }
  
                       if (this.level() instanceof ServerLevel && f5 > 2.0F) {
-@@ -1187,14 +_,20 @@
+@@ -1187,14 +_,21 @@
                       }
                    }
  
 -                  this.causeFoodExhaustion(0.1F);
-+                  this.causeFoodExhaustion(this.level().spigotConfig.combatExhaustion, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.ATTACK); // CraftBukkit - org.bukkit.event.entity.EntityExhaustionEvent // Spigot - Change to use configurable value
++                  this.setFoodExhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.ATTACK);
++                  this.causeFoodExhaustion(this.level().spigotConfig.combatExhaustion); // Spigot - Change to use configurable value
                 } else {
                    this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_ATTACK_NODAMAGE, this.getSoundSource(), 1.0F, 1.0F);
                    if (flag4) {
@@ -608,15 +608,17 @@
        } else {
           boolean flag = block.isPossibleToRespawnInThis(blockstate);
           BlockState blockstate1 = p_36131_.getBlockState(p_36132_.above());
-@@ -1356,9 +_,9 @@
+@@ -1356,9 +_,11 @@
        super.jumpFromGround();
        this.awardStat(Stats.JUMP);
        if (this.isSprinting()) {
 -         this.causeFoodExhaustion(0.2F);
-+         this.causeFoodExhaustion(this.level().spigotConfig.jumpSprintExhaustion, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.JUMP_SPRINT); // CraftBukkit - org.bukkit.event.entity.EntityExhaustionEvent // Spigot - Change to use configurable value
++         this.setFoodExhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.JUMP_SPRINT);
++         this.causeFoodExhaustion(this.level().spigotConfig.jumpSprintExhaustion); // Spigot - Change to use configurable value
        } else {
 -         this.causeFoodExhaustion(0.05F);
-+         this.causeFoodExhaustion(this.level().spigotConfig.jumpWalkExhaustion, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.JUMP); // CraftBukkit - org.bukkit.event.entity.EntityExhaustionEvent // Spigot - Change to use configurable value
++         this.setFoodExhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.JUMP);
++         this.causeFoodExhaustion(this.level().spigotConfig.jumpWalkExhaustion); // Spigot - Change to use configurable value
        }
  
     }
@@ -633,43 +635,50 @@
        } else {
           super.travel(p_36359_);
        }
-@@ -1413,19 +_,19 @@
+@@ -1413,19 +_,22 @@
              int i = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36380_ * p_36380_ + p_36381_ * p_36381_) * 100.0F);
              if (i > 0) {
                 this.awardStat(Stats.SWIM_ONE_CM, i);
 -               this.causeFoodExhaustion(0.01F * (float)i * 0.01F);
-+               this.causeFoodExhaustion(this.level().spigotConfig.swimMultiplier * (float)i * 0.01F, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.SWIM); // CraftBukkit - org.bukkit.event.entity.EntityExhaustionEvent // Spigot
++               this.setFoodExhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.SWIM);
++               this.causeFoodExhaustion(this.level().spigotConfig.swimMultiplier * (float)i * 0.01F); // Spigot
              }
           } else if (this.isEyeInFluid(FluidTags.WATER)) {
              int j = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36380_ * p_36380_ + p_36381_ * p_36381_) * 100.0F);
              if (j > 0) {
                 this.awardStat(Stats.WALK_UNDER_WATER_ONE_CM, j);
 -               this.causeFoodExhaustion(0.01F * (float)j * 0.01F);
-+               this.causeFoodExhaustion(this.level().spigotConfig.swimMultiplier * (float)j * 0.01F, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.WALK_UNDERWATER); // CraftBukkit - org.bukkit.event.entity.EntityExhaustionEvent // Spigot
++               this.setFoodExhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.WALK_UNDERWATER);
++               this.causeFoodExhaustion(this.level().spigotConfig.swimMultiplier * (float)j * 0.01F); // Spigot
              }
           } else if (this.isInWater()) {
              int k = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36381_ * p_36381_) * 100.0F);
              if (k > 0) {
                 this.awardStat(Stats.WALK_ON_WATER_ONE_CM, k);
 -               this.causeFoodExhaustion(0.01F * (float)k * 0.01F);
-+               this.causeFoodExhaustion(this.level().spigotConfig.swimMultiplier * (float)k * 0.01F, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.WALK_ON_WATER); // CraftBukkit - org.bukkit.event.entity.EntityExhaustionEvent // Spigot
++               this.setFoodExhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.WALK_ON_WATER);
++               this.causeFoodExhaustion(this.level().spigotConfig.swimMultiplier * (float)k * 0.01F); // Spigot
              }
           } else if (this.onClimbable()) {
              if (p_36380_ > 0.0D) {
-@@ -1436,13 +_,13 @@
+@@ -1436,13 +_,17 @@
              if (l > 0) {
                 if (this.isSprinting()) {
                    this.awardStat(Stats.SPRINT_ONE_CM, l);
 -                  this.causeFoodExhaustion(0.1F * (float)l * 0.01F);
-+                  this.causeFoodExhaustion(this.level().spigotConfig.sprintMultiplier * (float)l * 0.01F, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.SPRINT); // CraftBukkit - org.bukkit.event.entity.EntityExhaustionEvent // Spigot
++                  float sprintExhaustion = 0.1f; //Ketting - mixin inject
++                  this.setFoodExhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.SPRINT);
++                  this.causeFoodExhaustion((sprintExhaustion != 0.1F ? sprintExhaustion : this.level().spigotConfig.sprintMultiplier) * (float)l * 0.01F); // Spigot
                 } else if (this.isCrouching()) {
                    this.awardStat(Stats.CROUCH_ONE_CM, l);
 -                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F);
-+                  this.causeFoodExhaustion(this.level().spigotConfig.otherMultiplier * (float)l * 0.01F, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.CROUCH); // CraftBukkit - org.bukkit.event.entity.EntityExhaustionEvent // Spigot
++                  this.setFoodExhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.CROUCH);
++                  this.causeFoodExhaustion(this.level().spigotConfig.otherMultiplier * (float)l * 0.01F); // Spigot
                 } else {
                    this.awardStat(Stats.WALK_ONE_CM, l);
 -                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F);
-+                  this.causeFoodExhaustion(this.level().spigotConfig.otherMultiplier * (float)l * 0.01F, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.WALK); // CraftBukkit - org.bukkit.event.entity.EntityExhaustionEvent // Spigot
++                  this.setFoodExhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.WALK);
++                  this.causeFoodExhaustion(this.level().spigotConfig.otherMultiplier * (float)l * 0.01F); // Spigot
                 }
              }
           } else if (this.isFallFlying()) {
@@ -765,21 +774,23 @@
        this.experienceLevel += p_36276_;
        if (this.experienceLevel < 0) {
           this.experienceLevel = 0;
-@@ -1618,10 +_,20 @@
+@@ -1618,14 +_,33 @@
        }
     }
  
 +   // CraftBukkit start
-    public void causeFoodExhaustion(float p_36400_) {
-+      this.causeFoodExhaustion(p_36400_, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.UNKNOWN);
++   //Ketting start - mixin
++   private org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason causeFoodExhaustion$reason = org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.UNKNOWN;
++   public void setFoodExhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason reason) {
++      this.causeFoodExhaustion$reason = reason;
 +   }
 +
-+   public void causeFoodExhaustion(float p_36400_, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason reason) {
+    public void causeFoodExhaustion(float p_36400_) {
        if (!this.abilities.invulnerable) {
           if (!this.level().isClientSide) {
 -            this.foodData.addExhaustion(p_36400_);
 +            // CraftBukkit start
-+            org.bukkit.event.entity.EntityExhaustionEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerExhaustionEvent(this, reason, p_36400_);
++            org.bukkit.event.entity.EntityExhaustionEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerExhaustionEvent(this, causeFoodExhaustion$reason, p_36400_);
 +            if (!event.isCancelled()) {
 +               this.foodData.addExhaustion(event.getExhaustion());
 +            }
@@ -787,6 +798,18 @@
           }
  
        }
+-   }
++      causeFoodExhaustion$reason = org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.UNKNOWN;
++   }
++
++   public void causeFoodExhaustion(float p_36400_, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason reason) {
++      setFoodExhaustionReason(reason);
++      causeFoodExhaustion(p_36400_);
++   }
++   //Ketting end
+ 
+    public Optional<WardenSpawnTracker> getWardenSpawnTracker() {
+       return Optional.empty();
 @@ -1706,11 +_,11 @@
     public void setItemSlot(EquipmentSlot p_36161_, ItemStack p_36162_) {
        this.verifyEquippedItem(p_36162_);
