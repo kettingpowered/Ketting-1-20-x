@@ -164,7 +164,8 @@
        this.handlingTick = false;
        profilerfiller.pop();
 -      boolean flag1 = !this.players.isEmpty() || !this.getForcedChunks().isEmpty();
-+      boolean flag1 = true || !this.players.isEmpty() || net.minecraftforge.common.world.ForgeChunkManager.hasForcedChunks(this); //Forge: Replace vanilla's has forced chunk check with forge's that checks both the vanilla and forge added ones // CraftBukkit - this prevents entity cleanup, other issues on servers with no players
++      boolean flag1 = !this.players.isEmpty() || net.minecraftforge.common.world.ForgeChunkManager.hasForcedChunks(this); //Forge: Replace vanilla's has forced chunk check with forge's that checks both the vanilla and forge added ones
++      flag = true; // CraftBukkit - this prevents entity cleanup, other issues on servers with no players //Ketting - move true to new line, prevent mixin issue
        if (flag1) {
           this.resetEmptyTime();
        }
