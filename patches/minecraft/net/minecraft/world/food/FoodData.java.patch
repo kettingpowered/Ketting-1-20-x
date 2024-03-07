@@ -98,8 +98,8 @@
 -            p_38711_.heal(f / 6.0F);
 -            this.addExhaustion(f);
 +            p_38711_.heal(f / 6.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED); // CraftBukkit - added RegainReason
-+            // this.addExhaustion(f); CraftBukkit - EntityExhaustionEvent
-+            p_38711_.causeFoodExhaustion(f, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent
++            p_38711_.setFoodExhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN);
++            p_38711_.causeFoodExhaustion(f);
              this.tickTimer = 0;
           }
        } else if (flag && this.foodLevel >= 18 && p_38711_.isHurt()) {
@@ -109,8 +109,8 @@
 -            this.addExhaustion(6.0F);
 +         if (this.tickTimer >= this.unsaturatedRegenRate) { // CraftBukkit - add regen rate manipulation
 +            p_38711_.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED); // CraftBukkit - added RegainReason
-+            // this.addExhaustion(6.0F); CraftBukkit - EntityExhaustionEvent
-+            p_38711_.causeFoodExhaustion(p_38711_.level().spigotConfig.regenExhaustion, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent // Spigot - Change to use configurable value
++            p_38711_.setFoodExhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN);
++            p_38711_.causeFoodExhaustion(p_38711_.level().spigotConfig.regenExhaustion); // Spigot - Change to use configurable value
              this.tickTimer = 0;
           }
        } else if (this.foodLevel <= 0) {
