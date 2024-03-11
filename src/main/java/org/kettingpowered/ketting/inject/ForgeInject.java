@@ -29,13 +29,13 @@ import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Pose;
 import org.bukkit.entity.Villager;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 import org.kettingpowered.ketting.config.KettingConfig;
 import org.kettingpowered.ketting.core.Ketting;
-import org.kettingpowered.ketting.entity.CraftCustomEntity;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -96,6 +96,22 @@ public class ForgeInject {
     public static EntityType getBukkitEntityType(Entity entity) {
         EntityType type = EntityType.fromName(ENTITY_TYPES.get(entity.getType()));
         return type == null ? EntityType.UNKNOWN : type;
+    }
+
+    //Credit goes to Arclight for this fix
+    public static Pose getBukkitEntityPose(net.minecraft.world.entity.Pose nms) {
+        if (Pose.values().length <= nms.ordinal()) {
+            var newTypes = new ArrayList<Pose>();
+            var forgeCount = net.minecraft.world.entity.Pose.values().length;
+            for (var id = Pose.values().length; id < forgeCount; id++) {
+                var name = net.minecraft.world.entity.Pose.values()[id].name();
+                var newPhase = EnumHelper.makeEnum(Pose.class, name, id, List.of(), List.of());
+                newTypes.add(newPhase);
+                debug("Registering NMS pose {} as pose {}", name, newPhase);
+            }
+            EnumHelper.addEnums(Pose.class, newTypes);
+        }
+        return org.bukkit.entity.Pose.values()[nms.ordinal()];
     }
 
     public static void doInjectingMagic() {

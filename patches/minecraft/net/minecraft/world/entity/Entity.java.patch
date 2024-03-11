@@ -137,7 +137,7 @@
 +      if (p_20125_ == this.getPose()) {
 +         return;
 +      }
-+      if (p_20125_.ordinal() < org.bukkit.entity.Pose.values().length) this.level.getCraftServer().getPluginManager().callEvent(new org.bukkit.event.entity.EntityPoseChangeEvent(this.getBukkitEntity(), org.bukkit.entity.Pose.values()[p_20125_.ordinal()]));
++      this.level.getCraftServer().getPluginManager().callEvent(new org.bukkit.event.entity.EntityPoseChangeEvent(this.getBukkitEntity(), org.kettingpowered.ketting.inject.ForgeInject.getBukkitEntityPose(p_20125_)));
 +      // CraftBukkit end
        this.entityData.set(DATA_POSE, p_20125_);
     }
