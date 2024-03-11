@@ -330,10 +330,14 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         //Ketting - instead of throwing an AssertionError we return a custom entity
         String entityName = entity.getClass().getName();
         if (KettingConfig.getInstance().WARN_ON_UNKNOWN_ENTITY.getValue() && !UnknownEntity.isWarned(entityName)) {
-            String superclass = entity.getClass().getSuperclass() == null ? "" : " (" + entity.getClass().getSuperclass().getName() + ")";
-            Ketting.LOGGER.warn("Unknown entity type: " + entityName + superclass);
-            Ketting.LOGGER.warn("Please report this to the " + KettingConstants.NAME + " developers at " + KettingConstants.SITE_LINK);
-            UnknownEntity.warned(entityName);
+            String superclass = entity.getClass().getSuperclass() == null ? "" : entity.getClass().getSuperclass().getName();
+            if (!superclass.equals(Entity.class.getName())) { //Ignore direct descendants of Entity
+                if (superclass.isBlank()) Ketting.LOGGER.warn("Unknown entity type: {}", entityName);
+                else Ketting.LOGGER.warn("Unknown entity type: {} ({})", entityName, superclass);
+
+                Ketting.LOGGER.warn("Please report this to the " + KettingConstants.NAME + " developers at " + KettingConstants.SITE_LINK);
+                UnknownEntity.warned(entityName);
+            }
         }
         return new CraftCustomEntity(server, entity);
     }
