@@ -554,7 +554,8 @@
        ++this.tickCount;
        this.tickRateManager.tick();
        this.tickChildren(p_129871_);
-       if (i - this.lastServerStatus >= STATUS_EXPIRE_TIME_NANOS) {
+-      if (i - this.lastServerStatus >= STATUS_EXPIRE_TIME_NANOS) {
++      if (!cacheDisabled && i - this.lastServerStatus >= 5000000000L) { //Ketting - cacheDisabled
           this.lastServerStatus = i;
           this.status = this.buildServerStatus();
 +         resetStatusCache(status); //Ketting - who added this?
@@ -588,7 +589,7 @@
 +   }
 +
 +   private static final com.google.gson.Gson GSON = new com.google.gson.Gson();
-+   private String cachedServerStatus; // FORGE: cache the server status json in case a client spams requests
++   public String cachedServerStatus; // FORGE: cache the server status json in case a client spams requests //Ketting - private -> public
 +   private void resetStatusCache(ServerStatus status) {
 +      this.cachedServerStatus = GSON.toJson(ServerStatus.CODEC.encodeStart(com.mojang.serialization.JsonOps.INSTANCE, status)
 +              .result().orElseThrow());
@@ -604,9 +605,21 @@
        ServerStatus.Players serverstatus$players = this.buildPlayerStatus();
 -      return new ServerStatus(Component.nullToEmpty(this.motd), Optional.of(serverstatus$players), Optional.of(ServerStatus.Version.current()), Optional.ofNullable(this.statusIcon), this.enforceSecureProfile());
 +      return new ServerStatus(Component.nullToEmpty(this.motd), Optional.of(serverstatus$players), Optional.of(ServerStatus.Version.current()), Optional.ofNullable(this.statusIcon), this.enforceSecureProfile(), Optional.of(new net.minecraftforge.network.ServerStatusPing()));
++   }
++   //Ketting start
++   private boolean cacheDisabled;
++   public void disableStatusCache() {
++      this.cacheDisabled = true;
     }
  
++   public String statusToJson(ServerStatus status) {
++      return GSON.toJson(ServerStatus.CODEC.encodeStart(com.mojang.serialization.JsonOps.INSTANCE, status)
++              .result().orElseThrow());
++   }
++   //Ketting end
     private ServerStatus.Players buildPlayerStatus() {
+       List<ServerPlayer> list = this.playerList.getPlayers();
+       int i = this.getMaxPlayers();
 @@ -903,47 +_,92 @@
        this.getPlayerList().getPlayers().forEach((p_296434_) -> {
           p_296434_.connection.suspendFlushing();
