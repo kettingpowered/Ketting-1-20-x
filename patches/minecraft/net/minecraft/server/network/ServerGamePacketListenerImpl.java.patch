@@ -27,9 +27,14 @@
 @@ -223,17 +_,35 @@
     private boolean waitingForSwitchToConfig;
  
++   //Ketting start - move bukkit custom packet handling to a separate class
++   private final ServerGamePacketListener bukkitPacketListener;
++
     public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_, CommonListenerCookie p_300908_) {
 -      super(p_9770_, p_9771_, p_300908_);
 +      super(p_9770_, p_9771_, p_300908_, p_9772_); // CraftBukkit
++      bukkitPacketListener = new org.kettingpowered.ketting.craftbukkit.BukkitGamePacketListenerImpl(this);
++      //Ketting end
        this.chunkSender = new PlayerChunkSender(p_9771_.isMemoryConnection());
        p_9771_.setListener(this);
        this.player = p_9772_;
