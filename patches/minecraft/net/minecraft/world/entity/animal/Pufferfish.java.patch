@@ -1,20 +1,18 @@
 --- a/net/minecraft/world/entity/animal/Pufferfish.java
 +++ b/net/minecraft/world/entity/animal/Pufferfish.java
-@@ -132,7 +_,7 @@
+@@ -132,6 +_,7 @@
     private void touch(Mob p_29606_) {
        int i = this.getPuffState();
        if (p_29606_.hurt(this.damageSources().mobAttack(this), (float)(1 + i))) {
--         p_29606_.addEffect(new MobEffectInstance(MobEffects.POISON, 60 * i, 0), this);
-+         p_29606_.addEffect(new MobEffectInstance(MobEffects.POISON, 60 * i, 0), this, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
++         p_29606_.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); //Ketting
+          p_29606_.addEffect(new MobEffectInstance(MobEffects.POISON, 60 * i, 0), this);
           this.playSound(SoundEvents.PUFFER_FISH_STING, 1.0F, 1.0F);
        }
- 
-@@ -145,7 +_,7 @@
+@@ -145,6 +_,7 @@
              ((ServerPlayer)p_29617_).connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.PUFFER_FISH_STING, 0.0F));
           }
  
--         p_29617_.addEffect(new MobEffectInstance(MobEffects.POISON, 60 * i, 0), this);
-+         p_29617_.addEffect(new MobEffectInstance(MobEffects.POISON, 60 * i, 0), this, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
++         p_29617_.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); //Ketting
+          p_29617_.addEffect(new MobEffectInstance(MobEffects.POISON, 60 * i, 0), this);
        }
  
-    }

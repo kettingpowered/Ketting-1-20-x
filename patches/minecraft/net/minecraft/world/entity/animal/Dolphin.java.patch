@@ -35,21 +35,19 @@
              this.onItemPickup(p_28357_);
              this.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
              this.setGuaranteedDrop(EquipmentSlot.MAINHAND);
-@@ -445,7 +_,7 @@
+@@ -445,6 +_,7 @@
        }
  
        public void start() {
--         this.player.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 100), this.dolphin);
-+         this.player.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 100), this.dolphin, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DOLPHIN); // CraftBukkit
++         this.player.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DOLPHIN); //Ketting
+          this.player.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 100), this.dolphin);
        }
  
-       public void stop() {
-@@ -462,7 +_,7 @@
+@@ -462,6 +_,7 @@
           }
  
           if (this.player.isSwimming() && this.player.level().random.nextInt(6) == 0) {
--            this.player.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 100), this.dolphin);
-+            this.player.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 100), this.dolphin, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DOLPHIN); // CraftBukkit
++            this.player.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DOLPHIN); //Ketting
+             this.player.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 100), this.dolphin);
           }
  
-       }

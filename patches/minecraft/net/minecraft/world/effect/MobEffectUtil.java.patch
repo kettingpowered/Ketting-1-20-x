@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/effect/MobEffectUtil.java
 +++ b/net/minecraft/world/effect/MobEffectUtil.java
-@@ -44,12 +_,18 @@
+@@ -44,11 +_,18 @@
     }
  
     public static List<ServerPlayer> addEffectToPlayersAround(ServerLevel p_216947_, @Nullable Entity p_216948_, Vec3 p_216949_, double p_216950_, MobEffectInstance p_216951_, int p_216952_) {
@@ -15,8 +15,7 @@
           return p_267925_.gameMode.isSurvival() && (p_216948_ == null || !p_216948_.isAlliedTo(p_267925_)) && p_216949_.closerThan(p_267925_.position(), p_216950_) && (!p_267925_.hasEffect(mobeffect) || p_267925_.getEffect(mobeffect).getAmplifier() < p_216951_.getAmplifier() || p_267925_.getEffect(mobeffect).endsWithin(p_216952_ - 1));
        });
        list.forEach((p_238232_) -> {
--         p_238232_.addEffect(new MobEffectInstance(p_216951_), p_216948_);
-+         p_238232_.addEffect(new MobEffectInstance(p_216951_), p_216948_, cause); // CraftBukkit
++         p_238232_.prepareAddEffect(cause); //Ketting
+          p_238232_.addEffect(new MobEffectInstance(p_216951_), p_216948_);
        });
        return list;
-    }
