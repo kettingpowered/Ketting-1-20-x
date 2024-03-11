@@ -497,7 +497,8 @@
 +      net.minecraftforge.event.ForgeEventFactory.onPreServerTick(p_129871_, this);
        ++this.tickCount;
        this.tickChildren(p_129871_);
-       if (i - this.lastServerStatus >= 5000000000L) {
+-      if (i - this.lastServerStatus >= 5000000000L) {
++      if (!cacheDisabled && i - this.lastServerStatus >= 5000000000L) { //Ketting - cacheDisabled
           this.lastServerStatus = i;
           this.status = this.buildServerStatus();
 +         resetStatusCache(status);
@@ -515,7 +516,7 @@
        }
  
        this.profiler.push("tallying");
-@@ -819,11 +_,25 @@
+@@ -819,13 +_,37 @@
        long k = Util.getNanos();
        this.frameTimer.logFrameDuration(k - i);
        this.profiler.pop();
@@ -526,7 +527,7 @@
 +   }
 +
 +   private static final com.google.gson.Gson GSON = new com.google.gson.Gson();
-+   private String cachedServerStatus; // FORGE: cache the server status json in case a client spams requests
++   public String cachedServerStatus; // FORGE: cache the server status json in case a client spams requests //Ketting - private -> public
 +   private void resetStatusCache(ServerStatus status) {
 +      this.cachedServerStatus = GSON.toJson(ServerStatus.CODEC.encodeStart(com.mojang.serialization.JsonOps.INSTANCE, status)
 +              .result().orElseThrow());
@@ -539,9 +540,21 @@
        ServerStatus.Players serverstatus$players = this.buildPlayerStatus();
 -      return new ServerStatus(Component.nullToEmpty(this.motd), Optional.of(serverstatus$players), Optional.of(ServerStatus.Version.current()), Optional.ofNullable(this.statusIcon), this.enforceSecureProfile());
 +      return new ServerStatus(Component.nullToEmpty(this.motd), Optional.of(serverstatus$players), Optional.of(ServerStatus.Version.current()), Optional.ofNullable(this.statusIcon), this.enforceSecureProfile(), Optional.of(new net.minecraftforge.network.ServerStatusPing()));
++   }
++   //Ketting start
++   private boolean cacheDisabled;
++   public void disableStatusCache() {
++      this.cacheDisabled = true;
     }
  
++   public String statusToJson(ServerStatus status) {
++      return GSON.toJson(ServerStatus.CODEC.encodeStart(com.mojang.serialization.JsonOps.INSTANCE, status)
++              .result().orElseThrow());
++   }
++   //Ketting end
     private ServerStatus.Players buildPlayerStatus() {
+       List<ServerPlayer> list = this.playerList.getPlayers();
+       int i = this.getMaxPlayers();
 @@ -847,47 +_,92 @@
     }
  
