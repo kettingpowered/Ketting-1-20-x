@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -28,8 +29,10 @@ import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R1.util.CraftSpawnCategory;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Pose;
+import org.bukkit.entity.SpawnCategory;
 import org.bukkit.entity.Villager;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
@@ -127,6 +130,8 @@ public class ForgeInject {
         addForgeBiomes();
         debug("Injecting Forge Entities into Bukkit");
         addForgeEntities();
+        debug("Injecting Forge Spawn Categories into Bukkit");
+        addForgeSpawnCategories();
         debug("Injecting Forge VillagerProfessions into Bukkit");
         addForgeVillagerProfessions();
         debug("Injecting Forge statistics into bukkit");
@@ -495,6 +500,23 @@ public class ForgeInject {
         }
         EnumHelper.addEnums(EntityType.class, values);
         debug("Injecting Forge Entity into Bukkit: DONE");
+    }
+
+    //Credit goes to Arclight for this fix
+    private static void addForgeSpawnCategories() {
+        var id = SpawnCategory.values().length;
+        var newTypes = new ArrayList<SpawnCategory>();
+        for (var category : MobCategory.values()) {
+            try {
+                CraftSpawnCategory.toBukkit(category);
+            } catch (Exception e) {
+                var name = category.name();
+                var spawnCategory = EnumHelper.makeEnum(SpawnCategory.class, name, id++, List.of(), List.of());
+                newTypes.add(spawnCategory);
+                debug("Registered {} as spawn category {}", name, spawnCategory);
+            }
+        }
+        EnumHelper.addEnums(SpawnCategory.class, newTypes);
     }
 
     private static void addForgeVillagerProfessions() {
