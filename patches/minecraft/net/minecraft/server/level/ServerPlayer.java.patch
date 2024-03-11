@@ -211,7 +211,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.addCategory("Player being ticked");
-@@ -563,16 +_,92 @@
+@@ -563,16 +_,102 @@
     }
  
     private void updateScoreForCriteria(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -227,33 +227,43 @@
 +   private @Nullable org.bukkit.event.entity.PlayerDeathEvent callDeathEvent(DamageSource p_9035_,String deathmessage){
 +      final boolean originalKeepInv = this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY);
 +      final boolean keepInventory = originalKeepInv || this.isSpectator();
-+
-+      List<org.bukkit.inventory.ItemStack> capturedDrops = new java.util.ArrayList<>(this.drops);
-+      this.drops.clear();
-+
 +      
 +      keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
 +      org.bukkit.event.entity.PlayerDeathEvent event;
-+      if (!this.dead) event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerDeathEvent(this, capturedDrops, deathmessage, keepInventory); //Ketting - capturedDrops
++      if (!this.dead) event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerDeathEvent(this, new java.util.ArrayList<>(), deathmessage, keepInventory); //Ketting - capturedDrops
 +      else {
-+         event = new org.bukkit.event.entity.PlayerDeathEvent(this.getBukkitEntity(), capturedDrops, getExpReward(), deathmessage);
++         event = new org.bukkit.event.entity.PlayerDeathEvent(this.getBukkitEntity(), new java.util.ArrayList<>(), getExpReward(), deathmessage);
 +         event.setKeepInventory(originalKeepInv);
 +      }
 +      
 +      bukkitOnDeathKeepinv = event.getKeepInventory();
 +      final boolean needsSwap = originalKeepInv ^ bukkitOnDeathKeepinv;
 +
++      //Add added drops during the bukkit event to the inventory.
++      //This is so that grave mods can also potentially handle these items.
++      for (org.bukkit.inventory.ItemStack stack : event.getDrops()){
++         if (stack == null || stack.getType() == org.bukkit.Material.AIR) continue;
++         getInventory().add(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(stack));
++      }
++
 +      if (needsSwap) this.level().getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).set(bukkitOnDeathKeepinv, this.getServer());
 +      final boolean forgeResult;
 +      try{
 +         forgeResult = net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_9035_);
-+         if (!bukkitOnDeathKeepinv) {
-+            dropEquipment();
++         
++         //if the forgeResult was true, forge would have returned without doing anything.
++         //we make sure to inherit that behaviour here.
++         if (!forgeResult){ 
++            if (!this.isSpectator()) {
++               this.dropAllDeathLoot(p_9035_);
++            }
 +         }
++         
 +      }finally {
 +         if (needsSwap) this.level().getGameRules().getRule(GameRules.RULE_KEEPINVENTORY).set(originalKeepInv, this.getServer());
 +      }
 +      
++      //and lastly, any items that got added during forge's death event's can be added after all the things that should have been dropped have been dropped.
 +      this.addForgeCaptures();
 +      
 +      return forgeResult ? null : event;
