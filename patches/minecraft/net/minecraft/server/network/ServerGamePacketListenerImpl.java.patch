@@ -1034,7 +1034,7 @@
  
     private ParseResults<CommandSourceStack> parseCommand(String p_242938_) {
 -      CommandDispatcher<CommandSourceStack> commanddispatcher = this.server.getCommands().getDispatcher();
-+      CommandDispatcher<CommandSourceStack> commanddispatcher = this.server.getCommands().getCorrectDispatcher(p_242938_).unwrap();
++      CommandDispatcher<CommandSourceStack> commanddispatcher = this.server.getCommands().getCorrectDispatcher(p_242938_, false).unwrap();
        return commanddispatcher.parse(p_242938_, this.player.createCommandSourceStack());
     }
  

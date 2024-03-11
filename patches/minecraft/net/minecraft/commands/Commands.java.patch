@@ -214,7 +214,7 @@
           if (commandnode.canUse(p_82115_)) {
              ArgumentBuilder<SharedSuggestionProvider, ?> argumentbuilder = (ArgumentBuilder)commandnode.createBuilder();
              argumentbuilder.requires((p_82126_) -> {
-@@ -358,7 +_,44 @@
+@@ -358,7 +_,48 @@
     }
  
     public CommandDispatcher<CommandSourceStack> getDispatcher() {
@@ -234,10 +234,14 @@
 +   }
 +
 +   public org.kettingpowered.ketting.common.utils.Wrapper<CommandDispatcher<CommandSourceStack>> getCorrectDispatcher(String cmd) {
++      return getCorrectDispatcher(cmd, true);
++   }
++
++   public org.kettingpowered.ketting.common.utils.Wrapper<CommandDispatcher<CommandSourceStack>> getCorrectDispatcher(String cmd, boolean stripSlash) {
 +      if (forgeCommand) return getForgeDispatcher();
 +
 +      String literal = cmd.split(" ")[0]; //the command root, ex. deop
-+      if (literal.startsWith("/"))
++      if (literal.startsWith("/") && stripSlash)
 +         literal = literal.substring(1);
 +      if (literal.startsWith("forge:"))
 +         return getForgeDispatcher();
