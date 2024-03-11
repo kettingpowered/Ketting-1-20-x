@@ -24,6 +24,19 @@
     private int dropSpamTickCount;
     private double firstGoodX;
     private double firstGoodY;
+@@ -231,7 +_,12 @@
+    private final MessageSignatureCache messageSignatureCache = MessageSignatureCache.createDefault();
+    private final FutureChain chatMessageChain;
+ 
++   //Ketting start - move bukkit custom packet handling to a separate class
++   private final ServerGamePacketListener bukkitPacketListener;
++
+    public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_) {
++      bukkitPacketListener = new org.kettingpowered.ketting.craftbukkit.BukkitGamePacketListenerImpl(this);
++      //Ketting end
+       this.server = p_9770_;
+       this.connection = p_9771_;
+       p_9771_.setListener(this);
 @@ -240,10 +_,34 @@
        this.keepAliveTime = Util.getMillis();
        p_9772_.getTextFilter().join();
@@ -1861,7 +1874,7 @@
 +      //Ketting - don't parse a packet with bukkit, if forge has already handled it.
 +      if (net.minecraftforge.network.NetworkHooks.onCustomPayload(p_9860_, this.connection)) return;
 +      //Ketting - move this to a separate listener, so that the forge hook is not called twice
-+      PacketUtils.ensureRunningOnSameThread(p_9860_, new org.kettingpowered.ketting.craftbukkit.BukkitGamePacketListenerImpl(this), this.player.serverLevel()); //CraftBukkit
++      PacketUtils.ensureRunningOnSameThread(p_9860_, bukkitPacketListener, this.player.serverLevel()); //CraftBukkit
 +  }
 +
 +  public final boolean isDisconnected() {
