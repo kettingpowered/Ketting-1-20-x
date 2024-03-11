@@ -13,15 +13,14 @@
                    }
                 }
              }
-@@ -176,7 +_,7 @@
+@@ -176,6 +_,7 @@
        if (!list.isEmpty()) {
           for(Player player : list) {
              if (p_155445_.closerThan(player.blockPosition(), (double)j) && player.isInWaterOrRain()) {
--               player.addEffect(new MobEffectInstance(MobEffects.CONDUIT_POWER, 260, 0, true, true));
-+               player.addEffect(new MobEffectInstance(MobEffects.CONDUIT_POWER, 260, 0, true, true), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONDUIT); // CraftBukkit
++               player.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONDUIT); //Ketting
+                player.addEffect(new MobEffectInstance(MobEffects.CONDUIT_POWER, 260, 0, true, true));
              }
           }
- 
 @@ -203,8 +_,13 @@
        }
  

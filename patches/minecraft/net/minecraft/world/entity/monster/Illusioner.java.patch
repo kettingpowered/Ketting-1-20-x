@@ -21,12 +21,11 @@
        }
  
        protected SoundEvent getSpellPrepareSound() {
-@@ -260,7 +_,7 @@
+@@ -260,6 +_,7 @@
        }
  
        protected void performSpellCasting() {
--         Illusioner.this.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 1200));
-+         Illusioner.this.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 1200), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
++         Illusioner.this.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); //Ketting
+          Illusioner.this.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 1200));
        }
  
-       @Nullable

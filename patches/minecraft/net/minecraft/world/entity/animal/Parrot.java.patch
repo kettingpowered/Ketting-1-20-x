@@ -13,11 +13,10 @@
              itemstack.shrink(1);
           }
  
--         this.addEffect(new MobEffectInstance(MobEffects.POISON, 900));
-+         this.addEffect(new MobEffectInstance(MobEffects.POISON, 900), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD); // CraftBukkit
++         this.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD); //Ketting
+          this.addEffect(new MobEffectInstance(MobEffects.POISON, 900));
           if (p_29414_.isCreative() || !this.isInvulnerable()) {
              this.hurt(this.damageSources().playerAttack(p_29414_), Float.MAX_VALUE);
-          }
 @@ -354,7 +_,7 @@
     }
  
