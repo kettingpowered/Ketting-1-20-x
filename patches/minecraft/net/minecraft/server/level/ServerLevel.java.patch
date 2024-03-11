@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -188,24 +_,60 @@
+@@ -188,24 +_,73 @@
     private final List<CustomSpawner> customSpawners;
     @Nullable
     private EndDragonFight dragonFight;
@@ -28,8 +28,15 @@
 +
 +   //Ketting start - return serverleveldata
 +   public net.minecraft.world.level.storage.PrimaryLevelData getServerLevelData() {
-+      return serverLevelData instanceof org.kettingpowered.ketting.utils.DelegateWorldInfo delegate ?
-+              delegate : (net.minecraft.world.level.storage.PrimaryLevelData) serverLevelData;
++      if (serverLevelData instanceof org.kettingpowered.ketting.utils.DelegateWorldInfo delegate) {
++         return delegate;
++      } else if (serverLevelData instanceof net.minecraft.world.level.storage.PrimaryLevelData primary) {
++         return primary;
++      } else if (serverLevelData instanceof net.minecraft.world.level.storage.DerivedLevelData derived) {
++         return org.kettingpowered.ketting.utils.DelegateWorldInfo.wrap(derived);
++      } else {
++         throw new UnsupportedOperationException("Could not wrap level data");
++      }
 +   }
 +   //Ketting end
 +
@@ -50,10 +57,16 @@
        this.server = p_214999_;
        this.customSpawners = p_215008_;
 -      this.serverLevelData = p_215002_;
-+      if (p_215002_ instanceof net.minecraft.world.level.storage.PrimaryLevelData primary)
++      //Ketting start - wrap level data
++      if (p_215002_ instanceof net.minecraft.world.level.storage.PrimaryLevelData primary) {
 +         this.serverLevelData = primary;
-+      else
-+         this.serverLevelData = org.kettingpowered.ketting.utils.DelegateWorldInfo.wrap(p_215002_);
++      } else if (p_215002_ instanceof net.minecraft.world.level.storage.DerivedLevelData derived) {
++         this.serverLevelData = org.kettingpowered.ketting.utils.DelegateWorldInfo.wrap(derived);
++      } else {
++         org.kettingpowered.ketting.core.Ketting.LOGGER.warn("Could not wrap level data, this can cause some problems with bukkit", new UnsupportedOperationException());
++         this.serverLevelData = p_215002_;
++      }
++      //Ketting end
        ChunkGenerator chunkgenerator = p_215004_.generator();
 +      bukkitInit(chunkgenerator); //Ketting
        boolean flag = p_214999_.forceSynchronousWrites();
