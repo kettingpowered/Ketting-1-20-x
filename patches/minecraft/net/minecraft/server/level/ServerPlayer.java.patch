@@ -366,7 +366,7 @@
     protected PortalInfo findDimensionEntryPoint(ServerLevel p_8998_) {
        PortalInfo portalinfo = super.findDimensionEntryPoint(p_8998_);
 -      if (portalinfo != null && this.level().dimension() == Level.OVERWORLD && p_8998_.dimension() == Level.END) {
-+      p_8998_ = (portalinfo == null) ? p_8998_ : portalinfo.world; // CraftBukkit
++      p_8998_ = (portalinfo == null || portalinfo.world == null) ? p_8998_ : portalinfo.world; // CraftBukkit
 +
 +      if (portalinfo != null && this.level().dimension() == Level.OVERWORLD && p_8998_ != null && p_8998_.dimension() == Level.END) { // CraftBukkit
           Vec3 vec3 = portalinfo.pos.add(0.0D, -1.0D, 0.0D);
@@ -448,7 +448,7 @@
 -            p_9180_.addDuringPortalTeleport(this);
 -            serverlevel.getProfiler().pop();
 -            this.triggerDimensionChangeTriggers(serverlevel);
-+            levelRef.set(portalinfo.world); // CraftBukkit
++            levelRef.set(portalinfo.world == null ? p_9180_ : portalinfo.world); // CraftBukkit
 +            Entity e = teleporter.placeEntity(this, levelRef.get(), p_9180_, this.getYRot(), spawnPortal -> {//Forge: Start vanilla logic
 +               levelRef.get().getProfiler().push("moving");
 +               if (levelRef.get() == null) { } else // CraftBukkit - empty to fall through to null to event

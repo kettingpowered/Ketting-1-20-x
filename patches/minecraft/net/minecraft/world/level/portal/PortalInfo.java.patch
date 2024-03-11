@@ -1,18 +1,19 @@
 --- a/net/minecraft/world/level/portal/PortalInfo.java
 +++ b/net/minecraft/world/level/portal/PortalInfo.java
-@@ -7,8 +_,14 @@
+@@ -7,7 +_,16 @@
     public final Vec3 speed;
     public final float yRot;
     public final float xRot;
-+   // CraftBukkit start
-+   public final net.minecraft.server.level.ServerLevel world;
-+   public final org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent portalEventInfo;
++   //Ketting start
++   public net.minecraft.server.level.ServerLevel world;
++   public org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent portalEventInfo;
  
--   public PortalInfo(Vec3 p_77681_, Vec3 p_77682_, float p_77683_, float p_77684_) {
 +   public PortalInfo(Vec3 p_77681_, Vec3 p_77682_, float p_77683_, float p_77684_, net.minecraft.server.level.ServerLevel world, org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent portalEventInfo) {
++      this(p_77681_, p_77682_, p_77683_, p_77684_);
 +      this.world = world;
 +      this.portalEventInfo = portalEventInfo;
-+      // CraftBukkit end
++   }
++   //Ketting end
+    public PortalInfo(Vec3 p_77681_, Vec3 p_77682_, float p_77683_, float p_77684_) {
        this.pos = p_77681_;
        this.speed = p_77682_;
-       this.yRot = p_77683_;
