@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/level/block/WitherRoseBlock.java
 +++ b/net/minecraft/world/level/block/WitherRoseBlock.java
-@@ -45,7 +_,7 @@
+@@ -45,6 +_,7 @@
           if (p_58241_ instanceof LivingEntity) {
              LivingEntity livingentity = (LivingEntity)p_58241_;
              if (!livingentity.isInvulnerableTo(p_58239_.damageSources().wither())) {
--               livingentity.addEffect(new MobEffectInstance(MobEffects.WITHER, 40));
-+               livingentity.addEffect(new MobEffectInstance(MobEffects.WITHER, 40), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.WITHER_ROSE); // CraftBukkit
++               livingentity.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.WITHER_ROSE); //Ketting
+                livingentity.addEffect(new MobEffectInstance(MobEffects.WITHER, 40));
              }
           }
- 
