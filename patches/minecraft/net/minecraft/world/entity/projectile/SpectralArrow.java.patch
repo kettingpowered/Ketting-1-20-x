@@ -13,12 +13,11 @@
     public SpectralArrow(Level p_37419_, double p_309976_, double p_310894_, double p_309922_, ItemStack p_311719_) {
        super(EntityType.SPECTRAL_ARROW, p_309976_, p_310894_, p_309922_, p_37419_, p_311719_);
     }
-@@ -37,7 +_,7 @@
+@@ -37,6 +_,7 @@
     protected void doPostHurtEffects(LivingEntity p_37422_) {
        super.doPostHurtEffects(p_37422_);
        MobEffectInstance mobeffectinstance = new MobEffectInstance(MobEffects.GLOWING, this.duration, 0);
--      p_37422_.addEffect(mobeffectinstance, this.getEffectSource());
-+      p_37422_.addEffect(mobeffectinstance, this.getEffectSource(), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); // CraftBukkit
++      p_37422_.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); //Ketting
+       p_37422_.addEffect(mobeffectinstance, this.getEffectSource());
     }
  
-    public void readAdditionalSaveData(CompoundTag p_37424_) {

@@ -9,7 +9,7 @@
              if (this.isLingering()) {
                 this.makeAreaOfEffectCloud(itemstack, potion);
              } else {
-@@ -127,39 +_,65 @@
+@@ -127,39 +_,66 @@
     private void applySplash(List<MobEffectInstance> p_37548_, @Nullable Entity p_37549_) {
        AABB aabb = this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
        List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class, aabb);
@@ -91,7 +91,8 @@
 +                  MobEffectInstance mobeffect1 = new MobEffectInstance(mobeffectlist, i, effectinstance.getAmplifier(), effectinstance.isAmbient(), effectinstance.isVisible());
 +
 +                  if (!mobeffect1.endsWithin(20)) {
-+                     livingentity.addEffect(mobeffect1, entity1, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.POTION_SPLASH); // CraftBukkit
++                     livingentity.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.POTION_SPLASH); //Ketting
++                     livingentity.addEffect(mobeffect1, entity1);
 +                  }
 +               }
 +            }
