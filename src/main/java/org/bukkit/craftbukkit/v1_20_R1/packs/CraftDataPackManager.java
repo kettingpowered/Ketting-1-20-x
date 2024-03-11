@@ -50,7 +50,7 @@ public class CraftDataPackManager implements DataPackManager {
         Preconditions.checkArgument(world != null, "world cannot be null");
 
         CraftWorld craftWorld = ((CraftWorld) world);
-        return ((net.minecraft.world.level.storage.PrimaryLevelData) craftWorld.getHandle().serverLevelData).getDataConfiguration().dataPacks().getEnabled().stream().map(packName -> {
+        return craftWorld.getHandle().getServerLevelData().getDataConfiguration().dataPacks().getEnabled().stream().map(packName -> { //Ketting - don't enforce PrimaryLevelData
             Pack resourcePackLoader = this.getHandle().getPack(packName);
             if (resourcePackLoader != null) {
                 return new CraftDataPack(resourcePackLoader);
@@ -64,7 +64,7 @@ public class CraftDataPackManager implements DataPackManager {
         Preconditions.checkArgument(world != null, "world cannot be null");
 
         CraftWorld craftWorld = ((CraftWorld) world);
-        return ((net.minecraft.world.level.storage.PrimaryLevelData) craftWorld.getHandle().serverLevelData).getDataConfiguration().dataPacks().getDisabled().stream().map(packName -> {
+        return craftWorld.getHandle().getServerLevelData().getDataConfiguration().dataPacks().getDisabled().stream().map(packName -> { //Ketting - don't enforce PrimaryLevelData
             Pack resourcePackLoader = this.getHandle().getPack(packName);
             if (resourcePackLoader != null) {
                 return new CraftDataPack(resourcePackLoader);

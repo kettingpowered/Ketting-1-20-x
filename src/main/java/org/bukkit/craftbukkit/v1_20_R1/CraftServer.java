@@ -946,7 +946,7 @@ public final class CraftServer implements Server {
 
         org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
         for (ServerLevel world : console.getAllLevels()) {
-            ((net.minecraft.world.level.storage.PrimaryLevelData) world.serverLevelData).setDifficulty(config.difficulty);
+            world.getServerLevelData().setDifficulty(config.difficulty); //Ketting - don't enforce PrimaryLevelData
             world.setSpawnSettings(config.spawnMonsters, config.spawnAnimals);
 
             for (SpawnCategory spawnCategory : SpawnCategory.values()) {
