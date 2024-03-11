@@ -5,7 +5,7 @@
     });
     public static final ChunkStatus STRUCTURE_STARTS = register("structure_starts", EMPTY, 0, false, PRE_FEATURES, ChunkStatus.ChunkType.PROTOCHUNK, (p_296976_, p_296977_, p_296978_, p_296979_, p_296980_, p_296981_, p_296982_, p_296983_, p_296984_) -> {
 -      if (p_296978_.getServer().getWorldData().worldGenOptions().generateStructures()) {
-+      if (((net.minecraft.world.level.storage.PrimaryLevelData) p_296978_.serverLevelData).worldGenOptions().generateStructures()) { // CraftBukkit
++      if (p_296978_.getServerLevelData().worldGenOptions().generateStructures()) { // CraftBukkit //Ketting - don't enforce PrimaryLevelData
           p_296979_.createStructures(p_296978_.registryAccess(), p_296978_.getChunkSource().getGeneratorState(), p_296978_.structureManager(), p_296984_, p_296980_);
        }
  
