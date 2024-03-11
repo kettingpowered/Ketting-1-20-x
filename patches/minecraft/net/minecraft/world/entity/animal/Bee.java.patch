@@ -1,14 +1,13 @@
 --- a/net/minecraft/world/entity/animal/Bee.java
 +++ b/net/minecraft/world/entity/animal/Bee.java
-@@ -230,7 +_,7 @@
+@@ -230,6 +_,7 @@
              }
  
              if (i > 0) {
--               ((LivingEntity)p_27722_).addEffect(new MobEffectInstance(MobEffects.POISON, i * 20, 0), this);
-+               ((LivingEntity)p_27722_).addEffect(new MobEffectInstance(MobEffects.POISON, i * 20, 0), this, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
++               ((LivingEntity)p_27722_).prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); //Ketting
+                ((LivingEntity)p_27722_).addEffect(new MobEffectInstance(MobEffects.POISON, i * 20, 0), this);
              }
           }
- 
 @@ -473,7 +_,7 @@
           return false;
        } else {

@@ -289,7 +289,7 @@
              iterator.remove();
           }
  
-@@ -904,21 +_,62 @@
+@@ -904,29 +_,78 @@
        return this.activeEffects.get(p_21125_);
     }
  
@@ -303,58 +303,75 @@
        return this.addEffect(p_21165_, (Entity)null);
     }
  
+    public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
+-      if (!this.canBeAffected(p_147208_)) {
+-         return false;
+-      } else {
+-         MobEffectInstance mobeffectinstance = this.activeEffects.get(p_147208_.getEffect());
+-         if (mobeffectinstance == null) {
+-            this.activeEffects.put(p_147208_.getEffect(), p_147208_);
+-            this.onEffectAdded(p_147208_, p_147209_);
+-            return true;
+-         } else if (mobeffectinstance.update(p_147208_)) {
+-            this.onEffectUpdated(mobeffectinstance, true, p_147209_);
+-            return true;
+-         } else {
++      try {
++         org.spigotmc.AsyncCatcher.catchOp("effect add"); // Spigot
++         if (isTickingEffects) {
++            effectsToProcess.add(new ProcessableEffect(p_147208_, addEffect$cause));
++            return true;
++         }
++
++         if (!this.canBeAffected(p_147208_)) {
+             return false;
++         } else {
++            MobEffectInstance mobeffectinstance = this.activeEffects.get(p_147208_.getEffect());
++
++            // CraftBukkit start
++            boolean override = false;
++            if (mobeffectinstance != null) {
++               override = new MobEffectInstance(mobeffectinstance).update(p_147208_);
++            }
++
++            org.bukkit.event.entity.EntityPotionEffectEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, p_147208_, addEffect$cause, override);
++            if (event.isCancelled()) {
++               return false;
++            }
++            // CraftBukkit end
++
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Added(this, mobeffectinstance, p_147208_, p_147209_));
++            if (mobeffectinstance == null) {
++               this.activeEffects.put(p_147208_.getEffect(), p_147208_);
++               this.onEffectAdded(p_147208_, p_147209_);
++               return true;
++               // CraftBukkit start
++            } else if (event.isOverride()) {
++               mobeffectinstance.update(p_147208_);
++               this.onEffectUpdated(mobeffectinstance, true, p_147209_);
++               // CraftBukkit end
++               return true;
++            } else {
++               return false;
++            }
+          }
++      } finally {
++         this.addEffect$cause = org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN;
+       }
+    }
++
 +   // CraftBukkit start
 +   public boolean addEffect(MobEffectInstance mobeffect, org.bukkit.event.entity.EntityPotionEffectEvent.Cause cause) {
 +      prepareAddEffect(cause);
 +      return addEffect(mobeffect);
 +   }
 +
-+   @org.jetbrains.annotations.ApiStatus.ScheduledForRemoval
-    public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
-+      return this.addEffect(p_147208_, p_147209_, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN);
-+   }
-+
 +   public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_, org.bukkit.event.entity.EntityPotionEffectEvent.Cause cause) {
-+      org.spigotmc.AsyncCatcher.catchOp("effect add"); // Spigot
-+      if (isTickingEffects) {
-+         effectsToProcess.add(new ProcessableEffect(p_147208_, cause));
-+         return true;
-+      }
-+      // CraftBukkit end
-+
-       if (!this.canBeAffected(p_147208_)) {
-          return false;
-       } else {
-          MobEffectInstance mobeffectinstance = this.activeEffects.get(p_147208_.getEffect());
-+
-+         // CraftBukkit start
-+         boolean override = false;
-+         if (mobeffectinstance != null) {
-+            override = new MobEffectInstance(mobeffectinstance).update(p_147208_);
-+         }
-+
-+         org.bukkit.event.entity.EntityPotionEffectEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, p_147208_, cause, override);
-+         if (event.isCancelled()) {
-+            return false;
-+         }
-+         // CraftBukkit end
-+
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Added(this, mobeffectinstance, p_147208_, p_147209_));
-          if (mobeffectinstance == null) {
-             this.activeEffects.put(p_147208_.getEffect(), p_147208_);
-             this.onEffectAdded(p_147208_, p_147209_);
-             return true;
--         } else if (mobeffectinstance.update(p_147208_)) {
-+            // CraftBukkit start
-+         } else if (event.isOverride()) {
-+            mobeffectinstance.update(p_147208_);
-             this.onEffectUpdated(mobeffectinstance, true, p_147209_);
-+            // CraftBukkit end
-             return true;
-          } else {
-             return false;
-@@ -927,6 +_,9 @@
-    }
++      prepareAddEffect(cause);
++      return addEffect(p_147208_, p_147209_);
++   }
++   // CraftBukkit end
++   //Ketting end
  
     public boolean canBeAffected(MobEffectInstance p_21197_) {
 +      net.minecraftforge.event.entity.living.MobEffectEvent.Applicable event = new net.minecraftforge.event.entity.living.MobEffectEvent.Applicable(this, p_21197_);

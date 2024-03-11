@@ -12,12 +12,16 @@
        double d0 = p_32918_.getX() - this.getX();
        double d1 = p_32918_.getY(0.3333333333333333D) - abstractarrow.getY();
        double d2 = p_32918_.getZ() - this.getZ();
-@@ -230,7 +_,7 @@
+@@ -230,7 +_,11 @@
        }
  
        protected void performSpellCasting() {
 -         Illusioner.this.getTarget().addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 400), Illusioner.this);
-+         Illusioner.this.getTarget().addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 400), Illusioner.this, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ILLUSION); // CraftBukkit
++         //Ketting start
++         final LivingEntity target = Illusioner.this.getTarget();
++         target.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ILLUSION);
++         target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 400), Illusioner.this);
++         //Ketting end
        }
  
        protected SoundEvent getSpellPrepareSound() {

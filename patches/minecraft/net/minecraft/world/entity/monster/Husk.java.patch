@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/entity/monster/Husk.java
 +++ b/net/minecraft/world/entity/monster/Husk.java
-@@ -49,7 +_,7 @@
+@@ -49,6 +_,7 @@
        boolean flag = super.doHurtTarget(p_32892_);
        if (flag && this.getMainHandItem().isEmpty() && p_32892_ instanceof LivingEntity) {
           float f = this.level().getCurrentDifficultyAt(this.blockPosition()).getEffectiveDifficulty();
--         ((LivingEntity)p_32892_).addEffect(new MobEffectInstance(MobEffects.HUNGER, 140 * (int)f), this);
-+         ((LivingEntity)p_32892_).addEffect(new MobEffectInstance(MobEffects.HUNGER, 140 * (int)f), this, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
++         ((LivingEntity)p_32892_).prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); //Ketting
+          ((LivingEntity)p_32892_).addEffect(new MobEffectInstance(MobEffects.HUNGER, 140 * (int)f), this);
        }
  
-       return flag;

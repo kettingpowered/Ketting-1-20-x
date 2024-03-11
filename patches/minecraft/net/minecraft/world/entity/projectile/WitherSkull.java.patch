@@ -18,12 +18,13 @@
                 }
              }
           } else {
-@@ -73,7 +_,7 @@
+@@ -73,7 +_,8 @@
              }
  
              if (i > 0) {
 -               livingentity1.addEffect(new MobEffectInstance(MobEffects.WITHER, 20 * i, 1), this.getEffectSource());
-+               livingentity1.addEffect(new MobEffectInstance(MobEffects.WITHER, 20 * i, 1), this.getEffectSource(), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit;
++               livingentity1.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); //Ketting
++               livingentity1.addEffect(new MobEffectInstance(MobEffects.WITHER, 20 * i, 1), this.getEffectSource());;
              }
           }
  

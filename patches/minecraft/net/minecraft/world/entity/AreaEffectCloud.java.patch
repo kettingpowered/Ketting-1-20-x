@@ -19,7 +19,7 @@
     public void tick() {
        super.tick();
        boolean flag = this.isWaiting();
-@@ -238,19 +_,35 @@
+@@ -238,19 +_,36 @@
              } else {
                 List<LivingEntity> list1 = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox());
                 if (!list1.isEmpty()) {
@@ -57,7 +57,8 @@
 +                                 mobeffect1.getEffect().applyInstantenousEffect(this, this.getOwner(), entityliving, mobeffect1.getAmplifier(), 0.5D);
                                } else {
 -                                 livingentity.addEffect(new MobEffectInstance(mobeffectinstance1), this);
-+                                 entityliving.addEffect(new MobEffectInstance(mobeffect1), this, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.AREA_EFFECT_CLOUD); // CraftBukkit
++                                 entityliving.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.AREA_EFFECT_CLOUD); //Ketting
++                                 entityliving.addEffect(new MobEffectInstance(mobeffect1), this);
                                }
                             }
  

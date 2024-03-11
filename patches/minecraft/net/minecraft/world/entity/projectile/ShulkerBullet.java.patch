@@ -33,15 +33,14 @@
           }
        }
  
-@@ -273,7 +_,7 @@
+@@ -273,6 +_,7 @@
           this.doEnchantDamageEffects(livingentity, entity);
           if (entity instanceof LivingEntity) {
              LivingEntity livingentity1 = (LivingEntity)entity;
--            livingentity1.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 200), MoreObjects.firstNonNull(entity1, this));
-+            livingentity1.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 200), MoreObjects.firstNonNull(entity1, this), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
++            livingentity1.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); //Ketting
+             livingentity1.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 200), MoreObjects.firstNonNull(entity1, this));
           }
        }
- 
 @@ -300,6 +_,11 @@
     }
  
