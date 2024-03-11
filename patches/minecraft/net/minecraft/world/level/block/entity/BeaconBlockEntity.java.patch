@@ -28,7 +28,7 @@
              if (p_155111_.checkingBeamSections.size() <= 1) {
                 beaconblockentity$beaconbeamsection = new BeaconBlockEntity.BeaconBeamSection(afloat);
                 p_155111_.checkingBeamSections.add(beaconblockentity$beaconbeamsection);
-@@ -216,30 +_,71 @@
+@@ -216,30 +_,72 @@
        super.setRemoved();
     }
  
@@ -66,7 +66,8 @@
 +   private static void applyEffect(List<Player> list, MobEffect mobeffectlist, int j, int b0) {
 +      {
 +         for (Player player : list) {
-+            player.addEffect(new MobEffectInstance(mobeffectlist, j, b0, true, true), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.BEACON);
++            player.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.BEACON); //Ketting
++            player.addEffect(new MobEffectInstance(mobeffectlist, j, b0, true, true));
 +         }
 +      }
 +   }

@@ -27,15 +27,14 @@
     protected void customServerAiStep() {
        this.level().getProfiler().push("villagerBrain");
        this.getBrain().tick((ServerLevel)this.level(), this);
-@@ -220,7 +_,7 @@
+@@ -220,6 +_,7 @@
                 this.increaseProfessionLevelOnUpdate = false;
              }
  
--            this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
-+            this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.VILLAGER_TRADE); // CraftBukkit
++            this.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.VILLAGER_TRADE); //Ketting
+             this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
           }
        }
- 
 @@ -255,7 +_,7 @@
  
     public InteractionResult mobInteract(Player p_35472_, InteractionHand p_35473_) {

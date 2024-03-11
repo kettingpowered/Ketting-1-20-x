@@ -28,15 +28,15 @@
     }
  
     public InteractionResult mobInteract(Player p_34394_, InteractionHand p_34395_) {
-@@ -171,8 +_,10 @@
+@@ -171,8 +_,11 @@
        this.conversionStarter = p_34384_;
        this.villagerConversionTime = p_34385_;
        this.getEntityData().set(DATA_CONVERTING_ID, true);
 -      this.removeEffect(MobEffects.WEAKNESS);
--      this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, p_34385_, Math.min(this.level().getDifficulty().getId() - 1, 0)));
 +      // CraftBukkit start
 +      this.removeEffect(MobEffects.WEAKNESS, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
-+      this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, p_34385_, Math.min(this.level().getDifficulty().getId() - 1, 0)), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
++      this.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION); //Ketting
+       this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, p_34385_, Math.min(this.level().getDifficulty().getId() - 1, 0)));
 +      // CraftBukkit end
        this.level().broadcastEntityEvent(this, (byte)16);
     }
@@ -66,12 +66,12 @@
                 }
              }
           }
-@@ -224,11 +_,11 @@
+@@ -224,11 +_,12 @@
           }
        }
  
--      villager.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
-+      villager.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION); // CraftBukkit
++      villager.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION); //Ketting
+       villager.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
        if (!this.isSilent()) {
           p_34399_.levelEvent((Player)null, 1027, this.blockPosition(), 0);
        }

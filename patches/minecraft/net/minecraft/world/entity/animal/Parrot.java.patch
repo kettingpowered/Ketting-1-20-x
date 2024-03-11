@@ -9,18 +9,17 @@
                 this.tame(p_29414_);
                 this.level().broadcastEntityEvent(this, (byte)7);
              } else {
-@@ -257,9 +_,10 @@
+@@ -257,8 +_,10 @@
        } else if (itemstack.is(POISONOUS_FOOD)) {
           if (!p_29414_.getAbilities().instabuild) {
              itemstack.shrink(1);
 +            itemstack.shrink(1);
           }
  
--         this.addEffect(new MobEffectInstance(MobEffects.POISON, 900));
-+         this.addEffect(new MobEffectInstance(MobEffects.POISON, 900), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD); // CraftBukkit
++         this.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.FOOD); //Ketting
+          this.addEffect(new MobEffectInstance(MobEffects.POISON, 900));
           if (p_29414_.isCreative() || !this.isInvulnerable()) {
              this.hurt(this.damageSources().playerAttack(p_29414_), Float.MAX_VALUE);
-          }
 @@ -352,7 +_,7 @@
     }
  

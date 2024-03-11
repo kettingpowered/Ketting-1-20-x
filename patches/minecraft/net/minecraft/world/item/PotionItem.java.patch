@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/item/PotionItem.java
 +++ b/net/minecraft/world/item/PotionItem.java
-@@ -50,7 +_,7 @@
+@@ -50,6 +_,7 @@
              if (mobeffectinstance.getEffect().isInstantenous()) {
                 mobeffectinstance.getEffect().applyInstantenousEffect(player, player, p_42986_, mobeffectinstance.getAmplifier(), 1.0D);
              } else {
--               p_42986_.addEffect(new MobEffectInstance(mobeffectinstance));
-+               p_42986_.addEffect(new MobEffectInstance(mobeffectinstance), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.POTION_DRINK); // CraftBukkit
++               p_42986_.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.POTION_DRINK); //Ketting
+                p_42986_.addEffect(new MobEffectInstance(mobeffectinstance));
              }
           }
-       }

@@ -1,14 +1,13 @@
 --- a/net/minecraft/world/entity/raid/Raider.java
 +++ b/net/minecraft/world/entity/raid/Raider.java
-@@ -149,7 +_,7 @@
+@@ -149,6 +_,7 @@
                 i = Mth.clamp(i, 0, 4);
                 MobEffectInstance mobeffectinstance = new MobEffectInstance(MobEffects.BAD_OMEN, 120000, i, false, false, true);
                 if (!this.level().getGameRules().getBoolean(GameRules.RULE_DISABLE_RAIDS)) {
--                  player.addEffect(mobeffectinstance);
-+                  player.addEffect(mobeffectinstance, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.PATROL_CAPTAIN); // CraftBukkit
++                  player.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.PATROL_CAPTAIN); //Ketting
+                   player.addEffect(mobeffectinstance);
                 }
              }
-          }
 @@ -296,7 +_,7 @@
           this.mob.getNavigation().stop();
  

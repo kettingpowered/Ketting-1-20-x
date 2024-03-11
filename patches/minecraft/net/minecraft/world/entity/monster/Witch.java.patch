@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/entity/monster/Witch.java
 +++ b/net/minecraft/world/entity/monster/Witch.java
-@@ -117,7 +_,7 @@
+@@ -117,6 +_,7 @@
                    List<MobEffectInstance> list = PotionUtils.getMobEffects(itemstack);
                    if (list != null) {
                       for(MobEffectInstance mobeffectinstance : list) {
--                        this.addEffect(new MobEffectInstance(mobeffectinstance));
-+                        this.addEffect(new MobEffectInstance(mobeffectinstance), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
++                        this.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); //Ketting
+                         this.addEffect(new MobEffectInstance(mobeffectinstance));
                       }
                    }
-                }
