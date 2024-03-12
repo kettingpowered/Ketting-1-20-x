@@ -211,7 +211,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.addCategory("Player being ticked");
-@@ -563,16 +_,102 @@
+@@ -563,16 +_,111 @@
     }
  
     private void updateScoreForCriteria(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -253,9 +253,18 @@
 +         
 +         //if the forgeResult was true, forge would have returned without doing anything.
 +         //we make sure to inherit that behaviour here.
-+         if (!forgeResult){ 
++         if (!forgeResult){
 +            if (!this.isSpectator()) {
 +               this.dropAllDeathLoot(p_9035_);
++
++               //we have to manually drop these drops.
++               //we originally called bukkit here, and let bukkit drop it in the `callPlayerDeathEvent`, 
++               // but due to restructuring that does not happen anymore.
++               for (org.bukkit.inventory.ItemStack stack : drops) {
++                  if (stack == null || stack.getType() == org.bukkit.Material.AIR || stack.getAmount() == 0) continue;
++                  level().getWorld().dropItem(getBukkitEntity().getLocation(), stack);
++               }
++
 +            }
 +         }
 +         
