@@ -258,7 +258,7 @@
        p_155004_.awardRecipes(list);
  
        for(Recipe<?> recipe : list) {
-@@ -467,25 +_,42 @@
+@@ -467,18 +_,30 @@
     }
  
     public List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel p_154996_, Vec3 p_154997_) {
@@ -274,36 +274,59 @@
           p_154996_.getRecipeManager().byKey(entry.getKey()).ifPresent((p_155023_) -> {
              list.add(p_155023_);
 -            createExperience(p_154996_, p_154997_, entry.getIntValue(), ((AbstractCookingRecipe)p_155023_).getExperience());
-+            createExperience(p_154996_, p_154997_, entry.getIntValue(), ((AbstractCookingRecipe)p_155023_).getExperience(), blockposition, entityplayer, itemstack, amount); // CraftBukkit
++            // Ketting start - Add CraftBukkit
++            ketting$blockposition$1 = blockposition;
++            ketting$entityhuman = entityplayer;
++            ketting$itemstack = itemstack;
++            ketting$amount = amount;
++            // Ketting end
++            createExperience(p_154996_, p_154997_, entry.getIntValue(), ((AbstractCookingRecipe)p_155023_).getExperience()); // CraftBukkit
           });
        }
  
        return list;
     }
- 
--   private static void createExperience(ServerLevel p_154999_, Vec3 p_155000_, int p_155001_, float p_155002_) {
-+   private static void createExperience(ServerLevel p_154999_, Vec3 p_155000_, int p_155001_, float p_155002_, BlockPos blockposition, Player entityhuman, ItemStack itemstack, int amount) { // CraftBukkit
+-
++   
+    private static void createExperience(ServerLevel p_154999_, Vec3 p_155000_, int p_155001_, float p_155002_) {
        int i = Mth.floor((float)p_155001_ * p_155002_);
        float f = Mth.frac((float)p_155001_ * p_155002_);
-       if (f != 0.0F && Math.random() < (double)f) {
+@@ -486,13 +_,69 @@
           ++i;
        }
  
 +      // CraftBukkit start - fire org.bukkit.event.inventory.FurnaceExtractEvent / BlockExpEvent
-+      org.bukkit.event.block.BlockExpEvent event;
-+      if (amount != 0) {
-+         event = new org.bukkit.event.inventory.FurnaceExtractEvent((org.bukkit.entity.Player) entityhuman.getBukkitEntity(), org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_154999_, blockposition), org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers.getMaterial(itemstack.getItem()), amount, i);
-+      } else {
-+         event = new org.bukkit.event.block.BlockExpEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_154999_, blockposition), i);
++      if (ketting$entityhuman != null && ketting$blockposition$1 != null && ketting$itemstack != null) { // Ketting
++         org.bukkit.event.block.BlockExpEvent event;
++         if (ketting$amount != 0) {
++            event = new org.bukkit.event.inventory.FurnaceExtractEvent((org.bukkit.entity.Player) ketting$entityhuman.getBukkitEntity(), org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_154999_, ketting$blockposition$1), org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers.getMaterial(ketting$itemstack.getItem()), ketting$amount, i);
++         } else {
++            event = new org.bukkit.event.block.BlockExpEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_154999_, ketting$blockposition$1), i);
++         }
++         p_154999_.getCraftServer().getPluginManager().callEvent(event);
++         i = event.getExpToDrop();
 +      }
-+      p_154999_.getCraftServer().getPluginManager().callEvent(event);
-+      i = event.getExpToDrop();
 +      // CraftBukkit end
 +
        ExperienceOrb.award(p_154999_, p_155000_, i);
     }
++   
++   // Ketting start - Add CraftBukkit method
++   private static int ketting$amount;
++   private static Player ketting$entityhuman;
++   private static BlockPos ketting$blockposition$1;
++   private static ItemStack ketting$itemstack;
++   private static void createExperience(ServerLevel p_154999_, Vec3 p_155000_, int p_155001_, float p_155002_, BlockPos blockposition, Player entityhuman, ItemStack itemstack, int amount) { // CraftBukkit
++      ketting$amount = amount;
++      ketting$entityhuman = entityhuman;
++      ketting$blockposition$1 = blockposition;
++      ketting$itemstack = itemstack;
++      createExperience(p_154999_, p_155000_, p_155001_, p_155002_);
++   }
++   // Ketting end
  
-@@ -494,5 +_,34 @@
+    public void fillStackedContents(StackedContents p_58342_) {
+       for(ItemStack itemstack : this.items) {
           p_58342_.accountStack(itemstack);
        }
  
