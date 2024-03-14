@@ -21,11 +21,20 @@
        this.addSlot(new ResultSlot(p_39357_.player, this.craftSlots, this.resultSlots, 0, 124, 35));
  
        for(int i = 0; i < 3; ++i) {
-@@ -69,6 +_,7 @@
+@@ -58,6 +_,7 @@
+    protected static void slotChangedCraftingGrid(AbstractContainerMenu p_150547_, Level p_150548_, Player p_150549_, CraftingContainer p_150550_, ResultContainer p_150551_) {
+       if (!p_150548_.isClientSide) {
+          ServerPlayer serverplayer = (ServerPlayer)p_150549_;
++         org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(serverplayer); //Ketting
+          ItemStack itemstack = ItemStack.EMPTY;
+          Optional<CraftingRecipe> optional = p_150548_.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, p_150550_, p_150548_);
+          if (optional.isPresent()) {
+@@ -69,6 +_,8 @@
                 }
              }
           }
 +         itemstack = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.orElse(null) instanceof net.minecraft.world.item.crafting.RepairItemRecipe); // CraftBukkit
++         org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner(); //Ketting
  
           p_150551_.setItem(0, itemstack);
           p_150547_.setRemoteSlot(0, itemstack);

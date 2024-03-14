@@ -349,12 +349,24 @@
           this.connection.send(new ClientboundCommandSuggestionsPacket(p_9847_.getId(), p_238197_));
        });
     }
-@@ -726,6 +_,14 @@
+@@ -615,7 +_,9 @@
+             return;
+          }
+ 
++         org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(player); //Ketting
+          anvilmenu.setItemName(p_9899_.getName());
++         org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner(); //Ketting
+       }
+ 
+    }
+@@ -726,6 +_,16 @@
        int i = p_9905_.getItem();
        AbstractContainerMenu abstractcontainermenu = this.player.containerMenu;
        if (abstractcontainermenu instanceof MerchantMenu merchantmenu) {
 +         // CraftBukkit start
++         org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(player); //Ketting
 +         final org.bukkit.event.inventory.TradeSelectEvent tradeSelectEvent = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callTradeSelectEvent(this.player, i, merchantmenu);
++         org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner(); //Ketting
 +         if (tradeSelectEvent.isCancelled()) {
 +            this.player.getBukkitEntity().updateInventory();
 +            return;
@@ -1290,6 +1302,16 @@
        this.player.resetLastActionTime();
        switch (p_9891_.getAction()) {
           case PRESS_SHIFT_KEY:
+@@ -1384,7 +_,9 @@
+          case OPEN_INVENTORY:
+             Entity $$2 = this.player.getVehicle();
+             if ($$2 instanceof HasCustomInventoryScreen hascustominventoryscreen) {
++               org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(player); //Ketting
+                hascustominventoryscreen.openCustomInventoryScreen(this.player);
++               org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner(); //Ketting
+             }
+             break;
+          case START_FALL_FLYING:
 @@ -1416,6 +_,12 @@
     }
  
@@ -1329,7 +1351,7 @@
        this.player.resetLastActionTime();
        this.player.setShiftKeyDown(p_9866_.isUsingSecondaryAction());
        if (entity != null) {
-@@ -1440,13 +_,52 @@
+@@ -1440,13 +_,54 @@
           }
  
           AABB aabb = entity.getBoundingBox();
@@ -1338,6 +1360,7 @@
              p_9866_.dispatch(new ServerboundInteractPacket.Handler() {
 -               private void performInteraction(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_) {
 +               private void performInteraction(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_, org.bukkit.event.player.PlayerInteractEntityEvent event) { // CraftBukkit
++                  org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(ServerGamePacketListenerImpl.this.player); //Ketting
                    ItemStack itemstack = ServerGamePacketListenerImpl.this.player.getItemInHand(p_143679_);
                    if (itemstack.isItemEnabled(serverlevel.enabledFeatures())) {
                       ItemStack itemstack1 = itemstack.copy();
@@ -1370,6 +1393,7 @@
 +                     }
 +
 +                     if (event.isCancelled()) {
++                        org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner(); //Ketting
 +                        return;
 +                     }
 +                     // CraftBukkit end
@@ -1384,7 +1408,11 @@
                       if (interactionresult.consumesAction()) {
                          CriteriaTriggers.PLAYER_INTERACTED_WITH_ENTITY.trigger(ServerGamePacketListenerImpl.this.player, itemstack1, entity);
                          if (interactionresult.shouldSwing()) {
-@@ -1458,20 +_,28 @@
+@@ -1455,23 +_,32 @@
+                      }
+ 
+                   }
++                  org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner(); //Ketting
                 }
  
                 public void onInteraction(InteractionHand p_143677_) {
@@ -1458,7 +1486,7 @@
              this.player.containerMenu.sendAllDataToRemote();
           } else if (!this.player.containerMenu.stillValid(this.player)) {
              LOGGER.debug("Player {} interacted with invalid menu {}", this.player, this.player.containerMenu);
-@@ -1532,8 +_,288 @@
+@@ -1532,8 +_,292 @@
              } else {
                 boolean flag = p_9856_.getStateId() != this.player.containerMenu.getStateId();
                 this.player.containerMenu.suppressRemoteUpdates();
@@ -1629,7 +1657,9 @@
 +                     }
 +                     break;
 +                  case QUICK_CRAFT:
++                     org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(player); //Ketting
 +                     this.player.containerMenu.clicked(p_9856_.getSlotNum(), p_9856_.getButtonNum(), p_9856_.getClickType(), this.player);
++                     org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner();
 +                     break;
 +                  case PICKUP_ALL:
 +                     click = org.bukkit.event.inventory.ClickType.DOUBLE_CLICK;
@@ -1687,7 +1717,9 @@
 +                  switch (event.getResult()) {
 +                     case ALLOW:
 +                     case DEFAULT:
++                        org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(player); //Ketting
 +                        this.player.containerMenu.clicked(i, p_9856_.getButtonNum(), p_9856_.getClickType(), this.player);
++                        org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner(); //Ketting
 +                        break;
 +                     case DENY:
 +                                /* Needs enum constructor in InventoryAction
@@ -1749,7 +1781,7 @@
                 for(Int2ObjectMap.Entry<ItemStack> entry : Int2ObjectMaps.fastIterable(p_9856_.getChangedSlots())) {
                    this.player.containerMenu.setRemoteSlotNoCopy(entry.getIntKey(), entry.getValue());
                 }
-@@ -1558,15 +_,25 @@
+@@ -1558,21 +_,35 @@
           if (!this.player.containerMenu.stillValid(this.player)) {
              LOGGER.debug("Player {} interacted with invalid menu {}", this.player, this.player.containerMenu);
           } else {
@@ -1760,12 +1792,14 @@
 +            if (recipe == null) {
 +               return;
 +            }
++            org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(player); //Ketting
 +            org.bukkit.event.player.PlayerRecipeBookClickEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callRecipeBookClickEvent(this.player, recipe, p_9882_.isShiftDown());
 +
 +            // Cast to keyed should be safe as the recipe will never be a MerchantRecipe.
 +            this.server.getRecipeManager().byKey(org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.toMinecraft(((org.bukkit.Keyed) event.getRecipe()).getKey())).ifPresent((p_296595_) -> {
 +               ((RecipeBookMenu)this.player.containerMenu).handlePlacement(event.isShiftClick(), p_296595_, this.player);
              });
++            org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner(); //Ketting
 +            // CraftBukkit end
           }
        }
@@ -1777,6 +1811,14 @@
        this.player.resetLastActionTime();
        if (this.player.containerMenu.containerId == p_9854_.getContainerId() && !this.player.isSpectator()) {
           if (!this.player.containerMenu.stillValid(this.player)) {
+             LOGGER.debug("Player {} interacted with invalid menu {}", this.player, this.player.containerMenu);
+          } else {
++            org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(player); //Ketting
+             boolean flag = this.player.containerMenu.clickMenuButton(this.player, p_9854_.getButtonId());
++            org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner();
+             if (flag) {
+                this.player.containerMenu.broadcastChanges();
+             }
 @@ -1591,7 +_,7 @@
           }
  
@@ -1786,14 +1828,16 @@
              BlockPos blockpos = BlockEntity.getPosFromTag(compoundtag);
              if (this.player.level().isLoaded(blockpos)) {
                 BlockEntity blockentity = this.player.level().getBlockEntity(blockpos);
-@@ -1603,6 +_,44 @@
+@@ -1603,6 +_,46 @@
  
           boolean flag1 = p_9915_.getSlotNum() >= 1 && p_9915_.getSlotNum() <= 45;
           boolean flag2 = itemstack.isEmpty() || itemstack.getDamageValue() >= 0 && itemstack.getCount() <= 64 && !itemstack.isEmpty();
 +         if (flag || (flag1 && !ItemStack.matches(this.player.inventoryMenu.getSlot(p_9915_.getSlotNum()).getItem(), p_9915_.getItem()))) { // Insist on valid slot
 +            // CraftBukkit start - Call click event
++            org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(player); //Ketting
 +            org.bukkit.inventory.InventoryView inventory = this.player.inventoryMenu.getBukkitView();
 +            org.bukkit.inventory.ItemStack item = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asBukkitCopy(p_9915_.getItem());
++            org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner();
 +
 +            org.bukkit.event.inventory.InventoryType.SlotType type = org.bukkit.event.inventory.InventoryType.SlotType.QUICKBAR;
 +            if (flag) {

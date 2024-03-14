@@ -1417,8 +1417,11 @@ public final class CraftServer implements Server {
         }
 
         // Call Bukkit event to check for matrix/result changes.
+        org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(craftPlayer.getHandle());//Ketting
         net.minecraft.world.item.ItemStack result = CraftEventFactory.callPreCraftEvent(inventoryCrafting, craftResult, itemstack, container.getBukkitView(), recipe.map(net.minecraft.world.item.crafting.Recipe::toBukkitRecipe).orElse(null) instanceof RepairItemRecipe);
+        org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner(); //Ketting
 
+        
         // Set the resulting matrix items
         for (int i = 0; i < craftingMatrix.length; i++) {
             Item remaining = inventoryCrafting.getContents().get(i).getItem().getCraftingRemainingItem();

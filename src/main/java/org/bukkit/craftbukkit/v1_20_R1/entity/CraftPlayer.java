@@ -1733,9 +1733,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     @Override
     public boolean setWindowProperty(Property prop, int value) {
         AbstractContainerMenu container = getHandle().containerMenu;
-        if (container.getBukkitView().getType() != prop.getType()) {
-            return false;
+        //Ketting Start
+        try{
+            org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(getHandle());
+            if (container.getBukkitView().getType() != prop.getType()) {
+                return false;
+            }
+        }finally {
+            org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner();
         }
+        //Ketting end
         container.setData(prop.getId(), value);
         return true;
     }

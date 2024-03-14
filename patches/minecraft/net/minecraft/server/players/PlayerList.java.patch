@@ -97,7 +97,7 @@
        servergamepacketlistenerimpl.send(new ClientboundUpdateRecipesPacket(this.server.getRecipeManager().getRecipes()));
        servergamepacketlistenerimpl.send(new ClientboundUpdateTagsPacket(TagNetworkSerialization.serializeTagsToNetwork(this.registries)));
        this.sendPlayerPermissionLevel(p_11263_);
-@@ -197,32 +_,88 @@
+@@ -197,32 +_,90 @@
           mutablecomponent = Component.translatable("multiplayer.player.joined.renamed", p_11263_.getDisplayName(), s);
        }
  
@@ -124,7 +124,9 @@
 +      org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer bukkitPlayer = p_11263_.getBukkitEntity();
 +
 +      // Ensure that player inventory is populated with its viewer
++      org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(p_11263_); //Ketting
 +      p_11263_.containerMenu.transferTo(p_11263_.containerMenu, bukkitPlayer);
++      org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner(); //Ketting
 +
 +      org.bukkit.event.player.PlayerJoinEvent playerJoinEvent = new org.bukkit.event.player.PlayerJoinEvent(bukkitPlayer, joinMessage);
 +      cserver.getPluginManager().callEvent(playerJoinEvent);

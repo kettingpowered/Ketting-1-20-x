@@ -14,6 +14,10 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.kettingpowered.ketting.core.Ketting;
+import org.kettingpowered.ketting.craftbukkit.CraftStubInventoryHolder;
+
+import java.util.logging.Logger;
 
 public class CraftInventoryView extends InventoryView {
     private final AbstractContainerMenu container;
@@ -38,6 +42,10 @@ public class CraftInventoryView extends InventoryView {
 
     @Override
     public Inventory getBottomInventory() {
+        if (player == null) {
+            Ketting.LOGGER.warn("Tried to getBottomInventory on a CraftInventoryView with a null player at:", new NullPointerException());
+            return CraftStubInventoryHolder.INSTANCE.getInventory();
+        }
         return player.getInventory();
     }
 
