@@ -183,47 +183,55 @@ public abstract class AbstractModProvider implements IModProvider
                 (root, p) -> true,
                 path
         );
+        boolean forceInclude = false;
         //If this jar is a module, which is already present, we can just ignore it.
         try{
             final String moduleName = unfiltered_sj.moduleDataProvider().name();
             if (parentLoaders.containsKey(moduleName)){
                 LOGGER.warn("[Ketting] Tried to load duplicate module {}. Will ignore this module and all jarjar entries in this jar.", moduleName);
                 return null;
+            }else{
+                forceInclude = true;
+                LOGGER.info("[Ketting] Force including module {} from {}.", moduleName, path);
             }
         }catch (Throwable ignored){}
+        final boolean finalForceInclude = forceInclude;
         
         final ConcurrentHashMap<String, Boolean> hm = new ConcurrentHashMap<>();
 
         AtomicBoolean hmInit = new AtomicBoolean(false);
-        ForkJoinTask<?> hmInitTask = ForkJoinPool.commonPool().submit(() -> {
-            Instant start = Instant.now();
-            try (Stream<Path> walk = Files.walk(unfiltered_sj.getPath("/"))){
-                walk.filter(p->!p.toString().endsWith(".class"))
-                    .filter(Files::isDirectory)
-                    .forEach(p->populateIsExcludedPackage(p, hm));
-                hmInit.setRelease(true);
-            }catch (Throwable throwable) {
-                LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_ERRORS, "Error whilst trying to determine include status: ", throwable);
-                throw new RuntimeException(throwable);
-            }
-            
-            if (PrePopulateCacheFiles && CheckIndividualFiles){
+        ForkJoinTask<?> hmInitTask = null;
+        if (!forceInclude)
+            ForkJoinPool.commonPool().submit(() -> {
+                Instant start = Instant.now();
                 try (Stream<Path> walk = Files.walk(unfiltered_sj.getPath("/"))){
-                    walk.map(p->ForkJoinPool.commonPool().submit(()->shouldBeIncluded(p, hm)).fork())
-                        .forEach(ForkJoinTask::quietlyJoin);
+                    walk.filter(p->!p.toString().endsWith(".class"))
+                        .filter(Files::isDirectory)
+                        .forEach(p->populateIsExcludedPackage(p, hm));
+                    hmInit.setRelease(true);
                 }catch (Throwable throwable) {
                     LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_ERRORS, "Error whilst trying to determine include status: ", throwable);
                     throw new RuntimeException(throwable);
                 }
-            }
-            LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_EXCLUDES, "Initializing excludes for {} took: {}", path, Duration.between(start, Instant.now()));
-            hmInit.setRelease(true);
-        }).fork();
+                
+                if (PrePopulateCacheFiles && CheckIndividualFiles){
+                    try (Stream<Path> walk = Files.walk(unfiltered_sj.getPath("/"))){
+                        walk.map(p->ForkJoinPool.commonPool().submit(()->shouldBeIncluded(p, hm)).fork())
+                            .forEach(ForkJoinTask::quietlyJoin);
+                    }catch (Throwable throwable) {
+                        LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_ERRORS, "Error whilst trying to determine include status: ", throwable);
+                        throw new RuntimeException(throwable);
+                    }
+                }
+                LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_EXCLUDES, "Initializing excludes for {} took: {}", path, Duration.between(start, Instant.now()));
+                hmInit.setRelease(true);
+            }).fork();
         
         var sj = SecureJar.from(
                 Manifest::new,
                 jar -> jar.moduleDataProvider().findFile(MODS_TOML).isPresent() ? mjm : JarMetadata.from(jar, path),
                 (root, p) -> {
+                    if (finalForceInclude) return true;
                     //fast path. This particularly allows for access to all files in META-INF and all top-level files 
                     // (e.g. mixin declarations, mixin refmaps, mod icons, accesswideners, pack.mcmeta and others)
                     // without having to wait for the cache initialization.
