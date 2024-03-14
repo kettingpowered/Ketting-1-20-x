@@ -104,21 +104,22 @@
        this.entityData = new SynchedEntityData(this);
        this.entityData.define(DATA_SHARED_FLAGS_ID, (byte)0);
        this.entityData.define(DATA_AIR_SUPPLY_ID, this.getMaxAirSupply());
-@@ -253,8 +_,16 @@
+@@ -253,8 +_,17 @@
        this.entityData.define(DATA_POSE, Pose.STANDING);
        this.entityData.define(DATA_TICKS_FROZEN, 0);
        this.defineSynchedData();
 +      this.getEntityData().registrationLocked = true; // Spigot
        this.setPos(0.0D, 0.0D, 0.0D);
 -      this.eyeHeight = this.getEyeHeight(Pose.STANDING, this.dimensions);
++      //Ketting: Move on Player init, to allow for init after the Player Constructor 
++      if (!(this instanceof Player)) postInit(); 
++   }
++   protected void postInit(){
 +      var sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, Pose.STANDING, this.dimensions, this.getEyeHeight(Pose.STANDING, this.dimensions));
 +      this.dimensions = sizeEvent.getNewSize();
 +      this.eyeHeight = sizeEvent.getNewEyeHeight();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
-+      //Ketting - If we gatherCapabilities on a Player, it might cause an isOp check, which requires a GameProfile to be set.
-+      // So we move the gatherCapabilities check to after the Player initialization is done.
-+      if (!(this instanceof Player))
-+         this.gatherCapabilities();
++      this.gatherCapabilities();
     }
  
     public boolean isColliding(BlockPos p_20040_, BlockState p_20041_) {
