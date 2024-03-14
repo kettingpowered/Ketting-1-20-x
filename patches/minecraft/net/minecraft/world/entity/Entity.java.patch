@@ -111,11 +111,12 @@
 +      this.getEntityData().registrationLocked = true; // Spigot
        this.setPos(0.0D, 0.0D, 0.0D);
        this.eyeHeight = this.getEyeHeight(Pose.STANDING, this.dimensions);
-+      net.minecraftforge.event.ForgeEventFactory.onEntityConstructing(this);
-+      //Ketting - If we gatherCapabilities on a Player, it might cause an isOp check, which requires a GameProfile to be set.
-+      // So we move the gatherCapabilities check to after the Player initialization is done.
-+      if (!(this instanceof Player))
-+         this.gatherCapabilities();
++      //Ketting: Move on Player init, to allow for init after the Player Constructor 
++      if (!(this instanceof Player)) postInit(); 
++   }
++   protected void postInit(){
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
++      this.gatherCapabilities();
     }
  
     public boolean isColliding(BlockPos p_20040_, BlockState p_20041_) {
