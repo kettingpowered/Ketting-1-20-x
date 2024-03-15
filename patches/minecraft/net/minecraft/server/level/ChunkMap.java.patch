@@ -54,15 +54,14 @@
        RegistryAccess registryaccess = p_214836_.registryAccess();
        long i = p_214836_.getSeed();
        if (p_214843_ instanceof NoiseBasedChunkGenerator noisebasedchunkgenerator) {
-@@ -159,7 +_,7 @@
+@@ -159,6 +_,7 @@
           this.randomState = RandomState.create(NoiseGeneratorSettings.dummy(), registryaccess.lookupOrThrow(Registries.NOISE), i);
        }
  
--      this.chunkGeneratorState = p_214843_.createState(registryaccess.lookupOrThrow(Registries.STRUCTURE_SET), this.randomState, i);
-+      this.chunkGeneratorState = p_214843_.createState(registryaccess.lookupOrThrow(Registries.STRUCTURE_SET), this.randomState, i, p_214836_.spigotConfig); // Spigot
++      p_214843_.ketting$createState$conf.set(p_214836_.spigotConfig); //Ketting
+       this.chunkGeneratorState = p_214843_.createState(registryaccess.lookupOrThrow(Registries.STRUCTURE_SET), this.randomState, i);
        this.mainThreadExecutor = p_214841_;
        ProcessorMailbox<Runnable> processormailbox1 = ProcessorMailbox.create(p_214840_, "worldgen");
-       ProcessorHandle<Runnable> processorhandle = ProcessorHandle.of("main", p_214841_::tell);
 @@ -398,6 +_,7 @@
              this.modified = true;
           }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/FlatLevelSource.java
 +++ b/net/minecraft/world/level/levelgen/FlatLevelSource.java
-@@ -33,17 +_,23 @@
+@@ -33,7 +_,13 @@
     private final FlatLevelGeneratorSettings settings;
  
     public FlatLevelSource(FlatLevelGeneratorSettings p_256337_) {
@@ -15,15 +15,11 @@
        this.settings = p_256337_;
     }
  
--   public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> p_256602_, RandomState p_255830_, long p_256355_) {
-+   public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> p_256602_, RandomState p_255830_, long p_256355_, org.spigotmc.SpigotWorldConfig conf) { // Spigot
-       Stream<Holder<StructureSet>> stream = this.settings.structureOverrides().map(HolderSet::stream).orElseGet(() -> {
-          return p_256602_.listElements().map((p_255579_) -> {
+@@ -43,6 +_,7 @@
              return p_255579_;
           });
        });
--      return ChunkGeneratorStructureState.createForFlat(p_255830_, p_256355_, this.biomeSource, stream);
-+      return ChunkGeneratorStructureState.createForFlat(p_255830_, p_256355_, this.biomeSource, stream, conf); // Spigot
++      ChunkGeneratorStructureState.ketting$createFor$conf.set(ketting$createState$conf.getAndSet(null)); // Ketting
+       return ChunkGeneratorStructureState.createForFlat(p_255830_, p_256355_, this.biomeSource, stream);
     }
  
-    protected Codec<? extends ChunkGenerator> codec() {

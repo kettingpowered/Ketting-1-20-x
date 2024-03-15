@@ -9,7 +9,7 @@
     private final Supplier<List<FeatureSorter.StepFeatureData>> featuresPerStep;
     public final Function<Holder<Biome>, BiomeGenerationSettings> generationSettingsGetter;
  
-@@ -97,10 +_,16 @@
+@@ -97,9 +_,17 @@
        });
     }
  
@@ -21,13 +21,12 @@
 +
     protected abstract Codec<? extends ChunkGenerator> codec();
  
--   public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> p_256405_, RandomState p_256101_, long p_256018_) {
--      return ChunkGeneratorStructureState.createForNormal(p_256101_, p_256018_, this.biomeSource, p_256405_);
-+   public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> p_256405_, RandomState p_256101_, long p_256018_, org.spigotmc.SpigotWorldConfig conf) { // Spigot
-+      return ChunkGeneratorStructureState.createForNormal(p_256101_, p_256018_, this.biomeSource, p_256405_, conf);
++   public java.util.concurrent.atomic.AtomicReference<org.spigotmc.SpigotWorldConfig> ketting$createState$conf = new java.util.concurrent.atomic.AtomicReference<>(null); //Ketting
+    public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> p_256405_, RandomState p_256101_, long p_256018_) {
++      ChunkGeneratorStructureState.ketting$createFor$conf.set(ketting$createState$conf.getAndSet(null)); // Ketting
+       return ChunkGeneratorStructureState.createForNormal(p_256101_, p_256018_, this.biomeSource, p_256405_);
     }
  
-    public Optional<ResourceKey<Codec<? extends ChunkGenerator>>> getTypeNameForDataFixer() {
 @@ -264,8 +_,19 @@
           return false;
        }
