@@ -1,27 +1,25 @@
 --- a/net/minecraft/world/level/chunk/ChunkGeneratorStructureState.java
 +++ b/net/minecraft/world/level/chunk/ChunkGeneratorStructureState.java
-@@ -42,19 +_,79 @@
+@@ -42,10 +_,12 @@
     private boolean hasGeneratedPositions;
     private final List<Holder<StructureSet>> possibleStructureSets;
  
--   public static ChunkGeneratorStructureState createForFlat(RandomState p_256240_, long p_256404_, BiomeSource p_256274_, Stream<Holder<StructureSet>> p_256348_) {
-+   public static ChunkGeneratorStructureState createForFlat(RandomState p_256240_, long p_256404_, BiomeSource p_256274_, Stream<Holder<StructureSet>> p_256348_, org.spigotmc.SpigotWorldConfig conf) { // Spigot
++   public static java.util.concurrent.atomic.AtomicReference<org.spigotmc.SpigotWorldConfig> ketting$createFor$conf = new java.util.concurrent.atomic.AtomicReference<>(null); //Ketting
+    public static ChunkGeneratorStructureState createForFlat(RandomState p_256240_, long p_256404_, BiomeSource p_256274_, Stream<Holder<StructureSet>> p_256348_) {
        List<Holder<StructureSet>> list = p_256348_.filter((p_255616_) -> {
           return hasBiomesForStructureSet(p_255616_.value(), p_256274_);
        }).toList();
--      return new ChunkGeneratorStructureState(p_256240_, p_256274_, p_256404_, 0L, list);
-+      return new ChunkGeneratorStructureState(p_256240_, p_256274_, p_256404_, 0L, injectSpigot(list, conf)); // Spigot
++      list = injectSpigot(list, ketting$createFor$conf.getAndSet(null));
+       return new ChunkGeneratorStructureState(p_256240_, p_256274_, p_256404_, 0L, list);
     }
  
--   public static ChunkGeneratorStructureState createForNormal(RandomState p_256197_, long p_255806_, BiomeSource p_256653_, HolderLookup<StructureSet> p_256659_) {
-+   public static ChunkGeneratorStructureState createForNormal(RandomState p_256197_, long p_255806_, BiomeSource p_256653_, HolderLookup<StructureSet> p_256659_, org.spigotmc.SpigotWorldConfig conf) { // Spigot
+@@ -53,8 +_,69 @@
        List<Holder<StructureSet>> list = p_256659_.listElements().filter((p_256144_) -> {
           return hasBiomesForStructureSet(p_256144_.value(), p_256653_);
        }).collect(Collectors.toUnmodifiableList());
--      return new ChunkGeneratorStructureState(p_256197_, p_256653_, p_255806_, p_255806_, list);
--   }
-+      return new ChunkGeneratorStructureState(p_256197_, p_256653_, p_255806_, p_255806_, injectSpigot(list, conf)); // Spigot
-+   }
++      list = injectSpigot(list, ketting$createFor$conf.getAndSet(null));
+       return new ChunkGeneratorStructureState(p_256197_, p_256653_, p_255806_, p_255806_, list);
+    }
 +
 +   // Spigot start
 +   private static List<Holder<StructureSet>> injectSpigot(List<Holder<StructureSet>> list, org.spigotmc.SpigotWorldConfig conf) {
