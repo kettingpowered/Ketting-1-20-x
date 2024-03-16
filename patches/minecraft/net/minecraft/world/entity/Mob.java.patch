@@ -210,6 +210,16 @@
        this.level().getProfiler().push("sensing");
        this.sensing.tick();
        this.level().getProfiler().pop();
+@@ -732,7 +_,9 @@
+          this.targetSelector.tick();
+          this.level().getProfiler().pop();
+          this.level().getProfiler().push("goalSelector");
++         this.forceDrops = true; //Ketting
+          this.goalSelector.tick();
++         this.forceDrops = false; //Ketting
+          this.level().getProfiler().pop();
+       }
+ 
 @@ -1025,6 +_,16 @@
  
     }
