@@ -9,7 +9,7 @@
           return Pair.of(primaryleveldata, worlddimensions$complete);
        };
     }
-@@ -334,24 +_,46 @@
+@@ -334,24 +_,52 @@
     }
  
     public LevelStorageSource.LevelStorageAccess validateAndCreateAccess(String p_289980_) throws IOException, ContentValidationException {
@@ -26,6 +26,12 @@
 +         return new LevelStorageSource.LevelStorageAccess(p_289980_, path, dimensionType); // CraftBukkit
        }
     }
++
++   //Ketting start - try merging both world systems
++   public LevelStorageSource.LevelStorageAccess deriveFromSource(LevelStorageSource.LevelStorageAccess source, ResourceKey<LevelStem> dimensionType) throws IOException {
++      return new LevelStorageSource.LevelStorageAccess(source, dimensionType);
++   }
++   //Ketting end
  
     public LevelStorageSource.LevelStorageAccess createAccess(String p_78261_) throws IOException {
 +      return this.createAccess(p_78261_, null);
@@ -58,7 +64,7 @@
     public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> levels) implements Iterable<LevelStorageSource.LevelDirectory> {
        public boolean isEmpty() {
           return this.levels.isEmpty();
-@@ -397,8 +_,18 @@
+@@ -397,9 +_,34 @@
        public final LevelStorageSource.LevelDirectory levelDirectory;
        private final String levelId;
        private final Map<LevelResource, Path> resources = Maps.newHashMap();
@@ -68,8 +74,22 @@
 +      public ResourceKey<LevelStem> dimensionType;
 +
 +      //Ketting start
++      public final Path dimensionPath;
++
 +      public void setDimensionType(ResourceKey<LevelStem> dimensionType) {
 +          this.dimensionType = dimensionType;
++      }
++      //Ketting end
++
++      //Ketting start
++      LevelStorageAccess(LevelStorageAccess original, ResourceKey<LevelStem> dimensionType) {
++         this.dimensionType = dimensionType;
++
++         this.levelId = original.levelId;
++         this.dimensionPath = original.dimensionPath;
++         this.levelDirectory = original.levelDirectory;
++         this.lock = original.lock;
++         this.resources.putAll(original.resources);
 +      }
 +      //Ketting end
 +
@@ -77,8 +97,10 @@
 +         this.dimensionType = dimensionType;
 +         // CraftBukkit end
           this.levelId = p_289967_;
++         this.dimensionPath = p_289988_; //Ketting
           this.levelDirectory = new LevelStorageSource.LevelDirectory(p_289988_);
           this.lock = DirectoryLock.create(p_289988_);
+       }
 @@ -413,7 +_,7 @@
        }
  
@@ -117,14 +139,27 @@
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
              NbtIo.writeCompressed(compoundtag1, file2);
-@@ -469,6 +_,10 @@
- 
-       public Optional<Path> getIconFile() {
+@@ -471,6 +_,10 @@
           return !this.lock.isValid() ? Optional.empty() : Optional.of(this.levelDirectory.iconFile());
-+      }
-+
-+      public Path getWorldDir() {
-+         return baseDir;
        }
  
++      public Path getWorldDir() {
++         return baseDir;
++      }
++
        public void deleteLevel() throws IOException {
+          this.checkLock();
+          final Path path = this.levelDirectory.lockFile();
+@@ -569,6 +_,12 @@
+ 
+       public void close() throws IOException {
+          this.lock.close();
++      }
++
++      //Ketting start
++      public @Nullable LevelStorageSource reference;
++      public void setReference(LevelStorageSource levelstoragesource) {
++         this.reference = levelstoragesource;
+       }
+    }
+ }
