@@ -24,7 +24,7 @@
        }
     }
  
-@@ -160,10 +_,17 @@
+@@ -160,9 +_,16 @@
     }
  
     public void setInLove(@Nullable Player p_27596_) {
@@ -38,11 +38,10 @@
 +      // CraftBukkit end
        if (p_27596_ != null) {
           this.loveCause = p_27596_.getUUID();
++         this.breedItem = p_27596_.getInventory().getSelected(); // CraftBukkit
        }
-+      this.breedItem = p_27596_.getInventory().getSelected(); // CraftBukkit
  
        this.level().broadcastEntityEvent(this, (byte)18);
-    }
 @@ -206,15 +_,48 @@
  
     public void spawnChildFromBreeding(ServerLevel p_27564_, Animal p_27565_) {
