@@ -9,7 +9,7 @@
           if (mobcategory != MobCategory.MISC) {
              BlockPos blockpos = entity.blockPosition();
              p_186527_.query(ChunkPos.asLong(blockpos), (p_275163_) -> {
-@@ -101,13 +_,31 @@
+@@ -101,13 +_,33 @@
  
     public static void spawnForChunk(ServerLevel p_47030_, LevelChunk p_47031_, NaturalSpawner.SpawnState p_47032_, boolean p_47033_, boolean p_47034_, boolean p_47035_) {
        p_47030_.getProfiler().push("spawner");
@@ -18,7 +18,6 @@
 +      net.minecraft.world.level.storage.LevelData worlddata = p_47030_.getLevelData(); // CraftBukkit - Other mob type spawn tick rate
  
        for(MobCategory mobcategory : SPAWNING_CATEGORIES) {
--         if ((p_47033_ || !mobcategory.isFriendly()) && (p_47034_ || mobcategory.isFriendly()) && (p_47035_ || !mobcategory.isPersistent()) && p_47032_.canSpawnForCategory(mobcategory, p_47031_.getPos())) {
 +         // CraftBukkit start - Use per-world spawn limits
 +         boolean spawnThisTick = true;
 +         int limit = mobcategory.getMaxInstancesPerChunk();
@@ -32,10 +31,12 @@
 +            continue;
 +         }
 +
-+         if ((p_47033_ || !mobcategory.isFriendly()) && (p_47034_ || mobcategory.isFriendly()) && (p_47035_ || !mobcategory.isPersistent()) && p_47032_.canSpawnForCategory(mobcategory, p_47031_.getPos(), limit)) {
++         p_47032_.ketting$canSpawnForCategory$limit.set(limit);
+          if ((p_47033_ || !mobcategory.isFriendly()) && (p_47034_ || mobcategory.isFriendly()) && (p_47035_ || !mobcategory.isPersistent()) && p_47032_.canSpawnForCategory(mobcategory, p_47031_.getPos())) {
 +            // CraftBukkit end
              spawnCategoryForChunk(mobcategory, p_47030_, p_47031_, p_47032_::canSpawn, p_47032_::afterSpawn);
           }
++         p_47032_.ketting$canSpawnForCategory$limit.set(Integer.MAX_VALUE);
        }
  
 +      p_47030_.timings.mobSpawn.stopTiming(); // Spigot
@@ -122,15 +123,23 @@
                                spawngroupdata = mob.finalizeSpawn(p_220451_, p_220451_.getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.CHUNK_GENERATION, spawngroupdata, (CompoundTag)null);
                                p_220451_.addFreshEntityWithPassengers(mob);
                                flag = true;
-@@ -489,8 +_,11 @@
+@@ -489,8 +_,20 @@
           return this.unmodifiableMobCategoryCounts;
        }
  
--      boolean canSpawnForCategory(MobCategory p_186549_, ChunkPos p_186550_) {
--         int i = p_186549_.getMaxInstancesPerChunk() * this.spawnableChunkCount / NaturalSpawner.MAGIC_NUMBER;
-+      // CraftBukkit start
++      
++      //Ketting start
++      public final java.util.concurrent.atomic.AtomicInteger ketting$canSpawnForCategory$limit = new java.util.concurrent.atomic.AtomicInteger(Integer.MAX_VALUE);
++      @SuppressWarnings("unused") //Ketting - CB compat
 +      boolean canSpawnForCategory(MobCategory p_186549_, ChunkPos p_186550_, int limit) {
-+         int i = limit * this.spawnableChunkCount / NaturalSpawner.MAGIC_NUMBER;
++         ketting$canSpawnForCategory$limit.set(limit);
++         return canSpawnForCategory(p_186549_, p_186550_);
++      }
++      // CraftBukkit start
+       boolean canSpawnForCategory(MobCategory p_186549_, ChunkPos p_186550_) {
+-         int i = p_186549_.getMaxInstancesPerChunk() * this.spawnableChunkCount / NaturalSpawner.MAGIC_NUMBER;
++         int i = ketting$canSpawnForCategory$limit.getAndSet(Integer.MAX_VALUE) * this.spawnableChunkCount / NaturalSpawner.MAGIC_NUMBER;
++         //Ketting end
 +         // CraftBukkit end
 +
           if (this.mobCategoryCounts.getInt(p_186549_) >= i) {

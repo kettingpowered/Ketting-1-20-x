@@ -9,39 +9,31 @@
              BlockEntity blockentity = blockstate.hasBlockEntity() ? this.getBlockEntity(p_9550_) : null;
              Block.dropResources(blockstate, this.level, p_9550_, blockentity, p_9552_, ItemStack.EMPTY);
           }
-@@ -296,7 +_,37 @@
+@@ -296,7 +_,29 @@
        this.getChunk(p_9592_).markPosForPostprocessing(p_9592_);
     }
  
 +   //Ketting start
-+   private org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason addFreshEntity$spawnReason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
-+   @Override
-+   public void prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
-+      this.addFreshEntity$spawnReason = reason;
-+   }
-+
-+   private java.util.List<Entity> disabledEntitySpawns = new java.util.ArrayList<>();
++   private java.util.List<Entity> ketting$disabledEntitySpawns = new java.util.ArrayList<>();
 +   @Override
 +   public void disableSpawnFor(Entity entity) {
-+      disabledEntitySpawns.add(entity);
++      ketting$disabledEntitySpawns.add(entity);
++   }
++
++   //Ketting - CB does nothing with the spawn reason? 
++   //https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/nms-patches/net/minecraft/server/level/RegionLimitedWorldAccess.patch#1-2
++   public boolean addFreshEntity(Entity p_9580_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++      return addFreshEntity(p_9580_);
 +   }
 +
     public boolean addFreshEntity(Entity p_9580_) {
 +      // CraftBukkit start
-+      try {
-+         if (disabledEntitySpawns.contains(p_9580_)) {
-+            disabledEntitySpawns.remove(p_9580_);
-+            return false;
-+         }
-+         return addFreshEntity(p_9580_, addFreshEntity$spawnReason);
-+      } finally {
-+         addFreshEntity$spawnReason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
++      if (ketting$disabledEntitySpawns.contains(p_9580_)) {
++         ketting$disabledEntitySpawns.remove(p_9580_);
++         return false;
 +      }
-+   }
-+   //Ketting end
-+
-+   public boolean addFreshEntity(Entity p_9580_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
 +      // CraftBukkit end
++      // Ketting end
 +      if (p_9580_ instanceof net.minecraft.world.entity.Mob mob && mob.isSpawnCancelled()) return false;
 +
        int i = SectionPos.blockToSectionCoord(p_9580_.getBlockX());
