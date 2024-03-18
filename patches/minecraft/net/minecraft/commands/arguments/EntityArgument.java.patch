@@ -1,40 +1,25 @@
 --- a/net/minecraft/commands/arguments/EntityArgument.java
 +++ b/net/minecraft/commands/arguments/EntityArgument.java
-@@ -91,20 +_,26 @@
+@@ -90,9 +_,19 @@
+       }
     }
  
-    public EntitySelector parse(StringReader p_91451_) throws CommandSyntaxException {
-+      // CraftBukkit start
-+      return parse(p_91451_, false);
-+   }
++   // Ketting start - Keep CraftBukkit method
++   public java.util.concurrent.atomic.AtomicBoolean ketting$parse$overridePermissions = new java.util.concurrent.atomic.AtomicBoolean(false);
 +
-+   public EntitySelector parse(StringReader stringreader, boolean overridePermissions) throws CommandSyntaxException {
-+      // CraftBukkit end
++   public EntitySelector parse(StringReader p_91451_, boolean overridePermissions) throws CommandSyntaxException {
++      ketting$parse$overridePermissions.set(overridePermissions);
++      return parse(p_91451_);
++   }
++   // Ketting end
++
+    public EntitySelector parse(StringReader p_91451_) throws CommandSyntaxException {
        int i = 0;
--      EntitySelectorParser entityselectorparser = new EntitySelectorParser(p_91451_);
--      EntitySelector entityselector = entityselectorparser.parse();
-+      EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader);
-+      EntitySelector entityselector = entityselectorparser.parse(overridePermissions); // CraftBukkit
+       EntitySelectorParser entityselectorparser = new EntitySelectorParser(p_91451_);
++      entityselectorparser.ketting$parse$overridePermissions.set(ketting$parse$overridePermissions.getAndSet(false));
+       EntitySelector entityselector = entityselectorparser.parse();
        if (entityselector.getMaxResults() > 1 && this.single) {
           if (this.playersOnly) {
--            p_91451_.setCursor(0);
--            throw ERROR_NOT_SINGLE_PLAYER.createWithContext(p_91451_);
-+            stringreader.setCursor(0);
-+            throw ERROR_NOT_SINGLE_PLAYER.createWithContext(stringreader);
-          } else {
--            p_91451_.setCursor(0);
--            throw ERROR_NOT_SINGLE_ENTITY.createWithContext(p_91451_);
-+            stringreader.setCursor(0);
-+            throw ERROR_NOT_SINGLE_ENTITY.createWithContext(stringreader);
-          }
-       } else if (entityselector.includesEntities() && this.playersOnly && !entityselector.isSelfSelector()) {
--         p_91451_.setCursor(0);
--         throw ERROR_ONLY_PLAYERS_ALLOWED.createWithContext(p_91451_);
-+         stringreader.setCursor(0);
-+         throw ERROR_ONLY_PLAYERS_ALLOWED.createWithContext(stringreader);
-       } else {
-          return entityselector;
-       }
 @@ -115,7 +_,7 @@
        if (s instanceof SharedSuggestionProvider sharedsuggestionprovider) {
           StringReader stringreader = new StringReader(p_91483_.getInput());
