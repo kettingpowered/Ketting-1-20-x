@@ -28,6 +28,7 @@ import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.bukkit.craftbukkit.v1_20_R1.SpigotTimings;
+import org.kettingpowered.ketting.spigot.InactiveTickExclusions;
 
 public class ActivationRange
 {
@@ -235,6 +236,13 @@ public class ActivationRange
             SpigotTimings.checkIfActiveTimer.stopTiming();
             return true;
         }
+
+        //Ketting start - exclusions - this prevents some weird animation bugs with some entities
+        if (InactiveTickExclusions.isExcluded(entity)) {
+            SpigotTimings.checkIfActiveTimer.stopTiming();
+            return true;
+        }
+        //Ketting end
 
         boolean isActive = entity.activatedTick >= MinecraftServer.currentTick || entity.defaultActivationState;
 
