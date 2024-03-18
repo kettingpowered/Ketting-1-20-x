@@ -11,10 +11,12 @@
              }
  
           }
-@@ -99,13 +_,23 @@
+@@ -97,6 +_,16 @@
+       return CompletableFuture.allOf(list.toArray((p_253414_) -> {
+          return new CompletableFuture[p_253414_];
        }));
-    }
- 
++   }
++
 +   /**
 +    * Called every time a recipe is saved to also save the advancement JSON if it exists.
 +    *
@@ -23,16 +25,6 @@
 +   @org.jetbrains.annotations.Nullable
 +   protected CompletableFuture<?> saveAdvancement(CachedOutput output, FinishedRecipe finishedRecipe, JsonObject advancementJson) {
 +      return DataProvider.saveStable(output, advancementJson, this.advancementPathProvider.json(finishedRecipe.getAdvancementId()));
-+   }
-+
-    protected CompletableFuture<?> buildAdvancement(CachedOutput p_253674_, ResourceLocation p_254102_, Advancement.Builder p_253712_) {
-       return DataProvider.saveStable(p_253674_, p_253712_.serializeToJson(), this.advancementPathProvider.json(p_254102_));
     }
  
-    protected abstract void buildRecipes(Consumer<FinishedRecipe> p_251297_);
- 
--   protected static void generateForEnabledBlockFamilies(Consumer<FinishedRecipe> p_249188_, FeatureFlagSet p_251836_) {
-+   protected void generateForEnabledBlockFamilies(Consumer<FinishedRecipe> p_249188_, FeatureFlagSet p_251836_) {
-       BlockFamilies.getAllFamilies().filter((p_248034_) -> {
-          return p_248034_.shouldGenerateRecipe(p_251836_);
-       }).forEach((p_176624_) -> {
+    protected CompletableFuture<?> buildAdvancement(CachedOutput p_253674_, ResourceLocation p_254102_, Advancement.Builder p_253712_) {
