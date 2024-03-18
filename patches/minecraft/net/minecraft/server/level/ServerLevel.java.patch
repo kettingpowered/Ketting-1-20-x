@@ -424,70 +424,65 @@
        }
  
        this.getChunkSource().getDataStorage().save();
-@@ -799,16 +_,60 @@
+@@ -799,18 +_,58 @@
        return list.isEmpty() ? null : list.get(this.random.nextInt(list.size()));
     }
  
 +   //Ketting start - move spawnreason, disable spawns
-+   private org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason addFreshEntity$spawnReason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
++   private java.util.concurrent.atomic.AtomicReference<org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason> ketting$addFreshEntity$spawnReason = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   @Override
 +   public void prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
-+      addFreshEntity$spawnReason = spawnReason;
++      ketting$addFreshEntity$spawnReason.set(spawnReason);
 +   }
 +
-+   private java.util.List<Entity> disabledEntitySpawns = new java.util.ArrayList<>();
++   private java.util.List<Entity> ketting$disabledEntitySpawns = new java.util.ArrayList<>();
 +   @Override
 +   public void disableSpawnFor(Entity entity) {
-+      disabledEntitySpawns.add(entity);
++      ketting$disabledEntitySpawns.add(entity);
 +   }
 +
     public boolean addFreshEntity(Entity p_8837_) {
--      return this.addEntity(p_8837_);
-+      // CraftBukkit start
-+      try {
-+         if (disabledEntitySpawns.contains(p_8837_)) {
-+            disabledEntitySpawns.remove(p_8837_);
-+            return false;
-+         }
-+         return this.addFreshEntity(p_8837_, addFreshEntity$spawnReason);
-+      } finally {
-+         addFreshEntity$spawnReason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
++      if (ketting$disabledEntitySpawns.contains(p_8837_)) {
++         ketting$disabledEntitySpawns.remove(p_8837_);
++         return false;
 +      }
++      ketting$addEntity$spawnReason.set(ketting$addFreshEntity$spawnReason.getAndSet(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT));
++   // Ketting end
+       return this.addEntity(p_8837_);
+    }
+ 
++   //Ketting start
++   private java.util.concurrent.atomic.AtomicReference<org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason> ketting$addWithUUID$spawnReason = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++
++   public boolean addWithUUID(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++      ketting$addWithUUID$spawnReason.set(reason);
++      return this.addWithUUID(entity);
 +   }
 +   //Ketting end
 +
-+   @Override
-+   public boolean addFreshEntity(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
-+      return this.addEntityCB(entity, reason);
-+      // CraftBukkit end
-    }
- 
     public boolean addWithUUID(Entity p_8848_) {
--      return this.addEntity(p_8848_);
-+      // CraftBukkit start
-+      return this.addWithUUID(p_8848_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
-+   }
-+
-+   public boolean addWithUUID(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
-+      return this.addEntityCB(entity, reason);
-+      // CraftBukkit end
++      ketting$addEntity$spawnReason.getAndSet(ketting$addWithUUID$spawnReason.getAndSet(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT)); //Ketting
+       return this.addEntity(p_8848_);
     }
  
     public void addDuringTeleport(Entity p_143335_) {
--      this.addEntity(p_143335_);
 +      // CraftBukkit start
 +      // SPIGOT-6415: Don't call spawn event for entities which travel trough worlds,
 +      // since it is only an implementation detail, that a new entity is created when
 +      // they are traveling between worlds.
-+      this.addDuringTeleport(p_143335_, null);
-+   }
-+
-+   public void addDuringTeleport(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
-+      this.addEntityCB(entity, reason);
-+      // CraftBukkit end
++      ketting$addEntity$spawnReason.set(null);
+       this.addEntity(p_143335_);
     }
  
++   public void addDuringTeleport(Entity entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++      ketting$addEntity$spawnReason.set(reason);
++      this.addEntity(entity);
++      // CraftBukkit end
++   }
++
     public void addDuringCommandTeleport(ServerPlayer p_8623_) {
+       this.addPlayer(p_8623_);
+    }
 @@ -828,6 +_,7 @@
     }
  
@@ -496,7 +491,7 @@
        Entity entity = this.getEntities().get(p_8854_.getUUID());
        if (entity != null) {
           LOGGER.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.getUUID().toString());
-@@ -835,28 +_,70 @@
+@@ -835,28 +_,67 @@
           this.removePlayerImmediately((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -506,15 +501,15 @@
     }
  
 +   //Ketting start - add original method back, reverse delegation so that the CB method calls the original method.
-+   @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "OptionalAssignedToNull"}) //yeah, this is not really nice here, but whatever.
-+   @Nullable private Optional<org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason> addEntity$spawnReason = null;
-+   private boolean addEntityCB(Entity p_8873_, @Nullable org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
-+      try{
-+         addEntity$spawnReason = Optional.ofNullable(spawnReason);
-+         return addEntity(p_8873_);
-+      } finally {
-+         addEntity$spawnReason = null;
++   private final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason> ketting$addEntity$spawnReason = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CUSTOM);
++   private boolean ketting$addEntity(Entity p_8873_){
++      //Ketting: add original method back
++      org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason = ketting$addEntity$spawnReason.getAndSet(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CUSTOM);
++      if (reason != null && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.doEntityAddEventCalling(this, p_8873_, reason)) {
++         return true;
 +      }
++      return false;
++      // CraftBukkit end
 +   }
 +   //Ketting end
     private boolean addEntity(Entity p_8873_) {
@@ -524,13 +519,9 @@
           return false;
        } else {
 -         return this.entityManager.addNewEntity(p_8873_);
++         //return this.entityManager.addNewEntity(p_8873_);
 +         // SPIGOT-6415: Don't call spawn event when reason is null. For example when an entity teleports to a new world.
-+         //Ketting: add original method back
-+         //noinspection OptionalAssignedToNull
-+         if (addEntity$spawnReason != null && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.doEntityAddEventCalling(this, p_8873_, addEntity$spawnReason.orElse(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CUSTOM))) {
-+            return false;
-+         }
-+         // CraftBukkit end
++         if (ketting$addEntity(p_8873_)) return false;
 +
 +         if (this.entityManager.addNewEntity(p_8873_)) {
 +            p_8873_.onAddedToWorld();
@@ -541,17 +532,18 @@
        }
     }
  
-    public boolean tryAddFreshEntityWithPassengers(Entity p_8861_) {
-+      // CraftBukkit start
-+      return this.tryAddFreshEntityWithPassengers(p_8861_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
-+   }
-+
++   //Ketting start
++   private final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason> ketting$tryAddFreshEntityWithPassengers$spawnReason = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   public boolean tryAddFreshEntityWithPassengers(Entity p_8861_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
-+      // CraftBukkit end
++      ketting$tryAddFreshEntityWithPassengers$spawnReason.set(reason);
++      return tryAddFreshEntityWithPassengers(p_8861_);
++   }
++   //Ketting end
+    public boolean tryAddFreshEntityWithPassengers(Entity p_8861_) {
        if (p_8861_.getSelfAndPassengers().map(Entity::getUUID).anyMatch(this.entityManager::isLoaded)) {
           return false;
        } else {
-+         this.prepareAddFreshEntityWithPassengers(reason);
++         this.prepareAddFreshEntityWithPassengers(ketting$tryAddFreshEntityWithPassengers$spawnReason.getAndSet(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT));
           this.addFreshEntityWithPassengers(p_8861_);
           return true;
        }
@@ -695,15 +687,26 @@
        if (!explosion.interactsWithBlocks()) {
           explosion.clearToBlow();
        }
-@@ -1031,12 +_,20 @@
+@@ -1030,13 +_,31 @@
+       return this.server.getStructureManager();
     }
  
-    public <T extends ParticleOptions> int sendParticles(T p_8768_, double p_8769_, double p_8770_, double p_8771_, int p_8772_, double p_8773_, double p_8774_, double p_8775_, double p_8776_) {
-+      // CraftBukkit - visibility api support
-+      return sendParticles(null, p_8768_, p_8769_, p_8770_, p_8771_, p_8772_, p_8773_, p_8774_, p_8775_, p_8776_, false);
-+   }
++   private final java.util.concurrent.atomic.AtomicReference<ServerPlayer> ketting$sendParticles$sender = new java.util.concurrent.atomic.AtomicReference<>(null);
++   private final java.util.concurrent.atomic.AtomicBoolean ketting$sendParticles$force = new java.util.concurrent.atomic.AtomicBoolean(false);
 +
 +   public <T extends ParticleOptions> int sendParticles(ServerPlayer sender, T p_8768_, double p_8769_, double p_8770_, double p_8771_, int p_8772_, double p_8773_, double p_8774_, double p_8775_, double p_8776_, boolean force) {
++      ketting$sendParticles$sender.set(sender);
++      ketting$sendParticles$force.set(force);
++      // CraftBukkit - visibility api support
++      return sendParticles(p_8768_, p_8769_, p_8770_, p_8771_, p_8772_, p_8773_, p_8774_, p_8775_, p_8776_);
++   }
++   private boolean ketting$sendParticles(ServerPlayer serverplayer){
++      ServerPlayer sender = ketting$sendParticles$sender.getAndSet(null);
++      if (sender != null && !serverplayer.getBukkitEntity().canSee(sender.getBukkitEntity())) return true;
++      return false;
++   }
++
+    public <T extends ParticleOptions> int sendParticles(T p_8768_, double p_8769_, double p_8770_, double p_8771_, int p_8772_, double p_8773_, double p_8774_, double p_8775_, double p_8776_) {
        ClientboundLevelParticlesPacket clientboundlevelparticlespacket = new ClientboundLevelParticlesPacket(p_8768_, false, p_8769_, p_8770_, p_8771_, (float)p_8773_, (float)p_8774_, (float)p_8775_, (float)p_8776_, p_8772_);
 +      // CraftBukkit end
        int i = 0;
@@ -711,9 +714,9 @@
        for(int j = 0; j < this.players.size(); ++j) {
           ServerPlayer serverplayer = this.players.get(j);
 -         if (this.sendParticles(serverplayer, false, p_8769_, p_8770_, p_8771_, clientboundlevelparticlespacket)) {
-+         if (sender != null && !serverplayer.getBukkitEntity().canSee(sender.getBukkitEntity())) continue; // CraftBukkit
++         if (ketting$sendParticles(serverplayer)) continue; // Ketting - from CraftBukkit
 +
-+         if (this.sendParticles(serverplayer, force, p_8769_, p_8770_, p_8771_, clientboundlevelparticlespacket)) { // CraftBukkit
++         if (this.sendParticles(serverplayer, ketting$sendParticles$force.getAndSet(false), p_8769_, p_8770_, p_8771_, clientboundlevelparticlespacket)) { // CraftBukkit
              ++i;
           }
        }
@@ -760,16 +763,16 @@
     }
  
     @Nullable
-@@ -1368,19 +_,43 @@
+@@ -1367,20 +_,44 @@
+       }
     }
  
-    public static void makeObsidianPlatform(ServerLevel p_8618_) {
-+      // CraftBukkit start
-+      ServerLevel.makeObsidianPlatform(p_8618_, null);
-+   }
-+
++   public static final java.util.concurrent.atomic.AtomicReference<Entity> ketting$makeObsidianPlatform$entity = new java.util.concurrent.atomic.AtomicReference<>(null);
 +   public static void makeObsidianPlatform(ServerLevel p_8618_, Entity entity) {
-+      // CraftBukkit end
++      ketting$makeObsidianPlatform$entity.set(entity);
++      ServerLevel.makeObsidianPlatform(p_8618_);
++   }
+    public static void makeObsidianPlatform(ServerLevel p_8618_) {
        BlockPos blockpos = END_SPAWN_POINT;
        int i = blockpos.getX();
        int j = blockpos.getY() - 2;
@@ -790,6 +793,7 @@
 +         blockList.setBlock(blockposition1, Blocks.OBSIDIAN.defaultBlockState(), 3);
 +      });
 +      org.bukkit.World bworld = p_8618_.getWorld();
++      Entity entity = ketting$makeObsidianPlatform$entity.getAndSet(null);
 +      org.bukkit.event.world.PortalCreateEvent portalEvent = new org.bukkit.event.world.PortalCreateEvent((List<org.bukkit.block.BlockState>) (List) blockList.getList(), bworld, (entity == null) ? null : entity.getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.END_PLATFORM);
 +
 +      p_8618_.getCraftServer().getPluginManager().callEvent(portalEvent);
