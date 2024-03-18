@@ -18,36 +18,38 @@
     public final ItemStack dispense(BlockSource p_123391_, ItemStack p_123392_) {
        ItemStack itemstack = this.execute(p_123391_, p_123392_);
        this.playSound(p_123391_);
-@@ -20,11 +_,21 @@
+@@ -20,11 +_,67 @@
        Direction direction = p_123385_.getBlockState().getValue(DispenserBlock.FACING);
        Position position = DispenserBlock.getDispensePosition(p_123385_);
        ItemStack itemstack = p_123386_.split(1);
--      spawnItem(p_123385_.getLevel(), itemstack, 6, direction, position);
++      ketting$spawnItem$source = p_123385_; //Ketting
++      ketting$spawnItem$dropper.set(dropper); //Ketting
+       spawnItem(p_123385_.getLevel(), itemstack, 6, direction, position);
 +      // CraftBukkit start
-+      if (!spawnItem(p_123385_.getLevel(), itemstack, 6, direction, p_123385_, dropper)) {
++      if (!ketting$spawnItem$result.get()) {
 +         p_123386_.grow(1);
 +      }
 +      // CraftBukkit end
++      ketting$spawnItem$source = null; //Ketting
        return p_123386_;
     }
  
 +   //Ketting start - use original function
-+   private static boolean spawnItem$result;
-+   private static BlockSource spawnItem$source;
-+   private static boolean spawnItem$dropper;
-    public static void spawnItem(Level p_123379_, ItemStack p_123380_, int p_123381_, Direction p_123382_, Position p_123383_) {
-+      spawnItem$result = true;
-+      if (p_123380_.isEmpty()) return;
-       double d0 = p_123383_.x();
-       double d1 = p_123383_.y();
-       double d2 = p_123383_.z();
-@@ -37,8 +_,51 @@
-       ItemEntity itementity = new ItemEntity(p_123379_, d0, d1, d2, p_123380_);
-       double d3 = p_123379_.random.nextDouble() * 0.1D + 0.2D;
-       itementity.setDeltaMovement(p_123379_.random.triangle((double)p_123382_.getStepX() * d3, 0.0172275D * (double)p_123381_), p_123379_.random.triangle(0.2D, 0.0172275D * (double)p_123381_), p_123379_.random.triangle((double)p_123382_.getStepZ() * d3, 0.0172275D * (double)p_123381_));
-+
-+      if (spawnItem$source != null) {
-+         org.bukkit.block.Block block = org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_123379_, spawnItem$source.getPos());
++   private static final java.util.concurrent.atomic.AtomicBoolean ketting$spawnItem$result = new java.util.concurrent.atomic.AtomicBoolean(true);
++   private static @org.jetbrains.annotations.Nullable BlockSource ketting$spawnItem$source = null;
++   private static final java.util.concurrent.atomic.AtomicBoolean ketting$spawnItem$dropper = new java.util.concurrent.atomic.AtomicBoolean(false);
++   @SuppressWarnings("unused")
++   public static boolean spawnItem(Level p_123379_, ItemStack p_123380_, int p_123381_, Direction p_123382_, BlockSource p_123383_, boolean dropper) {
++      Position position = DispenserBlock.getDispensePosition(p_123383_);
++      ketting$spawnItem$source = p_123383_;
++      ketting$spawnItem$dropper.set(dropper);
++      spawnItem(p_123379_, p_123380_, p_123381_, p_123382_, position);
++      ketting$spawnItem$source = null;
++      return ketting$spawnItem$result.get();
++   }
++   private static void ketting$spawnItem(Level p_123379_, ItemStack p_123380_, ItemEntity itementity){
++      if (ketting$spawnItem$source != null) {
++         org.bukkit.block.Block block = org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(p_123379_, ketting$spawnItem$source.getPos());
 +         org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(p_123380_);
 +
 +         org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block, craftItem.clone(), org.bukkit.craftbukkit.v1_20_R1.util.CraftVector.toBukkit(itementity.getDeltaMovement()));
@@ -56,40 +58,41 @@
 +         }
 +
 +         if (event.isCancelled()) {
-+            spawnItem$result = false;
++            ketting$spawnItem$result.set(false);
 +            return;
 +         }
 +
 +         itementity.setItem(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getItem()));
 +         itementity.setDeltaMovement(org.bukkit.craftbukkit.v1_20_R1.util.CraftVector.toNMS(event.getVelocity()));
 +
-+         if (!spawnItem$dropper && !event.getItem().getType().equals(craftItem.getType())) {
++         if (!ketting$spawnItem$dropper.getAndSet(false) && !event.getItem().getType().equals(craftItem.getType())) {
 +            // Chain to handler for new item
 +            ItemStack eventStack = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +            if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior.getClass() != DefaultDispenseItemBehavior.class) {
-+               idispensebehavior.dispense(spawnItem$source, eventStack);
++               idispensebehavior.dispense(ketting$spawnItem$source, eventStack);
 +            } else {
 +               p_123379_.addFreshEntity(itementity);
 +            }
-+            spawnItem$result = false;
++            ketting$spawnItem$result.set(false);
 +            return;
 +         }
 +      }
++   }
++   //Ketting end
+    public static void spawnItem(Level p_123379_, ItemStack p_123380_, int p_123381_, Direction p_123382_, Position p_123383_) {
++      ketting$spawnItem$result.set(true); //Ketting
++      if (p_123380_.isEmpty()) return; //Ketting?
+       double d0 = p_123383_.x();
+       double d1 = p_123383_.y();
+       double d2 = p_123383_.z();
+@@ -37,6 +_,9 @@
+       ItemEntity itementity = new ItemEntity(p_123379_, d0, d1, d2, p_123380_);
+       double d3 = p_123379_.random.nextDouble() * 0.1D + 0.2D;
+       itementity.setDeltaMovement(p_123379_.random.triangle((double)p_123382_.getStepX() * d3, 0.0172275D * (double)p_123381_), p_123379_.random.triangle(0.2D, 0.0172275D * (double)p_123381_), p_123379_.random.triangle((double)p_123382_.getStepZ() * d3, 0.0172275D * (double)p_123381_));
++
++      ketting$spawnItem(p_123379_, p_123380_, itementity);//Ketting
 +
        p_123379_.addFreshEntity(itementity);
     }
-+
-+   public static boolean spawnItem(Level p_123379_, ItemStack p_123380_, int p_123381_, Direction p_123382_, BlockSource p_123383_, boolean dropper) {
-+      Position position = DispenserBlock.getDispensePosition(p_123383_);
-+      spawnItem$source = p_123383_;
-+      spawnItem$dropper = dropper;
-+      spawnItem(p_123379_, p_123380_, p_123381_, p_123382_, position);
-+      spawnItem$source = null;
-+      spawnItem$dropper = false;
-+      return spawnItem$result;
-+   }
-+   //Ketting end
  
-    protected void playSound(BlockSource p_123384_) {
-       p_123384_.getLevel().levelEvent(1000, p_123384_.getPos(), 0);
