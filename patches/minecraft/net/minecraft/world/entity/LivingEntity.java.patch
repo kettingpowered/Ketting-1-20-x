@@ -51,14 +51,20 @@
        this.blocksBuilding = true;
        this.rotA = (float)((Math.random() + 1.0D) * (double)0.01F);
        this.reapplyPosition();
-@@ -239,7 +_,9 @@
+@@ -238,8 +_,15 @@
+       this.setYRot((float)(Math.random() * (double)((float)Math.PI * 2F)));
        this.yHeadRot = this.getYRot();
        this.setMaxUpStep(0.6F);
++      this.entityData.set(DATA_HEALTH_ID, (float) this.getAttributeBaseValue(Attributes.MAX_HEALTH));
++      if (!(this instanceof org.bukkit.entity.Player)) postInit();
++   }
++   @Override
++   protected void postInit(){
++      super.postInit();
        NbtOps nbtops = NbtOps.INSTANCE;
 -      this.brain = this.makeBrain(new Dynamic<>(nbtops, nbtops.createMap(ImmutableMap.of(nbtops.createString("memories"), nbtops.emptyMap()))));
 +      var dyn = new Dynamic<>(nbtops, nbtops.createMap(ImmutableMap.of(nbtops.createString("memories"), nbtops.emptyMap())));
 +      this.brain = net.minecraftforge.common.ForgeHooks.onLivingMakeBrain(this, this.makeBrain(dyn), dyn);
-+      this.entityData.set(DATA_HEALTH_ID, (float) this.getAttributeBaseValue(Attributes.MAX_HEALTH));
     }
  
     public Brain<?> getBrain() {
