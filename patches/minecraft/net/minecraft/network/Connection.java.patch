@@ -1,13 +1,9 @@
 --- a/net/minecraft/network/Connection.java
 +++ b/net/minecraft/network/Connection.java
-@@ -82,8 +_,13 @@
-    });
-    private final PacketFlow receiving;
+@@ -84,6 +_,11 @@
     private final Queue<Consumer<Connection>> pendingActions = Queues.newConcurrentLinkedQueue();
--   private Channel channel;
--   private SocketAddress address;
-+   public Channel channel;
-+   public SocketAddress address;
+    public Channel channel;
+    public SocketAddress address;
 +   // Spigot Start
 +   public java.util.UUID spoofedUUID;
 +   public com.mojang.authlib.properties.Property[] spoofedProfile;
