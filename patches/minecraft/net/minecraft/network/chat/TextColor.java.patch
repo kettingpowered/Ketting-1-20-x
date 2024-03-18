@@ -1,15 +1,14 @@
 --- a/net/minecraft/network/chat/TextColor.java
 +++ b/net/minecraft/network/chat/TextColor.java
-@@ -20,7 +_,7 @@
+@@ -20,6 +_,7 @@
        });
     }, TextColor::serialize);
     private static final Map<ChatFormatting, TextColor> LEGACY_FORMAT_TO_COLOR = Stream.of(ChatFormatting.values()).filter(ChatFormatting::isColor).collect(ImmutableMap.toImmutableMap(Function.identity(), (p_237301_) -> {
--      return new TextColor(p_237301_.getColor(), p_237301_.getName());
-+      return new TextColor(p_237301_.getColor(), p_237301_.getName(), p_237301_); // CraftBukkit
++      ketting$format = p_237301_; // Ketting - CraftBukkit
+       return new TextColor(p_237301_.getColor(), p_237301_.getName());
     }));
     private static final Map<String, TextColor> NAMED_COLORS = LEGACY_FORMAT_TO_COLOR.values().stream().collect(ImmutableMap.toImmutableMap((p_237297_) -> {
-       return p_237297_.name;
-@@ -28,16 +_,26 @@
+@@ -28,16 +_,30 @@
     private final int value;
     @Nullable
     private final String name;
@@ -17,15 +16,19 @@
 +   // CraftBukkit start
 +   @Nullable
 +   public final ChatFormatting format;
-+   
-+   @SuppressWarnings("unused") //Ketting - mixin/minecraft compat
-    private TextColor(int p_131263_, String p_131264_) {
-+      this(p_131263_, p_131264_, null);
++   public static @Nullable ChatFormatting ketting$format; 
++   private static String wrap(String passthrough, @Nullable ChatFormatting format){
++      ketting$format = format;
++      return passthrough;
 +   }
 +   private TextColor(int p_131263_, String p_131264_, @Nullable ChatFormatting format) {
++      this(p_131263_, wrap(p_131264_, format));
++   }
++   
+    private TextColor(int p_131263_, String p_131264_) {
        this.value = p_131263_;
        this.name = p_131264_;
-+      this.format = format;
++      this.format = ketting$format;
     }
  
     private TextColor(int p_131261_) {
