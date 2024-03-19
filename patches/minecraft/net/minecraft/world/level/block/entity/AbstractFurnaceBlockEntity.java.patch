@@ -246,19 +246,29 @@
        }
     }
  
-@@ -453,8 +_,9 @@
+@@ -453,7 +_,21 @@
     public void awardUsedRecipes(Player p_58396_, List<ItemStack> p_282202_) {
     }
  
--   public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_) {
--      List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(p_155004_.serverLevel(), p_155004_.position());
-+   public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_) {}
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicReference<ItemStack> ketting$awardUsedRecipesAndPopExperience$itemstack  = new java.util.concurrent.atomic.AtomicReference<>(null);
++   public final java.util.concurrent.atomic.AtomicInteger ketting$awardUsedRecipesAndPopExperience$amount = new java.util.concurrent.atomic.AtomicInteger(0);
++   @SuppressWarnings("unused") //Ketting - CB compat
 +   public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_, ItemStack itemstack, int amount) { // CraftBukkit
-+      List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(p_155004_.serverLevel(), p_155004_.position(), this.worldPosition, p_155004_, itemstack, amount); // CraftBukkit
++      ketting$awardUsedRecipesAndPopExperience$itemstack.set(itemstack);
++      ketting$awardUsedRecipesAndPopExperience$amount.set(amount);
++      awardUsedRecipesAndPopExperience(p_155004_);
++   }
+    public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_) {
++      ketting$getRecipesToAwardAndPopExperience$blockposition.set(this.worldPosition);
++      ketting$getRecipesToAwardAndPopExperience$entityplayer.set(p_155004_);
++      ketting$getRecipesToAwardAndPopExperience$itemstack.set(ketting$awardUsedRecipesAndPopExperience$itemstack.getAndSet(null));
++      ketting$getRecipesToAwardAndPopExperience$amount.set(ketting$awardUsedRecipesAndPopExperience$amount.getAndSet(0));
++   //Ketting end
+       List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(p_155004_.serverLevel(), p_155004_.position());
        p_155004_.awardRecipes(list);
  
-       for(Recipe<?> recipe : list) {
-@@ -466,13 +_,33 @@
+@@ -466,13 +_,34 @@
        this.recipesUsed.clear();
     }
  
@@ -267,6 +277,7 @@
 +   public final java.util.concurrent.atomic.AtomicReference<ServerPlayer> ketting$getRecipesToAwardAndPopExperience$entityplayer = new java.util.concurrent.atomic.AtomicReference<>(null);
 +   public final java.util.concurrent.atomic.AtomicReference<ItemStack> ketting$getRecipesToAwardAndPopExperience$itemstack  = new java.util.concurrent.atomic.AtomicReference<>(null);
 +   public final java.util.concurrent.atomic.AtomicInteger ketting$getRecipesToAwardAndPopExperience$amount = new java.util.concurrent.atomic.AtomicInteger(0);
++   @SuppressWarnings("unused") //Ketting - CB Compat
 +   public List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel p_154996_, Vec3 p_154997_, BlockPos blockposition, ServerPlayer entityplayer, ItemStack itemstack, int amount) {
 +      ketting$getRecipesToAwardAndPopExperience$blockposition.set(blockposition);
 +      ketting$getRecipesToAwardAndPopExperience$entityplayer.set(entityplayer);
