@@ -32,19 +32,22 @@
        } else if (blockstate.canOcclude()) {
           Block.BlockStatePairKey block$blockstatepairkey = new Block.BlockStatePairKey(p_152445_, blockstate, p_152448_);
           Object2ByteLinkedOpenHashMap<Block.BlockStatePairKey> object2bytelinkedopenhashmap = OCCLUSION_CACHE.get();
-@@ -276,11 +_,14 @@
+@@ -275,12 +_,17 @@
+ 
     }
  
-    public static void dropResources(BlockState p_49882_, Level p_49883_, BlockPos p_49884_, @Nullable BlockEntity p_49885_, @Nullable Entity p_49886_, ItemStack p_49887_) {
-+      dropResources(p_49882_, p_49883_, p_49884_, p_49885_, p_49886_, p_49887_, true);
-+   }
++   private static final java.util.concurrent.atomic.AtomicBoolean ketting$dropResources$dropXp = new java.util.concurrent.atomic.AtomicBoolean(true);
 +   public static void dropResources(BlockState p_49882_, Level p_49883_, BlockPos p_49884_, @Nullable BlockEntity p_49885_, @Nullable Entity p_49886_, ItemStack p_49887_, boolean dropXp) {
++      ketting$dropResources$dropXp.set(dropXp);
++      dropResources(p_49882_, p_49883_, p_49884_, p_49885_, p_49886_, p_49887_);
++   }
+    public static void dropResources(BlockState p_49882_, Level p_49883_, BlockPos p_49884_, @Nullable BlockEntity p_49885_, @Nullable Entity p_49886_, ItemStack p_49887_) {
        if (p_49883_ instanceof ServerLevel) {
           getDrops(p_49882_, (ServerLevel)p_49883_, p_49884_, p_49885_, p_49886_, p_49887_).forEach((p_49944_) -> {
              popResource(p_49883_, p_49884_, p_49944_);
           });
 -         p_49882_.spawnAfterBreak((ServerLevel)p_49883_, p_49884_, p_49887_, true);
-+         p_49882_.spawnAfterBreak((ServerLevel)p_49883_, p_49884_, p_49887_, dropXp);
++         p_49882_.spawnAfterBreak((ServerLevel)p_49883_, p_49884_, p_49887_, ketting$dropResources$dropXp.getAndSet(true));
        }
  
     }
@@ -127,7 +130,7 @@
     }
  
     public boolean hasDynamicShape() {
-@@ -473,6 +_,74 @@
+@@ -473,21 +_,112 @@
        return this.stateDefinition.getPossibleStates().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), p_152459_));
     }
  
@@ -202,25 +205,25 @@
     /** @deprecated */
     @Deprecated
     public Holder.Reference<Block> builtInRegistryHolder() {
-@@ -480,14 +_,37 @@
+       return this.builtInRegistryHolder;
     }
  
-    protected void tryDropExperience(ServerLevel p_220823_, BlockPos p_220824_, ItemStack p_220825_, IntProvider p_220826_) {
-+      tryDropExperienceInt(p_220823_, p_220824_, p_220825_, p_220826_);
-+   }
++   public int ketting$tryDropExperience$result = 0; //Ketting
 +   // CraftBukkit start
-+   protected int tryDropExperienceInt(ServerLevel p_220823_, BlockPos p_220824_, ItemStack p_220825_, IntProvider p_220826_) {
+    protected void tryDropExperience(ServerLevel p_220823_, BlockPos p_220824_, ItemStack p_220825_, IntProvider p_220826_) {
        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, p_220825_) == 0) {
           int i = p_220826_.sample(p_220823_.random);
           if (i > 0) {
 -            this.popExperience(p_220823_, p_220824_, i);
 +            // this.popExperience(p_220823_, p_220824_, i);
-+            return i;
++            ketting$tryDropExperience$result = i;
++            return;
           }
        }
  
 -   }
-+      return 0;
++      ketting$tryDropExperience$result = 0;   
++      return;
 +   }
 +
 +   public int getExpDrop(BlockState blockstate, ServerLevel serverlevel, BlockPos blockpos, ItemStack itemstack, boolean flag) {

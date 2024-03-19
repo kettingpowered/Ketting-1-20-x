@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/level/block/LecternBlock.java
 +++ b/net/minecraft/world/level/block/LecternBlock.java
-@@ -181,10 +_,11 @@
+@@ -181,10 +_,13 @@
     }
  
     private void popBook(BlockState p_54588_, Level p_54589_, BlockPos p_54590_) {
--      BlockEntity blockentity = p_54589_.getBlockEntity(p_54590_);
-+      BlockEntity blockentity = p_54589_.getBlockEntity(p_54590_, false); // CraftBukkit - don't validate, type may be changed already
++      // CraftBukkit - don't validate, type may be changed already
++      //Ketting - even in CB, this doesn't change the behaviour. (removed false from call) 
+       BlockEntity blockentity = p_54589_.getBlockEntity(p_54590_);
        if (blockentity instanceof LecternBlockEntity lecternblockentity) {
           Direction direction = p_54588_.getValue(FACING);
           ItemStack itemstack = lecternblockentity.getBook().copy();

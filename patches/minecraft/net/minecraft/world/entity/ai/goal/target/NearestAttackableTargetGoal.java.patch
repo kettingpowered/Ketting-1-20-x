@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal.java
-@@ -64,7 +_,7 @@
+@@ -64,6 +_,8 @@
     }
  
     public void start() {
--      this.mob.setTarget(this.target);
-+      this.mob.setTarget(this.target, target instanceof ServerPlayer ? org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER : org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true); // CraftBukkit - reason
++      mob.ketting$setTarget$reason.set(target instanceof ServerPlayer ? org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER : org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_ENTITY);
++      mob.ketting$setTarget$fireEvent.set(true);
+       this.mob.setTarget(this.target);
        super.start();
     }
- 

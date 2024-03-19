@@ -8,7 +8,7 @@
              serverlevel.getBlockEntity(p_222178_, BlockEntityType.SCULK_SHRIEKER).ifPresent((p_222163_) -> {
                 p_222163_.tryShriek(serverlevel, serverplayer);
              });
-@@ -121,10 +_,22 @@
+@@ -121,10 +_,23 @@
  
     public void spawnAfterBreak(BlockState p_222192_, ServerLevel p_222193_, BlockPos p_222194_, ItemStack p_222195_, boolean p_222196_) {
        super.spawnAfterBreak(p_222192_, p_222193_, p_222194_, p_222195_, p_222196_);
@@ -20,7 +20,8 @@
 +   @Override
 +   public int getExpDrop(BlockState iblockdata, ServerLevel worldserver, BlockPos blockposition, ItemStack itemstack, boolean flag) {
 +      if (flag) {
-+         return this.tryDropExperienceInt(worldserver, blockposition, itemstack, ConstantInt.of(5));
++         this.tryDropExperience(worldserver, blockposition, itemstack, ConstantInt.of(5));
++         return ketting$tryDropExperience$result;
        }
  
 +      return 0;

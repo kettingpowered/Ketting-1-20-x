@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/ai/goal/target/OwnerHurtTargetGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/target/OwnerHurtTargetGoal.java
-@@ -33,7 +_,7 @@
+@@ -33,6 +_,8 @@
     }
  
     public void start() {
--      this.mob.setTarget(this.ownerLastHurt);
-+      this.mob.setTarget(this.ownerLastHurt, org.bukkit.event.entity.EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET, true); // CraftBukkit - reason
++      mob.ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET);
++      mob.ketting$setTarget$fireEvent.set(true);
+       this.mob.setTarget(this.ownerLastHurt);
        LivingEntity livingentity = this.tameAnimal.getOwner();
        if (livingentity != null) {
-          this.timestamp = livingentity.getLastHurtMobTimestamp();

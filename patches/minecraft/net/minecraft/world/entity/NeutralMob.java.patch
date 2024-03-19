@@ -9,17 +9,10 @@
        this.setRemainingPersistentAngerTime(0);
     }
  
-@@ -119,7 +_,13 @@
- 
+@@ -120,6 +_,7 @@
     void setLastHurtByPlayer(@Nullable Player p_21680_);
  
--   void setTarget(@Nullable LivingEntity p_21681_);
-+   //Ketting start
-+   default void setTarget(@Nullable LivingEntity p_21681_)
-+   {
-+      setTarget(p_21681_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN, true);
-+   }
-+   //Ketting end
+    void setTarget(@Nullable LivingEntity p_21681_);
 +   boolean setTarget(@Nullable LivingEntity p_21681_, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent); // CraftBukkit
  
     boolean canAttack(LivingEntity p_181126_);

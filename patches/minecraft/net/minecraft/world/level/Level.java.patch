@@ -180,11 +180,10 @@
        if (this.isOutsideBuildHeight(p_46605_)) {
           return false;
        } else if (!this.isClientSide && this.isDebug()) {
-@@ -198,17 +_,83 @@
+@@ -198,17 +_,78 @@
        } else {
           LevelChunk levelchunk = this.getChunkAt(p_46605_);
           Block block = p_46606_.getBlock();
--         BlockState blockstate = levelchunk.setBlockState(p_46605_, p_46606_, (p_46607_ & 64) != 0);
 +
 +         p_46605_ = p_46605_.immutable(); // Forge - prevent mutable BlockPos leaks
 +         net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
@@ -208,13 +207,8 @@
 +
 +         // CraftBukkit custom NO_PLACE flag
 +         //Ketting reverse delegation because of mixins
-+         BlockState blockstate;
-+         try{
-+            levelchunk.prepareSetBlockState((p_46607_ & 1024) == 0);
-+            blockstate= levelchunk.setBlockState(p_46605_, p_46606_, (p_46607_ & 64) != 0);
-+         }finally {
-+            levelchunk.resetSetBlockState();
-+         }
++         levelchunk.ketting$setBlockState$doPlace.set((p_46607_ & 1024) == 0);
+          BlockState blockstate = levelchunk.setBlockState(p_46605_, p_46606_, (p_46607_ & 64) != 0);
           if (blockstate == null) {
 +            if (blockSnapshot != null) this.capturedBlockSnapshots.remove(blockSnapshot);
 +            // CraftBukkit start - remove blockstate if failed (or the same)
@@ -431,18 +425,23 @@
        explosion.explode();
        explosion.finalizeExplosion(p_256377_);
        return explosion;
-@@ -494,7 +_,18 @@
+@@ -493,8 +_,22 @@
+ 
     public abstract String gatherChunkSourceStats();
  
-    @Nullable
-+   @Override
-    public BlockEntity getBlockEntity(BlockPos p_46716_) {
-+      // CraftBukkit start
-+      return this.getBlockEntity(p_46716_, true);
-+   }
+-   @Nullable
++   
++   //public java.util.concurrent.atomic.AtomicBoolean ketting$getBlockEntity$validate = new java.util.concurrent.atomic.AtomicBoolean(true);
 +
 +   @Nullable
 +   public BlockEntity getBlockEntity(BlockPos p_46716_, boolean validate) {
++   //   ketting$getBlockEntity$validate.set(validate); //Ketting - CB also doesn't do anything with this.
++      return getBlockEntity(p_46716_);
++   }
++
++   @Nullable
++   @Override
+    public BlockEntity getBlockEntity(BlockPos p_46716_) {
 +      if (capturedTileEntities.containsKey(p_46716_)) {
 +         return capturedTileEntities.get(p_46716_);
 +      }
