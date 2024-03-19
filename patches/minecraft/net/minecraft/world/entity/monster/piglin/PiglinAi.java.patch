@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/piglin/PiglinAi.java
 +++ b/net/minecraft/world/entity/monster/piglin/PiglinAi.java
-@@ -221,23 +_,27 @@
+@@ -221,22 +_,27 @@
     protected static void pickUpItem(Piglin p_34844_, ItemEntity p_34845_) {
        stopWalking(p_34844_);
        ItemStack itemstack;
@@ -27,11 +27,10 @@
        } else if (isFood(itemstack) && !hasEatenRecently(p_34844_)) {
           eat(p_34844_);
        } else {
--         boolean flag = !p_34844_.equipItemIfPossible(itemstack).equals(ItemStack.EMPTY);
-+         boolean flag = !p_34844_.equipItemIfPossible(itemstack, p_34845_).equals(ItemStack.EMPTY); // CraftBukkit
++         p_34844_.ketting$equipItemIfPossible$entity.set(p_34845_); //Ketting - CraftBukkit
+          boolean flag = !p_34844_.equipItemIfPossible(itemstack).equals(ItemStack.EMPTY);
           if (!flag) {
              putInInventory(p_34844_, itemstack);
-          }
 @@ -268,9 +_,14 @@
        ItemStack itemstack = p_34868_.getItemInHand(InteractionHand.OFF_HAND);
        p_34868_.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
@@ -107,19 +106,26 @@
     }
  
     private static void admireGoldItem(LivingEntity p_34939_) {
-@@ -714,6 +_,12 @@
+@@ -714,8 +_,18 @@
        return p_35021_.getBrain().hasMemoryValue(MemoryModuleType.ADMIRING_ITEM);
     }
  
++   //Ketting start
++   public static final java.util.concurrent.atomic.AtomicReference<java.util.Set<Item>> ketting$isBarterCurrency$piglin = new java.util.concurrent.atomic.AtomicReference<>(java.util.Collections.emptySet());
 +   // CraftBukkit start - Changes to allow custom payment for bartering
 +   private static boolean isBarterCurrency(ItemStack itemstack, Piglin piglin) {
-+      return isBarterCurrency(itemstack) || piglin.allowedBarterItems.contains(itemstack.getItem());
++      ketting$isBarterCurrency$piglin.set(piglin.allowedBarterItems);
++      return isBarterCurrency(itemstack);
 +   }
 +   // CraftBukkit end
 +
     private static boolean isBarterCurrency(ItemStack p_149968_) {
-       return p_149968_.is(BARTERING_ITEM);
+-      return p_149968_.is(BARTERING_ITEM);
++      return p_149968_.is(BARTERING_ITEM) || ketting$isBarterCurrency$piglin.getAndSet(java.util.Collections.emptySet()).contains(p_149968_.getItem());
++   //Ketting end
     }
+ 
+    private static boolean isFood(ItemStack p_149970_) {
 @@ -751,7 +_,7 @@
     }
  

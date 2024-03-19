@@ -262,20 +262,22 @@
        return d0;
     }
  
-@@ -870,7 +_,13 @@
+@@ -870,6 +_,15 @@
        this.entityData.set(DATA_EFFECT_COLOR_ID, 0);
     }
  
-+   // CraftBukkit start
-    public boolean removeAllEffects() {
-+      return removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN);
-+   }
-+
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.entity.EntityPotionEffectEvent.Cause> ketting$removeAllEffects$cause = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN);
++   
 +   public boolean removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause cause) {
-+      // CraftBukkit end
++      ketting$removeAllEffects$cause.set(cause);
++      return removeAllEffects();
++   }
++   //Ketting end
++
+    public boolean removeAllEffects() {
        if (this.level().isClientSide) {
           return false;
-       } else {
 @@ -878,7 +_,15 @@
  
           boolean flag;
@@ -284,7 +286,7 @@
 +            MobEffectInstance effect = iterator.next();
 +            if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, effect))) continue;
 +            // CraftBukkit start
-+            org.bukkit.event.entity.EntityPotionEffectEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, cause, org.bukkit.event.entity.EntityPotionEffectEvent.Action.CLEARED);
++            org.bukkit.event.entity.EntityPotionEffectEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, ketting$removeAllEffects$cause.getAndSet(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN), org.bukkit.event.entity.EntityPotionEffectEvent.Action.CLEARED);
 +            if (event.isCancelled()) {
 +               continue;
 +            }
@@ -293,7 +295,7 @@
              iterator.remove();
           }
  
-@@ -903,35 +_,82 @@
+@@ -903,34 +_,82 @@
        return this.activeEffects.get(p_21125_);
     }
  
@@ -308,18 +310,6 @@
     }
  
     public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
--      if (!this.canBeAffected(p_147208_)) {
--         return false;
--      } else {
--         MobEffectInstance mobeffectinstance = this.activeEffects.get(p_147208_.getEffect());
--         boolean flag = false;
--         if (mobeffectinstance == null) {
--            this.activeEffects.put(p_147208_.getEffect(), p_147208_);
--            this.onEffectAdded(p_147208_, p_147209_);
--            flag = true;
--         } else if (mobeffectinstance.update(p_147208_)) {
--            this.onEffectUpdated(mobeffectinstance, true, p_147209_);
--            flag = true;
 +      try {
 +         org.spigotmc.AsyncCatcher.catchOp("effect add"); // Spigot
 +         if (isTickingEffects) {
@@ -327,10 +317,10 @@
 +            return true;
           }
  
-+         if (!this.canBeAffected(p_147208_)) {
+         if (!this.canBeAffected(p_147208_)) {
 +            return false;
-+         } else {
-+            MobEffectInstance mobeffectinstance = this.activeEffects.get(p_147208_.getEffect());
+       } else {
+            MobEffectInstance mobeffectinstance = this.activeEffects.get(p_147208_.getEffect());
 +         boolean flag = false;
 +
 +            // CraftBukkit start
@@ -346,19 +336,20 @@
 +            // CraftBukkit end
 +
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Added(this, mobeffectinstance, p_147208_, p_147209_));
-+            if (mobeffectinstance == null) {
-+               this.activeEffects.put(p_147208_.getEffect(), p_147208_);
-+               this.onEffectAdded(p_147208_, p_147209_);
-+               flag = true;
+          if (mobeffectinstance == null) {
+             this.activeEffects.put(p_147208_.getEffect(), p_147208_);
+             this.onEffectAdded(p_147208_, p_147209_);
+             flag = true;
+-         } else if (mobeffectinstance.update(p_147208_)) {
 +               // CraftBukkit start
 +            } else if (event.isOverride()) {
 +               mobeffectinstance.update(p_147208_);
-+               this.onEffectUpdated(mobeffectinstance, true, p_147209_);
 +               // CraftBukkit end
-+               flag = true;
-+            }
-          p_147208_.onEffectStarted(this);
-          return flag;
+             this.onEffectUpdated(mobeffectinstance, true, p_147209_);
+             return true;
+          } else {
+             return false;
+          }
 +         }
 +      } finally {
 +         this.addEffect$cause = org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN;
@@ -389,73 +380,81 @@
           }
        }
  
-@@ -954,13 +_,40 @@
+@@ -954,12 +_,51 @@
        return this.getMobType() == MobType.UNDEAD;
     }
  
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.entity.EntityPotionEffectEvent.Cause> ketting$removeEffectNoUpdate$cause = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN);
 +   // CraftBukkit start
++   @SuppressWarnings("unused") //Ketting - CB compat
++   public @Nullable MobEffectInstance removeEffectNoUpdate(@Nullable MobEffect mobeffect, org.bukkit.event.entity.EntityPotionEffectEvent.Cause cause) {
++      ketting$removeEffectNoUpdate$cause.set(cause);
++      return removeEffectNoUpdate(mobeffect);
++   }
++   //Ketting end
++
     @Nullable
     public MobEffectInstance removeEffectNoUpdate(@Nullable MobEffect p_21164_) {
--      return this.activeEffects.remove(p_21164_);
-+      return removeEffectNoUpdate(p_21164_, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN);
-+   }
-+
-+   @Nullable
-+   public MobEffectInstance removeEffectNoUpdate(@Nullable MobEffect mobeffect, org.bukkit.event.entity.EntityPotionEffectEvent.Cause cause) {
 +      if (isTickingEffects) {
-+         effectsToProcess.add(new ProcessableEffect(mobeffect, cause));
++         effectsToProcess.add(new ProcessableEffect(p_21164_, ketting$removeEffectNoUpdate$cause.getAndSet(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN))); //ketting
 +         return null;
 +      }
 +
-+      MobEffectInstance effect = this.activeEffects.get(mobeffect);
++      MobEffectInstance effect = this.activeEffects.get(p_21164_);
 +      if (effect == null) {
++         ketting$removeEffectNoUpdate$cause.set(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN);//ketting
 +         return null;
 +      }
 +
-+      org.bukkit.event.entity.EntityPotionEffectEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, cause);
++      org.bukkit.event.entity.EntityPotionEffectEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, ketting$removeEffectNoUpdate$cause.getAndSet(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN));
 +      if (event.isCancelled()) {
 +         return null;
 +      }
 +
-+      return this.activeEffects.remove(mobeffect);
+       return this.activeEffects.remove(p_21164_);
     }
  
-    public boolean removeEffect(MobEffect p_21196_) {
--      MobEffectInstance mobeffectinstance = this.removeEffectNoUpdate(p_21196_);
-+      return removeEffect(p_21196_, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN);
-+   }
++   public final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.entity.EntityPotionEffectEvent.Cause> ketting$removeEffect$cause = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN);
 +
 +   public boolean removeEffect(MobEffect p_21196_, org.bukkit.event.entity.EntityPotionEffectEvent.Cause cause) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, p_21196_))) return false;
-+      MobEffectInstance mobeffectinstance = this.removeEffectNoUpdate(p_21196_, cause);
++      ketting$removeEffect$cause.set(cause);
++      return removeEffect(p_21196_);
++   }
++
+    public boolean removeEffect(MobEffect p_21196_) {
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, p_21196_))) {
++         ketting$removeEffect$cause.set(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN);
++         return false;
++      }
++      ketting$removeEffectNoUpdate$cause.set(ketting$removeEffect$cause.getAndSet(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN));
 +      // CraftBukkit end
+       MobEffectInstance mobeffectinstance = this.removeEffectNoUpdate(p_21196_);
        if (mobeffectinstance != null) {
           this.onEffectRemoved(mobeffectinstance);
-          return true;
 @@ -1040,19 +_,63 @@
  
     }
  
--   public void heal(float p_21116_) {
 +   // CraftBukkit start - Delegate so we can handle providing a reason for health being regained
 +   // Ketting - reverse that delegation, because mixins 
-+   private @Nullable org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason heal$regainReason = null;
++   public @Nullable org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason ketting$heal$regainReason = null;
 +   public void heal(float p_21116_, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason regainReason){
 +      try{
-+         heal$regainReason = regainReason;
++         ketting$heal$regainReason = regainReason;
 +         heal(p_21116_);
 +      }finally {
-+         heal$regainReason = null;
++         ketting$heal$regainReason = null;
 +      }
 +   }
-+   public void heal(float p_21116_) { 
+    public void heal(float p_21116_) {
 +      p_21116_ = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, p_21116_);
 +      if (p_21116_ <= 0) return;
 +
        float f = this.getHealth();
        if (f > 0.0F) {
 -         this.setHealth(f + p_21116_);
-+         org.bukkit.event.entity.EntityRegainHealthEvent event = new org.bukkit.event.entity.EntityRegainHealthEvent(this.getBukkitEntity(), p_21116_, heal$regainReason);
++         org.bukkit.event.entity.EntityRegainHealthEvent event = new org.bukkit.event.entity.EntityRegainHealthEvent(this.getBukkitEntity(), p_21116_, ketting$heal$regainReason);
 +         // Suppress during worldgen
 +         if (this.valid) {
 +            this.level().getCraftServer().getPluginManager().callEvent(event);
@@ -1319,15 +1318,6 @@
        super.tick();
        this.updatingUsingItem();
        this.updateSwimAmount();
-@@ -2262,7 +_,7 @@
-             }
-          }
- 
--         this.detectEquipmentUpdates();
-+         this.detectEquipmentUpdatesPublic(); // CraftBukkit
-          if (this.tickCount % 20 == 0) {
-             this.getCombatTracker().recheckStatus();
-          }
 @@ -2273,7 +_,9 @@
        }
  

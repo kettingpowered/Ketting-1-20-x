@@ -81,7 +81,7 @@
           this.discard();
        }
  
-@@ -330,7 +_,14 @@
+@@ -330,7 +_,15 @@
        int k = entity.getRemainingFireTicks();
        boolean flag1 = entity.getType().is(EntityTypeTags.DEFLECTS_ARROWS);
        if (this.isOnFire() && !flag && !flag1) {
@@ -90,7 +90,8 @@
 +         org.bukkit.event.entity.EntityCombustByEntityEvent combustEvent = new org.bukkit.event.entity.EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5);
 +         org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
 +         if (!combustEvent.isCancelled()) {
-+            entity.setSecondsOnFire(combustEvent.getDuration(), false);
++            entity.ketting$setSecondsOnFire$callEvent.set(false);
++            entity.setSecondsOnFire(combustEvent.getDuration());
 +         }
 +         // CraftBukkit end
 +
