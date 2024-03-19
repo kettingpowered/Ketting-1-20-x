@@ -181,27 +181,35 @@
        }
     }
  
-@@ -432,11 +_,18 @@
+@@ -431,11 +_,28 @@
+       });
     }
  
-    public <T> void addRegionTicket(TicketType<T> p_8388_, ChunkPos p_8389_, int p_8390_, T p_8391_) {
--      this.distanceManager.addRegionTicket(p_8388_, p_8389_, p_8390_, p_8391_);
-+      addRegionTicket(p_8388_, p_8389_, p_8390_, p_8391_, false);
-+   }
-+
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicBoolean ketting$addRegionTicket$forceTicks = new java.util.concurrent.atomic.AtomicBoolean(false);
 +   public <T> void addRegionTicket(TicketType<T> p_8388_, ChunkPos p_8389_, int p_8390_, T p_8391_, boolean forceTicks) {
-+      this.distanceManager.addRegionTicket(p_8388_, p_8389_, p_8390_, p_8391_, forceTicks);
-    }
- 
-    public <T> void removeRegionTicket(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_) {
--      this.distanceManager.removeRegionTicket(p_8439_, p_8440_, p_8441_, p_8442_);
-+      removeRegionTicket(p_8439_, p_8440_, p_8441_, p_8442_, false);
++      ketting$addRegionTicket$forceTicks.set(forceTicks);
++      addRegionTicket(p_8388_, p_8389_, p_8390_, p_8391_);
 +   }
-+   public <T> void removeRegionTicket(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_, boolean forceTicks) {
-+      this.distanceManager.removeRegionTicket(p_8439_, p_8440_, p_8441_, p_8442_, forceTicks);
++   //Ketting end
++
+    public <T> void addRegionTicket(TicketType<T> p_8388_, ChunkPos p_8389_, int p_8390_, T p_8391_) {
++      this.distanceManager.ketting$addRegionTicket$forceTicks = ketting$addRegionTicket$forceTicks.getAndSet(false); //Ketting
+       this.distanceManager.addRegionTicket(p_8388_, p_8389_, p_8390_, p_8391_);
     }
  
-    public void updateChunkForced(ChunkPos p_8400_, boolean p_8401_) {
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicBoolean ketting$removeRegionTicket$forceTicks = new java.util.concurrent.atomic.AtomicBoolean(false);
++   public <T> void removeRegionTicket(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_, boolean forceTicks) {
++      ketting$removeRegionTicket$forceTicks.set(forceTicks);
++      removeRegionTicket(p_8439_, p_8440_, p_8441_, p_8442_);
++   }
++   //Ketting end
+    public <T> void removeRegionTicket(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_) {
++      this.distanceManager.ketting$removeRegionTicket$forceTicks = ketting$removeRegionTicket$forceTicks.getAndSet(false); //Ketting
+       this.distanceManager.removeRegionTicket(p_8439_, p_8440_, p_8441_, p_8442_);
+    }
+ 
 @@ -534,13 +_,19 @@
           super.doRunTask(p_8502_);
        }

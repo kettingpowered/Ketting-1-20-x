@@ -111,7 +111,9 @@ public class PlayerRespawnEvent extends PlayerEvent {
         /**
          * When a plugin respawns the player.
          */
-        PLUGIN;
-        //Todo: add a Other reason for use in PlayerList.respawn compat method
+        PLUGIN,
+        //Ketting start
+        OTHER;
+        //Ketting end
     }
 }
