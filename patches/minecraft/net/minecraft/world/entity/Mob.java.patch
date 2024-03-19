@@ -164,34 +164,37 @@
           for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate((double)vec3i.getX(), (double)vec3i.getY(), (double)vec3i.getZ()))) {
              if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && !itementity.hasPickUpDelay() && this.wantsToPickUp(itementity.getItem())) {
                 this.pickUpItem(itementity);
-@@ -537,7 +_,7 @@
+@@ -537,6 +_,7 @@
  
     protected void pickUpItem(ItemEntity p_21471_) {
        ItemStack itemstack = p_21471_.getItem();
--      ItemStack itemstack1 = this.equipItemIfPossible(itemstack.copy());
-+      ItemStack itemstack1 = this.equipItemIfPossible(itemstack.copy(), p_21471_); // CraftBukkit - add item
++      ketting$equipItemIfPossible$entity.set(p_21471_); // Ketting - CraftBukkit - add item
+       ItemStack itemstack1 = this.equipItemIfPossible(itemstack.copy());
        if (!itemstack1.isEmpty()) {
           this.onItemPickup(p_21471_);
-          this.take(p_21471_, itemstack1.getCount());
-@@ -550,6 +_,12 @@
+@@ -549,6 +_,15 @@
+ 
     }
  
-    public ItemStack equipItemIfPossible(ItemStack p_255842_) {
-+      // CraftBukkit start - add item
-+      return this.equipItemIfPossible(p_255842_, null);
-+   }
-+
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicReference<ItemEntity> ketting$equipItemIfPossible$entity = new java.util.concurrent.atomic.AtomicReference<>(null);
++   @SuppressWarnings("unused") //Ketting - CB compat
 +   public ItemStack equipItemIfPossible(ItemStack p_255842_, ItemEntity entity) {
-+      // CraftBukkit end
++      ketting$equipItemIfPossible$entity.set(entity);
++      return this.equipItemIfPossible(p_255842_);
++   }
++   //Ketting end
++
+    public ItemStack equipItemIfPossible(ItemStack p_255842_) {
        EquipmentSlot equipmentslot = getEquipmentSlotForItem(p_255842_);
        ItemStack itemstack = this.getItemBySlot(equipmentslot);
-       boolean flag = this.canReplaceCurrentItem(p_255842_, itemstack);
-@@ -559,10 +_,18 @@
+@@ -559,10 +_,19 @@
           flag = itemstack.isEmpty();
        }
  
 -      if (flag && this.canHoldItem(p_255842_)) {
 +      // CraftBukkit start
++      ItemEntity entity = ketting$equipItemIfPossible$entity.getAndSet(null);
 +      boolean canPickup = flag && this.canHoldItem(p_255842_);
 +      if (entity != null) {
 +         canPickup = !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityPickupItemEvent(this, entity, 0, !canPickup).isCancelled();
@@ -290,121 +293,57 @@
           this.setLeashedTo(p_21500_, true);
           itemstack.shrink(1);
           return InteractionResult.sidedSuccess(this.level().isClientSide);
-@@ -1165,52 +_,76 @@
+@@ -1165,13 +_,21 @@
        return this.restrictRadius != -1.0F;
     }
  
 +   // CraftBukkit start
 +   //Ketting start - move back to original method
-+   private org.bukkit.event.entity.EntityTransformEvent.TransformReason convertTo$transformReason = org.bukkit.event.entity.EntityTransformEvent.TransformReason.UNKNOWN;
-+   private org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason convertTo$spawnReason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
++   public final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.entity.EntityTransformEvent.TransformReason> ketting$convertTo$transformReason = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.entity.EntityTransformEvent.TransformReason.UNKNOWN);
++   public final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason> ketting$convertTo$spawnReason = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
     @Nullable
     public <T extends Mob> T convertTo(EntityType<T> p_21407_, boolean p_21408_) {
--      if (this.isRemoved()) {
--         return (T)null;
--      } else {
--         T t = p_21407_.create(this.level());
--         if (t == null) {
--            return (T)null;
-+      try {
-+         if (this.isRemoved()) {
-+            return (T) null;
+       if (this.isRemoved()) {
++         ketting$convertTo$transformReason.set(org.bukkit.event.entity.EntityTransformEvent.TransformReason.UNKNOWN);
++         ketting$convertTo$spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
+          return (T)null;
+       } else {
+          T t = p_21407_.create(this.level());
+          if (t == null) {
++            ketting$convertTo$transformReason.set(org.bukkit.event.entity.EntityTransformEvent.TransformReason.UNKNOWN);
++            ketting$convertTo$spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
+             return (T)null;
           } else {
--            t.copyPosition(this);
--            t.setBaby(this.isBaby());
--            t.setNoAi(this.isNoAi());
--            if (this.hasCustomName()) {
--               t.setCustomName(this.getCustomName());
--               t.setCustomNameVisible(this.isCustomNameVisible());
--            }
--
--            if (this.isPersistenceRequired()) {
--               t.setPersistenceRequired();
--            }
--
--            t.setInvulnerable(this.isInvulnerable());
--            if (p_21408_) {
--               t.setCanPickUpLoot(this.canPickUpLoot());
--
--               for(EquipmentSlot equipmentslot : EquipmentSlot.values()) {
--                  ItemStack itemstack = this.getItemBySlot(equipmentslot);
--                  if (!itemstack.isEmpty()) {
--                     t.setItemSlot(equipmentslot, itemstack.copyAndClear());
--                     t.setDropChance(equipmentslot, this.getEquipmentDropChance(equipmentslot));
-+            T t = p_21407_.create(this.level());
-+            if (t == null) {
-+               return (T) null;
-+            } else {
-+               t.copyPosition(this);
-+               t.setBaby(this.isBaby());
-+               t.setNoAi(this.isNoAi());
-+               if (this.hasCustomName()) {
-+                  t.setCustomName(this.getCustomName());
-+                  t.setCustomNameVisible(this.isCustomNameVisible());
-+               }
-+
-+               if (this.isPersistenceRequired()) {
-+                  t.setPersistenceRequired();
-+               }
-+
-+               t.setInvulnerable(this.isInvulnerable());
-+               if (p_21408_) {
-+                  t.setCanPickUpLoot(this.canPickUpLoot());
-+
-+                  for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
-+                     ItemStack itemstack = this.getItemBySlot(equipmentslot);
-+                     if (!itemstack.isEmpty()) {
-+                        t.setItemSlot(equipmentslot, itemstack.copyAndClear());
-+                        t.setDropChance(equipmentslot, this.getEquipmentDropChance(equipmentslot));
-+                     }
-                   }
+             t.copyPosition(this);
+@@ -1199,6 +_,13 @@
                 }
--            }
--
--            this.level().addFreshEntity(t);
--            if (this.isPassenger()) {
--               Entity entity = this.getVehicle();
--               this.stopRiding();
--               t.startRiding(entity, true);
--            }
--
--            this.discard();
--            return t;
-+
-+               // CraftBukkit start
-+               if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTransformEvent(this, t, convertTo$transformReason).isCancelled()) {
-+                  return null;
-+               }
-+               // CraftBukkit end
-+               this.level().prepareAddFreshEntity(convertTo$spawnReason);
-+               this.level().addFreshEntity(t);
-+               if (this.isPassenger()) {
-+                  Entity entity = this.getVehicle();
-+                  this.stopRiding();
-+                  t.startRiding(entity, true);
-+               }
-+
-+               this.discard();
-+               return t;
+             }
+ 
++            // CraftBukkit start
++            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityTransformEvent(this, t, ketting$convertTo$transformReason.getAndSet(org.bukkit.event.entity.EntityTransformEvent.TransformReason.UNKNOWN)).isCancelled()) {
++               ketting$convertTo$spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++               return null;
 +            }
-          }
-+      } finally {
-+         //reset
-+         convertTo$transformReason = org.bukkit.event.entity.EntityTransformEvent.TransformReason.UNKNOWN;
-+         convertTo$spawnReason = org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT;
++            // CraftBukkit end
++            this.level().prepareAddFreshEntity(ketting$convertTo$spawnReason.getAndSet(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT));
+             this.level().addFreshEntity(t);
+             if (this.isPassenger()) {
+                Entity entity = this.getVehicle();
+@@ -1212,6 +_,14 @@
        }
     }
-+
+ 
 +   @Nullable
 +   public <T extends Mob> T convertTo(EntityType<T> p_21407_, boolean p_21408_, org.bukkit.event.entity.EntityTransformEvent.TransformReason transformReason, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
-+      convertTo$spawnReason = spawnReason;
-+      convertTo$transformReason = transformReason;
++      ketting$convertTo$spawnReason.set(spawnReason);
++      ketting$convertTo$transformReason.set(transformReason);
 +      return convertTo(p_21407_, p_21408_);
 +   }
 +   //Ketting end
- 
++
     protected void tickLeash() {
        if (this.leashInfoTag != null) {
+          this.restoreLeashFromSave();
 @@ -1219,6 +_,7 @@
  
        if (this.leashHolder != null) {
@@ -441,7 +380,7 @@
              this.leashInfoTag = null;
           }
        }
-@@ -1368,6 +_,14 @@
+@@ -1368,6 +_,15 @@
  
        int i = EnchantmentHelper.getFireAspect(this);
        if (i > 0) {
@@ -450,7 +389,8 @@
 +         org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
 +
 +         if (!combustEvent.isCancelled()) {
-+            p_21372_.setSecondsOnFire(combustEvent.getDuration(), false);
++            p_21372_.ketting$setSecondsOnFire$callEvent.set(false);
++            p_21372_.setSecondsOnFire(combustEvent.getDuration());
 +         }
 +         // CraftBukkit end
           p_21372_.setSecondsOnFire(i * 4);

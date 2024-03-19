@@ -193,15 +193,14 @@
     public void baseTick() {
        this.level().getProfiler().push("entityBaseTick");
        this.feetBlockState = null;
-@@ -427,7 +_,7 @@
+@@ -427,6 +_,7 @@
        this.walkDistO = this.walkDist;
        this.xRotO = this.getXRot();
        this.yRotO = this.getYRot();
--      this.handleNetherPortal();
-+      if (this instanceof ServerPlayer) this.handleNetherPortal(); // CraftBukkit - // Moved up to postTick
++      if (this instanceof ServerPlayer) // CraftBukkit - // Moved up to postTick
+       this.handleNetherPortal();
        if (this.canSpawnSprintParticle()) {
           this.spawnSprintParticle();
-       }
 @@ -461,7 +_,11 @@
  
        if (this.isInLava()) {
@@ -215,7 +214,7 @@
        }
  
        this.checkBelowWorld();
-@@ -513,15 +_,48 @@
+@@ -513,15 +_,55 @@
  
     public void lavaHurt() {
        if (!this.fireImmune()) {
@@ -229,11 +228,13 @@
 +            this.level.getCraftServer().getPluginManager().callEvent(combustEvent);
 +
 +            if (!combustEvent.isCancelled()) {
-+               this.setSecondsOnFire(combustEvent.getDuration(), false);
++               ketting$setSecondsOnFire$callEvent.set(false);
++               this.setSecondsOnFire(combustEvent.getDuration());
 +            }
 +         } else {
 +            // This will be called every single tick the entity is in lava, so don't throw an event
-+            this.setSecondsOnFire(15, false);
++            ketting$setSecondsOnFire$callEvent.set(false);
++            this.setSecondsOnFire(15);
 +         }
 +         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.blockDamage = (lastLavaContact) == null ? null : org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(level, lastLavaContact);
           if (this.hurt(this.damageSources().lava(), 4.0F)) {
@@ -243,15 +244,20 @@
 +         // CraftBukkit end - we also don't throw an event unless the object in lava is living, to save on some event calls
  
        }
++   }
++
++   //Ketting start
++   public java.util.concurrent.atomic.AtomicBoolean ketting$setSecondsOnFire$callEvent = new java.util.concurrent.atomic.AtomicBoolean(true);
++   @SuppressWarnings("unused") //Ketting - CB compat
++
++   public void setSecondsOnFire(int p_20255_, boolean callEvent) {
++      ketting$setSecondsOnFire$callEvent.set(callEvent);
++      this.setSecondsOnFire(p_20255_);
     }
  
     public void setSecondsOnFire(int p_20255_) {
-+      // CraftBukkit start
-+      this.setSecondsOnFire(p_20255_, true);
-+   }
-+
-+   public void setSecondsOnFire(int p_20255_, boolean callEvent) {
-+      if (callEvent) {
++      if (ketting$setSecondsOnFire$callEvent.getAndSet(true)) {
++      //Ketting end
 +         org.bukkit.event.entity.EntityCombustEvent event = new org.bukkit.event.entity.EntityCombustEvent(this.getBukkitEntity(), p_20255_);
 +         this.level.getCraftServer().getPluginManager().callEvent(event);
 +
@@ -739,24 +745,23 @@
              if (this.isPassenger()) {
                 this.stopRiding();
              }
-@@ -1915,8 +_,9 @@
+@@ -1915,8 +_,10 @@
     public void removeVehicle() {
        if (this.vehicle != null) {
           Entity entity = this.vehicle;
 +         if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entity, false)) return;
           this.vehicle = null;
--         entity.removePassenger(this);
-+         if (!entity.removePassengerBool(this)) this.vehicle = entity; // CraftBukkit
+          entity.removePassenger(this);
++         if (!ketting$removePassenger$returnValue) this.vehicle = entity; // CraftBukkit
        }
  
     }
-@@ -1947,9 +_,41 @@
+@@ -1946,10 +_,42 @@
+       }
     }
  
++   public boolean ketting$removePassenger$returnValue = false;
     protected void removePassenger(Entity p_20352_) {
-+      removePassengerBool(p_20352_);
-+   }
-+   protected boolean removePassengerBool(Entity p_20352_) { // CraftBukkit
        if (p_20352_.getVehicle() == this) {
           throw new IllegalStateException("Use x.stopRiding(y), not y.removePassenger(x)");
        } else {
@@ -775,7 +780,8 @@
 +            org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity craftn = (org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity) p_20352_.getBukkitEntity().getVehicle();
 +            Entity n = craftn == null ? null : craftn.getHandle();
 +            if (event.isCancelled() || n != orig) {
-+               return false;
++               ketting$removePassenger$returnValue = false;
++               return;
 +            }
 +         }
 +         // CraftBukkit end
@@ -786,17 +792,19 @@
 +            org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +         }
 +         if (event.isCancelled()) {
-+            return false;
++            ketting$removePassenger$returnValue = false;
++            return;
 +         }
 +         // Spigot end
           if (this.passengers.size() == 1 && this.passengers.get(0) == p_20352_) {
              this.passengers = ImmutableList.of();
           } else {
-@@ -1961,12 +_,15 @@
+@@ -1961,12 +_,16 @@
           p_20352_.boardingCooldown = 60;
           this.gameEvent(GameEvent.ENTITY_DISMOUNT, p_20352_);
        }
-+      return true; // CraftBukkit
++      ketting$removePassenger$returnValue = true;
++      return; // CraftBukkit
     }
  
     protected boolean canAddPassenger(Entity p_20354_) {
@@ -894,7 +902,7 @@
     }
  
     public int getTicksFrozen() {
-@@ -2254,11 +_,41 @@
+@@ -2254,11 +_,42 @@
  
     public void thunderHit(ServerLevel p_19927_, LightningBolt p_19928_) {
        this.setRemainingFireTicks(this.remainingFireTicks + 1);
@@ -913,7 +921,8 @@
 +         org.bukkit.event.entity.EntityCombustByEntityEvent entityCombustEvent = new org.bukkit.event.entity.EntityCombustByEntityEvent(stormBukkitEntity, thisBukkitEntity, 8);
 +         pluginManager.callEvent(entityCombustEvent);
 +         if (!entityCombustEvent.isCancelled()) {
-+            this.setSecondsOnFire(entityCombustEvent.getDuration(), false);
++            ketting$setSecondsOnFire$callEvent.set(false);
++            this.setSecondsOnFire(entityCombustEvent.getDuration());
 +         }
 +         // CraftBukkit end
 +      }
@@ -949,13 +958,10 @@
     }
  
     public boolean is(Entity p_20356_) {
-@@ -2410,36 +_,86 @@
+@@ -2408,38 +_,88 @@
+       this.portalEntrancePos = p_20362_.portalEntrancePos;
+    }
  
-    @Nullable
-    public Entity changeDimension(ServerLevel p_20118_) {
-+      return this.changeDimension(p_20118_, p_20118_.getPortalForcer());
-+   }
-+
 +   //Ketting start - bukkit function
 +   private Vec3 teleportTo$location;
 +   @Nullable
@@ -967,7 +973,11 @@
 +         this.teleportTo$location = null;
 +      }
 +   }
-+   //Ketting end
++
+    @Nullable
+    public Entity changeDimension(ServerLevel p_20118_) {
++      return changeDimension(p_20118_, p_20118_.getPortalForcer());
++   }
 +
 +   @Nullable
 +   public Entity changeDimension(ServerLevel p_20118_, net.minecraftforge.common.util.ITeleporter teleporter) {
@@ -976,6 +986,7 @@
           this.level().getProfiler().push("changeDimension");
 -         this.unRide();
 +         // CraftBukkit start
++         if (teleporter == null) teleporter = p_20118_.getPortalForcer();
 +         // this.unRide();
 +         if (p_20118_ == null) {
 +            return null;

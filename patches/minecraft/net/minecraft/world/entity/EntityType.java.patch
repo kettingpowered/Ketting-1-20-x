@@ -21,63 +21,41 @@
     private static <T extends Entity> EntityType<T> register(String p_20635_, EntityType.Builder<T> p_20636_) {
        return Registry.register(BuiltInRegistries.ENTITY_TYPE, p_20635_, p_20636_.build(p_20635_));
     }
-@@ -320,21 +_,34 @@
+@@ -320,6 +_,9 @@
     }
  
     public EntityType(EntityType.EntityFactory<T> p_273268_, MobCategory p_272918_, boolean p_273417_, boolean p_273389_, boolean p_273556_, boolean p_272654_, ImmutableSet<Block> p_273631_, EntityDimensions p_272946_, int p_272895_, int p_273451_, FeatureFlagSet p_273518_) {
--      this.factory = p_273268_;
--      this.category = p_272918_;
--      this.canSpawnFarFromPlayer = p_272654_;
--      this.serialize = p_273417_;
--      this.summon = p_273389_;
--      this.fireImmune = p_273556_;
--      this.immuneTo = p_273631_;
--      this.dimensions = p_272946_;
--      this.clientTrackingRange = p_272895_;
--      this.updateInterval = p_273451_;
--      this.requiredFeatures = p_273518_;
 +       this(p_273268_, p_272918_, p_273417_, p_273389_, p_273556_, p_272654_, p_273631_, p_272946_, p_272895_, p_273451_, p_273518_, EntityType::defaultVelocitySupplier, EntityType::defaultTrackingRangeSupplier, EntityType::defaultUpdateIntervalSupplier, null);
 +   }
-+   public EntityType(EntityType.EntityFactory<T> p_251402_, MobCategory p_251431_, boolean p_251439_, boolean p_251973_, boolean p_252007_, boolean p_250908_, ImmutableSet<Block> p_250201_, EntityDimensions p_251742_, int p_250479_, int p_249249_, FeatureFlagSet p_250427_, final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier, final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier, final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier, final java.util.function.BiFunction<net.minecraftforge.network.PlayMessages.SpawnEntity, Level, T> customClientFactory) {
-+      this.factory = p_251402_;
-+      this.category = p_251431_;
-+      this.canSpawnFarFromPlayer = p_250908_;
-+      this.serialize = p_251439_;
-+      this.summon = p_251973_;
-+      this.fireImmune = p_252007_;
-+      this.immuneTo = p_250201_;
-+      this.dimensions = p_251742_;
-+      this.clientTrackingRange = p_250479_;
-+      this.updateInterval = p_249249_;
-+      this.requiredFeatures = p_250427_;
++   public EntityType(EntityType.EntityFactory<T> p_273268_, MobCategory p_272918_, boolean p_273417_, boolean p_273389_, boolean p_273556_, boolean p_272654_, ImmutableSet<Block> p_273631_, EntityDimensions p_272946_, int p_272895_, int p_273451_, FeatureFlagSet p_273518_, final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier, final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier, final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier, final java.util.function.BiFunction<net.minecraftforge.network.PlayMessages.SpawnEntity, Level, T> customClientFactory) {
+       this.factory = p_273268_;
+       this.category = p_272918_;
+       this.canSpawnFarFromPlayer = p_272654_;
+@@ -331,10 +_,23 @@
+       this.clientTrackingRange = p_272895_;
+       this.updateInterval = p_273451_;
+       this.requiredFeatures = p_273518_;
 +      this.velocityUpdateSupplier = velocityUpdateSupplier;
 +      this.trackingRangeSupplier = trackingRangeSupplier;
 +      this.updateIntervalSupplier = updateIntervalSupplier;
 +      this.customClientFactory = customClientFactory;
-    }
- 
--   @Nullable
-    public T spawn(ServerLevel p_20593_, @Nullable ItemStack p_20594_, @Nullable Player p_20595_, BlockPos p_20596_, MobSpawnType p_20597_, boolean p_20598_, boolean p_20599_) {
-+      // CraftBukkit start
-+      return this.spawn(p_20593_, p_20594_, p_20595_, p_20596_, p_20597_, p_20598_, p_20599_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
 +   }
 +
-+      @Nullable
++   //Ketting start
++   @Nullable
 +   public T spawn(ServerLevel p_20593_, @Nullable ItemStack p_20594_, @Nullable Player p_20595_, BlockPos p_20596_, MobSpawnType p_20597_, boolean p_20598_, boolean p_20599_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
-+      // CraftBukkit end
++      ketting$spawn$spawnReason.set(spawnReason);
++      return this.spawn(p_20593_, p_20594_, p_20595_, p_20596_, p_20597_, p_20598_, p_20599_);
+    }
+ 
+    @Nullable
+    public T spawn(ServerLevel p_20593_, @Nullable ItemStack p_20594_, @Nullable Player p_20595_, BlockPos p_20596_, MobSpawnType p_20597_, boolean p_20598_, boolean p_20599_) {
++      ketting$spawn$spawnReason.compareAndSet(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
++   //Ketting end
        Consumer<T> consumer;
        CompoundTag compoundtag;
        if (p_20594_ != null) {
-@@ -346,7 +_,7 @@
-          compoundtag = null;
-       }
- 
--      return this.spawn(p_20593_, compoundtag, consumer, p_20596_, p_20597_, p_20598_, p_20599_);
-+      return this.spawn(p_20593_, compoundtag, consumer, p_20596_, p_20597_, p_20598_, p_20599_, spawnReason); // CraftBukkit end
-    }
- 
-    public static <T extends Entity> Consumer<T> createDefaultStackConfig(ServerLevel p_263583_, ItemStack p_263568_, @Nullable Player p_263575_) {
-@@ -367,20 +_,38 @@
+@@ -367,20 +_,40 @@
     public static <T extends Entity> Consumer<T> appendCustomEntityStackConfig(Consumer<T> p_263579_, ServerLevel p_263571_, ItemStack p_263582_, @Nullable Player p_263574_) {
        CompoundTag compoundtag = p_263582_.getTag();
        return compoundtag != null ? p_263579_.andThen((p_262558_) -> {
@@ -90,26 +68,29 @@
     @Nullable
     public T spawn(ServerLevel p_262634_, BlockPos p_262707_, MobSpawnType p_262597_) {
 -      return this.spawn(p_262634_, (CompoundTag)null, (Consumer<T>)null, p_262707_, p_262597_, false, false);
-+      // CraftBukkit start
-+      return this.spawn(p_262634_, p_262707_, p_262597_, ketting$spawn$spawnReason.getAndSet(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT));
+-   }
++      return this.spawn(p_262634_, (CompoundTag) null, null, p_262707_, p_262597_, false, false);
 +   }
 +
++   // CraftBukkit start
 +   @Nullable
-+   public T spawn(ServerLevel worldserver, BlockPos blockposition, MobSpawnType enummobspawn, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
-+      return this.spawn(worldserver, (CompoundTag) null, null, blockposition, enummobspawn, false, false, spawnReason); // CraftBukkit - decompile error
-+      // CraftBukkit end
-    }
- 
-    @Nullable
-    public T spawn(ServerLevel p_262704_, @Nullable CompoundTag p_262603_, @Nullable Consumer<T> p_262621_, BlockPos p_262672_, MobSpawnType p_262644_, boolean p_262690_, boolean p_262590_) {
-+      // CraftBukkit start
-+      return this.spawn(p_262704_, p_262603_, p_262621_, p_262672_, p_262644_, p_262690_, p_262590_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++   public T spawn(ServerLevel p_262634_, BlockPos p_262707_, MobSpawnType p_262597_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++      ketting$spawn$spawnReason.set(spawnReason);
++      return this.spawn(p_262634_, p_262707_, p_262597_);
 +   }
 +
 +   @Nullable
 +   public T spawn(ServerLevel p_262704_, @Nullable CompoundTag p_262603_, @Nullable Consumer<T> p_262621_, BlockPos p_262672_, MobSpawnType p_262644_, boolean p_262690_, boolean p_262590_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++      ketting$spawn$spawnReason.set(spawnReason);
++      return this.spawn(p_262704_, p_262603_, p_262621_, p_262672_, p_262644_, p_262690_, p_262590_);
++   }
++   // CraftBukkit end
+ 
+    @Nullable
+    public T spawn(ServerLevel p_262704_, @Nullable CompoundTag p_262603_, @Nullable Consumer<T> p_262621_, BlockPos p_262672_, MobSpawnType p_262644_, boolean p_262690_, boolean p_262590_) {
 +      // CraftBukkit end
        T t = this.create(p_262704_, p_262603_, p_262621_, p_262672_, p_262644_, p_262690_, p_262590_);
++      org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason = ketting$spawn$spawnReason.getAndSet(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
        if (t != null) {
 +         p_262704_.prepareAddFreshEntityWithPassengers(spawnReason);
           p_262704_.addFreshEntityWithPassengers(t);

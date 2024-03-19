@@ -28,26 +28,27 @@
     }
  
     public InteractionResult mobInteract(Player p_34394_, InteractionHand p_34395_) {
-@@ -171,8 +_,11 @@
+@@ -171,8 +_,12 @@
        this.conversionStarter = p_34384_;
        this.villagerConversionTime = p_34385_;
        this.getEntityData().set(DATA_CONVERTING_ID, true);
--      this.removeEffect(MobEffects.WEAKNESS);
++      ketting$removeEffect$cause.set(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION); //Ketting - CraftBukkit
+       this.removeEffect(MobEffects.WEAKNESS);
 +      // CraftBukkit start
-+      this.removeEffect(MobEffects.WEAKNESS, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
 +      this.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION); //Ketting
        this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, p_34385_, Math.min(this.level().getDifficulty().getId() - 1, 0)));
 +      // CraftBukkit end
        this.level().broadcastEntityEvent(this, (byte)16);
     }
  
-@@ -188,7 +_,13 @@
+@@ -188,7 +_,15 @@
     }
  
     private void finishConversion(ServerLevel p_34399_) {
--      Villager villager = this.convertTo(EntityType.VILLAGER, false);
++      ketting$convertTo$transformReason.set(org.bukkit.event.entity.EntityTransformEvent.TransformReason.CURED); //Ketting - CraftBukkit
++      ketting$convertTo$spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CURED); //Ketting - CraftBukkit
+       Villager villager = this.convertTo(EntityType.VILLAGER, false);
 +      // CraftBukkit start
-+      Villager villager = (Villager) this.convertTo(EntityType.VILLAGER, false, org.bukkit.event.entity.EntityTransformEvent.TransformReason.CURED, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CURED);
 +      if (villager == null) {
 +         ((org.bukkit.entity.ZombieVillager) getBukkitEntity()).setConversionTime(-1); // SPIGOT-5208: End conversion to stop event spam
 +         return;
