@@ -81,7 +81,6 @@
 +
 +      //Ketting start
 +      public static @Nullable ResourceKey<LevelStem> ketting$dimensionType;
-+      public final Path dimensionPath;
 +
 +      public void setDimensionType(ResourceKey<LevelStem> dimensionType) {
 +          this.dimensionType = dimensionType;
@@ -94,7 +93,6 @@
           this.lock = DirectoryLock.create(p_289988_);
 -      }
 +         //Ketting start
-+         this.dimensionPath = p_289988_;
 +         this.dimensionType = ketting$dimensionType;
 +         ketting$dimensionType = null;
 +      }
@@ -104,7 +102,6 @@
 +         this.dimensionType = dimensionType;
 +
 +         this.levelId = original.levelId;
-+         this.dimensionPath = original.dimensionPath;
 +         this.levelDirectory = original.levelDirectory;
 +         this.lock = original.lock;
 +         this.resources.putAll(original.resources);
@@ -168,3 +165,77 @@
        }
  
        public void deleteLevel() throws IOException {
+          this.checkLock();
+          final Path path = this.levelDirectory.lockFile();
+@@ -521,6 +_,58 @@
+ 
+       }
+ 
++      //Ketting start
++      public void deleteLevelSilent() throws IOException {
++         this.checkLock();
++         final Path path = this.levelDirectory.lockFile();
++         LevelStorageSource.LOGGER.debug("Deleting level {}", (Object)this.levelId);
++
++         for(int i = 1; i <= 5; ++i) {
++            LevelStorageSource.LOGGER.debug("Attempt {}...", (int)i);
++
++            try {
++               Files.walkFileTree(this.levelDirectory.path(), new SimpleFileVisitor<Path>() {
++                  public FileVisitResult visitFile(Path p_78323_, BasicFileAttributes p_78324_) throws IOException {
++                     if (!p_78323_.equals(path)) {
++                        LevelStorageSource.LOGGER.debug("Deleting {}", (Object)p_78323_);
++                        Files.delete(p_78323_);
++                     }
++
++                     return FileVisitResult.CONTINUE;
++                  }
++
++                  public FileVisitResult postVisitDirectory(Path p_78320_, @Nullable IOException p_78321_) throws IOException {
++                     if (p_78321_ != null) {
++                        throw p_78321_;
++                     } else {
++                        if (p_78320_.equals(LevelStorageAccess.this.levelDirectory.path())) {
++                           LevelStorageAccess.this.lock.close();
++                           Files.deleteIfExists(path);
++                        }
++
++                        Files.delete(p_78320_);
++                        return FileVisitResult.CONTINUE;
++                     }
++                  }
++               });
++               break;
++            } catch (IOException ioexception) {
++               if (i >= 5) {
++                  throw ioexception;
++               }
++
++               LevelStorageSource.LOGGER.debug("Failed to delete {}", this.levelDirectory.path(), ioexception);
++
++               try {
++                  Thread.sleep(500L);
++               } catch (InterruptedException interruptedexception) {
++               }
++            }
++         }
++
++      }
++      //Ketting end
++
+       public void renameLevel(String p_78298_) throws IOException {
+          this.checkLock();
+          Path path = this.levelDirectory.dataFile();
+@@ -570,5 +_,12 @@
+       public void close() throws IOException {
+          this.lock.close();
+       }
++
++      //Ketting start
++      public @Nullable LevelStorageSource reference;
++      public void setReference(LevelStorageSource levelstoragesource) {
++         this.reference = levelstoragesource;
++      }
++      //Ketting end
+    }
+ }
