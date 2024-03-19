@@ -222,6 +222,15 @@
 +            LevelStorageSource.LevelStorageAccess source;
 +            try {
 +               source = LevelStorageSource.createDefault(server.getWorldContainer().toPath()).validateAndCreateAccess(name, resourcekey);
++
++               if (org.kettingpowered.ketting.config.KettingConfig.getInstance().MERGE_WORLD_SYSTEMS.getValue()) {
++                  LevelStorageSource.LevelStorageAccess newSource = this.storageSource.reference.deriveFromSource(this.storageSource, resourcekey);
++
++                  if (org.kettingpowered.ketting.utils.WorldSystemConverter.needsConversion(source, resourcekey1))
++                     org.kettingpowered.ketting.utils.WorldSystemConverter.convert(source, newSource, resourcekey1);
++
++                  source = newSource;
++               }
 +            } catch (IOException | net.minecraft.world.level.validation.ContentValidationException e) {
 +               throw new RuntimeException(e);
 +            }
