@@ -91,11 +91,10 @@
     }
  
     private void readScoreboard(DimensionDataStorage p_129842_) {
-@@ -303,7 +_,19 @@
+@@ -303,6 +_,18 @@
  
     protected abstract boolean initServer() throws IOException;
  
--   protected void loadLevel() {
 +   //Ketting start
 +   private String loadLevel$worldName;
 +   protected void prepareLoadLevel(String worldName) {
@@ -108,10 +107,9 @@
 +   }
 +   //Ketting end
 +
-+   protected void loadLevel() { // CraftBukkit
+    protected void loadLevel() {
        if (!JvmProfiler.INSTANCE.isRunning()) {
        }
- 
 @@ -313,7 +_,14 @@
        ChunkProgressListener chunkprogresslistener = this.progressListenerFactory.create(11);
        this.createLevels(chunkprogresslistener);

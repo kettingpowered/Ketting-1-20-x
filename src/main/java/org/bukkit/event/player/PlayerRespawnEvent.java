@@ -111,6 +111,9 @@ public class PlayerRespawnEvent extends PlayerEvent {
         /**
          * When a plugin respawns the player.
          */
-        PLUGIN;
+        PLUGIN,
+        //Ketting start
+        OTHER;
+        //Ketting end
     }
 }
