@@ -139,7 +139,7 @@
        if (!serverleveldata.isInitialized()) {
           try {
              setInitialSpawn(serverlevel, serverleveldata, worldoptions.generateBonusChest(), flag);
-@@ -373,9 +_,57 @@
+@@ -373,9 +_,63 @@
           if (resourcekey != LevelStem.OVERWORLD) {
              ResourceKey<Level> resourcekey1 = ResourceKey.create(Registries.DIMENSION, resourcekey.location());
              DerivedLevelData derivedleveldata = new DerivedLevelData(this.worldData, serverleveldata);
@@ -172,10 +172,16 @@
 +
 +            LevelStorageSource.LevelStorageAccess source;
 +            try {
-+               if (org.kettingpowered.ketting.config.KettingConfig.getInstance().MERGE_WORLD_SYSTEMS.getValue())
-+                  source = this.storageSource.reference.deriveFromSource(this.storageSource, resourcekey);
-+               else
-+                  source = LevelStorageSource.createDefault(server.getWorldContainer().toPath()).validateAndCreateAccess(name, resourcekey);
++               source = LevelStorageSource.createDefault(server.getWorldContainer().toPath()).validateAndCreateAccess(name, resourcekey);
++
++               if (org.kettingpowered.ketting.config.KettingConfig.getInstance().MERGE_WORLD_SYSTEMS.getValue()) {
++                  LevelStorageSource.LevelStorageAccess newSource = this.storageSource.reference.deriveFromSource(this.storageSource, resourcekey);
++
++                  if (org.kettingpowered.ketting.utils.WorldSystemConverter.needsConversion(source, resourcekey1))
++                     org.kettingpowered.ketting.utils.WorldSystemConverter.convert(source, newSource, resourcekey1);
++
++                  source = newSource;
++               }
 +            } catch (IOException | net.minecraft.world.level.validation.ContentValidationException e) {
 +               throw new RuntimeException(e);
 +            }

@@ -41,6 +41,6 @@ public class KettingConfig extends AbstractConfig {
 
     public final BooleanValue OVERWRITE_FORGE_PERMISSIONS = new BooleanValue("forge.overwrite_forge_permissions", false, "--- WARNING - THIS WILL COMPLETELY DISABLE FORGE PERMISSION CHECKS ---  Overwrite Forge permissions with Bukkit permissions, makes it possible to use a permission manager plugin for modded commands. If true, Forge permissions will be set to 'forge.command.MODDEDCOMMAND' where MODDEDCOMMAND is the name of the modded command.");
 
-    public final BooleanValue MERGE_WORLD_SYSTEMS = new BooleanValue("ketting.merge_world_systems", false, "--- WARNING - THIS WILL BREAK EXISTING WORLDS ---  If true, this will attempt to merge both the Forge and Bukkit world system into one, making dimensions exist in the world folder, and Bukkit worlds in their own folder.");
+    public final BooleanValue MERGE_WORLD_SYSTEMS = new BooleanValue("ketting.merge_world_systems", false, "If true, this will attempt to merge both the Forge and Bukkit world system into one, making dimensions exist in the world folder, and Bukkit worlds in their own folder.");
     //End of config values
 }
