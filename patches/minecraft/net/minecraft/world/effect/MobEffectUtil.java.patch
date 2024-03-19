@@ -1,21 +1,25 @@
 --- a/net/minecraft/world/effect/MobEffectUtil.java
 +++ b/net/minecraft/world/effect/MobEffectUtil.java
-@@ -44,11 +_,18 @@
+@@ -43,12 +_,22 @@
+       return p_19589_.hasEffect(MobEffects.WATER_BREATHING) || p_19589_.hasEffect(MobEffects.CONDUIT_POWER);
     }
  
-    public static List<ServerPlayer> addEffectToPlayersAround(ServerLevel p_216947_, @Nullable Entity p_216948_, Vec3 p_216949_, double p_216950_, MobEffectInstance p_216951_, int p_216952_) {
-+      // CraftBukkit start
-+      return addEffectToPlayersAround(p_216947_, p_216948_, p_216949_, p_216950_, p_216951_, p_216952_, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN);
-+   }
-+
++   //Ketting start
++   public static final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.entity.EntityPotionEffectEvent.Cause> ketting$addEffectToPlayersAround$cause = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN);
++   @SuppressWarnings("unused") //Ketting - CB compat
 +   public static List<ServerPlayer> addEffectToPlayersAround(ServerLevel p_216947_, @Nullable Entity p_216948_, Vec3 p_216949_, double p_216950_, MobEffectInstance p_216951_, int p_216952_, org.bukkit.event.entity.EntityPotionEffectEvent.Cause cause) {
-+      // CraftBukkit end
++      ketting$addEffectToPlayersAround$cause.set(cause);
++      return addEffectToPlayersAround(p_216947_, p_216948_, p_216949_, p_216950_, p_216951_, p_216952_);
++   }
++   //Ketting end
++
+    public static List<ServerPlayer> addEffectToPlayersAround(ServerLevel p_216947_, @Nullable Entity p_216948_, Vec3 p_216949_, double p_216950_, MobEffectInstance p_216951_, int p_216952_) {
        MobEffect mobeffect = p_216951_.getEffect();
        List<ServerPlayer> list = p_216947_.getPlayers((p_267925_) -> {
           return p_267925_.gameMode.isSurvival() && (p_216948_ == null || !p_216948_.isAlliedTo(p_267925_)) && p_216949_.closerThan(p_267925_.position(), p_216950_) && (!p_267925_.hasEffect(mobeffect) || p_267925_.getEffect(mobeffect).getAmplifier() < p_216951_.getAmplifier() || p_267925_.getEffect(mobeffect).endsWithin(p_216952_ - 1));
        });
        list.forEach((p_238232_) -> {
-+         p_238232_.prepareAddEffect(cause); //Ketting
++         p_238232_.prepareAddEffect(ketting$addEffectToPlayersAround$cause.getAndSet(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN)); //Ketting
           p_238232_.addEffect(new MobEffectInstance(p_216951_), p_216948_);
        });
        return list;
