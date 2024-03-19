@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/MultifaceSpreader.java
 +++ b/net/minecraft/world/level/block/MultifaceSpreader.java
-@@ -136,14 +_,16 @@
+@@ -136,14 +_,19 @@
                 p_221702_.getChunk(p_221703_.pos()).markPosForPostprocessing(p_221703_.pos());
              }
  
@@ -16,6 +16,9 @@
 -   public static record SpreadPos(BlockPos pos, Direction face) {
 +   //Ketting - Todo: How do we fix this? Let's wait for an error to come around.
 +   public static record SpreadPos(BlockPos pos, Direction face, BlockPos source) { // CraftBukkit
++      public SpreadPos(BlockPos pos, Direction face){
++         this(pos, face, null);
++      }
     }
  
     @FunctionalInterface
