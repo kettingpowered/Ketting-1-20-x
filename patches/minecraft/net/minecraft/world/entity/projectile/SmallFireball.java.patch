@@ -12,7 +12,7 @@
     }
  
     public SmallFireball(Level p_37367_, double p_37368_, double p_37369_, double p_37370_, double p_37371_, double p_37372_, double p_37373_) {
-@@ -32,7 +_,14 @@
+@@ -32,7 +_,15 @@
           Entity entity = p_37386_.getEntity();
           Entity entity1 = this.getOwner();
           int i = entity.getRemainingFireTicks();
@@ -22,7 +22,8 @@
 +         entity.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (!event.isCancelled()) {
-+            entity.setSecondsOnFire(event.getDuration(), false);
++            entity.ketting$setSecondsOnFire$callEvent.set(false);
++            entity.setSecondsOnFire(event.getDuration());
 +         }
 +         // CraftBukkit end
           if (!entity.hurt(this.damageSources().fireball(this, entity1), 5.0F)) {

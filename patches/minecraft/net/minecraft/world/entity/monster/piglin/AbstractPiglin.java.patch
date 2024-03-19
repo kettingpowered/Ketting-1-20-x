@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
 +++ b/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
-@@ -93,9 +_,10 @@
+@@ -93,9 +_,9 @@
           ++this.timeInOverworld;
        } else {
           this.timeInOverworld = 0;
-+         this.timeInOverworld = 0;
        }
  
 -      if (this.timeInOverworld > 300) {
@@ -12,12 +11,13 @@
           this.playConvertedSound();
           this.finishConversion((ServerLevel)this.level());
        }
-@@ -107,9 +_,10 @@
+@@ -107,9 +_,12 @@
     }
  
     protected void finishConversion(ServerLevel p_34663_) {
--      ZombifiedPiglin zombifiedpiglin = this.convertTo(EntityType.ZOMBIFIED_PIGLIN, true);
-+      ZombifiedPiglin zombifiedpiglin = this.convertTo(EntityType.ZOMBIFIED_PIGLIN, true, org.bukkit.event.entity.EntityTransformEvent.TransformReason.PIGLIN_ZOMBIFIED, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.PIGLIN_ZOMBIFIED); // CraftBukkit - add spawn and transform reasons
++      ketting$convertTo$transformReason.set(org.bukkit.event.entity.EntityTransformEvent.TransformReason.PIGLIN_ZOMBIFIED); // Ketting
++      ketting$convertTo$spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.PIGLIN_ZOMBIFIED); // Ketting
+       ZombifiedPiglin zombifiedpiglin = this.convertTo(EntityType.ZOMBIFIED_PIGLIN, true);
        if (zombifiedpiglin != null) {
           zombifiedpiglin.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
 +         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin);

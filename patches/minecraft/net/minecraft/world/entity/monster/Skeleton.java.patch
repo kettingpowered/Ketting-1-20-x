@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/entity/monster/Skeleton.java
 +++ b/net/minecraft/world/entity/monster/Skeleton.java
-@@ -83,7 +_,7 @@
+@@ -83,6 +_,9 @@
     }
  
     protected void doFreezeConversion() {
--      this.convertTo(EntityType.STRAY, true);
-+      this.convertTo(EntityType.STRAY, true, org.bukkit.event.entity.EntityTransformEvent.TransformReason.FROZEN, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.FROZEN); // CraftBukkit - add spawn and transform reasons
++      // CraftBukkit - add spawn and transform reasons
++      ketting$convertTo$transformReason.set(org.bukkit.event.entity.EntityTransformEvent.TransformReason.FROZEN); //Ketting
++      ketting$convertTo$spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.FROZEN); //Ketting
+       this.convertTo(EntityType.STRAY, true);
        if (!this.isSilent()) {
           this.level().levelEvent((Player)null, 1048, this.blockPosition(), 0);
-       }
