@@ -1,35 +1,41 @@
 --- a/net/minecraft/world/item/LeadItem.java
 +++ b/net/minecraft/world/item/LeadItem.java
-@@ -24,7 +_,7 @@
+@@ -24,6 +_,7 @@
        if (blockstate.is(BlockTags.FENCES)) {
           Player player = p_42834_.getPlayer();
           if (!level.isClientSide && player != null) {
--            bindPlayerMobs(player, level, blockpos);
-+            bindPlayerMobs(player, level, blockpos, p_42834_.getHand()); // CraftBukkit - Pass hand
++            ketting$bindPlayerMobs$interactionHand.set(p_42834_.getHand());// Ketting - CraftBukkit - Pass hand
+             bindPlayerMobs(player, level, blockpos);
           }
  
-          return InteractionResult.sidedSuccess(level.isClientSide);
-@@ -33,7 +_,7 @@
+@@ -33,6 +_,14 @@
        }
     }
  
--   public static InteractionResult bindPlayerMobs(Player p_42830_, Level p_42831_, BlockPos p_42832_) {
-+   public static InteractionResult bindPlayerMobs(Player p_42830_, Level p_42831_, BlockPos p_42832_, net.minecraft.world.InteractionHand interactionHand) { // CraftBukkit - Add InteractionHand
++   //Ketting start
++   public static final java.util.concurrent.atomic.AtomicReference<net.minecraft.world.InteractionHand> ketting$bindPlayerMobs$interactionHand = new java.util.concurrent.atomic.AtomicReference<>(net.minecraft.world.InteractionHand.MAIN_HAND);
++   @SuppressWarnings("unused") //Ketting - CB compat
++   public static InteractionResult bindPlayerMobs(Player p_42830_, Level p_42831_, BlockPos p_42832_, net.minecraft.world.InteractionHand interactionHand) {
++      ketting$bindPlayerMobs$interactionHand.set(interactionHand);
++      return bindPlayerMobs(p_42830_, p_42831_, p_42832_);
++   }
++   //Ketting end
+    public static InteractionResult bindPlayerMobs(Player p_42830_, Level p_42831_, BlockPos p_42832_) {
        LeashFenceKnotEntity leashfenceknotentity = null;
        boolean flag = false;
-       double d0 = 7.0D;
-@@ -45,9 +_,26 @@
+@@ -45,9 +_,27 @@
           if (mob.getLeashHolder() == p_42830_) {
              if (leashfenceknotentity == null) {
                 leashfenceknotentity = LeashFenceKnotEntity.getOrCreateKnot(p_42831_, p_42832_);
 +
 +               // CraftBukkit start - fire HangingPlaceEvent
-+               org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R1.CraftEquipmentSlot.getHand(interactionHand);
++               org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R1.CraftEquipmentSlot.getHand(ketting$bindPlayerMobs$interactionHand.get());//Ketting
 +               org.bukkit.event.hanging.HangingPlaceEvent event = new org.bukkit.event.hanging.HangingPlaceEvent((org.bukkit.entity.Hanging) leashfenceknotentity.getBukkitEntity(), p_42830_ != null ? (org.bukkit.entity.Player) p_42830_.getBukkitEntity() : null, p_42831_.getWorld().getBlockAt(i, j, k), org.bukkit.block.BlockFace.SELF, hand);
 +               p_42831_.getCraftServer().getPluginManager().callEvent(event);
 +
 +               if (event.isCancelled()) {
 +                  leashfenceknotentity.discard();
++                  ketting$bindPlayerMobs$interactionHand.set(null);
 +                  return InteractionResult.PASS;
 +               }
 +               // CraftBukkit end
@@ -37,7 +43,7 @@
              }
  
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerLeashEntityEvent(mob, leashfenceknotentity, p_42830_, interactionHand).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerLeashEntityEvent(mob, leashfenceknotentity, p_42830_, ketting$bindPlayerMobs$interactionHand.get()).isCancelled()) {
 +               continue;
 +            }
 +            // CraftBukkit end
@@ -45,14 +51,11 @@
              mob.setLeashedTo(leashfenceknotentity, true);
              flag = true;
           }
-@@ -59,4 +_,10 @@
+@@ -57,6 +_,7 @@
+          p_42831_.gameEvent(GameEvent.BLOCK_ATTACH, p_42832_, GameEvent.Context.of(p_42830_));
+       }
  
++      ketting$bindPlayerMobs$interactionHand.set(net.minecraft.world.InteractionHand.MAIN_HAND); //Ketting
        return flag ? InteractionResult.SUCCESS : InteractionResult.PASS;
     }
-+
-+   // CraftBukkit start
-+   public static InteractionResult bindPlayerMobs(Player p_42830_, Level p_42831_, BlockPos p_42832_) {
-+      return bindPlayerMobs(p_42830_, p_42831_, p_42832_, net.minecraft.world.InteractionHand.MAIN_HAND);
-+   }
-+   // CraftBukkit end
  }
