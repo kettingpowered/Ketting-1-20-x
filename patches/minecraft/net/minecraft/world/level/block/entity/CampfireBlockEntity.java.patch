@@ -1,16 +1,5 @@
 --- a/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-@@ -29,8 +_,8 @@
-    private static final int BURN_COOL_SPEED = 2;
-    private static final int NUM_SLOTS = 4;
-    private final NonNullList<ItemStack> items = NonNullList.withSize(4, ItemStack.EMPTY);
--   private final int[] cookingProgress = new int[4];
--   private final int[] cookingTime = new int[4];
-+   public final int[] cookingProgress = new int[4];
-+   public final int[] cookingTime = new int[4];
-    private final RecipeManager.CachedCheck<Container, CampfireCookingRecipe> quickCheck = RecipeManager.createCheck(RecipeType.CAMPFIRE_COOKING);
- 
-    public CampfireBlockEntity(BlockPos p_155301_, BlockState p_155302_) {
 @@ -51,6 +_,20 @@
                    return p_270054_.assemble(container, p_155307_.registryAccess());
                 }).orElse(itemstack);

@@ -82,13 +82,15 @@
  
              for(int l = 0; l < 50; ++l) {
                 int i1 = i + Mth.nextInt(this.random, 7, 40) * Mth.nextInt(this.random, -1, 1);
-@@ -290,8 +_,10 @@
+@@ -290,8 +_,13 @@
                 if (NaturalSpawner.isSpawnPositionOk(spawnplacements$type, this.level(), blockpos, entitytype) && SpawnPlacements.checkSpawnRules(entitytype, serverlevel, MobSpawnType.REINFORCEMENT, blockpos, this.level().random)) {
                    zombie.setPos((double)i1, (double)j1, (double)k1);
                    if (!this.level().hasNearbyAlivePlayer((double)i1, (double)j1, (double)k1, 7.0D) && this.level().isUnobstructed(zombie) && this.level().noCollision(zombie) && !this.level().containsAnyLiquid(zombie.getBoundingBox())) {
--                     zombie.setTarget(livingentity);
-+                     if (livingentity != null)
-+                     zombie.setTarget(livingentity, org.bukkit.event.entity.EntityTargetEvent.TargetReason.REINFORCEMENT_TARGET, true); // CraftBukkit
++                     if (livingentity != null){
++                        zombie.ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.REINFORCEMENT_TARGET);
++                        zombie.ketting$setTarget$fireEvent.set(true);
+                      zombie.setTarget(livingentity);
++                     }
                       zombie.finalizeSpawn(serverlevel, this.level().getCurrentDifficultyAt(zombie.blockPosition()), MobSpawnType.REINFORCEMENT, (SpawnGroupData)null, (CompoundTag)null);
 +                     serverlevel.prepareAddFreshEntityWithPassengers(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.REINFORCEMENTS);
                       serverlevel.addFreshEntityWithPassengers(zombie);

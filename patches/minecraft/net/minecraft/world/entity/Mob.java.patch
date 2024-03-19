@@ -25,17 +25,34 @@
     protected void registerGoals() {
     }
  
-@@ -229,7 +_,42 @@
+@@ -228,8 +_,61 @@
+       return this.target;
     }
  
-    public void setTarget(@Nullable LivingEntity p_21544_) {
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.entity.EntityTargetEvent.TargetReason> ketting$setTarget$reason = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN);
++   public final java.util.concurrent.atomic.AtomicBoolean ketting$setTarget$fireEvent = new java.util.concurrent.atomic.AtomicBoolean(true);
++   public boolean ketting$setTarget$result = false;
++   
++   public boolean setTarget(@Nullable LivingEntity p_21544_, @Nullable org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent) {
++      if (reason != null) ketting$setTarget$reason.set(reason);
++      ketting$setTarget$fireEvent.set(fireEvent);
 +      // CraftBukkit start - fire event
-+      setTarget(p_21544_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN, true);
++      setTarget(p_21544_);
++      return ketting$setTarget$result;
 +   }
++   //Ketting end
 +
-+   public boolean setTarget(@Nullable LivingEntity p_21544_, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent) {
-+      if (getTarget() == p_21544_) return false;
-+      if (fireEvent) {
+    public void setTarget(@Nullable LivingEntity p_21544_) {
++      if (getTarget() == p_21544_) {
++         ketting$setTarget$result = false;
++         ketting$setTarget$fireEvent.set(true);
++         ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN);
++         return;
++      }
++      if (ketting$setTarget$fireEvent.getAndSet(true)) {
++         org.bukkit.event.entity.EntityTargetEvent.TargetReason reason = ketting$setTarget$reason.getAndSet(org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN);
++         if (reason == null) reason = org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN;
 +         if (reason == org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN && getTarget() != null && p_21544_ == null) {
 +            reason = getTarget().isAlive() ? org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET : org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_DIED;
 +         }
@@ -52,7 +69,8 @@
 +         org.bukkit.event.entity.EntityTargetLivingEntityEvent event = new org.bukkit.event.entity.EntityTargetLivingEntityEvent(this.getBukkitEntity(), ctarget, reason);
 +         this.level().getCraftServer().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
-+            return false;
++            ketting$setTarget$result = false;
++            return;
 +         }
 +
 +         if (event.getTarget() != null) {
@@ -63,7 +81,8 @@
 +      }
 +
        this.target = p_21544_;
-+      return true;
++      ketting$setTarget$result = true;
++      return;
 +      // CraftBukkit end
     }
  

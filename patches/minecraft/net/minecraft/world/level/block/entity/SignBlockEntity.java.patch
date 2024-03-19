@@ -24,12 +24,18 @@
        }
     }
  
-@@ -156,7 +_,8 @@
+@@ -156,7 +_,15 @@
        return this.setText(p_277877_.apply(signtext), p_277426_);
     }
  
--   private SignText setMessages(Player p_277396_, List<FilteredText> p_277744_, SignText p_277359_) {
++   //Ketting start
++   private final java.util.concurrent.atomic.AtomicBoolean ketting$setMessages$front = new java.util.concurrent.atomic.AtomicBoolean(true);
 +   private SignText setMessages(Player p_277396_, List<FilteredText> p_277744_, SignText p_277359_, boolean front) { // CraftBukkit
++      ketting$setMessages$front.set(front);
++      return setMessages(p_277396_, p_277744_, p_277359_);
++   }
++   //Ketting end
+    private SignText setMessages(Player p_277396_, List<FilteredText> p_277744_, SignText p_277359_) {
 +      SignText originalText = p_277359_; // CraftBukkit
        for(int i = 0; i < p_277744_.size(); ++i) {
           FilteredText filteredtext = p_277744_.get(i);
@@ -46,7 +52,7 @@
 +         lines[i] = org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage.fromComponent(p_277359_.getMessage(i, p_277396_.isTextFilteringEnabled()));
 +      }
 +
-+      org.bukkit.event.block.SignChangeEvent event = new org.bukkit.event.block.SignChangeEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(this.level, this.worldPosition), player, lines.clone(), (front) ? org.bukkit.block.sign.Side.FRONT : org.bukkit.block.sign.Side.BACK);
++      org.bukkit.event.block.SignChangeEvent event = new org.bukkit.event.block.SignChangeEvent(org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.at(this.level, this.worldPosition), player, lines.clone(), (ketting$setMessages$front.getAndSet(true)) ? org.bukkit.block.sign.Side.FRONT : org.bukkit.block.sign.Side.BACK);
 +      p_277396_.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) {

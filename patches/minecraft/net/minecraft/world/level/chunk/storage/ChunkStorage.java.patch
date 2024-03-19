@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/chunk/storage/ChunkStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/ChunkStorage.java
+@@ -19,6 +_,8 @@
+ import net.minecraft.world.level.levelgen.structure.LegacyStructureDataHandler;
+ import net.minecraft.world.level.storage.DimensionDataStorage;
+ 
++//Ketting - Todo: this whole class is a nightmare for method head and mixin compat. 
++//             Idk how to make it compatible, so leave it, until there's an error here.
+ public class ChunkStorage implements AutoCloseable {
+    public static final int LAST_MONOLYTH_STRUCTURE_DATA_VERSION = 1493;
+    private final IOWorker worker;
 @@ -35,8 +_,53 @@
        return this.worker.isOldChunkAround(p_223452_, p_223453_);
     }

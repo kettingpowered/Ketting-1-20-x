@@ -17,22 +17,29 @@
        }
  
     }
-@@ -64,17 +_,39 @@
+@@ -63,18 +_,46 @@
+       lowerFillLevel(p_153556_, p_153557_, p_153558_);
     }
  
-    public static void lowerFillLevel(BlockState p_153560_, Level p_153561_, BlockPos p_153562_) {
++   private static final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason> ketting$lowerFillLevel$reason = new java.util.concurrent.atomic.AtomicReference<>(null);
++   private static final java.util.concurrent.atomic.AtomicReference<Entity> ketting$lowerFillLevel$entity = new java.util.concurrent.atomic.AtomicReference<>(null);
++   private static boolean ketting$lowerFillLevel$result = false;
++   public static boolean lowerFillLevel(BlockState p_153560_, Level p_153561_, BlockPos p_153562_, Entity entity, org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason reason) {
++      ketting$lowerFillLevel$reason.set(reason);
++      ketting$lowerFillLevel$entity.set(entity);
 +      // CraftBukkit start
-+      lowerFillLevel(p_153560_, p_153561_, p_153562_, null, org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason.UNKNOWN);
++      lowerFillLevel(p_153560_, p_153561_, p_153562_);
++      return ketting$lowerFillLevel$result;
 +   }
 +
-+   public static boolean lowerFillLevel(BlockState p_153560_, Level p_153561_, BlockPos p_153562_, Entity entity, org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason reason) {
+    public static void lowerFillLevel(BlockState p_153560_, Level p_153561_, BlockPos p_153562_) {
        int i = p_153560_.getValue(LEVEL) - 1;
 -      BlockState blockstate = i == 0 ? Blocks.CAULDRON.defaultBlockState() : p_153560_.setValue(LEVEL, Integer.valueOf(i));
 -      p_153561_.setBlockAndUpdate(p_153562_, blockstate);
 -      p_153561_.gameEvent(GameEvent.BLOCK_CHANGE, p_153562_, GameEvent.Context.of(blockstate));
 -   }
 +      BlockState blockstate = i == 0 ? Blocks.CAULDRON.defaultBlockState() : p_153560_.setValue(LEVEL, i);
-+      return changeLevel(p_153560_, p_153561_, p_153562_, blockstate, entity, reason);
++      ketting$lowerFillLevel$result = changeLevel(p_153560_, p_153561_, p_153562_, blockstate, ketting$lowerFillLevel$entity.getAndSet(null), ketting$lowerFillLevel$reason.getAndSet(org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason.UNKNOWN));
 +   }
 +
 +   // CraftBukkit start
@@ -42,7 +49,7 @@
 +
 +      org.bukkit.event.block.CauldronLevelChangeEvent event = new org.bukkit.event.block.CauldronLevelChangeEvent(
 +              world.getWorld().getBlockAt(blockposition.getX(), blockposition.getY(), blockposition.getZ()),
-+              (entity == null) ? null : entity.getBukkitEntity(), reason, newState
++              (entity == null) ? null : entity.getBukkitEntity(), (reason == null) ? org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason.UNKNOWN : reason, newState
 +      );
 +      world.getCraftServer().getPluginManager().callEvent(event);
 +      if (event.isCancelled()) {

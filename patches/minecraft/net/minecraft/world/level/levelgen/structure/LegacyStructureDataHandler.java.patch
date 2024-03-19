@@ -1,11 +1,14 @@
 --- a/net/minecraft/world/level/levelgen/structure/LegacyStructureDataHandler.java
 +++ b/net/minecraft/world/level/levelgen/structure/LegacyStructureDataHandler.java
-@@ -202,13 +_,13 @@
+@@ -202,13 +_,16 @@
        }
     }
  
 -   public static LegacyStructureDataHandler getLegacyStructureHandler(ResourceKey<Level> p_71332_, @Nullable DimensionDataStorage p_71333_) {
 -      if (p_71332_ == Level.OVERWORLD) {
++   //Ketting - Todo: yes, this is a potential mixin inject error.
++   //                Patching this out seems to be hard, though.
++   //                For now we'll just hope nobody needs the mixin into the original method.
 +   public static LegacyStructureDataHandler getLegacyStructureHandler(ResourceKey<net.minecraft.world.level.dimension.LevelStem> p_71332_, @Nullable DimensionDataStorage p_71333_) { // CraftBukkit
 +      if (p_71332_ == net.minecraft.world.level.dimension.LevelStem.OVERWORLD) { // CraftBukkit
           return new LegacyStructureDataHandler(p_71333_, ImmutableList.of("Monument", "Stronghold", "Village", "Mineshaft", "Temple", "Mansion"), ImmutableList.of("Village", "Mineshaft", "Mansion", "Igloo", "Desert_Pyramid", "Jungle_Pyramid", "Swamp_Hut", "Stronghold", "Monument"));

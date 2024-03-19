@@ -49,45 +49,50 @@
        });
     }
  
-@@ -186,6 +_,12 @@
+@@ -185,6 +_,13 @@
+ 
     }
  
-    private boolean storeChunkSections(long p_157513_, Consumer<T> p_157514_) {
-+      // CraftBukkit start - add boolean for event call
-+      return storeChunkSections(p_157513_, p_157514_, false);
-+   }
-+
++   private final java.util.concurrent.atomic.AtomicBoolean ketting$storeChunkSections$callEvent = new java.util.concurrent.atomic.AtomicBoolean(false);
 +   private boolean storeChunkSections(long p_157513_, Consumer<T> p_157514_, boolean callEvent) {
-+      // CraftBukkit end
++      ketting$storeChunkSections$callEvent.set(callEvent);
++      // CraftBukkit start - add boolean for event call
++      return storeChunkSections(p_157513_, p_157514_);
++   }
++   
+    private boolean storeChunkSections(long p_157513_, Consumer<T> p_157514_) {
        PersistentEntitySectionManager.ChunkLoadStatus persistententitysectionmanager$chunkloadstatus = this.chunkLoadStatuses.get(p_157513_);
        if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.PENDING) {
-          return false;
-@@ -195,6 +_,7 @@
+@@ -195,16 +_,20 @@
           }).collect(Collectors.toList());
           if (list.isEmpty()) {
              if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.LOADED) {
-+               if (callEvent) org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntitiesUnloadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) permanentStorage).level, new ChunkPos(p_157513_), ImmutableList.of()); // CraftBukkit
++               if (ketting$storeChunkSections$callEvent.get()) org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntitiesUnloadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) permanentStorage).level, new ChunkPos(p_157513_), ImmutableList.of()); // CraftBukkit
                 this.permanentStorage.storeEntities(new ChunkEntities<>(new ChunkPos(p_157513_), ImmutableList.of()));
              }
- 
-@@ -203,6 +_,7 @@
+-
++            ketting$storeChunkSections$callEvent.set(false);
+             return true;
+          } else if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.FRESH) {
++            ketting$storeChunkSections$callEvent.set(false);
              this.requestChunkLoad(p_157513_);
              return false;
           } else {
-+            if (callEvent) org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntitiesUnloadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) permanentStorage).level, new ChunkPos(p_157513_), list.stream().map(entity -> (Entity) entity).collect(Collectors.toList())); // CraftBukkit
++            if (ketting$storeChunkSections$callEvent.get()) org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntitiesUnloadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) permanentStorage).level, new ChunkPos(p_157513_), list.stream().map(entity -> (Entity) entity).collect(Collectors.toList())); // CraftBukkit
              this.permanentStorage.storeEntities(new ChunkEntities<>(new ChunkPos(p_157513_), list));
              list.forEach(p_157514_);
++            ketting$storeChunkSections$callEvent.set(false);
              return true;
-@@ -222,7 +_,8 @@
+          }
+       }
+@@ -220,6 +_,7 @@
+    }
+ 
     private boolean processChunkUnload(long p_157569_) {
++      ketting$storeChunkSections$callEvent.set(true);
        boolean flag = this.storeChunkSections(p_157569_, (p_157595_) -> {
           p_157595_.getPassengersAndSelf().forEach(this::unloadEntity);
--      });
-+      }, true); // CraftBukkit - add boolean for event call
-+
-       if (!flag) {
-          return false;
-       } else {
+       });
 @@ -247,8 +_,13 @@
        while((chunkentities = this.loadingInbox.poll()) != null) {
           chunkentities.getEntities().forEach((p_157593_) -> {
@@ -102,22 +107,22 @@
        }
  
     }
-@@ -300,7 +_,14 @@
+@@ -299,7 +_,15 @@
+       this.permanentStorage.flush(true);
     }
  
-    public void close() throws IOException {
--      this.saveAll();
-+      // CraftBukkit start - add save boolean
-+      close(true);
-+   }
-+
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicBoolean ketting$close$save = new java.util.concurrent.atomic.AtomicBoolean(true);
 +   public void close(boolean save) throws IOException {
-+      if (save)
-+         this.saveAll();
-+      // CraftBukkit end
++      ketting$close$save.set(save);
++      close();
++   }
+    public void close() throws IOException {
++      if(ketting$close$save.getAndSet(true))
++      //Ketting end
+       this.saveAll();
        this.permanentStorage.close();
     }
- 
 @@ -349,11 +_,13 @@
  
     class Callback implements EntityInLevelCallback {

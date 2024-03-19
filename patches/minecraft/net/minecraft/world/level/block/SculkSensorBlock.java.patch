@@ -51,7 +51,7 @@
        p_277340_.setBlock(p_277386_, p_277799_.setValue(PHASE, SculkSensorPhase.ACTIVE).setValue(POWER, Integer.valueOf(p_277993_)), 3);
        p_277340_.scheduleTick(p_277386_, p_277799_.getBlock(), this.getActiveTicks());
        updateNeighbours(p_277340_, p_277386_, p_277799_);
-@@ -252,9 +_,21 @@
+@@ -252,9 +_,22 @@
  
     public void spawnAfterBreak(BlockState p_222142_, ServerLevel p_222143_, BlockPos p_222144_, ItemStack p_222145_, boolean p_222146_) {
        super.spawnAfterBreak(p_222142_, p_222143_, p_222144_, p_222145_, p_222146_);
@@ -63,7 +63,8 @@
 +   @Override
 +   public int getExpDrop(BlockState iblockdata, ServerLevel worldserver, BlockPos blockposition, ItemStack itemstack, boolean flag) {
 +      if (flag) {
-+         return this.tryDropExperienceInt(worldserver, blockposition, itemstack, ConstantInt.of(5));
++         this.tryDropExperience(worldserver, blockposition, itemstack, ConstantInt.of(5));
++         return ketting$tryDropExperience$result;
        }
  
 +      return 0;

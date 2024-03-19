@@ -10,7 +10,7 @@
  
     public void playerDestroy(Level p_49584_, Player p_49585_, BlockPos p_49586_, BlockState p_49587_, @Nullable BlockEntity p_49588_, ItemStack p_49589_) {
        super.playerDestroy(p_49584_, p_49585_, p_49586_, p_49587_, p_49588_, p_49589_);
-@@ -89,11 +_,12 @@
+@@ -89,10 +_,13 @@
        List<Bee> list = p_49650_.getEntitiesOfClass(Bee.class, (new AABB(p_49651_)).inflate(8.0D, 6.0D, 8.0D));
        if (!list.isEmpty()) {
           List<Player> list1 = p_49650_.getEntitiesOfClass(Player.class, (new AABB(p_49651_)).inflate(8.0D, 6.0D, 8.0D));
@@ -19,11 +19,11 @@
  
           for(Bee bee : list) {
              if (bee.getTarget() == null) {
--               bee.setTarget(list1.get(p_49650_.random.nextInt(i)));
-+               bee.setTarget(list1.get(p_49650_.random.nextInt(i)), org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true); // CraftBukkit
++               bee.ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER);
++               bee.ketting$setTarget$fireEvent.set(true);
+                bee.setTarget(list1.get(p_49650_.random.nextInt(i)));
              }
           }
-       }
 @@ -110,7 +_,7 @@
        boolean flag = false;
        if (i >= 5) {

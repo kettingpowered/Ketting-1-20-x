@@ -58,30 +58,19 @@
     }
  
     public TickContainerAccess<Block> getBlockTicks() {
-@@ -208,7 +_,30 @@
+@@ -208,7 +_,19 @@
        }
     }
  
 -   @Nullable
 +   // CraftBukkit start
 +   //Ketting start - reverse delegation
-+   private boolean setBlockState$doPlace = true;
-+   
-+   public void prepareSetBlockState(boolean doPlace){
-+      setBlockState$doPlace = doPlace;
-+   }
-+   public void resetSetBlockState(){
-+      setBlockState$doPlace = true;
-+   }
++   public final java.util.concurrent.atomic.AtomicBoolean ketting$setBlockState$doPlace = new java.util.concurrent.atomic.AtomicBoolean(true);
 +   
 +   @Nullable
 +   public BlockState setBlockState(BlockPos p_62865_, BlockState p_62866_, boolean p_62867_, boolean doPlace) {
-+      setBlockState$doPlace = doPlace;
-+      try{
-+         return setBlockState(p_62865_, p_62866_, p_62867_);
-+      }finally {
-+         setBlockState$doPlace = true; //default
-+      }
++      ketting$setBlockState$doPlace.set(doPlace);
++      return setBlockState(p_62865_, p_62866_, p_62867_);
 +   }
 +   //Ketting end
 +   // CraftBukkit end
@@ -104,8 +93,8 @@
              } else {
 -               if (!this.level.isClientSide) {
 +               // CraftBukkit - Don't place while processing the BlockPlaceEvent, unless it's a BlockContainer. Prevents blocks such as TNT from activating when cancelled.
-+               //Ketting - combine forge and bukkit snapshot caoture
-+               if (!this.level.isClientSide && setBlockState$doPlace && (!this.level.captureBlockSnapshots || (!this.level.captureBlockStates || block instanceof net.minecraft.world.level.block.BaseEntityBlock))) {
++               //Ketting - combine forge and bukkit snapshot capture. Also query doPlace first, so it always gets reset
++               if (ketting$setBlockState$doPlace.getAndSet(true) && !this.level.isClientSide && (!this.level.captureBlockSnapshots || (!this.level.captureBlockStates || block instanceof net.minecraft.world.level.block.BaseEntityBlock))) {
                    p_62866_.onPlace(this.level, p_62865_, blockstate, p_62867_);
                 }
  

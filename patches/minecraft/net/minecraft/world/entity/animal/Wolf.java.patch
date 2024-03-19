@@ -47,16 +47,16 @@
              return InteractionResult.SUCCESS;
           } else {
              if (item instanceof DyeItem) {
-@@ -353,7 +_,7 @@
+@@ -353,6 +_,8 @@
                 this.setOrderedToSit(!this.isOrderedToSit());
                 this.jumping = false;
                 this.navigation.stop();
--               this.setTarget((LivingEntity)null);
-+               this.setTarget((LivingEntity)null, org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit - reason
++               ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET);
++               ketting$setTarget$fireEvent.set(true);
+                this.setTarget((LivingEntity)null);
                 return InteractionResult.SUCCESS;
              } else {
-                return interactionresult;
-@@ -364,10 +_,11 @@
+@@ -364,10 +_,13 @@
              itemstack.shrink(1);
           }
  
@@ -66,7 +66,9 @@
              this.tame(p_30412_);
              this.navigation.stop();
 -            this.setTarget((LivingEntity)null);
-+            this.setTarget((LivingEntity) null, org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit - reason
++            ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET);
++            ketting$setTarget$fireEvent.set(true);
++            this.setTarget((LivingEntity) null);
              this.setOrderedToSit(true);
              this.level().broadcastEntityEvent(this, (byte)7);
           } else {

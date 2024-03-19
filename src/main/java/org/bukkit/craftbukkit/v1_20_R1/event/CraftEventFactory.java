@@ -842,6 +842,7 @@ public class CraftEventFactory {
 
     public static AtomicBoolean handleBlockSpreadUpdate = new AtomicBoolean(true); // Ketting
     public static boolean handleBlockSpreadEvent(LevelAccessor world, BlockPos source, BlockPos target, net.minecraft.world.level.block.state.BlockState block, int flag) {
+        if (source == null) return true; //Ketting
         // Suppress during worldgen
         if (!(world instanceof Level)) {
             world.setBlock(target, block, flag);
@@ -1256,6 +1257,7 @@ public class CraftEventFactory {
     }
 
     public static boolean callEntityChangeBlockEvent(Entity entity, BlockPos position, net.minecraft.world.level.block.state.BlockState newBlock) {
+        if (entity == null) return true; //Ketting
         return callEntityChangeBlockEvent(entity, position, newBlock, false);
     }
 

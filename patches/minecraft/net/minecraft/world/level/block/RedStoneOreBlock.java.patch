@@ -1,18 +1,20 @@
 --- a/net/minecraft/world/level/block/RedStoneOreBlock.java
 +++ b/net/minecraft/world/level/block/RedStoneOreBlock.java
-@@ -30,13 +_,27 @@
+@@ -30,13 +_,31 @@
     }
  
     public void attack(BlockState p_55467_, Level p_55468_, BlockPos p_55469_, Player p_55470_) {
--      interact(p_55467_, p_55468_, p_55469_);
-+      interact(p_55467_, p_55468_, p_55469_, p_55470_); // CraftBukkit - add player
++      interact$entity = p_55470_; // CraftBukkit - add player
+       interact(p_55467_, p_55468_, p_55469_);
++      interact$entity = null; //Ketting
        super.attack(p_55467_, p_55468_, p_55469_, p_55470_);
     }
  
     public void stepOn(Level p_154299_, BlockPos p_154300_, BlockState p_154301_, Entity p_154302_) {
        if (!p_154302_.isSteppingCarefully()) {
--         interact(p_154301_, p_154299_, p_154300_);
-+         interact(p_154301_, p_154299_, p_154300_, p_154302_);
++         interact$entity = p_154302_; // CraftBukkit - add player
+          interact(p_154301_, p_154299_, p_154300_);
++         interact$entity = null; //Ketting
 +         // CraftBukkit start
 +         if (p_154302_ instanceof Player) {
 +            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerInteractEvent((Player) p_154302_, org.bukkit.event.block.Action.PHYSICAL, p_154300_, null, null, null);
@@ -30,12 +32,16 @@
        }
  
        super.stepOn(p_154299_, p_154300_, p_154301_, p_154302_);
-@@ -46,16 +_,30 @@
+@@ -46,16 +_,34 @@
        if (p_55473_.isClientSide) {
           spawnParticles(p_55473_, p_55474_);
        } else {
 -         interact(p_55472_, p_55473_, p_55474_);
-+         interact(p_55472_, p_55473_, p_55474_, p_55475_); // CraftBukkit - add player
++         interact$entity = p_55475_; 
++         // CraftBukkit - add player
++         interact(p_55472_, p_55473_, p_55474_); 
++         interact$entity = null; //Ketting
++
        }
  
        ItemStack itemstack = p_55475_.getItemInHand(p_55476_);

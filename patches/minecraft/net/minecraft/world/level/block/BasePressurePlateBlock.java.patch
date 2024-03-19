@@ -19,22 +19,21 @@
        if (p_152148_ != i) {
           BlockState blockstate = this.setSignalForState(p_152147_, i);
           p_152145_.setBlock(p_152146_, blockstate, 2);
-@@ -124,9 +_,15 @@
+@@ -124,9 +_,16 @@
     }
  
     protected static int getEntityCount(Level p_289656_, AABB p_289647_, Class<? extends Entity> p_289686_) {
--      return p_289656_.getEntitiesOfClass(p_289686_, p_289647_, EntitySelector.NO_SPECTATORS.and((p_289691_) -> {
--         return !p_289691_.isIgnoringBlockTriggers();
--      })).size();
 +      // CraftBukkit start
 +      return getEntities(p_289656_, p_289647_, p_289686_).size();
 +   }
 +
-+   protected static <T extends Entity> java.util.List<T> getEntities(Level world, AABB axisalignedbb, Class<T> oclass) {
++   protected static <T extends Entity> java.util.List<T> getEntities(Level p_289656_, AABB p_289647_, Class<T> p_289686_) {
 +      // CraftBukkit end
-+      return world.getEntitiesOfClass(oclass, axisalignedbb, EntitySelector.NO_SPECTATORS.and((entity) -> {
-+         return !entity.isIgnoringBlockTriggers();
-+      })); // CraftBukkit
+       return p_289656_.getEntitiesOfClass(p_289686_, p_289647_, EntitySelector.NO_SPECTATORS.and((p_289691_) -> {
+          return !p_289691_.isIgnoringBlockTriggers();
+-      })).size();
++      })); 
++      // CraftBukkit
     }
  
     protected abstract int getSignalStrength(Level p_49336_, BlockPos p_49337_);

@@ -9,41 +9,50 @@
           return Pair.of(primaryleveldata, worlddimensions$complete);
        };
     }
-@@ -334,24 +_,52 @@
+@@ -333,18 +_,42 @@
+       return this.backupDir;
     }
  
-    public LevelStorageSource.LevelStorageAccess validateAndCreateAccess(String p_289980_) throws IOException, ContentValidationException {
-+      return this.validateAndCreateAccess(p_289980_, null);
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicReference<ResourceKey<LevelStem>> ketting$validateAndCreateAccess$dimensionType = new java.util.concurrent.atomic.AtomicReference<>(null);
++   public LevelStorageSource.LevelStorageAccess validateAndCreateAccess(String p_289980_, ResourceKey<LevelStem> dimensionType) throws IOException, ContentValidationException {
++      ketting$validateAndCreateAccess$dimensionType.set(dimensionType);
++      return validateAndCreateAccess(p_289980_);
 +   }
++   //Ketting end
 +
-+   public LevelStorageSource.LevelStorageAccess validateAndCreateAccess(String p_289980_, ResourceKey<LevelStem> dimensionType) throws IOException, ContentValidationException { // CraftBukkit
+    public LevelStorageSource.LevelStorageAccess validateAndCreateAccess(String p_289980_) throws IOException, ContentValidationException {
        Path path = this.getLevelPath(p_289980_);
        List<ForbiddenSymlinkInfo> list = this.worldDirValidator.validateSave(path, true);
        if (!list.isEmpty()) {
           throw new ContentValidationException(path, list);
        } else {
--         return new LevelStorageSource.LevelStorageAccess(p_289980_, path);
-+         return new LevelStorageSource.LevelStorageAccess(p_289980_, path, dimensionType); // CraftBukkit
++         LevelStorageAccess.ketting$dimensionType = ketting$validateAndCreateAccess$dimensionType.getAndSet(null);
+          return new LevelStorageSource.LevelStorageAccess(p_289980_, path);
        }
     }
-+
+ 
 +   //Ketting start - try merging both world systems
 +   public LevelStorageSource.LevelStorageAccess deriveFromSource(LevelStorageSource.LevelStorageAccess source, ResourceKey<LevelStem> dimensionType) throws IOException {
 +      return new LevelStorageSource.LevelStorageAccess(source, dimensionType);
 +   }
-+   //Ketting end
- 
-    public LevelStorageSource.LevelStorageAccess createAccess(String p_78261_) throws IOException {
-+      return this.createAccess(p_78261_, null);
-+   }
 +
++   public final java.util.concurrent.atomic.AtomicReference<ResourceKey<LevelStem>> ketting$createAccess$dimensionType = new java.util.concurrent.atomic.AtomicReference<>(null);
++
++   @SuppressWarnings("unused") //Ketting - CB compat
 +   public LevelStorageSource.LevelStorageAccess createAccess(String p_78261_, ResourceKey<LevelStem> dimensionType) throws IOException { // CraftBukkit
++      ketting$createAccess$dimensionType.set(dimensionType);
++      return this.createAccess(p_78261_);
++   }
++   //Ketting end
++
+    public LevelStorageSource.LevelStorageAccess createAccess(String p_78261_) throws IOException {
        Path path = this.getLevelPath(p_78261_);
--      return new LevelStorageSource.LevelStorageAccess(p_78261_, path);
-+      return new LevelStorageSource.LevelStorageAccess(p_78261_, path, dimensionType); // CraftBukkit
++      LevelStorageAccess.ketting$dimensionType = ketting$createAccess$dimensionType.getAndSet(null); //Ketting
+       return new LevelStorageSource.LevelStorageAccess(p_78261_, path);
     }
  
-    public DirectoryValidator getWorldDirValidator() {
+@@ -352,6 +_,20 @@
        return this.worldDirValidator;
     }
  
@@ -64,23 +73,33 @@
     public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> levels) implements Iterable<LevelStorageSource.LevelDirectory> {
        public boolean isEmpty() {
           return this.levels.isEmpty();
-@@ -397,9 +_,34 @@
+@@ -397,12 +_,45 @@
        public final LevelStorageSource.LevelDirectory levelDirectory;
        private final String levelId;
        private final Map<LevelResource, Path> resources = Maps.newHashMap();
--
--      LevelStorageAccess(String p_289967_, Path p_289988_) throws IOException {
 +      // CraftBukkit start
-+      public ResourceKey<LevelStem> dimensionType;
++      public @Nullable ResourceKey<LevelStem> dimensionType;
 +
 +      //Ketting start
++      public static @Nullable ResourceKey<LevelStem> ketting$dimensionType;
 +      public final Path dimensionPath;
 +
 +      public void setDimensionType(ResourceKey<LevelStem> dimensionType) {
 +          this.dimensionType = dimensionType;
 +      }
 +      //Ketting end
-+
+ 
+       LevelStorageAccess(String p_289967_, Path p_289988_) throws IOException {
+          this.levelId = p_289967_;
+          this.levelDirectory = new LevelStorageSource.LevelDirectory(p_289988_);
+          this.lock = DirectoryLock.create(p_289988_);
+-      }
++         //Ketting start
++         this.dimensionPath = p_289988_;
++         this.dimensionType = ketting$dimensionType;
++         ketting$dimensionType = null;
++      }
++      
 +      //Ketting start
 +      LevelStorageAccess(LevelStorageAccess original, ResourceKey<LevelStem> dimensionType) {
 +         this.dimensionType = dimensionType;
@@ -91,16 +110,16 @@
 +         this.lock = original.lock;
 +         this.resources.putAll(original.resources);
 +      }
++      @SuppressWarnings("unused") //Ketting - keep for CB compat
++      LevelStorageAccess(String p_289967_, Path p_289988_, ResourceKey<LevelStem> dimensionType) throws IOException {
++         this(p_289967_, p_289988_);
++         this.dimensionType = dimensionType;
++      }
 +      //Ketting end
 +
-+      LevelStorageAccess(String p_289967_, Path p_289988_, ResourceKey<LevelStem> dimensionType) throws IOException {
-+         this.dimensionType = dimensionType;
-+         // CraftBukkit end
-          this.levelId = p_289967_;
-+         this.dimensionPath = p_289988_; //Ketting
-          this.levelDirectory = new LevelStorageSource.LevelDirectory(p_289988_);
-          this.lock = DirectoryLock.create(p_289988_);
-       }
+ 
+       public String getLevelId() {
+          return this.levelId;
 @@ -413,7 +_,7 @@
        }
  

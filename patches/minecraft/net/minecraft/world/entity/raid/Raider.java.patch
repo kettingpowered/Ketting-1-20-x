@@ -8,21 +8,23 @@
                    player.addEffect(mobeffectinstance);
                 }
              }
-@@ -296,7 +_,7 @@
+@@ -296,6 +_,8 @@
           this.mob.getNavigation().stop();
  
           for(Raider raider : this.mob.level().getNearbyEntities(Raider.class, this.shoutTargeting, this.mob, this.mob.getBoundingBox().inflate(8.0D, 8.0D, 8.0D))) {
--            raider.setTarget(this.mob.getTarget());
-+            raider.setTarget(this.mob.getTarget(), org.bukkit.event.entity.EntityTargetEvent.TargetReason.FOLLOW_LEADER, true); // CraftBukkit
++            raider.ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.FOLLOW_LEADER);
++            raider.ketting$setTarget$fireEvent.set(true);
+             raider.setTarget(this.mob.getTarget());
           }
  
-       }
-@@ -306,7 +_,7 @@
+@@ -306,7 +_,9 @@
           LivingEntity livingentity = this.mob.getTarget();
           if (livingentity != null) {
              for(Raider raider : this.mob.level().getNearbyEntities(Raider.class, this.shoutTargeting, this.mob, this.mob.getBoundingBox().inflate(8.0D, 8.0D, 8.0D))) {
 -               raider.setTarget(livingentity);
-+               raider.setTarget(this.mob.getTarget(), org.bukkit.event.entity.EntityTargetEvent.TargetReason.FOLLOW_LEADER, true); // CraftBukkit
++               raider.ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.FOLLOW_LEADER);
++               raider.ketting$setTarget$fireEvent.set(true);
++               raider.setTarget(this.mob.getTarget());
                 raider.setAggressive(true);
              }
  

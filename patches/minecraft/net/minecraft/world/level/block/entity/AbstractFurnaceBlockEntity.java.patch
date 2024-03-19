@@ -258,15 +258,24 @@
        p_155004_.awardRecipes(list);
  
        for(Recipe<?> recipe : list) {
-@@ -467,18 +_,30 @@
+@@ -466,13 +_,33 @@
+       this.recipesUsed.clear();
     }
  
-    public List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel p_154996_, Vec3 p_154997_) {
-+      // CraftBukkit start
-+      return this.getRecipesToAwardAndPopExperience(p_154996_, p_154997_, this.worldPosition, null, null, 0);
-+   }
-+
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicReference<BlockPos> ketting$getRecipesToAwardAndPopExperience$blockposition = new java.util.concurrent.atomic.AtomicReference<>(null);
++   public final java.util.concurrent.atomic.AtomicReference<ServerPlayer> ketting$getRecipesToAwardAndPopExperience$entityplayer = new java.util.concurrent.atomic.AtomicReference<>(null);
++   public final java.util.concurrent.atomic.AtomicReference<ItemStack> ketting$getRecipesToAwardAndPopExperience$itemstack  = new java.util.concurrent.atomic.AtomicReference<>(null);
++   public final java.util.concurrent.atomic.AtomicInteger ketting$getRecipesToAwardAndPopExperience$amount = new java.util.concurrent.atomic.AtomicInteger(0);
 +   public List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel p_154996_, Vec3 p_154997_, BlockPos blockposition, ServerPlayer entityplayer, ItemStack itemstack, int amount) {
++      ketting$getRecipesToAwardAndPopExperience$blockposition.set(blockposition);
++      ketting$getRecipesToAwardAndPopExperience$entityplayer.set(entityplayer);
++      ketting$getRecipesToAwardAndPopExperience$itemstack.set(itemstack);
++      ketting$getRecipesToAwardAndPopExperience$amount.set(amount);
++      return getRecipesToAwardAndPopExperience(p_154996_, p_154997_);
++   }
++   //Ketting end
+    public List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel p_154996_, Vec3 p_154997_) {
 +      // CraftBukkit end
        List<Recipe<?>> list = Lists.newArrayList();
  
@@ -275,22 +284,15 @@
              list.add(p_155023_);
 -            createExperience(p_154996_, p_154997_, entry.getIntValue(), ((AbstractCookingRecipe)p_155023_).getExperience());
 +            // Ketting start - Add CraftBukkit
-+            ketting$blockposition$1 = blockposition;
-+            ketting$entityhuman = entityplayer;
-+            ketting$itemstack = itemstack;
-+            ketting$amount = amount;
++            ketting$blockposition$1 = ketting$getRecipesToAwardAndPopExperience$blockposition.getAndSet(this.worldPosition);
++            ketting$entityhuman = ketting$getRecipesToAwardAndPopExperience$entityplayer.getAndSet(null);
++            ketting$itemstack = ketting$getRecipesToAwardAndPopExperience$itemstack.getAndSet(null);
++            ketting$amount = ketting$getRecipesToAwardAndPopExperience$amount.getAndSet(0);
 +            // Ketting end
 +            createExperience(p_154996_, p_154997_, entry.getIntValue(), ((AbstractCookingRecipe)p_155023_).getExperience()); // CraftBukkit
           });
        }
  
-       return list;
-    }
--
-+   
-    private static void createExperience(ServerLevel p_154999_, Vec3 p_155000_, int p_155001_, float p_155002_) {
-       int i = Mth.floor((float)p_155001_ * p_155002_);
-       float f = Mth.frac((float)p_155001_ * p_155002_);
 @@ -486,13 +_,69 @@
           ++i;
        }
