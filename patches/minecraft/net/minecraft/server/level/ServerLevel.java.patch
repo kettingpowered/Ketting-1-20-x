@@ -533,7 +533,7 @@
     }
  
 +   //Ketting start
-+   private final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason> ketting$tryAddFreshEntityWithPassengers$spawnReason = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++   public final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason> ketting$tryAddFreshEntityWithPassengers$spawnReason = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   public boolean tryAddFreshEntityWithPassengers(Entity p_8861_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
 +      ketting$tryAddFreshEntityWithPassengers$spawnReason.set(reason);
 +      return tryAddFreshEntityWithPassengers(p_8861_);
@@ -780,21 +780,17 @@
        int i = blockpos.getX();
        int j = blockpos.getY() - 2;
        int k = blockpos.getZ();
--      BlockPos.betweenClosed(i - 2, j + 1, k - 2, i + 2, j + 3, k + 2).forEach((p_207578_) -> {
--         p_8618_.setBlockAndUpdate(p_207578_, Blocks.AIR.defaultBlockState());
--      });
--      BlockPos.betweenClosed(i - 2, j, k - 2, i + 2, j, k + 2).forEach((p_184101_) -> {
--         p_8618_.setBlockAndUpdate(p_184101_, Blocks.OBSIDIAN.defaultBlockState());
--      });
 +
 +      // CraftBukkit start
 +      org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator(p_8618_);
-+      BlockPos.betweenClosed(i - 2, j + 1, k - 2, i + 2, j + 3, k + 2).forEach((blockposition1) -> {
-+         blockList.setBlock(blockposition1, Blocks.AIR.defaultBlockState(), 3);
-+      });
-+      BlockPos.betweenClosed(i - 2, j, k - 2, i + 2, j, k + 2).forEach((blockposition1) -> {
-+         blockList.setBlock(blockposition1, Blocks.OBSIDIAN.defaultBlockState(), 3);
-+      });
+       BlockPos.betweenClosed(i - 2, j + 1, k - 2, i + 2, j + 3, k + 2).forEach((p_207578_) -> {
+-         p_8618_.setBlockAndUpdate(p_207578_, Blocks.AIR.defaultBlockState());
++         blockList.setBlock(p_207578_, Blocks.AIR.defaultBlockState(), 3);
+       });
+       BlockPos.betweenClosed(i - 2, j, k - 2, i + 2, j, k + 2).forEach((p_184101_) -> {
+-         p_8618_.setBlockAndUpdate(p_184101_, Blocks.OBSIDIAN.defaultBlockState());
++         blockList.setBlock(p_184101_, Blocks.OBSIDIAN.defaultBlockState(), 3);
+       });
 +      org.bukkit.World bworld = p_8618_.getWorld();
 +      Entity entity = ketting$makeObsidianPlatform$entity.getAndSet(null);
 +      org.bukkit.event.world.PortalCreateEvent portalEvent = new org.bukkit.event.world.PortalCreateEvent((List<org.bukkit.block.BlockState>) (List) blockList.getList(), bworld, (entity == null) ? null : entity.getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.END_PLATFORM);

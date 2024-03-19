@@ -82,11 +82,10 @@
     }
  
     private void readScoreboard(DimensionDataStorage p_129842_) {
-@@ -297,7 +_,19 @@
+@@ -297,6 +_,18 @@
  
     protected abstract boolean initServer() throws IOException;
  
--   protected void loadLevel() {
 +   //Ketting start
 +   private String loadLevel$worldName;
 +   protected void prepareLoadLevel(String worldName) {
@@ -99,10 +98,9 @@
 +   }
 +   //Ketting end
 +
-+   protected void loadLevel() { // CraftBukkit
+    protected void loadLevel() {
        if (!JvmProfiler.INSTANCE.isRunning()) {
        }
- 
 @@ -308,6 +_,13 @@
        this.createLevels(chunkprogresslistener);
        this.forceDifficulty();

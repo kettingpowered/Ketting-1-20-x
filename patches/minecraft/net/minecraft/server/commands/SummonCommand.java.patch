@@ -1,11 +1,10 @@
 --- a/net/minecraft/server/commands/SummonCommand.java
 +++ b/net/minecraft/server/commands/SummonCommand.java
-@@ -60,7 +_,7 @@
+@@ -60,6 +_,7 @@
                 ((Mob)entity).finalizeSpawn(p_270582_.getLevel(), p_270582_.getLevel().getCurrentDifficultyAt(entity.blockPosition()), MobSpawnType.COMMAND, (SpawnGroupData)null, (CompoundTag)null);
              }
  
--            if (!serverlevel.tryAddFreshEntityWithPassengers(entity)) {
-+            if (!serverlevel.tryAddFreshEntityWithPassengers(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.COMMAND)) { // CraftBukkit - pass a spawn reason of "COMMAND"
++            serverlevel.ketting$tryAddFreshEntityWithPassengers$spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.COMMAND);  // Ketting - CraftBukkit - pass a spawn reason of "COMMAND"
+             if (!serverlevel.tryAddFreshEntityWithPassengers(entity)) {
                 throw ERROR_DUPLICATE_UUID.create();
              } else {
-                return entity;

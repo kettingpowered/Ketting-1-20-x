@@ -1561,7 +1561,7 @@
              return false;
           } else {
              return item.getUseDuration(this.useItem) - this.useItemRemaining >= 5;
-@@ -3050,15 +_,43 @@
+@@ -3050,15 +_,45 @@
           }
  
           if (flag1) {
@@ -1590,7 +1590,9 @@
 +                  }
 +               } else {
 +                  // player teleport event is called in the underlining code
-+                  if (((ServerPlayer) this).connection.teleport(p_20985_, d3, p_20987_, this.getYRot(), this.getXRot(), java.util.Collections.emptySet(), this.ketting$teleportCause.getAndSet(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN))) {
++                  ((ServerPlayer) this).connection.ketting$teleport$reason.set(this.ketting$teleportCause.getAndSet(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN));
++                  ((ServerPlayer) this).connection.teleport(p_20985_, d3, p_20987_, this.getYRot(), this.getXRot(), java.util.Collections.emptySet());
++                  if (((ServerPlayer) this).connection.ketting$teleport$result) {
 +                     this.ketting$randomTeleportCB = Optional.empty(); // CraftBukkit // Ketting
 +                     return false;
 +                  }

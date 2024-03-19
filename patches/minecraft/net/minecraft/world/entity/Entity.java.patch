@@ -1166,19 +1166,25 @@
     public boolean isPushedByFluid() {
        return true;
     }
-@@ -2605,6 +_,12 @@
+@@ -2605,7 +_,18 @@
        }
     }
  
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.player.PlayerTeleportEvent.TeleportCause> ketting$teleportTo$cause = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);
 +   // CraftBukkit start
-+   public boolean teleportTo(ServerLevel worldserver, double d0, double d1, double d2, Set<RelativeMovement> set, float f, float f1, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
-+      return this.teleportTo(worldserver, d0, d1, d2, set, f, f1);
++   public boolean teleportTo(ServerLevel p_265257_, double p_265407_, double p_265727_, double p_265410_, Set<RelativeMovement> p_265083_, float p_265573_, float p_265094_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
++      ketting$teleportTo$cause.set(cause);
++      return this.teleportTo(p_265257_, p_265407_, p_265727_, p_265410_, p_265083_, p_265573_, p_265094_);
 +   }
 +   // CraftBukkit end
++   //Ketting end
 +
     public boolean teleportTo(ServerLevel p_265257_, double p_265407_, double p_265727_, double p_265410_, Set<RelativeMovement> p_265083_, float p_265573_, float p_265094_) {
++      ketting$teleportTo$cause.set(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);
        float f = Mth.clamp(p_265094_, -90.0F, 90.0F);
        if (p_265257_ == this.level()) {
+          this.moveTo(p_265407_, p_265727_, p_265410_, p_265573_, f);
 @@ -2679,8 +_,10 @@
        EntityDimensions entitydimensions = this.dimensions;
        Pose pose = this.getPose();
