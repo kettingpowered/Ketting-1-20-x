@@ -11,12 +11,12 @@
  
     public Vex(EntityType<? extends Vex> p_33984_, Level p_33985_) {
        super(p_33984_, p_33985_);
-@@ -293,7 +_,7 @@
+@@ -293,6 +_,8 @@
        }
  
        public void start() {
--         Vex.this.setTarget(Vex.this.owner.getTarget());
-+         Vex.this.setTarget(Vex.this.owner.getTarget(), org.bukkit.event.entity.EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET, true); // CraftBukkit
++         Vex.this.ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET);
++         Vex.this.ketting$setTarget$fireEvent.set(true);
+          Vex.this.setTarget(Vex.this.owner.getTarget());
           super.start();
        }
-    }

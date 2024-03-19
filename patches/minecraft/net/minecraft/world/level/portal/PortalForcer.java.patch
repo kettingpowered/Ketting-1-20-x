@@ -9,46 +9,53 @@
     private static final int TICKET_RADIUS = 3;
     private static final int SEARCH_RADIUS = 128;
     private static final int CREATE_RADIUS = 16;
-@@ -40,8 +_,15 @@
+@@ -39,9 +_,18 @@
+       this.level = p_77650_;
     }
  
-    public Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos p_192986_, boolean p_192987_, WorldBorder p_192988_) {
-+      // CraftBukkit start
-+      return this.findPortalAround(p_192986_, p_192988_, p_192987_ ? 16 : 128); // Search Radius
-+   }
-+
++   //Ketting start
++   private final java.util.concurrent.atomic.AtomicReference<Optional<java.lang.Integer>> ketting$findPortalAround$i = new java.util.concurrent.atomic.AtomicReference<>(Optional.empty());
 +   public Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos p_192986_, WorldBorder p_192988_, int i) {
++      ketting$findPortalAround$i.set(Optional.of(i));
++      return this.findPortalAround(p_192986_, true, p_192988_); // Search Radius
++   }
++   
+    public Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos p_192986_, boolean p_192987_, WorldBorder p_192988_) {
        PoiManager poimanager = this.level.getPoiManager();
 -      int i = p_192987_ ? 16 : 128;
-+      // int i = p_192987_ ? 16 : 128;
-+      // CraftBukkit end
++      int i = ketting$findPortalAround$i.getAndSet(Optional.empty()).orElse(p_192987_ ? 16 : 128);
++      //Ketting end
 +
        poimanager.ensureLoadedAndValid(this.level, p_192986_, i);
        Optional<PoiRecord> optional = poimanager.getInSquare((p_230634_) -> {
           return p_230634_.is(PoiTypes.NETHER_PORTAL);
-@@ -65,6 +_,12 @@
+@@ -64,6 +_,16 @@
+       });
     }
  
-    public Optional<BlockUtil.FoundRectangle> createPortal(BlockPos p_77667_, Direction.Axis p_77668_) {
++   //Ketting start
++   private final java.util.concurrent.atomic.AtomicReference<net.minecraft.world.entity.Entity> ketting$createPortal$entity = new java.util.concurrent.atomic.AtomicReference<>(null);
++   private final java.util.concurrent.atomic.AtomicInteger ketting$createPortal$createRadius = new java.util.concurrent.atomic.AtomicInteger(16);
++   public Optional<BlockUtil.FoundRectangle> createPortal(BlockPos p_77667_, Direction.Axis p_77668_, net.minecraft.world.entity.Entity entity, int createRadius) {
++      ketting$createPortal$entity.set(entity);
++      ketting$createPortal$createRadius.set(createRadius);
 +      // CraftBukkit start
-+      return this.createPortal(p_77667_, p_77668_, null, 16);
++      return this.createPortal(p_77667_, p_77668_);
 +   }
 +
-+   public Optional<BlockUtil.FoundRectangle> createPortal(BlockPos p_77667_, Direction.Axis p_77668_, net.minecraft.world.entity.Entity entity, int createRadius) {
-+      // CraftBukkit end
+    public Optional<BlockUtil.FoundRectangle> createPortal(BlockPos p_77667_, Direction.Axis p_77668_) {
        Direction direction = Direction.get(Direction.AxisDirection.POSITIVE, p_77668_);
        double d0 = -1.0D;
-       BlockPos blockpos = null;
 @@ -74,7 +_,7 @@
        int i = Math.min(this.level.getMaxBuildHeight(), this.level.getMinBuildHeight() + this.level.getLogicalHeight()) - 1;
        BlockPos.MutableBlockPos blockpos$mutableblockpos = p_77667_.mutable();
  
 -      for(BlockPos.MutableBlockPos blockpos$mutableblockpos1 : BlockPos.spiralAround(p_77667_, 16, Direction.EAST, Direction.SOUTH)) {
-+      for(BlockPos.MutableBlockPos blockpos$mutableblockpos1 : BlockPos.spiralAround(p_77667_, createRadius, Direction.EAST, Direction.SOUTH)) { // CraftBukkit
++      for(BlockPos.MutableBlockPos blockpos$mutableblockpos1 : BlockPos.spiralAround(p_77667_, ketting$createPortal$createRadius.getAndSet(16), Direction.EAST, Direction.SOUTH)) { // CraftBukkit
           int j = Math.min(i, this.level.getHeight(Heightmap.Types.MOTION_BLOCKING, blockpos$mutableblockpos1.getX(), blockpos$mutableblockpos1.getZ()));
           int k = 1;
           if (worldborder.isWithinBounds(blockpos$mutableblockpos1) && worldborder.isWithinBounds(blockpos$mutableblockpos1.move(direction, 1))) {
-@@ -115,6 +_,7 @@
+@@ -115,10 +_,12 @@
           d0 = d1;
        }
  
@@ -56,6 +63,11 @@
        if (d0 == -1.0D) {
           int k1 = Math.max(this.level.getMinBuildHeight() - -1, 70);
           int i2 = i - 9;
+          if (i2 < k1) {
++            ketting$createPortal$entity.set(null);
+             return Optional.empty();
+          }
+ 
 @@ -133,7 +_,7 @@
                 for(int k3 = -1; k3 < 3; ++k3) {
                    BlockState blockstate1 = k3 < 0 ? Blocks.OBSIDIAN.defaultBlockState() : Blocks.AIR.defaultBlockState();
@@ -74,7 +86,7 @@
              }
           }
        }
-@@ -153,10 +_,20 @@
+@@ -153,10 +_,21 @@
        for(int k2 = 0; k2 < 2; ++k2) {
           for(int l2 = 0; l2 < 3; ++l2) {
              blockpos$mutableblockpos.setWithOffset(blockpos, k2 * direction.getStepX(), l2, k2 * direction.getStepZ());
@@ -85,6 +97,7 @@
  
 +      // CraftBukkit start
 +      org.bukkit.World bworld = this.level.getWorld();
++      net.minecraft.world.entity.Entity entity = ketting$createPortal$entity.getAndSet(null);
 +      org.bukkit.event.world.PortalCreateEvent event = new org.bukkit.event.world.PortalCreateEvent((java.util.List)blockList.getList(), bworld, (entity == null) ? null : entity.getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.NETHER_PAIR);
 +
 +      this.level.getCraftServer().getPluginManager().callEvent(event);

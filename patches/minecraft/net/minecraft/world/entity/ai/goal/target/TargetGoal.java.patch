@@ -1,20 +1,20 @@
 --- a/net/minecraft/world/entity/ai/goal/target/TargetGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/target/TargetGoal.java
-@@ -62,7 +_,7 @@
+@@ -62,6 +_,8 @@
                    }
                 }
  
--               this.mob.setTarget(livingentity);
-+               this.mob.setTarget(livingentity, org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true); // CraftBukkit
++               mob.ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_ENTITY);
++               mob.ketting$setTarget$fireEvent.set(true);
+                this.mob.setTarget(livingentity);
                 return true;
              }
-          }
-@@ -80,7 +_,7 @@
+@@ -80,6 +_,8 @@
     }
  
     public void stop() {
--      this.mob.setTarget((LivingEntity)null);
-+      this.mob.setTarget((LivingEntity)null, org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit
++      mob.ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET);
++      mob.ketting$setTarget$fireEvent.set(true);
+       this.mob.setTarget((LivingEntity)null);
        this.targetMob = null;
     }
- 

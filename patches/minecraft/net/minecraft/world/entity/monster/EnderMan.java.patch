@@ -6,15 +6,10 @@
  
 +   @Override
     public void setTarget(@Nullable LivingEntity p_32537_) {
--      super.setTarget(p_32537_);
-+      // CraftBukkit start - fire event
-+      setTarget(p_32537_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN, true);
-+   }
-+
-+   @Override
-+   public boolean setTarget(LivingEntity p_32537_, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent) {
-+      if (!super.setTarget(p_32537_, reason, fireEvent)) {
-+         return false;
+       super.setTarget(p_32537_);
++      if (!ketting$setTarget$result) {
++         ketting$setTarget$result = false;
++         return;
 +      }
 +      p_32537_ = getTarget();
 +      // CraftBukkit end
@@ -22,11 +17,12 @@
        AttributeInstance attributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
        if (p_32537_ == null) {
           this.targetChangeTime = 0;
-@@ -126,6 +_,7 @@
+@@ -126,6 +_,8 @@
           }
        }
  
-+      return true;
++      ketting$setTarget$result = true;
++      return;
     }
  
     protected void defineSynchedData() {

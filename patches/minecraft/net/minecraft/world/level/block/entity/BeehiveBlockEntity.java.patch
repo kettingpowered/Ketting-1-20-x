@@ -17,29 +17,34 @@
     }
  
     public void emptyAllLivingFromHive(@Nullable Player p_58749_, BlockState p_58750_, BeehiveBlockEntity.BeeReleaseStatus p_58751_) {
-@@ -85,7 +_,7 @@
+@@ -85,6 +_,8 @@
                 Bee bee = (Bee)entity;
                 if (p_58749_.position().distanceToSqr(entity.position()) <= 16.0D) {
                    if (!this.isSedated()) {
--                     bee.setTarget(p_58749_);
-+                     bee.setTarget(p_58749_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true); // CraftBukkit
++                     bee.ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER);
++                     bee.ketting$setTarget$fireEvent.set(true);
+                      bee.setTarget(p_58749_);
                    } else {
                       bee.setStayOutOfHiveCountdown(400);
-                   }
-@@ -97,9 +_,15 @@
+@@ -96,10 +_,20 @@
+ 
     }
  
-    private List<Entity> releaseAllOccupants(BlockState p_58760_, BeehiveBlockEntity.BeeReleaseStatus p_58761_) {
-+      // CraftBukkit start - This allows us to bypass the night/rain/emergency check
-+      return releaseBees(p_58760_, p_58761_, false);
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicBoolean ketting$releaseAllOccupants$force = new java.util.concurrent.atomic.AtomicBoolean(false);
++   // CraftBukkit start - This allows us to bypass the night/rain/emergency check
++   public List<Entity> releaseBees(BlockState p_58760_, BeehiveBlockEntity.BeeReleaseStatus p_58761_, boolean force) {
++      ketting$releaseAllOccupants$force.set(false);
++      return releaseAllOccupants(p_58760_, p_58761_);
 +   }
 +
-+   public List<Entity> releaseBees(BlockState p_58760_, BeehiveBlockEntity.BeeReleaseStatus p_58761_, boolean force) {
+    private List<Entity> releaseAllOccupants(BlockState p_58760_, BeehiveBlockEntity.BeeReleaseStatus p_58761_) {
        List<Entity> list = Lists.newArrayList();
        this.stored.removeIf((p_272556_) -> {
 -         return releaseOccupant(this.level, this.worldPosition, p_58760_, p_272556_, list, p_58761_, this.savedFlowerPos);
-+         return releaseBee(this.level, this.worldPosition, p_58760_, p_272556_, list, p_58761_, this.savedFlowerPos, force);
++         return releaseBee(this.level, this.worldPosition, p_58760_, p_272556_, list, p_58761_, this.savedFlowerPos, ketting$releaseAllOccupants$force.getAndSet(false));
 +         // CraftBukkit end
++         //Ketting end
        });
        if (!list.isEmpty()) {
           super.setChanged();
@@ -64,17 +69,20 @@
           p_58745_.stopRiding();
           p_58745_.ejectPassengers();
           CompoundTag compoundtag = new CompoundTag();
-@@ -156,7 +_,13 @@
+@@ -155,8 +_,16 @@
+       this.stored.add(new BeehiveBlockEntity.BeeData(p_155158_, p_155159_, p_155160_ ? 2400 : 600));
     }
  
-    private static boolean releaseOccupant(Level p_155137_, BlockPos p_155138_, BlockState p_155139_, BeehiveBlockEntity.BeeData p_155140_, @Nullable List<Entity> p_155141_, BeehiveBlockEntity.BeeReleaseStatus p_155142_, @Nullable BlockPos p_155143_) {
--      if ((p_155137_.isNight() || p_155137_.isRaining()) && p_155142_ != BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY) {
++   public static final java.util.concurrent.atomic.AtomicBoolean ketting$releaseOccupant$force = new java.util.concurrent.atomic.AtomicBoolean(false);
++   private static boolean releaseBee(Level p_155137_, BlockPos p_155138_, BlockState p_155139_, BeehiveBlockEntity.BeeData p_155140_, @Nullable List<Entity> p_155141_, BeehiveBlockEntity.BeeReleaseStatus p_155142_, @Nullable BlockPos p_155143_, boolean force) {
++      ketting$releaseOccupant$force.set(force);
 +      // CraftBukkit start - This allows us to bypass the night/rain/emergency check
-+      return releaseBee(p_155137_, p_155138_, p_155139_, p_155140_, p_155141_, p_155142_, p_155143_, false);
++      return releaseOccupant(p_155137_, p_155138_, p_155139_, p_155140_, p_155141_, p_155142_, p_155143_);
 +   }
 +
-+   private static boolean releaseBee(Level p_155137_, BlockPos p_155138_, BlockState p_155139_, BeehiveBlockEntity.BeeData p_155140_, @Nullable List<Entity> p_155141_, BeehiveBlockEntity.BeeReleaseStatus p_155142_, @Nullable BlockPos p_155143_, boolean force) {
-+      if (!force && (p_155137_.isNight() || p_155137_.isRaining()) && p_155142_ != BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY) {
+    private static boolean releaseOccupant(Level p_155137_, BlockPos p_155138_, BlockState p_155139_, BeehiveBlockEntity.BeeData p_155140_, @Nullable List<Entity> p_155141_, BeehiveBlockEntity.BeeReleaseStatus p_155142_, @Nullable BlockPos p_155143_) {
+-      if ((p_155137_.isNight() || p_155137_.isRaining()) && p_155142_ != BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY) {
++      if (!ketting$releaseOccupant$force.getAndSet(false) && (p_155137_.isNight() || p_155137_.isRaining()) && p_155142_ != BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY) {
 +         // CraftBukkit end
           return false;
        } else {

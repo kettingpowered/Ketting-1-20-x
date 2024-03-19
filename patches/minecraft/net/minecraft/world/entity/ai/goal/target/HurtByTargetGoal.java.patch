@@ -1,19 +1,20 @@
 --- a/net/minecraft/world/entity/ai/goal/target/HurtByTargetGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/target/HurtByTargetGoal.java
-@@ -57,7 +_,7 @@
+@@ -57,6 +_,8 @@
     }
  
     public void start() {
--      this.mob.setTarget(this.mob.getLastHurtByMob());
-+      this.mob.setTarget(this.mob.getLastHurtByMob(), org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit - reason
++      mob.ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY);
++      mob.ketting$setTarget$fireEvent.set(true);
+       this.mob.setTarget(this.mob.getLastHurtByMob());
        this.targetMob = this.mob.getTarget();
        this.timestamp = this.mob.getLastHurtByMobTimestamp();
-       this.unseenMemoryTicks = 300;
-@@ -107,6 +_,6 @@
+@@ -107,6 +_,8 @@
     }
  
     protected void alertOther(Mob p_26042_, LivingEntity p_26043_) {
--      p_26042_.setTarget(p_26043_);
-+      p_26042_.setTarget(p_26043_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY, true); // CraftBukkit - reason
++      p_26042_.ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY);
++      p_26042_.ketting$setTarget$fireEvent.set(true);
+       p_26042_.setTarget(p_26043_);
     }
  }
