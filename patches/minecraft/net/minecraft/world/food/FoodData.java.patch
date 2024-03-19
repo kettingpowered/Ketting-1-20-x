@@ -1,15 +1,8 @@
 --- a/net/minecraft/world/food/FoodData.java
 +++ b/net/minecraft/world/food/FoodData.java
-@@ -8,25 +_,60 @@
- import net.minecraft.world.level.GameRules;
- 
- public class FoodData {
--   private int foodLevel = 20;
--   private float saturationLevel;
--   private float exhaustionLevel;
-+   public int foodLevel = 20;
-+   public float saturationLevel = 5.0F; //Ketting - moved from constructor
-+   public float exhaustionLevel;
+@@ -12,21 +_,57 @@
+    public float saturationLevel;
+    public float exhaustionLevel;
     private int tickTimer;
 +   // CraftBukkit start
 +   private @org.jetbrains.annotations.Nullable Player entityhuman; //Ketting - nullable
@@ -20,15 +13,14 @@
     private int lastFoodLevel = 20;
  
     public FoodData() {
--      this.saturationLevel = 5.0F;
--   }
 +      this(null); //Ketting
 +   }
 +
 +   // CraftBukkit start - added EntityHuman constructor
-+   public FoodData(Player entityhuman) {
++   public FoodData(@org.jetbrains.annotations.Nullable Player entityhuman) {
+       this.saturationLevel = 5.0F;
 +      this.entityhuman = entityhuman;
-+   }
+    }
 +   // CraftBukkit end
  
     public void eat(int p_38708_, float p_38709_) {
