@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/decoration/HangingEntity.java
 +++ b/net/minecraft/world/entity/decoration/HangingEntity.java
-@@ -58,34 +_,45 @@
+@@ -58,36 +_,47 @@
  
     protected void recalculateBoundingBox() {
        if (this.direction != null) {
@@ -32,6 +32,8 @@
 -         this.setBoundingBox(new AABB(d0 - d6, d1 - d7, d2 - d8, d0 + d6, d1 + d7, d2 + d8));
 -      }
 -   }
+-
+-   private double offs(int p_31710_) {
 +         // CraftBukkit start code moved in to calculateBoundingBox
 +         this.setBoundingBox(calculateBoundingBox(this, this.pos, this.direction, this.getWidth(), this.getHeight()));
 +         // CraftBukkit end
@@ -71,9 +73,11 @@
 +      return new AABB(d0 - d6, d1 - d7, d2 - d8, d0 + d6, d1 + d7, d2 + d8);
 +   }
 +   // CraftBukkit end
- 
-    private double offs(int p_31710_) {
++
++   private static double offs(int p_31710_) {
        return p_31710_ % 32 == 0 ? 0.5D : 0.0D;
+    }
+ 
 @@ -97,6 +_,24 @@
           if (this.checkInterval++ == 100) {
              this.checkInterval = 0;
