@@ -112,7 +112,7 @@
        this.setPos(0.0D, 0.0D, 0.0D);
 -      this.eyeHeight = this.getEyeHeight(Pose.STANDING, this.dimensions);
 +      //Ketting: Move on Player init, to allow for init after the Player Constructor 
-+      if (!(this instanceof Player)) postInit(); 
++      if (!(this instanceof LivingEntity)) postInit(); 
 +   }
 +   protected void postInit(){
 +      var sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, Pose.STANDING, this.dimensions, this.getEyeHeight(Pose.STANDING, this.dimensions));
