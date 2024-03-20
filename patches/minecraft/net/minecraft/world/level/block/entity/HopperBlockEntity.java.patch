@@ -155,44 +155,56 @@
           });
        } else {
           for(ItemEntity itementity : getItemsAtAndAbove(p_155553_, p_155554_)) {
-@@ -192,16 +_,46 @@
+@@ -192,16 +_,59 @@
        }
     }
  
--   private static boolean tryTakeInItemFromSlot(Hopper p_59355_, Container p_59356_, int p_59357_, Direction p_59358_) {
-+   private static boolean tryTakeInItemFromSlot(Hopper p_59355_, Container p_59356_, int p_59357_, Direction p_59358_, Level world) { // Spigot
++   public static final java.util.concurrent.atomic.AtomicReference<Level> ketting$tryTakeInItemFromSlot$world = new java.util.concurrent.atomic.AtomicReference<>(null);
++   private static boolean tryTakeInItemFromSlot(Hopper p_59355_, Container p_59356_, int p_59357_, Direction p_59358_, Level world) {
++       ketting$tryTakeInItemFromSlot$world.set(world);
++       return tryTakeInItemFromSlot(p_59355_, p_59356_, p_59357_, p_59358_);
++   }
+    private static boolean tryTakeInItemFromSlot(Hopper p_59355_, Container p_59356_, int p_59357_, Direction p_59358_) {
        ItemStack itemstack = p_59356_.getItem(p_59357_);
        if (!itemstack.isEmpty() && canTakeItemFromContainer(p_59355_, p_59356_, itemstack, p_59357_, p_59358_)) {
           ItemStack itemstack1 = itemstack.copy();
 -         ItemStack itemstack2 = addItem(p_59356_, p_59355_, p_59356_.removeItem(p_59357_, 1), (Direction)null);
 +         // ItemStack itemstack2 = addItem(p_59356_, p_59355_, p_59356_.removeItem(p_59357_, 1), (Direction)null);
-+          // CraftBukkit start - Call event on collection of items from inventories into the hopper
++         // CraftBukkit start - Call event on collection of items from inventories into the hopper
++         Level world = ketting$tryTakeInItemFromSlot$world.getAndSet(null);
++         int origCount;
++         ItemStack itemstack2;
++         if (world != null){
 +         org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack oitemstack = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(p_59356_.removeItem(p_59357_, world.spigotConfig.hopperAmount)); // Spigot
 +
 +         org.bukkit.inventory.Inventory sourceInventory;
 +         // Have to special case large chests as they work oddly
 +         if (p_59356_ instanceof ChestBlock.DoubleInventory) {
-+             sourceInventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryDoubleChest((ChestBlock.DoubleInventory) p_59356_);
++            sourceInventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryDoubleChest((ChestBlock.DoubleInventory) p_59356_);
 +         } else if (p_59356_.getOwner() != null) {
-+             sourceInventory = p_59356_.getOwner().getInventory();
++            sourceInventory = p_59356_.getOwner().getInventory();
 +         } else {
-+             sourceInventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory(p_59356_);
++            sourceInventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory(p_59356_);
 +         }
 +
 +         org.bukkit.event.inventory.InventoryMoveItemEvent event = new org.bukkit.event.inventory.InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), p_59355_.getOwner().getInventory(), false);
 +
 +         org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
-+             p_59356_.setItem(p_59357_, itemstack1);
++            p_59356_.setItem(p_59357_, itemstack1);
 +
-+             if (p_59355_ instanceof HopperBlockEntity) {
-+                 ((HopperBlockEntity) p_59355_).setCooldown(world.spigotConfig.hopperTransfer); // Spigot
-+             }
++            if (p_59355_ instanceof HopperBlockEntity) {
++               ((HopperBlockEntity) p_59355_).setCooldown(world.spigotConfig.hopperTransfer); // Spigot
++            }
 +
-+             return false;
++            return false;
 +         }
-+         int origCount = event.getItem().getAmount(); // Spigot
-+         ItemStack itemstack2 = addItem(p_59356_, p_59355_, org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getItem()), null);
++         origCount = event.getItem().getAmount(); // Spigot
++         itemstack2 = addItem(p_59356_, p_59355_, org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asNMSCopy(event.getItem()), null);
++         }else{
++           origCount = p_59357_;
++           itemstack2 = addItem(p_59356_, p_59355_, p_59356_.removeItem(p_59357_, 1), (Direction)null);
++         }
 +         // CraftBukkit end
 +
           if (itemstack2.isEmpty()) {

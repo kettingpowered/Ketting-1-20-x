@@ -8,15 +8,14 @@
        if (p_42925_ instanceof ServerPlayer serverplayer) {
           CriteriaTriggers.CONSUME_ITEM.trigger(serverplayer, p_42923_);
           serverplayer.awardStat(Stats.ITEM_USED.get(this));
-@@ -27,7 +_,7 @@
+@@ -27,6 +_,7 @@
        }
  
        if (!p_42924_.isClientSide) {
--         p_42925_.removeAllEffects();
-+         p_42925_.removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.MILK); // CraftBukkit
++         p_42925_.ketting$removeAllEffects$cause.set(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.MILK); // Ketting - CraftBukkit
+          p_42925_.removeAllEffects();
        }
  
-       return p_42923_.isEmpty() ? new ItemStack(Items.BUCKET) : p_42923_;
 @@ -43,5 +_,10 @@
  
     public InteractionResultHolder<ItemStack> use(Level p_42927_, Player p_42928_, InteractionHand p_42929_) {

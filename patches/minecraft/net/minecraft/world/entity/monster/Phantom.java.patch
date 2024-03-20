@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/monster/Phantom.java
 +++ b/net/minecraft/world/entity/monster/Phantom.java
-@@ -226,7 +_,7 @@
+@@ -226,6 +_,8 @@
  
                 for(Player player : list) {
                    if (Phantom.this.canAttack(player, TargetingConditions.DEFAULT)) {
--                     Phantom.this.setTarget(player);
-+                     Phantom.this.setTarget(player, org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true); // CraftBukkit - reason
++                     Phantom.this.ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER);
++                     Phantom.this.ketting$setTarget$fireEvent.set(true);
+                      Phantom.this.setTarget(player);
                       return true;
                    }
-                }

@@ -1,29 +1,23 @@
 --- a/net/minecraft/world/entity/monster/ZombifiedPiglin.java
 +++ b/net/minecraft/world/entity/monster/ZombifiedPiglin.java
-@@ -144,7 +_,7 @@
+@@ -144,6 +_,8 @@
        }).filter((p_289463_) -> {
           return !p_289463_.isAlliedTo(this.getTarget());
        }).forEach((p_289464_) -> {
--         p_289464_.setTarget(this.getTarget());
-+         p_289464_.setTarget(this.getTarget(), org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY, true); // CraftBukkit
++         p_289464_.ketting$setTarget$reason.set(org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY);
++         p_289464_.ketting$setTarget$fireEvent.set(true);
+          p_289464_.setTarget(this.getTarget());
        });
     }
- 
-@@ -152,7 +_,7 @@
+@@ -152,6 +_,7 @@
        this.playSound(SoundEvents.ZOMBIFIED_PIGLIN_ANGRY, this.getSoundVolume() * 2.0F, this.getVoicePitch() * 1.8F);
     }
  
--   public void setTarget(@Nullable LivingEntity p_34478_) {
-+   public boolean setTarget(@Nullable LivingEntity p_34478_, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent) { // CraftBukkit - signature
++   @Override
+    public void setTarget(@Nullable LivingEntity p_34478_) {
        if (this.getTarget() == null && p_34478_ != null) {
           this.playFirstAngerSoundIn = FIRST_ANGER_SOUND_DELAY.sample(this.random);
-          this.ticksUntilNextAlert = ALERT_INTERVAL.sample(this.random);
-@@ -162,11 +_,20 @@
-          this.setLastHurtByPlayer((Player)p_34478_);
-       }
- 
--      super.setTarget(p_34478_);
-+      return super.setTarget(p_34478_, reason, fireEvent); // CraftBukkit
+@@ -166,7 +_,16 @@
     }
  
     public void startPersistentAngerTimer() {

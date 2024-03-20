@@ -22,32 +22,39 @@
        } else {
           super.fallOn(p_154047_, p_154048_, p_154049_, p_154050_, p_154051_);
        }
-@@ -339,14 +_,14 @@
+@@ -339,14 +_,24 @@
        if (isUnmergedTipWithDirection(blockstate, p_154038_.getOpposite())) {
           createMergedTips(blockstate, p_154036_, blockpos);
        } else if (blockstate.isAir() || blockstate.is(Blocks.WATER)) {
--         createDripstone(p_154036_, blockpos, p_154038_, DripstoneThickness.TIP);
-+         createDripstone(p_154036_, blockpos, p_154038_, DripstoneThickness.TIP, p_154037_); // CraftBukkit
++         ketting$createDripstone$source.set(p_154037_); //Ketting - CraftBukkit
+          createDripstone(p_154036_, blockpos, p_154038_, DripstoneThickness.TIP);
        }
  
     }
  
--   private static void createDripstone(LevelAccessor p_154088_, BlockPos p_154089_, Direction p_154090_, DripstoneThickness p_154091_) {
++   //Ketting start
++   private final static java.util.concurrent.atomic.AtomicReference<BlockPos> ketting$createDripstone$source = new java.util.concurrent.atomic.AtomicReference<>(null);
++   @SuppressWarnings("unused") //Ketting - Keep for CB compat
 +   private static void createDripstone(LevelAccessor p_154088_, BlockPos p_154089_, Direction p_154090_, DripstoneThickness p_154091_, BlockPos source) { // CraftBukkit
++      ketting$createDripstone$source.set(source);
++      createDripstone(p_154088_, p_154089_, p_154090_, p_154091_);
++   }
++   //Ketting end
+    private static void createDripstone(LevelAccessor p_154088_, BlockPos p_154089_, Direction p_154090_, DripstoneThickness p_154091_) {
        BlockState blockstate = Blocks.POINTED_DRIPSTONE.defaultBlockState().setValue(TIP_DIRECTION, p_154090_).setValue(THICKNESS, p_154091_).setValue(WATERLOGGED, Boolean.valueOf(p_154088_.getFluidState(p_154089_).getType() == Fluids.WATER));
 -      p_154088_.setBlock(p_154089_, blockstate, 3);
-+      org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_154088_, source, p_154089_, blockstate, 3); // CraftBukkit
++      BlockPos source = ketting$createDripstone$source.getAndSet(null); //Ketting
++      if (source != null) org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_154088_, source, p_154089_, blockstate, 3); // CraftBukkit
     }
  
     private static void createMergedTips(BlockState p_154231_, LevelAccessor p_154232_, BlockPos p_154233_) {
-@@ -360,8 +_,8 @@
+@@ -360,7 +_,9 @@
           blockpos1 = p_154233_.below();
        }
  
--      createDripstone(p_154232_, blockpos, Direction.DOWN, DripstoneThickness.TIP_MERGE);
--      createDripstone(p_154232_, blockpos1, Direction.UP, DripstoneThickness.TIP_MERGE);
-+      createDripstone(p_154232_, blockpos, Direction.DOWN, DripstoneThickness.TIP_MERGE, p_154233_);
-+      createDripstone(p_154232_, blockpos1, Direction.UP, DripstoneThickness.TIP_MERGE, p_154233_);
++      ketting$createDripstone$source.set(p_154233_);
+       createDripstone(p_154232_, blockpos, Direction.DOWN, DripstoneThickness.TIP_MERGE);
++      ketting$createDripstone$source.set(p_154233_);
+       createDripstone(p_154232_, blockpos1, Direction.UP, DripstoneThickness.TIP_MERGE);
     }
  
-    public static void spawnDripParticle(Level p_154063_, BlockPos p_154064_, BlockState p_154065_) {

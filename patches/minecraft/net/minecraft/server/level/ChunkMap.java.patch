@@ -135,7 +135,7 @@
           }
  
        }
-@@ -946,21 +_,39 @@
+@@ -946,21 +_,48 @@
  
     private CompletableFuture<Optional<CompoundTag>> readChunk(ChunkPos p_214964_) {
        return this.read(p_214964_).thenApplyAsync((p_214907_) -> {
@@ -149,25 +149,34 @@
        }, Util.backgroundExecutor());
     }
  
--   private CompoundTag upgradeChunkTag(CompoundTag p_214948_) {
--      return this.upgradeChunkTag(this.level.dimension(), this.overworldDataStorage, p_214948_, this.generator.getTypeNameForDataFixer());
 +   // CraftBukkit start
++   public java.util.concurrent.atomic.AtomicReference<ChunkPos> ketting$upgradeChunkTag$pos = new java.util.concurrent.atomic.AtomicReference<>(null);
 +   private CompoundTag upgradeChunkTag(CompoundTag p_214948_, ChunkPos pos) {
-+      return this.upgradeChunkTag(Registries.levelToLevelStem(this.level.dimension()), this.overworldDataStorage, p_214948_, this.generator.getTypeNameForDataFixer(), pos, level);
++      ketting$upgradeChunkTag$pos.set(pos);
++      return upgradeChunkTag(p_214948_);
++   }
+    private CompoundTag upgradeChunkTag(CompoundTag p_214948_) {
+-      return this.upgradeChunkTag(this.level.dimension(), this.overworldDataStorage, p_214948_, this.generator.getTypeNameForDataFixer());
+-   }
++      return this.upgradeChunkTag(Registries.levelToLevelStem(this.level.dimension()), this.overworldDataStorage, p_214948_, this.generator.getTypeNameForDataFixer(), ketting$upgradeChunkTag$pos.getAndSet(null), level);
 +      // CraftBukkit end
-    }
- 
-    boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_) {
-+      // Spigot start
-+      return anyPlayerCloseEnoughForSpawning(p_183880_, false);
 +   }
 +
++   //Ketting start
++   public java.util.concurrent.atomic.AtomicBoolean ketting$anyPlayerCloseEnoughForSpawning$reducedRange = new java.util.concurrent.atomic.AtomicBoolean(false);
 +   boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_, boolean reducedRange) {
++      ketting$anyPlayerCloseEnoughForSpawning$reducedRange.set(reducedRange);
++      // Spigot start
++      return anyPlayerCloseEnoughForSpawning(p_183880_);
++   }
++   //Ketting end
+ 
+    boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_) {
 +      int chunkRange = level.spigotConfig.mobSpawnRange;
 +      chunkRange = (chunkRange > level.spigotConfig.viewDistance) ? (byte) level.spigotConfig.viewDistance : chunkRange;
 +      chunkRange = (chunkRange > 8) ? 8 : chunkRange;
 +
-+      double blockRange = (reducedRange) ? Math.pow(chunkRange << 4, 2) : 16384.0D;
++      double blockRange = (ketting$anyPlayerCloseEnoughForSpawning$reducedRange.getAndSet(false)) ? Math.pow(chunkRange << 4, 2) : 16384.0D;
 +      // Spigot end
        long i = p_183880_.toLong();
        if (!this.distanceManager.hasPlayersNearby(i)) {
@@ -179,27 +188,23 @@
                 return true;
              }
           }
-@@ -977,7 +_,7 @@
-          ImmutableList.Builder<ServerPlayer> builder = ImmutableList.builder();
- 
-          for(ServerPlayer serverplayer : this.playerMap.getPlayers(i)) {
--            if (this.playerIsCloseEnoughForSpawning(serverplayer, p_183889_)) {
-+            if (this.playerIsCloseEnoughForSpawning(serverplayer, p_183889_, 16384.0D)) {
-                builder.add(serverplayer);
-             }
-          }
-@@ -986,12 +_,12 @@
+@@ -986,12 +_,18 @@
        }
     }
  
--   private boolean playerIsCloseEnoughForSpawning(ServerPlayer p_183752_, ChunkPos p_183753_) {
-+   private boolean playerIsCloseEnoughForSpawning(ServerPlayer p_183752_, ChunkPos p_183753_, double range) { // Spigot
++   public final java.util.concurrent.atomic.AtomicReference<java.lang.Double> ketting$playerIsCloseEnoughForSpawning$range = new java.util.concurrent.atomic.AtomicReference<>(16384.0D);
++   private boolean playerIsCloseEnoughForSpawning(ServerPlayer p_183752_, ChunkPos p_183753_, double range) {
++      ketting$playerIsCloseEnoughForSpawning$range.set(range);
++      return playerIsCloseEnoughForSpawning(p_183752_, p_183753_);
++   }
+    private boolean playerIsCloseEnoughForSpawning(ServerPlayer p_183752_, ChunkPos p_183753_) {
        if (p_183752_.isSpectator()) {
++         ketting$playerIsCloseEnoughForSpawning$range.set(16384.0D);
           return false;
        } else {
           double d0 = euclideanDistanceSquared(p_183753_, p_183752_);
 -         return d0 < 16384.0D;
-+         return d0 < range; // Spigot
++         return d0 < java.util.Objects.requireNonNullElse(ketting$playerIsCloseEnoughForSpawning$range.getAndSet(16384.0D), 16384.0D); // Ketting - Spigot
        }
     }
  

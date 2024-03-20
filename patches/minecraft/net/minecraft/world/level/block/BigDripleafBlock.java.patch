@@ -43,38 +43,50 @@
           } else if (tilt == Tilt.FULL) {
              resetTilt(p_220798_, p_220799_, p_220800_);
           }
-@@ -190,8 +_,10 @@
+@@ -190,8 +_,19 @@
        return p_152303_.onGround() && p_152303_.position().y > (double)((float)p_152302_.getY() + 0.6875F);
     }
  
--   private void setTiltAndScheduleTick(BlockState p_152283_, Level p_152284_, BlockPos p_152285_, Tilt p_152286_, @Nullable SoundEvent p_152287_) {
--      setTilt(p_152283_, p_152284_, p_152285_, p_152286_);
++   // Ketting start
++   private final java.util.concurrent.atomic.AtomicReference<Entity> ketting$setTiltAndScheduleTick$entity = new java.util.concurrent.atomic.AtomicReference<>(null);
 +   // CraftBukkit start
 +   private void setTiltAndScheduleTick(BlockState p_152283_, Level p_152284_, BlockPos p_152285_, Tilt p_152286_, @Nullable SoundEvent p_152287_, @Nullable Entity entity) {
-+      if (setTilt(p_152283_, p_152284_, p_152285_, p_152286_, entity)) return;
++      ketting$setTiltAndScheduleTick$entity.set(entity);
++      setTiltAndScheduleTick(p_152283_, p_152284_, p_152285_, p_152286_, p_152287_);
++   }
+    private void setTiltAndScheduleTick(BlockState p_152283_, Level p_152284_, BlockPos p_152285_, Tilt p_152286_, @Nullable SoundEvent p_152287_) {
++      ketting$setTilt$entity.set(ketting$setTiltAndScheduleTick$entity.getAndSet(null)); //Ketting
+       setTilt(p_152283_, p_152284_, p_152285_, p_152286_);
++      if (ketting$setTilt$returnValue) return; //Ketting - CraftBukkit
 +      // CraftBukkit end
++      // Ketting end
        if (p_152287_ != null) {
           playTiltSound(p_152284_, p_152285_, p_152287_);
        }
-@@ -204,20 +_,28 @@
+@@ -204,6 +_,7 @@
     }
  
     private static void resetTilt(BlockState p_152314_, Level p_152315_, BlockPos p_152316_) {
--      setTilt(p_152314_, p_152315_, p_152316_, Tilt.NONE);
-+      setTilt(p_152314_, p_152315_, p_152316_, Tilt.NONE, null); // CraftBukkit
++      ketting$setTilt$entity.set(null);// CraftBukkit
+       setTilt(p_152314_, p_152315_, p_152316_, Tilt.NONE);
        if (p_152314_.getValue(TILT) != Tilt.NONE) {
           playTiltSound(p_152315_, p_152316_, SoundEvents.BIG_DRIPLEAF_TILT_UP);
-       }
+@@ -211,13 +_,28 @@
  
     }
  
--   private static void setTilt(BlockState p_152278_, Level p_152279_, BlockPos p_152280_, Tilt p_152281_) {
 +   // CraftBukkit start
++   private static final java.util.concurrent.atomic.AtomicReference<Entity> ketting$setTilt$entity = new java.util.concurrent.atomic.AtomicReference<>(null);
++   private static boolean ketting$setTilt$returnValue = true;
 +   private static boolean setTilt(BlockState p_152278_, Level p_152279_, BlockPos p_152280_, Tilt p_152281_, @Nullable Entity entity) {
-+      if (entity != null) {
-+         if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(entity, p_152280_, p_152278_.setValue(BigDripleafBlock.TILT, p_152281_))) {
-+            return false;
-+         }
++      ketting$setTilt$entity.set(entity);
++      setTilt(p_152278_, p_152279_, p_152280_, p_152281_);
++      return ketting$setTilt$returnValue;
++   }
+    private static void setTilt(BlockState p_152278_, Level p_152279_, BlockPos p_152280_, Tilt p_152281_) {
++      if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(ketting$setTilt$entity.getAndSet(null), p_152280_, p_152278_.setValue(BigDripleafBlock.TILT, p_152281_))) {
++         ketting$setTilt$returnValue = false;
++         return;
 +      }
 +      // CraftBukkit end
        Tilt tilt = p_152278_.getValue(TILT);
@@ -83,7 +95,8 @@
           p_152279_.gameEvent((Entity)null, GameEvent.BLOCK_CHANGE, p_152280_);
        }
  
-+      return true; // CraftBukkit
++      ketting$setTilt$returnValue = true; // CraftBukkit
++      return;
     }
  
     public VoxelShape getCollisionShape(BlockState p_152307_, BlockGetter p_152308_, BlockPos p_152309_, CollisionContext p_152310_) {

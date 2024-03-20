@@ -10,12 +10,3 @@
        CompoundTag compoundtag = new CompoundTag();
        compoundtag.putString("id", BuiltInRegistries.STRUCTURE_PIECE.getKey(this.getType()).toString());
        BoundingBox.CODEC.encodeStart(NbtOps.INSTANCE, this.boundingBox).resultOrPartial(LOGGER::error).ifPresent((p_163579_) -> {
-@@ -385,7 +_,7 @@
-    }
- 
-    protected boolean createDispenser(WorldGenLevel p_226820_, BoundingBox p_226821_, RandomSource p_226822_, int p_226823_, int p_226824_, int p_226825_, Direction p_226826_, ResourceLocation p_226827_) {
--      BlockPos blockpos = this.getWorldPos(p_226823_, p_226824_, p_226825_);
-+      BlockPos.MutableBlockPos blockpos = this.getWorldPos(p_226823_, p_226824_, p_226825_);
-       if (p_226821_.isInside(blockpos) && !p_226820_.getBlockState(blockpos).is(Blocks.DISPENSER)) {
-          this.placeBlock(p_226820_, Blocks.DISPENSER.defaultBlockState().setValue(DispenserBlock.FACING, p_226826_), p_226823_, p_226824_, p_226825_, p_226821_);
-          BlockEntity blockentity = p_226820_.getBlockEntity(blockpos);

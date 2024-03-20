@@ -9,35 +9,50 @@
           return Pair.of(primaryleveldata, worlddimensions$complete);
        };
     }
-@@ -334,24 +_,46 @@
+@@ -333,18 +_,42 @@
+       return this.backupDir;
     }
  
-    public LevelStorageSource.LevelStorageAccess validateAndCreateAccess(String p_289980_) throws IOException, ContentValidationException {
-+      return this.validateAndCreateAccess(p_289980_, null);
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicReference<ResourceKey<LevelStem>> ketting$validateAndCreateAccess$dimensionType = new java.util.concurrent.atomic.AtomicReference<>(null);
++   public LevelStorageSource.LevelStorageAccess validateAndCreateAccess(String p_289980_, ResourceKey<LevelStem> dimensionType) throws IOException, ContentValidationException {
++      ketting$validateAndCreateAccess$dimensionType.set(dimensionType);
++      return validateAndCreateAccess(p_289980_);
 +   }
++   //Ketting end
 +
-+   public LevelStorageSource.LevelStorageAccess validateAndCreateAccess(String p_289980_, ResourceKey<LevelStem> dimensionType) throws IOException, ContentValidationException { // CraftBukkit
+    public LevelStorageSource.LevelStorageAccess validateAndCreateAccess(String p_289980_) throws IOException, ContentValidationException {
        Path path = this.getLevelPath(p_289980_);
        List<ForbiddenSymlinkInfo> list = this.worldDirValidator.validateSave(path, true);
        if (!list.isEmpty()) {
           throw new ContentValidationException(path, list);
        } else {
--         return new LevelStorageSource.LevelStorageAccess(p_289980_, path);
-+         return new LevelStorageSource.LevelStorageAccess(p_289980_, path, dimensionType); // CraftBukkit
++         LevelStorageAccess.ketting$dimensionType = ketting$validateAndCreateAccess$dimensionType.getAndSet(null);
+          return new LevelStorageSource.LevelStorageAccess(p_289980_, path);
        }
     }
  
-    public LevelStorageSource.LevelStorageAccess createAccess(String p_78261_) throws IOException {
-+      return this.createAccess(p_78261_, null);
++   //Ketting start - try merging both world systems
++   public LevelStorageSource.LevelStorageAccess deriveFromSource(LevelStorageSource.LevelStorageAccess source, ResourceKey<LevelStem> dimensionType) throws IOException {
++      return new LevelStorageSource.LevelStorageAccess(source, dimensionType);
 +   }
 +
++   public final java.util.concurrent.atomic.AtomicReference<ResourceKey<LevelStem>> ketting$createAccess$dimensionType = new java.util.concurrent.atomic.AtomicReference<>(null);
++
++   @SuppressWarnings("unused") //Ketting - CB compat
 +   public LevelStorageSource.LevelStorageAccess createAccess(String p_78261_, ResourceKey<LevelStem> dimensionType) throws IOException { // CraftBukkit
++      ketting$createAccess$dimensionType.set(dimensionType);
++      return this.createAccess(p_78261_);
++   }
++   //Ketting end
++
+    public LevelStorageSource.LevelStorageAccess createAccess(String p_78261_) throws IOException {
        Path path = this.getLevelPath(p_78261_);
--      return new LevelStorageSource.LevelStorageAccess(p_78261_, path);
-+      return new LevelStorageSource.LevelStorageAccess(p_78261_, path, dimensionType); // CraftBukkit
++      LevelStorageAccess.ketting$dimensionType = ketting$createAccess$dimensionType.getAndSet(null); //Ketting
+       return new LevelStorageSource.LevelStorageAccess(p_78261_, path);
     }
  
-    public DirectoryValidator getWorldDirValidator() {
+@@ -352,6 +_,20 @@
        return this.worldDirValidator;
     }
  
@@ -58,27 +73,50 @@
     public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> levels) implements Iterable<LevelStorageSource.LevelDirectory> {
        public boolean isEmpty() {
           return this.levels.isEmpty();
-@@ -397,8 +_,18 @@
+@@ -397,12 +_,42 @@
        public final LevelStorageSource.LevelDirectory levelDirectory;
        private final String levelId;
        private final Map<LevelResource, Path> resources = Maps.newHashMap();
--
--      LevelStorageAccess(String p_289967_, Path p_289988_) throws IOException {
 +      // CraftBukkit start
-+      public ResourceKey<LevelStem> dimensionType;
++      public @Nullable ResourceKey<LevelStem> dimensionType;
 +
 +      //Ketting start
++      public static @Nullable ResourceKey<LevelStem> ketting$dimensionType;
++
 +      public void setDimensionType(ResourceKey<LevelStem> dimensionType) {
 +          this.dimensionType = dimensionType;
 +      }
 +      //Ketting end
-+
-+      LevelStorageAccess(String p_289967_, Path p_289988_, ResourceKey<LevelStem> dimensionType) throws IOException {
-+         this.dimensionType = dimensionType;
-+         // CraftBukkit end
+ 
+       LevelStorageAccess(String p_289967_, Path p_289988_) throws IOException {
           this.levelId = p_289967_;
           this.levelDirectory = new LevelStorageSource.LevelDirectory(p_289988_);
           this.lock = DirectoryLock.create(p_289988_);
+-      }
++         //Ketting start
++         this.dimensionType = ketting$dimensionType;
++         ketting$dimensionType = null;
++      }
++      
++      //Ketting start
++      LevelStorageAccess(LevelStorageAccess original, ResourceKey<LevelStem> dimensionType) {
++         this.dimensionType = dimensionType;
++
++         this.levelId = original.levelId;
++         this.levelDirectory = original.levelDirectory;
++         this.lock = original.lock;
++         this.resources.putAll(original.resources);
++      }
++      @SuppressWarnings("unused") //Ketting - keep for CB compat
++      LevelStorageAccess(String p_289967_, Path p_289988_, ResourceKey<LevelStem> dimensionType) throws IOException {
++         this(p_289967_, p_289988_);
++         this.dimensionType = dimensionType;
++      }
++      //Ketting end
++
+ 
+       public String getLevelId() {
+          return this.levelId;
 @@ -413,7 +_,7 @@
        }
  
@@ -117,14 +155,86 @@
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
              NbtIo.writeCompressed(compoundtag1, file2);
-@@ -469,6 +_,10 @@
- 
-       public Optional<Path> getIconFile() {
+@@ -471,6 +_,10 @@
           return !this.lock.isValid() ? Optional.empty() : Optional.of(this.levelDirectory.iconFile());
-+      }
-+
-+      public Path getWorldDir() {
-+         return baseDir;
        }
  
++      public Path getWorldDir() {
++         return baseDir;
++      }
++
        public void deleteLevel() throws IOException {
+          this.checkLock();
+          final Path path = this.levelDirectory.lockFile();
+@@ -521,6 +_,58 @@
+ 
+       }
+ 
++      //Ketting start
++      public void deleteLevelSilent() throws IOException {
++         this.checkLock();
++         final Path path = this.levelDirectory.lockFile();
++         LevelStorageSource.LOGGER.debug("Deleting level {}", (Object)this.levelId);
++
++         for(int i = 1; i <= 5; ++i) {
++            LevelStorageSource.LOGGER.debug("Attempt {}...", (int)i);
++
++            try {
++               Files.walkFileTree(this.levelDirectory.path(), new SimpleFileVisitor<Path>() {
++                  public FileVisitResult visitFile(Path p_78323_, BasicFileAttributes p_78324_) throws IOException {
++                     if (!p_78323_.equals(path)) {
++                        LevelStorageSource.LOGGER.debug("Deleting {}", (Object)p_78323_);
++                        Files.delete(p_78323_);
++                     }
++
++                     return FileVisitResult.CONTINUE;
++                  }
++
++                  public FileVisitResult postVisitDirectory(Path p_78320_, @Nullable IOException p_78321_) throws IOException {
++                     if (p_78321_ != null) {
++                        throw p_78321_;
++                     } else {
++                        if (p_78320_.equals(LevelStorageAccess.this.levelDirectory.path())) {
++                           LevelStorageAccess.this.lock.close();
++                           Files.deleteIfExists(path);
++                        }
++
++                        Files.delete(p_78320_);
++                        return FileVisitResult.CONTINUE;
++                     }
++                  }
++               });
++               break;
++            } catch (IOException ioexception) {
++               if (i >= 5) {
++                  throw ioexception;
++               }
++
++               LevelStorageSource.LOGGER.debug("Failed to delete {}", this.levelDirectory.path(), ioexception);
++
++               try {
++                  Thread.sleep(500L);
++               } catch (InterruptedException interruptedexception) {
++               }
++            }
++         }
++
++      }
++      //Ketting end
++
+       public void renameLevel(String p_78298_) throws IOException {
+          this.checkLock();
+          Path path = this.levelDirectory.dataFile();
+@@ -570,5 +_,12 @@
+       public void close() throws IOException {
+          this.lock.close();
+       }
++
++      //Ketting start
++      public @Nullable LevelStorageSource reference;
++      public void setReference(LevelStorageSource levelstoragesource) {
++         this.reference = levelstoragesource;
++      }
++      //Ketting end
+    }
+ }

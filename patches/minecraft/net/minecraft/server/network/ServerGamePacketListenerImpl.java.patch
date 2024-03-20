@@ -623,51 +623,57 @@
                          this.player.doCheckFallDamage(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5, p_9874_.isOnGround());
                       }
                    }
-@@ -954,11 +_,62 @@
+@@ -954,11 +_,69 @@
        return false;
     }
  
-+   // CraftBukkit start - Delegate to teleport(org.bukkit.Location)
-    public void teleport(double p_9775_, double p_9776_, double p_9777_, float p_9778_, float p_9779_) {
--      this.teleport(p_9775_, p_9776_, p_9777_, p_9778_, p_9779_, Collections.emptySet());
-+      this.teleport(p_9775_, p_9776_, p_9777_, p_9778_, p_9779_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.player.PlayerTeleportEvent.TeleportCause> ketting$teleport$reason = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);
++   public boolean ketting$teleport$result = false;
++   @SuppressWarnings("unused") //Ketting - CB compat
++   public void teleport(double p_9775_, double p_9776_, double p_9777_, float p_9778_, float p_9779_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
++      ketting$teleport$reason.set(cause);
++      this.teleport(p_9775_, p_9776_, p_9777_, p_9778_, p_9779_);
 +   }
-+
-+   public void teleport(double d0, double d1, double d2, float f, float f1, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
-+      this.teleport(d0, d1, d2, f, f1, Collections.emptySet(), cause);
++   @SuppressWarnings("unused") //Ketting - CB compat
++   public void teleport(double p_9781_, double p_9782_, double p_9783_, float p_9784_, float p_9785_, Set<RelativeMovement> p_9786_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
++      ketting$teleport$reason.set(cause);
++      this.teleport(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_, p_9786_);
++   }
++   //Ketting end
+    public void teleport(double p_9775_, double p_9776_, double p_9777_, float p_9778_, float p_9779_) {
+       this.teleport(p_9775_, p_9776_, p_9777_, p_9778_, p_9779_, Collections.emptySet());
     }
  
     public void teleport(double p_9781_, double p_9782_, double p_9783_, float p_9784_, float p_9785_, Set<RelativeMovement> p_9786_) {
-+      this.teleport(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_, p_9786_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);
-+   }
-+
-+   public boolean teleport(double d0, double d1, double d2, float f, float f1, Set<RelativeMovement> set, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) { // CraftBukkit - Return event status
 +      org.bukkit.entity.Player player = this.getCraftPlayer();
 +      org.bukkit.Location from = player.getLocation();
-+      double x = d0;
-+      double y = d1;
-+      double z = d2;
-+      float yaw = f;
-+      float pitch = f1;
++      double x = p_9781_;
++      double y = p_9782_;
++      double z = p_9783_;
++      float yaw = p_9784_;
++      float pitch = p_9785_;
 +      org.bukkit.Location to = new org.bukkit.Location(this.getCraftPlayer().getWorld(), x, y, z, yaw, pitch);
 +      // SPIGOT-5171: Triggered on join
 +      if (from.equals(to)) {
-+         this.internalTeleport(d0, d1, d2, f, f1, set);
-+         return false; // CraftBukkit - Return event status
++         this.internalTeleport(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_, p_9786_);
++         ketting$teleport$result = false; // Ketting - CraftBukkit - Return event status
++         return; 
 +      }
-+      org.bukkit.event.player.PlayerTeleportEvent event = new org.bukkit.event.player.PlayerTeleportEvent(player, from.clone(), to.clone(), cause);
++      org.bukkit.event.player.PlayerTeleportEvent event = new org.bukkit.event.player.PlayerTeleportEvent(player, from.clone(), to.clone(), ketting$teleport$reason.getAndSet(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN));
 +      this.cserver.getPluginManager().callEvent(event);
 +      if (event.isCancelled() || !to.equals(event.getTo())) {
-+         set.clear(); // Can't relative teleport
++         p_9786_.clear(); // Can't relative teleport
 +         to = event.isCancelled() ? event.getFrom() : event.getTo();
-+         d0 = to.getX();
-+         d1 = to.getY();
-+         d2 = to.getZ();
-+         f = to.getYaw();
-+         f1 = to.getPitch();
++         p_9781_ = to.getX();
++         p_9782_ = to.getY();
++         p_9783_ = to.getZ();
++         p_9784_ = to.getYaw();
++         p_9785_ = to.getPitch();
 +      }
-+      this.internalTeleport(d0, d1, d2, f, f1, set);
-+      return event.isCancelled(); // CraftBukkit - Return event status
++      this.internalTeleport(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_, p_9786_);
++      ketting$teleport$result = event.isCancelled(); // Ketting - CraftBukkit - Return event status
++      return;
 +   }
 +
 +   public void teleport(org.bukkit.Location dest) {

@@ -8,7 +8,7 @@
  
     public ClientIntentionPacket(String p_134726_, int p_134727_, ConnectionProtocol p_134728_) {
        this.protocolVersion = SharedConstants.getCurrentVersion().getProtocolVersion();
-@@ -21,14 +_,19 @@
+@@ -21,14 +_,16 @@
  
     public ClientIntentionPacket(FriendlyByteBuf p_179801_) {
        this.protocolVersion = p_179801_.readVarInt();
@@ -18,9 +18,6 @@
        this.intention = ConnectionProtocol.getById(p_179801_.readVarInt());
 +      this.fmlVersion = net.minecraftforge.network.NetworkHooks.getFMLVersion(hostName);
 +      this.hostName = hostName.split("\0")[0];
-+//-      this(p_179801_.readVarInt(), p_179801_.readUtf(255), p_179801_.readUnsignedShort(), ClientIntent.byId(p_179801_.readVarInt()));
-+//+      // Spigot - increase max hostName length
-+//+      this(p_179801_.readVarInt(), p_179801_.readUtf(Short.MAX_VALUE), p_179801_.readUnsignedShort(), ClientIntent.byId(p_179801_.readVarInt()));
     }
  
     public void write(FriendlyByteBuf p_134737_) {

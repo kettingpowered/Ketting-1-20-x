@@ -9,16 +9,21 @@
                 return InteractionResult.SUCCESS;
              } else {
                 return InteractionResult.PASS;
-@@ -147,6 +_,15 @@
+@@ -146,7 +_,20 @@
+       return woodtype;
     }
  
-    public void openTextEdit(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_) {
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicReference<org.bukkit.event.player.PlayerSignOpenEvent.Cause> ketting$openTextEdit$cause = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.player.PlayerSignOpenEvent.Cause.UNKNOWN);
++   public void openTextEdit(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_, org.bukkit.event.player.PlayerSignOpenEvent.Cause cause) {
++      ketting$openTextEdit$cause.set(cause);
 +      // Craftbukkit start
-+      openTextEdit(p_277738_, p_277467_, p_277771_, org.bukkit.event.player.PlayerSignOpenEvent.Cause.UNKNOWN);
++      openTextEdit(p_277738_, p_277467_, p_277771_);
 +   }
 +
-+   public void openTextEdit(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_, org.bukkit.event.player.PlayerSignOpenEvent.Cause cause) {
-+      if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerSignOpenEvent(p_277738_, p_277467_, p_277771_, cause)) {
+    public void openTextEdit(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_) {
++      if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerSignOpenEvent(p_277738_, p_277467_, p_277771_, ketting$openTextEdit$cause.getAndSet(org.bukkit.event.player.PlayerSignOpenEvent.Cause.UNKNOWN))) {
++      //Ketting end
 +         return;
 +      }
 +      // Craftbukkit end

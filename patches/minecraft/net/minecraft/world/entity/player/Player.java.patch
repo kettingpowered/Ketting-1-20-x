@@ -139,31 +139,38 @@
        super.die(p_36152_);
        this.reapplyPosition();
        if (!this.isSpectator()) {
-@@ -622,11 +_,17 @@
+@@ -622,12 +_,23 @@
  
     @Nullable
     public ItemEntity drop(ItemStack p_36177_, boolean p_36178_) {
 -      return this.drop(p_36177_, false, p_36178_);
+-   }
 +      return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, p_36177_, p_36178_);
-    }
++   }
++
++   //Ketting start
++   public final java.util.concurrent.atomic.AtomicBoolean ketting$drop$callEvent = new java.util.concurrent.atomic.AtomicBoolean(true);
++   @Nullable
++   public ItemEntity drop(ItemStack p_36179_, boolean p_36180_, boolean p_36181_, boolean callEvent) {
++      ketting$drop$callEvent.set(callEvent);
++      // CraftBukkit start - SPIGOT-2942: Add boolean to call event
++      return drop(p_36179_, p_36180_, p_36181_);
++   }
++   //Ketting end
  
     @Nullable
     public ItemEntity drop(ItemStack p_36179_, boolean p_36180_, boolean p_36181_) {
-+      // CraftBukkit start - SPIGOT-2942: Add boolean to call event
-+      return drop(p_36179_, p_36180_, p_36181_, true);
-+   }
-+
-+   @Nullable
-+   public ItemEntity drop(ItemStack p_36179_, boolean p_36180_, boolean p_36181_, boolean callEvent) {
        if (p_36179_.isEmpty()) {
++         ketting$drop$callEvent.set(true);
           return null;
        } else {
+          if (this.level().isClientSide) {
 @@ -656,11 +_,43 @@
              itementity.setDeltaMovement((double)(-f3 * f2 * 0.3F) + Math.cos((double)f5) * (double)f6, (double)(-f8 * 0.3F + 0.1F + (this.random.nextFloat() - this.random.nextFloat()) * 0.1F), (double)(f4 * f2 * 0.3F) + Math.sin((double)f5) * (double)f6);
           }
  
 +         // CraftBukkit start - fire PlayerDropItemEvent
-+         if (!callEvent) { // SPIGOT-2942: Add boolean to call event
++         if (!ketting$drop$callEvent.getAndSet(true)) { // SPIGOT-2942: Add boolean to call event
 +            return itementity;
 +         }
 +         org.bukkit.entity.Player player = (org.bukkit.entity.Player) this.getBukkitEntity();
@@ -437,7 +444,7 @@
                 }
  
                 float f4 = 0.0F;
-@@ -1099,8 +_,15 @@
+@@ -1099,8 +_,16 @@
                 if (p_36347_ instanceof LivingEntity) {
                    f4 = ((LivingEntity)p_36347_).getHealth();
                    if (j > 0 && !p_36347_.isOnFire()) {
@@ -449,7 +456,8 @@
 +
 +                     if (!combustEvent.isCancelled()) {
 +                        flag4 = true;
-+                        p_36347_.setSecondsOnFire(combustEvent.getDuration(), false);
++                        p_36347_.ketting$setSecondsOnFire$callEvent.set(false);
++                        p_36347_.setSecondsOnFire(combustEvent.getDuration());
 +                     }
 +                     // CraftBukkit end
                    }
@@ -522,7 +530,7 @@
                          this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
                       }
                    }
-@@ -1178,7 +_,14 @@
+@@ -1178,7 +_,15 @@
                       float f5 = f4 - ((LivingEntity)p_36347_).getHealth();
                       this.awardStat(Stats.DAMAGE_DEALT, Math.round(f5 * 10.0F));
                       if (j > 0) {
@@ -532,7 +540,8 @@
 +                        org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
 +
 +                        if (!combustEvent.isCancelled()) {
-+                           entity.setSecondsOnFire(combustEvent.getDuration(), false);
++                           entity.ketting$setSecondsOnFire$callEvent.set(false);
++                           entity.setSecondsOnFire(combustEvent.getDuration());
 +                        }
 +                        // CraftBukkit end
                       }

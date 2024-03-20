@@ -62,7 +62,7 @@
  
           Path path = optionset.valueOf(optionspec14);
           if (path != null) {
-@@ -102,29 +_,52 @@
+@@ -102,29 +_,53 @@
              JvmProfiler.INSTANCE.start(Environment.SERVER);
           }
  
@@ -121,6 +121,7 @@
           LevelStorageSource levelstoragesource = LevelStorageSource.createDefault(file1.toPath());
 -         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s);
 +         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s, LevelStem.OVERWORLD);
++         levelstoragesource$levelstorageaccess.setReference(levelstoragesource); //Ketting
 +         levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData();
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.getSummary();
           if (levelsummary != null) {

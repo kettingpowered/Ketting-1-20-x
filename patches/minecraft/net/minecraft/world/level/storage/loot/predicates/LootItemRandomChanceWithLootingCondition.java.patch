@@ -1,22 +1,16 @@
 --- a/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
 +++ b/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
-@@ -31,11 +_,16 @@
-    }
- 
-    public boolean test(LootContext p_81967_) {
--      Entity entity = p_81967_.getParamOrNull(LootContextParams.KILLER_ENTITY);
-+      Entity entity = (Entity) p_81967_.getParamOrNull(LootContextParams.KILLER_ENTITY);
-       int i = 0;
+@@ -36,6 +_,13 @@
        if (entity instanceof LivingEntity) {
--         i = EnchantmentHelper.getMobLooting((LivingEntity)entity);
--      }
-+         i = EnchantmentHelper.getMobLooting((LivingEntity) entity);
-+      }
+          i = EnchantmentHelper.getMobLooting((LivingEntity)entity);
+       }
 +      // CraftBukkit start - only use lootingModifier if set by Bukkit
 +      if (p_81967_.hasParam(LootContextParams.LOOTING_MOD)) {
 +         i = p_81967_.getParamOrNull(LootContextParams.LOOTING_MOD);
 +      }
 +      // CraftBukkit end
++      //Todo: this doesn't match forge. There's not much we can do about it though.
++      // Either we make it correct for CB or for Forge.
  
        return p_81967_.getRandom().nextFloat() < this.percent + (float)i * this.lootingMultiplier;
     }

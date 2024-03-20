@@ -82,11 +82,10 @@
     }
  
     private void readScoreboard(DimensionDataStorage p_129842_) {
-@@ -297,7 +_,19 @@
+@@ -297,6 +_,18 @@
  
     protected abstract boolean initServer() throws IOException;
  
--   protected void loadLevel() {
 +   //Ketting start
 +   private String loadLevel$worldName;
 +   protected void prepareLoadLevel(String worldName) {
@@ -99,10 +98,9 @@
 +   }
 +   //Ketting end
 +
-+   protected void loadLevel() { // CraftBukkit
+    protected void loadLevel() {
        if (!JvmProfiler.INSTANCE.isRunning()) {
        }
- 
 @@ -308,6 +_,13 @@
        this.createLevels(chunkprogresslistener);
        this.forceDifficulty();
@@ -139,7 +137,7 @@
        if (!serverleveldata.isInitialized()) {
           try {
              setInitialSpawn(serverlevel, serverleveldata, worldoptions.generateBonusChest(), flag);
-@@ -373,9 +_,54 @@
+@@ -373,9 +_,63 @@
           if (resourcekey != LevelStem.OVERWORLD) {
              ResourceKey<Level> resourcekey1 = ResourceKey.create(Registries.DIMENSION, resourcekey.location());
              DerivedLevelData derivedleveldata = new DerivedLevelData(this.worldData, serverleveldata);
@@ -173,6 +171,15 @@
 +            LevelStorageSource.LevelStorageAccess source;
 +            try {
 +               source = LevelStorageSource.createDefault(server.getWorldContainer().toPath()).validateAndCreateAccess(name, resourcekey);
++
++               if (org.kettingpowered.ketting.config.KettingConfig.getInstance().MERGE_WORLD_SYSTEMS.getValue()) {
++                  LevelStorageSource.LevelStorageAccess newSource = this.storageSource.reference.deriveFromSource(this.storageSource, resourcekey);
++
++                  if (org.kettingpowered.ketting.utils.WorldSystemConverter.needsConversion(source, resourcekey1))
++                     org.kettingpowered.ketting.utils.WorldSystemConverter.convert(source, newSource, resourcekey1);
++
++                  source = newSource;
++               }
 +            } catch (IOException | net.minecraft.world.level.validation.ContentValidationException e) {
 +               throw new RuntimeException(e);
 +            }

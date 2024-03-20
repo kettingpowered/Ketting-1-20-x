@@ -1,19 +1,33 @@
 --- a/net/minecraft/world/level/portal/PortalInfo.java
 +++ b/net/minecraft/world/level/portal/PortalInfo.java
-@@ -7,7 +_,16 @@
+@@ -7,11 +_,29 @@
     public final Vec3 speed;
     public final float yRot;
     public final float xRot;
 +   //Ketting start
-+   public net.minecraft.server.level.ServerLevel world;
-+   public org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent portalEventInfo;
++   public @org.jetbrains.annotations.Nullable net.minecraft.server.level.ServerLevel world;
++   public @org.jetbrains.annotations.Nullable org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent portalEventInfo;
++   public static @org.jetbrains.annotations.Nullable net.minecraft.server.level.ServerLevel ketting$world;
++   public static @org.jetbrains.annotations.Nullable org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent ketting$portalEventInfo;
++   //Ketting end
  
+    public PortalInfo(Vec3 p_77681_, Vec3 p_77682_, float p_77683_, float p_77684_) {
+       this.pos = p_77681_;
+       this.speed = p_77682_;
+       this.yRot = p_77683_;
+       this.xRot = p_77684_;
+-   }
++      //Ketting start
++      this.world = ketting$world;
++      ketting$world = null;
++      this.portalEventInfo = ketting$portalEventInfo;
++      ketting$portalEventInfo = null;
++   }
++   
 +   public PortalInfo(Vec3 p_77681_, Vec3 p_77682_, float p_77683_, float p_77684_, net.minecraft.server.level.ServerLevel world, org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent portalEventInfo) {
 +      this(p_77681_, p_77682_, p_77683_, p_77684_);
 +      this.world = world;
 +      this.portalEventInfo = portalEventInfo;
 +   }
 +   //Ketting end
-    public PortalInfo(Vec3 p_77681_, Vec3 p_77682_, float p_77683_, float p_77684_) {
-       this.pos = p_77681_;
-       this.speed = p_77682_;
+ }

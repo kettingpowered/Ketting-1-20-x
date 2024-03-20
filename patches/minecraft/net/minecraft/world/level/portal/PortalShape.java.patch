@@ -60,14 +60,12 @@
        }
  
        return 21;
-@@ -166,10 +_,30 @@
+@@ -165,11 +_,29 @@
+       return this.bottomLeft != null && this.width >= 2 && this.width <= 21 && this.height >= 3 && this.height <= 21;
     }
  
++   private boolean ketting$createPortalBlocks$result = false;
     public void createPortalBlocks() {
-+      createPortalBlocksBoolean();
-+   }
-+   // CraftBukkit start - return boolean
-+   public boolean createPortalBlocksBoolean() {
 +      org.bukkit.World bworld = this.level.getMinecraftWorld().getWorld();
 +
 +      // Copy below for loop
@@ -81,32 +79,35 @@
 +      this.level.getMinecraftWorld().getServer().server.getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) {
-+         return false;
++         ketting$createPortalBlocks$result = false;
++         return;
 +      }
 +      // CraftBukkit end
        BlockPos.betweenClosed(this.bottomLeft, this.bottomLeft.relative(Direction.UP, this.height - 1).relative(this.rightDir, this.width - 1)).forEach((p_77725_) -> {
           this.level.setBlock(p_77725_, blockstate, 18);
        });
-+      return true; // CraftBukkit
++      ketting$createPortalBlocks$result = true; // CraftBukkit
     }
  
     public boolean isComplete() {
-@@ -202,6 +_,9 @@
+@@ -201,6 +_,11 @@
+       return new Vec3(d2, d4, d3);
     }
  
-    public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_) {
-+      return createPortalInfo(p_259301_, p_259931_, p_259901_, p_259630_, p_259166_, p_260043_, p_259853_, p_259667_, null);
-+   }
++   private static final java.util.concurrent.atomic.AtomicReference<org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent> ketting$createPortalInfo$portalEventInfo = new java.util.concurrent.atomic.AtomicReference<>(null);
 +   public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_, org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent portalEventInfo) { // CraftBukkit
++      ketting$createPortalInfo$portalEventInfo.set(portalEventInfo);
++      return createPortalInfo(p_259301_, p_259931_, p_259901_, p_259630_, p_259166_, p_260043_, p_259853_, p_259667_);
++   }
+    public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_) {
        BlockPos blockpos = p_259931_.minCorner;
        BlockState blockstate = p_259301_.getBlockState(blockpos);
-       Direction.Axis direction$axis = blockstate.getOptionalValue(BlockStateProperties.HORIZONTAL_AXIS).orElse(Direction.Axis.X);
-@@ -216,7 +_,7 @@
+@@ -216,6 +_,8 @@
        boolean flag = direction$axis == Direction.Axis.X;
        Vec3 vec31 = new Vec3((double)blockpos.getX() + (flag ? d2 : d4), (double)blockpos.getY() + d3, (double)blockpos.getZ() + (flag ? d4 : d2));
        Vec3 vec32 = findCollisionFreePosition(vec31, p_259301_, p_259166_, entitydimensions);
--      return new PortalInfo(vec32, vec3, p_259853_ + (float)i, p_259667_);
-+      return new PortalInfo(vec32, vec3, p_259853_ + (float)i, p_259667_, p_259301_, portalEventInfo); // CraftBukkit);
++      PortalInfo.ketting$portalEventInfo = ketting$createPortalInfo$portalEventInfo.getAndSet(null); //Ketting - pass CB values 
++      PortalInfo.ketting$world = p_259301_; //Ketting - pass CB values
+       return new PortalInfo(vec32, vec3, p_259853_ + (float)i, p_259667_);
     }
  
-    private static Vec3 findCollisionFreePosition(Vec3 p_260315_, ServerLevel p_259704_, Entity p_259626_, EntityDimensions p_259816_) {

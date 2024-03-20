@@ -21,22 +21,21 @@
     protected Brain.Provider<Allay> brainProvider() {
        return Brain.provider(MEMORY_TYPES, SENSOR_TYPES);
     }
-@@ -207,7 +_,7 @@
+@@ -207,6 +_,7 @@
     public void aiStep() {
        super.aiStep();
        if (!this.level().isClientSide && this.isAlive() && this.tickCount % 10 == 0) {
--         this.heal(1.0F);
-+         this.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.REGEN); // CraftBukkit
++         ketting$heal$regainReason = org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.REGEN;
+          this.heal(1.0F);
        }
  
-       if (this.isDancing() && this.shouldStopDancing() && this.tickCount % 20 == 0) {
-@@ -272,7 +_,12 @@
-       ItemStack itemstack = p_218361_.getItemInHand(p_218362_);
+@@ -273,6 +_,13 @@
        ItemStack itemstack1 = this.getItemInHand(InteractionHand.MAIN_HAND);
        if (this.isDancing() && this.isDuplicationItem(itemstack) && this.canDuplicate()) {
--         this.duplicateAllay();
+          this.duplicateAllay();
 +         // CraftBukkit start - handle cancel duplication
-+         Allay allay = this.duplicateAllay();
++         Allay allay = ketting$duplicateAllay$returnValue;
++         ketting$duplicateAllay$returnValue = null;
 +         if (allay == null) {
 +            return InteractionResult.SUCCESS;
 +         }
@@ -61,23 +60,23 @@
        return this.jukeboxPos == null || !this.jukeboxPos.closerToCenterThan(this.position(), (double)GameEvent.JUKEBOX_PLAY.getNotificationRadius()) || !this.level().getBlockState(this.jukeboxPos).is(Blocks.JUKEBOX);
     }
  
-@@ -463,16 +_,17 @@
+@@ -463,6 +_,7 @@
        return DUPLICATION_ITEM.test(p_239736_);
     }
  
--   private void duplicateAllay() {
-+   public Allay duplicateAllay() { // CraftBukkit - return allay
++   public @Nullable Allay ketting$duplicateAllay$returnValue = null;
+    public void duplicateAllay() {
        Allay allay = EntityType.ALLAY.create(this.level());
        if (allay != null) {
-          allay.moveTo(this.position());
+@@ -470,9 +_,11 @@
           allay.setPersistenceRequired();
           allay.resetDuplicationCooldown();
           this.resetDuplicationCooldown();
 +         this.level().prepareAddFreshEntity(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DUPLICATION);
           this.level().addFreshEntity(allay);
        }
--
-+      return allay; // CraftBukkit
+ 
++      ketting$duplicateAllay$returnValue = allay;
     }
  
     public void resetDuplicationCooldown() {

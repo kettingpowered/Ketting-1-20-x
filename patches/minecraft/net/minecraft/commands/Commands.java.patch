@@ -44,7 +44,7 @@
     }
  
     public static <S> ParseResults<S> mapSource(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
-@@ -230,11 +_,64 @@
+@@ -230,11 +_,71 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }
  
@@ -93,23 +93,27 @@
 +      }
 +   }
 +   // CraftBukkit end
-+
++   //Ketting start
++   private java.util.concurrent.atomic.AtomicReference<String> ketting$performPrefixedCommand$label = new java.util.concurrent.atomic.AtomicReference<>(null);  // Ketting
++   public int performPrefixedCommand(CommandSourceStack p_230958_, String p_230959_, String label) {
++      ketting$performPrefixedCommand$label.set(label);
++      return performPrefixedCommand(p_230958_, p_230959_);
++   }
++   private void ketting$performPrefixedCommandPass(String s){
++      String label = ketting$performPrefixedCommand$label.get();
++      if (label == null) ketting$performCommand$label.set(s);
++      else ketting$performCommand$label.set(label);
++   }
++   //Ketting end
     public int performPrefixedCommand(CommandSourceStack p_230958_, String p_230959_) {
--      p_230959_ = p_230959_.startsWith("/") ? p_230959_.substring(1) : p_230959_;
+       p_230959_ = p_230959_.startsWith("/") ? p_230959_.substring(1) : p_230959_;
 -      return this.performCommand(this.dispatcher.parse(p_230959_, p_230958_), p_230959_);
--   }
--
-+      // CraftBukkit start
-+      return this.performPrefixedCommand(p_230958_, p_230959_, p_230959_);
-+   }
++      ketting$performPrefixedCommandPass(p_230959_); //Ketting
++      return this.performCommand(this.getCorrectDispatcher(p_230959_).unwrap().parse(p_230959_, p_230958_), p_230959_);
+    }
+ 
 +
-+   public int performPrefixedCommand(CommandSourceStack commandlistenerwrapper, String s, String label) {
-+      s = s.startsWith("/") ? s.substring(1) : s;
-+      return this.performCommand(this.getCorrectDispatcher(s).unwrap().parse(s, commandlistenerwrapper), s, label);
-+      // CraftBukkit end
-+   }
-+
-+   private String ketting$label = null;  // Ketting
++   private final java.util.concurrent.atomic.AtomicReference<String> ketting$performCommand$label = new java.util.concurrent.atomic.AtomicReference<>(null);  // Ketting
     public int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
        CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
        commandsourcestack.getServer().getProfiler().push(() -> {
@@ -136,7 +140,7 @@
                 int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
                 MutableComponent mutablecomponent1 = Component.empty().withStyle(ChatFormatting.GRAY).withStyle((p_82134_) -> {
 -                  return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + p_242841_));
-+                  return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + (ketting$label == null ? p_242841_ : ketting$label))); // CraftBukkit
++                  return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + (java.util.Objects.requireNonNullElse(ketting$performCommand$label.get(), p_242841_)))); // CraftBukkit
                 });
                 if (j > 10) {
                    mutablecomponent1.append(CommonComponents.ELLIPSIS);
@@ -144,13 +148,13 @@
  
           return 0;
        } finally {
-+         ketting$label = null;
++         ketting$performCommand$label.set(null);
           commandsourcestack.getServer().getProfiler().pop();
        }
     }
  
 +   public int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_, String label) { // CraftBukkit
-+      this.ketting$label = label;
++      this.ketting$performCommand$label.set(label);
 +      return this.performCommand(p_242844_, p_242841_);
 +   }
 +

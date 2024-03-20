@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/BaseFireBlock.java
 +++ b/net/minecraft/world/level/block/BaseFireBlock.java
-@@ -112,7 +_,14 @@
+@@ -112,7 +_,15 @@
        if (!p_49263_.fireImmune()) {
           p_49263_.setRemainingFireTicks(p_49263_.getRemainingFireTicks() + 1);
           if (p_49263_.getRemainingFireTicks() == 0) {
@@ -10,7 +10,8 @@
 +            p_49261_.getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (!event.isCancelled()) {
-+               p_49263_.setSecondsOnFire(event.getDuration(), false);
++               p_49263_.ketting$setSecondsOnFire$callEvent.set(false);
++               p_49263_.setSecondsOnFire(event.getDuration());
 +            }
 +            // CraftBukkit end
           }

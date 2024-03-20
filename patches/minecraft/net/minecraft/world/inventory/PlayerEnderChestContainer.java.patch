@@ -21,9 +21,9 @@
     public PlayerEnderChestContainer() {
 +      this(null);//Ketting - keep compat
 +   }
-+   public PlayerEnderChestContainer(Player owner) {
++   public PlayerEnderChestContainer(@Nullable Player owner) {
        super(27);
-+      this.owner = owner;
++      this.owner = owner==null?org.kettingpowered.ketting.utils.InventoryViewHelper.getContainerOwner():owner; //Ketting - idk rn, if the InventoryViewHelper.getContainerOwner() is really correct rn.
 +      // CraftBukkit end
     }
  
