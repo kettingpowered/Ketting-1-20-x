@@ -26,6 +26,17 @@
        int i = p_135373_.getId();
        if (i > 254) {
           throw new IllegalArgumentException("Data value id is too big with " + i + "! (Max is 254)");
+@@ -124,6 +_,10 @@
+ 
+    public <T> void set(EntityDataAccessor<T> p_276368_, T p_276363_, boolean p_276370_) {
+       SynchedEntityData.DataItem<T> dataitem = this.getItem(p_276368_);
++      if (!dataitem.getValue().getClass().isAssignableFrom(p_276363_.getClass())){
++         org.kettingpowered.ketting.core.Ketting.LOGGER.error("Bad set of EntityDataAccessor value. Ignoring", new IllegalStateException());
++         return;
++      }
+       if (p_276370_ || ObjectUtils.notEqual(p_276363_, dataitem.getValue())) {
+          dataitem.setValue(p_276363_);
+          this.entity.onSyncedDataUpdated(p_276368_);
 @@ -133,6 +_,13 @@
  
     }
