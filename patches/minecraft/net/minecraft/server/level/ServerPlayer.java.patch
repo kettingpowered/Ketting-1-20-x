@@ -1066,11 +1066,13 @@
 +      // CraftBukkit end
        this.setCamera(this);
        this.stopRiding();
-+      /* CraftBukkit start - replace with bukkit handling for multi-world
++      // /* CraftBukkit start - replace with bukkit handling for multi-world 
++      // Ketting - disabling causes inv desync on dimension changes.
++      // https://github.com/kettingpowered/Ketting-1-20-x/issues/189
        if (p_9000_ == this.level()) {
           this.connection.teleport(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
        } else {
-+         if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_9000_.dimension())) return;
++         if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9000_.dimension())) return;
           ServerLevel serverlevel = this.serverLevel();
           LevelData leveldata = p_9000_.getLevelData();
           this.connection.send(new ClientboundRespawnPacket(this.createCommonSpawnInfo(p_9000_), (byte)3));
@@ -1089,8 +1091,8 @@
           this.server.getPlayerList().sendAllPlayerInfo(this);
 +         net.minecraftforge.event.ForgeEventFactory.onPlayerChangedDimension(this, serverlevel.dimension(), p_9000_.dimension());
        }
-+      */
-+      this.getBukkitEntity().teleport(new org.bukkit.Location(p_9000_.getWorld(), p_9001_, p_9002_, p_9003_, p_9004_, p_9005_), ketting$ServerPlayer$teleportTo$cause.getAndSet(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN));
++      //*/
++      //this.getBukkitEntity().teleport(new org.bukkit.Location(p_9000_.getWorld(), p_9001_, p_9002_, p_9003_, p_9004_, p_9005_), ketting$ServerPlayer$teleportTo$cause.getAndSet(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN), false);
 +      // CraftBukkit end
  
     }
