@@ -164,7 +164,7 @@
           for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate((double)vec3i.getX(), (double)vec3i.getY(), (double)vec3i.getZ()))) {
              if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && !itementity.hasPickUpDelay() && this.wantsToPickUp(itementity.getItem())) {
                 this.pickUpItem(itementity);
-@@ -539,7 +_,8 @@
+@@ -539,6 +_,7 @@
  
     protected void pickUpItem(ItemEntity p_21471_) {
        ItemStack itemstack = p_21471_.getItem();
@@ -172,8 +172,8 @@
        ItemStack itemstack1 = this.equipItemIfPossible(itemstack.copy());
        if (!itemstack1.isEmpty()) {
           this.onItemPickup(p_21471_);
-          this.take(p_21471_, itemstack1.getCount());
-@@ -552,5 +_,14 @@
+@@ -551,6 +_,15 @@
+ 
     }
  
 +   //Ketting start
@@ -315,7 +315,7 @@
              return (T)null;
           } else {
              t.copyPosition(this);
-@@ -1199,6 +_,13 @@
+@@ -1205,6 +_,13 @@
                 }
              }
  
@@ -329,7 +329,7 @@
              this.level().addFreshEntity(t);
              if (this.isPassenger()) {
                 Entity entity = this.getVehicle();
-@@ -1212,6 +_,14 @@
+@@ -1218,6 +_,14 @@
        }
     }
  
