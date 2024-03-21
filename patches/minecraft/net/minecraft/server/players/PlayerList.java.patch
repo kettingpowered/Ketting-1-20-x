@@ -407,7 +407,7 @@
     public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) {
        UUID uuid = p_299278_.getId();
        Set<ServerPlayer> set = Sets.newIdentityHashSet();
-@@ -396,28 +_,64 @@
+@@ -396,18 +_,48 @@
        }
  
        for(ServerPlayer serverplayer1 : set) {
@@ -456,7 +456,7 @@
        ServerLevel serverlevel = this.server.getLevel(p_11237_.getRespawnDimension());
        Optional<Vec3> optional;
        if (serverlevel != null && blockpos != null) {
-@@ -431,8 +_,15 @@
+@@ -418,6 +_,13 @@
  
        ServerLevel serverlevel1 = serverlevel != null && optional.isPresent() ? serverlevel : this.server.overworld();
        ServerPlayer serverplayer = new ServerPlayer(this.server, serverlevel1, p_11237_.getGameProfile(), p_11237_.clientInformation());
@@ -470,7 +470,7 @@
        serverplayer.restoreFrom(p_11237_, p_11238_);
 +      serverplayer.reviveCaps();
        serverplayer.setId(p_11237_.getId());
-@@ -428,47 +_,124 @@
+@@ -428,6 +_,21 @@
        }
  
        boolean flag2 = false;
@@ -492,7 +492,7 @@
        if (optional.isPresent()) {
           BlockState blockstate = serverlevel1.getBlockState(blockpos);
           boolean flag1 = blockstate.is(Blocks.RESPAWN_ANCHOR);
-@@ -453,34 +_,94 @@
+@@ -440,35 +_,95 @@
              f1 = (float)Mth.wrapDegrees(Mth.atan2(vec31.z, vec31.x) * (double)(180F / (float)Math.PI) - 90.0D);
           }
  
