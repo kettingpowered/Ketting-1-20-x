@@ -276,7 +276,7 @@
        this.save(p_11287_);
        if (p_11287_.isPassenger()) {
           Entity entity = p_11287_.getRootVehicle();
-@@ -339,21 +_,36 @@
+@@ -339,19 +_,36 @@
        serverlevel.removePlayerImmediately(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
        p_11287_.getAdvancements().stopListening();
        this.players.remove(p_11287_);
@@ -286,10 +286,9 @@
        ServerPlayer serverplayer = this.playersByUUID.get(uuid);
        if (serverplayer == p_11287_) {
           this.playersByUUID.remove(uuid);
--         this.stats.remove(uuid);
-+         // CraftBukkit start
-+         this.stats.remove(uuid); // Ketting
+          this.stats.remove(uuid);
           this.advancements.remove(uuid);
++         // CraftBukkit start
 -      }
 -
 -      this.broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(p_11287_.getUUID())));
@@ -313,13 +312,13 @@
 +      // CraftBukkit end
 +
 +      ketting$remove$returnValue = playerQuitEvent.getQuitMessage(); // CraftBukkit
-    }
- 
++    }
++ 
     @Nullable
     public Component canPlayerLogin(SocketAddress p_11257_, GameProfile p_11258_) {
        if (this.bans.isBanned(p_11258_)) {
           UserBanListEntry userbanlistentry = this.bans.get(p_11258_);
-@@ -376,15 +_,84 @@
+@@ -376,4 +_,70 @@
        }
     }
  
@@ -374,9 +373,7 @@
 +
 +         // return chatmessage;
 +         event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_BANNED, org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage.fromComponent(mutablecomponent));
-       } else {
--         return this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(p_11258_) ? Component.translatable("multiplayer.disconnect.server_full") : null;
--      }
++       } else {
 +         // return this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameprofile) ? IChatBaseComponent.translatable("multiplayer.disconnect.server_full") : null;
 +         if (this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameprofile)) {
 +            event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_FULL, org.spigotmc.SpigotConfig.serverFullMessage); // Spigot
@@ -389,10 +386,10 @@
 +         return null;
 +      }
 +      return player;
-    }
- 
-+   //Ketting start - keep compat
++   }
++
     public ServerPlayer getPlayerForLogin(GameProfile p_215625_, ClientInformation p_300548_) {
+@@ -380,6 +_,13 @@
        return new ServerPlayer(this.server, this.server.overworld(), p_215625_, p_300548_);
     }
  
