@@ -752,7 +752,7 @@
 +         if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entity, false)) return;
           this.vehicle = null;
           entity.removePassenger(this);
-+         if (!ketting$removePassenger$returnValue) this.vehicle = entity; // CraftBukkit
++         if (!entity.ketting$removePassenger$returnValue) this.vehicle = entity; // CraftBukkit
        }
  
     }
@@ -799,12 +799,11 @@
           if (this.passengers.size() == 1 && this.passengers.get(0) == p_20352_) {
              this.passengers = ImmutableList.of();
           } else {
-@@ -1961,12 +_,16 @@
+@@ -1961,12 +_,15 @@
           p_20352_.boardingCooldown = 60;
           this.gameEvent(GameEvent.ENTITY_DISMOUNT, p_20352_);
        }
 +      ketting$removePassenger$returnValue = true;
-+      return; // CraftBukkit
     }
  
     protected boolean canAddPassenger(Entity p_20354_) {
