@@ -263,10 +263,10 @@ public final class CraftEntityTypes {
         register(new EntityTypeData<>(EntityType.FISHING_HOOK, FishHook.class, CraftFishHook::new, null)); // Cannot spawn a fish hook
         register(new EntityTypeData<>(EntityType.PLAYER, Player.class, CraftPlayer::new, null)); // Cannot spawn a player
         //Ketting: Todo: Proper EntityType?
-        register(new EntityTypeData<>(EntityType.UNKNOWN, Minecart.class, CraftCustomMinecart::new, null));
-        register(new EntityTypeData<>(EntityType.UNKNOWN, Tameable.class, CraftCustomTamable::new, null));
-        register(new EntityTypeData<AbstractHorse, net.minecraft.world.entity.animal.horse.AbstractChestedHorse>(EntityType.UNKNOWN, AbstractHorse.class, CraftCustomHorse::new, null));
-        register(new EntityTypeData<AbstractHorse, net.minecraft.world.entity.animal.horse.AbstractHorse>(EntityType.UNKNOWN, AbstractHorse.class, CraftCustomHorse::new, null));
+        //register(new EntityTypeData<>(EntityType.UNKNOWN, Minecart.class, CraftCustomMinecart::new, null));
+        //register(new EntityTypeData<>(EntityType.UNKNOWN, Tameable.class, CraftCustomTamable::new, null));
+        //register(new EntityTypeData<AbstractHorse, net.minecraft.world.entity.animal.horse.AbstractChestedHorse>(EntityType.UNKNOWN, AbstractHorse.class, CraftCustomHorse::new, null));
+        //register(new EntityTypeData<AbstractHorse, net.minecraft.world.entity.animal.horse.AbstractHorse>(EntityType.UNKNOWN, AbstractHorse.class, CraftCustomHorse::new, null));
     }
 
     private static void register(EntityTypeData<?, ?> typeData) {
