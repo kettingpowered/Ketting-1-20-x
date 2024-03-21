@@ -288,7 +288,7 @@
              iterator.remove();
           }
  
-@@ -901,32 +_,79 @@
+@@ -901,35 +_,82 @@
        return this.activeEffects.get(p_21125_);
     }
  
@@ -307,6 +307,7 @@
 -         return false;
 -      } else {
 -         MobEffectInstance mobeffectinstance = this.activeEffects.get(p_147208_.getEffect());
+-         boolean flag = false;
 -         if (mobeffectinstance == null) {
 -            this.activeEffects.put(p_147208_.getEffect(), p_147208_);
 -            this.onEffectAdded(p_147208_, p_147209_);
@@ -314,19 +315,18 @@
 -         } else if (mobeffectinstance.update(p_147208_)) {
 -            this.onEffectUpdated(mobeffectinstance, true, p_147209_);
 -            flag = true;
--         }
 +      try {
 +         org.spigotmc.AsyncCatcher.catchOp("effect add"); // Spigot
 +         if (isTickingEffects) {
 +            effectsToProcess.add(new ProcessableEffect(p_147208_, addEffect$cause));
 +            return true;
-+         }
-+
+          }
+ 
 +         if (!this.canBeAffected(p_147208_)) {
-             return false;
++            return false;
 +         } else {
 +            MobEffectInstance mobeffectinstance = this.activeEffects.get(p_147208_.getEffect());
-          boolean flag = false;
++         boolean flag = false;
 +
 +            // CraftBukkit start
 +            boolean override = false;
@@ -354,7 +354,7 @@
 +            }
           p_147208_.onEffectStarted(this);
           return flag;
-          }
++         }
 +      } finally {
 +         this.addEffect$cause = org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN;
        }
@@ -380,6 +380,10 @@
        if (this.getMobType() == MobType.UNDEAD) {
           MobEffect mobeffect = p_21197_.getEffect();
           if (mobeffect == MobEffects.REGENERATION || mobeffect == MobEffects.POISON) {
+-            return false;
+          }
+       }
+ 
 @@ -954,13 +_,40 @@
        return this.getMobType() == MobType.UNDEAD;
     }
