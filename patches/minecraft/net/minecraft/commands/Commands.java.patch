@@ -20,8 +20,7 @@
           TestCommand.register(this.dispatcher);
           ResetChunksCommand.register(this.dispatcher);
           RaidCommand.register(this.dispatcher);
-@@ -244,8 +_,20 @@
-       if (p_230943_.includeIntegrated) {
+@@ -245,7 +_,19 @@
           PublishCommand.register(this.dispatcher);
        }
  
@@ -41,7 +40,7 @@
     }
  
     public static <S> ParseResults<S> mapSource(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
-@@ -254,10 +_,65 @@
+@@ -254,19 +_,82 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }
  
@@ -111,7 +110,6 @@
 +   private String ketting$label = null;  // Ketting
     public void performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
        CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
-@@ -264,9 +_,17 @@
        commandsourcestack.getServer().getProfiler().push(() -> {
           return "/" + p_242841_;
        });
@@ -130,14 +128,13 @@
           if (contextchain != null) {
              executeCommandInContext(commandsourcestack, (p_308343_) -> {
                 ExecutionContext.queueInitialCommandExecution(p_308343_, p_242841_, contextchain, commandsourcestack, CommandResultCallback.EMPTY);
-@@ -291,7 +_,8 @@
+@@ -291,6 +_,7 @@
              LOGGER.error("'/{}' threw an exception", p_242841_, exception);
           }
        } finally {
 +         ketting$label = null;
           commandsourcestack.getServer().getProfiler().pop();
        }
-    }
  
 @@ -308,7 +_,7 @@
           if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {

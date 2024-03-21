@@ -280,7 +280,7 @@
           this.setLeashedTo(p_21500_, true);
           itemstack.shrink(1);
           return InteractionResult.sidedSuccess(this.level().isClientSide);
-@@ -1172,52 +_,76 @@
+@@ -1172,63 +_,88 @@
        return this.restrictRadius != -1.0F;
     }
  
@@ -395,7 +395,8 @@
  
     protected void tickLeash() {
        if (this.leashInfoTag != null) {
-@@ -1225,7 +_,8 @@
+          this.restoreLeashFromSave();
+-      }
  
        if (this.leashHolder != null) {
           if (!this.isAlive() || !this.leashHolder.isAlive()) {
@@ -404,7 +405,10 @@
 +            this.dropLeash(true, !this.leashHolder.pluginRemoved);// CraftBukkit - SPIGOT-7487: Don't drop leash, when the holder was removed by a plugin
           }
  
++      }
        }
+    }
+ 
 @@ -1237,7 +_,9 @@
           this.leashHolder = null;
           this.leashInfoTag = null;

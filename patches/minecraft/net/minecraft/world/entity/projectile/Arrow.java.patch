@@ -12,17 +12,22 @@
  
     public void setEffectsFromItem(ItemStack p_36879_) {
        if (p_36879_.is(Items.TIPPED_ARROW)) {
-@@ -181,4 +_,5 @@
+@@ -179,15 +_,17 @@
+       Entity entity = this.getEffectSource();
+ 
        for(MobEffectInstance mobeffectinstance : this.potion.getEffects()) {
 +         p_36873_.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); //Ketting
           p_36873_.addEffect(new MobEffectInstance(mobeffectinstance.getEffect(), Math.max(mobeffectinstance.mapDuration((p_268168_) -> {
              return p_268168_ / 8;
           }), 1), mobeffectinstance.getAmplifier(), mobeffectinstance.isAmbient(), mobeffectinstance.isVisible()), entity);
-@@ -185,6 +_,7 @@
+-      }
  
        if (!this.effects.isEmpty()) {
           for(MobEffectInstance mobeffectinstance1 : this.effects) {
 +            p_36873_.prepareAddEffect(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); //Ketting
              p_36873_.addEffect(mobeffectinstance1, entity);
           }
++      }
        }
+ 
+    }

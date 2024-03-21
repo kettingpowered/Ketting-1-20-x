@@ -24,7 +24,8 @@
     private int dropSpamTickCount;
     private double firstGoodX;
     private double firstGoodY;
-@@ -224,17 +_,40 @@
+@@ -223,18 +_,41 @@
+    private final FutureChain chatMessageChain;
     private boolean waitingForSwitchToConfig;
  
 +   //Ketting start - move bukkit custom packet handling to a separate class
@@ -1195,7 +1196,12 @@
        this.player.resetLastActionTime();
        switch (p_9891_.getAction()) {
           case PRESS_SHIFT_KEY:
-@@ -1332,7 +_,9 @@
+@@ -1329,13 +_,15 @@
+             Entity entity1 = this.player.getControlledVehicle();
+             if (entity1 instanceof PlayerRideableJumping playerrideablejumping) {
+                playerrideablejumping.handleStopJump();
+-            }
+-            break;
           case OPEN_INVENTORY:
              Entity $$2 = this.player.getVehicle();
              if ($$2 instanceof HasCustomInventoryScreen hascustominventoryscreen) {
@@ -1203,8 +1209,11 @@
                 hascustominventoryscreen.openCustomInventoryScreen(this.player);
 +               org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner(); //Ketting
              }
++            break;
++         case START_FALL_FLYING:
              break;
           case START_FALL_FLYING:
+             if (!this.player.tryToStartFallFlying()) {
 @@ -1366,6 +_,12 @@
     }
  
