@@ -523,7 +523,7 @@
                          this.player.doCheckFallDamage(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5, p_9874_.isOnGround());
                       }
                    }
-@@ -952,22 +_,102 @@
+@@ -952,28 +_,102 @@
        return false;
     }
  
@@ -602,6 +602,12 @@
 +      float f2 = set.contains(RelativeMovement.Y_ROT) ? this.player.getYRot() : 0.0F;
 +      float f3 = set.contains(RelativeMovement.X_ROT) ? this.player.getXRot() : 0.0F;
 +
+-      double d0 = p_9786_.contains(RelativeMovement.X) ? this.player.getX() : 0.0D;
+-      double d1 = p_9786_.contains(RelativeMovement.Y) ? this.player.getY() : 0.0D;
+-      double d2 = p_9786_.contains(RelativeMovement.Z) ? this.player.getZ() : 0.0D;
+-      float f = p_9786_.contains(RelativeMovement.Y_ROT) ? this.player.getYRot() : 0.0F;
+-      float f1 = p_9786_.contains(RelativeMovement.X_ROT) ? this.player.getXRot() : 0.0F;
+-      this.awaitingPositionFromClient = new Vec3(p_9781_, p_9782_, p_9783_);
 +      this.awaitingPositionFromClient = new Vec3(d0, d1, d2);
        if (++this.awaitingTeleport == Integer.MAX_VALUE) {
           this.awaitingTeleport = 0;
