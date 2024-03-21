@@ -1,15 +1,24 @@
 --- a/net/minecraft/world/entity/projectile/ThrownPotion.java
 +++ b/net/minecraft/world/entity/projectile/ThrownPotion.java
-@@ -88,7 +_,7 @@
+@@ -88,10 +_,12 @@
           boolean flag = potion == Potions.WATER && list.isEmpty();
           if (flag) {
              this.applyWater();
 -         } else if (!list.isEmpty()) {
 +         } else if (true || !list.isEmpty()) { // CraftBukkit - Call event even if no effects to apply
              if (this.isLingering()) {
++               ketting$makeAreaOfEffectCloud$position.set(p_37543_);
                 this.makeAreaOfEffectCloud(itemstack, potion);
              } else {
-@@ -127,39 +_,66 @@
++               ketting$applySplash$position.set(p_37543_);
+                this.applySplash(list, p_37543_.getType() == HitResult.Type.ENTITY ? ((EntityHitResult)p_37543_).getEntity() : null);
+             }
+          }
+@@ -124,44 +_,73 @@
+ 
+    }
+ 
++   private final java.util.concurrent.atomic.AtomicReference<HitResult> ketting$applySplash$position = new java.util.concurrent.atomic.AtomicReference<>(null);
     private void applySplash(List<MobEffectInstance> p_37548_, @Nullable Entity p_37549_) {
        AABB aabb = this.getBoundingBox().inflate(4.0D, 2.0D, 4.0D);
        List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class, aabb);
@@ -59,7 +68,7 @@
 +      }
 +
 +
-+      org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPotionSplashEvent(this, position, affected);
++      org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPotionSplashEvent(this, ketting$applySplash$position.getAndSet(null), affected);
 +      if (!event.isCancelled() && p_37548_ != null && !p_37548_.isEmpty()) { // do not process effects if there are no effects to process
 +         Entity entity1 = this.getEffectSource();
 +         for (org.bukkit.entity.LivingEntity victim : event.getAffectedEntities()) {
@@ -100,14 +109,17 @@
 +      }
     }
  
++   private final java.util.concurrent.atomic.AtomicReference<HitResult> ketting$makeAreaOfEffectCloud$position = new java.util.concurrent.atomic.AtomicReference<>(null);
     private void makeAreaOfEffectCloud(ItemStack p_37538_, Potion p_37539_) {
+       AreaEffectCloud areaeffectcloud = new AreaEffectCloud(this.level(), this.getX(), this.getY(), this.getZ());
+       Entity entity = this.getOwner();
 @@ -184,7 +_,14 @@
           areaeffectcloud.setFixedColor(compoundtag.getInt("CustomPotionColor"));
        }
  
 -      this.level().addFreshEntity(areaeffectcloud);
 +      // CraftBukkit start
-+      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callLingeringPotionSplashEvent(this, position, areaeffectcloud);
++      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callLingeringPotionSplashEvent(this, ketting$makeAreaOfEffectCloud$position.getAndSet(null), areaeffectcloud);
 +      if (!(event.isCancelled() || areaeffectcloud.isRemoved())) {
 +         this.level().addFreshEntity(areaeffectcloud);
 +      } else {
