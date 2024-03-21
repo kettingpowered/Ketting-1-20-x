@@ -20,7 +20,7 @@
           TestCommand.register(this.dispatcher);
           ResetChunksCommand.register(this.dispatcher);
           RaidCommand.register(this.dispatcher);
-@@ -225,8 +_,20 @@
+@@ -244,8 +_,20 @@
        if (p_230943_.includeIntegrated) {
           PublishCommand.register(this.dispatcher);
        }
@@ -41,7 +41,7 @@
     }
  
     public static <S> ParseResults<S> mapSource(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
-@@ -254,11 +_,66 @@
+@@ -254,10 +_,65 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }
  
@@ -95,7 +95,7 @@
 +
     public void performPrefixedCommand(CommandSourceStack p_230958_, String p_230959_) {
 -      p_230959_ = p_230959_.startsWith("/") ? p_230959_.substring(1) : p_230959_;
--      return this.performCommand(this.dispatcher.parse(p_230959_, p_230958_), p_230959_);
+-      this.performCommand(this.dispatcher.parse(p_230959_, p_230958_), p_230959_);
 -   }
 -
 +      // CraftBukkit start
@@ -109,43 +109,47 @@
 +   }
 +
 +   private String ketting$label = null;  // Ketting
-    public int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
+    public void performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
        CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
+@@ -264,9 +_,17 @@
        commandsourcestack.getServer().getProfiler().push(() -> {
-@@ -249,7 +_,16 @@
+          return "/" + p_242841_;
+       });
+-      ContextChain<CommandSourceStack> contextchain = finishParsing(p_242844_, p_242841_, commandsourcestack);
  
        try {
-          try {
--            return this.dispatcher.execute(p_242844_);
-+            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(p_242844_);
-+            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
-+               if (event.getException() instanceof Exception exception) {
-+                  throw exception;
-+               } else if (event.getException() != null) {
-+                  com.google.common.base.Throwables.throwIfUnchecked(event.getException());
-+               }
-+               return 1;
-+            }
-+            return this.getCorrectDispatcher(p_242841_).unwrap().execute(event.getParseResults());
-          } catch (CommandRuntimeException commandruntimeexception) {
-             commandsourcestack.sendFailure(commandruntimeexception.getComponent());
-             return 0;
-@@ -258,7 +_,7 @@
-             if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
-                int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
-                MutableComponent mutablecomponent1 = Component.empty().withStyle(ChatFormatting.GRAY).withStyle((p_82134_) -> {
--                  return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + p_242841_));
-+                  return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + (ketting$label == null ? p_242841_ : ketting$label))); // CraftBukkit
-                });
-                if (j > 10) {
-                   mutablecomponent1.append(CommonComponents.ELLIPSIS);
-@@ -297,20 +_,70 @@
- 
-          return 0;
++         var event = new net.minecraftforge.event.CommandEvent(p_242844_);
++         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
++            if (event.getException() instanceof Exception exception)
++               throw exception;
++            else if (event.getException() != null)
++               com.google.common.base.Throwables.throwIfUnchecked(event.getException());
++            return;
++         }
++         ContextChain<CommandSourceStack> contextchain = finishParsing(event.getParseResults(), p_242841_, commandsourcestack);
+          if (contextchain != null) {
+             executeCommandInContext(commandsourcestack, (p_308343_) -> {
+                ExecutionContext.queueInitialCommandExecution(p_308343_, p_242841_, contextchain, commandsourcestack, CommandResultCallback.EMPTY);
+@@ -291,7 +_,8 @@
+             LOGGER.error("'/{}' threw an exception", p_242841_, exception);
+          }
        } finally {
 +         ketting$label = null;
           commandsourcestack.getServer().getProfiler().pop();
        }
+    }
+ 
+@@ -308,7 +_,7 @@
+          if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
+             int i = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
+             MutableComponent mutablecomponent = Component.empty().withStyle(ChatFormatting.GRAY).withStyle((p_82134_) -> {
+-               return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + p_312044_));
++               return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + (ketting$label == null ? p_242841_ : ketting$label))); // CraftBukkit
+             });
+             if (i > 10) {
+                mutablecomponent.append(CommonComponents.ELLIPSIS);
+@@ -349,16 +_,65 @@
+ 
     }
  
 +   public int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_, String label) { // CraftBukkit
