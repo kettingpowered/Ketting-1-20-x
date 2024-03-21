@@ -51,7 +51,7 @@
        return new LevelStorageSource.LevelStorageAccess(p_78261_, path);
     }
  
-@@ -352,6 +_,20 @@
+@@ -374,6 +_,20 @@
        return this.worldDirValidator;
     }
  
@@ -114,9 +114,9 @@
 +      //Ketting end
 +
  
-       public String getLevelId() {
-          return this.levelId;
-@@ -413,7 +_,7 @@
+       public LevelStorageSource parent() {
+          return LevelStorageSource.this;
+@@ -439,7 +_,7 @@
        }
  
        public Path getDimensionPath(ResourceKey<Level> p_197395_) {
@@ -146,7 +146,7 @@
        public void deleteLevel() throws IOException {
           this.checkLock();
           final Path path = this.levelDirectory.lockFile();
-@@ -521,6 +_,58 @@
+@@ -547,6 +_,58 @@
  
        }
  
@@ -205,7 +205,7 @@
        public void renameLevel(String p_78298_) throws IOException {
           this.checkLock();
           Path path = this.levelDirectory.dataFile();
-@@ -570,5 +_,12 @@
+@@ -596,5 +_,12 @@
        public void close() throws IOException {
           this.lock.close();
        }
