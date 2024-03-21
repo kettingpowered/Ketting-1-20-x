@@ -5,7 +5,7 @@
        ItemStack itemstack = p_28298_.getItemInHand(p_28299_);
        if (itemstack.is(Items.BUCKET) && !this.isBaby()) {
 +         // CraftBukkit start - Got milk?
-+         org.bukkit.event.player.PlayerBucketFillEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) p_28298_.level(), p_28298_, this.blockPosition(), this.blockPosition(), null, itemstack, Items.MILK_BUCKET, p_28299_);
++         org.bukkit.event.player.PlayerBucketFillEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) p_28298_.level(), p_28298_, this.blockPosition(), this.blockPosition(), null, itemstack, Items.MILK_BUCKET, p_28299_);
 +
 +         if (event.isCancelled()) {
 +            return InteractionResult.PASS;
@@ -13,7 +13,7 @@
 +         // CraftBukkit end
           p_28298_.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
 -         ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, p_28298_, Items.MILK_BUCKET.getDefaultInstance());
-+         ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, p_28298_, org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
++         ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, p_28298_, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
           p_28298_.setItemInHand(p_28299_, itemstack1);
           return InteractionResult.sidedSuccess(this.level().isClientSide);
        } else {

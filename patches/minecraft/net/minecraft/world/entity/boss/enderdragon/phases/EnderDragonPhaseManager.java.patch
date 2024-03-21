@@ -6,9 +6,9 @@
  
 +         // CraftBukkit start - Call EnderDragonChangePhaseEvent
 +         org.bukkit.event.entity.EnderDragonChangePhaseEvent event = new org.bukkit.event.entity.EnderDragonChangePhaseEvent(
-+                 (org.bukkit.craftbukkit.v1_20_R3.entity.CraftEnderDragon) this.dragon.getBukkitEntity(),
-+                 (this.currentPhase == null) ? null : org.bukkit.craftbukkit.v1_20_R3.entity.CraftEnderDragon.getBukkitPhase(this.currentPhase.getPhase()),
-+                 org.bukkit.craftbukkit.v1_20_R3.entity.CraftEnderDragon.getBukkitPhase(p_31417_)
++                 (org.bukkit.craftbukkit.v1_20_R2.entity.CraftEnderDragon) this.dragon.getBukkitEntity(),
++                 (this.currentPhase == null) ? null : org.bukkit.craftbukkit.v1_20_R2.entity.CraftEnderDragon.getBukkitPhase(this.currentPhase.getPhase()),
++                 org.bukkit.craftbukkit.v1_20_R2.entity.CraftEnderDragon.getBukkitPhase(p_31417_)
 +         );
 +         this.dragon.level().getCraftServer().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
@@ -16,7 +16,7 @@
 +         }
 +
 +         //Ketting start - check for modded phases
-+         EnderDragonPhase<?> newPhase = org.bukkit.craftbukkit.v1_20_R3.entity.CraftEnderDragon.getMinecraftPhase(event.getNewPhase());
++         EnderDragonPhase<?> newPhase = org.bukkit.craftbukkit.v1_20_R2.entity.CraftEnderDragon.getMinecraftPhase(event.getNewPhase());
 +         if (newPhase != null)
 +            p_31417_ = newPhase;
 +         //Ketting end

@@ -36,7 +36,7 @@
 +         if (isIncendiary || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), entity)) { // CraftBukkit
              BlockPos blockpos = p_37384_.getBlockPos().relative(p_37384_.getDirection());
 -            if (this.level().isEmptyBlock(blockpos)) {
-+            if (this.level().isEmptyBlock(blockpos) && !org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockIgniteEvent(this.level(), blockpos, this).isCancelled()) { // CraftBukkit
++            if (this.level().isEmptyBlock(blockpos) && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(this.level(), blockpos, this).isCancelled()) { // CraftBukkit
                 this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level(), blockpos));
              }
           }

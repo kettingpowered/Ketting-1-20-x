@@ -5,7 +5,7 @@
           for(Mob mob : list) {
              if (mob.getLeashHolder() == p_31842_) {
 +               // CraftBukkit start
-+               if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerLeashEntityEvent(mob, this, p_31842_, p_31843_).isCancelled()) {
++               if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerLeashEntityEvent(mob, this, p_31842_, p_31843_).isCancelled()) {
 +                  ((net.minecraft.server.level.ServerPlayer) p_31842_).connection.send(new net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket(mob, mob.getLeashHolder()));
 +                  continue;
 +               }
@@ -28,7 +28,7 @@
                    if (mob1.isLeashed() && mob1.getLeashHolder() == this) {
 -                     mob1.dropLeash(true, false);
 +                     // CraftBukkit start
-+                     if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerUnleashEntityEvent(mob1, p_31842_, p_31843_).isCancelled()) {
++                     if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerUnleashEntityEvent(mob1, p_31842_, p_31843_).isCancelled()) {
 +                        die = false;
 +                        continue;
 +                     }

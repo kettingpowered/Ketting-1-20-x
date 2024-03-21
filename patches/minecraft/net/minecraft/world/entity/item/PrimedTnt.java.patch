@@ -40,7 +40,7 @@
 -      this.level().explode(this, this.getX(), this.getY(0.0625D), this.getZ(), 4.0F, Level.ExplosionInteraction.TNT);
 +      // CraftBukkit start
 +      // float f = 4.0F;
-+      org.bukkit.event.entity.ExplosionPrimeEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callExplosionPrimeEvent((org.bukkit.entity.Explosive)this.getBukkitEntity());
++      org.bukkit.event.entity.ExplosionPrimeEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callExplosionPrimeEvent((org.bukkit.entity.Explosive)this.getBukkitEntity());
 +
 +      if (!event.isCancelled()) {
 +         this.level().explode(this, this.getX(), this.getY(0.0625D), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.TNT);

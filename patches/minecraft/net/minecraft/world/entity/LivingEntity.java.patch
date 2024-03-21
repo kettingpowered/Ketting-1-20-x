@@ -24,7 +24,7 @@
 +   public int expToDrop;
 +   public boolean forceDrops;
 +   public java.util.ArrayList<org.bukkit.inventory.ItemStack> drops = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
-+   public final org.bukkit.craftbukkit.v1_20_R3.attribute.CraftAttributeMap craftAttributes;
++   public final org.bukkit.craftbukkit.v1_20_R2.attribute.CraftAttributeMap craftAttributes;
 +   public boolean collides = true;
 +   public java.util.Set<UUID> collidableExemptions = new java.util.HashSet<>();
 +   public boolean bukkitPickUpLoot;
@@ -46,7 +46,7 @@
        super(p_20966_, p_20967_);
        this.attributes = new AttributeMap(DefaultAttributes.getSupplier(p_20966_));
 -      this.setHealth(this.getMaxHealth());
-+      this.craftAttributes = new org.bukkit.craftbukkit.v1_20_R3.attribute.CraftAttributeMap(attributes); // CraftBukkit
++      this.craftAttributes = new org.bukkit.craftbukkit.v1_20_R2.attribute.CraftAttributeMap(attributes); // CraftBukkit
 +      // CraftBukkit - this.setHealth(this.getMaxHealth()); inlined and simplified to skip the instanceof check for EntityPlayer, as getBukkitEntity() is not initialized in constructor
        this.blocksBuilding = true;
        this.rotA = (float)((Math.random() + 1.0D) * (double)0.01F);
@@ -208,7 +208,7 @@
 -               if (!this.level().isClientSide) {
 +               if (!this.level().isClientSide && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Expired(this, mobeffectinstance))) {
 +                  // CraftBukkit start
-+                  org.bukkit.event.entity.EntityPotionEffectEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, null, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.EXPIRATION);
++                  org.bukkit.event.entity.EntityPotionEffectEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, null, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.EXPIRATION);
 +                  if (event.isCancelled()) {
 +                     continue;
 +                  }
@@ -278,7 +278,7 @@
 +            MobEffectInstance effect = iterator.next();
 +            if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, effect))) continue;
 +            // CraftBukkit start
-+            org.bukkit.event.entity.EntityPotionEffectEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, cause, org.bukkit.event.entity.EntityPotionEffectEvent.Action.CLEARED);
++            org.bukkit.event.entity.EntityPotionEffectEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, cause, org.bukkit.event.entity.EntityPotionEffectEvent.Action.CLEARED);
 +            if (event.isCancelled()) {
 +               continue;
 +            }
@@ -321,7 +321,7 @@
 +            override = new MobEffectInstance(mobeffectinstance).update(p_147208_);
 +         }
 +
-+         org.bukkit.event.entity.EntityPotionEffectEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, p_147208_, cause, override);
++         org.bukkit.event.entity.EntityPotionEffectEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, p_147208_, cause, override);
 +         if (event.isCancelled()) {
 +            return false;
 +         }
@@ -374,7 +374,7 @@
 +         return null;
 +      }
 +
-+      org.bukkit.event.entity.EntityPotionEffectEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, cause);
++      org.bukkit.event.entity.EntityPotionEffectEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, cause);
 +      if (event.isCancelled()) {
 +         return null;
 +      }
@@ -443,7 +443,7 @@
     public void setHealth(float p_21154_) {
 +      // CraftBukkit start - Handle scaled health
 +      if (this instanceof ServerPlayer) {
-+         org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer player = ((ServerPlayer) this).getBukkitEntity();
++         org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer player = ((ServerPlayer) this).getBukkitEntity();
 +         // Squeeze
 +         if (p_21154_ < 0.0F) {
 +            player.setRealHealth(0.0D);
@@ -597,7 +597,7 @@
 +            }
 +         }
 +
-+         org.bukkit.inventory.EquipmentSlot handSlot = (hand != null) ? org.bukkit.craftbukkit.v1_20_R3.CraftEquipmentSlot.getHand(hand) : null;
++         org.bukkit.inventory.EquipmentSlot handSlot = (hand != null) ? org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot.getHand(hand) : null;
 +         org.bukkit.event.entity.EntityResurrectEvent event = new org.bukkit.event.entity.EntityResurrectEvent((org.bukkit.entity.LivingEntity) this.getBukkitEntity(), handSlot);
 +         event.setCancelled(itemstack == null);
 +         this.level().getCraftServer().getPluginManager().callEvent(event);
@@ -669,7 +669,7 @@
 -                  flag = true;
 +               if (this.level().isEmptyBlock(blockpos) && blockstate.canSurvive(this.level(), blockpos)) {
 +                  // CraftBukkit start - call EntityBlockFormEvent for Wither Rose
-+                  flag = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockFormEvent(this.level(), blockpos, blockstate, 3, this);;
++                  flag = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this.level(), blockpos, blockstate, 3, this);;
 +                  // CraftBukkit end
                 }
              }
@@ -679,7 +679,7 @@
 +
 +               // CraftBukkit start
 +               org.bukkit.event.entity.EntityDropItemEvent event = new org.bukkit.event.entity.EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) itementity.getBukkitEntity());
-+               org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEvent(event);
++               org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEvent(event);
 +               if (event.isCancelled()) {
 +                  return;
 +               }
@@ -732,9 +732,9 @@
 +      }
 +
 +      if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, p_21192_, drops, i, lastHurtByPlayerTime > 0)) {
-+         drops.forEach(e -> this.drops.add(org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asCraftMirror(e.getItem())));
++         drops.forEach(e -> this.drops.add(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(e.getItem())));
 +         if (!(this instanceof ServerPlayer))
-+            org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityDeathEvent(this, this.drops);
++            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityDeathEvent(this, this.drops);
 +      }
 +
 +      if (this instanceof ServerPlayer player) {
@@ -986,7 +986,7 @@
 +         };
 +         float absorptionModifier = absorption.apply((double) f).floatValue();
 +
-+         org.bukkit.event.entity.EntityDamageEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleLivingEntityDamageEvent(this, damagesource, originalDamage, hardHatModifier, blockingModifier, armorModifier, resistanceModifier, magicModifier, absorptionModifier, hardHat, blocking, armor, resistance, magic, absorption);
++         org.bukkit.event.entity.EntityDamageEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleLivingEntityDamageEvent(this, damagesource, originalDamage, hardHatModifier, blockingModifier, armorModifier, resistanceModifier, magicModifier, absorptionModifier, hardHat, blocking, armor, resistance, magic, absorption);
 +         if (damagesource.getEntity() instanceof Player) {
 +            ((Player) damagesource.getEntity()).resetAttackStrengthTicker(); // Moved from EntityHuman in order to make the cooldown reset get called after the damage event is fired
 +         }
@@ -1128,7 +1128,7 @@
 +   }
 +
 +   public final void setArrowCount(int p_21318_, boolean flag) {
-+      org.bukkit.event.entity.ArrowBodyCountChangeEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callArrowBodyCountChangeEvent(this, getArrowCount(), p_21318_, flag);
++      org.bukkit.event.entity.ArrowBodyCountChangeEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callArrowBodyCountChangeEvent(this, getArrowCount(), p_21318_, flag);
 +      if (event.isCancelled()) {
 +         return;
 +      }
@@ -1250,7 +1250,7 @@
              }
  
              if (this.onGround() && !this.level().isClientSide) {
-+               if (getSharedFlag(7) && !org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) // CraftBukkit
++               if (getSharedFlag(7) && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) // CraftBukkit
                 this.setSharedFlag(7, false);
              }
           } else {
@@ -1274,7 +1274,7 @@
  
     public void tick() {
 +      if (net.minecraftforge.common.ForgeHooks.onLivingTick(this)) return;
-+      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.timerEntityBaseTick.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timerEntityBaseTick.startTiming(); // Spigot
        super.tick();
        this.updatingUsingItem();
        this.updateSwimAmount();
@@ -1291,9 +1291,9 @@
        }
  
        if (!this.isRemoved()) {
-+         org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.timerEntityBaseTick.stopTiming(); // Spigot
++         org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timerEntityBaseTick.stopTiming(); // Spigot
           this.aiStep();
-+         org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.timerEntityTickRest.startTiming(); // Spigot
++         org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timerEntityTickRest.startTiming(); // Spigot
        }
  
        double d1 = this.getX() - this.xo;
@@ -1301,7 +1301,7 @@
        }
  
        this.refreshDirtyAttributes();
-+      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.timerEntityTickRest.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timerEntityTickRest.stopTiming(); // Spigot
 +   }
 +
 +   public void detectEquipmentUpdatesPublic() { // CraftBukkit
@@ -1321,7 +1321,7 @@
  
        this.setDeltaMovement(d0, d1, d2);
        this.level().getProfiler().push("ai");
-+      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.timerEntityAI.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timerEntityAI.startTiming(); // Spigot
        if (this.isImmobile()) {
           this.jumping = false;
           this.xxa = 0.0F;
@@ -1329,7 +1329,7 @@
           this.serverAiStep();
           this.level().getProfiler().pop();
        }
-+      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.timerEntityAI.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timerEntityAI.stopTiming(); // Spigot
  
        this.level().getProfiler().pop();
        this.level().getProfiler().push("jump");
@@ -1366,7 +1366,7 @@
           this.resetFallDistance();
        }
  
-+      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.timerEntityAIMove.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timerEntityAIMove.startTiming(); // Spigot
        label104: {
           LivingEntity livingentity = this.getControllingPassenger();
           if (livingentity instanceof Player player) {
@@ -1374,7 +1374,7 @@
  
           this.travel(vec31);
        }
-+      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.timerEntityAIMove.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timerEntityAIMove.stopTiming(); // Spigot
  
        this.level().getProfiler().pop();
        this.level().getProfiler().push("freezing");
@@ -1382,9 +1382,9 @@
           this.checkAutoSpinAttack(aabb, this.getBoundingBox());
        }
  
-+      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.timerEntityAICollision.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timerEntityAICollision.startTiming(); // Spigot
        this.pushEntities();
-+      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.timerEntityAICollision.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timerEntityAICollision.stopTiming(); // Spigot
        this.level().getProfiler().pop();
        if (!this.level().isClientSide && this.isSensitiveToWater() && this.isInWaterRainOrBubble()) {
           this.hurt(this.damageSources().drown(), 1.0F);
@@ -1401,7 +1401,7 @@
        }
  
        if (!this.level().isClientSide) {
-+         if (flag != this.getSharedFlag(7) && !org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callToggleGlideEvent(this, flag).isCancelled()) // CraftBukkit
++         if (flag != this.getSharedFlag(7) && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callToggleGlideEvent(this, flag).isCancelled()) // CraftBukkit
           this.setSharedFlag(7, flag);
        }
  
@@ -1499,8 +1499,8 @@
 +               ItemStack forgeResult = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, this.useItem.copy(), getUseItemRemainingTicks(), this.useItem.finishUsingItem(this.level(), this));
 +               ItemStack itemstack;
 +               if (this instanceof ServerPlayer) {
-+                  org.bukkit.inventory.ItemStack craftItem = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asBukkitCopy(this.useItem);
-+                  org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R3.CraftEquipmentSlot.getHand(interactionhand);
++                  org.bukkit.inventory.ItemStack craftItem = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asBukkitCopy(this.useItem);
++                  org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot.getHand(interactionhand);
 +                  org.bukkit.event.player.PlayerItemConsumeEvent event = new org.bukkit.event.player.PlayerItemConsumeEvent((org.bukkit.entity.Player) this.getBukkitEntity(), craftItem, hand);
 +                  this.level().getCraftServer().getPluginManager().callEvent(event);
 +
@@ -1511,7 +1511,7 @@
 +                     return;
 +                  }
 +
-+                  itemstack = (craftItem.equals(event.getItem())) ? forgeResult : org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asNMSCopy(event.getItem()).finishUsingItem(this.level(), this);
++                  itemstack = (craftItem.equals(event.getItem())) ? forgeResult : org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(event.getItem()).finishUsingItem(this.level(), this);
 +               } else {
 +                  itemstack = forgeResult;
 +               }

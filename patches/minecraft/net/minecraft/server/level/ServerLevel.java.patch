@@ -36,7 +36,7 @@
     public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_) {
        super(p_215002_, p_215003_, p_214999_.registryAccess(), p_215004_.type(), p_214999_::getProfiler, false, p_215006_, p_215007_, p_214999_.getMaxChainedNeighborUpdates());
 +      convertable = p_215001_;
-+      uuid = org.bukkit.craftbukkit.v1_20_R3.util.WorldUUID.getUUID((p_215002_ instanceof net.minecraft.world.level.storage.DerivedLevelData ? p_215001_.getDimensionPath(p_215003_) : p_215001_.levelDirectory.path()).toFile()); //Ketting
++      uuid = org.bukkit.craftbukkit.v1_20_R2.util.WorldUUID.getUUID((p_215002_ instanceof net.minecraft.world.level.storage.DerivedLevelData ? p_215001_.getDimensionPath(p_215003_) : p_215001_.levelDirectory.path()).toFile()); //Ketting
 +      // CraftBukkit end
        this.tickTime = p_215009_;
        this.server = p_214999_;
@@ -84,7 +84,7 @@
 +      ((net.minecraft.world.level.storage.PrimaryLevelData) serverLevelData).setWorld(this);
 +
 +      if (biomeProvider != null) {
-+         net.minecraft.world.level.biome.BiomeSource worldChunkManager = new org.bukkit.craftbukkit.v1_20_R3.generator.CustomWorldChunkManager(getWorld(), biomeProvider, server.registryAccess().registryOrThrow(Registries.BIOME));
++         net.minecraft.world.level.biome.BiomeSource worldChunkManager = new org.bukkit.craftbukkit.v1_20_R2.generator.CustomWorldChunkManager(getWorld(), biomeProvider, server.registryAccess().registryOrThrow(Registries.BIOME));
 +         if (chunkgenerator instanceof net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator cga) {
 +            chunkgenerator = new net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator(worldChunkManager, cga.settings);
 +         } else if (chunkgenerator instanceof net.minecraft.world.level.levelgen.FlatLevelSource cpf) {
@@ -93,7 +93,7 @@
 +      }
 +
 +      if (this.generator != null) {
-+         chunkgenerator = new org.bukkit.craftbukkit.v1_20_R3.generator.CustomChunkGenerator(this, chunkgenerator, generator);
++         chunkgenerator = new org.bukkit.craftbukkit.v1_20_R2.generator.CustomChunkGenerator(this, chunkgenerator, generator);
 +      }
 +      // CraftBukkit end
 +   }
@@ -237,8 +237,8 @@
        if (biome.shouldFreeze(this, blockpos1)) {
 -         this.setBlockAndUpdate(blockpos1, Blocks.ICE.defaultBlockState());
 +         // Ketting start
-+            org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockFormUpdate.set(false);
-+            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.ICE.defaultBlockState(), null))  { // CraftBukkit
++            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormUpdate.set(false);
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.ICE.defaultBlockState(), null))  { // CraftBukkit
 +               this.setBlockAndUpdate(blockpos1, Blocks.ICE.defaultBlockState());
 +            }
 +            // Ketting end
@@ -250,8 +250,8 @@
                    Block.pushEntitiesUp(blockstate, blockstate1, this, blockpos);
                    this.setBlockAndUpdate(blockpos, blockstate1);
 +                     // Ketting start
-+                     org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockFormUpdate.set(false);
-+                     if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockFormEvent(this, blockpos, blockstate1, null))  { // CraftBukkit
++                     org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormUpdate.set(false);
++                     if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos, blockstate1, null))  { // CraftBukkit
 +                        this.setBlockAndUpdate(blockpos1, Blocks.ICE.defaultBlockState());
 +                     }
 +                     // Ketting end
@@ -259,8 +259,8 @@
              } else {
 -               this.setBlockAndUpdate(blockpos, Blocks.SNOW.defaultBlockState());
 +               // Ketting start
-+                  org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockFormUpdate.set(false);
-+                  if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockFormEvent(this, blockpos, Blocks.SNOW.defaultBlockState(), null))  { // CraftBukkit
++                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormUpdate.set(false);
++                  if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this, blockpos, Blocks.SNOW.defaultBlockState(), null))  { // CraftBukkit
 +                     this.setBlockAndUpdate(blockpos1, Blocks.ICE.defaultBlockState());
 +                  }
 +                  // Ketting end
@@ -512,7 +512,7 @@
 +         // SPIGOT-6415: Don't call spawn event when reason is null. For example when an entity teleports to a new world.
 +         //Ketting: add original method back
 +         //noinspection OptionalAssignedToNull
-+         if (addEntity$spawnReason != null && !org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.doEntityAddEventCalling(this, p_8873_, addEntity$spawnReason.orElse(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CUSTOM))) {
++         if (addEntity$spawnReason != null && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.doEntityAddEventCalling(this, p_8873_, addEntity$spawnReason.orElse(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CUSTOM))) {
 +            return false;
 +         }
 +         // CraftBukkit end
@@ -565,7 +565,7 @@
 +   }
 +
 +   public boolean strikeLightning(Entity entitylightning, org.bukkit.event.weather.LightningStrikeEvent.Cause cause) {
-+      org.bukkit.event.weather.LightningStrikeEvent lightning = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callLightningStrikeEvent((org.bukkit.entity.LightningStrike) entitylightning.getBukkitEntity(), cause);
++      org.bukkit.event.weather.LightningStrikeEvent lightning = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callLightningStrikeEvent((org.bukkit.entity.LightningStrike) entitylightning.getBukkitEntity(), cause);
 +
 +      if (lightning.isCancelled()) {
 +         return false;
@@ -779,7 +779,7 @@
 -      });
 +
 +      // CraftBukkit start
-+      org.bukkit.craftbukkit.v1_20_R3.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.v1_20_R3.util.BlockStateListPopulator(p_8618_);
++      org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator(p_8618_);
 +      BlockPos.betweenClosed(i - 2, j + 1, k - 2, i + 2, j + 3, k + 2).forEach((blockposition1) -> {
 +         blockList.setBlock(blockposition1, Blocks.AIR.defaultBlockState(), 3);
 +      });

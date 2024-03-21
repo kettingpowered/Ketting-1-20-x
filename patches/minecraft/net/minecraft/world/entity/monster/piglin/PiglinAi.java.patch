@@ -6,12 +6,12 @@
        ItemStack itemstack;
 -      if (p_34845_.getItem().is(Items.GOLD_NUGGET)) {
 +      // CraftBukkit start
-+      if (p_34845_.getItem().is(Items.GOLD_NUGGET) && !org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityPickupItemEvent(p_34844_, p_34845_, 0, false).isCancelled()) {
++      if (p_34845_.getItem().is(Items.GOLD_NUGGET) && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPickupItemEvent(p_34844_, p_34845_, 0, false).isCancelled()) {
           p_34844_.take(p_34845_, p_34845_.getItem().getCount());
           itemstack = p_34845_.getItem();
           p_34845_.discard();
 -      } else {
-+      } else if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityPickupItemEvent(p_34844_, p_34845_, p_34845_.getItem().getCount() - 1, false).isCancelled()) {
++      } else if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPickupItemEvent(p_34844_, p_34845_, p_34845_.getItem().getCount() - 1, false).isCancelled()) {
           p_34844_.take(p_34845_, 1);
           itemstack = removeOneItemFromItemEntity(p_34845_);
 +      } else {
@@ -41,9 +41,9 @@
           if (p_34869_ && flag) {
 -            throwItems(p_34868_, getBarterResponseItems(p_34868_));
 +            // CraftBukkit start
-+            org.bukkit.event.entity.PiglinBarterEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPiglinBarterEvent(p_34868_, getBarterResponseItems(p_34868_), itemstack);
++            org.bukkit.event.entity.PiglinBarterEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPiglinBarterEvent(p_34868_, getBarterResponseItems(p_34868_), itemstack);
 +            if (!event.isCancelled()) {
-+               throwItems(p_34868_, event.getOutcome().stream().map(org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack::asNMSCopy).collect(java.util.stream.Collectors.toList()));
++               throwItems(p_34868_, event.getOutcome().stream().map(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack::asNMSCopy).collect(java.util.stream.Collectors.toList()));
 +            }
 +            // CraftBukkit end
           } else if (!flag) {

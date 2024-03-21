@@ -7,9 +7,9 @@
 +            // CraftBukkit start - Step on eggs
 +            org.bukkit.event.Cancellable cancellable;
 +            if (p_154854_ instanceof Player) {
-+               cancellable = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerInteractEvent((Player) p_154854_, org.bukkit.event.block.Action.PHYSICAL, p_154853_, null, null, null);
++               cancellable = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent((Player) p_154854_, org.bukkit.event.block.Action.PHYSICAL, p_154853_, null, null, null);
 +            } else {
-+               cancellable = new org.bukkit.event.entity.EntityInteractEvent(p_154854_.getBukkitEntity(), org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock.at(p_154851_, p_154853_));
++               cancellable = new org.bukkit.event.entity.EntityInteractEvent(p_154854_.getBukkitEntity(), org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_154851_, p_154853_));
 +               p_154851_.getCraftServer().getPluginManager().callEvent((org.bukkit.event.entity.EntityInteractEvent) cancellable);
 +            }
 +
@@ -25,7 +25,7 @@
           int i = p_222644_.getValue(HATCH);
           if (i < 2) {
 +            // CraftBukkit start - Call BlockGrowEvent
-+            if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockGrowEvent(p_222645_, p_222646_, p_222644_.setValue(TurtleEggBlock.HATCH, i + 1), 2)) {
++            if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockGrowEvent(p_222645_, p_222646_, p_222644_.setValue(TurtleEggBlock.HATCH, i + 1), 2)) {
 +               return;
 +            }
 +            // CraftBukkit end
@@ -36,7 +36,7 @@
           } else {
 -            p_222645_.playSound((Player)null, p_222646_, SoundEvents.TURTLE_EGG_HATCH, SoundSource.BLOCKS, 0.7F, 0.9F + p_222647_.nextFloat() * 0.2F);
 +            // CraftBukkit start - Call BlockFadeEvent
-+            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockFadeEvent(p_222645_, p_222646_, Blocks.AIR.defaultBlockState()).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockFadeEvent(p_222645_, p_222646_, Blocks.AIR.defaultBlockState()).isCancelled()) {
 +               return;
 +            }
 +            // CraftBukkit end

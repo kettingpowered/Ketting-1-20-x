@@ -2,9 +2,9 @@ package org.kettingpowered.ketting.entity;
 
 import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
-import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftAbstractHorse;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftChestedHorse;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftAbstractHorse;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftChestedHorse;
 import org.bukkit.entity.Horse;
 import org.jetbrains.annotations.NotNull;
 

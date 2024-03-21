@@ -4,13 +4,13 @@
        if (!isNearWater(p_221140_, p_221141_) && !p_221140_.isRainingAt(p_221141_.above())) {
           if (i > 0) {
              p_221140_.setBlock(p_221141_, p_221139_.setValue(MOISTURE, Integer.valueOf(i - 1)), 2);
-+            org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleMoistureChangeEvent(p_221140_, p_221141_, (BlockState) p_221139_.setValue(FarmBlock.MOISTURE, i - 1), 2); // CraftBukkit
++            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleMoistureChangeEvent(p_221140_, p_221141_, (BlockState) p_221139_.setValue(FarmBlock.MOISTURE, i - 1), 2); // CraftBukkit
           } else if (!shouldMaintainFarmland(p_221140_, p_221141_)) {
              turnToDirt((Entity)null, p_221139_, p_221140_, p_221141_);
           }
        } else if (i < 7) {
 -         p_221140_.setBlock(p_221141_, p_221139_.setValue(MOISTURE, Integer.valueOf(7)), 2);
-+         org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleMoistureChangeEvent(p_221140_, p_221141_, (BlockState) p_221139_.setValue(FarmBlock.MOISTURE, 7), 2); // CraftBukkit
++         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleMoistureChangeEvent(p_221140_, p_221141_, (BlockState) p_221139_.setValue(FarmBlock.MOISTURE, 7), 2); // CraftBukkit
        }
  
     }
@@ -22,7 +22,7 @@
 +         // CraftBukkit start - Interact soil
 +         org.bukkit.event.Cancellable cancellable;
 +         if (p_153230_ instanceof Player) {
-+            cancellable = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerInteractEvent((Player) p_153230_, org.bukkit.event.block.Action.PHYSICAL, p_153229_, null, null, null);
++            cancellable = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent((Player) p_153230_, org.bukkit.event.block.Action.PHYSICAL, p_153229_, null, null, null);
 +         } else {
 +            cancellable = new org.bukkit.event.entity.EntityInteractEvent(p_153230_.getBukkitEntity(), p_153227_.getWorld().getBlockAt(p_153229_.getX(), p_153229_.getY(), p_153229_.getZ()));
 +            p_153227_.getCraftServer().getPluginManager().callEvent((org.bukkit.event.entity.EntityInteractEvent) cancellable);
@@ -32,7 +32,7 @@
 +            return;
 +         }
 +
-+         if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(p_153230_, p_153229_, Blocks.DIRT.defaultBlockState())) {
++         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_153230_, p_153229_, Blocks.DIRT.defaultBlockState())) {
 +            return;
 +         }
 +         // CraftBukkit end
@@ -45,7 +45,7 @@
  
     public static void turnToDirt(@Nullable Entity p_270981_, BlockState p_270402_, Level p_270568_, BlockPos p_270551_) {
 +      // CraftBukkit start
-+      if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockFadeEvent(p_270568_, p_270551_, Blocks.DIRT.defaultBlockState()).isCancelled()) {
++      if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockFadeEvent(p_270568_, p_270551_, Blocks.DIRT.defaultBlockState()).isCancelled()) {
 +         return;
 +      }
 +      // CraftBukkit end

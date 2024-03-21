@@ -43,14 +43,14 @@
 -         p_31589_.setItemInHand(p_31592_, itemstack);
 -         return true;
 -      }
-+         org.bukkit.inventory.ItemStack armorStandItem = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asCraftMirror(itemstack);
-+         org.bukkit.inventory.ItemStack playerHeldItem = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asCraftMirror(p_31591_);
++         org.bukkit.inventory.ItemStack armorStandItem = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(itemstack);
++         org.bukkit.inventory.ItemStack playerHeldItem = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(p_31591_);
 +
 +         org.bukkit.entity.Player player = (org.bukkit.entity.Player) p_31589_.getBukkitEntity();
 +         org.bukkit.entity.ArmorStand self = (org.bukkit.entity.ArmorStand) this.getBukkitEntity();
 +
-+         org.bukkit.inventory.EquipmentSlot slot = org.bukkit.craftbukkit.v1_20_R3.CraftEquipmentSlot.getSlot(p_31590_);
-+         org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R3.CraftEquipmentSlot.getHand(p_31592_);
++         org.bukkit.inventory.EquipmentSlot slot = org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot.getSlot(p_31590_);
++         org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot.getHand(p_31592_);
 +         org.bukkit.event.player.PlayerArmorStandManipulateEvent armorStandManipulateEvent = new org.bukkit.event.player.PlayerArmorStandManipulateEvent(player, self, playerHeldItem, armorStandItem, slot, hand);
 +         this.level().getCraftServer().getPluginManager().callEvent(armorStandManipulateEvent);
 +
@@ -81,7 +81,7 @@
        if (!this.level().isClientSide && !this.isRemoved()) {
           if (p_31579_.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31579_, p_31580_)) {
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31579_, p_31580_)) {
 +               return false;
 +            }
 +            // CraftBukkit end
@@ -90,7 +90,7 @@
 -         } else if (!this.isInvulnerableTo(p_31579_) && !this.invisible && !this.isMarker()) {
 +         } else if (!this.isInvulnerableTo(p_31579_) && (true || !this.invisible) && !this.isMarker()) { // CraftBukkit
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31579_, p_31580_, true, this.invisible)) {
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31579_, p_31580_, true, this.invisible)) {
 +               return false;
 +            }
 +            // CraftBukkit end
@@ -114,7 +114,7 @@
        }
  
 -      Block.popResource(this.level(), this.blockPosition(), itemstack);
-+      drops.add(org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
++      drops.add(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
        this.brokenByAnything(p_31647_);
     }
  
@@ -127,7 +127,7 @@
           ItemStack itemstack = this.handItems.get(i);
           if (!itemstack.isEmpty()) {
 -            Block.popResource(this.level(), this.blockPosition().above(), itemstack);
-+            drops.add(org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
++            drops.add(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
              this.handItems.set(i, ItemStack.EMPTY);
           }
        }
@@ -136,7 +136,7 @@
           ItemStack itemstack1 = this.armorItems.get(j);
           if (!itemstack1.isEmpty()) {
 -            Block.popResource(this.level(), this.blockPosition().above(), itemstack1);
-+            drops.add(org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asBukkitCopy(itemstack1)); // CraftBukkit - add to drops
++            drops.add(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asBukkitCopy(itemstack1)); // CraftBukkit - add to drops
              this.armorItems.set(j, ItemStack.EMPTY);
           }
        }
@@ -157,7 +157,7 @@
 +   // CraftBukkit end
 +
     public void kill() {
-+      org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityDeathEvent(this, drops); // CraftBukkit - call event
++      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityDeathEvent(this, drops); // CraftBukkit - call event
        this.remove(Entity.RemovalReason.KILLED);
        this.gameEvent(GameEvent.ENTITY_DIE);
     }
