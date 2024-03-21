@@ -866,7 +866,7 @@
     }
  
     public void openItemGui(ItemStack p_9082_, InteractionHand p_9083_) {
-@@ -994,6 +_,7 @@
+@@ -994,13 +_,24 @@
     }
  
     public void closeContainer() {
@@ -874,13 +874,13 @@
        this.connection.send(new ClientboundContainerClosePacket(this.containerMenu.containerId));
        this.doCloseContainer();
     }
-@@ -1001,6 +_,16 @@
+ 
     public void doCloseContainer() {
 +      //Ketting start - fix inventory closing
 +      if (this.containerMenu != this.inventoryMenu) {
 +         Player old = org.kettingpowered.ketting.utils.InventoryViewHelper.getContainerOwner();
 +         org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(this);
-+         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleInventoryCloseEvent(this);
++         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleInventoryCloseEvent(this);
 +         org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(old);
 +      }
 +      //Ketting end

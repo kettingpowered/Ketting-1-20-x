@@ -150,7 +150,7 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
             Preconditions.checkArgument(minecraft != null);
 
             net.minecraft.core.Registry<VillagerProfession> registry = CraftRegistry.getMinecraftRegistry(Registries.VILLAGER_PROFESSION);
-            Profession bukkit = Registry.VILLAGER_PROFESSION.get(CraftNamespacedKey.fromMinecraft(org.kettingpowered.ketting.inject.ForgeInject.standardize(registry.getResourceKey(minecraft).orElseThrow().location())));
+            Profession bukkit = Registry.VILLAGER_PROFESSION.get(CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location()));
 
             Preconditions.checkArgument(bukkit != null);
 
