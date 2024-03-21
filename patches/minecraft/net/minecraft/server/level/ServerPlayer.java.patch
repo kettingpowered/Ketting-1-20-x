@@ -1108,7 +1108,7 @@
        if (p_9000_ == this.level()) {
           this.connection.teleport(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
        } else {
-+         if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9000_.dimension())) return;
++         if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_9000_.dimension())) return;
           ServerLevel serverlevel = this.serverLevel();
           LevelData leveldata = p_9000_.getLevelData();
           this.connection.send(new ClientboundRespawnPacket(this.createCommonSpawnInfo(p_9000_), (byte)3));

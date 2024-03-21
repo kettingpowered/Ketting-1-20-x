@@ -456,7 +456,7 @@
        ServerLevel serverlevel = this.server.getLevel(p_11237_.getRespawnDimension());
        Optional<Vec3> optional;
        if (serverlevel != null && blockpos != null) {
-@@ -418,6 +_,13 @@
+@@ -418,8 +_,15 @@
  
        ServerLevel serverlevel1 = serverlevel != null && optional.isPresent() ? serverlevel : this.server.overworld();
        ServerPlayer serverplayer = new ServerPlayer(this.server, serverlevel1, p_11237_.getGameProfile(), p_11237_.clientInformation());
@@ -470,6 +470,8 @@
        serverplayer.restoreFrom(p_11237_, p_11238_);
 +      serverplayer.reviveCaps();
        serverplayer.setId(p_11237_.getId());
+       serverplayer.setMainArm(p_11237_.getMainArm());
+ 
 @@ -428,6 +_,21 @@
        }
  
