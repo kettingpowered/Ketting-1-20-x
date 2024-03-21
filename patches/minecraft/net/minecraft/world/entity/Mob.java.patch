@@ -25,7 +25,8 @@
     protected void registerGoals() {
     }
  
-@@ -232,7 +_,60 @@
+@@ -231,8 +_,61 @@
+       return this.target;
     }
  
 +   //Ketting start
@@ -172,7 +173,7 @@
           for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate((double)vec3i.getX(), (double)vec3i.getY(), (double)vec3i.getZ()))) {
              if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && !itementity.hasPickUpDelay() && this.wantsToPickUp(itementity.getItem())) {
                 this.pickUpItem(itementity);
-@@ -540,7 +_,8 @@
+@@ -540,6 +_,7 @@
  
     protected void pickUpItem(ItemEntity p_21471_) {
        ItemStack itemstack = p_21471_.getItem();
@@ -180,8 +181,8 @@
        ItemStack itemstack1 = this.equipItemIfPossible(itemstack.copy());
        if (!itemstack1.isEmpty()) {
           this.onItemPickup(p_21471_);
-          this.take(p_21471_, itemstack1.getCount());
-@@ -553,5 +_,14 @@
+@@ -552,6 +_,15 @@
+ 
     }
  
 +   //Ketting start
@@ -337,10 +338,14 @@
              this.level().addFreshEntity(t);
              if (this.isPassenger()) {
                 Entity entity = this.getVehicle();
-@@ -1218,16 +_,25 @@
+@@ -1215,20 +_,28 @@
+ 
+             this.discard();
+             return t;
+-         }
        }
     }
- 
++
 +   @Nullable
 +   public <T extends Mob> T convertTo(EntityType<T> p_21407_, boolean p_21408_, org.bukkit.event.entity.EntityTransformEvent.TransformReason transformReason, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
 +      ketting$convertTo$spawnReason.set(spawnReason);
@@ -348,7 +353,7 @@
 +      return convertTo(p_21407_, p_21408_);
 +   }
 +   //Ketting end
-+
+ 
     protected void tickLeash() {
        if (this.leashInfoTag != null) {
           this.restoreLeashFromSave();

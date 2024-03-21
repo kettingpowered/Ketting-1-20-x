@@ -276,7 +276,7 @@
        this.save(p_11287_);
        if (p_11287_.isPassenger()) {
           Entity entity = p_11287_.getRootVehicle();
-@@ -339,19 +_,36 @@
+@@ -339,6 +_,7 @@
        serverlevel.removePlayerImmediately(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
        p_11287_.getAdvancements().stopListening();
        this.players.remove(p_11287_);
@@ -284,16 +284,16 @@
        this.server.getCustomBossEvents().onPlayerDisconnect(p_11287_);
        UUID uuid = p_11287_.getUUID();
        ServerPlayer serverplayer = this.playersByUUID.get(uuid);
-       if (serverplayer == p_11287_) {
+@@ -346,11 +_,27 @@
           this.playersByUUID.remove(uuid);
           this.stats.remove(uuid);
           this.advancements.remove(uuid);
-+         // CraftBukkit start
 -      }
 -
 -      this.broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(p_11287_.getUUID())));
 -   }
 -
++         // CraftBukkit start
 +         // CraftBukkit end
 +      }
 +
@@ -317,8 +317,7 @@
     @Nullable
     public Component canPlayerLogin(SocketAddress p_11257_, GameProfile p_11258_) {
        if (this.bans.isBanned(p_11258_)) {
-          UserBanListEntry userbanlistentry = this.bans.get(p_11258_);
-@@ -376,4 +_,70 @@
+@@ -376,10 +_,83 @@
        }
     }
  
@@ -389,7 +388,6 @@
 +   }
 +
     public ServerPlayer getPlayerForLogin(GameProfile p_215625_, ClientInformation p_300548_) {
-@@ -380,6 +_,13 @@
        return new ServerPlayer(this.server, this.server.overworld(), p_215625_, p_300548_);
     }
  
@@ -403,7 +401,7 @@
     public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) {
        UUID uuid = p_299278_.getId();
        Set<ServerPlayer> set = Sets.newIdentityHashSet();
-@@ -396,17 +_,49 @@
+@@ -396,21 +_,53 @@
        }
  
        for(ServerPlayer serverplayer1 : set) {
@@ -413,6 +411,7 @@
  
        return !set.isEmpty();
     }
+-
 +   // Ketting end
 +   // CraftBukkit start - Moved up
 +   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_, ServerPlayer player) { // CraftBukkit - added EntityPlayer
@@ -453,6 +452,10 @@
        ServerLevel serverlevel = this.server.getLevel(p_11237_.getRespawnDimension());
        Optional<Vec3> optional;
        if (serverlevel != null && blockpos != null) {
++      if (serverlevel != null && blockpos != null) {
+          optional = Player.findRespawnPositionAndUseSpawnBlock(serverlevel, blockpos, f, flag, p_11238_);
+       } else {
+          optional = Optional.empty();
 @@ -418,8 +_,15 @@
  
        ServerLevel serverlevel1 = serverlevel != null && optional.isPresent() ? serverlevel : this.server.overworld();
