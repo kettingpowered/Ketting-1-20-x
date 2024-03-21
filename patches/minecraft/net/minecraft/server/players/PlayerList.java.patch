@@ -276,7 +276,7 @@
        this.save(p_11287_);
        if (p_11287_.isPassenger()) {
           Entity entity = p_11287_.getRootVehicle();
-@@ -339,48 +_,122 @@
+@@ -339,21 +_,36 @@
        serverlevel.removePlayerImmediately(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
        p_11287_.getAdvancements().stopListening();
        this.players.remove(p_11287_);
@@ -319,7 +319,7 @@
     public Component canPlayerLogin(SocketAddress p_11257_, GameProfile p_11258_) {
        if (this.bans.isBanned(p_11258_)) {
           UserBanListEntry userbanlistentry = this.bans.get(p_11258_);
-@@ -376,10 +_,89 @@
+@@ -376,15 +_,84 @@
        }
     }
  
@@ -406,7 +406,7 @@
     public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) {
        UUID uuid = p_299278_.getId();
        Set<ServerPlayer> set = Sets.newIdentityHashSet();
-@@ -396,18 +_,48 @@
+@@ -396,17 +_,49 @@
        }
  
        for(ServerPlayer serverplayer1 : set) {

@@ -172,7 +172,7 @@
           for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate((double)vec3i.getX(), (double)vec3i.getY(), (double)vec3i.getZ()))) {
              if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && !itementity.hasPickUpDelay() && this.wantsToPickUp(itementity.getItem())) {
                 this.pickUpItem(itementity);
-@@ -540,6 +_,7 @@
+@@ -540,7 +_,8 @@
  
     protected void pickUpItem(ItemEntity p_21471_) {
        ItemStack itemstack = p_21471_.getItem();
@@ -301,7 +301,7 @@
           this.setLeashedTo(p_21500_, true);
           itemstack.shrink(1);
           return InteractionResult.sidedSuccess(this.level().isClientSide);
-@@ -1172,63 +_,88 @@
+@@ -1172,13 +_,21 @@
        return this.restrictRadius != -1.0F;
     }
  
@@ -337,7 +337,7 @@
              this.level().addFreshEntity(t);
              if (this.isPassenger()) {
                 Entity entity = this.getVehicle();
-@@ -1218,6 +_,14 @@
+@@ -1218,16 +_,25 @@
        }
     }
  
