@@ -15,7 +15,7 @@
     private volatile boolean isSaving;
 +   // CraftBukkit start
 +   public WorldLoader.DataLoadContext worldLoader; //Ketting - not final
-+   public org.bukkit.craftbukkit.v1_20_R2.CraftServer server;
++   public org.bukkit.craftbukkit.v1_20_R3.CraftServer server;
 +   public joptsimple.OptionSet options;
 +   public org.bukkit.command.ConsoleCommandSender console;
 +   public jline.console.ConsoleReader reader;
@@ -86,7 +86,7 @@
 +            LOGGER.warn((String) null, ex);
 +         }
 +      }
-+      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.v1_20_R2.util.ServerShutdownThread(this));
++      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.v1_20_R3.util.ServerShutdownThread(this));
 +      // CraftBukkit end
     }
  
@@ -139,7 +139,7 @@
 +      org.kettingpowered.ketting.core.Ketting.getInstance().getDimensionRegistry().get().register(this.registryAccess().registryOrThrow(Registries.LEVEL_STEM)); //Ketting
        this.levels.put(Level.OVERWORLD, serverlevel);
        DimensionDataStorage dimensiondatastorage = serverlevel.getDataStorage();
-+      this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_20_R2.scoreboard.CraftScoreboardManager(this, serverlevel.getScoreboard()); // CraftBukkit
++      this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_20_R3.scoreboard.CraftScoreboardManager(this, serverlevel.getScoreboard()); // CraftBukkit
        this.readScoreboard(dimensiondatastorage);
        this.commandStorage = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.getWorldBorder();
@@ -563,7 +563,7 @@
     }
  
     public void tickServer(BooleanSupplier p_129871_) {
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.serverTickTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.serverTickTimer.startTiming(); // Spigot
        long i = Util.getNanos();
 +      net.minecraftforge.event.ForgeEventFactory.onPreServerTick(p_129871_, this);
        ++this.tickCount;
@@ -582,14 +582,14 @@
 +      if (this.autosavePeriod > 0 && this.ticksUntilAutosave <= 0) {
 +         this.ticksUntilAutosave = this.autosavePeriod;
 +         // CraftBukkit end
-+         org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.worldSaveTimer.startTiming(); // Spigot
++         org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.worldSaveTimer.startTiming(); // Spigot
           this.ticksUntilAutosave = this.computeNextAutosaveInterval();
           LOGGER.debug("Autosave started");
           this.profiler.push("save");
           this.saveEverything(true, false, false);
           this.profiler.pop();
           LOGGER.debug("Autosave finished");
-+         org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.worldSaveTimer.stopTiming(); // Spigot
++         org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.worldSaveTimer.stopTiming(); // Spigot
        }
  
        this.profiler.push("tallying");
@@ -599,7 +599,7 @@
        this.profiler.pop();
 +      net.minecraftforge.event.ForgeEventFactory.onPostServerTick(p_129871_, this);
 +      org.spigotmc.WatchdogThread.tick(); // Spigot
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.serverTickTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.serverTickTimer.stopTiming(); // Spigot
 +      org.spigotmc.CustomTimingsHandler.tick(); // Spigot
 +   }
 +
@@ -639,25 +639,25 @@
        this.getPlayerList().getPlayers().forEach((p_296434_) -> {
           p_296434_.connection.suspendFlushing();
        });
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.schedulerTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.schedulerTimer.startTiming(); // Spigot
 +      this.server.getScheduler().mainThreadHeartbeat(this.tickCount); // CraftBukkit
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.schedulerTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.schedulerTimer.stopTiming(); // Spigot
        this.profiler.push("commandFunctions");
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.commandFunctionsTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.commandFunctionsTimer.startTiming(); // Spigot
        this.getFunctions().tick();
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.commandFunctionsTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.commandFunctionsTimer.stopTiming(); // Spigot
        this.profiler.popPush("levels");
  
 -      for(ServerLevel serverlevel : this.getAllLevels()) {
 +      // CraftBukkit start
 +      // Run tasks that are waiting on processing
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.processQueueTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.processQueueTimer.startTiming(); // Spigot
 +      while (!processQueue.isEmpty()) {
 +         processQueue.remove().run();
 +      }
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.processQueueTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.processQueueTimer.stopTiming(); // Spigot
 +
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timeUpdateTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.timeUpdateTimer.startTiming(); // Spigot
 +      // Send time updates to everyone, it will get the right time from the world the player is in.
 +      if (this.tickCount % 20 == 0) {
 +         for (int i = 0; i < this.getPlayerList().players.size(); ++i) {
@@ -665,7 +665,7 @@
 +            serverplayer.connection.send(new ClientboundSetTimePacket(serverplayer.level().getGameTime(), serverplayer.getPlayerTime(), serverplayer.level().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT))); // Add support for per player time
 +         }
 +      }
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.timeUpdateTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.timeUpdateTimer.stopTiming(); // Spigot
 +
 +      for(ServerLevel serverlevel : this.getWorldArray()) {
 +         long tickStart = Util.getNanos();
@@ -709,25 +709,25 @@
        }
  
        this.profiler.popPush("connection");
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.connectionTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.connectionTimer.startTiming(); // Spigot
        this.getConnection().tick();
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.connectionTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.connectionTimer.stopTiming(); // Spigot
        this.profiler.popPush("players");
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.playerListTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.playerListTimer.startTiming(); // Spigot
        this.playerList.tick();
 -      if (SharedConstants.IS_RUNNING_IN_IDE && this.tickRateManager.runsNormally()) {
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.playerListTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.playerListTimer.stopTiming(); // Spigot
 +      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
           GameTestTicker.SINGLETON.tick();
        }
  
        this.profiler.popPush("server gui refresh");
  
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.tickablesTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.tickablesTimer.startTiming(); // Spigot
        for(int i = 0; i < this.tickables.size(); ++i) {
           this.tickables.get(i).run();
        }
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.tickablesTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.tickablesTimer.stopTiming(); // Spigot
  
        this.profiler.popPush("send chunks");
  
@@ -858,7 +858,7 @@
 +
 +   @Deprecated
 +   public static MinecraftServer getServer() {
-+      return (org.bukkit.Bukkit.getServer() instanceof org.bukkit.craftbukkit.v1_20_R2.CraftServer) ? ((org.bukkit.craftbukkit.v1_20_R2.CraftServer) org.bukkit.Bukkit.getServer()).getServer() : null;
++      return (org.bukkit.Bukkit.getServer() instanceof org.bukkit.craftbukkit.v1_20_R3.CraftServer) ? ((org.bukkit.craftbukkit.v1_20_R3.CraftServer) org.bukkit.Bukkit.getServer()).getServer() : null;
 +   }
 +   // CraftBukkit end
 +

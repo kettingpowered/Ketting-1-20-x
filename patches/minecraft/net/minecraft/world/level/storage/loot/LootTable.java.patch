@@ -13,7 +13,7 @@
     private final List<LootPool> pools;
     private final List<LootItemFunction> functions;
     private final BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
-+   public org.bukkit.craftbukkit.v1_20_R2.CraftLootTable craftLootTable; // CraftBukkit
++   public org.bukkit.craftbukkit.v1_20_R3.CraftLootTable craftLootTable; // CraftBukkit
  
     LootTable(LootContextParamSet p_287716_, Optional<ResourceLocation> p_298628_, List<LootPool> p_298771_, List<LootItemFunction> p_301234_) {
        this.paramSet = p_287716_;
@@ -80,11 +80,11 @@
        RandomSource randomsource = lootcontext.getRandom();
 +      if (!p_287743_.empty) { //Ketting - don't fire event if empty
 +         // CraftBukkit start
-+         org.bukkit.event.world.LootGenerateEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callLootGenerateEvent(p_287662_, this, lootcontext, objectarraylist, ketting$fill$plugin.getAndSet(false));
++         org.bukkit.event.world.LootGenerateEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callLootGenerateEvent(p_287662_, this, lootcontext, objectarraylist, ketting$fill$plugin.getAndSet(false));
 +         if (event.isCancelled()) {
 +            return;
 +         }
-+         objectarraylist = event.getLoot().stream().map(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
++         objectarraylist = event.getLoot().stream().map(org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
 +         // CraftBukkit end
 +      } else {
 +         ketting$fill$plugin.set(false); //don't skip reset

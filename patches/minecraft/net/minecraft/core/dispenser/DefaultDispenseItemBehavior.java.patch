@@ -49,10 +49,10 @@
 +   }
 +   private static void ketting$spawnItem(Level p_123379_, ItemStack p_123380_, ItemEntity itementity){
 +      if (ketting$spawnItem$source != null) {
-+         org.bukkit.block.Block block = org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_123379_, ketting$spawnItem$source.pos());
-+         org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(p_123380_);
++         org.bukkit.block.Block block = org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock.at(p_123379_, ketting$spawnItem$source.pos());
++         org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack craftItem = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asCraftMirror(p_123380_);
 +
-+         org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block, craftItem.clone(), org.bukkit.craftbukkit.v1_20_R2.util.CraftVector.toBukkit(itementity.getDeltaMovement()));
++         org.bukkit.event.block.BlockDispenseEvent event = new org.bukkit.event.block.BlockDispenseEvent(block, craftItem.clone(), org.bukkit.craftbukkit.v1_20_R3.util.CraftVector.toBukkit(itementity.getDeltaMovement()));
 +         if (!DispenserBlock.eventFired) {
 +            p_123379_.getCraftServer().getPluginManager().callEvent(event);
 +         }
@@ -62,12 +62,12 @@
 +            return;
 +         }
 +
-+         itementity.setItem(org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(event.getItem()));
-+         itementity.setDeltaMovement(org.bukkit.craftbukkit.v1_20_R2.util.CraftVector.toNMS(event.getVelocity()));
++         itementity.setItem(org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asNMSCopy(event.getItem()));
++         itementity.setDeltaMovement(org.bukkit.craftbukkit.v1_20_R3.util.CraftVector.toNMS(event.getVelocity()));
 +
 +         if (!ketting$spawnItem$dropper.getAndSet(false) && !event.getItem().getType().equals(craftItem.getType())) {
 +            // Chain to handler for new item
-+            ItemStack eventStack = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(event.getItem());
++            ItemStack eventStack = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asNMSCopy(event.getItem());
 +            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
 +            if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior.getClass() != DefaultDispenseItemBehavior.class) {
 +               idispensebehavior.dispense(ketting$spawnItem$source, eventStack);

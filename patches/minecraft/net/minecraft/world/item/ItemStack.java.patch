@@ -89,7 +89,7 @@
 +
 +   // Called to run this stack through the data converter to handle older storage methods and serialized items
 +   public void convertStack(int version) {
-+      if (0 < version && version < org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers.INSTANCE.getDataVersion()) {
++      if (0 < version && version < org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers.INSTANCE.getDataVersion()) {
 +         /* org.kettingpowered.ketting.core.Ketting start
 +         CompoundTag savedStack = new CompoundTag();
 +         this.save(savedStack);
@@ -192,10 +192,10 @@
 +         this.setTagClone(oldData);
 +         if (interactionresult.consumesAction() && world.captureTreeGeneration && world.capturedBlockStates.size() > 0) {
 +            world.captureTreeGeneration = false;
-+            org.bukkit.Location location = org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation.toBukkit(blockpos, world.getWorld());
++            org.bukkit.Location location = org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation.toBukkit(blockpos, world.getWorld());
 +            org.bukkit.TreeType treeType = net.minecraft.world.level.block.SaplingBlock.treeType;
 +            net.minecraft.world.level.block.SaplingBlock.treeType = null;
-+            List<org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState> blocks = new java.util.ArrayList<>(world.capturedBlockStates.values());
++            List<org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockState> blocks = new java.util.ArrayList<>(world.capturedBlockStates.values());
 +            world.capturedBlockStates.clear();
 +            org.bukkit.event.world.StructureGrowEvent structureEvent = null;
 +            if (treeType != null) {
@@ -204,7 +204,7 @@
 +               org.bukkit.Bukkit.getPluginManager().callEvent(structureEvent);
 +            }
 +
-+            org.bukkit.event.block.BlockFertilizeEvent fertilizeEvent = new org.bukkit.event.block.BlockFertilizeEvent(org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(world, blockpos), (org.bukkit.entity.Player) player.getBukkitEntity(), (List) blocks);
++            org.bukkit.event.block.BlockFertilizeEvent fertilizeEvent = new org.bukkit.event.block.BlockFertilizeEvent(org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock.at(world, blockpos), (org.bukkit.entity.Player) player.getBukkitEntity(), (List) blocks);
 +            fertilizeEvent.setCancelled(structureEvent != null && structureEvent.isCancelled());
 +            org.bukkit.Bukkit.getPluginManager().callEvent(fertilizeEvent);
 +
@@ -214,7 +214,7 @@
 +                  this.setTag(newData);
 +                  this.setCount(newCount);
 +               }
-+               for (org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState blockstate : blocks) {
++               for (org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockState blockstate : blocks) {
 +                  blockstate.update(true); //Ketting
 +                  //world.setBlock(blockstate.getPosition(),blockstate.getHandle(), blockstate.getFlag()); // SPIGOT-7248 - manual update to avoid physics where appropriate
 +               }
@@ -233,9 +233,9 @@
 +            List<org.bukkit.block.BlockState> blocks = new java.util.ArrayList<>(world.capturedBlockStates.values());
 +            world.capturedBlockStates.clear();
 +            if (blocks.size() > 1) {
-+               placeEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockMultiPlaceEvent(world, player, enumhand, blocks, blockpos.getX(), blockpos.getY(), blockpos.getZ());
++               placeEvent = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockMultiPlaceEvent(world, player, enumhand, blocks, blockpos.getX(), blockpos.getY(), blockpos.getZ());
 +            } else if (blocks.size() == 1) {
-+               placeEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockPlaceEvent(world, player, enumhand, blocks.get(0), blockpos.getX(), blockpos.getY(), blockpos.getZ());
++               placeEvent = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockPlaceEvent(world, player, enumhand, blocks.get(0), blockpos.getX(), blockpos.getY(), blockpos.getZ());
 +            }
 +
 +            if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
@@ -250,7 +250,7 @@
 +               world.preventPoiUpdated = false;
 +
 +               // Brute force all possible updates
-+               BlockPos placedPos = ((org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock) placeEvent.getBlock()).getPosition();
++               BlockPos placedPos = ((org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock) placeEvent.getBlock()).getPosition();
 +               for (net.minecraft.core.Direction dir : net.minecraft.core.Direction.values()) {
 +                  ((ServerPlayer) player).connection.send(new net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket(world, placedPos.relative(dir)));
 +               }
@@ -267,9 +267,9 @@
 +               }
 +
 +               for (org.bukkit.block.BlockState blockstate : blocks) {
-+                  int updateFlag = ((org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState) blockstate).getFlag();
-+                  BlockState oldBlock = ((org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState) blockstate).getHandle();
-+                  BlockPos newblockposition = ((org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState) blockstate).getPosition();
++                  int updateFlag = ((org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockState) blockstate).getFlag();
++                  BlockState oldBlock = ((org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockState) blockstate).getHandle();
++                  BlockPos newblockposition = ((org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockState) blockstate).getPosition();
 +                  BlockState block = world.getBlockState(newblockposition);
 +
 +                  if (!(block.getBlock() instanceof net.minecraft.world.level.block.BaseEntityBlock)) { // Containers get placed automatically
@@ -331,7 +331,7 @@
 +
 +               // SPIGOT-7315: Moved from BlockBed#setPlacedBy
 +               if (placeEvent != null && this.item instanceof BedItem) {
-+                  BlockPos position = ((org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock) placeEvent.getBlock()).getPosition();
++                  BlockPos position = ((org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock) placeEvent.getBlock()).getPosition();
 +                  BlockState blockData =  world.getBlockState(position);
 +
 +                  if (blockData.getBlock() instanceof net.minecraft.world.level.block.BedBlock) {
@@ -411,7 +411,7 @@
              p_220158_ -= j;
 +            // CraftBukkit start
 +            if (p_220160_ != null) {
-+               org.bukkit.event.player.PlayerItemDamageEvent event = new org.bukkit.event.player.PlayerItemDamageEvent(p_220160_.getBukkitEntity(), org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(this), p_220158_);
++               org.bukkit.event.player.PlayerItemDamageEvent event = new org.bukkit.event.player.PlayerItemDamageEvent(p_220160_.getBukkitEntity(), org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asCraftMirror(this), p_220158_);
 +               event.getPlayer().getServer().getPluginManager().callEvent(event);
 +
 +               if (p_220158_ != event.getDamage() || event.isCancelled()) {
@@ -437,7 +437,7 @@
                 Item item = this.getItem();
 +               // CraftBukkit start - Check for item breaking
 +               if (this.count == 1 && p_41624_ instanceof Player) {
-+                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerItemBreakEvent((Player) p_41624_, this);
++                  org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerItemBreakEvent((Player) p_41624_, this);
 +               }
 +               // CraftBukkit end
 +

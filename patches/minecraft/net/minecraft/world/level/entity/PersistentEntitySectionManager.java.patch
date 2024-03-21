@@ -67,7 +67,7 @@
           }).collect(Collectors.toList());
           if (list.isEmpty()) {
              if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.LOADED) {
-+               if (ketting$storeChunkSections$callEvent.get()) org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntitiesUnloadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) permanentStorage).level, new ChunkPos(p_157513_), ImmutableList.of()); // CraftBukkit
++               if (ketting$storeChunkSections$callEvent.get()) org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntitiesUnloadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) permanentStorage).level, new ChunkPos(p_157513_), ImmutableList.of()); // CraftBukkit
                 this.permanentStorage.storeEntities(new ChunkEntities<>(new ChunkPos(p_157513_), ImmutableList.of()));
              }
 -
@@ -78,7 +78,7 @@
              this.requestChunkLoad(p_157513_);
              return false;
           } else {
-+            if (ketting$storeChunkSections$callEvent.get()) org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntitiesUnloadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) permanentStorage).level, new ChunkPos(p_157513_), list.stream().map(entity -> (Entity) entity).collect(Collectors.toList())); // CraftBukkit
++            if (ketting$storeChunkSections$callEvent.get()) org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntitiesUnloadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) permanentStorage).level, new ChunkPos(p_157513_), list.stream().map(entity -> (Entity) entity).collect(Collectors.toList())); // CraftBukkit
              this.permanentStorage.storeEntities(new ChunkEntities<>(new ChunkPos(p_157513_), list));
              list.forEach(p_157514_);
 +            ketting$storeChunkSections$callEvent.set(false);
@@ -102,7 +102,7 @@
           this.chunkLoadStatuses.put(chunkentities.getPos().toLong(), PersistentEntitySectionManager.ChunkLoadStatus.LOADED);
 +         // CraftBukkit start - call entity load event
 +         List<Entity> entities = getEntities(chunkentities.getPos());
-+         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntitiesLoadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) permanentStorage).level, chunkentities.getPos(), entities);
++         org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntitiesLoadEvent(((net.minecraft.world.level.chunk.storage.EntityStorage) permanentStorage).level, chunkentities.getPos(), entities);
 +         // CraftBukkit end
        }
  

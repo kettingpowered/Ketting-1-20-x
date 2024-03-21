@@ -5,7 +5,7 @@
     public final ContainerLevelAccess access;
     private final Player player;
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView bukkitEntity = null;
 +   // CraftBukkit end
  
     public CraftingMenu(int p_39353_, Inventory p_39354_) {
@@ -33,7 +33,7 @@
                 }
              }
           }
-+         itemstack = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.map(RecipeHolder::toBukkitRecipe).orElse(null) instanceof net.minecraft.world.item.crafting.RepairItemRecipe); // CraftBukkit
++         itemstack = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.map(RecipeHolder::toBukkitRecipe).orElse(null) instanceof net.minecraft.world.item.crafting.RepairItemRecipe); // CraftBukkit
 +         org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner(); //Ketting
  
           p_150551_.setItem(0, itemstack);
@@ -53,13 +53,13 @@
 +
 +   // CraftBukkit start
 +   @Override
-+   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryCrafting inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryCrafting(this.craftSlots, this.resultSlots);
-+      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
++      org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryCrafting inventory = new org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryCrafting(this.craftSlots, this.resultSlots);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

@@ -6,19 +6,19 @@
  public class LecternMenu extends AbstractContainerMenu {
 +
 +   // CraftBukkit start
-+   private org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView bukkitEntity = null;
++   private org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView bukkitEntity = null;
 +   public org.bukkit.entity.Player player;
 +
 +   @Override
-+   public org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView getBukkitView() {
++   public org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
 +
 +      if (this.player == null) this.player = org.kettingpowered.ketting.utils.InventoryViewHelper.getCraftContainerOwner();
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryLectern inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryLectern(this.lectern);
-+      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView(this.player, inventory, this);
++      org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryLectern inventory = new org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryLectern(this.lectern);
++      bukkitEntity = new org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
@@ -30,7 +30,7 @@
                 }
  
 +               // CraftBukkit start - Event for taking the book
-+               org.bukkit.event.player.PlayerTakeLecternBookEvent event = new org.bukkit.event.player.PlayerTakeLecternBookEvent(player, ((org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryLectern) getBukkitView().getTopInventory()).getHolder());
++               org.bukkit.event.player.PlayerTakeLecternBookEvent event = new org.bukkit.event.player.PlayerTakeLecternBookEvent(player, ((org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryLectern) getBukkitView().getTopInventory()).getHolder());
 +               org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
 +               if (event.isCancelled()) {
 +                  return false;

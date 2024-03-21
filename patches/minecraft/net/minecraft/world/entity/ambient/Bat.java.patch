@@ -5,14 +5,14 @@
              }
  
 -            if (this.level().getNearestPlayer(BAT_RESTING_TARGETING, this) != null) {
-+            if (this.level().getNearestPlayer(Bat.BAT_RESTING_TARGETING, this) != null && org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBatToggleSleepEvent(this, true)) { // CraftBukkit - Call BatToggleSleepEvent
++            if (this.level().getNearestPlayer(Bat.BAT_RESTING_TARGETING, this) != null && org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBatToggleSleepEvent(this, true)) { // CraftBukkit - Call BatToggleSleepEvent
                 this.setResting(false);
                 if (!flag) {
                    this.level().levelEvent((Player)null, 1025, blockpos, 0);
                 }
              }
 -         } else {
-+         } else if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBatToggleSleepEvent(this, true)) { // CraftBukkit - Call BatToggleSleepEvent
++         } else if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBatToggleSleepEvent(this, true)) { // CraftBukkit - Call BatToggleSleepEvent
              this.setResting(false);
              if (!flag) {
                 this.level().levelEvent((Player)null, 1025, blockpos, 0);
@@ -21,7 +21,7 @@
           this.zza = 0.5F;
           this.setYRot(this.getYRot() + f1);
 -         if (this.random.nextInt(100) == 0 && this.level().getBlockState(blockpos1).isRedstoneConductor(this.level(), blockpos1)) {
-+         if (this.random.nextInt(100) == 0 && this.level().getBlockState(blockpos1).isRedstoneConductor(this.level(), blockpos1) && org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBatToggleSleepEvent(this, false)) { // CraftBukkit - Call BatToggleSleepEvent
++         if (this.random.nextInt(100) == 0 && this.level().getBlockState(blockpos1).isRedstoneConductor(this.level(), blockpos1) && org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBatToggleSleepEvent(this, false)) { // CraftBukkit - Call BatToggleSleepEvent
              this.setResting(true);
           }
        }
@@ -30,7 +30,7 @@
           return false;
        } else {
 -         if (!this.level().isClientSide && this.isResting()) {
-+         if (!this.level().isClientSide && this.isResting() && org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBatToggleSleepEvent(this, true)) { // CraftBukkit - Call BatToggleSleepEvent
++         if (!this.level().isClientSide && this.isResting() && org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBatToggleSleepEvent(this, true)) { // CraftBukkit - Call BatToggleSleepEvent
              this.setResting(false);
           }
  

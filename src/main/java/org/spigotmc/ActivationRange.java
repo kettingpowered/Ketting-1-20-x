@@ -27,7 +27,7 @@ import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.phys.AABB;
-import org.bukkit.craftbukkit.v1_20_R2.SpigotTimings;
+import org.bukkit.craftbukkit.v1_20_R3.SpigotTimings;
 import org.kettingpowered.ketting.spigot.InactiveTickExclusions;
 
 public class ActivationRange

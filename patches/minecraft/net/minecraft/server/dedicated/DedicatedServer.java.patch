@@ -86,7 +86,7 @@
 +      for (java.util.logging.Handler handler : global.getHandlers()) {
 +         global.removeHandler(handler);
 +      }
-+      global.addHandler(new org.bukkit.craftbukkit.v1_20_R2.util.ForwardLogHandler());
++      global.addHandler(new org.bukkit.craftbukkit.v1_20_R3.util.ForwardLogHandler());
 +
 +      final org.apache.logging.log4j.core.Logger logger = ((org.apache.logging.log4j.core.Logger) org.apache.logging.log4j.LogManager.getRootLogger());
 +      for (org.apache.logging.log4j.core.Appender appender : logger.getAppenders().values()) {
@@ -228,7 +228,7 @@
     }
  
     public void handleConsoleInputs() {
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.serverCommandTimer.startTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.serverCommandTimer.startTiming(); // Spigot
        while(!this.consoleInput.isEmpty()) {
           ConsoleInput consoleinput = this.consoleInput.remove(0);
 -         this.getCommands().performPrefixedCommand(consoleinput.source, consoleinput.msg);
@@ -244,7 +244,7 @@
 +         // CraftBukkit end
        }
  
-+      org.bukkit.craftbukkit.v1_20_R2.SpigotTimings.serverCommandTimer.stopTiming(); // Spigot
++      org.bukkit.craftbukkit.v1_20_R3.SpigotTimings.serverCommandTimer.stopTiming(); // Spigot
     }
  
     public boolean isDedicatedServer() {

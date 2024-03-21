@@ -13,8 +13,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
 
 import java.util.ArrayList;

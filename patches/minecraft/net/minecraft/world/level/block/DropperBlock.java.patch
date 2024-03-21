@@ -35,12 +35,12 @@
 -                  itemstack1 = HopperBlockEntity.addItem(dispenserblockentity, container, itemstack.copy().split(1), direction.getOpposite());
 -                  if (itemstack1.isEmpty()) {
 +                  // CraftBukkit start - Fire event when pushing items into other inventories
-+                  org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack oitemstack = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asCraftMirror(itemstack.copy().split(1));
++                  org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack oitemstack = org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asCraftMirror(itemstack.copy().split(1));
 +
 +                  org.bukkit.inventory.Inventory destinationInventory;
 +                  // Have to special case large chests as they work oddly
 +                  if (container instanceof ChestBlock.DoubleInventory) {
-+                     destinationInventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryDoubleChest((ChestBlock.DoubleInventory) container);
++                     destinationInventory = new org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryDoubleChest((ChestBlock.DoubleInventory) container);
 +                  } else {
 +                     destinationInventory = container.getOwner().getInventory();
 +                  }
@@ -50,7 +50,7 @@
 +                  if (event.isCancelled()) {
 +                     return;
 +                  }
-+                  itemstack1 = HopperBlockEntity.addItem(dispenserblockentity, container, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asNMSCopy(event.getItem()), direction.getOpposite());
++                  itemstack1 = HopperBlockEntity.addItem(dispenserblockentity, container, org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack.asNMSCopy(event.getItem()), direction.getOpposite());
 +                  if (event.getItem().equals(oitemstack) && itemstack1.isEmpty()) {
 +                     // CraftBukkit end
                       itemstack1 = itemstack.copy();

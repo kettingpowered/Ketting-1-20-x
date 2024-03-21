@@ -5,7 +5,7 @@
     public void thunderHit(ServerLevel p_32286_, LightningBolt p_32287_) {
        super.thunderHit(p_32286_, p_32287_);
 +      // CraftBukkit start
-+      if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callCreeperPowerEvent(this, p_32287_, org.bukkit.event.entity.CreeperPowerEvent.PowerCause.LIGHTNING).isCancelled()) {
++      if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callCreeperPowerEvent(this, p_32287_, org.bukkit.event.entity.CreeperPowerEvent.PowerCause.LIGHTNING).isCancelled()) {
 +         return;
 +      }
 +      // CraftBukkit end
@@ -26,7 +26,7 @@
        if (!this.level().isClientSide) {
           float f = this.isPowered() ? 2.0F : 1.0F;
 +         // CraftBukkit start
-+         org.bukkit.event.entity.ExplosionPrimeEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callExplosionPrimeEvent(this, this.explosionRadius * f, false);
++         org.bukkit.event.entity.ExplosionPrimeEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callExplosionPrimeEvent(this, this.explosionRadius * f, false);
 +         if (!event.isCancelled()) {
           this.dead = true;
 -         this.level().explode(this, this.getX(), this.getY(), this.getZ(), (float)this.explosionRadius * f, Level.ExplosionInteraction.MOB);
