@@ -295,7 +295,7 @@
              iterator.remove();
           }
  
-@@ -903,34 +_,82 @@
+@@ -903,21 +_,51 @@
        return this.activeEffects.get(p_21125_);
     }
  
@@ -315,13 +315,13 @@
 +         if (isTickingEffects) {
 +            effectsToProcess.add(new ProcessableEffect(p_147208_, addEffect$cause));
 +            return true;
-          }
- 
-         if (!this.canBeAffected(p_147208_)) {
-+            return false;
++         }
++
+       if (!this.canBeAffected(p_147208_)) {
+          return false;
        } else {
-            MobEffectInstance mobeffectinstance = this.activeEffects.get(p_147208_.getEffect());
-+         boolean flag = false;
+          MobEffectInstance mobeffectinstance = this.activeEffects.get(p_147208_.getEffect());
+          boolean flag = false;
 +
 +            // CraftBukkit start
 +            boolean override = false;
@@ -346,15 +346,17 @@
 +               mobeffectinstance.update(p_147208_);
 +               // CraftBukkit end
              this.onEffectUpdated(mobeffectinstance, true, p_147209_);
-             return true;
-          } else {
-             return false;
+             flag = true;
           }
-+         }
+@@ -926,13 +_,31 @@
+          p_147208_.onEffectStarted(this);
+          return flag;
+       }
+-   }
 +      } finally {
 +         this.addEffect$cause = org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN;
-       }
-    }
++      }
++   }
 +
 +   // CraftBukkit start
 +   public boolean addEffect(MobEffectInstance mobeffect, org.bukkit.event.entity.EntityPotionEffectEvent.Cause cause) {
