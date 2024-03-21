@@ -9,7 +9,7 @@
           return Pair.of(primaryleveldata, worlddimensions$complete);
        };
     }
-@@ -356,24 +_,46 @@
+@@ -356,17 +_,41 @@
     }
  
 +   //Ketting start
@@ -72,7 +72,7 @@
     public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> levels) implements Iterable<LevelStorageSource.LevelDirectory> {
        public boolean isEmpty() {
           return this.levels.isEmpty();
-@@ -419,8 +_,18 @@
+@@ -419,12 +_,42 @@
        public final LevelStorageSource.LevelDirectory levelDirectory;
        private final String levelId;
        private final Map<LevelResource, Path> resources = Maps.newHashMap();
@@ -154,7 +154,7 @@
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
              NbtIo.writeCompressed(compoundtag1, file2);
-@@ -495,6 +_,10 @@
+@@ -495,8 +_,12 @@
  
        public Optional<Path> getIconFile() {
           return !this.lock.isValid() ? Optional.empty() : Optional.of(this.levelDirectory.iconFile());
