@@ -338,14 +338,10 @@
              this.level().addFreshEntity(t);
              if (this.isPassenger()) {
                 Entity entity = this.getVehicle();
-@@ -1215,20 +_,28 @@
- 
-             this.discard();
-             return t;
--         }
+@@ -1219,16 +_,25 @@
        }
     }
-+
+ 
 +   @Nullable
 +   public <T extends Mob> T convertTo(EntityType<T> p_21407_, boolean p_21408_, org.bukkit.event.entity.EntityTransformEvent.TransformReason transformReason, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
 +      ketting$convertTo$spawnReason.set(spawnReason);
@@ -353,7 +349,7 @@
 +      return convertTo(p_21407_, p_21408_);
 +   }
 +   //Ketting end
- 
++
     protected void tickLeash() {
        if (this.leashInfoTag != null) {
           this.restoreLeashFromSave();

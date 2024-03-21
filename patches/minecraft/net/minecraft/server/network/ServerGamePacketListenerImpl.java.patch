@@ -812,7 +812,7 @@
        LOGGER.info("{} lost connection: {}", this.player.getName().getString(), p_9825_.getString());
        this.removePlayerFromWorld();
        super.onDisconnect(p_9825_);
-@@ -1111,10 +_,18 @@
+@@ -1111,10 +_,19 @@
  
     private void removePlayerFromWorld() {
        this.chatMessageChain.close();
@@ -823,8 +823,8 @@
 +      */
 +
        this.player.disconnect();
--      this.server.getPlayerList().remove(this.player);
-+      String quitMessage = this.server.getPlayerList().remove_string(this.player);
+       this.server.getPlayerList().remove(this.player);
++      String quitMessage = this.server.getPlayerList().ketting$remove$returnValue;
 +      if ((quitMessage != null) && (quitMessage.length() > 0)) {
 +         this.server.getPlayerList().broadcastMessage(org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage.fromString(quitMessage));
 +      }
@@ -1202,12 +1202,7 @@
        this.player.resetLastActionTime();
        switch (p_9891_.getAction()) {
           case PRESS_SHIFT_KEY:
-@@ -1329,13 +_,15 @@
-             Entity entity1 = this.player.getControlledVehicle();
-             if (entity1 instanceof PlayerRideableJumping playerrideablejumping) {
-                playerrideablejumping.handleStopJump();
--            }
--            break;
+@@ -1334,7 +_,9 @@
           case OPEN_INVENTORY:
              Entity $$2 = this.player.getVehicle();
              if ($$2 instanceof HasCustomInventoryScreen hascustominventoryscreen) {
@@ -1215,11 +1210,8 @@
                 hascustominventoryscreen.openCustomInventoryScreen(this.player);
 +               org.kettingpowered.ketting.utils.InventoryViewHelper.clearContainerOwner(); //Ketting
              }
-+            break;
-+         case START_FALL_FLYING:
              break;
           case START_FALL_FLYING:
-             if (!this.player.tryToStartFallFlying()) {
 @@ -1366,6 +_,12 @@
     }
  

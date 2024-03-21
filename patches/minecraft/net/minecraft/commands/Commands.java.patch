@@ -92,10 +92,10 @@
 +   }
 +   // CraftBukkit end
 +   //Ketting start
-+   private java.util.concurrent.atomic.AtomicReference<String> ketting$performPrefixedCommand$label = new java.util.concurrent.atomic.AtomicReference<>(null);  // Ketting
-+   public int performPrefixedCommand(CommandSourceStack p_230958_, String p_230959_, String label) {
++   public static final java.util.concurrent.atomic.AtomicReference<String> ketting$performPrefixedCommand$label = new java.util.concurrent.atomic.AtomicReference<>(null);  // Ketting
++   public void performPrefixedCommand(CommandSourceStack p_230958_, String p_230959_, String label) {
 +      ketting$performPrefixedCommand$label.set(label);
-+      return performPrefixedCommand(p_230958_, p_230959_);
++      performPrefixedCommand(p_230958_, p_230959_);
 +   }
 +   private void ketting$performPrefixedCommandPass(String s){
 +      String label = ketting$performPrefixedCommand$label.get();
@@ -144,7 +144,7 @@
              int i = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
              MutableComponent mutablecomponent = Component.empty().withStyle(ChatFormatting.GRAY).withStyle((p_82134_) -> {
 -               return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + p_312044_));
-+               return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + (ketting$label == null ? p_242841_ : ketting$label))); // CraftBukkit
++               return p_82134_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + (ketting$performPrefixedCommand$label.get() == null ? p_312044_ : ketting$performPrefixedCommand$label.getAndSet(null)))); // CraftBukkit
              });
              if (i > 10) {
                 mutablecomponent.append(CommonComponents.ELLIPSIS);
@@ -152,9 +152,9 @@
  
     }
  
-+   public int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_, String label) { // CraftBukkit
++   public void performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_, String label) { // CraftBukkit
 +      this.ketting$performCommand$label.set(label);
-+      return this.performCommand(p_242844_, p_242841_);
++      this.performCommand(p_242844_, p_242841_);
 +   }
 +
 +   //Ketting start - rewrite to add forge dispatcher support

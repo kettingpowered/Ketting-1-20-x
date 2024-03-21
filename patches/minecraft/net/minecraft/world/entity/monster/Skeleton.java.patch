@@ -4,11 +4,12 @@
     }
  
     protected void doFreezeConversion() {
+-      this.convertTo(EntityType.STRAY, true);
 +      if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.STRAY, (timer) -> this.conversionTime = timer)) return;
 +      // CraftBukkit - add spawn and transform reasons
 +      ketting$convertTo$transformReason.set(org.bukkit.event.entity.EntityTransformEvent.TransformReason.FROZEN); //Ketting
 +      ketting$convertTo$spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.FROZEN); //Ketting
-       this.convertTo(EntityType.STRAY, true);
++      var result = this.convertTo(EntityType.STRAY, true);
        if (!this.isSilent()) {
           this.level().levelEvent((Player)null, 1048, this.blockPosition(), 0);
        }
