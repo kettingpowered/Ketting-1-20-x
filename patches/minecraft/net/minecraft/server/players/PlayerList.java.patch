@@ -9,7 +9,7 @@
     private final Map<UUID, ServerPlayer> playersByUUID = Maps.newHashMap();
     private final UserBanList bans = new UserBanList(USERBANLIST_FILE);
     private final IpBanList ipBans = new IpBanList(IPBANLIST_FILE);
-@@ -132,8 +_,18 @@
+@@ -126,8 +_,18 @@
     private boolean allowCheatsForAllPlayers;
     private static final boolean ALLOW_LOGOUTIVATOR = false;
     private int sendAllPlayerInfoIn;
@@ -476,7 +476,7 @@
        serverplayer.connection = p_11237_.connection;
        serverplayer.restoreFrom(p_11237_, p_11238_);
        serverplayer.setId(p_11237_.getId());
-@@ -441,46 +_,123 @@
+@@ -428,47 +_,124 @@
        }
  
        boolean flag2 = false;
@@ -572,6 +572,7 @@
 +      ketting$respawn$avoidSuffocation.set(true);
  
        byte b0 = (byte)(p_11238_ ? 1 : 0);
+       ServerLevel serverlevel2 = serverplayer.serverLevel();
        LevelData leveldata = serverlevel2.getLevelData();
        serverplayer.connection.send(new ClientboundRespawnPacket(serverplayer.createCommonSpawnInfo(serverlevel2), b0));
 -      serverplayer.connection.teleport(serverplayer.getX(), serverplayer.getY(), serverplayer.getZ(), serverplayer.getYRot(), serverplayer.getXRot());
@@ -643,10 +644,10 @@
           this.sendAllPlayerInfoIn = 0;
        }
  
-@@ -506,6 +_,21 @@
+@@ -494,5 +_,21 @@
  
     }
- 
++
 +   // CraftBukkit start - add a world/entity limited version
 +   public void broadcastAll(Packet packet, Player player) {
 +      for (ServerPlayer serverPlayer : this.players) {
