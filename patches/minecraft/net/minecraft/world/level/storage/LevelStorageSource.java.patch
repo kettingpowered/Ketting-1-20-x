@@ -137,12 +137,12 @@
  
        public Optional<Path> getIconFile() {
           return !this.lock.isValid() ? Optional.empty() : Optional.of(this.levelDirectory.iconFile());
-+      }
-+
-+      public Path getWorldDir() {
-+         return baseDir;
        }
  
++      public Path getWorldDir() {
++         return baseDir;
++      }
++
        public void deleteLevel() throws IOException {
           this.checkLock();
           final Path path = this.levelDirectory.lockFile();
