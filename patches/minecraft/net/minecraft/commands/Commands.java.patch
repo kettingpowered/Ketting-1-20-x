@@ -42,12 +42,6 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }
  
--   public void performPrefixedCommand(CommandSourceStack p_230958_, String p_230959_) {
--      p_230959_ = p_230959_.startsWith("/") ? p_230959_.substring(1) : p_230959_;
--      this.performCommand(this.dispatcher.parse(p_230959_, p_230958_), p_230959_);
--   }
--
--   public void performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
 +   // CraftBukkit start
 +   public void dispatchServerCommand(CommandSourceStack p_230958_, String p_230959_) {
 +      com.google.common.base.Joiner joiner = com.google.common.base.Joiner.on(" ");
@@ -102,7 +96,7 @@
 -   }
 -
 +      // CraftBukkit start
-+      this.performPrefixedCommand(commandlistenerwrapper, s, s);
++      this.performPrefixedCommand(p_230958_, p_230959_, p_230959_);
 +   }
 +
 +   public void performPrefixedCommand(CommandSourceStack commandlistenerwrapper, String s, String label) {
@@ -142,7 +136,7 @@
                 });
                 if (j > 10) {
                    mutablecomponent1.append(CommonComponents.ELLIPSIS);
-@@ -291,20 +_,70 @@
+@@ -297,20 +_,70 @@
  
           return 0;
        } finally {

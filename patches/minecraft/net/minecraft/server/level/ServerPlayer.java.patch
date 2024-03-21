@@ -862,7 +862,7 @@
     }
  
     public void openItemGui(ItemStack p_9082_, InteractionHand p_9083_) {
-@@ -1006,6 +_,7 @@
+@@ -1006,13 +_,24 @@
     }
  
     public void closeContainer() {
@@ -876,7 +876,7 @@
 +      if (this.containerMenu != this.inventoryMenu) {
 +         Player old = org.kettingpowered.ketting.utils.InventoryViewHelper.getContainerOwner();
 +         org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(this);
-+         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleInventoryCloseEvent(this);
++         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleInventoryCloseEvent(this);
 +         org.kettingpowered.ketting.utils.InventoryViewHelper.setContainerOwner(old);
 +      }
 +      //Ketting end
