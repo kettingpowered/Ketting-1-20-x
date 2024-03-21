@@ -288,7 +288,7 @@
              iterator.remove();
           }
  
-@@ -904,30 +_,79 @@
+@@ -904,32 +_,79 @@
        return this.activeEffects.get(p_21125_);
     }
  
@@ -310,11 +310,11 @@
 -         if (mobeffectinstance == null) {
 -            this.activeEffects.put(p_147208_.getEffect(), p_147208_);
 -            this.onEffectAdded(p_147208_, p_147209_);
--            return true;
+-            flag = true;
 -         } else if (mobeffectinstance.update(p_147208_)) {
 -            this.onEffectUpdated(mobeffectinstance, true, p_147209_);
--            return true;
--         } else {
+-            flag = true;
+-         }
 +      try {
 +         org.spigotmc.AsyncCatcher.catchOp("effect add"); // Spigot
 +         if (isTickingEffects) {
@@ -344,16 +344,16 @@
 +            if (mobeffectinstance == null) {
 +               this.activeEffects.put(p_147208_.getEffect(), p_147208_);
 +               this.onEffectAdded(p_147208_, p_147209_);
-+               return true;
++               flag = true;
 +               // CraftBukkit start
 +            } else if (event.isOverride()) {
 +               mobeffectinstance.update(p_147208_);
 +               this.onEffectUpdated(mobeffectinstance, true, p_147209_);
 +               // CraftBukkit end
-+               return true;
-+            } else {
-+               return false;
++               flag = true;
 +            }
+          p_147208_.onEffectStarted(this);
+          return flag;
           }
 +      } finally {
 +         this.addEffect$cause = org.bukkit.event.entity.EntityPotionEffectEvent.Cause.UNKNOWN;
