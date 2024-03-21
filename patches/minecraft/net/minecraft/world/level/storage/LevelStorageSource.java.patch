@@ -9,7 +9,8 @@
           return Pair.of(primaryleveldata, worlddimensions$complete);
        };
     }
-@@ -356,17 +_,41 @@
+@@ -355,18 +_,42 @@
+       return this.backupDir;
     }
  
 +   //Ketting start
@@ -154,16 +155,14 @@
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
              NbtIo.writeCompressed(compoundtag1, file2);
-@@ -495,8 +_,12 @@
- 
-       public Optional<Path> getIconFile() {
+@@ -497,6 +_,10 @@
           return !this.lock.isValid() ? Optional.empty() : Optional.of(this.levelDirectory.iconFile());
-+      }
-+
-+      public Path getWorldDir() {
-+         return baseDir;
        }
  
++      public Path getWorldDir() {
++         return baseDir;
++      }
++
        public void deleteLevel() throws IOException {
           this.checkLock();
           final Path path = this.levelDirectory.lockFile();
