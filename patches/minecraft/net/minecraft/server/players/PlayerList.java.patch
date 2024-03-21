@@ -229,7 +229,7 @@
        } else {
           compoundtag1 = this.playerIo.load(p_11225_);
        }
-@@ -307,13 +_,15 @@
+@@ -307,22 +_,44 @@
     }
  
     protected void save(ServerPlayer p_11277_) {
@@ -247,7 +247,7 @@
        if (playeradvancements != null) {
           playeradvancements.save();
        }
-@@ -321,8 +_,28 @@
+ 
     }
  
 +   public String ketting$remove$returnValue = "";
@@ -317,7 +317,7 @@
     public Component canPlayerLogin(SocketAddress p_11257_, GameProfile p_11258_) {
        if (this.bans.isBanned(p_11258_)) {
           UserBanListEntry userbanlistentry = this.bans.get(p_11258_);
-@@ -376,11 +_,90 @@
+@@ -376,10 +_,89 @@
        }
     }
  
@@ -397,7 +397,6 @@
        return new ServerPlayer(this.server, this.server.overworld(), p_215625_, p_300548_);
     }
  
--   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) {
 +   // CraftBukkit start - added EntityPlayer
 +   public ServerPlayer getPlayerForLogin(GameProfile gameprofile, ClientInformation clientinformation, ServerPlayer player) {
 +      player.updateOptions(clientinformation);
@@ -405,10 +404,9 @@
 +      // CraftBukkit end
 +   }
 +
-+   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) {
+    public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) {
        UUID uuid = p_299278_.getId();
        Set<ServerPlayer> set = Sets.newIdentityHashSet();
- 
 @@ -396,28 +_,64 @@
        }
  
@@ -644,10 +642,10 @@
           this.sendAllPlayerInfoIn = 0;
        }
  
-@@ -494,5 +_,21 @@
+@@ -494,6 +_,22 @@
  
     }
-+
+ 
 +   // CraftBukkit start - add a world/entity limited version
 +   public void broadcastAll(Packet packet, Player player) {
 +      for (ServerPlayer serverPlayer : this.players) {
@@ -663,9 +661,10 @@
 +      }
 +   }
 +   // CraftBukkit end
- 
++
     public void broadcastAll(Packet<?> p_11271_, ResourceKey<Level> p_11272_) {
        for(ServerPlayer serverplayer : this.players) {
+          if (serverplayer.level().dimension() == p_11272_) {
 @@ -550,6 +_,7 @@
     }
  

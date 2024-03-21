@@ -8,7 +8,9 @@
     public final boolean onlineMode = this.get("online-mode", true);
     public final boolean preventProxyConnections = this.get("prevent-proxy-connections", false);
     public final String serverIp = this.get("server-ip", "");
-@@ -121,10 +_,29 @@
+@@ -119,12 +_,31 @@
+       this.initialDataPackConfiguration = getDatapackConfig(this.get("initial-enabled-packs", String.join(",", WorldDataConfiguration.DEFAULT.dataPacks().getEnabled())), this.get("initial-disabled-packs", String.join(",", WorldDataConfiguration.DEFAULT.dataPacks().getDisabled())));
+    }
  
 -   public static DedicatedServerProperties fromFile(Path p_180930_) {
 -      return new DedicatedServerProperties(loadFromFile(p_180930_));
