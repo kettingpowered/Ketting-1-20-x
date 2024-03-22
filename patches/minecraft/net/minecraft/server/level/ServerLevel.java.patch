@@ -70,10 +70,11 @@
           return p_214999_.overworld().getDataStorage();
        });
        this.chunkSource.getGeneratorState().ensureStructuresGenerated();
-@@ -222,9 +_,9 @@
+@@ -222,9 +_,10 @@
  
        long i = p_214999_.getWorldData().worldGenOptions().seed();
        this.structureCheck = new StructureCheck(this.chunkSource.chunkScanner(), this.registryAccess(), p_214999_.getStructureManager(), p_215003_, chunkgenerator, this.chunkSource.randomState(), this, chunkgenerator.getBiomeSource(), i, datafixer);
++      this.structureCheck.setTypeKey(getTypeKey());
 -      this.structureManager = new StructureManager(this, p_214999_.getWorldData().worldGenOptions(), this.structureCheck);
 +      this.structureManager = new StructureManager(this, getServerLevelData().worldGenOptions(), this.structureCheck); // CraftBukkit //Ketting - don't enforce PrimaryLevelData
        if (this.dimension() == Level.END && this.dimensionTypeRegistration().is(BuiltinDimensionTypes.END)) {
