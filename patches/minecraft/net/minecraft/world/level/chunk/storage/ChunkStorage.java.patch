@@ -98,12 +98,16 @@
        LegacyStructureDataHandler legacystructuredatahandler = this.legacyStructureHandler;
        if (legacystructuredatahandler == null) {
           synchronized(this) {
-@@ -69,7 +_,7 @@
+@@ -69,9 +_,11 @@
        return legacystructuredatahandler;
     }
  
 -   public static void injectDatafixingContext(CompoundTag p_196919_, ResourceKey<Level> p_196920_, Optional<ResourceKey<Codec<? extends ChunkGenerator>>> p_196921_) {
-+   public static void injectDatafixingContext(CompoundTag p_196919_, ResourceKey<net.minecraft.world.level.dimension.LevelStem> p_196920_, Optional<ResourceKey<Codec<? extends ChunkGenerator>>> p_196921_) { // CraftBukkit
++   public static void injectDatafixingContext(CompoundTag p_196919_, @Nullable ResourceKey<net.minecraft.world.level.dimension.LevelStem> p_196920_, Optional<ResourceKey<Codec<? extends ChunkGenerator>>> p_196921_) { // CraftBukkit
        CompoundTag compoundtag = new CompoundTag();
++      if (p_196920_ != null) //Ketting
        compoundtag.putString("dimension", p_196920_.location().toString());
++      else org.kettingpowered.ketting.core.Ketting.LOGGER.warn("Got a null LevelStem ResourceKey.", new IllegalArgumentException()); //Ketting
        p_196921_.ifPresent((p_196917_) -> {
+          compoundtag.putString("generator", p_196917_.location().toString());
+       });

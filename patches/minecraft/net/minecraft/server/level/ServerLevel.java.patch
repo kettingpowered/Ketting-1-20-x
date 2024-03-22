@@ -70,13 +70,14 @@
           return p_214999_.overworld().getDataStorage();
        });
        this.chunkSource.getGeneratorState().ensureStructuresGenerated();
-@@ -224,9 +_,9 @@
+@@ -224,9 +_,10 @@
  
        long i = p_214999_.getWorldData().worldGenOptions().seed();
        this.structureCheck = new StructureCheck(this.chunkSource.chunkScanner(), this.registryAccess(), p_214999_.getStructureManager(), p_215003_, chunkgenerator, this.chunkSource.randomState(), this, chunkgenerator.getBiomeSource(), i, datafixer);
 -      this.structureManager = new StructureManager(this, p_214999_.getWorldData().worldGenOptions(), this.structureCheck);
 -      if (this.dimension() == Level.END && this.dimensionTypeRegistration().is(BuiltinDimensionTypes.END)) {
 -         this.dragonFight = new EndDragonFight(this, i, p_214999_.getWorldData().endDragonFightData());
++      this.structureCheck.setTypeKey(getTypeKey());
 +      this.structureManager = new StructureManager(this, getServerLevelData().worldGenOptions(), this.structureCheck); // CraftBukkit //Ketting - don't enforce PrimaryLevelData
 +      if (this.dimension() == Level.END && this.dimensionTypeRegistration().is(BuiltinDimensionTypes.END) || init$env == org.bukkit.World.Environment.THE_END) { //// CraftBukkit - Allow to create EnderDragonBattle in default and custom END
 +         this.dragonFight = new EndDragonFight(this, getServerLevelData().worldGenOptions().seed(), getServerLevelData().endDragonFightData()); // CraftBukkit //Ketting - don't enforce PrimaryLevelData
