@@ -206,9 +206,9 @@ public abstract class AbstractModProvider implements IModProvider {
         final ConcurrentHashMap<String, Boolean> hm = new ConcurrentHashMap<>();
 
         AtomicBoolean hmInit = new AtomicBoolean(false);
-        ForkJoinTask<?> hmInitTask = null;
+        Optional<ForkJoinTask<?>> hmInitTask;
         if (!forceInclude)
-            ForkJoinPool.commonPool().submit(() -> {
+            hmInitTask = Optional.of(ForkJoinPool.commonPool().submit(() -> {
                 Instant start = Instant.now();
                 try (Stream<Path> walk = Files.walk(unfiltered_sj.getPath("/"))){
                     walk.filter(p->!p.toString().endsWith(".class"))
@@ -231,10 +231,10 @@ public abstract class AbstractModProvider implements IModProvider {
                 }
                 LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_EXCLUDES, "Initializing excludes for {} took: {}", path, Duration.between(start, Instant.now()));
                 hmInit.setRelease(true);
-            }).fork();
+            }).fork());
+        else hmInitTask = Optional.empty();
         
         var sj = SecureJar.from(
-                Manifest::new,
                 jar -> jar.moduleDataProvider().findFile(MODS_TOML).isPresent() ? mjm : JarMetadata.from(jar, path),
                 (root, p) -> {
                     if (finalForceInclude) return true;
@@ -242,9 +242,10 @@ public abstract class AbstractModProvider implements IModProvider {
                     // (e.g. mixin declarations, mixin refmaps, mod icons, accesswideners, pack.mcmeta and others)
                     // without having to wait for the cache initialization.
                     if (root != null && (root.startsWith("META-INF") || root.chars().filter(chr -> '/' == chr).count() <= 1)) return true;
-                    if (!hmInit.get()) {
+                    //noinspection ConstantValue
+                    if (hmInitTask.isPresent() && !hmInit.get()) {
                         LOGGER.debug("Waiting on hm init for {}", root);
-                        hmInitTask.join();
+                        hmInitTask.get().join();
                     }
                     boolean include = shouldBeIncluded(unfiltered_sj.getPath(root), hm);
                     if (!include) LOGGER.debug(LogMarkers.DYNAMIC_EXCLUDE_EXCLUDES, "excluding class {} for mod {}", root, path);
