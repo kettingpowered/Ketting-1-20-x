@@ -46,7 +46,7 @@
        int i = p_270603_.getValue(LEVEL);
        float f = COMPOSTABLES.getFloat(p_270354_.getItem());
 -      if ((i != 0 || !(f > 0.0F)) && !(p_270151_.getRandom().nextDouble() < (double)f)) {
-+      if ((i != 0 || !(f > 0.0F)) && java.util.Objects.requireNonNullElse(ketting$addItem$rand.get(), p_270151_.getRandom().nextDouble()) >= (double) f) { //Ketting
++      if ((i != 0 || !(f > 0.0F)) && !(ketting$addItem$rand.get() < (double) f)) { // Ketting - Revert to original for don't use DummyGeneratorAccess.getRandom()
           return p_270603_;
        } else {
           int j = i + 1;
