@@ -42,7 +42,7 @@
     public ItemStack(ItemLike p_41599_) {
        this(p_41599_, 1);
     }
-@@ -137,30 +_,67 @@
+@@ -137,27 +_,58 @@
     }
  
     public ItemStack(ItemLike p_41601_, int p_41602_) {
@@ -68,16 +68,9 @@
     private ItemStack(@Nullable Void p_282703_) {
 +      super(ItemStack.class, true);
        this.item = null;
--   }
--
--   private ItemStack(CompoundTag p_41608_) {
--      this.item = BuiltInRegistries.ITEM.get(new ResourceLocation(p_41608_.getString("id")));
--      this.count = p_41608_.getByte("Count");
--      if (p_41608_.contains("tag", 10)) {
--         this.tag = p_41608_.getCompound("tag");
 +      this.delegate = null;
-+   }
-+
+    }
+ 
 +   // Called to run this stack through the data converter to handle older storage methods and serialized items
 +   public void convertStack(int version) {
 +      if (0 < version && version < org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers.INSTANCE.getDataVersion()) {
@@ -91,17 +84,18 @@
 +         //Ketting end
 +      }
 +   }
-+
-+   // CraftBukkit - break into own method
-+   private void load(CompoundTag tag) {
-+      this.capNBT = tag.contains("ForgeCaps") ? tag.getCompound("ForgeCaps") : null;
-+      Item rawItem =
-+      this.item = BuiltInRegistries.ITEM.get(new ResourceLocation(tag.getString("id")));
++   
+    private ItemStack(CompoundTag p_41608_) {
+-      this.item = BuiltInRegistries.ITEM.get(new ResourceLocation(p_41608_.getString("id")));
++      super(ItemStack.class, true);
++      this.capNBT = p_41608_.contains("ForgeCaps") ? p_41608_.getCompound("ForgeCaps") : null;
++      Item rawItem = this.item = BuiltInRegistries.ITEM.get(new ResourceLocation(p_41608_.getString("id")));
 +      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(rawItem);
-+      this.count = tag.getByte("Count");
-+      if (tag.contains("tag", 10)) {
+       this.count = p_41608_.getByte("Count");
+       if (p_41608_.contains("tag", 10)) {
+-         this.tag = p_41608_.getCompound("tag");
 +         // CraftBukkit start - make defensive copy as this data may be coming from the save thread
-+         this.tag = tag.getCompound("tag").copy();
++         this.tag = p_41608_.getCompound("tag").copy();
 +         // CraftBukkit end
           this.getItem().verifyTagAfterLoad(this.tag);
        }
@@ -112,15 +106,7 @@
 +      if (this.getItem().isDamageable(this)) {
           this.setDamageValue(this.getDamageValue());
        }
-+   }
  
-+   private ItemStack(CompoundTag p_41608_) {
-+      super(ItemStack.class, true);
-+      this.load(p_41608_);
-+      // CraftBukkit end
-    }
- 
-    public static ItemStack of(CompoundTag p_41713_) {
 @@ -173,7 +_,7 @@
     }
  
