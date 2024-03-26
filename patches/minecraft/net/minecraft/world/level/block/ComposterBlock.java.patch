@@ -46,10 +46,31 @@
        int i = p_270603_.getValue(LEVEL);
        float f = COMPOSTABLES.getFloat(p_270354_.getItem());
 -      if ((i != 0 || !(f > 0.0F)) && !(p_270151_.getRandom().nextDouble() < (double)f)) {
-+      if ((i != 0 || !(f > 0.0F)) && java.util.Objects.requireNonNullElse(ketting$addItem$rand.get(), p_270151_.getRandom().nextDouble()) >= (double) f) { //Ketting
++      if ((i != 0 || !(f > 0.0F)) && getRandOr(p_270151_) >= (double) f) { //Ketting
           return p_270603_;
        } else {
           int j = i + 1;
+@@ -282,6 +_,20 @@
+       }
+    }
+ 
++   //Ketting start - get random from any available source
++   static RandomSource fallbackSource = RandomSource.create();
++   static double getRandOr(LevelAccessor level) {
++      Double ret = ketting$addItem$rand.get();
++      if (ret == null) {
++         if (level instanceof org.bukkit.craftbukkit.v1_20_R1.util.DummyGeneratorAccess)
++            ret = fallbackSource.nextDouble();
++         else
++            ret = level.getRandom().nextDouble();
++      }
++      return ret;
++   }
++   //Ketting end
++
+    public void tick(BlockState p_221015_, ServerLevel p_221016_, BlockPos p_221017_, RandomSource p_221018_) {
+       if (p_221015_.getValue(LEVEL) == 7) {
+          p_221016_.setBlock(p_221017_, p_221015_.cycle(LEVEL), 3);
 @@ -311,13 +_,15 @@
        if (i == 8) {
           return new ComposterBlock.OutputContainer(p_51956_, p_51957_, p_51958_, new ItemStack(Items.BONE_MEAL));
