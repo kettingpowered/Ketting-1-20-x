@@ -17,13 +17,21 @@ public class RoutableCommandDispatcher extends CommandDispatcher<CommandSourceSt
             "org.valkyrienskies.mod.forge.common.ValkyrienSkiesModForge"
     };
 
-    public static boolean needsRedirect() {
+    // se desactiva ya que ocaciona bajones de tps
+    /**
+     * public static boolean needsRedirect() {
         StackWalker walker = StackWalker.getInstance(Collections.emptySet(), 10);
         return walker.walk(frames ->
                 frames.map(StackWalker.StackFrame::getClassName)
                         .filter(IgnoredClasses::shouldCheck)
                         .anyMatch(name -> Arrays.stream(REDIRECTIONS).anyMatch(name::startsWith))
         );
+    }
+    */
+
+    public static boolean needsRedirect() {
+    // Desactivamos completamente la funcionalidad de redirección
+    return false;
     }
 
     private static CommandDispatcher<CommandSourceStack> fallback;
