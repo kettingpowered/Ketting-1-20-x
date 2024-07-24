@@ -172,7 +172,7 @@
           }
  
        }
-@@ -219,40 +_,154 @@
+@@ -219,40 +_,153 @@
  
     }
  
@@ -229,12 +229,11 @@
                 ItemStack itemstack1 = itemstack.copy();
 -               boolean flag1 = this.player.hasCorrectToolForDrops(blockstate);
 +               boolean flag1 = blockstate.canHarvestBlock(this.level, p_9281_, this.player); // previously player.hasCorrectToolForDrops(blockstate)
-+
++               
                 itemstack.mineBlock(this.level, blockstate, p_9281_, this.player);
 -               if (flag && flag1) {
 +               if (itemstack.isEmpty() && !itemstack1.isEmpty())
 +                  net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.player, itemstack1, InteractionHand.MAIN_HAND);
-+
 +               if (flag && flag1 && destroyBlock$event.get().isDropItems()) { // CraftBukkit - Check if block should drop items
                    block.playerDestroy(this.level, this.player, p_9281_, blockstate, blockentity, itemstack1);
                 }
@@ -337,7 +336,7 @@
     }
  
     public InteractionResult useItem(ServerPlayer p_9262_, Level p_9263_, ItemStack p_9264_, InteractionHand p_9265_) {
-@@ -261,6 +_,8 @@
+@@ -261,9 +_,13 @@
        } else if (p_9262_.getCooldowns().isOnCooldown(p_9264_.getItem())) {
           return InteractionResult.PASS;
        } else {
@@ -345,7 +344,12 @@
 +         if (cancelResult != null) return cancelResult;
           int i = p_9264_.getCount();
           int j = p_9264_.getDamageValue();
++         p_9262_.forceDrops = true; //Ketting
           InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.use(p_9263_, p_9262_, p_9265_);
++         p_9262_.forceDrops = false; //Ketting
+          ItemStack itemstack = interactionresultholder.getObject();
+          if (itemstack == p_9264_ && itemstack.getCount() == i && itemstack.getUseDuration() <= 0 && itemstack.getDamageValue() == j) {
+             return interactionresultholder.getResult();
 @@ -294,52 +_,128 @@
        }
     }

@@ -682,32 +682,30 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Loading entity NBT");
           CrashReportCategory crashreportcategory = crashreport.addCategory("Entity being loaded");
-@@ -1793,7 +_,24 @@
+@@ -1791,8 +_,23 @@
+       } else if (this.level().isClientSide) {
+          return null;
        } else {
++         // CraftBukkit start - Capture drops for death event
++         if (this instanceof LivingEntity && !((LivingEntity) this).forceDrops && captureDrops() == null) { //Ketting - check if we currently are capturing drops
++            ((LivingEntity) this).drops.add(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asBukkitCopy(p_19985_));
++            return null;
++         }
++         // CraftBukkit end
           ItemEntity itementity = new ItemEntity(this.level(), this.getX(), this.getY() + (double)p_19986_, this.getZ(), p_19985_);
           itementity.setDefaultPickUpDelay();
--         this.level().addFreshEntity(itementity);
-+         //Ketting start
-+         java.util.Collection<ItemEntity> capture = captureDrops();
-+         if (this instanceof LivingEntity l && l.forceDrops) capture = null;
-+         if (capture != null) captureDrops().add(itementity);
-+         //Ketting end
-+         else
-+         //Ketting start - bukkit event
-+         {
-+            // CraftBukkit start
-+            org.bukkit.event.entity.EntityDropItemEvent event = new org.bukkit.event.entity.EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) itementity.getBukkitEntity());
-+            org.bukkit.Bukkit.getPluginManager().callEvent(event);
-+            if (event.isCancelled()) {
-+               return null;
-+            }
-+            // CraftBukkit end
-+            this.level().addFreshEntity(itementity);
++         // CraftBukkit start
++         org.bukkit.event.entity.EntityDropItemEvent event = new org.bukkit.event.entity.EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) itementity.getBukkitEntity());
++         org.bukkit.Bukkit.getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            return null;
 +         }
-+         //Ketting end
++         // CraftBukkit end
++         if (captureDrops() != null) captureDrops().add(itementity);
++         else
+          this.level().addFreshEntity(itementity);
           return itementity;
        }
-    }
 @@ -1829,6 +_,7 @@
  
     public void rideTick() {

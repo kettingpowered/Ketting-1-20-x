@@ -16,13 +16,14 @@
     public static final int HAND_SLOTS = 2;
     public static final int ARMOR_SLOTS = 4;
     public static final int EQUIPMENT_SLOT_OFFSET = 98;
-@@ -226,11 +_,32 @@
+@@ -226,11 +_,33 @@
     private float swimAmountO;
     protected Brain<?> brain;
     private boolean skipDropExperience;
 +   // CraftBukkit start
 +   public int expToDrop;
 +   public boolean forceDrops;
++   public java.util.ArrayList<org.bukkit.inventory.ItemStack> drops = new java.util.ArrayList<org.bukkit.inventory.ItemStack>();
 +   public final org.bukkit.craftbukkit.v1_20_R1.attribute.CraftAttributeMap craftAttributes;
 +   public boolean collides = true;
 +   public java.util.Set<UUID> collidableExemptions = new java.util.HashSet<>();
@@ -720,8 +721,18 @@
                 this.level().addFreshEntity(itementity);
              }
           }
-@@ -1335,12 +_,12 @@
+@@ -1333,31 +_,81 @@
+       }
+    }
  
++   //Ketting start - capture death drops
++   private @Nullable net.minecraft.world.entity.player.Inventory forgeCaptures = null;
++   protected @Nullable net.minecraft.world.entity.player.Inventory getForgeCapturesAndClear() {
++      net.minecraft.world.entity.player.Inventory temp = forgeCaptures;
++      forgeCaptures = null;
++      return temp;
++   }
++
     protected void dropAllDeathLoot(DamageSource p_21192_) {
        Entity entity = p_21192_.getEntity();
 -      int i;
@@ -732,33 +743,49 @@
 -      }
 +
 +      int i = net.minecraftforge.common.ForgeHooks.getLootingLevel(this, entity, p_21192_);
-+      //Ketting start - get already captured items
-+      Collection<ItemEntity> alreadyCaptured = this.captureDrops();
-+      this.captureDrops(alreadyCaptured != null ? alreadyCaptured : new java.util.ArrayList<>());
-+      //Ketting end
++      this.captureDrops(new java.util.ArrayList<>());
  
        boolean flag = this.lastHurtByPlayerTime > 0;
++
++      this.dropEquipment(); // CraftBukkit - from below
        if (this.shouldDropLoot() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
-@@ -1349,15 +_,42 @@
+          this.dropFromLootTable(p_21192_, flag);
+          this.dropCustomDeathLoot(p_21192_, i, flag);
        }
  
-       this.dropEquipment();
--      this.dropExperience();
-+      // this.dropExperience(); //Ketting - moved down
+-      this.dropEquipment();
++      // this.dropEquipment(); // CraftBukkit - moved up
+       this.dropExperience();
 +
 +      Collection<ItemEntity> drops = captureDrops(null);
-+      if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, p_21192_, drops, i, lastHurtByPlayerTime > 0))
-+      //Ketting start - recapture if ServerPlayer
-+      {
-+         if (this instanceof ServerPlayer)
-+            this.captureDrops(drops);
-+         else
-+            drops.forEach(e -> level().addFreshEntity(e));
-+      }
-+      //Ketting end
 +
-+      this.dropExperience(); //Ketting
++      if (this instanceof ServerPlayer player && !(this instanceof net.minecraftforge.common.util.FakePlayer)) {
++         forgeCaptures = new net.minecraft.world.entity.player.Inventory(player);
++         forgeCaptures.replaceWith(player.getInventory());
++         player.getInventory().clearContent();
++      }
++
++      if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, p_21192_, drops, i, lastHurtByPlayerTime > 0)) {
++         drops.forEach(e -> this.drops.add(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(e.getItem())));
++         if (!(this instanceof ServerPlayer) || this instanceof net.minecraftforge.common.util.FakePlayer)
++            org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityDeathEvent(this, this.drops);
++      }
++
++      if (this instanceof ServerPlayer player && !(this instanceof net.minecraftforge.common.util.FakePlayer)) {
++         // grab potential items added to the inventory after the death event was called
++         net.minecraft.world.entity.player.Inventory captured = new net.minecraft.world.entity.player.Inventory(player);
++         captured.replaceWith(player.getInventory());
++
++         // restore the inventory to before the event was called
++         player.getInventory().clearContent();
++         player.getInventory().replaceWith(forgeCaptures);
++
++         // add the items that were added after the event was called
++         forgeCaptures.clearContent();
++         forgeCaptures.replaceWith(captured);
++      }
     }
++   //Ketting end
  
     protected void dropEquipment() {
     }

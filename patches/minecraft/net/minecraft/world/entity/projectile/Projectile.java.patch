@@ -24,12 +24,12 @@
     }
  
 +   // CraftBukkit start - call projectile hit event
++   protected boolean ketting$preOnHitResult;
++   
 +   protected void preOnHit(HitResult hitResult) {
 +      org.bukkit.event.entity.ProjectileHitEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callProjectileHitEvent(this, hitResult);
 +      this.hitCancelled = event != null && event.isCancelled();
-+      if (hitResult.getType() == HitResult.Type.BLOCK || !this.hitCancelled) {
-+         this.onHit(hitResult);
-+      }
++      ketting$preOnHitResult = hitResult.getType() == HitResult.Type.BLOCK || !this.hitCancelled;
 +   }
 +   // CraftBukkit end
 +

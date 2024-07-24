@@ -1,12 +1,16 @@
 --- a/net/minecraft/world/entity/projectile/LlamaSpit.java
 +++ b/net/minecraft/world/entity/projectile/LlamaSpit.java
-@@ -29,7 +_,8 @@
+@@ -29,7 +_,12 @@
        super.tick();
        Vec3 vec3 = this.getDeltaMovement();
        HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
 -      this.onHit(hitresult);
-+      if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
-+      this.preOnHit(hitresult); // CraftBukkit - projectile hit event
++      if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
++         this.preOnHit(hitresult); // CraftBukkit - projectile hit event
++         if (this.ketting$preOnHitResult) { // Ketting - Fix mixin errors
++            this.onHit(hitresult);
++         }
++      }
        double d0 = this.getX() + vec3.x;
        double d1 = this.getY() + vec3.y;
        double d2 = this.getZ() + vec3.z;

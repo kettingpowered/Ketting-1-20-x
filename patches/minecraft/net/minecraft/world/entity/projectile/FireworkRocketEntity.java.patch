@@ -23,12 +23,15 @@
     protected void defineSynchedData() {
        this.entityData.define(DATA_ID_FIREWORKS_ITEM, ItemStack.EMPTY);
        this.entityData.define(DATA_ATTACHED_TO_TARGET, OptionalInt.empty());
-@@ -130,7 +_,7 @@
+@@ -130,7 +_,10 @@
  
        HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
        if (!this.noPhysics) {
 -         this.onHit(hitresult);
 +         this.preOnHit(hitresult); // CraftBukkit - projectile hit event
++         if (this.ketting$preOnHitResult) { // Ketting - Fix mixin errors
++            this.onHit(hitresult);
++         }
           this.hasImpulse = true;
        }
  

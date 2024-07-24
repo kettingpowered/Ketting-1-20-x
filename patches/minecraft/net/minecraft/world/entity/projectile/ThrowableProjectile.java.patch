@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/ThrowableProjectile.java
 +++ b/net/minecraft/world/entity/projectile/ThrowableProjectile.java
-@@ -58,8 +_,8 @@
+@@ -58,8 +_,11 @@
           }
        }
  
@@ -8,6 +8,9 @@
 -         this.onHit(hitresult);
 +      if (hitresult.getType() != HitResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
 +         this.preOnHit(hitresult); // CraftBukkit - projectile hit event
++         if (this.ketting$preOnHitResult) { // Ketting - Fix mixin errors
++            this.onHit(hitresult);
++         }
        }
  
        this.checkInsideBlocks();

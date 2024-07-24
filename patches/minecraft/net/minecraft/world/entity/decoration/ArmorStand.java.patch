@@ -23,7 +23,7 @@
     private boolean hasPhysics() {
        return !this.isMarker() && !this.isNoGravity();
     }
-@@ -355,31 +_,62 @@
+@@ -355,29 +_,58 @@
           return false;
        } else if (itemstack.isEmpty() && (this.disabledSlots & 1 << p_31590_.getFilterFlag() + 16) != 0) {
           return false;
@@ -85,7 +85,6 @@
 +               return false;
 +            }
 +            // CraftBukkit end
-+            this.callDeathEvent(); //Ketting
              this.kill();
              return false;
 -         } else if (!this.isInvulnerableTo(p_31579_) && !this.invisible && !this.isMarker()) {
@@ -97,18 +96,7 @@
 +            // CraftBukkit end
              if (p_31579_.is(DamageTypeTags.IS_EXPLOSION)) {
                 this.brokenByAnything(p_31579_);
-+               this.callDeathEvent(); //Ketting
                 this.kill();
-                return false;
-             } else if (p_31579_.is(DamageTypeTags.IGNITES_ARMOR_STANDS)) {
-@@ -411,6 +_,7 @@
-                   if (p_31579_.isCreativePlayer()) {
-                      this.playBrokenSound();
-                      this.showBreakingParticles();
-+                     this.callDeathEvent(); //Ketting
-                      this.kill();
-                      return flag1;
-                   } else {
 @@ -422,7 +_,7 @@
                       } else {
                          this.brokenByPlayer(p_31579_);
@@ -118,15 +106,14 @@
                       }
  
                       return true;
-@@ -471,6 +_,7 @@
-       f -= p_31650_;
-       if (f <= 0.5F) {
-          this.brokenByAnything(p_31649_);
-+         this.callDeathEvent(); //Ketting
-          this.kill();
-       } else {
-          this.setHealth(f);
-@@ -491,12 +_,12 @@
+@@ -485,18 +_,18 @@
+          itemstack.setHoverName(this.getCustomName());
+       }
+ 
+-      Block.popResource(this.level(), this.blockPosition(), itemstack);
++      drops.add(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
+       this.brokenByAnything(p_31647_);
+    }
  
     private void brokenByAnything(DamageSource p_31654_) {
        this.playBrokenSound();
@@ -137,7 +124,7 @@
           ItemStack itemstack = this.handItems.get(i);
           if (!itemstack.isEmpty()) {
 -            Block.popResource(this.level(), this.blockPosition().above(), itemstack);
-+            this.tryCaptureDrops(this.level(), this.blockPosition().above(), itemstack); //Ketting
++            drops.add(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
              this.handItems.set(i, ItemStack.EMPTY);
           }
        }
@@ -146,7 +133,7 @@
           ItemStack itemstack1 = this.armorItems.get(j);
           if (!itemstack1.isEmpty()) {
 -            Block.popResource(this.level(), this.blockPosition().above(), itemstack1);
-+            this.tryCaptureDrops(this.level(), this.blockPosition().above(), itemstack1); //Ketting
++            drops.add(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asBukkitCopy(itemstack1)); // CraftBukkit - add to drops
              this.armorItems.set(j, ItemStack.EMPTY);
           }
        }
@@ -155,7 +142,7 @@
     }
  
     private void playBrokenSound() {
-@@ -592,10 +_,57 @@
+@@ -592,7 +_,15 @@
        return this.isSmall();
     }
  
@@ -167,49 +154,7 @@
 +   // CraftBukkit end
 +
     public void kill() {
-+      this.callDeathEvent(); //Ketting
++      org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityDeathEvent(this, drops); // CraftBukkit - call event
        this.remove(Entity.RemovalReason.KILLED);
        this.gameEvent(GameEvent.ENTITY_DIE);
     }
-+
-+   //Ketting start
-+   private void tryCaptureDrops(Level worldIn, BlockPos pos, ItemStack stack) {
-+      if (!worldIn.isClientSide && !stack.isEmpty() && worldIn.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DOBLOCKDROPS) && !worldIn.restoringBlockSnapshots) { // do not drop items while restoring blockstates, prevents item dupe
-+         net.minecraft.world.entity.item.ItemEntity itementity = new net.minecraft.world.entity.item.ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(), stack);
-+         getDrops().add(itementity);
-+      }
-+   }
-+
-+   private java.util.Collection<net.minecraft.world.entity.item.ItemEntity> getDrops() {
-+      java.util.Collection<net.minecraft.world.entity.item.ItemEntity> drops = this.captureDrops();
-+      if (drops == null) {
-+         java.util.List<net.minecraft.world.entity.item.ItemEntity> list = new java.util.ArrayList<>();
-+         this.captureDrops(list);
-+         return list;
-+      } else {
-+         return drops;
-+      }
-+   }
-+
-+   private void callDeathEvent() {
-+      java.util.Collection<net.minecraft.world.entity.item.ItemEntity> captureDrops = this.captureDrops(null);
-+      List<org.bukkit.inventory.ItemStack> drops;
-+      if (captureDrops == null) {
-+         drops = new java.util.ArrayList<>();
-+      } else if (captureDrops instanceof List) {
-+         drops = com.google.common.collect.Lists.transform(
-+                 (List<net.minecraft.world.entity.item.ItemEntity>) captureDrops,
-+                 e -> org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(e.getItem())
-+         );
-+      } else {
-+         drops = captureDrops.stream()
-+                 .map(net.minecraft.world.entity.item.ItemEntity::getItem)
-+                 .map(org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack::asCraftMirror)
-+                 .collect(java.util.stream.Collectors.toList());
-+      }
-+      org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityDeathEvent(this, drops);
-+   }
-+   //Ketting end
- 
-    public boolean ignoreExplosion() {
-       return this.isInvisible();

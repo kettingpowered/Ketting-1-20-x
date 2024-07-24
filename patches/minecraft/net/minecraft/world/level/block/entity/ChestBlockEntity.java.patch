@@ -37,12 +37,10 @@
     protected ChestBlockEntity(BlockEntityType<?> p_155327_, BlockPos p_155328_, BlockState p_155329_) {
        super(p_155327_, p_155328_, p_155329_);
     }
-@@ -158,6 +_,45 @@
- 
-    protected AbstractContainerMenu createMenu(int p_59082_, Inventory p_59083_) {
+@@ -160,6 +_,45 @@
        return ChestMenu.threeRows(p_59082_, p_59083_, this);
-+   }
-+
+    }
+ 
 +   private net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandlerModifiable> chestHandler;
 +   @Override
 +   public void setBlockState(BlockState p_155251_) {
@@ -80,6 +78,20 @@
 +         chestHandler.invalidate();
 +         chestHandler = null;
 +      }
-    }
- 
++   }
++
     public void recheckOpen() {
+       if (!this.remove) {
+          this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
+@@ -171,4 +_,11 @@
+       Block block = p_155335_.getBlock();
+       p_155333_.blockEvent(p_155334_, block, 1, p_155337_);
+    }
++
++   // CraftBukkit start
++   @Override
++   public boolean onlyOpCanSetNbt() {
++      return true;
++   }
++   // CraftBukkit end
+ }

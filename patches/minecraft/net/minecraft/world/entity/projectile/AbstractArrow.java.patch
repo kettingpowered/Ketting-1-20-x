@@ -30,7 +30,7 @@
           this.clearFire();
        }
  
-@@ -186,9 +_,28 @@
+@@ -186,9 +_,34 @@
                 }
              }
  
@@ -42,6 +42,9 @@
 +                  case SKIP_ENTITY:
 +                     if (hitresult.getType() != HitResult.Type.ENTITY) { // If there is no entity, we just return default behaviour
 +                        this.preOnHit(hitresult); // CraftBukkit - projectile hit event
++                        if (this.ketting$preOnHitResult) { // Ketting - Fix mixin errors
++                           this.onHit(hitresult);
++                        }
 +                        this.hasImpulse = true;
 +                        break;
 +                     }
@@ -56,6 +59,9 @@
 +                     this.setPierceLevel((byte) 0);
 +                  case DEFAULT:
 +                     this.preOnHit(hitresult); // CraftBukkit - projectile hit event
++                     if (this.ketting$preOnHitResult) { // Ketting - Fix mixin errors
++                        this.onHit(hitresult);
++                     }
 +                     this.hasImpulse = true;
 +                     break;
 +               }
