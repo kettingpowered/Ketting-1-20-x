@@ -1,3 +1,7 @@
+<div align="center">
+  <h1>⚠️ 1.20.4 IS EOL AND WILL NOT BE UPDATED! ⚠️</h1>
+</div>
+
 [discord-widget]: https://canary.discord.com/api/guilds/1172551819138965605/widget.png
 [discord-invite]: https://discord.kettingpowered.org/
 
