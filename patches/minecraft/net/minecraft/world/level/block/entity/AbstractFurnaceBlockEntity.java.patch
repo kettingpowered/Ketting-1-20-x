@@ -150,11 +150,16 @@
                    p_155017_.setRecipeUsed(recipe);
                 }
  
-@@ -295,7 +_,7 @@
+@@ -295,7 +_,12 @@
  
     }
  
 -   private static boolean canBurn(RegistryAccess p_266924_, @Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
++   static final AbstractFurnaceBlockEntity $ketting_furnace = new FurnaceBlockEntity(new net.minecraft.core.BlockPos(0, 0, 0), net.minecraft.world.level.block.Blocks.FURNACE.defaultBlockState());
++   @SuppressWarnings("unused")
++   private static boolean canBurn_static(RegistryAccess p_266924_, @Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
++      return $ketting_furnace.canBurn(p_266924_, p_155006_, p_155007_, p_155008_);
++   }
 +   private boolean canBurn(RegistryAccess p_266924_, @Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
        if (!p_155007_.get(0).isEmpty() && p_155006_ != null) {
           ItemStack itemstack = p_155006_.getResultItem(p_266924_);
