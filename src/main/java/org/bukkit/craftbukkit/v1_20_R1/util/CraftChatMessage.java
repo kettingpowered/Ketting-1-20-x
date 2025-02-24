@@ -20,6 +20,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import org.bukkit.ChatColor;
+import org.kettingpowered.ketting.core.Ketting;
 
 public final class CraftChatMessage {
 
@@ -28,8 +29,15 @@ public final class CraftChatMessage {
 
     static {
         Builder<Character, ChatFormatting> builder = ImmutableMap.builder();
+        java.util.HashMap<Character, ChatFormatting> check = new java.util.HashMap<>();
         for (ChatFormatting format : ChatFormatting.values()) {
-            builder.put(Character.toLowerCase(format.toString().charAt(1)), format);
+            final Character chr = Character.toLowerCase(format.toString().charAt(1));
+            final ChatFormatting dupe = check.put(chr, format);
+            if (dupe != null) {
+                Ketting.LOGGER.warn("Skipping Duplicate ChatFormatting: §{}, original formatting: {}, duplicate formatting: {}", chr, dupe, format);
+            } else {
+                builder.put(chr, format);
+            }
         }
         formatMap = builder.build();
     }
