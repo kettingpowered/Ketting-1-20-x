@@ -9,8 +9,8 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.monster.SpellcasterIllager;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.TrappedChestBlock;
@@ -31,11 +31,7 @@ import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftSpawnCategory;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Pose;
-import org.bukkit.entity.SpawnCategory;
-import org.bukkit.entity.Villager;
+import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
@@ -138,6 +134,8 @@ public class ForgeInject {
         addForgeVillagerProfessions();
         debug("Injecting Forge statistics into bukkit");
         addForgeStatistics();
+        debug("Injecting Forge IllagerSpells into bukkit");
+        addForgeIllagerSpells();
         debug("Injecting Forge into Bukkit: DONE");
 
         try {
@@ -167,7 +165,10 @@ public class ForgeInject {
             try {
                 Class<?> match = CraftBlockData.getClosestBlockDataClass(block.getClass());
                 Class<?> blockDataClass = match == null ? null : match.getInterfaces()[0];
-                var material = Material.addMaterial(enumName, ordinal, blockDataClass, CraftNamespacedKey.fromMinecraft(location), true, item != null && item != Items.AIR);
+                var material = blockDataClass == null ? Material.addMaterial(enumName, ordinal,
+                        CraftNamespacedKey.fromMinecraft(location), true, item != null && item != Items.AIR)
+                        : Material.addMaterial(enumName, ordinal, blockDataClass,
+                        CraftNamespacedKey.fromMinecraft(location), true, item != null && item != Items.AIR);
                 if (material == null) {
                     Ketting.LOGGER.warn("Could not inject block into Bukkit: " + enumName);
                     continue;
@@ -180,10 +181,11 @@ public class ForgeInject {
                 if (match != null)
                     MATERIALS.computeIfAbsent(match, k -> new ArrayList<>()).add(new AbstractMap.SimpleEntry<>(block, material));
                 debug("Injecting Forge Blocks into Bukkit: " + material.name());
-                if (blockDataClass != null)
-                    debug("Assigning block data " + blockDataClass + " to " + material.name());
+                if (blockDataClass != null) {
+                    debug("Assigning block data " + blockDataClass + " to " + material.name() + " because it extends " + block.getClass());
+                }
             } catch (Throwable e) {
-                Ketting.LOGGER.error("Could not inject block into Bukkit: {}.", enumName, e);
+                Ketting.LOGGER.error("Could not inject block into Bukkit: " + enumName + ". " + e.getMessage());
             }
         }
         debug("Injecting Forge Blocks into Bukkit: DONE");
@@ -201,7 +203,8 @@ public class ForgeInject {
             // Material may already be registered by a block
             if (material == null) {
                 try {
-                    material = Material.addMaterial(enumName, ordinal, null, CraftNamespacedKey.fromMinecraft(location), false, true);
+                    material = Material.addMaterial(enumName, ordinal, CraftNamespacedKey.fromMinecraft(location),
+                            false, true);
                     if (material == null) {
                         Ketting.LOGGER.warn("Could not inject item into Bukkit: " + enumName);
                         continue;
@@ -267,7 +270,6 @@ public class ForgeInject {
         registerMaterialsFor(materials, CraftSuspiciousSand.class, BrushableBlockEntity.class, CraftSuspiciousSand::new);
         registerMaterialsFor(materials, CraftBrushableBlock.class, BrushableBlockEntity.class, CraftBrushableBlock::new);
         registerChests(materials);
-        registerExceptions(materials);
         materials.keySet().forEach(craftClass -> {
             debugWarn("Could not find a matching block entity for " + craftClass.getSimpleName());
         });
@@ -382,54 +384,9 @@ public class ForgeInject {
         }
     }
 
-    public static final Map<String, com.google.common.base.Function<net.minecraft.world.level.block.state.BlockState, org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData>> MOD_CLASS_EXCEPTIONS = Map.of(
-            "com.mrcrayfish.goldenhopper.world.level.block.AbstractHopperBlock", org.bukkit.craftbukkit.v1_20_R1.block.impl.CraftHopper::new
-    );
-    private static final Map<Class, Class<? extends CraftBlockEntityState>> CUSTOM_CRAFT_CLASSES = Map.of(
-            org.bukkit.craftbukkit.v1_20_R1.block.impl.CraftHopper.class, org.kettingpowered.ketting.entity.block.CraftCustomHopper.class
-    );
-    private static void registerExceptions(@NotNull Map<Class<?>, List<Map.Entry<Block, Material>>> materialsMap) {
-        for (var it = materialsMap.keySet().iterator(); it.hasNext(); ) {
-            var craftClass = it.next();
-            for (var entry : materialsMap.get(craftClass)) {
-                final Block block = entry.getKey();
-                final Material material = entry.getValue();
-
-                if (block instanceof EntityBlock entityBlock) {
-                    if (!CUSTOM_CRAFT_CLASSES.containsKey(craftClass)) {
-                        debugWarn("Could not find a matching block entity translation for " + craftClass.getSimpleName());
-                        continue;
-                    }
-                    var customCraftClass = CUSTOM_CRAFT_CLASSES.get(craftClass);
-                    debug("Registering " + material.name() + " as " + customCraftClass.getSimpleName());
-                    CraftBlockStates.register(material, customCraftClass, translateCraftClass(customCraftClass, material), (pos, state) -> {
-                        try {
-                            return entityBlock.newBlockEntity(pos, state);
-                        } catch (Throwable e) {
-                            Ketting.LOGGER.error("Could not register " + material.name() + " as " + craftClass.getSimpleName(), e);
-                            return null;
-                        }
-                    });
-                }
-            }
-            it.remove();
-        }
-    }
-
-    private static <T extends BlockEntity, B extends CraftBlockEntityState<T>> BiFunction<World, T, B> translateCraftClass(Class<B> craftClass, Material material) {
-        return (world, blockEntity) -> {
-            try {
-                return craftClass.getDeclaredConstructor(org.bukkit.World.class, RandomizableContainerBlockEntity.class).newInstance(world, blockEntity);
-            } catch (Throwable e) {
-                Ketting.LOGGER.error("Could not register {} as {}", material.name(), craftClass.getSimpleName(), e);
-                return null;
-            }
-        };
-    }
-
     private static void addForgeEnchantments() {
         ForgeRegistries.ENCHANTMENTS.getEntries().forEach(entry -> {
-            Enchantment enchantment = new CraftEnchantment(entry.getValue(), standardize(entry.getKey().location()));
+            CraftEnchantment enchantment = new CraftEnchantment(entry.getValue());
             if (!org.bukkit.enchantments.Enchantment.byKey.containsKey(enchantment.getKey())
                     || !org.bukkit.enchantments.Enchantment.byName.containsKey(enchantment.getName())) {
                 org.bukkit.enchantments.Enchantment.byKey.put(enchantment.getKey(), enchantment);
@@ -441,52 +398,52 @@ public class ForgeInject {
     }
 
     private static void addForgePotions() {
-        // Stage 1 - register the actual effects
-        int maxId = ForgeRegistries.MOB_EFFECTS.getValues().stream().mapToInt(MobEffect::getId).max().orElse(0);
-        PotionEffectType.byId = new PotionEffectType[maxId + 1];
         PotionEffectType.startAcceptingRegistrations();
         ForgeRegistries.MOB_EFFECTS.getEntries().forEach(entry -> {
-            var effect = new CraftPotionEffectType(entry.getValue(), standardize(entry.getKey().location()));
+            var pet = new CraftPotionEffectType(entry.getValue());
+
+            if (pet == null)
+                return;
 
             try {
-                PotionEffectType.registerPotionEffectType(effect);
-                debug("Registering Forge mob effect into Bukkit: " + effect.getName());
-            } catch (Throwable e) {
-                Ketting.LOGGER.error("Could not register mob effect into Bukkit: " + effect.getName() + ". " + e.getMessage());
+                PotionEffectType.registerPotionEffectType(pet);
+                debug("Registering Forge Potion into Bukkit: " + pet.getName());
+            } catch (IllegalStateException e) {
+                Ketting.LOGGER.error("Could not register potion effect into Bukkit: " + pet.getName() + ". " + e.getMessage());
             }
         });
         PotionEffectType.stopAcceptingRegistrations();
+        // Stage 1 complete - now to add the types to bukkit
 
-        // Stage 2 - add the types to bukkit
-        int ordinal = PotionType.values().length;
+
+        int ordinal = EntityType.values().length;
         List<PotionType> values = new ArrayList<>();
         BiMap<PotionType, String> newRegular = HashBiMap.create(CraftPotionUtil.regular);
         for (var entry : ForgeRegistries.POTIONS.getEntries()) {
             var location = entry.getKey().location();
+            if (location.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                continue;
+            }
+            var enumName = standardize(location);
             var potion = entry.getValue();
-            if (CraftPotionUtil.toBukkit(location.toString()).getType() == PotionType.UNCRAFTABLE && potion != Potions.EMPTY) {
-                var enumName = standardize(location);
-                var effect = potion.getEffects().isEmpty() ? null : potion.getEffects().get(0);
-
-                var type = effect == null ? null : PotionEffectType.getById(MobEffect.getId(effect.getEffect()));
-                if (type == null) {
-                    Ketting.LOGGER.error("Could not inject Potion into Bukkit: " + enumName + ". " + (effect == null || effect.getEffect() == null ? "Effect is null" : "Missing required effect " + standardize(ForgeRegistries.MOB_EFFECTS.getKey(effect.getEffect()))));
-                    continue;
-                }
-
-                PotionType potionType = EnumHelper.makeEnum(PotionType.class, enumName, ordinal++,
-                        Arrays.asList(PotionEffectType.class, boolean.class, boolean.class),
-                        Arrays.asList(type, false, false)
-                );
-
+            var effect = potion.getEffects().isEmpty() ? null : potion.getEffects().get(0);
+            PotionEffectType type = null;
+            if (effect != null) type = PotionEffectType.getById(MobEffect.getId(effect.getEffect()));
+            if (type == null) type = PotionEffectType.NORMAL;
+            try {
+                var potionType = EnumHelper.makeEnum(PotionType.class, enumName, ordinal,
+                        List.of(PotionEffectType.class, boolean.class, boolean.class),
+                        List.of(type, false, false));
                 if (potionType == null) {
-                    Ketting.LOGGER.error("Could not inject Potion into Bukkit: " + enumName + ". PotionType is null");
+                    Ketting.LOGGER.error("Could not inject potion into Bukkit: " + enumName + ". PotionType is null");
                     continue;
                 }
-
+                ordinal++;
                 values.add(potionType);
-                newRegular.put(potionType, location.toString());
+                newRegular.put(potionType, ForgeRegistries.POTIONS.getKey(potion).toString());
                 debug("Injecting Forge Potion into Bukkit: " + potionType.name());
+            } catch (Throwable e) {
+                Ketting.LOGGER.error("Could not inject potion into Bukkit: " + enumName + ". " + e.getMessage());
             }
         }
         CraftPotionUtil.regular = newRegular;
@@ -606,5 +563,22 @@ public class ForgeInject {
         EnumHelper.addEnums(Statistic.class, values);
         CraftStatistic.statistics = statistics;
         debug("Injecting Forge Statistic into Bukkit: DONE");
+    }
+    private static void addForgeIllagerSpells() {
+        int ordinal = Spellcaster.Spell.values().length;
+        List<Spellcaster.Spell> values = new ArrayList<>();
+//        Set<String> vanillaSpells = Set.of("NONE", "SUMMON_VEX", "FANGS", "WOLOLO", "DISAPPEAR", "BLINDNESS");
+        for (var spell : SpellcasterIllager.IllagerSpell.values()) {
+//            if (vanillaSpells.contains(spell.name())) continue;
+            String enumName = spell.name();
+            try {
+                var bukkitSpell = EnumHelper.makeEnum(Spellcaster.Spell.class, enumName, ordinal, List.of(), List.of());
+                values.add(bukkitSpell);
+                ordinal++;
+                debug("Injected modded Illager Spell into Bukkit: " + bukkitSpell.name());
+            } catch (Throwable e) {
+                Ketting.LOGGER.error("Could not inject Illager Spell: " + enumName + ". " + e.getMessage(), e);
+            }
+        }
     }
 }
