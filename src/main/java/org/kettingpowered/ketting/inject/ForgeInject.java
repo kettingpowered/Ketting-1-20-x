@@ -567,9 +567,9 @@ public class ForgeInject {
     private static void addForgeIllagerSpells() {
         int ordinal = Spellcaster.Spell.values().length;
         List<Spellcaster.Spell> values = new ArrayList<>();
-//        Set<String> vanillaSpells = Set.of("NONE", "SUMMON_VEX", "FANGS", "WOLOLO", "DISAPPEAR", "BLINDNESS");
+        Set<String> vanillaSpells = Set.of("NONE", "SUMMON_VEX", "FANGS", "WOLOLO", "DISAPPEAR", "BLINDNESS");
         for (var spell : SpellcasterIllager.IllagerSpell.values()) {
-//            if (vanillaSpells.contains(spell.name())) continue;
+            if (vanillaSpells.contains(spell.name())) continue;
             String enumName = spell.name();
             try {
                 var bukkitSpell = EnumHelper.makeEnum(Spellcaster.Spell.class, enumName, ordinal, List.of(), List.of());
