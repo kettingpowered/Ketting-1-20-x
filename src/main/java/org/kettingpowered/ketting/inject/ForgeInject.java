@@ -138,6 +138,8 @@ public class ForgeInject {
         addForgeVillagerProfessions();
         debug("Injecting Forge statistics into bukkit");
         addForgeStatistics();
+        debug("Injecting Forge IllagerSpells into bukkit");
+        addForgeIllagerSpells();
         debug("Injecting Forge into Bukkit: DONE");
 
         try {
@@ -606,5 +608,22 @@ public class ForgeInject {
         EnumHelper.addEnums(Statistic.class, values);
         CraftStatistic.statistics = statistics;
         debug("Injecting Forge Statistic into Bukkit: DONE");
+    }
+   public static void addForgeIllagerSpells() {
+        int ordinal = Spellcaster.Spell.values().length;
+        List<Spellcaster.Spell> values = new ArrayList<>();
+        Set<String> vanillaSpells = Set.of("NONE", "SUMMON_VEX", "FANGS", "WOLOLO", "DISAPPEAR", "BLINDNESS");
+        for (var spell : SpellcasterIllager.IllagerSpell.values()) {
+            if (vanillaSpells.contains(spell.name())) continue;
+            String enumName = spell.name();
+            try {
+                var bukkitSpell = EnumHelper.makeEnum(Spellcaster.Spell.class, enumName, ordinal, List.of(), List.of());
+                values.add(bukkitSpell);
+                ordinal++;
+                debug("Injected modded Illager Spell into Bukkit: " + bukkitSpell.name());
+            } catch (Throwable e) {
+                Ketting.LOGGER.error("Could not inject Illager Spell: " + enumName + ". " + e.getMessage(), e);
+            }
+        }
     }
 }
