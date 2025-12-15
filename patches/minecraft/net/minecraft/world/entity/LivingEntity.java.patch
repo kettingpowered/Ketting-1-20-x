@@ -968,7 +968,7 @@
  
           if (p_21194_ <= 0.0F) {
              return 0.0F;
-@@ -1581,8 +_,213 @@
+@@ -1581,8 +_,217 @@
        }
     }
  
@@ -977,13 +977,8 @@
 +      if (!this.isInvulnerableTo(damagesource)) {
 +         // Check if entity is a "human" aka player
 +         final boolean human = this instanceof ServerPlayer;
-+         // Cauldron start - apply forge damage hook
 +         f = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damagesource, f);
-+         // If the damage is negative return true
-+         if (f < 0) return true;
-+         // Thermos detect null damage
-+         final boolean nulldmg = f == 0;
-+         // Cauldron end
++         if (f <= 0) return true;
 +         float originalDamage = f;
 +         com.google.common.base.Function<Double, Double> hardHat = new com.google.common.base.Function<Double, Double>() {
 +            @Override
@@ -998,10 +993,19 @@
 +         float hardHatModifier = hardHat.apply((double) f).floatValue();
 +         f += hardHatModifier;
 +
++         java.util.concurrent.atomic.AtomicBoolean shieldTakesDamage = new java.util.concurrent.atomic.AtomicBoolean(true); //Ketting
 +         com.google.common.base.Function<Double, Double> blocking = new com.google.common.base.Function<Double, Double>() {
 +            @Override
 +            public Double apply(Double f) {
-+               return -((LivingEntity.this.isDamageSourceBlocked(damagesource)) ? f : 0.0);
++               //Ketting start - fire forge shield block event before bukkit
++               if (LivingEntity.this.isDamageSourceBlocked(damagesource)) {
++                  var ev = net.minecraftforge.common.ForgeHooks.onShieldBlock(LivingEntity.this, damagesource, f.floatValue());
++                  if (ev.isCanceled()) return 0d;
++                  shieldTakesDamage.set(ev.shieldTakesDamage());
++                  return -((double) ev.getBlockedDamage());
++               }
++               return 0d;
++               //Ketting end
 +            }
 +         };
 +         float blockingModifier = blocking.apply((double) f).floatValue();
@@ -1066,7 +1070,6 @@
 +         }
 +
 +         f = (float) event.getFinalDamage();
-+         if (nulldmg) return true; // Preclude any stupidity with null head items
 +
 +         // Resistance
 +         if (event.getDamage(org.bukkit.event.entity.EntityDamageEvent.DamageModifier.RESISTANCE) < 0) {
@@ -1092,18 +1095,17 @@
 +         }
 +
 +         // Apply blocking code // PAIL: steal from above
-+         if (event.getDamage(org.bukkit.event.entity.EntityDamageEvent.DamageModifier.BLOCKING) < 0) {
-+            var ev = net.minecraftforge.common.ForgeHooks.onShieldBlock(this, damagesource, (float) event.getDamage(org.bukkit.event.entity.EntityDamageEvent.DamageModifier.BLOCKING)); //Ketting
-+
-+            if (!ev.isCanceled()) {
++         //Ketting start - take forge event in account
++         double blockingDmg = event.getDamage(org.bukkit.event.entity.EntityDamageEvent.DamageModifier.BLOCKING);
++         if (blockingDmg < 0) {
 +               this.level().broadcastEntityEvent(this, (byte) 29); // SPIGOT-4635 - shield damage sound
-+               if (ev.shieldTakesDamage()) this.hurtCurrentlyUsedShield(-ev.getBlockedDamage());
++               if (shieldTakesDamage.get()) this.hurtCurrentlyUsedShield(-(float) blockingDmg);
++               //Ketting end
 +               Entity entity = damagesource.getDirectEntity();
 +
 +               if (entity instanceof LivingEntity) {
 +                  this.blockUsingShield((LivingEntity) entity);
 +               }
-+            }
 +         }
 +
 +         absorptionModifier = (float) -event.getDamage(org.bukkit.event.entity.EntityDamageEvent.DamageModifier.ABSORPTION);
@@ -1122,6 +1124,8 @@
 +               entityplayer.awardStat(Stats.DAMAGE_DEALT_ABSORBED, Math.round(f2 * 10.0F));
 +            }
 +         }
++
++         f = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, damagesource, f);
 +
 +         if (f > 0 || !human) {
 +            if (human) {
