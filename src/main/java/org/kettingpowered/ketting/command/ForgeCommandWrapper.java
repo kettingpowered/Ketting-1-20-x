@@ -28,22 +28,7 @@ public class ForgeCommandWrapper extends BukkitCommand {
 
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         final CommandSourceStack listener = getListener(sender);
-        if (KettingConfig.getInstance().OVERWRITE_FORGE_PERMISSIONS.getValue()) {
-            //If we detect that the CraftPlayer permissible was injected into (ex. LuckPerms), we will use their permissions
-            //instead of the Forge permissions defined in 'Commands.literal(...).requires(s -> s.hasPermission(..))'.
-            //This will cause a problem though, as the Forge permissions will not be checked.
-            //So you will have to manually set the Forge permissions by allowing ex. "forge.command.coolmodcommand" in LuckPerms.
-            boolean permissibleInjected = false;
-            if (sender instanceof CraftPlayer player)
-                permissibleInjected = player.isPermissibleInjected();
-
-            if ((permissibleInjected && !testPermission(sender)) ||
-                    (!permissibleInjected && !forgeCommand.getRequirement().test(listener)))
-                return true;
-        } else {
-            if (!forgeCommand.getRequirement().test(listener)) return true;
-        }
-
+        if (!forgeCommand.getRequirement().test(listener)) return true;
         dispatcher.setForgeCommand(true);
         dispatcher.performPrefixedCommand(listener, "/"+toDispatcher(args, getName()), "/"+toDispatcher(args, commandLabel));
         dispatcher.setForgeCommand(false);

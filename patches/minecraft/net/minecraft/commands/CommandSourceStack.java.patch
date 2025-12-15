@@ -24,8 +24,8 @@
     public boolean hasPermission(int p_81370_) {
 +      // CraftBukkit start
 +      com.mojang.brigadier.tree.CommandNode currentCommand = this.currentCommand;
-+      if (currentCommand != null && !org.kettingpowered.ketting.command.ForgeCommand.checkIfForgeCommand(currentCommand)) { //Ketting - skip if forge command
-+         return hasPermission(p_81370_, org.bukkit.craftbukkit.v1_20_R1.command.VanillaCommandWrapper.getPermission(currentCommand));
++      if (currentCommand != null) {
++          return org.kettingpowered.ketting.utils.PermissionHelper.handleSourceStackPermission(this, currentCommand, p_81370_);
 +      }
 +      // CraftBukkit end
 +

@@ -12,7 +12,8 @@ public enum PermissionDefault {
     TRUE("true"),
     FALSE("false"),
     OP("op", "isop", "operator", "isoperator", "admin", "isadmin"),
-    NOT_OP("!op", "notop", "!operator", "notoperator", "!admin", "notadmin");
+    NOT_OP("!op", "notop", "!operator", "notoperator", "!admin", "notadmin"),
+    MODDED("ketting-modded"); //Ketting - permission handler
 
     private final String[] names;
     private static final Map<String, PermissionDefault> lookup = new HashMap<String, PermissionDefault>();
@@ -61,6 +62,7 @@ public enum PermissionDefault {
 
     static {
         for (PermissionDefault value : values()) {
+            if (value == MODDED) continue; //Ketting
             for (String name : value.names) {
                 lookup.put(name, value);
             }

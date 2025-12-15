@@ -23,7 +23,7 @@ public class KettingConfig extends AbstractConfig {
                 "Github: https://github.com/kettingpowered/",
                 "Discord: https://discord.kettingpowered.org/",
                 ""
-        }, fileName, 3);
+        }, fileName, 4);
         load();
     }
 
@@ -33,7 +33,7 @@ public class KettingConfig extends AbstractConfig {
     public final BooleanValue WARN_ON_NULL_NBT = new BooleanValue("debug.warn_on_null_nbt", true, "Print a warning to the console when something tries to set a null NBT tag.");
     public final BooleanValue WARN_ON_UNKNOWN_STRUCTURE_TYPE = new BooleanValue("debug.warn_on_unknown_structure_type", true, "Print a warning to the console when a structure type is unknown to Bukkit.");
 
-    public final BooleanValue OVERWRITE_FORGE_PERMISSIONS = new BooleanValue("forge.overwrite_forge_permissions", false, "--- WARNING - THIS WILL COMPLETELY DISABLE FORGE PERMISSION CHECKS ---  Overwrite Forge permissions with Bukkit permissions, makes it possible to use a permission manager plugin for modded commands. If true, Forge permissions will be set to 'forge.command.MODDEDCOMMAND' where MODDEDCOMMAND is the name of the modded command.");
+    public final BooleanValue REROUTE_FORGE_COMMAND_PERMISSIONS = new BooleanValue("ketting.reroute_forge_command_permissions", false, "If true, Ketting will reroute Forge command permissions to Bukkit permissions. This is useful if you want to use a permission plugin like LuckPerms with Forge commands.");
     public final BooleanValue SILENCE_PARSING_ERRORS = new BooleanValue("forge.silence_parsing_errors", true, "If true, this will minimize some general parsing errors from appearing in the console");
 
     public final BooleanValue MERGE_WORLD_SYSTEMS = new BooleanValue("ketting.merge_world_systems", false, "If true, this will attempt to merge both the Forge and Bukkit world system into one, making dimensions exist in the world folder, and Bukkit worlds in their own folder.");

@@ -134,6 +134,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapCursor;
 import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.profile.PlayerProfile;
@@ -141,6 +142,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 
 import net.md_5.bungee.api.chat.BaseComponent; // Spigot
+import org.kettingpowered.ketting.utils.PermissionHelper;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -2202,4 +2204,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return spigot;
     }
     // Spigot end
+
+    //Ketting start - permission handler
+    @Override
+    public boolean hasPermission(@NotNull String name) {
+        return PermissionHelper.handlePermission(this, name, () -> super.hasPermission(name));
+    }
+
+    @Override
+    public boolean hasPermission(@NotNull Permission perm) {
+        return PermissionHelper.handlePermission(this, perm, () -> super.hasPermission(perm));
+    }
+    //Ketting end
 }

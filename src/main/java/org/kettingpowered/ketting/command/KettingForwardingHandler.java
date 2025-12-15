@@ -8,6 +8,7 @@ import net.minecraftforge.server.permission.nodes.PermissionNode;
 import net.minecraftforge.server.permission.nodes.PermissionTypes;
 import org.bukkit.Bukkit;
 import org.kettingpowered.ketting.internal.KettingConstants;
+import org.kettingpowered.ketting.utils.PermissionHelper;
 
 import java.util.Set;
 import java.util.UUID;
@@ -18,6 +19,7 @@ public class KettingForwardingHandler implements IPermissionHandler {
 
     public KettingForwardingHandler(IPermissionHandler delegate) {
         this.delegate = delegate;
+        PermissionHelper.injectPermissions(getRegisteredNodes());
     }
 
     public ResourceLocation getIdentifier() {
@@ -29,19 +31,29 @@ public class KettingForwardingHandler implements IPermissionHandler {
     }
 
     public <T> T getPermission(ServerPlayer player, PermissionNode<T> node, PermissionDynamicContext<?>... context) {
-        if (node.getType() == PermissionTypes.BOOLEAN) {
-            return (T) (Object) player.getBukkitEntity().hasPermission(node.getNodeName());
-        } else {
-            return delegate.getPermission(player, node, context);
+        try {
+            if (node.getType() == PermissionTypes.BOOLEAN) {
+                PermissionHelper.MODDED_CONTEXT = context;
+                return (T) (Object) player.getBukkitEntity().hasPermission(node.getNodeName());
+            } else {
+                return delegate.getPermission(player, node, context);
+            }
+        } finally {
+            PermissionHelper.MODDED_CONTEXT = PermissionHelper.MODDED_CONTEXT_EMPTY;
         }
     }
 
     public <T> T getOfflinePermission(UUID uuid, PermissionNode<T> node, PermissionDynamicContext<?>... context) {
-        var player = Bukkit.getPlayer(uuid);
-        if (player != null && node.getType() == PermissionTypes.BOOLEAN) {
-            return (T) (Object) player.hasPermission(node.getNodeName());
-        } else {
-            return delegate.getOfflinePermission(uuid, node, context);
+        try {
+            var player = Bukkit.getPlayer(uuid);
+            if (player != null && node.getType() == PermissionTypes.BOOLEAN) {
+                PermissionHelper.MODDED_CONTEXT = context;
+                return (T) (Object) player.hasPermission(node.getNodeName());
+            } else {
+                return delegate.getOfflinePermission(uuid, node, context);
+            }
+        } finally {
+            PermissionHelper.MODDED_CONTEXT = PermissionHelper.MODDED_CONTEXT_EMPTY;
         }
     }
 }
