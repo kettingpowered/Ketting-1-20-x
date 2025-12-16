@@ -1,12 +1,10 @@
 --- a/net/minecraft/world/CompoundContainer.java
 +++ b/net/minecraft/world/CompoundContainer.java
-@@ -7,6 +_,48 @@
+@@ -7,6 +_,42 @@
     public final Container container1;
     public final Container container2;
  
 +   // CraftBukkit start - add fields and methods
-+   public java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
-+
 +   public java.util.List<ItemStack> getContents() {
 +      java.util.List<ItemStack> result = new java.util.ArrayList<ItemStack>(this.getContainerSize());
 +      for (int i = 0; i < this.getContainerSize(); i++) {
@@ -18,17 +16,13 @@
 +   public void onOpen(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
 +      this.container1.onOpen(who);
 +      this.container2.onOpen(who);
-+      transaction.add(who);
++      Container.super.onOpen(who); //Ketting
 +   }
 +
 +   public void onClose(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
 +      this.container1.onClose(who);
 +      this.container2.onClose(who);
-+      transaction.remove(who);
-+   }
-+
-+   public java.util.List<org.bukkit.entity.HumanEntity> getViewers() {
-+      return transaction;
++      Container.super.onClose(who); //Ketting
 +   }
 +
 +   public org.bukkit.inventory.InventoryHolder getOwner() {

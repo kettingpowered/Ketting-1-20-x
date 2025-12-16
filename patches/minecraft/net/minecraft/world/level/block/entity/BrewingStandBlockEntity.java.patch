@@ -1,25 +1,12 @@
 --- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -67,6 +_,37 @@
+@@ -67,6 +_,24 @@
        }
     };
  
 +   // CraftBukkit start - add fields and methods
 +   private int lastTick = net.minecraft.server.MinecraftServer.currentTick;
-+   public java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
 +   private int maxStack = 64;
-+
-+   public void onOpen(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
-+       transaction.add(who);
-+   }
-+
-+   public void onClose(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
-+       transaction.remove(who);
-+   }
-+
-+   public java.util.List<org.bukkit.entity.HumanEntity> getViewers() {
-+       return transaction;
-+   }
 +
 +   public java.util.List<ItemStack> getContents() {
 +       return this.items;

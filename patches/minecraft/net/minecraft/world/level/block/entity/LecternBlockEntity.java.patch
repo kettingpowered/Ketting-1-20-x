@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/LecternBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/LecternBlockEntity.java
-@@ -25,12 +_,58 @@
+@@ -25,12 +_,42 @@
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
  
@@ -15,27 +15,11 @@
 +   public final Container bookAccess = new LecternInventory();
 +   public class LecternInventory implements Container {
 +
-+      public java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<>();
 +      private int maxStack = 1;
 +
 +      @Override
 +      public java.util.List<ItemStack> getContents() {
 +         return java.util.Arrays.asList(book);
-+      }
-+
-+      @Override
-+      public void onOpen(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
-+         transaction.add(who);
-+      }
-+
-+      @Override
-+      public void onClose(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
-+         transaction.remove(who);
-+      }
-+
-+      @Override
-+      public java.util.List<org.bukkit.entity.HumanEntity> getViewers() {
-+         return transaction;
 +      }
 +
 +      @Override

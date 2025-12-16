@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/inventory/TransientCraftingContainer.java
 +++ b/net/minecraft/world/inventory/TransientCraftingContainer.java
-@@ -13,6 +_,79 @@
+@@ -13,6 +_,61 @@
     private final int height;
     private final AbstractContainerMenu menu;
  
 +   // CraftBukkit start - add fields
-+   public List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
 +   private net.minecraft.world.item.crafting.Recipe<?> currentRecipe;
 +   public net.minecraft.world.Container resultInventory;
 +   private Player owner;
@@ -15,25 +14,8 @@
 +      return this.items;
 +   }
 +
-+   public void onOpen(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
-+      transaction.add(who);
-+   }
-+
 +   public org.bukkit.event.inventory.InventoryType getInvType() {
 +      return items.size() == 4 ? org.bukkit.event.inventory.InventoryType.CRAFTING : org.bukkit.event.inventory.InventoryType.WORKBENCH;
-+   }
-+
-+   public void onClose(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
-+      int index = transaction.indexOf(who);
-+      if (index < 0 || index > transaction.size()) {
-+         org.kettingpowered.ketting.core.Ketting.LOGGER.warn("Trying to remove an out-of-bounds index on container close. Skipping.");
-+         return;
-+      }
-+      transaction.remove(index);
-+   }
-+
-+   public List<org.bukkit.entity.HumanEntity> getViewers() {
-+      return transaction;
 +   }
 +
 +   public org.bukkit.inventory.InventoryHolder getOwner() {

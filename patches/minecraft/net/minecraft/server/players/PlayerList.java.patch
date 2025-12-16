@@ -286,7 +286,7 @@
        this.save(p_11287_);
        if (p_11287_.isPassenger()) {
           Entity entity = p_11287_.getRootVehicle();
-@@ -355,19 +_,35 @@
+@@ -355,19 +_,37 @@
        serverlevel.removePlayerImmediately(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
        p_11287_.getAdvancements().stopListening();
        this.players.remove(p_11287_);
@@ -319,6 +319,8 @@
 +      // This removes the scoreboard (and player reference) for the specific player in the manager
 +      cserver.getScoreboardManager().removePlayer(p_11287_.getBukkitEntity());
 +      // CraftBukkit end
++
++      org.kettingpowered.ketting.utils.InventoryViewHelper.purgeContainerTransactions(p_11287_.getBukkitEntity()); //Ketting
 +
 +      ketting$remove$returnValue = playerQuitEvent.getQuitMessage(); // CraftBukkit
     }

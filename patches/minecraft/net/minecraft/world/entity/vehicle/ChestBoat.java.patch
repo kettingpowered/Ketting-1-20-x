@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/vehicle/ChestBoat.java
 +++ b/net/minecraft/world/entity/vehicle/ChestBoat.java
-@@ -204,7 +_,76 @@
+@@ -204,7 +_,60 @@
        this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
     }
  
@@ -31,27 +31,11 @@
     }
 +
 +   // CraftBukkit start
-+   public java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
 +   private int maxStack = MAX_STACK;
 +
 +   @Override
 +   public java.util.List<ItemStack> getContents() {
 +      return this.itemStacks;
-+   }
-+
-+   @Override
-+   public void onOpen(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
-+      transaction.add(who);
-+   }
-+
-+   @Override
-+   public void onClose(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
-+      transaction.remove(who);
-+   }
-+
-+   @Override
-+   public java.util.List<org.bukkit.entity.HumanEntity> getViewers() {
-+      return transaction;
 +   }
 +
 +   @Override

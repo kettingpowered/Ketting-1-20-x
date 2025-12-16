@@ -1,27 +1,14 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
-@@ -23,12 +_,55 @@
+@@ -23,12 +_,42 @@
     public ResourceLocation lootTable;
     public long lootTableSeed;
  
 +   // CraftBukkit start
-+   public java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
 +   private int maxStack = MAX_STACK;
 +
 +   public java.util.List<ItemStack> getContents() {
 +      return this.itemStacks;
-+   }
-+
-+   public void onOpen(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
-+      transaction.add(who);
-+   }
-+
-+   public void onClose(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
-+      transaction.remove(who);
-+   }
-+
-+   public java.util.List<org.bukkit.entity.HumanEntity> getViewers() {
-+      return transaction;
 +   }
 +
 +   public org.bukkit.inventory.InventoryHolder getOwner() {

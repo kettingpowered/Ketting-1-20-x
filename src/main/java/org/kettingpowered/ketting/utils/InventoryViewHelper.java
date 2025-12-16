@@ -4,6 +4,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView;
@@ -13,16 +14,32 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class InventoryViewHelper {
 
-    private static Map<Container, List<HumanEntity>> containerTransactions = new HashMap<>();
+    private static final Map<Container, List<HumanEntity>> containerTransactions = new ConcurrentHashMap<>();
 
     public static List<HumanEntity> getContainerTransactions(Container container) {
-        return containerTransactions.computeIfAbsent(container, k -> new java.util.ArrayList<>());
+        return containerTransactions.computeIfAbsent(container, c -> new CopyOnWriteArrayList<>());
+    }
+
+    public static void removeContainerTransaction(Container container, CraftHumanEntity who) {
+        containerTransactions.computeIfPresent(container, (c, viewers) -> {
+            viewers.remove(who);
+            return viewers.isEmpty() ? null : viewers;
+        });
+    }
+
+    public static void purgeContainerTransactions(CraftHumanEntity who) {
+        containerTransactions.forEach((container, viewers) -> {
+            viewers.remove(who);
+            if (viewers.isEmpty())
+                containerTransactions.remove(container);
+        });
     }
 
     private static Player containerOwner;

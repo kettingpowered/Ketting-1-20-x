@@ -1,32 +1,16 @@
 --- a/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
-@@ -31,6 +_,42 @@
+@@ -31,6 +_,26 @@
     public long tickCount;
     public long recordStartedTick;
     public boolean isPlaying;
 +   // CraftBukkit start - add fields and methods
-+   public java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<org.bukkit.entity.HumanEntity>();
 +   private int maxStack = MAX_STACK;
 +   public boolean opened;
 +
 +   @Override
 +   public java.util.List<ItemStack> getContents() {
 +      return this.items;
-+   }
-+
-+   @Override
-+   public void onOpen(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
-+      transaction.add(who);
-+   }
-+
-+   @Override
-+   public void onClose(org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity who) {
-+      transaction.remove(who);
-+   }
-+
-+   @Override
-+   public java.util.List<org.bukkit.entity.HumanEntity> getViewers() {
-+      return transaction;
 +   }
 +
 +   @Override
