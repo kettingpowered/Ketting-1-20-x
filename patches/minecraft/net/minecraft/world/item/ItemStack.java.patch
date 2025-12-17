@@ -156,7 +156,7 @@
        Player player = p_41662_.getPlayer();
        BlockPos blockpos = p_41662_.getClickedPos();
        BlockInWorld blockinworld = new BlockInWorld(p_41662_.getLevel(), blockpos, false);
-@@ -233,10 +_,170 @@
+@@ -233,10 +_,174 @@
           return InteractionResult.PASS;
        } else {
           Item item = this.getItem();
@@ -315,9 +315,13 @@
 +               }
 +
 +               // SPIGOT-1288 - play sound stripped from ItemBlock
-+               if (false && this.item instanceof BlockItem) { //Ketting - handled in BlockItem again due to mixin issues, will cause SPIGOT-1288 to appear again
-+                  net.minecraft.world.level.block.SoundType soundeffecttype = ((BlockItem) this.item).getBlock().defaultBlockState().getSoundType(); // TODO: not strictly correct, however currently only affects decorated pots
-+                  world.playSound(player, blockpos, soundeffecttype.getPlaceSound(), net.minecraft.sounds.SoundSource.BLOCKS, (soundeffecttype.getVolume() + 1.0F) / 2.0F, soundeffecttype.getPitch() * 0.8F);
++               //Ketting start - fix block placement sound
++               if (this.item instanceof BlockItem blockItem) {
++                  var state = world.getBlockState(blockpos);
++                  net.minecraft.world.level.block.SoundType soundeffecttype = state.getSoundType(world, blockpos, player);
++                  var soundEvent = blockItem.getPlaceSound(state, world, blockpos, player);
++                  world.playSound(player, blockpos, soundEvent, net.minecraft.sounds.SoundSource.BLOCKS, (soundeffecttype.getVolume() + 1.0F) / 2.0F, soundeffecttype.getPitch() * 0.8F);
++                  //Ketting end
 +               }
 +
 +               player.awardStat(Stats.ITEM_USED.get(item));

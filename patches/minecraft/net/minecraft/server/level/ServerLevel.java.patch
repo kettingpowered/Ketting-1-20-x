@@ -642,10 +642,17 @@
              if (d0 * d0 + d1 * d1 + d2 * d2 < 1024.0D) {
                 serverplayer.connection.send(new ClientboundBlockDestructionPacket(p_8612_, p_8613_, p_8614_));
              }
-@@ -880,14 +_,37 @@
-    }
+@@ -878,16 +_,43 @@
+       }
  
+    }
+-
++   
++   //Ketting start - cancel seeded sound
++   public boolean playSeededSound$cancel = false;
     public void playSeededSound(@Nullable Player p_263330_, double p_263393_, double p_263369_, double p_263354_, Holder<SoundEvent> p_263412_, SoundSource p_263338_, float p_263352_, float p_263390_, long p_263403_) {
++      if (playSeededSound$cancel) return;
++      //Ketting end
 +      net.minecraftforge.event.PlayLevelSoundEvent.AtPosition event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtPosition(this, p_263393_, p_263369_, p_263354_, p_263412_, p_263338_, p_263352_, p_263390_);
 +      if (event.isCanceled() || event.getSound() == null) return;
 +      p_263412_ = event.getSound();

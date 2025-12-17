@@ -14,7 +14,7 @@
              if (blockstate == null) {
                 return InteractionResult.FAIL;
              } else if (!this.placeBlock(blockplacecontext, blockstate)) {
-@@ -77,15 +_,28 @@
+@@ -77,15 +_,30 @@
                    blockstate1 = this.updateBlockStateFromTag(blockpos, level, itemstack, blockstate1);
                    this.updateCustomBlockEntityTag(blockpos, level, player, itemstack, blockstate1);
                    blockstate1.getBlock().setPlacedBy(level, blockpos, blockstate1, player, itemstack);
@@ -39,7 +39,9 @@
 -               SoundType soundtype = blockstate1.getSoundType();
 -               level.playSound(player, blockpos, this.getPlaceSound(blockstate1), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 +               SoundType soundtype = blockstate1.getSoundType(level, blockpos, p_40577_.getPlayer());
++               if (level instanceof net.minecraft.server.level.ServerLevel l) l.playSeededSound$cancel = true; //Ketting
 +               level.playSound(player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, p_40577_.getPlayer()), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
++               if (level instanceof net.minecraft.server.level.ServerLevel l) l.playSeededSound$cancel = false; //Ketting
                 level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(player, blockstate1));
 -               if (player == null || !player.getAbilities().instabuild) {
 +               if ((player == null || !player.getAbilities().instabuild) && itemstack != ItemStack.EMPTY) { // CraftBukkit
