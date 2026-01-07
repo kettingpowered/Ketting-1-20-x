@@ -23,6 +23,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.craftbukkit.v1_20_R1.CraftStatistic;
 import org.bukkit.craftbukkit.v1_20_R1.block.*;
 import org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_20_R1.block.impl.CraftCeilingHangingSign;
 import org.bukkit.craftbukkit.v1_20_R1.block.impl.CraftFloorSign;
 import org.bukkit.craftbukkit.v1_20_R1.block.impl.CraftWallHangingSign;
 import org.bukkit.craftbukkit.v1_20_R1.block.impl.CraftWallSign;
@@ -321,6 +322,8 @@ public class ForgeInject {
             materials.addAll(materialsMap.remove(CraftWallSign.class));
         if (materialsMap.containsKey(CraftFloorSign.class))
             materials.addAll(materialsMap.remove(CraftFloorSign.class));
+        if (materialsMap.containsKey(CraftCeilingHangingSign.class))
+            materials.addAll(materialsMap.remove(CraftCeilingHangingSign.class));
 
         if (materials.isEmpty())
             return;
