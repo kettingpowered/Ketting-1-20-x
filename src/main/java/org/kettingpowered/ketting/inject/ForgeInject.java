@@ -46,6 +46,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
+import static org.kettingpowered.ketting.inject.NonDefaultMinecraftRegistry.getNonMinecraftEntries;
+
 public class ForgeInject {
 
     public static void debug(String message) {
@@ -135,6 +137,8 @@ public class ForgeInject {
                 }
             }
         } catch (Throwable ignored) {}
+
+        NonDefaultMinecraftRegistry.clear();
     }
 
     private static void addForgeMaterials() {
@@ -142,11 +146,8 @@ public class ForgeInject {
         List<Material> values = new ArrayList<>();
         int origin = ordinal;
         int blocks = 0;
-        for (var entry : ForgeRegistries.BLOCKS.getEntries()) {
+        for (var entry : getNonMinecraftEntries(ForgeRegistries.BLOCKS)) {
             var location = entry.getKey().location();
-            if (location.getNamespace().equals(NamespacedKey.MINECRAFT)) {
-                continue;
-            }
             // inject block materials into Bukkit for FML
             var enumName = standardize(location);
             var block = entry.getValue();
@@ -176,11 +177,8 @@ public class ForgeInject {
         debug("Injecting Forge Blocks into Bukkit: DONE");
 
         int items = 0;
-        for (var entry : ForgeRegistries.ITEMS.getEntries()) {
+        for (var entry : getNonMinecraftEntries(ForgeRegistries.ITEMS)) {
             var location = entry.getKey().location();
-            if (location.getNamespace().equals(NamespacedKey.MINECRAFT)) {
-                continue;
-            }
             // inject item materials into Bukkit for FML
             var enumName = standardize(location);
             var item = entry.getValue();
@@ -486,11 +484,8 @@ public class ForgeInject {
     private static void addForgeBiomes() {
         int ordinal = EntityType.values().length;
         List<Biome> values = new ArrayList<>();
-        for (var entry : ForgeRegistries.BIOMES.getEntries()) {
+        for (var entry : getNonMinecraftEntries(ForgeRegistries.BIOMES)) {
             var location = entry.getKey().location();
-            if (location.getNamespace().equals(NamespacedKey.MINECRAFT)) {
-                continue;
-            }
             var enumName = standardize(location);
             try {
                 var biome = EnumHelper.makeEnum(Biome.class, enumName, ordinal, List.of(), List.of());
@@ -508,13 +503,10 @@ public class ForgeInject {
     private static void addForgeEntities() {
         int ordinal = EntityType.values().length;
         List<EntityType> values = new ArrayList<>();
-        for (var entry : ForgeRegistries.ENTITY_TYPES.getEntries()) {
+        for (var entry : getNonMinecraftEntries(ForgeRegistries.ENTITY_TYPES)) {
             var location = ForgeRegistries.ENTITY_TYPES.getKey(entry.getValue());
             var enumName = standardize(location);
             ENTITY_TYPES.put(entry.getValue(), enumName);
-            if (location.getNamespace().equals(NamespacedKey.MINECRAFT)) {
-                continue;
-            }
             int typeId = enumName.hashCode();
             try {
                 var bukkitType = EnumHelper.makeEnum(EntityType.class, enumName, ordinal,
@@ -596,19 +588,17 @@ public class ForgeInject {
     private static void addForgeVillagerProfessions() {
         int ordinal = Villager.Profession.values().length;
         List<Villager.Profession> values = new ArrayList<>();
-        for (var entry : ForgeRegistries.VILLAGER_PROFESSIONS.getEntries()) {
+        for (var entry : getNonMinecraftEntries(ForgeRegistries.VILLAGER_PROFESSIONS)) {
             var location = entry.getKey().location();
-            if (!location.getNamespace().equals(NamespacedKey.MINECRAFT)) {
-                var enumName = standardize(location);
-                try {
-                    var profession = EnumHelper.makeEnum(Villager.Profession.class, enumName, ordinal, List.of(), List.of());
-                    values.add(profession);
-                    ordinal++;
-                    PROFESSIONS.put(profession, location);
-                    debug("Injecting Forge VillagerProfession into Bukkit: " + profession.name());
-                } catch (Throwable e) {
-                    Ketting.LOGGER.error("Could not inject villager profession into Bukkit: " + enumName + ". " + e.getMessage());
-                }
+            var enumName = standardize(location);
+            try {
+                var profession = EnumHelper.makeEnum(Villager.Profession.class, enumName, ordinal, List.of(), List.of());
+                values.add(profession);
+                ordinal++;
+                PROFESSIONS.put(profession, location);
+                debug("Injecting Forge VillagerProfession into Bukkit: " + profession.name());
+            } catch (Throwable e) {
+                Ketting.LOGGER.error("Could not inject villager profession into Bukkit: " + enumName + ". " + e.getMessage());
             }
         }
         EnumHelper.addEnums(Villager.Profession.class, values);

@@ -55,6 +55,10 @@ public class RegisterEvent extends Event implements IModBusEvent
     {
         if (this.registryKey.equals(registryKey))
         {
+            //Ketting start - check for registries with the 'minecraft' namespace
+            if (name.getNamespace().equals(org.bukkit.NamespacedKey.MINECRAFT))
+                org.kettingpowered.ketting.inject.NonDefaultMinecraftRegistry.addNonDefaultEntry(this.registryKey, name);
+            //Ketting end
             if (this.forgeRegistry != null)
                 ((IForgeRegistry) this.forgeRegistry).register(name, valueSupplier.get());
             else if (this.vanillaRegistry != null)
