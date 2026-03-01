@@ -33,18 +33,29 @@ public final class PermissionHelper {
             throw new IllegalArgumentException("Player cannot be null");
 
         PermissionNode.PermissionResolver<Boolean> resolver = MODDED_RESOLVERS.get(name);
-        return resolver != null && resolver.resolve(player, player.getUUID(), MODDED_CONTEXT);
+        if (resolver == null) {
+            ForgeInject.debugWarn("No resolver found for permission {}, returning false", name);
+            return false;
+        }
+        return resolver.resolve(player, player.getUUID(), MODDED_CONTEXT) == Boolean.TRUE;
     }
 
+    @SuppressWarnings("unchecked")
     public static void injectPermissions(Set<PermissionNode<?>> nodes) {
         nodes.forEach(node -> {
             if (node.getType() != PermissionTypes.BOOLEAN) return;
 
             String name = node.getNodeName();
+            try {
+                MODDED_RESOLVERS.put(name, (PermissionNode.PermissionResolver<Boolean>) node.getDefaultResolver());
+            } catch (ClassCastException e) {
+                ForgeInject.debugWarn("Boolean permission {} has a non-boolean resolver, skipping", name);
+                return;
+            }
+
             String description = node.getDescription() == null ? "" : node.getDescription().getString();
             Bukkit.getServer().getPluginManager().addPermission(new Permission(name, description, PermissionDefault.MODDED));
             ForgeInject.debug("Registering boolean permission {} to Bukkit", name);
-            MODDED_RESOLVERS.put(name, (PermissionNode.PermissionResolver<Boolean>) node.getDefaultResolver());
         });
     }
 
