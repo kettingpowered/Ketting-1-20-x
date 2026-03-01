@@ -253,6 +253,8 @@ public class DelegateWorldInfo extends PrimaryLevelData {
         } else if (levelData instanceof ServerLevelData serverlevelData1) {
             org.kettingpowered.ketting.core.Ketting.LOGGER.warn("Could not wrap level data, this can cause some problems with bukkit", new UnsupportedOperationException());
             serverLevelData = serverlevelData1;
+        } else if (levelData == null) {
+            Ketting.LOGGER.warn("Could not get a ServerLevelData from a WritableLevelData because it is null.");
         } else {
             Ketting.LOGGER.error("Could not get a ServerLevelData from a WritableLevelData in Level constructor", new IllegalArgumentException("A WritableLevelData in the Level constructor wasn't a ServerLevelData"));
         }
