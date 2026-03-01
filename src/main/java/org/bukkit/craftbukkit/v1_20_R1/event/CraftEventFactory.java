@@ -857,7 +857,7 @@ public class CraftEventFactory {
 
         if (!event.isCancelled()) {
             // Ketting start - Possibility to move the handle to the vanilla method
-            if (handleBlockFormUpdate.getAndSet(true)) {
+            if (handleBlockSpreadUpdate.getAndSet(true)) {
                 state.update(true);
             }
             // Ketting end
