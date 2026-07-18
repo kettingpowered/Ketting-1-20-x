@@ -8,8 +8,8 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '[2.3.0,2.4.0)'
     id 'eclipse'
     id 'de.undercouch.download' version '5.4.0'
-    id 'net.minecraftforge.gradle.patcher' version '[6.0.16,6.2)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[6.0.16,6.2)' apply false
+    id 'net.minecraftforge.gradle.patcher' version '[6.0.52,6.2)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[6.0.52,6.2)' apply false
     id 'net.minecraftforge.gradlejarsigner' version '1.0.4'
     id 'org.barfuin.gradle.taskinfo' version '2.1.0'
     id "dev.vankka.dependencydownload.plugin" version "1.3.1" apply false
@@ -46,15 +46,5 @@ project(':mcp') {
     mcp {
         config MC_VERSION + '-' + MCP_VERSION
         pipeline = 'joined'
-    }
-}
-
-if (System.env.TEAMCITY_VERSION) {
-    //Only setup the CI environment if and only if the environment variables are set.
-    tasks.configureTeamCity {
-        doLast {
-            println "##teamcity[buildNumber '${project(':forge').version}']"
-            println "##teamcity[setParameter name='env.PUBLISHED_JAVA_ARTIFACT_VERSION' value='${project(':forge').version}']"
-        }
     }
 }

@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Collections;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -60,6 +62,7 @@ public class ModFile implements IModFile {
     private CompletableFuture<ModFileScanData> futureScanResult;
     private List<CoreModFile> coreMods;
     private Path accessTransformer;
+    private List<Path> accessTransformers = Collections.emptyList();
 
     static final Attributes.Name TYPE = new Attributes.Name("FMLModType");
     private SecureJar.Status securityStatus;
@@ -104,7 +107,11 @@ public class ModFile implements IModFile {
     }
 
     public Optional<Path> getAccessTransformer() {
-        return Optional.ofNullable(Files.exists(accessTransformer) ? accessTransformer : null);
+        return Optional.ofNullable(accessTransformer);
+    }
+
+    public List<Path> getAccessTransformers() {
+        return accessTransformers;
     }
 
     public boolean identifyMods() {
@@ -113,7 +120,28 @@ public class ModFile implements IModFile {
         LOGGER.debug(LogMarkers.LOADING,"Loading mod file {} with languages {}", this.getFilePath(), this.modFileInfo.requiredLanguageLoaders());
         this.coreMods = ModFileParser.getCoreMods(this);
         this.coreMods.forEach(mi-> LOGGER.debug(LogMarkers.LOADING,"Found coremod {}", mi.getPath()));
-        this.accessTransformer = findResource("META-INF", "accesstransformer.cfg");
+        List<String> cfg;
+        // Note: Some mods may have invalid tomls copied from other projects.
+        // Unfortunately we must protect against those landmines.
+        try {
+            cfg = this.modFileInfo.getConfig().<List<String>>getConfigElement("accessTransformers").orElse(null);
+        } catch (Exception e) {
+            cfg = null;
+            LOGGER.warn("{} contains an invalid 'accessTransformers' TOML entry. Should be e.g. accessTransformers = [\"META-INF/accesstransformer.cfg\", \"META-INF/extra_at.cfg\"] or accessTransformers = [] for no ATs. Falling back to default.", this.getFileName());
+        }
+        if (cfg == null) {
+            var path = findResource("META-INF", "accesstransformer.cfg");
+            if (Files.exists(path)) {
+                this.accessTransformer = path;
+                this.accessTransformers = List.of(path);
+            }
+        } else if (!cfg.isEmpty()) {
+            var paths = new ArrayList<Path>(cfg.size());
+            for (var path : cfg) {
+                paths.add(getSecureJar().getPath(path.replace('\\', '/')));
+            }
+            this.accessTransformers = List.copyOf(paths);
+        }
         return true;
     }
 
