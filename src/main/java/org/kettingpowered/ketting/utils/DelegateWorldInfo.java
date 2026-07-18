@@ -15,17 +15,26 @@ import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.WritableLevelData;
 import net.minecraft.world.level.timers.TimerQueue;
 import org.kettingpowered.ketting.core.Ketting;
+import org.kettingpowered.ketting.craftbukkit.ITypedLevelData;
 
 import java.util.UUID;
 
 @SuppressWarnings("all")
-public class DelegateWorldInfo extends PrimaryLevelData {
+public class DelegateWorldInfo extends PrimaryLevelData implements ITypedLevelData {
 
     private final DerivedLevelData derivedWorldInfo;
 
     public DelegateWorldInfo(LevelSettings p_251081_, WorldOptions p_251666_, SpecialWorldProperty p_252268_, Lifecycle p_251714_, DerivedLevelData derivedLevelData) {
         super(p_251081_, p_251666_, p_252268_, p_251714_);
         this.derivedWorldInfo = derivedLevelData;
+    }
+
+    public String getOriginalLevelName() {
+        return derivedWorldInfo.getOriginalLevelName();
+    }
+
+    public net.minecraft.resources.ResourceKey<net.minecraft.world.level.dimension.LevelStem> getTypeKey() {
+        return derivedWorldInfo.getTypeKey();
     }
 
     public void setTypeKey(net.minecraft.resources.ResourceKey<net.minecraft.world.level.dimension.LevelStem> typeKey) {

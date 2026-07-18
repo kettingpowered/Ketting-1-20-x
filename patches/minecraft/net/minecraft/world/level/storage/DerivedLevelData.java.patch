@@ -1,11 +1,23 @@
 --- a/net/minecraft/world/level/storage/DerivedLevelData.java
 +++ b/net/minecraft/world/level/storage/DerivedLevelData.java
-@@ -14,12 +_,23 @@
- public class DerivedLevelData implements ServerLevelData {
+@@ -11,15 +_,34 @@
+ import net.minecraft.world.level.border.WorldBorder;
+ import net.minecraft.world.level.timers.TimerQueue;
+ 
+-public class DerivedLevelData implements ServerLevelData {
++public class DerivedLevelData implements ServerLevelData, org.kettingpowered.ketting.craftbukkit.ITypedLevelData { //Ketting
     private final WorldData worldData;
     private final ServerLevelData wrapped;
 +   //Ketting start
++   public String getOriginalLevelName() {
++      return this.wrapped.getLevelName();
++   }
++
 +   private net.minecraft.resources.ResourceKey<net.minecraft.world.level.dimension.LevelStem> typeKey;
++
++   public net.minecraft.resources.ResourceKey<net.minecraft.world.level.dimension.LevelStem> getTypeKey() {
++      return typeKey;
++   }
 +
 +   public void setTypeKey(net.minecraft.resources.ResourceKey<net.minecraft.world.level.dimension.LevelStem> typeKey) {
 +      this.typeKey = typeKey;
