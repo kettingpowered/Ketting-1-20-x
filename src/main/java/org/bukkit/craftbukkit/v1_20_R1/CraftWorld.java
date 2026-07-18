@@ -591,8 +591,29 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         }
     }
 
+    //Ketting start
+    private String ketting$cachedWorldName;
+    private String calculateWorldName(org.kettingpowered.ketting.craftbukkit.ITypedLevelData typedLevelData) {
+        if (ketting$cachedWorldName != null) return ketting$cachedWorldName;
+        String worldName = typedLevelData.getOriginalLevelName() + "_";
+        String suffix;
+        if (typedLevelData.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.NETHER) {
+            suffix = "nether";
+        } else if (typedLevelData.getTypeKey() == net.minecraft.world.level.dimension.LevelStem.END) {
+            suffix = "the_end";
+        } else {
+            suffix = (typedLevelData.getTypeKey().location().getNamespace() + "_" + typedLevelData.getTypeKey().location().getPath()).replace('/', '_');
+        }
+        ketting$cachedWorldName = worldName + suffix;
+        return ketting$cachedWorldName;
+    }
+
     @Override
     public String getName() {
+        if (org.kettingpowered.ketting.config.KettingConfig.getInstance().SPLIT_WORLD_NAMES.getValue()
+                && world.serverLevelData instanceof org.kettingpowered.ketting.craftbukkit.ITypedLevelData typeKey && typeKey.hasNonDefaultTypeKey())
+            return calculateWorldName(typeKey);
+        //Ketting end
         return world.serverLevelData.getLevelName();
     }
 
