@@ -15,16 +15,10 @@ public class EntityDataUtils {
     }
 
     private static <T> boolean exceptionCheck(T data, T value) {
-        if (data.getClass().getName().equals("kotlin.collections.EmptySet") && value instanceof Set<?>) {
-            return true; // Special case for cobblemon
-
-        } else if (data.getClass().getName().equals("java.util.Collections$EmptyMap") && value instanceof Map<?, ?>) {
-            return true; // Special case for Pandas-Falling-Trees
-
-        } else if (data.getClass().getName().equals("java.util.Collections$EmptyList") && value instanceof List<?>) {
-            return true; // Also Special case for Pandas-Falling-Trees..
-        }
-
+        var className = data.getClass().getName();
+        if (className.equals("kotlin.collections.EmptySet") && value instanceof Set<?>) return true;
+        if (className.equals("java.util.Collections$EmptyMap") && value instanceof Map<?, ?>) return true;
+        if (className.equals("java.util.Collections$EmptyList") && value instanceof List<?>) return true;
         return false;
     }
 }
