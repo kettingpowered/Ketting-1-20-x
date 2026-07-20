@@ -17,6 +17,9 @@ public class EntityDataUtils {
     private static <T> boolean exceptionCheck(T data, T value) {
         var className = data.getClass().getName();
         if (className.equals("kotlin.collections.EmptySet") && value instanceof Set<?>) return true;
+        if (className.equals("kotlin.collections.EmptyMap") && value instanceof Map<?, ?>) return true;
+        if (className.equals("kotlin.collections.EmptyList") && value instanceof List<?>) return true;
+        if (className.equals("java.util.Collections$EmptySet") && value instanceof Set<?>) return true;
         if (className.equals("java.util.Collections$EmptyMap") && value instanceof Map<?, ?>) return true;
         if (className.equals("java.util.Collections$EmptyList") && value instanceof List<?>) return true;
         return false;
