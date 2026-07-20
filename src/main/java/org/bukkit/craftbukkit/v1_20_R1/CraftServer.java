@@ -1133,7 +1133,7 @@ public final class CraftServer implements Server {
 
         PrimaryLevelData worlddata;
         WorldLoader.DataLoadContext worldloader_a = console.worldLoader;
-        net.minecraft.core.Registry<LevelStem> iregistry = worldloader_a.datapackDimensions().registryOrThrow(Registries.LEVEL_STEM);
+        net.minecraft.core.Registry<LevelStem> iregistry = console.registryAccess().registryOrThrow(Registries.LEVEL_STEM); //Ketting
         DynamicOps<Tag> dynamicops = RegistryOps.create(NbtOps.INSTANCE, (HolderLookup.Provider) worldloader_a.datapackWorldgen());
         Pair<WorldData, WorldDimensions.Complete> pair = worldSession.getDataTag(dynamicops, worldloader_a.dataConfiguration(), iregistry, worldloader_a.datapackWorldgen().allRegistriesLifecycle());
 
