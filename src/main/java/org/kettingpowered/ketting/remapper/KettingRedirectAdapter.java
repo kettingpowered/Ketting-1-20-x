@@ -165,8 +165,10 @@ public class KettingRedirectAdapter implements PluginTransformer {
     }
 
     @Override
-    public void handleClass(ClassNode node, ClassLoaderRemapper remapper) {
-        redirect(node, remapper);
+    public void handleClass(ClassNode node, ClassLoaderRemapper remapper, KettingRemapConfig config) {
+        if (config.remap()) {
+            redirect(node, remapper);
+        }
     }
 
     private static void redirect(ClassNode classNode, ClassLoaderRemapper remapper) {

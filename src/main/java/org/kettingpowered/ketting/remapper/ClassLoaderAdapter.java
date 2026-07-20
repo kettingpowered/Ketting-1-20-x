@@ -5,19 +5,7 @@ import org.kettingpowered.ketting.core.Ketting;
 import org.kettingpowered.ketting.remapper.generated.RemappingURLClassLoader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.FrameNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -36,7 +24,8 @@ public class ClassLoaderAdapter implements PluginTransformer {
             .build();
 
     @Override
-    public void handleClass(ClassNode node, ClassLoaderRemapper remapper) {
+    public void handleClass(ClassNode node, ClassLoaderRemapper remapper, KettingRemapConfig config) {
+        // Must handle all class loaders, or else we'll lose track of classloading
         for (MethodNode methodNode : node.methods) {
             for (AbstractInsnNode insnNode : methodNode.instructions) {
                 if (insnNode.getOpcode() == Opcodes.NEW) {
@@ -76,26 +65,69 @@ public class ClassLoaderAdapter implements PluginTransformer {
     private void implementIntf(ClassNode node) {
         Ketting.LOGGER.debug(MARKER, "Implementing RemappingClassLoader for class {}", node.name);
         FieldNode remapper = new FieldNode(Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC, "remapper", Type.getDescriptor(ClassLoaderRemapper.class), null, null);
-        MethodNode methodNode = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC, "getRemapper", Type.getMethodDescriptor(Type.getType(ClassLoaderRemapper.class)), null, null);
-        InsnList list = new InsnList();
-        LabelNode labelNode = new LabelNode();
-        list.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        list.add(new FieldInsnNode(Opcodes.GETFIELD, node.name, remapper.name, remapper.desc));
-        list.add(new JumpInsnNode(Opcodes.IFNONNULL, labelNode));
-        list.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        list.add(new InsnNode(Opcodes.DUP));
-        list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(KettingRemapper.class), "createClassLoaderRemapper", Type.getMethodDescriptor(Type.getType(ClassLoaderRemapper.class), Type.getType(ClassLoader.class)), false));
-        list.add(new FieldInsnNode(Opcodes.PUTFIELD, node.name, remapper.name, remapper.desc));
-        list.add(labelNode);
-        if ((node.version & 0xFFFF) >= Opcodes.V1_6) {
-            list.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
+        MethodNode getRemapper = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC, "getRemapper", Type.getMethodDescriptor(Type.getType(ClassLoaderRemapper.class)), null, null);
+        {
+            InsnList list = new InsnList();
+            LabelNode labelNode = new LabelNode();
+            list.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            list.add(new FieldInsnNode(Opcodes.GETFIELD, node.name, remapper.name, remapper.desc));
+            list.add(new JumpInsnNode(Opcodes.IFNONNULL, labelNode));
+            list.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            list.add(new InsnNode(Opcodes.DUP));
+            list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(KettingRemapper.class), "createClassLoaderRemapper", Type.getMethodDescriptor(Type.getType(ClassLoaderRemapper.class), Type.getType(ClassLoader.class)), false));
+            list.add(new FieldInsnNode(Opcodes.PUTFIELD, node.name, remapper.name, remapper.desc));
+            list.add(labelNode);
+            if ((node.version & 0xFFFF) >= Opcodes.V1_6) {
+                list.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
+            }
+            list.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            list.add(new FieldInsnNode(Opcodes.GETFIELD, node.name, remapper.name, remapper.desc));
+            list.add(new InsnNode(Opcodes.ARETURN));
+            getRemapper.instructions = list;
         }
-        list.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        list.add(new FieldInsnNode(Opcodes.GETFIELD, node.name, remapper.name, remapper.desc));
-        list.add(new InsnNode(Opcodes.ARETURN));
-        methodNode.instructions = list;
+        FieldNode remapConfig = new FieldNode(Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC, "Ketting$remapConfig", Type.getDescriptor(KettingRemapConfig.class), null, null);
+        MethodNode getConfig = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC, "getRemapConfig", Type.getMethodDescriptor(Type.getType(KettingRemapConfig.class)), null, null);
+        {
+            final var config = Type.getInternalName(KettingRemapConfig.class);
+
+            InsnList list = new InsnList();
+            LabelNode getfield = new LabelNode();
+            LabelNode putfield = new LabelNode();
+            LabelNode aret = new LabelNode();
+
+            list.add(getfield);
+            list.add(new LineNumberNode(-101, getfield));
+            list.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            list.add(new FieldInsnNode(Opcodes.GETFIELD, node.name, remapConfig.name, remapConfig.desc));
+            list.add(new JumpInsnNode(Opcodes.IFNONNULL, aret));
+
+            list.add(putfield);
+            list.add(new LineNumberNode(-103, putfield));
+            list.add(new TypeInsnNode(Opcodes.NEW, config));
+            list.add(new InsnNode(Opcodes.DUP));
+            list.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, node.name, "needRemap", Type.getMethodDescriptor(Type.getType(boolean.class), Type.getType(ClassLoader.class))));
+            list.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, config, "<init>", "(Z)V"));
+            list.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            list.add(new InsnNode(Opcodes.SWAP));
+            list.add(new FieldInsnNode(Opcodes.PUTFIELD, node.name, remapConfig.name, remapConfig.desc));
+
+            list.add(aret);
+            list.add(new LineNumberNode(-105, aret));
+            if ((node.version & 0xFFFF) >= Opcodes.V1_6) {
+                list.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
+            }
+            list.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            list.add(new FieldInsnNode(Opcodes.GETFIELD, node.name, remapConfig.name, remapConfig.desc));
+            list.add(new InsnNode(Opcodes.ARETURN));
+            getConfig.instructions = list;
+            getConfig.visitMaxs(3, 1);
+        }
         node.fields.add(remapper);
-        node.methods.add(methodNode);
+        node.fields.add(remapConfig);
+        RemappingClassLoader.implementNeedRemap(node);
+        node.methods.add(getRemapper);
+        node.methods.add(getConfig);
         node.interfaces.add(Type.getInternalName(RemappingClassLoader.class));
     }
 

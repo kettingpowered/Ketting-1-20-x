@@ -2,10 +2,7 @@ package org.kettingpowered.ketting.remapper.generated;
 
 import org.kettingpowered.ketting.internal.KettingConstants;
 import org.kettingpowered.ketting.internal.hacks.Unsafe;
-import org.kettingpowered.ketting.remapper.KettingRedirectAdapter;
-import org.kettingpowered.ketting.remapper.ClassLoaderRemapper;
-import org.kettingpowered.ketting.remapper.GlobalClassRepo;
-import org.kettingpowered.ketting.remapper.RemappingClassLoader;
+import org.kettingpowered.ketting.remapper.*;
 import org.kettingpowered.ketting.utils.Enumerations;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
@@ -229,8 +226,6 @@ public class KettingReflectionHandler extends ClassLoader {
 
     // bukkit -> srg
     public static Class<?> redirectClassForName(String cl, boolean initialize, ClassLoader classLoader) throws ClassNotFoundException {
-        if (cl.isEmpty())
-            throw new ClassNotFoundException();
         try {
             String replace = remapper.mapType(cl.replace('.', '/')).replace('/', '.');
             return Class.forName(replace, initialize, classLoader);
@@ -655,7 +650,8 @@ public class KettingReflectionHandler extends ClassLoader {
             }
         }
         if (rcl != null) {
-            return rcl.getRemapper().remapClassFile(bytes, GlobalClassRepo.INSTANCE, true);
+            var repo = new ClassRepoWrapper(GlobalClassRepo.INSTANCE, rcl.getRemapConfig());
+            return rcl.getRemapper().remapClassFile(bytes, repo, true);
         } else {
             KettingRedirectAdapter.scanMethod(bytes);
             return bytes;

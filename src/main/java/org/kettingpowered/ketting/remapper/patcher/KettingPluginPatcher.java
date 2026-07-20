@@ -5,6 +5,7 @@ import io.izzel.arclight.api.PluginPatcher;
 import org.kettingpowered.ketting.core.Ketting;
 import org.kettingpowered.ketting.remapper.ClassLoaderRemapper;
 import org.kettingpowered.ketting.remapper.GlobalClassRepo;
+import org.kettingpowered.ketting.remapper.KettingRemapConfig;
 import org.kettingpowered.ketting.remapper.PluginTransformer;
 import org.objectweb.asm.tree.ClassNode;
 
@@ -21,7 +22,7 @@ public class KettingPluginPatcher implements PluginTransformer {
     }
 
     @Override
-    public void handleClass(ClassNode node, ClassLoaderRemapper remapper) {
+    public void handleClass(ClassNode node, ClassLoaderRemapper remapper, KettingRemapConfig config) {
         for (PluginPatcher patcher : list) {
             patcher.handleClass(node, GlobalClassRepo.INSTANCE);
         }

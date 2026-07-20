@@ -296,9 +296,9 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
                 }));
     }
 
-    public Product2<byte[], CodeSource> remapClass(String className, Callable<byte[]> byteSource, URLConnection connection) throws ClassNotFoundException {
+    public Product2<byte[], CodeSource> remapClass(String className, Callable<byte[]> byteSource, URLConnection connection, KettingRemapConfig config) throws ClassNotFoundException {
         try {
-            byte[] bytes = remapClassFile(byteSource.call(), GlobalClassRepo.INSTANCE);
+            byte[] bytes = remapClassFile(byteSource.call(), new ClassRepoWrapper(GlobalClassRepo.INSTANCE, config));
             URL url;
             CodeSigner[] signers;
             if (connection instanceof JarURLConnection) {
@@ -328,9 +328,16 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
         ClassNode node = new ClassNode();
         RemappingClassAdapter mapper = new RemappingClassAdapter(node, this, repo);
         reader.accept(mapper, 0);
+        KettingRemapConfig config;
+        if (repo instanceof ClassRepoWrapper wrapper) {
+            config = wrapper.config();
+        } else {
+            Ketting.LOGGER.warn("No class remap config is provided for class {}, using PLUGIN", node.name.replace('/','.'));
+            config = KettingRemapConfig.PLUGIN;
+        }
 
         for (PluginTransformer transformer : KettingRemapper.INSTANCE.getTransformerList()) {
-            transformer.handleClass(node, this);
+            transformer.handleClass(node, this, config);
         }
 
         ClassWriter wr = new PluginClassWriter(ClassWriter.COMPUTE_MAXS);
