@@ -98,14 +98,22 @@ dependencyResolutionManagement {
 
             library('inject', 'javax.inject', 'javax.inject').version('1')
 
+            library('maven-resolver-api', 'org.apache.maven.resolver', 'maven-resolver-api').version('1.6.3')
+            library('maven-resolver-connector-basic', 'org.apache.maven.resolver', 'maven-resolver-connector-basic').version('1.7.3')
+            library('maven-resolver-impl', 'org.apache.maven.resolver', 'maven-resolver-impl').version('1.6.3')
             library('maven-resolver-provider', 'org.apache.maven', 'maven-resolver-provider').version('3.8.5')
-            library('maven-resolver-connector', 'org.apache.maven.resolver', 'maven-resolver-connector-basic').version('1.7.3')
+            library('maven-resolver-spi', 'org.apache.maven.resolver', 'maven-resolver-spi').version('1.6.3')
             library('maven-resolver-transport', 'org.apache.maven.resolver', 'maven-resolver-transport-http').version('1.7.3')
+            library('maven-resolver-util', 'org.apache.maven.resolver', 'maven-resolver-util').version('1.6.3')
 
-            bundle('maven-transitive', [
+            bundle('maven-resolvers', [
+                    'maven-resolver-api',
+                    'maven-resolver-connector-basic',
+                    'maven-resolver-impl',
                     'maven-resolver-provider',
-                    'maven-resolver-connector',
-                    'maven-resolver-transport'
+                    'maven-resolver-spi',
+                    'maven-resolver-transport',
+                    'maven-resolver-util'
             ])
 
             bundle('bukkitlibs', [

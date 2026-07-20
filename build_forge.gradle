@@ -154,13 +154,11 @@ dependencies {
     installer(libs.bundles.bukkitlibs){
         exclude group: 'junit', module: 'junit'
     }
-    transitiveInstaller(libs.bundles.maven.transitive) {
-        exclude group: 'org.apache.maven', module: 'maven-model'
-        exclude group: 'org.apache.maven', module: 'maven-model-builder'
+    installer(libs.bundles.maven.resolvers) {
+        transitive = false
     }
-    compileOnly(libs.bundles.maven.transitive) {
-        exclude group: 'org.apache.maven', module: 'maven-model'
-        exclude group: 'org.apache.maven', module: 'maven-model-builder'
+    compileOnly(libs.bundles.maven.resolvers) {
+        transitive = false
     }
     installer(libs.mavenmodelcombined)
     compileOnly(libs.mavenmodelcombined)
