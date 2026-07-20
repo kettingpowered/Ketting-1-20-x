@@ -21,13 +21,13 @@ import java.util.logging.Level;
 
 import cpw.mods.modlauncher.EnumerationHelper;
 import io.izzel.tools.product.Product2;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.SimplePluginManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kettingpowered.ketting.remapper.ClassLoaderRemapper;
+import org.kettingpowered.ketting.remapper.KettingRemapConfig;
 import org.kettingpowered.ketting.remapper.KettingRemapper;
 import org.kettingpowered.ketting.remapper.RemappingClassLoader;
 
@@ -59,6 +59,11 @@ final class PluginClassLoader extends URLClassLoader implements RemappingClassLo
             remapper = KettingRemapper.createClassLoaderRemapper(this);
         }
         return remapper;
+    }
+
+    @Override
+    public KettingRemapConfig getRemapConfig() {
+        return KettingRemapConfig.PLUGIN;
     }
 
     PluginClassLoader(@NotNull final JavaPluginLoader loader, @Nullable final ClassLoader parent, @NotNull final PluginDescriptionFile description, @NotNull final File dataFolder, @NotNull final File file, @Nullable ClassLoader libraryLoader) throws IOException, InvalidPluginException, MalformedURLException {
@@ -204,7 +209,7 @@ final class PluginClassLoader extends URLClassLoader implements RemappingClassLo
                     throw new ClassNotFoundException(name, e);
                 }
 
-                Product2<byte[], CodeSource> classBytes = this.getRemapper().remapClass(name, byteSource, connection);
+                Product2<byte[], CodeSource> classBytes = this.getRemapper().remapClass(name, byteSource, connection, KettingRemapConfig.PLUGIN);
 
                 int dot = name.lastIndexOf('.');
                 if (dot != -1) {
