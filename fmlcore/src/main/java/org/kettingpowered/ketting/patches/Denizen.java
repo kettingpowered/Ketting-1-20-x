@@ -48,11 +48,8 @@ public class Denizen implements PluginPatcher {
                 methodInsn.owner = JAVA_MAP;
                 methodInsn.itf = true;
 
-                if (methodInsn.name.equals("keySet")) {
-                    System.out.println("descriptor for keySet is: " + methodInsn.desc);
+                if (methodInsn.name.equals("keySet"))
                     methodInsn.desc = Type.getMethodDescriptor(Type.getType(Set.class));
-                    System.out.println("changed to: " + methodInsn.desc);
-                }
             }
 
             if (insn instanceof FrameNode frame) {
