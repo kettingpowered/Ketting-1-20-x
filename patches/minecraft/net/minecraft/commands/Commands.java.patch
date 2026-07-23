@@ -24,7 +24,7 @@
           TestCommand.register(this.dispatcher);
           SpawnArmorTrimsCommand.register(this.dispatcher);
        }
-@@ -219,9 +_,32 @@
+@@ -219,9 +_,28 @@
           PublishCommand.register(this.dispatcher);
        }
  
@@ -52,11 +52,7 @@
 +      });
 +      // CraftBukkit end
 +
-+      //Ketting start
-+      this.forgeDispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
-+         p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
-+      });
-+      //Ketting end
++      this.forgeDispatcher.setConsumer(this.dispatcher.getConsumer()); //Ketting
     }
  
     public static <S> ParseResults<S> mapSource(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {

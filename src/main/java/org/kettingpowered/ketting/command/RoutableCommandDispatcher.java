@@ -45,6 +45,7 @@ public class RoutableCommandDispatcher extends CommandDispatcher<CommandSourceSt
 
     private RoutableCommandDispatcher(CommandDispatcher<CommandSourceStack> dispatcher) {
         super(getRoot(dispatcher));
+        this.setConsumer(dispatcher.getConsumer());
     }
 
     public static RootCommandNode<CommandSourceStack> getRoot(CommandDispatcher<CommandSourceStack> dispatcher) {

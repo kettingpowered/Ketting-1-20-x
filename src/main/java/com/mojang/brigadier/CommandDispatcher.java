@@ -65,6 +65,11 @@ public class CommandDispatcher<S> {
     };
     private ResultConsumer<S> consumer = (c, s, r) -> {
     };
+    //Ketting start - getter
+    public ResultConsumer<S> getConsumer() {
+        return consumer;
+    }
+    //Ketting end
 
     /**
      * Create a new {@link CommandDispatcher} with the specified root node.
