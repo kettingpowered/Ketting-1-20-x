@@ -310,6 +310,20 @@
           }
        }
     }
+@@ -269,7 +_,13 @@
+    public void addDestroyBlockEffect(BlockPos p_151531_, BlockState p_151532_) {
+    }
+ 
++   //Ketting start
++   public java.util.concurrent.atomic.AtomicReference<org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator> setBlockAndUpdate$blockList = new java.util.concurrent.atomic.AtomicReference<>(null);
+    public boolean setBlockAndUpdate(BlockPos p_46598_, BlockState p_46599_) {
++      if (setBlockAndUpdate$blockList.get() != null) {
++         return setBlockAndUpdate$blockList.getAndSet(null).setBlock(p_46598_, p_46599_, 3);
++      }
++      //Ketting end
+       return this.setBlock(p_46598_, p_46599_, 3);
+    }
+ 
 @@ -279,6 +_,7 @@
     }
  

@@ -345,7 +345,7 @@
           this.unRide();
           this.serverLevel().removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
           if (!this.wonGame) {
-@@ -731,71 +_,167 @@
+@@ -731,71 +_,171 @@
  
           return this;
        } else {
@@ -454,7 +454,7 @@
           return this;
        }
     }
-+
+ 
 +   private java.util.concurrent.atomic.AtomicReference<org.bukkit.event.player.PlayerTeleportEvent.TeleportCause> ketting$changeDimension$cause = new java.util.concurrent.atomic.AtomicReference<>(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);
 +   @Nullable
 +   public Entity changeDimension(ServerLevel p_9180_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
@@ -480,29 +480,32 @@
 +      return new org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent(event);
 +   }
 +   // CraftBukkit end
- 
++
++   //Ketting start - bukkit & mixin compat
++   private org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator createEndPlatform$blockList;
     private void createEndPlatform(ServerLevel p_9007_, BlockPos p_9008_) {
        BlockPos.MutableBlockPos blockpos$mutableblockpos = p_9008_.mutable();
-+      org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator(p_9007_); // CraftBukkit
++      createEndPlatform$blockList = new org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator(p_9007_);
  
        for(int i = -2; i <= 2; ++i) {
           for(int j = -2; j <= 2; ++j) {
              for(int k = -1; k < 3; ++k) {
                 BlockState blockstate = k == -1 ? Blocks.OBSIDIAN.defaultBlockState() : Blocks.AIR.defaultBlockState();
--               p_9007_.setBlockAndUpdate(blockpos$mutableblockpos.set(p_9008_).move(j, k, i), blockstate);
-+               blockList.setBlock(blockpos$mutableblockpos.set(p_9008_).move(j, k, i), blockstate, 3); // CraftBukkit
++               p_9007_.setBlockAndUpdate$blockList.set(createEndPlatform$blockList);
+                p_9007_.setBlockAndUpdate(blockpos$mutableblockpos.set(p_9008_).move(j, k, i), blockstate);
              }
           }
        }
 +      // CraftBukkit start - call portal event
-+      org.bukkit.event.world.PortalCreateEvent portalEvent = new org.bukkit.event.world.PortalCreateEvent((List<org.bukkit.block.BlockState>) (List) blockList.getList(), p_9007_.getWorld(), this.getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.END_PLATFORM);
++      org.bukkit.event.world.PortalCreateEvent portalEvent = new org.bukkit.event.world.PortalCreateEvent((List<org.bukkit.block.BlockState>) (List) createEndPlatform$blockList.getList(), p_9007_.getWorld(), this.getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.END_PLATFORM);
 +      p_9007_.getCraftServer().getPluginManager().callEvent(portalEvent);
 +      if (!portalEvent.isCancelled()) {
-+         blockList.updateList();
++         createEndPlatform$blockList.updateList();
 +      }
 +      // CraftBukkit end
  
     }
++   //Ketting end
  
 +   //Ketting start - original method
     protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel p_184131_, BlockPos p_184132_, boolean p_184133_, WorldBorder p_184134_) {
