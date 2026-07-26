@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -120,7 +_,34 @@
+@@ -120,7 +_,40 @@
  import net.minecraft.world.scores.Team;
  import org.slf4j.Logger;
  
@@ -14,6 +14,12 @@
 +   }
 +
 +   private org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity bukkitEntity;
++
++   //Ketting start
++   protected void setBukkitEntity(org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity entity) {
++      this.bukkitEntity = entity;
++   }
++   //Ketting end
 +
 +   public org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity getBukkitEntity() {
 +      if (bukkitEntity == null) {

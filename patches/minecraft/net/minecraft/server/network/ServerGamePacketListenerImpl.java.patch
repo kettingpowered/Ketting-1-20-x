@@ -607,7 +607,7 @@
                          this.player.doCheckFallDamage(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5, p_9874_.isOnGround());
                       }
                    }
-@@ -954,11 +_,69 @@
+@@ -954,11 +_,74 @@
        return false;
     }
  
@@ -625,7 +625,12 @@
 +      this.teleport(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_, p_9786_);
 +   }
 +   //Ketting end
++   //Ketting start
++   public java.util.concurrent.atomic.AtomicBoolean teleport$forceInternal = new java.util.concurrent.atomic.AtomicBoolean(false);
     public void teleport(double p_9775_, double p_9776_, double p_9777_, float p_9778_, float p_9779_) {
++      if (teleport$forceInternal.getAndSet(false))
++         this.internalTeleport(p_9775_, p_9776_, p_9777_, p_9778_, p_9779_, Collections.emptySet());
++      //Ketting end
        this.teleport(p_9775_, p_9776_, p_9777_, p_9778_, p_9779_, Collections.emptySet());
     }
  
@@ -1442,23 +1447,22 @@
                       }
                    } else {
                       ServerGamePacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.invalid_entity_attacked"));
-@@ -1492,14 +_,14 @@
+@@ -1492,6 +_,7 @@
           case PERFORM_RESPAWN:
              if (this.player.wonGame) {
                 this.player.wonGame = false;
--               this.player = this.server.getPlayerList().respawn(this.player, true);
-+               this.player = this.server.getPlayerList().respawn(this.player, true, org.bukkit.event.player.PlayerRespawnEvent.RespawnReason.END_PORTAL);
++               this.server.getPlayerList().ketting$respawn$reason.set(org.bukkit.event.player.PlayerRespawnEvent.RespawnReason.END_PORTAL); //Ketting
+                this.player = this.server.getPlayerList().respawn(this.player, true);
                 CriteriaTriggers.CHANGED_DIMENSION.trigger(this.player, Level.END, Level.OVERWORLD);
              } else {
-                if (this.player.getHealth() > 0.0F) {
+@@ -1499,6 +_,7 @@
                    return;
                 }
  
--               this.player = this.server.getPlayerList().respawn(this.player, false);
-+               this.player = this.server.getPlayerList().respawn(this.player, false, org.bukkit.event.player.PlayerRespawnEvent.RespawnReason.DEATH);
++               this.server.getPlayerList().ketting$respawn$reason.set(org.bukkit.event.player.PlayerRespawnEvent.RespawnReason.DEATH); //Ketting
+                this.player = this.server.getPlayerList().respawn(this.player, false);
                 if (this.server.isHardcore()) {
                    this.player.setGameMode(GameType.SPECTATOR);
-                   this.player.level().getGameRules().getRule(GameRules.RULE_SPECTATORSGENERATECHUNKS).set(false, this.server);
 @@ -1514,14 +_,19 @@
  
     public void handleContainerClose(ServerboundContainerClosePacket p_9858_) {

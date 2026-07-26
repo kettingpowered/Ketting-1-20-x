@@ -869,7 +869,7 @@
     }
  
     public void displayClientMessage(Component p_9154_, boolean p_9155_) {
-@@ -1129,12 +_,21 @@
+@@ -1129,12 +_,38 @@
        this.lastSentExp = -1;
        this.lastSentHealth = -1.0F;
        this.lastSentFood = -1;
@@ -889,6 +889,23 @@
 +      net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_9016_, !p_9017_);
 +      this.tabListHeader = p_9016_.tabListHeader;
 +      this.tabListFooter = p_9016_.tabListFooter;
++
++      //Ketting start - copy over bukkit values
++      this.displayName = p_9016_.displayName;
++      this.compassTarget = p_9016_.compassTarget;
++      this.newExp = p_9016_.newExp;
++      this.newLevel = p_9016_.newLevel;
++      this.newTotalExp = p_9016_.newTotalExp;
++      this.keepLevel = p_9016_.keepLevel;
++      this.maxHealthCache = p_9016_.maxHealthCache;
++      this.joining = p_9016_.joining;
++      this.sentListPacket = p_9016_.sentListPacket;
++      this.clientViewDistance = p_9016_.clientViewDistance;
++      this.kickLeaveMessage = p_9016_.kickLeaveMessage;
++
++      p_9016_.getBukkitEntity().setHandle(this);
++      this.setBukkitEntity(p_9016_.getBukkitEntity());
++      //Ketting end
     }
  
     protected void onEffectAdded(MobEffectInstance p_143393_, @Nullable Entity p_143394_) {
