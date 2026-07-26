@@ -11,6 +11,7 @@ public final class MapCursor {
     private byte direction, type;
     private boolean visible;
     private String caption;
+    private byte moddedIcon; //Ketting
 
     /**
      * Initialize the map cursor.
@@ -126,6 +127,10 @@ public final class MapCursor {
      */
     @Deprecated
     public byte getRawType() {
+        //Ketting start
+        if (type == Type.MODDED.value)
+            return moddedIcon;
+        //Ketting end
         return type;
     }
 
@@ -186,7 +191,12 @@ public final class MapCursor {
     @Deprecated
     public void setRawType(byte type) {
         if (type < 0 || type > 26) {
-            throw new IllegalArgumentException("Type must be in the range 0-26");
+            //Ketting start
+            //throw new IllegalArgumentException("Type must be in the range 0-26");
+            this.type = Type.MODDED.value;
+            this.moddedIcon = type;
+            return;
+            //Ketting end
         }
         this.type = type;
     }
@@ -252,7 +262,10 @@ public final class MapCursor {
         BANNER_GREEN(23),
         BANNER_RED(24),
         BANNER_BLACK(25),
-        RED_X(26);
+        //Ketting start
+        RED_X(26),
+        MODDED(999);
+        //Ketting end
 
         private byte value;
 
