@@ -462,13 +462,14 @@
        Optional<Vec3> optional;
        if (serverlevel != null && blockpos != null) {
           optional = Player.findRespawnPositionAndUseSpawnBlock(serverlevel, blockpos, f, flag, p_11238_);
-@@ -431,8 +_,11 @@
+@@ -431,8 +_,12 @@
  
        ServerLevel serverlevel1 = serverlevel != null && optional.isPresent() ? serverlevel : this.server.overworld();
        ServerPlayer serverplayer = new ServerPlayer(this.server, serverlevel1, p_11237_.getGameProfile());
 +      respawn$fromWorld = p_11237_.getBukkitEntity().getWorld(); //Ketting
 +      p_11237_.wonGame = false;
        serverplayer.connection = p_11237_.connection;
++      serverplayer.connection.player = serverplayer; //Ketting
        serverplayer.restoreFrom(p_11237_, p_11238_);
 +      serverplayer.setRespawnPosition(p_11237_.getRespawnDimension(), p_11237_.getRespawnPosition(), p_11237_.getRespawnAngle(), p_11237_.isRespawnForced(), false);
        serverplayer.setId(p_11237_.getId());
