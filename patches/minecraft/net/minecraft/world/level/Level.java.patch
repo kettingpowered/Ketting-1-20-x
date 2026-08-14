@@ -108,7 +108,7 @@
 +      }
 +   }
 +   protected void serverLevelDataDependentInit(net.minecraft.world.level.storage.ServerLevelData serverLevelData){
-+      spigotConfig = new org.spigotmc.SpigotWorldConfig(serverLevelData.getLevelName());
++      spigotConfig = new org.spigotmc.SpigotWorldConfig(serverLevelData.getLevelName(), this instanceof net.minecraft.server.level.ServerLevel);
 +
 +      this.setEntityLimiter(new org.spigotmc.TickLimiter(spigotConfig.entityMaxTickTime));
 +      this.setTileLimiter(new org.spigotmc.TickLimiter(spigotConfig.tileMaxTickTime));
@@ -119,7 +119,7 @@
  
     protected Level(WritableLevelData p_270739_, ResourceKey<Level> p_270683_, RegistryAccess p_270200_, Holder<DimensionType> p_270240_, Supplier<ProfilerFiller> p_270692_, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_) {
 +      super(Level.class);
-+      if (p_270739_ != null) bukkitInit(p_270739_); //Ketting - do not init bukkit on simulated/fake levels
++      if (p_270739_ != null) bukkitInit(p_270739_); // Ketting - do not init bukkit on simulated/fake levels
 +
 +      // CraftBukkit Ticks things
 +      for (org.bukkit.entity.SpawnCategory spawnCategory : org.bukkit.entity.SpawnCategory.values()) {

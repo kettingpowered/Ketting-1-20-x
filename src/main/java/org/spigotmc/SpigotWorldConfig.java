@@ -9,12 +9,19 @@ public class SpigotWorldConfig
 
     private final String worldName;
     private final YamlConfiguration config;
+    private final boolean logWorldSettings;
     private boolean verbose;
 
     public SpigotWorldConfig(String worldName)
     {
+        this(worldName, true);
+    }
+
+    public SpigotWorldConfig(String worldName, boolean logWorldSettings)
+    {
         this.worldName = worldName;
         this.config = SpigotConfig.config;
+        this.logWorldSettings = logWorldSettings;
         init();
     }
 
@@ -28,7 +35,7 @@ public class SpigotWorldConfig
 
     private void log(String s)
     {
-        if ( verbose )
+        if ( verbose && logWorldSettings )
         {
             Bukkit.getLogger().info( s );
         }
