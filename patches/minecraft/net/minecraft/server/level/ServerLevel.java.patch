@@ -434,12 +434,20 @@
           if (p_8644_ != null) {
              p_8644_.progressStartNoAbort(Component.translatable("menu.savingLevel"));
           }
-@@ -736,12 +_,13 @@
+@@ -736,12 +_,21 @@
              this.entityManager.autoSave();
           }
  
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Save(this));
        }
++
++      //Ketting start
++      // CraftBukkit start - (Ketting: NOT) moved from MinecraftServer.saveChunks
++      getServerLevelData().setWorldBorder(this.getWorldBorder().createSettings());
++      getServerLevelData().setCustomBossEvents(this.server.getCustomBossEvents().save());
++      convertable.saveDataTag(this.server.registryAccess(), this.getServerLevelData(), this.server.getPlayerList().getSingleplayerData());
++      // CraftBukkit end
++      //Ketting
     }
  
     private void saveLevelData() {
